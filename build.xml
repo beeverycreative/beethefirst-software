@@ -1,0 +1,397 @@
+<project name="BEESOFT" basedir="." default="help">
+
+        <!-- Project name -->
+
+        <property name="project" value="BEESOFT" />
+
+        <!-- Set the platform property based on the current environment -->
+        <condition property="platform" value="macosx">
+                <os family="mac" />
+        </condition>
+        <condition property="platform" value="windows">
+                <os family="windows" />
+        </condition>
+        <condition property="platform" value="linux">
+                <os family="unix" />
+        </condition>
+
+        <!-- Load the per-platform properties -->
+        <property file="ant.includes/${os.name}-${os.arch}.properties" />
+        <echo>${os.name}-${os.arch}</echo>
+
+        <property name="src.dir" value="src" />
+        <property name="build.dir" value="build" />
+        <property name="lib.dir" value="libs" />
+        <property name="doc.dir" location="doc"/>
+        <!--<property name="dist.dir" value="installers" /> -->
+        <property name="classes.dir" value="${build.dir}/classes" />
+        <property name="jar.dir" value="${lib.dir}/jar" />
+        <property name="resources.dir" value="resources" />
+        <property name="ant.build.javac.target" value="1.6" />
+        <property name="ant.build.javac.source" value="1.6" />
+        <property name="test.src.dir" value="test/src" />
+        <property name="release.name" value="BEESOFT-3.9.0_beta1-2014-07-10" />
+       <!--  <property name="release.name" value="BEESOFT-3.8.0-beta_2014-05-01" /> -->
+        <property name="release.version" value="3.9.0_beta1" />
+        <!-- <property name="release.version" value="3.8.0-beta" /> -->
+
+        <path id="classpath">
+                <!-- include jarbundler -->
+                <fileset dir="installers/macosx" includes="*.jar" />
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <pathelement path="/System/Library/Java" />
+        </path>
+
+        <path id="test.cp">
+                <path refid="classpath" />
+                <pathelement path="test/lib/testng.jar" />
+                <pathelement path="${classes.dir}" />
+        </path>
+
+
+        <target name="clean">
+                <delete dir="${classes.dir}" />
+                <delete dir="${jar.dir}" />
+                <delete dir="dist" />
+                <delete dir="${doc.dir}"/>
+        </target>
+
+        <target name="compile">
+                <mkdir dir="${classes.dir}" />
+                <mkdir dir="${doc.dir}"/>
+                <copy todir="${classes.dir}">
+                    <filelist dir="${src.dir}" files="javax.usb.properties" /> 
+                </copy> 
+                <copy todir="${classes.dir}/replicatorg/app/ui/mainWindow">
+                        <fileset dir="resources/mainWindow">
+                            <include name="*"/>
+                        </fileset>
+                </copy> 
+                <copy todir="${classes.dir}/replicatorg/app/ui/panels">
+                        <fileset dir="resources/panels">
+                            <include name="*"/>
+                        </fileset>
+                </copy> 
+                <copy todir="${classes.dir}/Source_Sans_Pro/">
+                        <fileset dir="resources/Source_Sans_Pro">
+                            <include name="*"/>
+                        </fileset>
+                </copy> 
+
+                <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" debug="true" debuglevel="lines,vars,source"  includeAntRuntime="false">
+                        <!-- Uncomment to aid in Java debugging
+                        <compilerarg value="-Xlint:deprecation" />
+                        <compilerarg value="-Xlint:unchecked" />
+                        -->
+                </javac>
+        </target>
+        
+         <target name="init" description="setup project directories">
+              <mkdir dir="${doc.dir}"/>
+          </target>
+
+        <!-- Generate javadocs for current project into ${doc.dir} -->
+        <target name="javadoc" depends="init" description="generate documentation">
+                 <javadoc sourcepath="${src.dir}" destdir="${doc.dir}"
+                docletpath="apiviz-1.3.0.GA.jar"
+                doclet="org.jboss.apiviz.APIviz"
+                 additionalparam="-author -version ..."/>
+        </target>
+
+        <target name="compile-tests">
+                <mkdir dir="${classes.dir}" />
+                <javac srcdir="${test.src.dir}" destdir="${classes.dir}" classpathref="test.cp" debug="true" debuglevel="lines,vars,source" >
+                        <!-- Uncomment to aid in Java debugging
+                        <compilerarg value="-Xlint:deprecation" />
+                        <compilerarg value="-Xlint:unchecked" />
+                        -->
+                </javac>
+        </target>
+
+        <target name="jar" depends="compile">
+                <mkdir dir="${jar.dir}" />
+                <copy todir="${classes.dir}">
+                        <fileset dir="${resources.dir}" />
+                </copy>
+                <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+                </jar>
+        </target>
+
+        <target name="run" depends="jar">
+                
+                <echo message="native.lib.dir - ${native.lib.dir}"/>
+		<java fork="true" classname="replicatorg.app.Base">
+                        <!-- jvm="/usr/lib/jvm/java-1.5.0-sun/bin/java" -->
+
+                        <jvmarg value="-ea" />
+                        <jvmarg value="-Xmx2048m" />
+                        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+                        <jvmarg value="${native.java.flags}" />
+                        <classpath>
+                                <path refid="classpath" />
+                                <pathelement location="${jar.dir}/${ant.project.name}.jar" />
+                        </classpath>
+                        <sysproperty key="java.library.path" path="${native.lib.dir}" />
+                        <sysproperty key="replicatorg.app-resources" path="${lib.dir}" />
+                        <sysproperty key="replicatorg.toolpath" path="${native.tools.dir}" />
+                        <arg line="${run.arguments}" />
+                </java>
+        </target>
+
+        <target name="run-clean" depends="jar">
+                <delete dir="${user.home}/.replicatorg/temp" />
+                <java fork="true" classname="replicatorg.app.Base">
+                        <!-- jvm="/usr/lib/jvm/java-1.5.0-sun/bin/java" -->
+                        <jvmarg value="-ea" />
+                        <jvmarg value="-Xmx2048m" />
+                        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+                        <jvmarg value="${native.java.flags}" />
+                        <arg value="--alternate-prefs" />
+                        <arg value="temp" />
+                        <arg value="--clean-prefs" />
+                        <classpath>
+                                <path refid="classpath" />
+                                <pathelement location="${jar.dir}/${ant.project.name}.jar" />
+                        </classpath>
+                        <sysproperty key="java.library.path" path="${native.lib.dir}" />
+                        <sysproperty key="replicatorg.app-resources" path="${lib.dir}" />
+                        <sysproperty key="replicatorg.toolpath" path="${native.tools.dir}" />
+                </java>
+        </target>
+
+        <target name="run-non-clean" depends="jar">
+                <java fork="true" classname="replicatorg.app.Base">
+                        <!-- jvm="/usr/lib/jvm/java-1.5.0-sun/bin/java" -->
+                        <jvmarg value="-ea" />
+                        <jvmarg value="-Xmx2048m" />
+                        <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+                        <jvmarg value="${native.java.flags}" />
+                        <arg value="--alternate-prefs" />
+                        <arg value="temp" />
+                        <classpath>
+                                <path refid="classpath" />
+                                <pathelement location="${jar.dir}/${ant.project.name}.jar" />
+                        </classpath>
+                        <sysproperty key="java.library.path" path="${native.lib.dir}" />
+                        <sysproperty key="replicatorg.app-resources" path="${lib.dir}" />
+                        <sysproperty key="replicatorg.toolpath" path="${native.tools.dir}" />
+                </java>
+        </target>
+        <target name="debug" depends="compile">
+                <java fork="true" classname="replicatorg.app.Base">
+                        <jvmarg value="-ea" />
+                        <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" />
+                        <classpath>
+                                <path refid="classpath" />
+                                <pathelement location="${classes.dir}" />
+                        </classpath>
+                        <sysproperty key="java.library.path" path="${native.lib.dir}" />
+                        <sysproperty key="replicatorg.app-resources" path="${lib.dir}" />
+                </java>
+        </target>
+
+        <target name="dist-macosx" depends="jar" description="Builds OS X BEESOFT distribution">
+                <property name="target.dir" value="dist/macosx/${release.name}" />
+                <property name="dist.dir" value="installers/macosx/dist" />
+                <property name="reso.dir" value="dist/macosx/${release.name}/BEESOFT.app/Contents/Resources" />
+
+                <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
+                <antcall target="dist-common-plain" />
+                <jarbundler dir="${target.dir}" name="BEESOFT" bundleid="org.beesoft.app" mainclass="replicatorg.app.Base" icon="${dist.dir}/bee.icns" extraclasspath="/System/Library/Java" jvmversion="1.6+" vmoptions="-d32 -ea -Xmx1G" infostring="BEESOFT, © 2013-${current.year} BEEVC - Electronic Systems" version="${release.version}" stubfile="${dist.dir}/BEESOFT">
+                        <jarfileset dir="${jar.dir}" includes="BEESOFT.jar" />
+                        <jarfileset dir="${lib.dir}" includes="*.jar" />
+                        <jarfileset dir="${dist.dir}" includes="*.jnilib" />
+                        <documenttype name="STL 3D model" extensions="stl" iconFile="${dist.dir}/bee.icns" role="Editor" />
+                        <documenttype name="STL 3D model" extensions="STL" iconFile="${dist.dir}/bee.icns" role="Editor" />
+                        <resourcefileset dir="${lib.dir}" includes="*.gif" />
+                        <javaproperty name="beesoft.app-resources" value="$APP_PACKAGE/Contents/Resources" />
+                        <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+                </jarbundler>  
+
+        <copy todir="${reso.dir}">
+            <fileset dir="${dist.dir}" includes="drivers/*.dmg" />
+        </copy>
+
+        <copy todir="${reso.dir}">
+            <filelist dir="." files="license.txt,readme.txt,contributors.txt,changelog.txt" />
+        </copy>
+        <copy todir="${reso.dir}/firmware">
+            <fileset dir="firmware" />
+        </copy>        
+        <copy todir="${reso.dir}/3DModels">
+            <fileset dir="3DModels" />
+        </copy>    
+        <copy todir="${reso.dir}/pypy">
+            <fileset dir="pypy/distro/pypy-2.0-beta1-osx" />
+        </copy>
+        <copy todir="${reso.dir}/curaEngine/bin">
+            <fileset dir="curaEngine/distros/mac" />
+        </copy>
+        <copy todir="${reso.dir}/curaEngine/prefs">
+            <fileset dir="curaEngine/prefs" />
+        </copy>
+        <copy todir="${reso.dir}/estimator">
+            <fileset dir="estimator" />        
+        </copy>
+        <copy todir="${reso.dir}/machines">
+            <fileset dir="machines" />
+        </copy>
+        <copy todir="${reso.dir}/languages">
+            <fileset dir="languages" />
+        </copy>  
+        <!-- permissions -->
+        <chmod file="${target.dir}/BEESOFT.app" perm="ugo+rx" />
+        <chmod file="${reso.dir}/pypy/bin/pypy" perm="ugo+rx" />
+
+        <!-- delete the copies in the base dir, to make installer build easier -->
+        <delete dir="${target.dir}/machines" />
+        <delete file="${target.dir}/contributors.txt" />
+        <delete file="${target.dir}/readme.txt" />
+        <delete file="${target.dir}/license.txt" />
+
+        <condition property="macosx">
+            <os family="mac" />
+        </condition>
+     <!--   <antcall target="dist-macosx-zip" /> -->
+        <antcall target="dist-macosx-dmg" />
+    </target>
+
+    <target name="dist-macosx-dmg" if="macosx">
+        <exec dir="." os="Mac OS X" executable="/bin/sh">
+            <arg value="-c" />
+            <arg value="${dist.dir}/mkdmg.sh ./dist ../${target.dir} image ${release.name}-mac" />
+        </exec>
+    </target>
+
+    <target name="dist-common-plain" depends="jar" description="Copies plaintext files common to all BEESOFT distributions.">
+        <echo message="Preparing BEESOFT Version: ${release.version}" />
+        <mkdir dir="${target.dir}" />
+        <copy todir="${target.dir}">
+            <filelist dir="." files="license.txt, readme.txt,contributors.txt" />
+        </copy>
+        <copy todir="${target.dir}/machines">
+            <fileset dir="machines" />
+        </copy> 
+    </target>
+
+    <target name="cache-local-docs" description="Downloads the BEESOFT documentation ">
+        <exec executable="wget">
+            <arg value="-r" />
+            <arg value="-k" />
+            <arg value="--directory-prefix=./docs" />
+            <arg value="--timestamping" />
+            <arg value="replicat.org" />
+        </exec>
+    </target>
+
+    <target name="dist-common" description="Builds files common to all BEESOFT distributions, excepting jarbundler-based distros.">
+        <antcall target="dist-common-plain" />
+        <copy todir="${target.dir}/lib">
+            <fileset dir="${lib.dir}" includes="*.jar" />
+        </copy>
+        <copy todir="${target.dir}/lib">
+            <fileset dir="${lib.dir}" includes="*.gif" />
+            <filelist dir="${lib.dir}" files="keywords.txt" />
+            <fileset dir="${jar.dir}" includes="*.jar" />
+        </copy>
+    </target>
+
+    <target name="dist-linux" depends="jar" description="Builds Linux BEESOFT distribution">
+        <property name="target.dir" value="dist/linux/${release.name}" />
+        <property name="dist.dir" value="installers/linux/dist" />
+
+        <!-- standard files -->
+        <antcall target="dist-common" />
+        
+        <!-- platform-specific files -->
+        <copy todir="${target.dir}">
+            <filelist dir="${dist.dir}" files="BEESOFT" />
+        </copy>
+        <copy todir="${target.dir}/pypy">
+            <fileset dir="pypy/distro/pypy-2.0-beta1-linux" />
+        </copy> 
+        <copy todir="${target.dir}/curaEngine/bin">
+            <fileset dir="curaEngine/distros/linux" />
+        </copy>
+        <copy todir="${target.dir}/curaEngine/prefs">
+            <fileset dir="curaEngine/prefs" />
+        </copy>        
+        <copy todir="${target.dir}/firmware">
+            <fileset dir="firmware" />
+        </copy> 
+        <copy todir="${target.dir}/3DModels">
+            <fileset dir="3DModels" />
+        </copy>  
+        <copy todir="${target.dir}/estimator">
+            <fileset dir="estimator" />
+        </copy>   
+        <copy todir="${target.dir}">
+            <filelist dir="." files="changelog.txt" />
+        </copy>
+        <copy todir="${target.dir}/languages">
+            <fileset dir="languages" />
+        </copy>  
+        <copy todir="${target.dir}/lib-i686">
+            <fileset dir="${dist.dir}/lib-i686" includes="*.so" />
+        </copy>
+        <copy todir="${target.dir}/lib-x86_64">
+            <fileset dir="${dist.dir}/lib-x86_64" includes="*.so" />
+        </copy>
+        <!-- permissions -->
+        <chmod file="${target.dir}/gitg" perm="ugo+rx"/>
+        <chmod file="${target.dir}/pypy/bin/pypy" perm="ugo+rx" />
+
+    </target>
+    <target name="dist-windows" depends="jar" description="Builds Windows BEESOFT distribution">
+        <property name="target.dir" value="dist/windows/${release.name}" />
+        <property name="dist.dir" value="installers/windows/dist" />
+        <!-- standard files -->
+        <antcall target="dist-common" />
+        <copy todir="${target.dir}/pypy">
+            <fileset dir="pypy/distro/pypy-2.0-beta1-win32" />
+        </copy>
+        <copy todir="${target.dir}/curaEngine/bin">
+            <fileset dir="curaEngine/distros/windows" />
+        </copy>     
+        <copy todir="${target.dir}/curaEngine/prefs">
+            <fileset dir="curaEngine/prefs" />
+        </copy>     
+        <copy todir="${target.dir}/estimator">
+            <fileset dir="estimator" />            
+        </copy> 
+        <copy todir="${target.dir}/firmware">
+            <fileset dir="firmware" />
+        </copy> 
+        <copy todir="${target.dir}/update">
+            <fileset dir="update" />
+        </copy>         
+        <copy todir="${target.dir}/3DModels">
+            <fileset dir="3DModels" />
+        </copy>    
+        <copy todir="${target.dir}/languages">
+            <fileset dir="languages" />
+        </copy>  
+        <copy todir="${target.dir}">
+            <filelist dir="." files="changelog.txt" />
+        </copy>        
+        <copy todir="${target.dir}">
+            <fileset dir="${dist.dir}" includes="*.dll" />
+            <filelist dir="${dist.dir}" files="BEESOFT.exe" />
+            <fileset dir="${dist.dir}" includes="drivers/**/*" />
+            <fileset dir="${dist.dir}" includes="java/**/*" />
+        </copy>
+    </target>
+
+
+    <target name="dist" depends="dist-linux,dist-macosx,dist-windows" description="Builds all BEESOFT distributions">
+    </target>
+
+    <!-- Help -->
+    <target name="help" description="Targets for this project">
+        <echo message="Targets for this project" />
+        <exec executable="ant">
+            <arg value="-p" />
+        </exec>
+        <antcall target="test" />
+    </target>
+</project>

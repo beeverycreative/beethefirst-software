@@ -1,0 +1,7 @@
+CuraEngine binaries that will be copied to
+
+curaEngine/bin
+
+depending on OS.
+
+By default, curaEngine/bin/CuraEngine is a linux bin for Netbeans development
