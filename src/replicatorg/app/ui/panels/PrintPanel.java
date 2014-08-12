@@ -9,16 +9,23 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
+import replicatorg.app.PrintEstimator;
+import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.drivers.Driver;
+
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -40,26 +47,42 @@ public class PrintPanel extends javax.swing.JFrame {
     private JLabel quality_medium;
     private JLabel quality_solid;
     private ArrayList<String> prefs;
-    private boolean raftPressed, supportPressed,autonomousPressed;
+    private boolean raftPressed, supportPressed, autonomousPressed;
     private int posX = 0, posY = 0;
     private Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
     boolean no_Filament = false;
     private static final String NOK = "NOK";
     private Thread t = null;
+    private static final String FORMAT = "%2d:%2d";
     private String colorCode = "A0";
+    private PrintEstimationThread estimationThread = null;
+    private boolean isRunning = true;
+    boolean lastUsedRaft;
+    String lastUsedDensity;
+    String lastUsedResolution;
+    boolean lastUsedSupport;
+    boolean lastUsedAutonomous;
+    boolean lastSelectedRaft;
+    String lastSelectedDensity;
+    String lastSelectedResolution;
+    boolean lastSelectedSupport;
+    boolean lastSelectedAutonomous;
+    boolean gcodeOK;
+    private boolean estimatePressed;
 
     public PrintPanel() {
         initComponents();
         initSlidersLables();
         setFont();
-        getCoilCode();
         setTextLanguage();
         initSliderConfigs();
         centerOnScreen();
+        estimationThread = new PrintEstimationThread(this);
+        getCoilCode();
         prefs = new ArrayList<String>();
         raftPressed = false;
         supportPressed = false;
-        autonomousPressed = false;
+        autonomousPressed = true;
         evaluateConditions();
         matchChanges();
         enableDrag();
@@ -80,7 +103,12 @@ public class PrintPanel extends javax.swing.JFrame {
         jLabel12.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel16.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel19.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel20.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        bEstimate.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        filamentType.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        estimatedPrintTime.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        estimatedMaterial.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        printTime.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        materialCost.setFont(GraphicDesignComponents.getSSProRegular("10"));
         jLabel22.setFont(GraphicDesignComponents.getSSProRegular("10"));
         jLabel23.setFont(GraphicDesignComponents.getSSProRegular("10"));
 
@@ -90,6 +118,35 @@ public class PrintPanel extends javax.swing.JFrame {
         quality_low.setFont(GraphicDesignComponents.getSSProRegular("12"));
         quality_medium.setFont(GraphicDesignComponents.getSSProRegular("12"));
         quality_solid.setFont(GraphicDesignComponents.getSSProRegular("12"));
+    }
+
+    private void setTextLanguage() {
+        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Print"));
+        jLabel2.setText(Languager.getTagValue("Print", "Print_Quality"));
+        jLabel3.setText(Languager.getTagValue("Print", "Print_Density"));
+        jLabel7.setText(Languager.getTagValue("Print", "Print_Raft"));
+        jLabel8.setText(splitString(Languager.getTagValue("Print", "Print_Raft_Info")));
+        jLabel9.setText(Languager.getTagValue("Print", "Print_Support"));
+        jLabel10.setText(splitString(Languager.getTagValue("Print", "Print_Support_Info")));
+        jLabel11.setText(splitString(Languager.getTagValue("Print", "Print_Autonomy_Info")));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bEstimate.setText(Languager.getTagValue("OptionPaneButtons", "Line15"));
+        jLabel12.setText(Languager.getTagValue("ToolPath", "Line21"));
+        jLabel16.setText(Languager.getTagValue("Print", "Print_Autonomy"));
+        jLabel19.setText(Languager.getTagValue("MaintenancePanel", "FilamentChange_button"));
+        filamentType.setText(Languager.getTagValue("MaintenancePanel", "Filament_Type"));
+        estimatedPrintTime.setText(Languager.getTagValue("Print", "Print_EstimationPrintTime"));
+        estimatedMaterial.setText(Languager.getTagValue("Print", "Print_EstimationMaterial"));
+        jLabel23.setText("");
+
+
+        quality_prototype.setText(Languager.getTagValue("Print", "Print_Quality_Low"));
+        quality_normal.setText(Languager.getTagValue("Print", "Print_Quality_Normal"));
+        quality_artwork.setText(Languager.getTagValue("Print", "Print_Quality_High"));
+        quality_low.setText(Languager.getTagValue("Print", "Print_Density_Low"));
+        quality_medium.setText(Languager.getTagValue("Print", "Print_Density_Medium"));
+        quality_solid.setText(Languager.getTagValue("Print", "Print_Density_High"));
+
     }
 
     private void getCoilCode() {
@@ -113,45 +170,29 @@ public class PrintPanel extends javax.swing.JFrame {
             jLabel23.setText(Languager.getTagValue("Print", "Print_Splash_Info11"));
 
         } else {
-            colorCode = code;
-            code = getColor(Base.getMainWindow().getMachine().getModel().getCoilCode());
-
+            
+            code = FilamentControler.getColor(Base.getMainWindow().getMachine().getModel().getCoilCode());
+            
+            //Checks if user besides having a BEECode, it is one up-to-date.
+            //BEECodes may have been changed
+            if(code.equals("NO_FILAMENT") == false)
+            {
+                colorCode = code;
+            }
+            else
+            {
+                no_Filament = true;
+            }
             jLabel22.setText(" " + code);
         }
 
 
-        if (no_Filament == false) {
+        if (no_Filament == true) {
             jLabel22.setText(" " + code);
             jLabel23.setText(Languager.getTagValue("Print", "Print_Splash_Info11"));
         } else {
             jLabel22.setText(" " + code);
         }
-
-    }
-
-    private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Print"));
-        jLabel2.setText(Languager.getTagValue("Print", "Print_Quality"));
-        jLabel3.setText(Languager.getTagValue("Print", "Print_Density"));
-        jLabel7.setText(Languager.getTagValue("Print", "Print_Raft"));
-        jLabel8.setText(splitString(Languager.getTagValue("Print", "Print_Raft_Info")));
-        jLabel9.setText(Languager.getTagValue("Print", "Print_Support"));
-        jLabel10.setText(splitString(Languager.getTagValue("Print", "Print_Support_Info")));
-        jLabel11.setText(splitString(Languager.getTagValue("Print", "Print_Autonomy_Info")));
-        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        jLabel12.setText(Languager.getTagValue("ToolPath", "Line21"));
-        jLabel16.setText(Languager.getTagValue("Print", "Print_Autonomy"));
-        jLabel19.setText(Languager.getTagValue("MaintenancePanel", "FilamentChange_button"));
-        jLabel20.setText(Languager.getTagValue("MaintenancePanel", "Filament_Type"));
-        jLabel23.setText("");
-
-
-        quality_prototype.setText(Languager.getTagValue("Print", "Print_Quality_Low"));
-        quality_normal.setText(Languager.getTagValue("Print", "Print_Quality_Normal"));
-        quality_artwork.setText(Languager.getTagValue("Print", "Print_Quality_High"));
-        quality_low.setText(Languager.getTagValue("Print", "Print_Density_Low"));
-        quality_medium.setText(Languager.getTagValue("Print", "Print_Density_Medium"));
-        quality_solid.setText(Languager.getTagValue("Print", "Print_Density_High"));
 
     }
 
@@ -226,7 +267,12 @@ public class PrintPanel extends javax.swing.JFrame {
         quality_solid = new JLabel("solid");
     }
 
+    public boolean isRunning() {
+        return isRunning;
+    }
+
     private String parseSlider1() {
+
         if (jSlider1.getValue() == 0) {
             return "LOW";
         }
@@ -241,6 +287,7 @@ public class PrintPanel extends javax.swing.JFrame {
     }
 
     private String parseSlider2() {
+
         if (jSlider2.getValue() == 0) {
             return "LOW";
         }
@@ -251,13 +298,21 @@ public class PrintPanel extends javax.swing.JFrame {
             return "HIGH";
         }
 
-        return "MEDIUM";
+        return "LOW";
     }
 
     private void evaluateConditions() {
-        
-        //Force GCode generation
-//        Base.getMainWindow().getBed().setGcodeOK(false);
+
+        lastUsedRaft = Base.getMainWindow().getBed().isLasRaft();
+        lastUsedDensity = Base.getMainWindow().getBed().getLastDensity();
+        lastUsedResolution = Base.getMainWindow().getBed().getLastResolution();
+        lastUsedSupport = Base.getMainWindow().getBed().isLastSupport();
+        lastUsedAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
+        gcodeOK = Base.getMainWindow().getBed().isGcodeOK();
+
+        materialCost.setText("N/A");
+        showLoadingIcon(false);
+        updateOldSettings();
 
         //|| gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100
         if (no_Filament) // Less than a meter(100 grams)
@@ -269,71 +324,88 @@ public class PrintPanel extends javax.swing.JFrame {
 
     }
 
-    private double gramsCalculator(double meters) {
-        return meters * 12 / 4;
+    public void updateEstimationPanel(String time, String cost) {
+
+        if (!time.contains("NA") || !time.contains("N/A")) {
+            printTime.setText(buildTimeEstimationString(time));
+        }
+        
+        if (!cost.contains("NA") && !cost.contains("N/A")) {
+            materialCost.setText(tuneCost(cost));
+        }
+     
     }
 
-    private String parseCoilCode() {
-        String colorRatio = "1.1164";
-        String code = ProperDefault.get("coilCode");
+    private String gramsCalculator(double meters) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        double grams = meters * 12 / 4;
 
-        if (code.contains("301")) {
-            colorRatio = "1.1164";
-        }
-        if (code.contains("302")) {
-            colorRatio = "1.0797";
-        }
-        if (code.contains("303")) {
-            colorRatio = "1.2100";
-        }
-        if (code.contains("304")) {
-            colorRatio = "1.0996";
-        }
-        if (code.contains("305")) {
-            colorRatio = "1.1940";
-        }
-        if (code.contains("306")) {
-            colorRatio = "1.2438";
-        }
-        if (code.contains("321")) {
-            colorRatio = "1.2600";
-        }
-        if (code.contains("322")) {
-            colorRatio = "1.1592";
+        if (grams > 0) {
+            return df.format(meters * 12 / 4);
         }
 
-        return colorRatio;
+        return "N/A";
     }
 
-    private String getColor(String coilCode) {
-        String color = "NO_FILAMENT";
+    private String tuneCost(String cost) {
+        double meters = Double.valueOf(cost);
+        String result = gramsCalculator(meters / 1000.0);
+        return result + " " + Languager.getTagValue("Print", "Print_GramsTag");
+    }
 
-        if (coilCode.contains("301")) {
-            color = "WHITE";
+    private String minutesToHours(int t) {
+        int hours = t / 60; //since both are ints, you get an int
+        int minute = t % 60;
+
+        return String.format(FORMAT, hours, minute);
+    }
+
+    private int estimatorTimeToMinutes(String durT) {
+        if (durT.contains(":")) {
+            String[] cells = durT.split(":");
+            int hours = Integer.valueOf(cells[0]) * 60;
+            int minutes = Integer.valueOf(cells[1]);
+
+            return hours + minutes;
+        } else {
+            return Integer.valueOf(durT);
         }
-        if (coilCode.contains("302")) {
-            color = "BLACK";
-        }
-        if (coilCode.contains("303")) {
-            color = "YELLOW";
-        }
-        if (coilCode.contains("304")) {
-            color = "RED";
-        }
-        if (coilCode.contains("305")) {
-            color = "TURQUOISE";
-        }
-        if (coilCode.contains("306")) {
-            color = "TRANSPARENT";
-        }
-        if (coilCode.contains("321")) {
-            color = "GREEN";
-        }
-        if (coilCode.contains("322")) {
-            color = "ORANGE";
+    }
+
+    private String buildTimeEstimationString(String durT) {
+        String text = "N/A";
+        if (!durT.equals("NA")) {
+            int duration = estimatorTimeToMinutes(durT);
+            String hours = minutesToHours(duration).split("\\:")[0];
+            String minutes = minutesToHours(duration).split("\\:")[1];
+            int min = Integer.valueOf(minutes.trim());
+
+            if (duration >= 120) {
+                if (min > 1) {
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                } else if (min == 1) {
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinute"));
+                } else {
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour"));
+                }
+            } else if (duration >= 60 && duration < 120) {
+                if (min > 1) {
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                } else if (min == 1) {
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinute"));
+                } else {
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour"));
+                }
+            } else {
+                text = (" " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+            }
+        } else {
+            text = (durT);
         }
 
-        return color;
+
+        return text;
+
     }
 
     private void enableDrag() {
@@ -353,15 +425,29 @@ public class PrintPanel extends javax.swing.JFrame {
         });
     }
 
+    public void showLoadingIcon(boolean show) {
+        loading.setVisible(show);
+       
+        if(show)
+        {
+            materialCost.setText("N/A");
+            printTime.setText("N/A");
+            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
+        } else {
+            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
+            estimatePressed = false;
+        }
+    }
+
     private void matchChanges() {
 
-        boolean lastRaft = Base.getMainWindow().getBed().isLasRaft();
-        String lastDensity = Base.getMainWindow().getBed().getLastDensity();
-        String lastResolution = Base.getMainWindow().getBed().getLastResolution();
-        boolean lastSupport = Base.getMainWindow().getBed().isLastSupport();
-        boolean lastAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
+        lastUsedRaft = Base.getMainWindow().getBed().isLasRaft();
+        lastUsedDensity = Base.getMainWindow().getBed().getLastDensity();
+        lastUsedResolution = Base.getMainWindow().getBed().getLastResolution();
+        lastUsedSupport = Base.getMainWindow().getBed().isLastSupport();
+        lastUsedAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
 
-        if (lastRaft) {
+        if (lastUsedRaft) {
             jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
             raftPressed = true;
         } else {
@@ -369,77 +455,145 @@ public class PrintPanel extends javax.swing.JFrame {
             raftPressed = false;
         }
 
-        if (lastSupport) {
+        if (lastUsedSupport) {
             jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
             supportPressed = true;
         } else {
             jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
             supportPressed = false;
         }
-        
-        if (lastAutonomous) {
+
+        if (lastUsedAutonomous) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
             autonomousPressed = true;
         } else {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
             autonomousPressed = false;
-        }        
-        
-        if (lastDensity.equalsIgnoreCase("LOW")) {
+        }
+
+        if (lastUsedDensity.equalsIgnoreCase("LOW")) {
             jSlider2.setValue(0);
-        } else if (lastDensity.equalsIgnoreCase("MEDIUM")) {
+        } else if (lastUsedDensity.equalsIgnoreCase("MEDIUM")) {
             jSlider2.setValue(50);
         } else {
             jSlider2.setValue(100);
         }
 
-        if (lastResolution.equalsIgnoreCase("LOW")) {
+        if (lastUsedResolution.equalsIgnoreCase("LOW")) {
             jSlider1.setValue(0);
         } else {
             jSlider1.setValue(100);
         }
-        
+
         checkChanges();
     }
 
-    private boolean checkChanges() {
+    public boolean checkChanges() {
         boolean equal = false;
 
-        boolean lastRaft = Base.getMainWindow().getBed().isLasRaft();
-        String lastDensity = Base.getMainWindow().getBed().getLastDensity();
-        String lastResolution = Base.getMainWindow().getBed().getLastResolution();
-        boolean lastSupport = Base.getMainWindow().getBed().isLastSupport();
-        boolean lastAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
-        boolean gcodeOK = Base.getMainWindow().getBed().isGcodeOK();
+        lastUsedRaft = Base.getMainWindow().getBed().isLasRaft();
+        lastUsedDensity = Base.getMainWindow().getBed().getLastDensity();
+        lastUsedResolution = Base.getMainWindow().getBed().getLastResolution();
+        lastUsedSupport = Base.getMainWindow().getBed().isLastSupport();
+        lastUsedAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
+        gcodeOK = Base.getMainWindow().getBed().isGcodeOK();
 
-        if (parseSlider1().equals(lastResolution)
-                && parseSlider2().equals(lastDensity)
-                && raftPressed == lastRaft
-                && supportPressed == lastSupport
-                && autonomousPressed == lastAutonomous
+        if (parseSlider1().equals(lastUsedResolution)
+                && parseSlider2().equals(lastUsedDensity)
+                && raftPressed == lastUsedRaft
+                && supportPressed == lastUsedSupport
+                && autonomousPressed == lastUsedAutonomous
                 && gcodeOK) {
             equal = true;
         }
-//        
-//        if(!equal)
-//        {
-//        jLabel6.setVisible(true);
-//        jLabel16.setVisible(true);
-//        }
-//        else
-//        {
-//            jLabel6.setVisible(false);
-//            jLabel16.setVisible(false);
-//        }
-
 
         return equal;
     }
 
+    public boolean settingsChanged() {
+
+        if (parseSlider1().equals(lastSelectedResolution)
+                && parseSlider2().equals(lastSelectedDensity)
+                && raftPressed == lastSelectedRaft
+                && supportPressed == lastSelectedSupport) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void updateOldSettings() {
+        lastSelectedRaft = raftPressed;
+        lastSelectedDensity = parseSlider2();
+        lastSelectedResolution = parseSlider1();
+        lastSelectedSupport = supportPressed;
+        lastSelectedAutonomous = autonomousPressed;
+    }
+
     private void doCancel() {
         dispose();
+        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         Base.bringAllWindowsToFront();
+        isRunning = false;
+        estimationThread.stop();
+        if (t != null) {
+            t.stop();
+        }
+
+    }
+
+    public ArrayList<String> getPreferences() {
+        ArrayList<String> prefs = new ArrayList<String>();
+
+        prefs.add(parseSlider1());
+        prefs.add(FilamentControler.getColor(colorCode));
+        prefs.add(parseSlider2());
+        prefs.add(String.valueOf(raftPressed));
+        prefs.add(String.valueOf(supportPressed));
+        prefs.add(String.valueOf(autonomousPressed));
+
+        return prefs;
+    }
+
+    private void triggerRaft() {
+        lastSelectedRaft = raftPressed;
+
+        if (!raftPressed) {
+            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
+            raftPressed = true;
+        } else {
+            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
+            raftPressed = false;
+        }
+
+        checkChanges();
+    }
+
+    private void triggerSupport() {
+        lastSelectedSupport = supportPressed;
+
+        if (!supportPressed) {
+            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
+            supportPressed = true;
+        } else {
+            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
+            supportPressed = false;
+        }
+
+        checkChanges();
+    }
+
+    private void triggerAutonomous() {
+        if (!autonomousPressed) {
+            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
+            autonomousPressed = true;
+        } else {
+            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
+            autonomousPressed = false;
+        }
+
+        checkChanges();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -463,7 +617,7 @@ public class PrintPanel extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
+        filamentType = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel22 = new javax.swing.JLabel();
@@ -471,17 +625,25 @@ public class PrintPanel extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        estimatedPrintTime = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        estimatedMaterial = new javax.swing.JLabel();
+        printTime = new javax.swing.JLabel();
+        materialCost = new javax.swing.JLabel();
+        loading = new javax.swing.JLabel();
+        bEstimate = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(375, 510));
+        setPreferredSize(new java.awt.Dimension(375, 565));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setPreferredSize(new java.awt.Dimension(374, 435));
+        jPanel1.setPreferredSize(new java.awt.Dimension(374, 440));
 
         jPanel4.setBackground(new java.awt.Color(255, 203, 5));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -543,6 +705,11 @@ public class PrintPanel extends javax.swing.JFrame {
         jSlider1.setPaintLabels(true);
         jSlider1.setSnapToTicks(true);
         jSlider1.setValue(0);
+        jSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSlider1MouseReleased(evt);
+            }
+        });
         jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSlider1StateChanged(evt);
@@ -558,6 +725,11 @@ public class PrintPanel extends javax.swing.JFrame {
         jSlider2.setSnapToTicks(true);
         jSlider2.setValue(0);
         jSlider2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jSlider2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSlider2MouseReleased(evt);
+            }
+        });
         jSlider2.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jSlider2StateChanged(evt);
@@ -580,15 +752,35 @@ public class PrintPanel extends javax.swing.JFrame {
 
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Raft");
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel7MousePressed(evt);
+            }
+        });
 
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Suspendisse potenti.");
+        jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel8MousePressed(evt);
+            }
+        });
 
         jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Support");
+        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel9MousePressed(evt);
+            }
+        });
 
         jLabel10.setForeground(new java.awt.Color(0, 0, 0));
         jLabel10.setText("Suspendisse potenti.");
+        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel10MousePressed(evt);
+            }
+        });
 
         jLabel19.setForeground(new java.awt.Color(0, 0, 0));
         jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
@@ -606,8 +798,8 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel20.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel20.setText("Filament Type");
+        filamentType.setForeground(new java.awt.Color(0, 0, 0));
+        filamentType.setText("Filament Type");
 
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
@@ -619,9 +811,19 @@ public class PrintPanel extends javax.swing.JFrame {
 
         jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setText("Suspendisse potenti.");
+        jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel11MousePressed(evt);
+            }
+        });
 
         jLabel16.setForeground(new java.awt.Color(0, 0, 0));
         jLabel16.setText("Autonomous");
+        jLabel16.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel16MousePressed(evt);
+            }
+        });
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -630,23 +832,44 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
+        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
+
+        estimatedPrintTime.setForeground(new java.awt.Color(0, 0, 0));
+        estimatedPrintTime.setText("Print time:");
+
+        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
+
+        estimatedMaterial.setForeground(new java.awt.Color(0, 0, 0));
+        estimatedMaterial.setText("Material cost:");
+
+        printTime.setForeground(new java.awt.Color(0, 0, 0));
+        printTime.setText("N/A");
+
+        materialCost.setForeground(new java.awt.Color(0, 0, 0));
+        materialCost.setText("N/A");
+
+        loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
+
+        bEstimate.setForeground(new java.awt.Color(0, 0, 0));
+        bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
+        bEstimate.setText("Estimate");
+        bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bEstimateMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bEstimateMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bEstimateMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(108, 108, 108)
-                        .addComponent(jLabel19))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel11))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -664,29 +887,69 @@ public class PrintPanel extends javax.swing.JFrame {
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel7))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(4, 4, 4)
-                                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel10)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(estimatedMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
+                                        .addGap(15, 15, 15)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(printTime)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(bEstimate))
+                                            .addComponent(materialCost)))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel20)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel5)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGap(4, 4, 4)
+                                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel23)
-                                            .addComponent(jLabel22))))))
+                                            .addComponent(jLabel8)
+                                            .addComponent(jLabel9)
+                                            .addComponent(jLabel10)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(filamentType)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel23)
+                                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                                        .addComponent(jLabel22)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(loading)))))))
+                                .addGap(15, 15, 15)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel11))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(106, 106, 106)
+                .addComponent(jLabel19)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -721,18 +984,34 @@ public class PrintPanel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(filamentType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(loading))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel23)
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(estimatedPrintTime)
+                        .addComponent(printTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bEstimate)))
+                .addGap(4, 4, 4)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(estimatedMaterial)
+                        .addComponent(materialCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel19)
                 .addContainerGap())
         );
@@ -798,12 +1077,12 @@ public class PrintPanel extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -813,23 +1092,23 @@ public class PrintPanel extends javax.swing.JFrame {
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
 
-        if (jSlider1.getValue() > 5) {
+        if (jSlider1.getValue() >= 30) {
             jSlider1.setValue(100);
         } else {
             jSlider1.setValue(0);
         }
 
         checkChanges();
-
-
     }//GEN-LAST:event_jSlider1StateChanged
 
     private void jSlider2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider2StateChanged
-        if (jSlider2.getValue() > 1 && jSlider2.getValue() < 49) {
+
+        if (jSlider2.getValue() > 1 && jSlider2.getValue() <= 49) {
             jSlider2.setValue(50);
-        }
-        if (jSlider2.getValue() > 51) {
+        } else if (jSlider2.getValue() >= 51) {
             jSlider2.setValue(100);
+        } else if (jSlider2.getValue() <= 1) {
+            jSlider2.setValue(0);
         }
 
         checkChanges();
@@ -868,7 +1147,8 @@ public class PrintPanel extends javax.swing.JFrame {
         if (t != null) {
             t.stop();
         }
-
+        estimationThread.stop();
+        
         if (!no_Filament) {
             /*
              * prefs[0] - profile (LOW,HIGH) 
@@ -884,7 +1164,7 @@ public class PrintPanel extends javax.swing.JFrame {
 
             prefs.add(parseSlider1());
 //            prefs.add(parseCoilCode());
-            prefs.add(getColor(colorCode));
+            prefs.add(FilamentControler.getColor(colorCode));
             prefs.add(parseSlider2());
             prefs.add(String.valueOf(raftPressed));
             prefs.add(String.valueOf(supportPressed));
@@ -898,10 +1178,11 @@ public class PrintPanel extends javax.swing.JFrame {
 
             Base.getMainWindow().setEnabled(false);
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
-            
+
             dispose();
             Base.getMainWindow().getCanvas().unPickAll();
-      
+            isRunning = false;
+
             if (autonomousPressed == false) {
                 final PrintSplashSimple p = new PrintSplashSimple(prefs);
                 p.setVisible(true);
@@ -988,43 +1269,86 @@ public class PrintPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed
-        if (!autonomousPressed) {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
-            autonomousPressed = true;
-        } else {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
-            autonomousPressed = false;
-        }
-
-        checkChanges();
+        triggerAutonomous();
     }//GEN-LAST:event_jLabel6MousePressed
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
-        if (!raftPressed) {
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
-            raftPressed = true;
-        } else {
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
-            raftPressed = false;
-        }
-
-        checkChanges();
+        triggerRaft();
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        if (!supportPressed) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
-            supportPressed = true;
-        } else {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
-            supportPressed = false;
-        }
-
-        checkChanges();
+        triggerSupport();
     }//GEN-LAST:event_jLabel5MousePressed
+
+    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
+        triggerRaft();
+    }//GEN-LAST:event_jLabel7MousePressed
+
+    private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
+        triggerRaft();
+    }//GEN-LAST:event_jLabel8MousePressed
+
+    private void jLabel9MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MousePressed
+        triggerSupport();
+    }//GEN-LAST:event_jLabel9MousePressed
+
+    private void jLabel10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MousePressed
+        triggerSupport();
+    }//GEN-LAST:event_jLabel10MousePressed
+
+    private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
+        triggerAutonomous();
+    }//GEN-LAST:event_jLabel16MousePressed
+
+    private void jLabel11MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MousePressed
+        triggerAutonomous();
+    }//GEN-LAST:event_jLabel11MousePressed
+
+    private void jSlider1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider1MouseReleased
+        lastSelectedResolution = parseSlider1();
+    }//GEN-LAST:event_jSlider1MouseReleased
+
+    private void jSlider2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider2MouseReleased
+        lastSelectedDensity = parseSlider2();
+    }//GEN-LAST:event_jSlider2MouseReleased
+
+    private void bEstimateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseEntered
+        if(estimatePressed == false)
+        {
+            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
+        }
+    }//GEN-LAST:event_bEstimateMouseEntered
+
+    private void bEstimateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseExited
+        if(estimatePressed == false)
+        {
+            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
+        }
+    }//GEN-LAST:event_bEstimateMouseExited
+
+    private void bEstimateMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMousePressed
+        
+        if(estimatePressed == false)
+        {
+            estimationThread = new PrintEstimationThread(this);
+            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
+            estimatePressed = true;
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    estimationThread.start();
+                    Base.systemThreads.add(estimationThread);
+                }
+            });
+        }
+    }//GEN-LAST:event_bEstimateMousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
+    private javax.swing.JLabel bEstimate;
+    private javax.swing.JLabel estimatedMaterial;
+    private javax.swing.JLabel estimatedPrintTime;
+    private javax.swing.JLabel filamentType;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1035,10 +1359,11 @@ public class PrintPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1053,5 +1378,60 @@ public class PrintPanel extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JSlider jSlider2;
+    private javax.swing.JLabel loading;
+    private javax.swing.JLabel materialCost;
+    private javax.swing.JLabel printTime;
     // End of variables declaration//GEN-END:variables
+}
+class PrintEstimationThread extends Thread {
+
+    private PrintPanel printPanel;
+    private int nTimes;
+
+    public PrintEstimationThread(PrintPanel panel) {
+        super("Print panel Estimation Thread");
+        this.printPanel = panel;
+        this.nTimes = 0;
+    }
+
+    public void runEstimator() {
+        ArrayList<String> preferences = printPanel.getPreferences();
+        Printer prt = new Printer(preferences);
+        prt.generateGCode(preferences);
+        File gcode = prt.getGCode();
+
+        //Estimate time and cost
+        PrintEstimator.estimateTime(gcode);
+        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+    }
+
+    @Override
+    public void run() {
+
+        while (printPanel.isRunning()) {
+            try {
+                Thread.sleep(5, 0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(PrintEstimationThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (!printPanel.settingsChanged() || nTimes == 0) {
+                printPanel.showLoadingIcon(true);
+                
+                if (Base.getMainWindow().isOkToGoOnSave() == false) {
+                    Base.getMainWindow().handleSave(true);
+                }
+                runEstimator();
+                printPanel.updateOldSettings();
+                nTimes++;
+                printPanel.showLoadingIcon(false);
+                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+                this.stop();
+            
+            } else {
+                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+            }
+
+
+        }
+    }
 }

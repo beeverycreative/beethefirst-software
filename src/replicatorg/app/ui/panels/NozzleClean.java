@@ -158,16 +158,27 @@ public class NozzleClean extends javax.swing.JFrame {
             double acHigh = machine.getAcceleration("acHigh");
             double spHigh = machine.getFeedrate("spHigh");
 
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            //turn off blower before heating
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
             machine.runCommand(new replicatorg.drivers.commands.SetTemperature(heatTemperature));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            if(Base.printPaused == false)
+            {
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                //turn off blower before heating
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            }
+            else
+            {
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + spHigh + " X-85 Y-65"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            }
         }
     }
 
@@ -230,21 +241,24 @@ public class NozzleClean extends javax.swing.JFrame {
         Base.writeLog("Nozzle cleaned");
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        Base.enableAllOpenWindows();
 
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
+        
+        if(!Base.printPaused){
+            Point5d b = machine.getTablePoints("safe");
+            double acLow = machine.getAcceleration("acLow");
+            double acHigh = machine.getAcceleration("acHigh");
+            double spHigh = machine.getFeedrate("spHigh");
 
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        }
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
@@ -355,9 +369,9 @@ public class NozzleClean extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,7 +399,7 @@ public class NozzleClean extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
@@ -558,22 +572,25 @@ public class NozzleClean extends javax.swing.JFrame {
             double acHigh = machine.getAcceleration("acHigh");
             double spHigh = machine.getFeedrate("spHigh");
 
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            if(Base.printPaused == false)
+            {
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            }
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.getMainWindow().setEnabled(true);
+            Base.enableAllOpenWindows();
         }
     }//GEN-LAST:event_jLabel18MousePressed
 
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
         if (!ProperDefault.get("maintenance").equals("1") && achievement) {
             dispose();
-            FilamentCodeInsertion p = new FilamentCodeInsertion();
+            FilamentCodeInsertion p = new FilamentCodeInsertion(machine.getModel().getCoilCode());
             p.setVisible(true);
         }
     }//GEN-LAST:event_jLabel17MousePressed
@@ -615,7 +632,7 @@ class DisposeFeedbackThread6 extends Thread {
     private NozzleClean nozzlePanel;
 
     public DisposeFeedbackThread6(NozzleClean filIns, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Nozzle Clean Thread");
         this.machine = mach;
         this.nozzlePanel = filIns;
     }

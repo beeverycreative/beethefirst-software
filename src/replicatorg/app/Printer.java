@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import replicatorg.app.ui.MainWindow;
+import replicatorg.machine.model.MachineModel;
 import replicatorg.model.PrintBed;
 import replicatorg.plugin.toolpath.cura.CuraGenerator;
 import replicatorg.util.Tuple;
@@ -76,8 +77,17 @@ public class Printer {
             Base.writeLog("GCode generated");
 //            parseGCodeToSave();
         } else {
-            // handle with no permission error cancelling print and setting error message
-            return "-1";
+            if(!gcode.canRead() || gcode.length() == 0)
+            {
+                // handles with mesh error
+                Base.getMainWindow().showFeedBackMessage("modelMeshError");
+                return "-2";
+            }
+            else
+            {
+                // handles with no permission error cancelling print and setting error message
+                return "-1";
+            }
         }
         return PrintEstimator.getEstimatedTime();
     }
@@ -91,6 +101,11 @@ public class Printer {
     public void setGCodeFile(File gFile) {
         this.gcode = gFile;
     }
+    
+    public void setPreferences(ArrayList<String> prefs)
+    {
+        this.params = prefs;
+    }
 
     private File generateSTL() {
 
@@ -98,9 +113,6 @@ public class Printer {
                 + System.currentTimeMillis() + ".stl");
         HashMap<Integer, File> stlFiles = new HashMap<Integer, File>();
 
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        String code = null;
         boolean oneSTL = (bed.getNumberModels() == 1);
 
         for (int i = 0; i < bed.getNumberModels(); i++) {
@@ -229,6 +241,7 @@ public class Printer {
 
     private String parseProfile(ArrayList<String> params) {
         String profile = "";
+        MachineModel machine = Base.getMainWindow().getMachine().getModel();
         String color = params.get(1);
         String resolution = params.get(0);
         String curaFileForced = ProperDefault.get("curaFile");
@@ -243,31 +256,10 @@ public class Printer {
             } else if (resolution.equalsIgnoreCase("high")) {
                 profile = "HighRes";
             }
+            
+            profile += machine.getCoilCode();
+                    //FilamentControler.getBEECode(color);
 
-            if (color.contains("WHITE")) {
-                profile += "A301";
-            }
-            if (color.contains("BLACK")) {
-                profile += "A302";
-            }
-            if (color.contains("YELLOW")) {
-                profile += "A303";
-            }
-            if (color.contains("RED")) {
-                profile += "A304";
-            }
-            if (color.contains("TURQUOISE")) {
-                profile += "A305";
-            }
-            if (color.contains("TRANSPARENT")) {
-                profile += "A306";
-            }
-            if (color.contains("GREEN")) {
-                profile += "A321";
-            }
-            if (color.contains("ORANGE")) {
-                profile += "A322";
-            }
         } else {
             profile = curaFileForced;
         }

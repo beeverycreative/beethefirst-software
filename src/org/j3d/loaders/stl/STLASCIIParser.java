@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.swing.ProgressMonitorInputStream;
+import replicatorg.app.Base;
 
 /**
  * Class to parse STL (stereolithography) files in ASCII format.<p>
@@ -54,6 +55,7 @@ class STLASCIIParser extends STLParser
         int type = itsTokenizer.nextToken( );
         if( type  == StreamTokenizer.TT_EOF )
         {
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             close( );
             throw new IOException( "Unexpected EOF" );
         }
@@ -87,6 +89,7 @@ class STLASCIIParser extends STLParser
         }
         else
         {
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             close( );
             throw new IOException( "Unexpected data found");
         }

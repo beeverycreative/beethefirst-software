@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 import replicatorg.app.ProperDefault;
 
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.tools.XML;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.DriverError;
@@ -49,8 +50,20 @@ class MachineThread extends Thread {
     private double jogRateLowerValue;
     private double jogRateMediumValue;
     private double jogRateHigherValue;
+    private String lastFeedrate;
+    private String lastEString;
+    private String lastAcceleration;
     private HashMap<String, Point5d> tablePoints;
+    private static final String COMMAND_ACCELERATION = "M206";
     private int stopwatch;
+    private boolean isPaused;
+    private Point5d lastPoint = new Point5d();
+    private Point5d actualPoint = new Point5d();
+    private boolean isFilamentChanged;
+    private String lastBEECode = "";
+    private double previousEParsed = 0;
+    private double absoluteDistance = 0;
+
 
     class AssessStatusThread extends Thread {
 
@@ -72,7 +85,7 @@ class MachineThread extends Thread {
                     // Send out a request, then sleep for a bit, then start over.
                     DriverCommand assessCommand = new AssessState();
                     flag = machineThread.isConnected();
-
+//                    Base.listAllJVMThreads();
                     if (!flag) {
                         machineThread.notConnectedMessage();
                         Base.diposeAllOpenWindows();
@@ -87,7 +100,7 @@ class MachineThread extends Thread {
                             RequestType.RUN_COMMAND, assessCommand));
 
                     sleep(500, 1);
-
+//                    Base.listAllJVMThreads();
                 } catch (InterruptedException e) {
                     Base.status_thread_died = true;
                     Base.writeLog("taking assess status thread down");
@@ -139,6 +152,7 @@ class MachineThread extends Thread {
     private Timer pollingTimer;
     // Link of machine commands to run
     ConcurrentLinkedQueue<MachineCommand> pendingQueue;
+    ConcurrentLinkedQueue<MachineCommand> auxiliarQueue;
     // this is the xml config for this machine.
     private Node machineNode;
     private Machine controller;
@@ -164,8 +178,9 @@ class MachineThread extends Thread {
 
         this.tablePoints = new HashMap<String, Point5d>();
         pollingTimer = new Timer();
-
+        lastFeedrate = "0";
         pendingQueue = new ConcurrentLinkedQueue<MachineCommand>();
+        auxiliarQueue = new ConcurrentLinkedQueue<MachineCommand>();
 
         // save our XML
         this.machineNode = machineNode;
@@ -599,10 +614,83 @@ class MachineThread extends Thread {
             }
 
             // Check for and run any control requests that might be in the queue.
-            while (!pendingQueue.isEmpty()) {
+            // Regular queue for communication
+            while (!pendingQueue.isEmpty() && !isPaused) {
                 try {
-                    runCommand(pendingQueue.remove());
+                    MachineCommand command = pendingQueue.remove();
+
+                    if (command.command != null) {
+                        String cmdValue = command.command.getCommand();
+
+                        //Not a Comment
+                        if (cmdValue.contains(";") == false) {
+                            //If G1 or G0 process  X, Y, Z, E axis values and acceleration and feedrate values
+                            if (cmdValue.contains("G1") || cmdValue.contains("G0")) {
+                                if (cmdValue.contains("X")) {
+                                    int indexX = cmdValue.indexOf("X");
+                                    int commandLenght = cmdValue.length();
+                                    String aux = cmdValue.substring(indexX + 1, commandLenght).split(" ")[0];
+                                    actualPoint.setX(Double.valueOf(aux));
+                                }
+
+                                if (cmdValue.contains("Y")) {
+                                    int indexY = cmdValue.indexOf("Y");
+                                    int commandLenght = cmdValue.length();
+                                    String aux = cmdValue.substring(indexY + 1, commandLenght).split(" ")[0];
+                                    actualPoint.setY(Double.valueOf(aux));
+                                }
+
+                                if (cmdValue.contains("Z")) {
+                                    int indexZ = cmdValue.indexOf("Z");
+                                    int commandLenght = cmdValue.length();
+                                    String aux = cmdValue.substring(indexZ + 1, commandLenght).split(" ")[0];
+                                    actualPoint.setZ(Double.valueOf(aux));
+                                }
+                            }
+
+                            if (cmdValue.contains("F")) {
+                                int indexF = cmdValue.indexOf("F");
+                                int commandLenght = cmdValue.length();
+                                String aux = cmdValue.substring(indexF, commandLenght).split(" ")[0];
+
+                                lastFeedrate = aux;
+                            }
+                            if (cmdValue.contains("E")) {
+                                int indexE = cmdValue.indexOf("E");
+                                int commandLenght = cmdValue.length();
+                                lastEString = cmdValue.substring(indexE, commandLenght).split(" ")[0];
+                                
+                                String parsedE = lastEString.substring(1);
+                                double actualEValue = 0;
+                                
+                                //G92 E
+                                if (parsedE.isEmpty() == false) {
+                                    actualEValue = Double.valueOf(parsedE);
+                                }
+
+                                actualPoint.setA(actualEValue);
+                                previousEParsed = actualEValue;
+
+                            }
+                            if (cmdValue.contains(COMMAND_ACCELERATION)) {
+                                lastAcceleration = cmdValue;
+                            }
+
+                        }
+                    }
+
+                    /**
+                     * Stores last point
+                     */
+                    lastPoint.setX(actualPoint.x());
+                    lastPoint.setY(actualPoint.y());
+                    lastPoint.setZ(actualPoint.z());
+                    lastPoint.setA(actualPoint.a());
+                    lastPoint.setB(actualPoint.b());
+
+                    runCommand(command);
                     stopwatch++;
+
                 } catch (VersionException e) {
                     e.printStackTrace();
                 } catch (UsbClaimException e) {
@@ -610,6 +698,30 @@ class MachineThread extends Thread {
                 } catch (UsbNotActiveException e) {
                     e.printStackTrace();
                 } catch (UsbDisconnectedException e) {
+                    e.printStackTrace();
+                } catch (UsbException e) {
+                }
+            }
+
+            // Check for any run any control requests that might be in the auxiliarQueue.
+            // Secondary queue for communication  when first one is allocated to print and print is paused
+            while (!auxiliarQueue.isEmpty() && isPaused) {
+
+                try {
+                    MachineCommand command = auxiliarQueue.remove();
+                    runCommand(command);
+
+                } catch (VersionException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (UsbClaimException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (UsbNotActiveException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (UsbDisconnectedException e) {
+                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (UsbException e) {
                 }
@@ -649,6 +761,15 @@ class MachineThread extends Thread {
             }
 
         }
+
+        /**
+         * Power saving
+         */
+        Base.turnOnPowerSaving();
+
+        this.stop();
+        statusThread.stop();
+
         Base.writeLog("MachineThread interrupted, terminating.");
         Base.logger.fine("MachineThread interrupted, terminating.");
         dispose();
@@ -666,13 +787,93 @@ class MachineThread extends Thread {
         this.stopwatch = stopwatch;
     }
 
+    public void stopwatch() {
+        isPaused = true;
+    }
+
+    public void resumeWatch() {
+        isPaused = false;
+    }
+
+    public String getLastFeedrate() {
+        return lastFeedrate;
+    }
+
+    public void setLastBEECode(String code) {
+        lastBEECode = code;
+    }
+
+    public String getLastE() {
+        return lastEString;
+    }
+
+    public String getLastAcceleration() {
+        return lastAcceleration;
+    }
+
+    public Point5d getLastPrintedPoint() {
+        return actualPoint;
+    }
+
+    public void setLastPrintedPoint(Point5d point) {
+        this.actualPoint = point;
+    }
+        
+    private double getColorRatio(String coilCode) {
+ 
+        return FilamentControler.getColorRatio(coilCode);
+    }
+
+    public void setFilamentChanged(boolean changed) {
+        this.isFilamentChanged = changed;
+    }
+
+    public boolean hasFilamentChanged() {
+        return this.isFilamentChanged;
+    }
+
+    
     public boolean scheduleRequest(MachineCommand request) {
-        pendingQueue.add(request);
-        synchronized (this) {
-            notify();
+
+        if (!Base.printPaused) {
+//            System.out.println("1");
+            pendingQueue.add(request);
+            synchronized (this) {
+                notify();
+            }
+
+            return true;
+        }
+
+        if (Base.printPaused && !Boolean.valueOf(ProperDefault.get("transferingGCode"))) {
+//            System.out.println("2");
+            auxiliarQueue.add(request);
+            synchronized (this) {
+                notify();
+            }
+
+            return true;
+        }
+
+        if (Base.printPaused && Boolean.valueOf(ProperDefault.get("transferingGCode"))) {
+            if (request.command != null && request.command.isPrintingCommand()) {
+//                System.out.println("3");
+                pendingQueue.add(request);
+                synchronized (this) {
+                    notify();
+                }
+            } else {
+//                System.out.println("4");
+                auxiliarQueue.add(request);
+                synchronized (this) {
+                    notify();
+                }
+            }
+            return true;
         }
 
         return true;
+
     }
 
     public boolean isReadyToPrint() {

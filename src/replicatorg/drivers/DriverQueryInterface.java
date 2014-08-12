@@ -53,6 +53,8 @@ public interface DriverQueryInterface {
         public String getCoilCode();
     
         public void setCoilCode(String CoilCode);
+        
+        public Point5d getActualPosition();
          
 
 

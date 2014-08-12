@@ -5,14 +5,28 @@ import replicatorg.drivers.RetryException;
 
 public class SetTemperature implements DriverCommand {
 
-	double temperature;
-	
-	public SetTemperature(double temperature) {
-		this.temperature = temperature;
-	}
-	
-	@Override
-	public void run(Driver driver) throws RetryException {
-		driver.setTemperature(temperature);
-	}
+    double temperature;
+
+    public SetTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
+    @Override
+    public void run(Driver driver) throws RetryException {
+        driver.setTemperature(temperature);
+    }
+
+    @Override
+    public String getCommand() {
+        return "";
+    }
+
+    @Override
+    public void setCommand(String newCommand) {
+    }
+
+    @Override
+    public boolean isPrintingCommand() {
+        return false;
+    }
 }

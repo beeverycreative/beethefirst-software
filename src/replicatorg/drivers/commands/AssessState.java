@@ -9,4 +9,18 @@ public class AssessState implements DriverCommand {
 		driver.assessState();
 	}
 
+    @Override
+    public String getCommand() {
+        return "";
+    }
+
+    @Override
+    public boolean isPrintingCommand() {
+        return false;
+    }
+
+    @Override
+    public void setCommand(String newCommand) {
+    }
+
 }

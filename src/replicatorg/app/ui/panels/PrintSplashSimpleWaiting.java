@@ -26,6 +26,8 @@ import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
 import replicatorg.app.DoNotSleep;
+import replicatorg.app.FilamentControler;
+import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.drivers.Driver;
@@ -78,7 +80,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         isPaused = false;
         tInfo6.setText("");
         tInfo7.setText("");
-        bPause.setVisible(false);
+        bPause.setVisible(true);
         bOk.setVisible(false);
         bCancel.setVisible(false);
         bUnload.setVisible(true);
@@ -111,7 +113,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         tRemaining.setText(Languager.getTagValue("Print", "Print_Remaining"));
         bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
         bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line10"));
-        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line10"));
+        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
         bUnload.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
@@ -310,7 +312,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
     public void checkTimeElapsed() {
 
-        if ((int) (Math.ceil((System.currentTimeMillis() - startTimeMillis2) / 1000)) == 60) {
+        if ((int) (Math.ceil((System.currentTimeMillis() - startTimeMillis2) / 1000)) > 60) {
 
             // Not able to estimate print time
             // 00 - error code
@@ -351,6 +353,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             vEstimation.setVisible(false);
             vRemaining.setVisible(false);
             bCancel.setVisible(false);
+            bPause.setVisible(false);
             bOk.setVisible(true);
             bUnload.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
 
@@ -375,6 +378,14 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
             }
             ProperDefault.put("durationLastPrint", String.valueOf(duration));
+            int nPrints = Integer.valueOf(ProperDefault.get("nTotalPrints"))+1;
+            ProperDefault.put("nTotalPrints", String.valueOf(nPrints));
+
+            /**
+             * Power saving
+             */
+            Base.turnOnPowerSaving();
+
         } else if (!printEnded) {
             abortPrint();
         }
@@ -457,6 +468,12 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                                     + " " + Languager.getTagValue("Print", "PrintHour")
                                     + " " + minutes
                                     + " " + Languager.getTagValue("Print", "PrintMinutes");
+                        } else if (minutes == 2) {
+                            //In case PrintEstimator fails, dont appear 2min
+                            textE = "";
+                            vEstimation.setVisible(false);
+                            tEstimation.setText(Languager.getTagValue("Print", "Print_EstimatorError"));
+                            return;
                         } else {
                             textE = hours
                                     + " " + Languager.getTagValue("Print", "PrintHour")
@@ -468,6 +485,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                                     + " " + minutes
                                     + " " + Languager.getTagValue("Print", "PrintMinute");
                         }
+
                         vEstimation.setText(textE);
                         vRemaining.setText(textR);
                     } else {
@@ -523,6 +541,14 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                         if (remainingTime > 1) {
                             textR = remainingTime
                                     + " " + Languager.getTagValue("Print", "PrintMinutes");
+                        } else if (remainingTime == 2) {
+                            //In case PrintEstimator fails, dont appear 2min
+                            textR = "";
+                            vEstimation.setVisible(false);
+                            tRemaining.setVisible(false);
+                            vRemaining.setVisible(false);
+                            tEstimation.setText(Languager.getTagValue("Print", "Print_EstimatorError"));
+                            return;
                         } else {
                             textR = remainingTime
                                     + " " + Languager.getTagValue("Print", "PrintMinute");
@@ -568,6 +594,25 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             vRemaining.setText("");
         }
 
+    }
+
+    private void setPreparingNewFilamentInfo() {
+        tInfo2.setText(Languager.getTagValue("Print", "Print_Pausing"));
+        tRemaining.setVisible(false);
+        vRemaining.setVisible(false);
+        tEstimation.setVisible(false);
+        vEstimation.setVisible(false);
+        jProgressBar1.setVisible(false);
+    }
+
+    private void disablePreparingNewFilamentInfo() {
+        tInfo2.setText(Languager.getTagValue("Print", "Print_Splash_Info2"));
+        tRemaining.setVisible(true);
+        vRemaining.setVisible(true);
+        tEstimation.setVisible(true);
+        vEstimation.setVisible(true);
+        jProgressBar1.setVisible(true);
+        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
     }
 
     @Override
@@ -864,7 +909,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         });
 
         bPause.setForeground(new java.awt.Color(0, 0, 0));
-        bPause.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bPause.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bPause.setText("PAUSE");
         bPause.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bPause.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -904,7 +949,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                 .addComponent(bPause)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bCancel)
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bOk)
                 .addGap(12, 12, 12)
                 .addComponent(bUnload)
@@ -996,19 +1041,98 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }//GEN-LAST:event_bUnloadMouseEntered
 
     private void bPauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMousePressed
+        final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+        final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+        final double previousColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
 
-        MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-        Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+        if (!isPaused) {
+            machine.stopwatch();
+            setPreparingNewFilamentInfo();
+            Base.printPaused = true;
+            isPaused = true;
 
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    pausePos = driver.getActualPosition();
 
+                    driver.dispatchCommand("G28", COM.BLOCK);
+                    driver.dispatchCommand("G1 F1000");
+                    driver.dispatchCommand("M206 x400");
+                    driver.dispatchCommand("M300");
+
+                    String status = "";
+
+                    while (!status.contains("S:3")) {
+                        try {
+                            Thread.sleep(1, 0);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        status += driver.dispatchCommand("M625");
+                    }
+
+                    //Flags firmware to stop queued commands
+                    driver.dispatchCommand(PAUSE_PRINT, COM.DEFAULT);
+
+                    machine.getModel().setMachineBusy(false);
+
+                    Maintenance p = new Maintenance();
+                    p.setVisible(true);
+                    bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line12"));
+                    tInfo2.setText(Languager.getTagValue("Print", "Print_Waiting"));
+                }
+            });
+        } else {
+            isPaused = false;
+            tInfo2.setText(Languager.getTagValue("Print", "Print_Resuming"));
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    //Little retraction to avoid filament break
+                    driver.dispatchCommand("G1 F300 E50", COM.BLOCK);
+                    driver.dispatchCommand("G92 E", COM.BLOCK);
+                    driver.dispatchCommand("G1 F6000 E-2", COM.BLOCK);
+//                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
+                    
+                    double actualColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
+                    double colorRatio = actualColorRatio / previousColorRatio;
+                    /**
+                     * Signals FW about the color ratio between previous and
+                     * actual color
+                     */
+                    driver.dispatchCommand("M642 W" + colorRatio, COM.NO_RESPONSE);
+
+                    //Go slowly to pause position
+                    //Special attention to models on bed
+                    driver.dispatchCommand("G1 F2000 X" + pausePos.x() + " Y" + pausePos.y(), COM.NO_RESPONSE);
+                    driver.dispatchCommand("G1 F1000 Z" + (pausePos.z()+10) + " E-1", COM.NO_RESPONSE);
+                    driver.dispatchCommand("G1 F1000 Z" + pausePos.z() + " E0", COM.NO_RESPONSE);
+                    driver.dispatchCommand("G92 E"+pausePos.a(), COM.BLOCK);
+
+//            //Sets previous feedrate
+                    driver.dispatchCommand("G1 " + machine.getLastFeedrate(), COM.NO_RESPONSE);
+//            //Sets last acceleration
+                    driver.dispatchCommand(machine.getLastAcceleration(), COM.NO_RESPONSE);
+
+                    //Flags firmware to resume queued commands
+                    driver.dispatchCommand(RESUME_PRINT, COM.NO_RESPONSE);
+
+                    //Resume printing
+                    machine.resumewatch();
+                    Base.printPaused = false;
+                    disablePreparingNewFilamentInfo();
+                }
+            });
+        }
     }//GEN-LAST:event_bPauseMousePressed
 
     private void bPauseMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMouseExited
-        bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+        bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bPauseMouseExited
 
     private void bPauseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMouseEntered
-        bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+        bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bPauseMouseEntered
 
     public boolean updateHeatBar() {
@@ -1114,7 +1238,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     private javax.swing.JLabel vRemaining;
     // End of variables declaration//GEN-END:variables
 
-    void startUnload() {
+    public void startUnload() {
         jProgressBar1.setVisible(false);
         iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
         tRemaining.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info3"));
@@ -1254,7 +1378,7 @@ class UpdateThread3 extends Thread {
     PrintSplashSimpleWaiting window;
 
     public UpdateThread3(PrintSplashSimpleWaiting w) {
-        super("Update Thread");
+        super("Print Splash Simple Waiting Thread");
         window = w;
     }
 
@@ -1280,7 +1404,8 @@ class UpdateThread3 extends Thread {
 
                 readerStartGCode = new BufferedReader(new FileReader(window.getStartCode()));
                 readerEndGCode = new BufferedReader(new FileReader(window.getEndCode()));
-                window.updatePrintEstimation(Base.getMainWindow().getBed().getEstimatedTime(), true);
+//                PrintEstimator.estimateTime(gcode);
+                window.updatePrintEstimation(PrintEstimator.getEstimatedTime(), true);
             } catch (FileNotFoundException ex) {
                 Base.writeLog("Can't read gCode file to print");
             }
@@ -1315,7 +1440,7 @@ class UpdateThread3 extends Thread {
              */
             while ((sCurrentLinereaderEndGCode = readerEndGCode.readLine()) != null) {
                 ProperDefault.put("transferingGCode", String.valueOf(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(sCurrentLinereaderEndGCode, COM.BLOCK));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(sCurrentLinereaderEndGCode, COM.BLOCK, true));
             }
 
             ProperDefault.put("transferingGCode", String.valueOf(false));
@@ -1345,15 +1470,14 @@ class UpdateThread3 extends Thread {
             readerGCode.close();
             readerEndGCode.close();
             readerStartGCode.close();
-            
+
             /**
              * Check if machine is ready to continue
              */
-            if(window.checkIFReady())
-            {
+            if (window.checkIFReady()) {
                 window.setPrintEnded(finished);
                 Base.setPrintEnded(true);
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));  
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             }
 
             while (true) {

@@ -234,6 +234,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         messagesPP = new MessagesPopUp();
         messagesPP.setVisible(false);
         camCtrl = new CameraControl(this, false);
+        Base.writeLog("5");
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         this.getContentPane().addComponentListener(new ComponentListener() {
@@ -287,7 +288,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         menubar.add(buildModelsMenu());
         menubar.add(buildPrinterMenu());
         menubar.add(buildHelpMenu());
-
         setJMenuBar(menubar);
         buttons = new ButtonsPanel(this);
         Container pane = getContentPane();
@@ -302,7 +302,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cardPanel,
                 console);
-
         new FileDrop(null, cardPanel, /* dragBorder, */
                 new FileDrop.Listener() {
             public void filesDropped(java.io.File[] files) {
@@ -314,7 +313,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
             }
         });
-
 //        splitPane.setResizeWeight(0.86);
         splitPane.setPreferredSize(new Dimension(1000, 600));
         pane.add(cardPanel, "growx,growy,shrinkx,shrinky");
@@ -349,6 +347,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         this.oktoGoOnSave = oktoGoOnSave;
     }
     
+    public boolean isOkToGoOnSave()
+    {
+        return this.oktoGoOnSave;
+    }
     
     public CategoriesList getCategoriesManager() {
         return categoriesList;
@@ -1621,7 +1623,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      */
     public void handleStop() {
         Base.writeLog("Stopping ...");
-        Base.getMachineLoader().getMachineInterface().killSwitch();
+        
+        if(!Base.printPaused)
+        {
+            Base.getMachineLoader().getMachineInterface().killSwitch();
+        }
         Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("M112"));
         doStop();
         Base.writeLog("Print stopped ...");
@@ -2111,6 +2117,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         Base.writeConfig();
         Base.loadProperties();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+                    
     }
 
     /**
@@ -2219,28 +2226,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     @Override
     public void updateGenerator(GeneratorEvent evt) {
         // ignore
-    }
-
-    private void maybeRunScript(String path, String... arguments) {
-        // Run a shell script if possible. Fail silently.
-        try {
-            List<String> command = new LinkedList<String>();
-            command.add(path);
-            for (int i = 0; i < arguments.length; i++) {
-                command.add(arguments[i]);
-            }
-            ProcessBuilder pb = new ProcessBuilder(command);
-            Process process = pb.start();
-            Base.logger.log(Level.INFO, "Running script: " + path);
-            // Fire off some loggers
-            StreamLoggerThread ist = new StreamLoggerThread(process.getInputStream());
-            ist.setDefaultLevel(Level.INFO);
-            ist.start();
-            StreamLoggerThread est = new StreamLoggerThread(process.getErrorStream());
-            est.setDefaultLevel(Level.WARNING);
-            est.start();
-        } catch (java.io.IOException e) {
-        }
     }
 
     /**

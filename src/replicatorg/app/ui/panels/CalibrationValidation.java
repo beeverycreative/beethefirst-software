@@ -575,7 +575,7 @@ class DisposeFeedbackThread7 extends Thread {
     private CalibrationValidation calibrationPanel;
 
     public DisposeFeedbackThread7(CalibrationValidation calVal, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Calibration validation Thread");
         this.machine = mach;
         this.calibrationPanel = calVal;
     }

@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -94,26 +95,8 @@ public class About extends javax.swing.JFrame {
         return color;
     }
     
-    private String getFilamentType(String code)
-    {
-        if(code.contains("301"))
-            return FilamentCodes.A301 + " - " + Languager.getTagValue("CoilColors", "WHITE");
-        if(code.contains("302"))
-            return FilamentCodes.A302 + " - " + Languager.getTagValue("CoilColors", "BLACK");
-        if(code.contains("303"))
-            return FilamentCodes.A303 + " - " + Languager.getTagValue("CoilColors", "YELLOW");
-        if(code.contains("304"))
-            return FilamentCodes.A304 + " - " + Languager.getTagValue("CoilColors", "RED");
-        if(code.contains("305"))
-            return FilamentCodes.A305 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE");
-        if(code.contains("306"))
-            return FilamentCodes.A306 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT");
-        if(code.contains("321"))
-            return FilamentCodes.A321 + " - " + Languager.getTagValue("CoilColors", "GREEN");
-        if(code.contains("322"))
-            return FilamentCodes.A322 + " - " + Languager.getTagValue("CoilColors", "ORANGE");
-        
-        return "N/A";
+    private String getFilamentType(String code) {
+        return FilamentControler.getFilamentType(code);
     }
 
     private void centerOnScreen()

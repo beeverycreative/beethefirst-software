@@ -190,4 +190,24 @@ public interface MachineInterface {
     public double getFeedrate(String speedTag);
 
     public String getGCodePrintTest(String code);
+    
+    public void stopwatch();
+
+    public void resumewatch();
+    
+    public String getLastFeedrate();
+
+    public String getLastE();
+
+    public String getLastAcceleration();
+    
+    public Point5d getLastPrintedPoint();
+    
+    public void setFilamentChanged(boolean isChanged);
+    
+    public boolean hasFilamentChanged();
+
+    public void setLastBEECode(String code);
+    
+    public void setLastPrintedPoint(Point5d point);
 }

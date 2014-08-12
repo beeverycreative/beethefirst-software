@@ -41,6 +41,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
     private DisposeFeedbackThread disposeThread;
     private boolean jLabel18MouseClickedReady;
     private boolean unloadPressed;
+    private String previousColor = "";
 
     public FilamentInsertion() {
         initComponents();
@@ -52,10 +53,14 @@ public class FilamentInsertion extends javax.swing.JFrame {
         moveToPosition();
 //        enableDrag();
 //        disableMessageDisplay();
+        previousColor = machine.getModel().getCoilCode();
         disposeThread = new DisposeFeedbackThread(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
         jLabel17.setVisible(false);
+        if (Base.printPaused == true) {
+            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+        }
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -63,7 +68,16 @@ public class FilamentInsertion extends javax.swing.JFrame {
         if (!jLabel5MouseClickedReady) {
             jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
             jLabel5MouseClickedReady = true;
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            if (unloadPressed == false) {
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            } else {
+                if (Base.printPaused == true) {
+                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                } else {
+                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+                }
+            }
             jLabel18MouseClickedReady = true;
         }
 
@@ -74,15 +88,34 @@ public class FilamentInsertion extends javax.swing.JFrame {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-04.png")));
             jLabel6MouseClickedReady = true;
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            if (unloadPressed == false) {
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            } else {
+                if (Base.printPaused == true) {
+                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                } else {
+                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+                }
+            }
             jLabel18MouseClickedReady = true;
 //            jLabel5.setVisible(false);
         }
 
         if (!jLabel18MouseClickedReady) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            if (unloadPressed == false) {
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            } else {
+                if (Base.printPaused == true) {
+                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                } else {
+                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+                }
+            }
             jLabel18MouseClickedReady = true;
         }
+   
 
         disableMessageDisplay();
     }
@@ -95,8 +128,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jLabel6.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel7.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel19.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
 
@@ -108,8 +141,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jLabel6.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
         jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
 
     }
 
@@ -153,14 +186,25 @@ public class FilamentInsertion extends javax.swing.JFrame {
         double acHigh = machine.getAcceleration("acHigh");
         double spHigh = machine.getFeedrate("spHigh");
 
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
+        if(Base.printPaused == false)
+        {
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        }
+        else
+        {
+            
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F"+spHigh +" X-85 Y-65"));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));   
+        }
     }
 
     private void finalizeHeat() {
@@ -219,27 +263,44 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }
 
     private void doCancel() {
-        dispose();
-        finalizeHeat();
-        Base.getMainWindow().handleStop();
-        Base.bringAllWindowsToFront();
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.maintenanceWizardOpen = false;
-        disposeThread.stop();
-        Base.getMainWindow().setEnabled(true);
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
+        
+        if(Base.printPaused)
+        {
+            return;
+        }
+        else
+        {
+            dispose();
+            Base.getMainWindow().handleStop();
+            Base.bringAllWindowsToFront();
+            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+            Base.maintenanceWizardOpen = false;
+            disposeThread.stop();
+            Base.enableAllOpenWindows();
+            Point5d b = machine.getTablePoints("safe");
+            double acLow = machine.getAcceleration("acLow");
+            double acHigh = machine.getAcceleration("acHigh");
+            double spHigh = machine.getFeedrate("spHigh");
 
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            if (Base.printPaused == false) {
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+                finalizeHeat();
+            } else {
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 X-85 Y-60"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            }
+        }
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
@@ -267,8 +328,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
+        bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(567, 501));
@@ -483,35 +544,35 @@ public class FilamentInsertion extends javax.swing.JFrame {
             }
         });
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        jLabel18.setText("SEGUINTE");
-        jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
+        bNext.setForeground(new java.awt.Color(0, 0, 0));
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setText("SEGUINTE");
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel18MouseEntered(evt);
+                bNextMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel18MouseExited(evt);
+                bNextMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel18MousePressed(evt);
+                bNextMousePressed(evt);
             }
         });
 
-        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
-        jLabel19.setText("SAIR");
-        jLabel19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel19.addMouseListener(new java.awt.event.MouseAdapter() {
+        bExit.setForeground(new java.awt.Color(0, 0, 0));
+        bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bExit.setText("SAIR");
+        bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExit.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel19MouseEntered(evt);
+                bExitMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel19MouseExited(evt);
+                bExitMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel19MousePressed(evt);
+                bExitMousePressed(evt);
             }
         });
 
@@ -521,11 +582,11 @@ public class FilamentInsertion extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel19)
+                .addComponent(bExit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel18)
+                .addComponent(bNext)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -534,8 +595,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel19))
+                    .addComponent(bNext)
+                    .addComponent(bExit))
                 .addGap(20, 20, 20))
         );
 
@@ -579,25 +640,54 @@ public class FilamentInsertion extends javax.swing.JFrame {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
         }    }//GEN-LAST:event_jLabel6MouseExited
 
-    private void jLabel19MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseEntered
-        jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-    }//GEN-LAST:event_jLabel19MouseEntered
-
-    private void jLabel19MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseExited
-        jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-    }//GEN-LAST:event_jLabel19MouseExited
-
-    private void jLabel18MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseEntered
-        if (jLabel18MouseClickedReady) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
+        if(Base.printPaused)
+        {
+          return;  
         }
-    }//GEN-LAST:event_jLabel18MouseEntered
-
-    private void jLabel18MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseExited
-        if (jLabel18MouseClickedReady) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        else
+        {
+            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
         }
-    }//GEN-LAST:event_jLabel18MouseExited
+        
+    }//GEN-LAST:event_bExitMouseEntered
+
+    private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
+        if(Base.printPaused )
+        {
+          return;  
+        }
+        else
+        {
+            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+        }
+    }//GEN-LAST:event_bExitMouseExited
+
+    private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
+        if(Base.printPaused && unloadPressed)
+        {
+          return;  
+        }
+        else
+        {        
+            if (jLabel18MouseClickedReady) {
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+            }
+        }
+    }//GEN-LAST:event_bNextMouseEntered
+
+    private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
+        if(Base.printPaused && unloadPressed)
+        {
+          return;  
+        }
+        else
+            {
+            if (jLabel18MouseClickedReady) {
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            }
+        }
+    }//GEN-LAST:event_bNextMouseExited
 
     private void jLabel17MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseEntered
         jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
@@ -607,39 +697,41 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_jLabel17MouseExited
 
-    private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
+    private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (!machine.getDriverQueryInterface().isBusy()) {
 
-            if (!unloadPressed) {
+            if (unloadPressed == false) {
                 dispose();
                 disposeThread.stop();
-                FilamentCodeInsertion p = new FilamentCodeInsertion();
+                FilamentCodeInsertion p = new FilamentCodeInsertion(previousColor);
                 p.setVisible(true);
             } else {
-                disposeThread.stop();
-                dispose();
-                Base.bringAllWindowsToFront();
-                finalizeHeat();
-                Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-                Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-                Base.maintenanceWizardOpen = false;
-                Base.getMainWindow().setEnabled(true);
+                if (Base.printPaused == false) {
+                    disposeThread.stop();
+                    dispose();
+                    Base.bringAllWindowsToFront();
+                    finalizeHeat();
+                    Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+                    Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+                    Base.maintenanceWizardOpen = false;
+                    Base.enableAllOpenWindows();
 
-                Point5d b = machine.getTablePoints("safe");
-                double acLow = machine.getAcceleration("acLow");
-                double acHigh = machine.getAcceleration("acHigh");
-                double spHigh = machine.getFeedrate("spHigh");
+                    Point5d b = machine.getTablePoints("safe");
+                    double acLow = machine.getAcceleration("acLow");
+                    double acHigh = machine.getAcceleration("acHigh");
+                    double spHigh = machine.getFeedrate("spHigh");
 
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+                    machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                    machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                    machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+                    machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+                }
             }
         }
-    }//GEN-LAST:event_jLabel18MousePressed
+    }//GEN-LAST:event_bNextMousePressed
 
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
         if (jLabel17GoBack) {
@@ -650,18 +742,18 @@ public class FilamentInsertion extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jLabel17MousePressed
 
-    private void jLabel19MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MousePressed
+    private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel19MousePressed
+    }//GEN-LAST:event_bExitMousePressed
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
         if (!machine.getDriverQueryInterface().isBusy()) {
 
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "inserir_filamento.png")));
             jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info2")));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+            bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
             unloadPressed = false;
-            
+              
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
@@ -670,7 +762,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
                         showMessage();
                         jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
                         jLabel5MouseClickedReady = false;
-                        jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+                        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
                         jLabel18MouseClickedReady = false;
 
                         Base.writeLog("Loading Filament");
@@ -693,6 +785,12 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 }
             });
 
+            if(Base.printPaused == true)
+            {
+                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            }
+                        
         }
     }//GEN-LAST:event_jLabel5MousePressed
 
@@ -703,14 +801,14 @@ public class FilamentInsertion extends javax.swing.JFrame {
             showMessage();
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
             jLabel6MouseClickedReady = false;
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
             jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info3")));
             
             jLabel18MouseClickedReady = false;
             ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
             ProperDefault.put("coilCode", String.valueOf("N/A"));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
             unloadPressed = true;
             
             Base.writeLog("Unloading Filament");
@@ -743,6 +841,12 @@ public class FilamentInsertion extends javax.swing.JFrame {
 
                 }
             });
+            
+            if(Base.printPaused == true)
+            {
+                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+            }
         }
     }//GEN-LAST:event_jLabel6MousePressed
 
@@ -754,13 +858,13 @@ public class FilamentInsertion extends javax.swing.JFrame {
         doCancel();
     }//GEN-LAST:event_jLabel15MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bExit;
+    private javax.swing.JLabel bNext;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -782,7 +886,7 @@ class DisposeFeedbackThread extends Thread {
     private FilamentInsertion filamentPanel;
 
     public DisposeFeedbackThread(FilamentInsertion filIns, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Filament Insertion Thread");
         this.machine = mach;
         this.filamentPanel = filIns;
     }
@@ -806,6 +910,7 @@ class DisposeFeedbackThread extends Thread {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            
             if (machine.getDriverQueryInterface().getMachineStatus()
                     && !machine.getDriverQueryInterface().isBusy()) {
                 filamentPanel.resetFeedbackComponents();

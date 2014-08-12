@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.awt.Component;
 import java.io.*;
 import javax.swing.ProgressMonitorInputStream;
+import replicatorg.app.Base;
 
 /**
  * Class to parse STL (stereolithography) files in binary format.<p>
@@ -70,6 +71,7 @@ class STLBinaryParser extends STLParser
         }
         catch( IOException e )
         {
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             if( stream != null )
             {
                 stream.close( );
@@ -101,6 +103,7 @@ class STLBinaryParser extends STLParser
         catch( IOException e )
         {
             close( );
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             throw e;
         }
         return false;
@@ -156,6 +159,7 @@ class STLBinaryParser extends STLParser
         catch( IOException e )
         {
             close( );
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             throw e;
         }
         return false;

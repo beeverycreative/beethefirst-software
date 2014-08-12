@@ -49,13 +49,13 @@ public class CuraGenerator extends ToolpathGenerator {
              * Different call depending on windows arch.
              * CuraEngine is compiled in x86 and x64 and it requires different libs
              */
-            if(Base.isx86())
+            if(Base.isx86_64())
             {
-                CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x86\\CuraEngine.exe");
+                CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x64\\CuraEngine.exe");
             }
             else 
             {
-                CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x64\\CuraEngine.exe");
+                CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x86\\CuraEngine.exe");
             }
             CURA_CONFIGURATION_File_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\prefs\\");   
         }
@@ -104,7 +104,14 @@ public class CuraGenerator extends ToolpathGenerator {
     @Override
     public File generateToolpath(File stl, List<CuraEngineOption> prefs) {
         
-//        System.out.println("File size: "+stl.length());
+        //Tests if CuraEngine has +x permissions or if it does exist
+        File curaBin = new File(CURA_BIN_PATH);
+        if(curaBin.canExecute() == false || curaBin.exists() == false)
+        {
+            Base.writeLog("CuraEngine no execute permissions");
+            Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
+            return null;    
+        }
 
         // Builds files paths
         String path = stl.getAbsolutePath();
@@ -151,6 +158,8 @@ public class CuraGenerator extends ToolpathGenerator {
         }        
 //        System.out.println("********************");
 //        // Prints arguments
+        Base.writeLog("Cura Path "+CURA_BIN_PATH);
+        Base.writeLog("Cura prefs path "+CURA_CONFIGURATION_File_PATH);
 //        for (String arg : arguments) {
 //            Base.writeLog(arg+" ");
 //        }
@@ -187,12 +196,16 @@ public class CuraGenerator extends ToolpathGenerator {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ioe);
             Base.writeLog(ERROR_MESSAGE);
             process.destroy();
+            ist.stop();
+            est.stop();
             // Throw ToolpathGeneratorException
             return null;
         } catch (InterruptedException ex) {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ex);
             Base.writeLog(ERROR_MESSAGE);
             process.destroy();
+            ist.stop();
+             est.stop();
             // Throw ToolpathGeneratorException
             return null;
         }
@@ -206,17 +219,13 @@ public class CuraGenerator extends ToolpathGenerator {
         Base.writeLog("File " + root + ".gcode created with success");
         File gcode = new File(gcodePath);
         
-        /**
-         * Estimates only if scene is different or parameters have changed
-         */
-        if(Base.getMainWindow().getBed().isSceneDifferent() || !Base.getMainWindow().getBed().isGcodeOK())
-        {
-            // Estimates print time
-            PrintEstimator.estimateTime(gcode);
-            Base.getMainWindow().getBed().setEstimatedTime(PrintEstimator.getEstimatedTime());
-            Base.getMainWindow().getBed().setSceneDifferent(false);
-            Base.getMainWindow().getBed().setGcodeOK(true);
-        }
+        ist.stop();
+        est.stop();
+        
+  
+        // Estimates print time
+        PrintEstimator.estimateTime(gcode);
+
         return gcode;
     }
 

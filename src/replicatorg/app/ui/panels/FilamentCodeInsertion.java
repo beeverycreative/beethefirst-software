@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -35,11 +36,13 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     private String[] categories;
     private boolean itemChanged;
     private static final String WRITE_CONFIG = "M601";
+    private String previousColor = "";
 
-    public FilamentCodeInsertion() {
+    public FilamentCodeInsertion(String prevColor) {
         initComponents();
         setFont();
         setTextLanguage();
+        previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
         centerOnScreen();
@@ -51,7 +54,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel19.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
 
     }
@@ -61,7 +64,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         jLabel3.setText(Languager.getTagValue("FilamentWizard", "Title4"));
         jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
         jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
 
     }
 
@@ -91,11 +94,15 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
             jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
         }
+        
+        if (Base.printPaused == true) {
+            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+        }
 
     }
-
+    
     private int getModelCategoryIndex() {
-        FilamentCodes[] enumCodes = FilamentCodes.values();
+        FilamentControler.FilamentCodes[] enumCodes = FilamentControler.FilamentCodes.values();
         String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
         
         for (int i = 0; i < categories.length; i++) {
@@ -112,17 +119,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private String[] fullFillCombo() {
-        String[] colors = {
-            FilamentCodes.A301 + " - " + Languager.getTagValue("CoilColors", "WHITE"),
-            FilamentCodes.A302 + " - " + Languager.getTagValue("CoilColors", "BLACK"),
-            FilamentCodes.A303 + " - " + Languager.getTagValue("CoilColors", "YELLOW"),
-            FilamentCodes.A304 + " - " + Languager.getTagValue("CoilColors", "RED"),
-            FilamentCodes.A305 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE"),
-            FilamentCodes.A306 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT"),
-            FilamentCodes.A321 + " - " + Languager.getTagValue("CoilColors", "GREEN"),
-            FilamentCodes.A322 + " - " + Languager.getTagValue("CoilColors", "ORANGE"),};
-
-        return colors;
+        return FilamentControler.getColors();
     }
 
     private void initializeHeat() {
@@ -136,39 +133,8 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
 
-    private boolean validateCode() {
-        String code = String.valueOf(comboModel.getSelectedItem());  // REDSOFT:  A301
-
-//        if(code.substring(0, 2).equals("CB"))
-//        {
-//            if(code.charAt(2)=='A')
-//            {
-//                if(code.substring(3, 6).equals("110"))
-//                {
-//                    for(int i = 0; i < FilamentCodes.values().length; i++)
-//                    { 
-//                        if(FilamentCodes.values()[i].toString().contains(code.substring(6,9)))
-//                            return true;
-//                    }
-//                    
-//                }
-//            }
-//        }
-
-        if (code.contains("A") && code.substring(0, 1).equals("A")) {
-            for (int i = 0; i < FilamentCodes.values().length; i++) {
-                if (FilamentCodes.values()[i].toString().equals(code)) {
-                    return true;
-                }
-            }
-
-        }
-
-        return false;
-    }
-
     private String parseComboCode() {
-        FilamentCodes[] enumCodes = FilamentCodes.values();
+        FilamentControler.FilamentCodes[] enumCodes = FilamentControler.FilamentCodes.values();
 
         for (int i = 0; i < enumCodes.length; i++) {
             if (String.valueOf(comboModel.getSelectedItem()).contains(enumCodes[i].toString())) {
@@ -197,29 +163,34 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private void doCancel() {
-        dispose();
-        Base.bringAllWindowsToFront();
-        finalizeHeat();
-        Base.maintenanceWizardOpen = false;
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        
+        if(Base.printPaused == false)
+        {
+            dispose();
+            Base.bringAllWindowsToFront();
+            Base.maintenanceWizardOpen = false;
+            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+            Base.enableAllOpenWindows();
 
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
+            if(Base.printPaused == false){
+                Point5d b = machine.getTablePoints("safe");
+                double acLow = machine.getAcceleration("acLow");
+                double acHigh = machine.getAcceleration("acHigh");
+                double spHigh = machine.getFeedrate("spHigh");
 
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+                finalizeHeat();
+            }
+            if (ProperDefault.get("maintenance").equals("1")) {
+                ProperDefault.remove("maintenance");
+            }
         }
     }
 
@@ -230,7 +201,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        bCancel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
@@ -286,19 +257,19 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             }
         });
 
-        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
-        jLabel19.setText("SAIR");
-        jLabel19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel19.addMouseListener(new java.awt.event.MouseAdapter() {
+        bCancel.setForeground(new java.awt.Color(0, 0, 0));
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bCancel.setText("SAIR");
+        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel19MouseEntered(evt);
+                bCancelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel19MouseExited(evt);
+                bCancelMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel19MousePressed(evt);
+                bCancelMousePressed(evt);
             }
         });
 
@@ -308,7 +279,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel19)
+                .addComponent(bCancel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 354, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -322,7 +293,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel17)
                     .addComponent(jLabel18)
-                    .addComponent(jLabel19))
+                    .addComponent(bCancel))
                 .addGap(20, 20, 20))
         );
 
@@ -495,20 +466,45 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_jLabel17MouseExited
 
-    private void jLabel19MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseEntered
-        jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-    }//GEN-LAST:event_jLabel19MouseEntered
+    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
+        if(Base.printPaused == false)
+        {
+            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+        }
+    }//GEN-LAST:event_bCancelMouseEntered
 
-    private void jLabel19MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseExited
-        jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-    }//GEN-LAST:event_jLabel19MouseExited
+    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
+        if(Base.printPaused == false)
+        {        
+            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+        }
+    }//GEN-LAST:event_bCancelMouseExited
 
     private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
 //        if (validateCode()) {
 
         String code = parseComboCode();
-        //set the M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(String.valueOf(code)));
+        
+        /**
+         * Checks if color switch was between this combinations
+         */
+        boolean blackTurquoise = previousColor.equals("A335") && code.equals("A332")
+                                  || previousColor.equals("A332") && code.equals("A335");
+        
+        boolean yellowRed = previousColor.equals("A333") && code.equals("A334")
+                          || previousColor.equals("A334") && code.equals("A333");
+        
+        /**
+         * If this is made on print paused and color is not the same then flag it to machineThread to process GCode on runCommand
+         */
+        if(Base.printPaused && !blackTurquoise && !yellowRed)
+        {
+            machine.setFilamentChanged(true);
+            machine.setLastBEECode(previousColor);
+        }//no need for else
+        
+        //set the coil code: M400 <COILCODE>
+        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 
@@ -525,26 +521,37 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             p.setVisible(true);
         } else {
             dispose();
-            Base.bringAllWindowsToFront();
-            finalizeHeat();
+            
+            /**
+             * If print is not paused, cool down
+             */
+            if(Base.printPaused == false)
+            {
+                finalizeHeat();
+            }//no need for else
+            
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.maintenanceWizardOpen = false;
-            Base.getMainWindow().setEnabled(true);
+            Base.enableAllOpenWindows();
+            Base.bringAllWindowsToFront();
+            
+            if(Base.printPaused == false){
+                Point5d b = machine.getTablePoints("safe");
+                double acLow = machine.getAcceleration("acLow");
+                double acHigh = machine.getAcceleration("acHigh");
+                double spHigh = machine.getFeedrate("spHigh");
 
-            Point5d b = machine.getTablePoints("safe");
-            double acLow = machine.getAcceleration("acLow");
-            double acHigh = machine.getAcceleration("acHigh");
-            double spHigh = machine.getFeedrate("spHigh");
-
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-//            ProperDefault.remove("maintenance");
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+    //            ProperDefault.remove("maintenance");
+            }
+            
         }
     }//GEN-LAST:event_jLabel18MousePressed
 
@@ -555,9 +562,9 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jLabel17MousePressed
 
-    private void jLabel19MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MousePressed
+    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel19MousePressed
+    }//GEN-LAST:event_bCancelMousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
         setState(ICONIFIED);
@@ -571,6 +578,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         itemChanged = true;
     }//GEN-LAST:event_jComboBox1ItemStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bCancel;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
@@ -578,7 +586,6 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
@@ -589,14 +596,4 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 }
 
-enum FilamentCodes {
 
-    A301, // WHITE
-    A302, // BLACK
-    A303, //YELLOW
-    A304, //RED
-    A305, // VIOLET
-    A306, //TRANSPARENT
-    A321, // GREEN
-    A322  //ORANGE
-}

@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.CalibrationGCoder;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -259,12 +260,14 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
         Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
 
-        preferences = new ArrayList<String>();
-        preferences.add("LOW");
-        preferences.add(parseCoilCode());
-        preferences.add("LOW");
-        preferences.add(String.valueOf(false));
-        preferences.add(String.valueOf(false));
+//        preferences = new ArrayList<String>();
+//        preferences.add("LOW");
+//        preferences.add(FilamentControler.getColor(machine.getModel().getCoilCode()));
+//        preferences.add("LOW");
+//        preferences.add(String.valueOf(false));
+//        preferences.add(String.valueOf(false));
+//        preferences.add(String.valueOf(false));
+        
         try {
             reader = new BufferedReader(new FileReader(getPrintFile()));
         } catch (FileNotFoundException ex) {
@@ -273,38 +276,6 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
 
         jProgressBar1.setValue(0);
 
-    }
-
-    private String parseCoilCode() {
-        String colorRatio = "1.1164";
-        String code = ProperDefault.get("coilCode");
-
-        if (code.contains("301")) {
-            colorRatio = "1.1164";
-        }
-        if (code.contains("302")) {
-            colorRatio = "1.0797";
-        }
-        if (code.contains("303")) {
-            colorRatio = "1.2100";
-        }
-        if (code.contains("304")) {
-            colorRatio = "1.0996";
-        }
-        if (code.contains("305")) {
-            colorRatio = "1.1940";
-        }
-        if (code.contains("306")) {
-            colorRatio = "1.2438";
-        }
-        if (code.contains("321")) {
-            colorRatio = "1.2600";
-        }
-        if (code.contains("322")) {
-            colorRatio = "1.1592";
-        }
-
-        return colorRatio;
     }
 
     private File getPrintFile() {
@@ -674,7 +645,7 @@ class PrintThread extends Thread {
     MachineInterface machine;
 
     public PrintThread(CalibrationPrintTest w, MachineInterface machine) {
-        super("Control Panel Update Thread");
+        super("Calibration Print Thread");
         window = w;
         this.machine = machine;
         Base.writeLog("Reading Temperature ...");
@@ -708,7 +679,7 @@ class PrintThread extends Thread {
             try {
                 Thread.sleep(250);
             } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PrintThread.class.getName()).log(Level.SEVERE, null, ex);
             }
             if (!machine.getDriverQueryInterface().getMachineStatus() || machine.getDriverQueryInterface().isBusy()) {
                 window.showPrintMessage();

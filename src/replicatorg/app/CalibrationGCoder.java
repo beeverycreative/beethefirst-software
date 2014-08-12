@@ -25,20 +25,7 @@ import replicatorg.app.tools.XML;
  */
 public class CalibrationGCoder {
 
-    /**
-     * Colors supported
-     */
-    public enum ColorsSupported {
 
-        BLACK,
-        GREEN,
-        ORANGE,
-        RED,
-        TURQUOISE,
-        TRANSPARENT,
-        WHITE,
-        YELLOW
-    };
     private static String fileName = "colorsGCode";
 
     /**
@@ -106,7 +93,18 @@ public class CalibrationGCoder {
      */
     private static String getCode() {
         String rootTag = "colors";
-        String subTag = parseCoilCode().toLowerCase();
+        String beeCode =  Base.getMainWindow().getMachineInterface().getModel().getCoilCode();
+        String subTag = FilamentControler.getColor(beeCode).toLowerCase();
+        
+        /**
+         * Lets user do calibration test event without filament.
+         * Default color = Black
+         */
+        if(subTag.equalsIgnoreCase("NO_FILAMENT"))
+        {
+            subTag = Languager.getTagValue("CoilColors", "BLACK");
+        }
+             
         String tag = "gcode";
 
         Document dom;
@@ -186,31 +184,5 @@ public class CalibrationGCoder {
         return code.split(",");
     }
 
-    private static String parseCoilCode() {
-        String color = "Black";
-        String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
 
-        if (code.contains("301")) {
-            color = "WHITE";
-        } else if (code.contains("302")) {
-            color = "BLACK";
-        } else if (code.contains("303")) {
-            color = "YELLOW";
-        } else if (code.contains("304")) {
-            color = "RED";
-        } else if (code.contains("305")) {
-            color = "TURQUOISE";
-        } else if (code.contains("306")) {
-            color = "TRANSPARENT";
-        } else if (code.contains("321")) {
-            color = "GREEN";
-        } else if (code.contains("322")) {
-            color = "ORANGE";
-        } else
-        {
-            color = "A0";
-        }
-
-        return color;
-    }
 }

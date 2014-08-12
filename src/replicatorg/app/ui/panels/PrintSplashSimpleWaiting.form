@@ -371,7 +371,7 @@
                   <Component id="bPause" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="bCancel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="bOk" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   <Component id="bUnload" min="-2" max="-2" attributes="0"/>
@@ -435,7 +435,7 @@
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_18.png"/>
+              <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="PAUSE"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>

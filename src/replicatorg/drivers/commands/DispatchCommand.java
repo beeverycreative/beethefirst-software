@@ -16,6 +16,7 @@ public class DispatchCommand implements DriverCommand {
 
     String command;
     Enum comtype = null;
+    boolean printing;
 
     public DispatchCommand(String command) {
         this.command = command;
@@ -24,6 +25,29 @@ public class DispatchCommand implements DriverCommand {
     public DispatchCommand(String command, Enum comtype) {
         this.command = command;
         this.comtype = comtype;
+    }
+    
+    public DispatchCommand(String command, Enum comtype, boolean print) {
+        this.command = command;
+        this.comtype = comtype;
+        this.printing = print;
+    }
+    
+    @Override
+    public String getCommand()
+    {
+        return command;
+    }
+    
+    @Override
+    public void setCommand(String newCommand) {
+        this.command = newCommand;
+    }
+    
+    @Override
+    public boolean isPrintingCommand()
+    {
+        return printing;
     }
 
     @Override

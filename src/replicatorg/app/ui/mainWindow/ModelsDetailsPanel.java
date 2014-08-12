@@ -511,7 +511,7 @@ class DimensionsThread extends Thread {
     ModelsDetailsPanel window;
 
     public DimensionsThread(ModelsDetailsPanel w) {
-        super("Update Thread");
+        super("Dimensions Thread");
         this.window = w;
     }
 

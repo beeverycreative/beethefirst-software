@@ -194,11 +194,12 @@ public class FilamentHeating extends javax.swing.JFrame {
         double acMedium = machine.getAcceleration("acMedium");
         double spHigh = machine.getFeedrate("spHigh");
 
+        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
+
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         //turn off blower before heating
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
@@ -271,6 +272,7 @@ public class FilamentHeating extends javax.swing.JFrame {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
@@ -641,7 +643,7 @@ class UpdateThread extends Thread {
     FilamentHeating window;
 
     public UpdateThread(FilamentHeating w) {
-        super("Control Panel Update Thread");
+        super("Filament Heating Thread");
         window = w;
         Base.writeLog("Reading Temperature ...");
     }

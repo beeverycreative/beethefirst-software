@@ -551,8 +551,8 @@ public class MachineModel
 	  return this.endstops.get(axis);
   }
 
-    public void setMachineReady(boolean machineReady) {
-        this.machineReady = machineReady;
+    public void setMachineReady(boolean machReady) {
+        this.machineReady = machReady;
     }
 
     public boolean getMachineReady() {

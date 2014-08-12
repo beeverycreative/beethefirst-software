@@ -326,13 +326,13 @@ public class PrintBed implements Serializable {
             printBed_Models.get(lastModel).setYscale(modelToClone.getYscalePercentage() / 100);
             printBed_Models.get(lastModel).setZscale(modelToClone.getZscalePercentage() / 100);
             getModel(lastModel).getEditer().centerAndToBed();
-            Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/"+Base.MODELS_FOLDER+"/");
+            Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
         }
     }
 
     private File generateSTL(int index) {
 
-        File stl = new File(Base.getAppDataDirectory() + "/"+Base.MODELS_FOLDER+"/temp.stl");
+        File stl = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/temp.stl");
         PrintWriter pw = null;
         String code = null;
 
@@ -359,7 +359,7 @@ public class PrintBed implements Serializable {
         ByteArrayOutputStream buffer = null;
         int nRead;
         byte[] bytes = new byte[16384];
- 
+
         try {
             is = new FileInputStream(stl);
             buffer = new ByteArrayOutputStream();
@@ -375,7 +375,7 @@ public class PrintBed implements Serializable {
     }
 
     public static File toFile(byte[] bytes) {
-        File stl = new File(Base.getAppDataDirectory() + "/"+Base.MODELS_FOLDER+"/" + "temp.stl");
+        File stl = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + "temp.stl");
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(stl.getAbsolutePath(), false);
@@ -393,9 +393,9 @@ public class PrintBed implements Serializable {
 
         return stl;
     }
-    
+
     public static File toFile(byte[] bytes, String fileName) {
-        File stl = new File(Base.getAppDataDirectory() + "/"+Base.MODELS_FOLDER+"/" + fileName);
+        File stl = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + fileName);
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(stl.getAbsolutePath(), false);
@@ -477,38 +477,49 @@ public class PrintBed implements Serializable {
     }
 
     public boolean saveAs(boolean force) {
-
-        String newName = "Untitled.bee";
-
         final JFileChooser fileChooser = new JFileChooser();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-        Date date = new Date();
         File scene = null;
         fileChooser.setDialogTitle("Save Current Scene");
         fileChooser.setCurrentDirectory(new File(ProperDefault.get("defaultSceneDir")));
-//        fileChooser.showOpenDialog(Base.getMainWindow());
-        //fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        Date date = new Date();
+        String newName = "Untitled.bee";
+        String firstModelName = "";
+        boolean bedEmpty = printBed_Models.isEmpty();
+        File selectedFilev1 = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + "UntitledScene " + dateFormat.format(date) + ".bee");
+        File selectedFilev2 = null;
+
+        if (!bedEmpty) {
+            Model mdl = getModel(0);
+            firstModelName = mdl.getName().toLowerCase().split(".stl")[0].concat("_");
+            selectedFilev2 = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + firstModelName + " " + dateFormat.format(date) + ".bee");
+            fileChooser.setSelectedFile(selectedFilev2);
+        } else {
+            fileChooser.setSelectedFile(selectedFilev1);
+        }
+
         int userSelection = 0;
         fileChooser.setVisible(true);
-        
-        if(!force)
-        {
+
+        if (!force) {
             userSelection = fileChooser.showSaveDialog(Base.getMainWindow());
             scene = fileChooser.getSelectedFile();
-        }
-        else
-        {
-            scene = new File(Base.getAppDataDirectory()+"/"+Base.MODELS_FOLDER+"/"+"UntitledScene " + dateFormat.format(date) + ".bee");
+        } else {
+            if (bedEmpty) {
+                scene = selectedFilev1;
+            } else {
+                scene = selectedFilev2;
+            }
         }
         fileChooser.setSelectedFile(scene);
-        
+
 //        System.out.println("fileChooser.setSelectedFile: "+fileChooser.getSelectedFile().getAbsolutePath());
-        
-        if (userSelection == JFileChooser.APPROVE_OPTION ) {
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
             newName = fileChooser.getSelectedFile().getName();
 //
 //            System.out.println("fileChooser.getSelectedFile().getAbsolutePath(): "+fileChooser.getSelectedFile().getAbsolutePath());
-            
+
 //            System.out.println(fileChooser.getSelectedFile().exists());
 //            System.out.println(fileChooser.getSelectedFile().canRead());
 //            System.out.println(fileChooser.getSelectedFile().canWrite());
@@ -518,7 +529,7 @@ public class PrintBed implements Serializable {
                     && fileChooser.getSelectedFile().canRead()
                     && fileChooser.getSelectedFile().canWrite()
                     && !force) {
-                
+
                 userSelection = JOptionPane.showConfirmDialog(Base.getMainWindow(),
                         "Replace existing file?");
                 // may need to check for cancel option as well
@@ -547,7 +558,7 @@ public class PrintBed implements Serializable {
                 }
 
                 this.printBedFile = new File(folderPath.concat(newName));
-                
+
                 this.name = printBedFile.getName();
                 return true;
             }
@@ -613,19 +624,18 @@ public class PrintBed implements Serializable {
     public void setEstimatedTime(String esTime) {
         this.estimatedTime = esTime;
     }
-    
-    public String getEstimatedTime()
-    {
+
+    public String getEstimatedTime() {
         /**
-         * New versions of BEESOFT can open old scene files where EstimatedTime is not implemented.
-         * Getter gives null pointer in that situations and crashes print. This ensures print goes on!
+         * New versions of BEESOFT can open old scene files where EstimatedTime
+         * is not implemented. Getter gives null pointer in that situations and
+         * crashes print. This ensures print goes on!
          */
-        if(this.estimatedTime != null) {
+        if (this.estimatedTime != null) {
             return this.estimatedTime;
-        } else
-        {
+        } else {
             return NOT_AVAILABLE;
         }
-        
+
     }
 }

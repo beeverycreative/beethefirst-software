@@ -14,4 +14,18 @@ public class GCodePassthrough implements DriverCommand {
 	public void run(Driver driver) {
 		driver.executeGCodeLine(command);
 	}
+
+    @Override
+    public String getCommand() {
+        return "";
+    }
+    
+    @Override
+    public void setCommand(String newCommand) {
+    }
+
+    @Override
+    public boolean isPrintingCommand() {
+        return false;
+    }
 }

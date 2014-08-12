@@ -120,6 +120,11 @@ public class Maintenance extends javax.swing.JFrame {
         if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
             jLabel6.setForeground(Color.red);
         }
+        
+        if(Base.printPaused)
+        {
+            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+        }
 
     }
 
@@ -180,8 +185,9 @@ public class Maintenance extends javax.swing.JFrame {
         Base.maintenanceOpened = false;
         ProperDefault.remove("maintenance");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        Base.enableAllOpenWindows();
         Base.bringAllWindowsToFront();
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -531,11 +537,15 @@ public class Maintenance extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel4MouseExited
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
-        jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        if (!Base.printPaused) {
+            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        }
     }//GEN-LAST:event_jLabel7MouseEntered
 
     private void jLabel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseExited
-        jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        if (!Base.printPaused) {
+            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        }
     }//GEN-LAST:event_jLabel7MouseExited
 
     private void jLabel11MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseEntered
@@ -555,15 +565,20 @@ public class Maintenance extends javax.swing.JFrame {
         if (!moving) {
             dispose();
             ctrlStatus.stop();
-            FilamentHeating p = new FilamentHeating();
-            p.setVisible(true);
+            if (Base.printPaused) {
+                FilamentInsertion p = new FilamentInsertion();
+                p.setVisible(true);
+            } else {
+                FilamentHeating p = new FilamentHeating();
+                p.setVisible(true);
+            }
             Base.getMainWindow().getCanvas().unPickAll();
         }
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
 
-        if (!moving) {
+        if (!moving && !Base.printPaused) {
             dispose();
             ctrlStatus.stop();
 //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(true));
@@ -626,7 +641,7 @@ class ControlStatus extends Thread {
     private Maintenance maintenancePanel;
 
     public ControlStatus(Maintenance filIns, MachineInterface mach) {
-        super("Control Thread");
+        super("Maintenance Thread");
         this.machine = mach;
         this.maintenancePanel = filIns;
     }

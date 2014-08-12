@@ -595,7 +595,7 @@ class UpdateThread2 extends Thread {
     GCodeGenerationThread ut1;
 
     public UpdateThread2(PrintSplashSimple w, GCodeGenerationThread utN) {
-        super("Update Thread");
+        super("PrintSplash simple Thread");
         this.window = w;
         this.ut1 = utN;
     }
@@ -631,7 +631,7 @@ class GCodeGenerationThread extends Thread {
     boolean gCodeDone = false;
 
     public GCodeGenerationThread(PrintSplashSimple w) {
-        super("Update Thread");
+        super("GCode Generation Thread");
         window = w;
     }
 

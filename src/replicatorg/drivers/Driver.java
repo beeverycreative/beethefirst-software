@@ -83,6 +83,14 @@ public interface Driver {
         public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous); 
         
         /**
+         * GCode simple transfer without SDCard init and creation and set session variables 
+         * @param gcode
+         * @param psAutonomous
+         * @return 
+         */
+        public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous);
+        
+        /**
          * Start autonomous print
          * @return 
          */
@@ -558,8 +566,14 @@ public interface Driver {
     public void stopTransfer();
     
     public boolean isAutonomous();
+    
+    public int getLastLineNumber();
 
+    public void readLastLineNumber();
 
-
+    public Point5d getActualPosition();
+    
+    public String setElapsedTime(long time);
+    
 
 }

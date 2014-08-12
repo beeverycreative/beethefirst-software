@@ -19,6 +19,7 @@ import replicatorg.drivers.Driver;
 		public void dispose() {
 			if (callbackHandler != null) {
 				callbackHandler.interrupt();
+                                callbackHandler.stop();
 
 				// Wait 5 seconds for the thread to stop.
 				try {

@@ -230,6 +230,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         dispose();
         Base.bringAllWindowsToFront();
         Base.maintenanceWizardOpen = false;
+        disposeThread.stop();
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
         Point5d b = machine.getTablePoints("safe");
@@ -644,7 +645,7 @@ class DisposeFeedbackThread5 extends Thread {
     private CalibrationFinish calibrationPanel;
 
     public DisposeFeedbackThread5(CalibrationFinish filIns, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Calibration Finish Thread");
         this.machine = mach;
         this.calibrationPanel = filIns;
     }

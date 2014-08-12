@@ -34,6 +34,7 @@ import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.SceneBase;
 import java.io.Serializable;
+import replicatorg.app.Base;
 
 /**
  * Class to load objects from a STL (Stereolithography) file into Java3D.<p>
@@ -159,6 +160,13 @@ public class STLLoader extends LoaderBase implements Serializable
             final double[ ] normal = new double[ 3 ];
             final float[ ] fNormal = new float[ 3 ];
             final double[ ][ ] vertices = new double[ 3 ][ 3 ];
+            
+            if(numOfObjects == 0 || numOfFacets.length == 0)
+            {
+                Base.getMainWindow().showFeedBackMessage("modelMeshError");
+                return null;
+            }
+            
             for( int i = 0; i < numOfObjects; i ++ )
             {
                 final TriangleArray geometry = new TriangleArray
@@ -220,11 +228,13 @@ public class STLLoader extends LoaderBase implements Serializable
         }
         catch( InterruptedIOException ie )
         {
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             // user cancelled loading
             return null;
         }
         catch( IOException e )
         {
+            Base.getMainWindow().showFeedBackMessage("modelMeshError");
             throw new ParsingErrorException( e.toString( ) );
         }
         finally

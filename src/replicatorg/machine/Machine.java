@@ -447,7 +447,55 @@ public class Machine implements MachineInterface {
     public void setStopwatch(int stopwatch) {
         machineThread.setStopwatch(stopwatch);
     }
+    
+    public void stopwatch(){
+        machineThread.stopwatch();
+    }
+    
+    public void resumewatch()
+    {
+        machineThread.resumeWatch();
+    }
+    
+    public String getLastFeedrate()
+    {
+        return machineThread.getLastFeedrate();
+    }
+    
+    public String getLastE() {
+        return machineThread.getLastE();
+    }
+    
+    public String getLastAcceleration()
+    {
+        return machineThread.getLastAcceleration();
+    }
+    
+    public Point5d getLastPrintedPoint()
+    {
+        return machineThread.getLastPrintedPoint();
+    }
+    
+    public void setLastPrintedPoint(Point5d point)
+    {
+        machineThread.setLastPrintedPoint(point);
+    }
+    
+    public void setFilamentChanged(boolean isChanged)
+    {
+        machineThread.setFilamentChanged(isChanged);
+    }
+    
+    
+    public boolean hasFilamentChanged() {
+        return machineThread.hasFilamentChanged();
+    }
 
+    public void setLastBEECode(String code)
+    {
+        machineThread.setLastBEECode(code);
+    }
+    
     public Point5d getTablePoints(String pointName) {
         return machineThread.getTablePoints(pointName);
     }

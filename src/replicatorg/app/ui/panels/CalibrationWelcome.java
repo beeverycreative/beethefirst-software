@@ -1001,7 +1001,7 @@ class DisposeFeedbackThread2 extends Thread {
     private CalibrationWelcome calibrationPanel;
 
     public DisposeFeedbackThread2(CalibrationWelcome filIns, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Calibration Welcome Thread");
         this.machine = mach;
         this.calibrationPanel = filIns;
     }
@@ -1016,7 +1016,7 @@ class DisposeFeedbackThread2 extends Thread {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DisposeFeedbackThread2.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
@@ -1027,7 +1027,7 @@ class DisposeFeedbackThread2 extends Thread {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DisposeFeedbackThread2.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             if (machine.getDriverQueryInterface().getMachineStatus()

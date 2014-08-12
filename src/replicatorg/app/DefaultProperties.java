@@ -82,6 +82,7 @@ public class DefaultProperties {
         defaultHash.put("localPrint", String.valueOf(false));
         defaultHash.put("localPrintFileName", "abcde.gcode");
         defaultHash.put("curaFile", "none");
+        defaultHash.put("transferSpeed", "42.0");
     }
 
     public static String getDefault(String value) {

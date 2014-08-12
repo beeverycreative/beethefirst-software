@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.usb.UsbDeviceDescriptor;
 import javax.usb.UsbIrp;
 import javax.usb.UsbNotOpenException;
+import javax.usb.UsbPipe;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
@@ -467,13 +468,19 @@ public class UsbDriver extends DriverBaseImplementation {
                 pipes.open();
             }
             
-            if(!isBootloader){
-               if(!transferMode)
-               {
-                    pipes.getUsbPipeWrite().syncSubmit(usbIrp);
-               }
+            if (!isBootloader) {
+                if (!transferMode) {
+                    if (pipes != null) {
+                        UsbPipe pipeWrite = pipes.getUsbPipeWrite();
+                        if (pipeWrite != null) {
+                            if (usbIrp != null) {
+                                pipeWrite.syncSubmit(usbIrp);
+                            }
+                        }
+                    }
+                }
             }
-            
+
             
         } catch (UsbException ex) {
             Base.writeLog("USB exception: " + ex.getMessage());
@@ -495,6 +502,10 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("USB disconnected exception: " + ex.getMessage());
             setInitialized(false);
             return false;
+        } catch (Exception ex) {
+            Base.writeLog("Exception test pipes: " + ex.getMessage());
+//            setInitialized(false);
+//            return false;
         }
         return true;
 

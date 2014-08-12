@@ -99,6 +99,9 @@ public class Base {
 
     public static boolean status_thread_died = false;
     public static boolean errorOccured = false;
+    public static boolean printPaused = false;
+    public static double originalColorRatio = 1;
+    private static String COMPUTER_ARCHITECTURE;
 
     public enum InitialOpenBehavior {
 
@@ -107,13 +110,13 @@ public class Base {
         OPEN_SPECIFIC_FILE
     };
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.9.0_beta1-2014-07-10";
+    public static final String VERSION_BEESOFT = "3.10.0_beta1-2014-08-12";
 //    public static final String VERSION_BEESOFT = "3.8.0-beta_2014-05-01";
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
-    public static String firmware_version_in_use = "BEETHEFIRST-4.29.0.bin";
-    public static final String VERSION_FIRMWARE_FINAL = "4.29.0";
-    public static final String VERSION_FIRMWARE_FINAL_OLD = "3.29.0";
+    public static String firmware_version_in_use = "BEETHEFIRST-4.35.0.bin";
+    public static final String VERSION_FIRMWARE_FINAL = "4.35.0";
+    public static final String VERSION_FIRMWARE_FINAL_OLD = "3.35.0";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
@@ -141,12 +144,10 @@ public class Base {
      * Global LOG file *
      */
     private static File log;
-    
     /**
      * Autonomous statistics file
      */
     private static File statistics = null;
-    
     /**
      * Properties file
      */
@@ -245,20 +246,21 @@ public class Base {
         ID++;
         return ID;
     }
-    
+
     /**
      * Lists all threads running on the JVM.
      */
-    public static void listAllJVMThreads()
-    {
-        
+    public static void listAllJVMThreads() {
+
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
-        
-        for(int i = 0; i < threadArray.length; i++)
-        {
-            System.out.println("Thread "+(i+1)+ " > "+threadArray[i]);
+
+        for (int i = 0; i < threadArray.length; i++) {
+            System.out.println("Thread " + (i + 1) + " > " + threadArray[i]);
         }
+        System.out.println("\n");
+        System.out.println("Total Threads > "+threadArray.length);
+        System.out.println("*****************");
     }
 
     /**
@@ -366,17 +368,15 @@ public class Base {
         writer.close();
     }
 
-    private static Map<String,String> getGalleryMap(File[] models)
-    {
-        Map<String,String> mod = new HashMap<String, String>();
-        
-        for (int i = 0; i < models.length; i++) 
-        {
+    private static Map<String, String> getGalleryMap(File[] models) {
+        Map<String, String> mod = new HashMap<String, String>();
+
+        for (int i = 0; i < models.length; i++) {
             mod.put(models[i].getName(), models[i].getAbsolutePath());
         }
         return mod;
     }
-    
+
     public static void copy3DFiles() {
         InputStream inStream = null;
         OutputStream outStream = null;
@@ -407,7 +407,7 @@ public class Base {
                     inStream.close();
                     outStream.close();
                 }
-                
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -443,6 +443,7 @@ public class Base {
             bw.write("Bootloader version: " + VERSION_BOOTLOADER + "\n");
             bw.write("Firmware version: " + firmware_version_in_use + "\n");
             bw.write("Java version: " + VERSION_JAVA + "\n");
+            bw.write("Architecture: " + COMPUTER_ARCHITECTURE + "\n");
 //            bw.write("Serial Number:" + " " + VERSION_MACHINE+ "\n");
             bw.write("Machine name: BEETHEFIRST\n");
             bw.write("Company name: BEEVERYCREATIVE\n");
@@ -486,7 +487,7 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static void writeStatistics(String message) {
 
         /**
@@ -692,6 +693,10 @@ public class Base {
             }
         }
     }
+    
+    public static void turnOnPowerSaving() {
+        editor.getMachine().getDriver().dispatchCommand("M641");
+    }
 
     private static void getJavaVersion() {
         String[] command = {"java", "-version"};
@@ -741,6 +746,25 @@ public class Base {
 
         for (int i = 0; i < systemThreads.size(); i++) {
             systemThreads.get(i).stop();
+        }
+
+    }
+    
+    static public void enableAllOpenWindows() {
+        java.awt.Window win[] = java.awt.Window.getWindows();
+        for (int i = 0; i < win.length; i++) {
+            if (win[i].getName().equals("mainWindow")) { //|| win[i].getName().equals("Autonomous") 
+                if (printPaused) {
+                    win[i].setEnabled(false);
+                } else {
+                    win[i].setEnabled(true);
+                }
+
+            } else {
+                win[i].setEnabled(true);
+            }
+//            }
+//            System.out.println(win[i].getName());
         }
 
     }
@@ -1025,7 +1049,7 @@ public class Base {
         }
 
     }
-    
+
     private File openStatsFile() {
         /**
          * Put log file near app folder *
@@ -1056,7 +1080,7 @@ public class Base {
 
         // Log autonomous statistics file
         statistics = openStatsFile();
-        
+
         // Properties file init
         propertiesFile = openFileProperties();
 
@@ -1116,7 +1140,6 @@ public class Base {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-
                 ProperDefault.put("machine.name", MACHINE_NAME);
                 String machineName = ProperDefault.get("machine.name");
                 // build the editor object
@@ -1140,7 +1163,7 @@ public class Base {
                 editor.setVisible(false);
                 WelcomeSplash splash = new WelcomeSplash(editor);
                 splash.setVisible(true);
-                
+
 //                buildLogFile(false);
                 writeLog("Log file created");
             }
@@ -1218,6 +1241,7 @@ public class Base {
                 platform = Platform.OTHER;
             }
             String aString = System.getProperty("os.arch");
+            COMPUTER_ARCHITECTURE = aString;
             if ("i386".equals(aString)) {
                 arch = Arch.x86;
             } else if ("x86_64".equals(aString) || "amd64".equals(aString)) {
@@ -1226,9 +1250,6 @@ public class Base {
                 arch = Arch.OTHER;
                 throw new RuntimeException("Can not use use arch: '" + arch + "'");
             }
-
-
-
         }
     }
 
@@ -1495,7 +1516,7 @@ public class Base {
     }
 
     static protected void addToFileList(String basePath, String path,
-        Vector<String> fileList) {
+            Vector<String> fileList) {
         File folder = new File(path);
         String list[] = folder.list();
         if (list == null) {

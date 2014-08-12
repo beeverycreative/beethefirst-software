@@ -213,9 +213,7 @@ public class UpdateChecker extends javax.swing.JFrame {
                 updateBetaAvailable = true;
                 updateString = softServerVersionBetaString + "-" + softServerDateBetaString;
                 return true; 
-            }
-            else if(currentSoftwareVersion.compareTo(softwareFromServer) < 0)
-            {
+            } else if(currentSoftwareVersion.compareTo(softwareFromServer) < 0){
                 //In case of none beta update may exist a stable update
                 updateStableAvailable = true;
                 updateString = softServerVersionString + "-" + softServerDateString;
@@ -236,7 +234,7 @@ public class UpdateChecker extends javax.swing.JFrame {
 
         return false;
     }
-
+       
     public void setMessage(String message) {
         if(message.contains("Available") && !message.equals("NotAvailable"))
         {

@@ -445,7 +445,7 @@ public class FilamentFinish extends javax.swing.JFrame {
 
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
         dispose();
-        FilamentCodeInsertion p = new FilamentCodeInsertion();
+        FilamentCodeInsertion p = new FilamentCodeInsertion(machine.getModel().getCoilCode());
         p.setVisible(true);
     }//GEN-LAST:event_jLabel17MousePressed
 

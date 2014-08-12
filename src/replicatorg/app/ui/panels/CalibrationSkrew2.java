@@ -558,7 +558,7 @@ class DisposeFeedbackThread4 extends Thread {
     private CalibrationSkrew2 calibrationPanel;
 
     public DisposeFeedbackThread4(CalibrationSkrew2 callIns, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Calibration skrew 2 Thread");
         this.machine = mach;
         this.calibrationPanel = callIns;
     }

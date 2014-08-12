@@ -112,6 +112,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean driverError = false;
     private String driverErrorDescription;
     private boolean stopTranfer = false;
+    private int lastLineNumber = 0;
 
     public enum COM {
 
@@ -202,8 +203,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void sendInitializationGcode() throws VersionException {
         hiccup(1000, 0);
         String type = checkFirmwareType();
-        
-         super.isBootloader = true;
+
+        super.isBootloader = true;
 
         System.out.println("type: " + type);
 
@@ -225,16 +226,29 @@ public final class UsbPassthroughDriver extends UsbDriver {
             closePipe(pipes);
             return;
         }
-        
+
         if (type.contains("autonomous")) {
-            
+
             serialNumberString = "0000000000";
             lastDispathTime = System.currentTimeMillis();
 
             super.isBootloader = false;
 
-
             Base.getMainWindow().setEnabled(false);
+
+            /**
+             * Does not show PSAutonomous until MainWindows is visible
+             */
+            boolean mwVisible = Base.getMainWindow().isVisible();
+            while (mwVisible == false) {
+                try {
+                    Thread.sleep(1, 0);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                mwVisible = Base.getMainWindow().isVisible();//polls
+            }
+
             PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
             p.setVisible(true);
             p.startConditions();
@@ -305,6 +319,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             dispatchCommand("M107", COM.DEFAULT); // Shut downs Blower 
             dispatchCommand("M104 S0", COM.DEFAULT); //Extruder and Table heat
             dispatchCommand("G92", COM.DEFAULT);
+            
+            //Set PID values
+            dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
+            dispatchCommand("M601", COM.DEFAULT);
 
             dispatchCommand("G28 Z", COM.BLOCK);
             dispatchCommand("G28 X Y", COM.BLOCK);
@@ -321,25 +339,24 @@ public final class UsbPassthroughDriver extends UsbDriver {
             sendCommand(GET_STATUS_FROM_ERROR);
             String status = readResponse();
 //            System.out.println("status: " + status + " found in " + tries + ".");
-
+            
             while (status.contains(NOK) && (tries < MESSAGES_IN_BLOCK)) {
                 tries++;
                 sendCommand(GET_STATUS_FROM_ERROR);
                 status = readResponse();
 //                System.out.println("status: " + status + " found in " + tries + ".");
-            }            
-            
+            }
+
             isAutonomous = status.contains(STATUS_SDCARD);
-            
+
             if (status.contains(RESPONSE_TRANSFER_ON_GOING)) {
-                
+
                 //Printer still waiting to transfer end of block to SDCard
                 //Solution: asking for STATUS to close the block and so abort
                 //When recovered, initialize driver again
                 //System.out.println("isOnTransfer: " + isOnTransfer);
-                System.out.println("isOnTransfer");
                 //recoverFromSDCardTransfer();
-                while (!status.contains(RESPONSE_OK)&& tries < MESSAGES_IN_BLOCK) {
+                while (!status.contains(RESPONSE_OK) && tries < MESSAGES_IN_BLOCK) {
                     tries++;
                     status = dispatchCommand(GET_STATUS_FROM_ERROR);
                 }
@@ -352,14 +369,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 setBusy(false);
                 return;
             }
-            
-            //
+
             System.out.println("Could not recover com from type: error.");
             Base.writeLog("Could not recover com from type: error.");
             setBusy(false);
             closePipe(pipes);
-            
-            
+
+
         }
     }
 
@@ -483,7 +499,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         //End transfer mode
         transferMode = false;
     }
@@ -769,7 +785,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public String dispatchCommand(String next) {
 
         String ans = _dispatchCommand(next);
-
         queue_size = getQfromStatus(ans);
 
         return ans;
@@ -900,13 +915,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void setAutonomous(boolean auto) {
         isAutonomous = auto;
     }
-    
+
     @Override
     public void stopTransfer() {
-        stopTranfer = true;        
+        stopTranfer = true;
     }
-    
-    
+
     @Override
     public void readZValue() {
         String temp = dispatchCommand("M600");
@@ -1013,7 +1027,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //Send the file 1 block at a time, only send full blocks
         //Each block is MESSAGES_IN_BLOCK messages long        
         for (int block = 1; block < totalBlocks; block++) {
-            
+
             //check if the transfer was canceled
             if (stopTranfer == true) {
                 Base.writeLog("Transfer canceled.");
@@ -1021,7 +1035,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 dispatchCommand("G28");
                 transferMode = false;
                 isAutonomous = false;
-                stopTranfer = false;                
+                stopTranfer = false;
                 return driverErrorDescription;
             }
 
@@ -1060,11 +1074,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
                 transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
-                psAutonomous.updatePrintBar(transferPercentage);
                 
+                if(Base.printPaused == false)
+                {
+                    psAutonomous.updatePrintBar(transferPercentage);
+                }
+
 //                System.out.println("\tmessage: "+message);
 //                System.out.println("\tsrc: "+srcPos+"\tdst: "+destPos);
-                
+
             }
             System.out.println("Block " + block + "/" + totalBlocks);
         }
@@ -1072,9 +1090,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //Do the last Block!
         // Updates variables
         srcPos = destPos;
-  
+
 //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
-        
+
         //check if the transfer was canceled
         if (stopTranfer == true) {
             Base.writeLog("Transfer canceled.");
@@ -1124,11 +1142,178 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //        System.out.println("Message " + totalMessages + "/" + totalMessages + " with " + lastMessage.length + " bytes transfered with success");
         loop = System.currentTimeMillis() - loop;
+        double transferSpeed = totalBytes / (loop / 1000.0);
         String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
-                + "s : " + totalBytes / (loop / 1000.0) + "kbps\n";
+                + "s : " + transferSpeed + "kbps\n";
         logTransfer += statistics;
         Base.writeStatistics(logTransfer);
         System.out.println(statistics);
+
+        double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
+        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed/1000) + meanSpeed)/2));
+        
+        transferMode = false;
+
+        return RESPONSE_OK;
+    }
+
+    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
+
+        long loop = System.currentTimeMillis();
+        long time;
+        int file_size;
+        byte[] gcodeBytes;
+        int srcPos = 0;
+        int offset = MESSAGE_SIZE;
+        int destPos = 0;
+        int totalMessages = 0;
+        int message = 0;
+        int totalBytes = 0;
+        int totalBlocks = 0;
+        String logTransfer = "";
+
+        file_size = (int) gcode.length();
+        totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
+        totalBlocks = (int) Math.ceil((double) file_size / (double) (MESSAGES_IN_BLOCK * MESSAGE_SIZE));
+
+        String fileSizeInfo = "File size: " + file_size + " bytes";
+        logTransfer += fileSizeInfo + "\n";
+        System.out.println(fileSizeInfo);
+        String s_totalMessages = "Number of messages to Transfer: " + totalMessages;
+        System.out.println(s_totalMessages);
+        logTransfer += s_totalMessages + "\n";
+        String s_totalBlocks = "Number of blocks to Transfer: " + totalBlocks;
+        System.out.println(s_totalBlocks);
+        logTransfer += s_totalBlocks + "\n";
+
+        transferMode = true;
+
+        //Stores file in byte array
+        gcodeBytes = getBytesFromFile(gcode);
+        byte[] iMessage;
+
+        //Send the file 1 block at a time, only send full blocks
+        //Each block is MESSAGES_IN_BLOCK messages long        
+        for (int block = 1; block < totalBlocks; block++) {
+
+            //check if the transfer was canceled
+            if (stopTranfer == true) {
+                Base.writeLog("Transfer canceled.");
+                driverErrorDescription = ERROR + ":Transfer canceled.";
+                dispatchCommand("G28");
+                transferMode = false;
+                isAutonomous = false;
+                stopTranfer = false;
+                return driverErrorDescription;
+            }
+
+            // size is MAX_BLOCK_SIZE of file_size
+            if (setTransferSize(destPos, (destPos + MAX_BLOCK_SIZE) - 1).contains(ERROR)) {
+                driverError = true;
+                driverErrorDescription = ERROR + ":setTransferSize failed";
+                transferMode = false;
+
+                return driverErrorDescription;
+            } else {
+                Base.writeLog("SDCard space allocated with success");
+            }
+//            System.out.println("block:" + block + "M28 A" + srcPos + " D" + ((srcPos + MAX_BLOCK_SIZE) - 1));
+            for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
+
+                message++;
+                //Get byte array with MESSAGE_SIZE
+                time = System.currentTimeMillis();
+
+                // Updates variables
+                srcPos = destPos;
+                destPos = srcPos + offset;
+                iMessage = subbytes(gcodeBytes, srcPos, destPos);
+                //Transfer each Block
+                if (transferMessage(iMessage).contains(ERROR)) {
+                    driverError = true;
+                    driverErrorDescription = ERROR + ":512B message transfer failed";
+                    transferMode = false;
+
+                    return driverErrorDescription;
+                } else {
+                    totalBytes += iMessage.length;
+//                Base.writeLog("512B block transfered with success");
+                }
+
+                System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
+                transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
+                psAutonomous.updatePrintBar(transferPercentage);
+//                System.out.println("\tmessage: "+message);
+//                System.out.println("\tsrc: "+srcPos+"\tdst: "+destPos);
+
+            }
+            System.out.println("Block " + block + "/" + totalBlocks);
+        }
+
+        //Do the last Block!
+        // Updates variables
+        srcPos = destPos;
+
+//        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
+
+        //check if the transfer was canceled
+        if (stopTranfer == true) {
+            Base.writeLog("Transfer canceled.");
+            driverErrorDescription = ERROR + ":Transfer canceled.";
+            dispatchCommand("G28");
+            transferMode = false;
+            isAutonomous = false;
+            stopTranfer = false;
+            return driverErrorDescription;
+        }
+
+        // last block is special
+        //destpos is MAX_BLOCK_SIZE+src or file_size
+        if (setTransferSize(srcPos, Math.min(srcPos + MAX_BLOCK_SIZE, file_size) - 1).contains(ERROR)) {
+            driverError = true;
+            driverErrorDescription = ERROR + ":setTransferSize failed";
+            transferMode = false;
+
+            return driverErrorDescription;
+        } else {
+            Base.writeLog("SDCard space allocated with success");
+        }
+
+        for (; srcPos < file_size; srcPos += offset) {
+            message++;
+            //Get byte array with MESSAGE_SIZE
+            time = System.currentTimeMillis();
+
+            iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
+            //Transfer each Block
+            if (transferMessage(iMessage).contains(ERROR)) {
+                driverError = true;
+                driverErrorDescription = ERROR + ":512B message transfer failed";
+                transferMode = false;
+
+                return driverErrorDescription;
+            } else {
+                totalBytes += iMessage.length;
+//                Base.writeLog("512B block transfered with success");
+            }
+
+            System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
+            transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
+            psAutonomous.updatePrintBar(transferPercentage);
+        }
+        System.out.println("Block " + totalBlocks + "/" + totalBlocks);
+
+//        System.out.println("Message " + totalMessages + "/" + totalMessages + " with " + lastMessage.length + " bytes transfered with success");
+        loop = System.currentTimeMillis() - loop;
+        double transferSpeed = totalBytes / (loop / 1000.0);
+        String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
+                + "s : " +  transferSpeed + "kbps\n";
+        logTransfer += statistics;
+        Base.writeStatistics(logTransfer);
+        System.out.println(statistics);
+        
+        double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
+        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed/1000) + meanSpeed)/2));
 
         transferMode = false;
 
@@ -1137,16 +1322,26 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     public String startPrintAutonomous() {
         //Begin print from SDCard
-        if (dispatchCommand(BEGIN_PRINT, COM.BLOCK).contains(ERROR)) {
-            driverError = true;
-            driverErrorDescription = ERROR + ":BEGIN_PRINT failed";
-            transferMode = false;
+        String answer = "";
+//        while (!answer.contains(RESPONSE_OK)) {
 
-            return driverErrorDescription;
-        } else {
-            Base.writeLog("Print begun with success");
+        sendCommand(BEGIN_PRINT);
+        try {
+            Thread.sleep(5, 0);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
+        answer += readResponse();
 
+//            if (answer.contains(ERROR)) {
+//                driverError = true;
+//                driverErrorDescription = ERROR + ":BEGIN_PRINT failed";
+//                transferMode = false;
+//
+//                return driverErrorDescription;
+//            } // no need for else
+//        }
+//        Base.writeLog("Print begun with success");
         return RESPONSE_OK;
     }
 
@@ -1158,10 +1353,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //        elapsedTime - [1];
 //        nLines - [2];
 //        currentNumberLines - [3];
-       
-        sendCommand(READ_VARIABLES);
-        String printSession = readResponse();
-        
+
+        String printSession = dispatchCommand(READ_VARIABLES);
+//        String printSession = readResponse();
+//        System.out.println("printSession " + printSession);
         String[] data = parseData(printSession);
 
         return new AutonomousData(data[0], data[1], data[2], data[3], 0);
@@ -1170,39 +1365,67 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String[] parseData(String printSession) {
         String[] variables = new String[4];
 
-        String re1 = ".*?";	// Non-greedy match on filler
-        String re2 = "(\\d+)";	// Integer Number 1
-        String re3 = ".*?";	// Non-greedy match on filler
-        String re4 = "(\\d+)";	// Integer Number 2
-        String re5 = ".*?";	// Non-greedy match on filler
-        String re6 = "(\\d+)";	// Integer Number 3
-        String re7 = ".*?";	// Non-greedy match on filler
-        String re8 = "(\\d+)";	// Integer Number 4
-        String re9 = ".*?";	// Non-greedy match on filler
-        String re10 = "(ok)";	// Word 1
+        String[] result = printSession.split(" ");
 
-//        System.out.println("printSession: "+printSession);
-        
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(printSession);
-        if (m.find()) {
-            String int1 = m.group(1);
-            String int2 = m.group(2);
-            String int3 = m.group(3);
-            String int4 = m.group(4);
-            String word1 = m.group(5);
+        String aTag = "A";
+        String bTag = "B";
+        String cTag = "C";
+        String dTag = "D";
+        String aValue = "0";
+        String bValue = "0";
+        String cValue = "0";
+        String dValue = "0";
 
-            variables[0] = int1;
-            variables[1] = int2;
-            variables[2] = int3;
-            variables[3] = int4;
-        } else {
-            //Matcher failed
-            variables[0] = "0";
-            variables[1] = "0";
-            variables[2] = "0";
-            variables[3] = "0";
+        for (int i = 0; i < result.length; i++) {
+            if (result[i].contains(aTag)) {
+                aValue = result[i].substring(1);
+            } else if (result[i].contains(bTag)) {
+                bValue = result[i].substring(1);
+            } else if (result[i].contains(cTag)) {
+                cValue = result[i].substring(1);
+            } else if (result[i].contains(dTag) && !result[i].equalsIgnoreCase("Done")) {
+                dValue = result[i].substring(1);
+            }
         }
+
+        variables[0] = aValue;
+        variables[1] = bValue;
+        variables[2] = cValue;
+        variables[3] = dValue;
+
+//        String re1 = ".*?";	// Non-greedy match on filler
+//        String re2 = "(\\d+)";	// Integer Number 1
+//        String re3 = ".*?";	// Non-greedy match on filler
+//        String re4 = "(\\d+)";	// Integer Number 2
+//        String re5 = ".*?";	// Non-greedy match on filler
+//        String re6 = "(\\d+)";	// Integer Number 3
+//        String re7 = ".*?";	// Non-greedy match on filler
+//        String re8 = "(\\d+)";	// Integer Number 4
+//        String re9 = ".*?";	// Non-greedy match on filler
+//        String re10 = "(ok)";	// Word 1
+//
+////        System.out.println("printSession: "+printSession);
+//
+//        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+//        Matcher m = p.matcher(printSession);
+//        if (m.find()) {
+//            String int1 = m.group(1);
+//            String int2 = m.group(2);
+//            String int3 = m.group(3);
+//            String int4 = m.group(4);
+//            String word1 = m.group(5);
+//
+//            variables[0] = int1;
+//            variables[1] = int2;
+//            variables[2] = int3;
+//            variables[3] = int4;
+//        } else {
+//            //Matcher failed
+//            variables[0] = "0";
+//            variables[1] = "0";
+//            variables[2] = "0";
+//            variables[3] = "0";
+//        }
 
         return variables;
     }
@@ -1230,10 +1453,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             try {
 
                 out += (response = readResponse()) + "\n";
-
 //                System.out.println("Transfer Response: " + out);
 
-                if (sent == iBlock.length && response.toLowerCase().contains(RESPONSE_TRANSFER_ON_GOING)) {
+                if (sent == iBlock.length && out.toLowerCase().contains(RESPONSE_TRANSFER_ON_GOING)) {
+                    out += response + "\n";
+                    break;
+                } else if (sent == iBlock.length && out.replace("\n", "").toLowerCase().contains(RESPONSE_TRANSFER_ON_GOING)) {
                     out += response + "\n";
                     break;
                 } else if (driverError) {
@@ -2006,9 +2231,52 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void readStatus() {
 
         machineReady = dispatchCommand(GET_STATUS).contains(STATUS_OK);
+
 //        System.out.println("machineReady: "+machineReady);
         //machine.currentTool().setCurrentTemperature(temperature);        
         machine.setMachineReady(machineReady);
+    }
+
+    @Override
+    public int getLastLineNumber() {
+
+        String result = dispatchCommand(GET_LINE_NUMBER,COM.BLOCK);
+        String[] parts = result.split(" ");
+        String seekTag = "sdpos:";
+        
+        for(int i = 0; i < parts.length; i++)
+        {
+            if(parts[i].contains(seekTag))
+            {
+                lastLineNumber = Integer.valueOf(parts[i].split(":")[1]);
+            }
+        }
+        
+        return lastLineNumber;
+    }
+
+    @Override
+    public void readLastLineNumber() {
+        
+        String result = dispatchCommand(GET_LINE_NUMBER,COM.DEFAULT);
+        //parse value
+        String txt = "* last N:0 SDPOS:0 ok Q:0";
+
+        String re1=".*?";	// Non-greedy match on filler
+        String re2="(sdpos)";	// Word 1
+        String re3="(:)";	// Any Single Character 1
+        String re4="(\\d+)";	// Integer Number 1
+        
+        Pattern p = Pattern.compile(re1+re2+re3+re4,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(result);
+        if (m.find())
+        {
+            String word1=m.group(1);
+            String c1=m.group(2);
+            String int1=m.group(3);
+            lastLineNumber = Integer.valueOf(int1);
+        }
+       
     }
 
     @Override
@@ -2017,7 +2285,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Point5d myCurrentPosition = null;
 
         String position = dispatchCommand(GET_POSITION, COM.BLOCK);
-//        System.out.println("position "+position);
+//        Base.writeLog("position "+position);
         /**
          * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok
          * Q:0";
@@ -2062,11 +2330,188 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String w5 = m.group(16);
             String float4 = m.group(17);
             myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
+            Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
         }
 //        synchronized (currentPosition) {
         currentPosition.set(myCurrentPosition);
 //        }
 
+        return myCurrentPosition;
+    }
+    
+    public String setElapsedTime(long time)
+    {
+        sendCommand("M32 A"+time);
+        try {
+            Thread.sleep(5,0);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+        return readResponse();
+    }
+    
+    @Override
+    public Point5d getActualPosition() {
+
+        Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
+        int tries = 10;
+         sendCommand(GET_POSITION);
+        try {
+            Thread.sleep(10,0);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+         String position = readResponse();
+                  
+         System.out.println("position1: "+position);
+         
+        /**
+         * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok
+         * Q:0";
+         */
+        String re1 = "([a-z])";	// Any Single Word Character (Not Whitespace) 1
+        String re2 = "(.)";	// Any Single Character 1
+        String re3 = "(\\s+)";	// White Space 1
+        String re4 = "([a-z])";	// Any Single Word Character (Not Whitespace) 2
+        String re5 = "(.)";	// Any Single Character 2
+        String re6 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
+        String re7 = "(\\s+)";	// White Space 2
+        String re8 = "([a-z])";	// Any Single Word Character (Not Whitespace) 3
+        String re9 = "(.)";	// Any Single Character 3
+        String re10 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
+        String re11 = "(\\s+)";	// White Space 3
+        String re12 = "([a-z])";	// Any Single Word Character (Not Whitespace) 4
+        String re13 = "(.)";	// Any Single Character 4
+        String re14 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 3
+        String re15 = "(\\s+)";	// White Space 4
+        String re16 = "([a-z])";	// Any Single Word Character (Not Whitespace) 5
+        String re17 = ".*?";	// Non-greedy match on filler
+        String re18 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 4
+
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14 + re15 + re16 + re17 + re18, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(position);
+        if (m.find()) {
+//            System.out.println("Matcher find");
+            String w1 = m.group(1);
+            String c1 = m.group(2);
+            String ws1 = m.group(3);
+            String w2 = m.group(4);
+            String c2 = m.group(5);
+            String float1 = m.group(6);
+            String ws2 = m.group(7);
+            String w3 = m.group(8);
+            String c3 = m.group(9);
+            String float2 = m.group(10);
+            String ws3 = m.group(11);
+            String w4 = m.group(12);
+            String c4 = m.group(13);
+            String float3 = m.group(14);
+            String ws4 = m.group(15);
+            String w5 = m.group(16);
+            String float4 = m.group(17);
+            myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
+            Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
+        }
+        else
+        {
+            //C: X:0.0000 Y:0.0000 Z:0.0000 E:0.0000 ok Q:0
+            
+            if (position.contains("X")) {
+                int indexX = position.indexOf("X");
+                int commandLenght = position.length();
+                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+                myCurrentPosition.setX(Double.valueOf(aux));
+            }
+            if (position.contains("Y")) {
+                int indexX = position.indexOf("Y");
+                int commandLenght = position.length();
+                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+                myCurrentPosition.setY(Double.valueOf(aux));
+            }
+            if (position.contains("Z")) {
+                int indexX = position.indexOf("Z");
+                int commandLenght = position.length();
+                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+                myCurrentPosition.setZ(Double.valueOf(aux));
+            }
+            if (position.contains("E")) {
+                int indexX = position.indexOf("E");
+                int commandLenght = position.length();
+                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+                myCurrentPosition.setA(Double.valueOf(aux));
+            }
+            if(!position.contains("X") && !position.contains("Y") && !position.contains("Z")&& !position.contains("E"))
+            {
+                sendCommand(GET_POSITION); 
+                try {
+                    Thread.sleep(5, 0);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                position = readResponse();
+                System.out.println("position2: "+position);
+                boolean answerOK = false;
+                
+                while( !answerOK || (tries > 0))
+                {
+                    sendCommand(GET_POSITION);
+                    try {
+                        Thread.sleep(25, 0);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    position += readResponse();
+                    tries--;
+                    
+                    if(position.contains("X") && position.contains("Y") && position.contains("Z")&& position.contains("E"))
+                    {
+                        answerOK = true;
+                        myCurrentPosition = readPoint5DFromPosition(position);
+                        break;
+                    }
+                    
+                }
+            }
+        }
+//        synchronized (currentPosition) {
+        currentPosition.set(myCurrentPosition);
+//        }
+
+        return myCurrentPosition;
+    }
+    
+    private Point5d readPoint5DFromPosition(String position)
+    {
+        Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
+        
+        if (position.contains("X")) {
+            int indexX = position.indexOf("X");
+            int commandLenght = position.length();
+            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+            myCurrentPosition.setX(Double.valueOf(aux));
+        } 
+        if (position.contains("Y")) {
+            int indexX = position.indexOf("Y");
+            int commandLenght = position.length();
+            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+            myCurrentPosition.setY(Double.valueOf(aux));
+        } 
+        if (position.contains("Z")) {
+            int indexX = position.indexOf("Z");
+            int commandLenght = position.length();
+            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+            myCurrentPosition.setZ(Double.valueOf(aux));
+        } 
+        if (position.contains("E")) {
+            int indexX = position.indexOf("E");
+            int commandLenght = position.length();
+            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
+            myCurrentPosition.setA(Double.valueOf(aux));
+        }
+        
         return myCurrentPosition;
     }
 
@@ -2233,21 +2678,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String checkFirmwareType() {
         Base.writeLog("testing bootloader");
         //Clear message stack
-        
+
         sendCommand(GET_STATUS);
         hiccup(30, 0);
         String res = readResponse();
         if (res.toLowerCase().contains(STATUS_SDCARD)) {
-            Base.writeLog("Is not bootloader - autonomous: "+STATUS_SDCARD);
+            Base.writeLog("Is not bootloader - autonomous: " + STATUS_SDCARD);
 //            System.out.println("autonomous");
             return "autonomous";
-        }else if (res.isEmpty()) {
+        } else if (res.isEmpty()) {
             return "error";
         }
         sendCommand("M300");
         hiccup(30, 0);
         readResponse();
-        
+
 //        System.out.println(res);
         if (res.toLowerCase().contains("bad")) {
             sendCommand("M116");

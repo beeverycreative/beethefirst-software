@@ -129,6 +129,8 @@ public class MessagesPopUp extends javax.swing.JFrame {
             jLabel3.setText(Languager.getTagValue("StatusMessages", "BTF_Disconnected"));    
         if(message.equals("moving"))
             jLabel3.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage2")); 
+        if(message.equals("modelMeshError"))
+            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "MeshError")); 
         
         autoHide();
         setLocation();

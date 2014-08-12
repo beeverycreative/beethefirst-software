@@ -24,14 +24,18 @@ public class PrintEstimator {
     private static String GCODER_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/estimator/gcoder.py");
     private static String ERROR_MESSAGE = "NA";
     private static String estimatedTime = ERROR_MESSAGE;
+    private static String estimatedCost = ERROR_MESSAGE;
     private static String BIN_PATH_UNIX = "python";
     private static String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
-    private static final double patch = 1.20;
-            //1.50;
+    private static final double patch = 1.50;
     private static final String dayKeyWord = "day";
 
     public static String getEstimatedTime() {
         return estimatedTime;
+    }
+
+    public static String getEstimatedCost() {
+        return estimatedCost;
     }
 
     public static String estimateTime(File gcode) {
@@ -86,21 +90,21 @@ public class PrintEstimator {
                 e.printStackTrace();
             }
 
-            estimatedTime = parseOutput(output);
-            
+            estimatedCost = parseCostOutput(output);
+            estimatedTime = parseTimeOutput(output);
+
         } else {
             Base.writeLog("Error starting process to estimate print duration");
             estimatedTime = ERROR_MESSAGE;
             return "Error";
         }
-        
+
 //        System.out.println("Estimated time: "+estimatedTime);
-        
+
         return estimatedTime;
     }
-    
-    private static String noDays(String duration)
-    {
+
+    private static String noDays(String duration) {
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "((?:(?:[0-1][0-9])|(?:[2][0-3])|(?:[0-9])):(?:[0-5][0-9])(?::[0-5][0-9])?(?:\\s?(?:am|AM|pm|PM))?)";	// HourMinuteSec 1
         String time1 = "ND";
@@ -111,76 +115,71 @@ public class PrintEstimator {
             time1 = m.group(1);
 //                System.out.print("("+time1.toString()+")"+"\n");
         }
-        
+
         return time1.toString();
     }
-    
-    private static String withDays(String duration)
-    {
 
-        String re1=".*?";	// Non-greedy match on filler
-         String re2="\\s+";	// Uninteresting: ws
-         String re3=".*?";	// Non-greedy match on filler
-         String re4="(\\s+)";	// White Space 1
-         String re5="(\\d+)";	// Integer Number 1
-         String re6="(\\s+)";	// White Space 2
-         String re7="((?:[a-z][a-z]+))";	// Word 1
-         String re8="(,)";	// Any Single Character 1
-         String re9="(\\s+)";	// White Space 3
-         String re10="(\\d+)";	// Integer Number 2
-         String re11="(:)";	// Any Single Character 2
-         String re12="(\\d+)";	// Integer Number 3
-         String re13="(:)";	// Any Single Character 3
-         String re14="(\\d+)";	// Integer Number 4
+    private static String withDays(String duration) {
+
+        String re1 = ".*?";	// Non-greedy match on filler
+        String re2 = "\\s+";	// Uninteresting: ws
+        String re3 = ".*?";	// Non-greedy match on filler
+        String re4 = "(\\s+)";	// White Space 1
+        String re5 = "(\\d+)";	// Integer Number 1
+        String re6 = "(\\s+)";	// White Space 2
+        String re7 = "((?:[a-z][a-z]+))";	// Word 1
+        String re8 = "(,)";	// Any Single Character 1
+        String re9 = "(\\s+)";	// White Space 3
+        String re10 = "(\\d+)";	// Integer Number 2
+        String re11 = "(:)";	// Any Single Character 2
+        String re12 = "(\\d+)";	// Integer Number 3
+        String re13 = "(:)";	// Any Single Character 3
+        String re14 = "(\\d+)";	// Integer Number 4
         int nDays = 0;
         int nHours = 0;
         String time1 = "ND";
-        
-        Pattern p = Pattern.compile(re1+re2+re3+re4+re5+re6+re7+re8+re9+re10+re11+re12+re13+re14,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(duration);
-        if (m.find())
-        {
-        String ws1=m.group(1);
-        
-        // Number of days
-        String int1=m.group(2);
-        nDays = Integer.valueOf(int1);
-        
-        String ws2=m.group(3);
-        String word1=m.group(4);
-        String c1=m.group(5);
-        String ws3=m.group(6);
-        
-        String hours=m.group(7);
-        nHours = Integer.valueOf(hours);
-        
-        String c2=m.group(8);
-        String minutes=m.group(9);
-        String c3=m.group(10);
-        String seconds=m.group(11);
- 
-            int nTotalHours = nDays*24;
-            hours = String.valueOf(nTotalHours+nHours);
 
-            time1 = hours+c2+minutes+c2+seconds;
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(duration);
+        if (m.find()) {
+            String ws1 = m.group(1);
+
+            // Number of days
+            String int1 = m.group(2);
+            nDays = Integer.valueOf(int1);
+
+            String ws2 = m.group(3);
+            String word1 = m.group(4);
+            String c1 = m.group(5);
+            String ws3 = m.group(6);
+
+            String hours = m.group(7);
+            nHours = Integer.valueOf(hours);
+
+            String c2 = m.group(8);
+            String minutes = m.group(9);
+            String c3 = m.group(10);
+            String seconds = m.group(11);
+
+            int nTotalHours = nDays * 24;
+            hours = String.valueOf(nTotalHours + nHours);
+
+            time1 = hours + c2 + minutes + c2 + seconds;
         }
-        
+
         return time1;
     }
 
-    private static String parseOutput(String out) {
+    private static String parseTimeOutput(String out) {
         if (!out.isEmpty()) {
             String timeParsed = "ND";
-            
-            if(out.toLowerCase().contains(dayKeyWord))
-            {
+
+            if (out.toLowerCase().contains(dayKeyWord)) {
                 timeParsed = withDays(out);
-            }
-            else
-            {
+            } else {
                 timeParsed = noDays(out);
             }
-            
+
 
             return filterTime(timeParsed);
         }
@@ -192,7 +191,7 @@ public class PrintEstimator {
         int hours = 0;
         int minutes = 0;
         int seconds = 0;
-        
+
         String re1 = "(\\d+)";	// Integer Number 1
         String re2 = ".*?";	// Non-greedy match on filler
         String re3 = "(\\d+)";	// Integer Number 2
@@ -203,18 +202,9 @@ public class PrintEstimator {
         Matcher m = p.matcher(baseEstimation);
         if (m.find()) {
             //20% patch to correct the deviation of the estimation
-            
-            System.out.println("Integer.valueOf(m.group(1)): "+Integer.valueOf(m.group(1)));
-            System.out.println("Integer.valueOf(m.group(2)): "+Integer.valueOf(m.group(2)));
-            System.out.println("Integer.valueOf(m.group(3)): "+Integer.valueOf(m.group(3)));
-            
             hours = (int) Math.ceil(Integer.valueOf(m.group(1)) * patch);
             minutes = (int) Math.ceil(Integer.valueOf(m.group(2)) * patch);
             seconds = (int) Math.ceil(Integer.valueOf(m.group(3)) * patch);
-            
-            System.out.println("hours: "+hours);
-            System.out.println("minutes: "+minutes);
-            System.out.println("seconds: "+seconds);
         }
 
         /**
@@ -224,7 +214,7 @@ public class PrintEstimator {
         hours = timeTuned[0];
         minutes = timeTuned[1];
 
-        
+
         if (hours > 0) {
             return String.valueOf(hours).concat(":").concat(String.valueOf(minutes));
         }
@@ -237,48 +227,39 @@ public class PrintEstimator {
     }
 
     private static int[] tuneEstimation(int hr, int mnt) {
-        
+
         int[] time = new int[2];
-        
+
         int hours = hr;
         int minutes = mnt;
-        
-        if(minutes > 60)
-        {
-            hours+= (minutes/60);
-            minutes = (minutes%60);
+
+        if (minutes > 60) {
+            hours += (minutes / 60);
+            minutes = (minutes % 60);
         }
 
         time[0] = hours;
         time[1] = minutes;
-        
+
         return time;
 
     }
 
-    private static String trunkTime(int hours, int minutes, int seconds) {
-        int hoursTrunked = hours;
-        int minutesTrunked = minutes;
-        int secondsTrunked = seconds;
-        double quocient = 0;
-        final int BASE = 60;
+    private static String parseCostOutput(String out) {
 
-        if (seconds > BASE) {
-            quocient = seconds / 60;
-            int minutesCarry = (int) quocient;
-            double fractional = secondsTrunked - minutesCarry;
+        String costParsed = ERROR_MESSAGE;
 
-            minutes += minutesCarry;
-            secondsTrunked = (int) Math.round(fractional * 60);
+        if (!out.isEmpty()) {
+            String tag = "Filament used: ";
+            try{
+                costParsed = out.substring(out.indexOf(tag), out.indexOf("mm")).split(tag)[1];
+            }
+            catch(StringIndexOutOfBoundsException e)
+            {
+                ;//Do nothing - just avoid throw
+            }
+            
         }
-        if (minutes > BASE) {
-            quocient = minutes / 60;
-            int hoursCarry = (int) quocient;
-
-            hoursTrunked += hoursCarry;
-            minutesTrunked = (int) Math.round(minutes % BASE);
-        }
-
-        return String.valueOf(hoursTrunked).concat(":").concat(String.valueOf(minutesTrunked));
+        return costParsed;
     }
 }
