@@ -165,7 +165,9 @@ public class Gallery extends javax.swing.JFrame {
             jLabel37, jLabel38, jLabel39,
             jLabel40};
 
-        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+        if(Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false){
+            Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+        }
         resetModelsView(1);
         fullfillModelsSlots(1);
     }
@@ -379,9 +381,8 @@ public class Gallery extends javax.swing.JFrame {
         mWindow.getButtons().updatePressedStateButton("models");
         mWindow.setEnabled(true);
         Base.bringAllWindowsToFront();
-
     }
-    
+
     
     private void evaluatePickedModel(int modelID) {
         

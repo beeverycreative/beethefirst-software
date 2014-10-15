@@ -46,7 +46,7 @@ public class FilamentHeating extends javax.swing.JFrame {
         Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
-        machine.getDriverQueryInterface().resetToolTemperature();
+        machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
         centerOnScreen();
         setProgressBarColor();
@@ -154,8 +154,7 @@ public class FilamentHeating extends javax.swing.JFrame {
             Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        double temperature = machine.getDriverQueryInterface().getTemperature();
-
+        double temperature = machine.getDriver().getTemperature();
         if (temperature > (int) (jProgressBar1.getValue() * 2)) {
             int val = (int) (temperature / 2.25);
             if (val > jProgressBar1.getValue()) {

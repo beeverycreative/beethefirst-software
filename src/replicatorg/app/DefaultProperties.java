@@ -77,7 +77,7 @@ public class DefaultProperties {
         defaultHash.put("nCalibrations", String.valueOf(0));
         defaultHash.put("nTotalPrints", String.valueOf(0));
         defaultHash.put("debugMode", String.valueOf(false));
-        defaultHash.put("comLog", String.valueOf(false));
+        defaultHash.put("comLog", String.valueOf(true));
         defaultHash.put("flashFirmware", String.valueOf(false));
         defaultHash.put("localPrint", String.valueOf(false));
         defaultHash.put("localPrintFileName", "abcde.gcode");

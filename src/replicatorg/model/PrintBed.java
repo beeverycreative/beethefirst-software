@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.j3d.Shape3D;
@@ -49,6 +50,7 @@ public class PrintBed implements Serializable {
     private int nModels;
     private ArrayList<Model> printBed_Models;
     private ArrayList<Model> pickedModels;
+//    private HashMap<String,String> gridOccupation;
     private String category;
     private boolean gcodeOK;
     private boolean isSceneDifferent;
@@ -75,6 +77,7 @@ public class PrintBed implements Serializable {
             nModels = 0;
             printBed_Models = new ArrayList<Model>();
             pickedModels = new ArrayList<Model>();
+//            gridOccupation = new HashMap<String, String>();
 
         } /**
          * No need for else. All of this bellow its not necessary cause we init
@@ -141,6 +144,15 @@ public class PrintBed implements Serializable {
     public void setLastAutonomous(boolean autonomous) {
         this.lastAutonomous = autonomous;
     }
+    
+//    public HashMap<String,String> getGridOccupation()
+//    {
+//        return gridOccupation;
+//    }
+//    
+//    public void addPoint(String x, String y) {
+//        gridOccupation.put(x, y);
+//    }
 
     public StringBuffer getGcode() {
         return gcode;
@@ -159,7 +171,11 @@ public class PrintBed implements Serializable {
     }
 
     public void setSceneDifferent(boolean isDifferent) {
-        Base.getMainWindow().setOktoGoOnSave(false);
+        
+        if(Base.getMainWindow() != null)
+        {
+            Base.getMainWindow().setOktoGoOnSave(false);
+        }
         this.isSceneDifferent = isDifferent;
     }
 

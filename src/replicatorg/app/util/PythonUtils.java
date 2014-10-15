@@ -93,7 +93,7 @@ public class PythonUtils {
                                 }
                         }
 		} catch (Exception e) {
-			Base.showWarning("Pypy", "Fatal Error! Could not find OS! Reinstall Aplication.", e);
+//			Base.showWarning("Pypy", "Fatal Error! Could not find OS! Reinstall Aplication.", e);
 		}
 
 		return null;

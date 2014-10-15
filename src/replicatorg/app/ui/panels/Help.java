@@ -442,9 +442,11 @@ public class Help extends javax.swing.JFrame {
         
         if(Base.getMachineLoader().isConnected())
         {
-            this.dispose();
-            FilamentHeating p = new FilamentHeating();
-            p.setVisible(true);
+            if (Base.isPrinting == false) {
+                this.dispose();
+                FilamentHeating p = new FilamentHeating();
+                p.setVisible(true);
+            }
         }
         else
         {

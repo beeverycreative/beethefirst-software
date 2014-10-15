@@ -45,7 +45,7 @@ public class NozzleClean extends javax.swing.JFrame {
         centerOnScreen();
         machine = Base.getMachineLoader().getMachineInterface();
         achievement = false;
-        machine.getDriverQueryInterface().resetToolTemperature();
+        machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
 //        enableDrag();
         initializeHeatNClean();
@@ -213,7 +213,7 @@ public class NozzleClean extends javax.swing.JFrame {
 
     public boolean getAchievement() {
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
 
         if (temperature < heatTemperature) {
             achievement = false;

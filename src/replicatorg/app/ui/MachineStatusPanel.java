@@ -87,19 +87,19 @@ public class MachineStatusPanel extends BGPanel implements MachineListener {
 	
 // TODO: this has no business being here.
 //	private boolean checkVersionCompatibility() {
-//		Version v = machine.getDriverQueryInterface().getVersion();
+//		Version v = machine.getDriver().getVersion();
 //		
 //		 if (v == null) {
 //			return false;
 //		}
 //		
-//		if (v.compareTo(machine.getDriverQueryInterface().getPreferredVersion()) < 0) {
+//		if (v.compareTo(machine.getDriver().getPreferredVersion()) < 0) {
 //			if (!firmwareWarningIssued) {
 //				firmwareWarningIssued = true;
 //				JOptionPane.showMessageDialog(
 //						this,
 //						"Firmware version "+v+" was detected on your machine.  Firmware version "+
-//						machine.getDriverQueryInterface().getPreferredVersion() + " is recommended.\n" +
+//						machine.getDriver().getPreferredVersion() + " is recommended.\n" +
 //						"Please update your firmware and restart ReplicatorG.",
 //						"Old firmware detected", JOptionPane.WARNING_MESSAGE);
 //			}

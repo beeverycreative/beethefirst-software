@@ -56,7 +56,7 @@ public class CuraEngineConfigurator {
         result.put("printSpeed", "50");
         result.put("infillSpeed", "50");
         result.put("inset0Speed", "50");
-        result.put("pointsClipDistance", "440");
+//        result.put("pointsClipDistance", "440");
         result.put("insetXSpeed", "50");
         result.put("moveSpeed", "150");
         result.put("fanFullOnLayerNr", "2");
@@ -67,7 +67,7 @@ public class CuraEngineConfigurator {
         result.put("supportXYDistance", "700");
         result.put("supportZDistance", "150");
         result.put("supportExtruder", "-1");
-        result.put("retractionAmount", "4500");
+        result.put("retractionAmount", "500");
         result.put("retractionAmountPrime", "0");
         result.put("retractionSpeed", "45");
         result.put("retractionAmountExtruderSwitch", "14500");
@@ -268,10 +268,10 @@ public class CuraEngineConfigurator {
                 return String.valueOf((int) (Float.parseFloat(curaIni.get("layer_height")) * 1000.0));
             }
             
-            if(key.equals("pointsClipDistance"))
-            {
-                return String.valueOf((int) (Float.parseFloat(curaIni.get("clip_distance")) * 1000.0));
-            }
+//            if(key.equals("pointsClipDistance"))
+//            {
+//                return String.valueOf((int) (Float.parseFloat(curaIni.get("clip_distance")) * 1000.0));
+//            }
 
             if (key.equals("sparseInfillLineDistance")) {
 
@@ -485,7 +485,7 @@ public class CuraEngineConfigurator {
 
             if (key.equals("retractionAmount")) {
 
-                return String.valueOf(Float.parseFloat(curaIni.get("retraction_amount")) * 1000.0);
+                return String.valueOf((int) (Float.parseFloat(curaIni.get("retraction_amount")) * 1000.0));
             }
             if (key.equals("retractionSpeed")) {
 

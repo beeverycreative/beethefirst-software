@@ -13,31 +13,62 @@ package replicatorg.app;
  */
 public class FilamentControler {
 
+    public static String NO_FILAMENT = "NO_FILAMENT";
+    public static String NO_FILAMENT_CODE = "A0";
+    
     public static String getColor(String coilCode) {
-        String color = "NO_FILAMENT";
+        String color = NO_FILAMENT;
 
-        if (coilCode.contains("331") || coilCode.contains("301")) {
-            color = Languager.getTagValue("CoilColors", "WHITE");
-        }
-        if (coilCode.contains("332") || coilCode.contains("302")) {
-            color = Languager.getTagValue("CoilColors", "BLACK");
-        }
-        if (coilCode.contains("333") || coilCode.contains("303")) {
-            color = Languager.getTagValue("CoilColors", "YELLOW");
-        }
-        if (coilCode.contains("334")|| coilCode.contains("304")) {
-            color = Languager.getTagValue("CoilColors", "RED");
-        }
-        if (coilCode.contains("335") || coilCode.contains("305")) {
-            color = Languager.getTagValue("CoilColors", "TURQUOISE");
-        }
-        if (coilCode.contains("336") || coilCode.contains("306")) {
+        if (coilCode.contains("336")
+                || coilCode.contains("306")
+                || coilCode.contains("001")) {
             color = Languager.getTagValue("CoilColors", "TRANSPARENT");
         }
-        if (coilCode.contains("337") || coilCode.contains("321")) {
+        if (coilCode.contains("331")
+                || coilCode.contains("301")
+                || coilCode.contains("002")) {
+            color = Languager.getTagValue("CoilColors", "WHITE");
+        }
+        if (coilCode.contains("332")
+                || coilCode.contains("302")
+                || coilCode.contains("003")) {
+            color = Languager.getTagValue("CoilColors", "BLACK");
+        }
+        if (coilCode.contains("334")
+                || coilCode.contains("304")
+                || coilCode.contains("004")) {
+            color = Languager.getTagValue("CoilColors", "RED");
+        }
+        if (coilCode.contains("333")
+                || coilCode.contains("303")
+                || coilCode.contains("005")) {
+            color = Languager.getTagValue("CoilColors", "YELLOW");
+        }
+        if (coilCode.contains("006")) {
+            color = Languager.getTagValue("CoilColors", "BLUE");
+        }
+        if (coilCode.contains("007")) {
+            color = Languager.getTagValue("CoilColors", "OLIVE");
+        }
+        if (coilCode.contains("008")) {
+            color = Languager.getTagValue("CoilColors", "PINK");
+        }
+        if (coilCode.contains("009")) {
+            color = Languager.getTagValue("CoilColors", "SILVER");
+        }
+        if (coilCode.contains("335")
+                || coilCode.contains("305")
+                || coilCode.contains("010")) {
+            color = Languager.getTagValue("CoilColors", "TURQUOISE");
+        }
+        if (coilCode.contains("337")
+                || coilCode.contains("321")
+                || coilCode.contains("011")) {
             color = Languager.getTagValue("CoilColors", "GREEN");
         }
-        if (coilCode.contains("338") || coilCode.contains("322")) {
+        if (coilCode.contains("338")
+                || coilCode.contains("322")
+                || coilCode.contains("012")) {
             color = Languager.getTagValue("CoilColors", "ORANGE");
         }
 
@@ -47,85 +78,189 @@ public class FilamentControler {
     public static String[] getColors() {
 
         String[] colors = {
-            FilamentCodes.A301 + " - " + Languager.getTagValue("CoilColors", "WHITE"),
-            FilamentCodes.A302 + " - " + Languager.getTagValue("CoilColors", "BLACK"),
-            FilamentCodes.A303 + " - " + Languager.getTagValue("CoilColors", "YELLOW"),
-            FilamentCodes.A304 + " - " + Languager.getTagValue("CoilColors", "RED"),
-            FilamentCodes.A305 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE"),
-            FilamentCodes.A306 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT"),
-            FilamentCodes.A321 + " - " + Languager.getTagValue("CoilColors", "GREEN"),
-            FilamentCodes.A322 + " - " + Languager.getTagValue("CoilColors", "ORANGE"),          
-//            FilamentCodes.A331 + " - " + Languager.getTagValue("CoilColors", "WHITE"),
-//            FilamentCodes.A332 + " - " + Languager.getTagValue("CoilColors", "BLACK"),
-//            FilamentCodes.A333 + " - " + Languager.getTagValue("CoilColors", "YELLOW"),
-//            FilamentCodes.A334 + " - " + Languager.getTagValue("CoilColors", "RED"),
-//            FilamentCodes.A335 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE"),
-//            FilamentCodes.A336 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT"),
-//            FilamentCodes.A337 + " - " + Languager.getTagValue("CoilColors", "GREEN"),
-//            FilamentCodes.A338 + " - " + Languager.getTagValue("CoilColors", "ORANGE")
+            
+            Languager.getTagValue("CoilColors", "BLACK"),
+            Languager.getTagValue("CoilColors", "BLACK") + " - " + FilamentCodes.A003,
+            Languager.getTagValue("CoilColors", "BLUE"),
+            Languager.getTagValue("CoilColors", "BLUE") + " - " + FilamentCodes.A006,
+            Languager.getTagValue("CoilColors", "GREEN"),
+            Languager.getTagValue("CoilColors", "GREEN") + " - " + FilamentCodes.A011,
+            Languager.getTagValue("CoilColors", "OLIVE"),
+            Languager.getTagValue("CoilColors", "OLIVE") + " - " + FilamentCodes.A007,
+            Languager.getTagValue("CoilColors", "ORANGE"),
+            Languager.getTagValue("CoilColors", "ORANGE") + " - " + FilamentCodes.A012,
+            Languager.getTagValue("CoilColors", "PINK") + " - " + FilamentCodes.A008,
+            Languager.getTagValue("CoilColors", "RED"),
+            Languager.getTagValue("CoilColors", "RED") + " - " + FilamentCodes.A004,
+            Languager.getTagValue("CoilColors", "SILVER") + " - " + FilamentCodes.A009,
+            Languager.getTagValue("CoilColors", "TRANSPARENT"),
+            Languager.getTagValue("CoilColors", "TRANSPARENT") + " - " + FilamentCodes.A001,
+            Languager.getTagValue("CoilColors", "TURQUOISE"),
+            Languager.getTagValue("CoilColors", "TURQUOISE") + " - " + FilamentCodes.A010,
+            Languager.getTagValue("CoilColors", "WHITE"),
+            Languager.getTagValue("CoilColors", "WHITE") + " - " + FilamentCodes.A002,
+            Languager.getTagValue("CoilColors", "YELLOW"),
+            Languager.getTagValue("CoilColors", "YELLOW") + " - " + FilamentCodes.A005,
+            
+            
+//            FilamentCodes.A301 + " - " + Languager.getTagValue("CoilColors", "WHITE"),
+//            FilamentCodes.A302 + " - " + Languager.getTagValue("CoilColors", "BLACK"),
+//            FilamentCodes.A303 + " - " + Languager.getTagValue("CoilColors", "YELLOW"),
+//            FilamentCodes.A304 + " - " + Languager.getTagValue("CoilColors", "RED"),
+//            FilamentCodes.A305 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE"),
+//            FilamentCodes.A306 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT"),
+//            FilamentCodes.A321 + " - " + Languager.getTagValue("CoilColors", "GREEN"),
+//            FilamentCodes.A322 + " - " + Languager.getTagValue("CoilColors", "ORANGE"), 
         };
 
         return colors;
     }
 
     public static String getFilamentType(String code) {
-        if (code.contains("331")) {
-            return FilamentCodes.A331 + " - " + Languager.getTagValue("CoilColors", "WHITE");
+        //FILKEMP
+        if (code.contains("001")) {
+            return Languager.getTagValue("CoilColors", "TRANSPARENT")+" - "+ FilamentCodes.A001;
         }
-        if (code.contains("332")) {
-            return FilamentCodes.A332 + " - " + Languager.getTagValue("CoilColors", "BLACK");
+        if (code.contains("002")) {
+            return Languager.getTagValue("CoilColors", "WHITE")+" - "+ FilamentCodes.A002 ;
         }
-        if (code.contains("333")) {
-            return FilamentCodes.A333 + " - " + Languager.getTagValue("CoilColors", "YELLOW");
+        if (code.contains("003")) {
+            return Languager.getTagValue("CoilColors", "BLACK")+" - "+ FilamentCodes.A003 ;
         }
-        if (code.contains("334")) {
-            return FilamentCodes.A334 + " - " + Languager.getTagValue("CoilColors", "RED");
+        if (code.contains("004")) {
+            return Languager.getTagValue("CoilColors", "RED")+" - "+ FilamentCodes.A003;
         }
-        if (code.contains("335")) {
-            return FilamentCodes.A335 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE");
+        if (code.contains("005")) {
+            return Languager.getTagValue("CoilColors", "YELLOW")+" - "+ FilamentCodes.A005;
         }
-        if (code.contains("336")) {
-            return FilamentCodes.A336 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT");
+        if (code.contains("006")) {
+            return Languager.getTagValue("CoilColors", "BLUE")+" - "+ FilamentCodes.A006;
         }
-        if (code.contains("337")) {
-            return FilamentCodes.A337 + " - " + Languager.getTagValue("CoilColors", "GREEN");
+        if (code.contains("007")) {
+            return Languager.getTagValue("CoilColors", "OLIVE")+" - "+ FilamentCodes.A007 ;
         }
-        if (code.contains("338")) {
-            return FilamentCodes.A338 + " - " + Languager.getTagValue("CoilColors", "ORANGE");
+        if (code.contains("008")) {
+            return Languager.getTagValue("CoilColors", "PINK")+" - "+ FilamentCodes.A008;
         }
+        if (code.contains("009")) {
+            return Languager.getTagValue("CoilColors", "SILVER")+" - "+ FilamentCodes.A009;
+        }
+        if (code.contains("010")) {
+            return Languager.getTagValue("CoilColors", "TURQUOISE")+" - "+ FilamentCodes.A010 ;
+        }
+        if (code.contains("011")) {
+            return Languager.getTagValue("CoilColors", "GREEN")+" - "+ FilamentCodes.A011 ;
+        }
+        if (code.contains("012")) {
+            return Languager.getTagValue("CoilColors", "ORANGE")+" - "+ FilamentCodes.A012;
+        }
+//         //KDI-NEW
+//        if (code.contains("331")) {
+//            return FilamentCodes.A331 + " - " + Languager.getTagValue("CoilColors", "WHITE");
+//        }
+//        if (code.contains("332")) {
+//            return FilamentCodes.A332 + " - " + Languager.getTagValue("CoilColors", "BLACK");
+//        }
+//        if (code.contains("333")) {
+//            return FilamentCodes.A333 + " - " + Languager.getTagValue("CoilColors", "YELLOW");
+//        }
+//        if (code.contains("334")) {
+//            return FilamentCodes.A334 + " - " + Languager.getTagValue("CoilColors", "RED");
+//        }
+//        if (code.contains("335")) {
+//            return FilamentCodes.A335 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE");
+//        }
+//        if (code.contains("336")) {
+//            return FilamentCodes.A336 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT");
+//        }
+//        if (code.contains("337")) {
+//            return FilamentCodes.A337 + " - " + Languager.getTagValue("CoilColors", "GREEN");
+//        }
+//        if (code.contains("338")) {
+//            return FilamentCodes.A338 + " - " + Languager.getTagValue("CoilColors", "ORANGE");
+//        }
         
-        //OLD
+         //KDI-OLD
         
         if (code.contains("301")) {
-            return FilamentCodes.A301 + " - " + Languager.getTagValue("CoilColors", "WHITE");
+            return Languager.getTagValue("CoilColors", "WHITE");
         }
         if (code.contains("302")) {
-            return FilamentCodes.A302 + " - " + Languager.getTagValue("CoilColors", "BLACK");
+            return Languager.getTagValue("CoilColors", "BLACK");
         }
         if (code.contains("303")) {
-            return FilamentCodes.A303 + " - " + Languager.getTagValue("CoilColors", "YELLOW");
+            return Languager.getTagValue("CoilColors", "YELLOW");
         }
         if (code.contains("304")) {
-            return FilamentCodes.A304 + " - " + Languager.getTagValue("CoilColors", "RED");
+            return Languager.getTagValue("CoilColors", "RED");
         }
         if (code.contains("305")) {
-            return FilamentCodes.A305 + " - " + Languager.getTagValue("CoilColors", "TURQUOISE");
+            return Languager.getTagValue("CoilColors", "TURQUOISE");
         }
         if (code.contains("306")) {
-            return FilamentCodes.A306 + " - " + Languager.getTagValue("CoilColors", "TRANSPARENT");
+            return Languager.getTagValue("CoilColors", "TRANSPARENT");
         }
         if (code.contains("321")) {
-            return FilamentCodes.A321 + " - " + Languager.getTagValue("CoilColors", "GREEN");
+            return Languager.getTagValue("CoilColors", "GREEN");
         }
         if (code.contains("322")) {
-            return FilamentCodes.A322 + " - " + Languager.getTagValue("CoilColors", "ORANGE");
+            return Languager.getTagValue("CoilColors", "ORANGE");
         }
 
         return "N/A";
     }
 
     public static double getColorRatio(String coilCode) {
-        
+
+        //A001-TRANSPARENT
+        if (coilCode.contains("001")) {
+            return 0.91;
+        }
+        //A002-WHITE
+        if (coilCode.contains("002")) {
+            return 0.89;
+        }
+        //A003-BLACK
+        if (coilCode.contains("003")) {
+            return 0.88;
+        }
+        //A004-RED
+        if (coilCode.contains("004")) {
+            return 0.96;
+        }
+        //A005-YELLOW
+        if (coilCode.contains("005")) {
+            return 0.96;
+        }
+        //A006-BLUE
+        if (coilCode.contains("006")) {
+            return 0.92;
+        }
+        //A007-BRONZE
+        if (coilCode.contains("007")) {
+            return 0.88;
+        }
+        //A008-PINK
+        if (coilCode.contains("008")) {
+            return 0.90;
+        }
+        //A009-SILVER
+        if (coilCode.contains("009")) {
+            return 0.91;
+        }
+        //A010-TURQUOISE
+        if (coilCode.contains("010")) {
+            return 0.86;
+        }
+        //A011-NEON GREEN
+        if (coilCode.contains("011")) {
+            return 0.86;
+        }
+        //A012-ORANGE  
+        if (coilCode.contains("012")) {
+            return 0.88;
+        }
+      
         if (coilCode.contains("331") || coilCode.contains("301")) {
             return 0.93;
         }
@@ -184,6 +319,19 @@ public class FilamentControler {
 
     public enum FilamentCodes {
 
+        A001, // FILLKEMPT - Transparent
+        A002, // FILLKEMPT - White
+        A003, // FILLKEMPT - Black
+        A004, // FILLKEMPT - Red
+        A005, // FILLKEMPT - Yellow
+        A006, // FILLKEMPT - Blue
+        A007, // FILLKEMPT - Bronze
+        A008, // FILLKEMPT - Pink
+        A009, // FILLKEMPT - Silver
+        A010, // FILLKEMPT - Turquoise
+        A011, // FILLKEMPT - Neon Green
+        A012, // FILLKEMPT - Orange
+        
         A301, // WHITE
         A302, // BLACK
         A303, //YELLOW
@@ -192,25 +340,15 @@ public class FilamentControler {
         A306, //TRANSPARENT
         A321, // GREEN
         A322,  //ORANGE
-        A331, // WHITE
-        A332, // BLACK
-        A333, //YELLOW
-        A334, //RED
-        A335, // VIOLET
-        A336, //TRANSPARENT
-        A337, // GREEN
-        A338  //ORANGE
+//        
+//        A331, // WHITE
+//        A332, // BLACK
+//        A333, //YELLOW
+//        A334, //RED
+//        A335, // VIOLET
+//        A336, //TRANSPARENT
+//        A337, // GREEN
+//        A338, //ORANGE
     }
 
-//    public enum ColorsSupported {
-//
-//        BLACK,
-//        GREEN,
-//        ORANGE,
-//        RED,
-//        TURQUOISE,
-//        TRANSPARENT,
-//        WHITE,
-//        YELLOW
-//    };
 }

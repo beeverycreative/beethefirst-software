@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.j3d.loaders.stl.STLFileReader;
-import replicatorg.model.GCodeSource;
-import replicatorg.plugin.toolpath.cura.CuraGenerator;
 import replicatorg.util.Point5d;
 
 /**
@@ -27,13 +25,6 @@ public class Oracle {
     private static Point5d start,finish;
     private static double estimatedGCodeTime = 0;
     private static double startTime = 0;
-
-
-    public static double getPrintTime(GCodeSource src)
-    {
-        return 0;
-        
-    }
     
     // REDSOFT: This must be able to be performed using Scene or Model as argument
     //       and then accessing n_Facets per model to be printed

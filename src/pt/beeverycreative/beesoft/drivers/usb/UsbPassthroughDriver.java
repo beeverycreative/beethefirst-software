@@ -316,10 +316,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             //dispatchCommand("M29"); // Shuts down current USB-print
             setBusy(true);
             updateCoilCode();
+            Base.isPrinting = false;
             dispatchCommand("M107", COM.DEFAULT); // Shut downs Blower 
             dispatchCommand("M104 S0", COM.DEFAULT); //Extruder and Table heat
             dispatchCommand("G92", COM.DEFAULT);
-            
+
             //Set PID values
             dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
             dispatchCommand("M601", COM.DEFAULT);
@@ -339,7 +340,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             sendCommand(GET_STATUS_FROM_ERROR);
             String status = readResponse();
 //            System.out.println("status: " + status + " found in " + tries + ".");
-            
+
             while (status.contains(NOK) && (tries < MESSAGES_IN_BLOCK)) {
                 tries++;
                 sendCommand(GET_STATUS_FROM_ERROR);
@@ -898,7 +899,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String w1 = m.group(1);
             String int1 = m.group(2);
 
-            machine.setCoilCode("A" + int1);
+            //hack to set coil codes to 3 digits
+            String zeros = "000";
+            String code = "A" + zeros.substring(0, 3 - int1.length()) + int1;
+
+            machine.setCoilCode(code);
 
         } else {
             //Default A0 / None
@@ -1072,11 +1077,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //                Base.writeLog("512B block transfered with success");
                 }
 
-                System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
+                //System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
                 transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
-                
-                if(Base.printPaused == false)
-                {
+
+                if (Base.printPaused == false) {
                     psAutonomous.updatePrintBar(transferPercentage);
                 }
 
@@ -1150,8 +1154,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         System.out.println(statistics);
 
         double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
-        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed/1000) + meanSpeed)/2));
-        
+        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
+
         transferMode = false;
 
         return RESPONSE_OK;
@@ -1307,13 +1311,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         loop = System.currentTimeMillis() - loop;
         double transferSpeed = totalBytes / (loop / 1000.0);
         String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
-                + "s : " +  transferSpeed + "kbps\n";
+                + "s : " + transferSpeed + "kbps\n";
         logTransfer += statistics;
         Base.writeStatistics(logTransfer);
         System.out.println(statistics);
-        
+
         double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
-        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed/1000) + meanSpeed)/2));
+        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
 
         transferMode = false;
 
@@ -2240,43 +2244,40 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public int getLastLineNumber() {
 
-        String result = dispatchCommand(GET_LINE_NUMBER,COM.BLOCK);
+        String result = dispatchCommand(GET_LINE_NUMBER, COM.BLOCK);
         String[] parts = result.split(" ");
         String seekTag = "sdpos:";
-        
-        for(int i = 0; i < parts.length; i++)
-        {
-            if(parts[i].contains(seekTag))
-            {
+
+        for (int i = 0; i < parts.length; i++) {
+            if (parts[i].contains(seekTag)) {
                 lastLineNumber = Integer.valueOf(parts[i].split(":")[1]);
             }
         }
-        
+
         return lastLineNumber;
     }
 
     @Override
     public void readLastLineNumber() {
-        
-        String result = dispatchCommand(GET_LINE_NUMBER,COM.DEFAULT);
+
+        String result = dispatchCommand(GET_LINE_NUMBER, COM.DEFAULT);
         //parse value
         String txt = "* last N:0 SDPOS:0 ok Q:0";
 
-        String re1=".*?";	// Non-greedy match on filler
-        String re2="(sdpos)";	// Word 1
-        String re3="(:)";	// Any Single Character 1
-        String re4="(\\d+)";	// Integer Number 1
-        
-        Pattern p = Pattern.compile(re1+re2+re3+re4,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        String re1 = ".*?";	// Non-greedy match on filler
+        String re2 = "(sdpos)";	// Word 1
+        String re3 = "(:)";	// Any Single Character 1
+        String re4 = "(\\d+)";	// Integer Number 1
+
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(result);
-        if (m.find())
-        {
-            String word1=m.group(1);
-            String c1=m.group(2);
-            String int1=m.group(3);
+        if (m.find()) {
+            String word1 = m.group(1);
+            String c1 = m.group(2);
+            String int1 = m.group(3);
             lastLineNumber = Integer.valueOf(int1);
         }
-       
+
     }
 
     @Override
@@ -2338,35 +2339,34 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         return myCurrentPosition;
     }
-    
-    public String setElapsedTime(long time)
-    {
-        sendCommand("M32 A"+time);
+
+    public String setElapsedTime(long time) {
+        sendCommand("M32 A" + time);
         try {
-            Thread.sleep(5,0);
+            Thread.sleep(5, 0);
         } catch (InterruptedException ex) {
             Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
-         
+
         return readResponse();
     }
-    
+
     @Override
     public Point5d getActualPosition() {
 
         Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
         int tries = 10;
-         sendCommand(GET_POSITION);
+        sendCommand(GET_POSITION);
         try {
-            Thread.sleep(10,0);
+            Thread.sleep(10, 0);
         } catch (InterruptedException ex) {
             Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
-         
-         String position = readResponse();
-                  
-         System.out.println("position1: "+position);
-         
+
+        String position = readResponse();
+
+        System.out.println("position1: " + position);
+
         /**
          * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok
          * Q:0";
@@ -2413,11 +2413,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String float4 = m.group(17);
             myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
             Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
-        }
-        else
-        {
+        } else {
             //C: X:0.0000 Y:0.0000 Z:0.0000 E:0.0000 ok Q:0
-            
+
             if (position.contains("X")) {
                 int indexX = position.indexOf("X");
                 int commandLenght = position.length();
@@ -2442,20 +2440,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
                 myCurrentPosition.setA(Double.valueOf(aux));
             }
-            if(!position.contains("X") && !position.contains("Y") && !position.contains("Z")&& !position.contains("E"))
-            {
-                sendCommand(GET_POSITION); 
+            if (!position.contains("X") && !position.contains("Y") && !position.contains("Z") && !position.contains("E")) {
+                sendCommand(GET_POSITION);
                 try {
                     Thread.sleep(5, 0);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 position = readResponse();
-                System.out.println("position2: "+position);
+                System.out.println("position2: " + position);
                 boolean answerOK = false;
-                
-                while( !answerOK || (tries > 0))
-                {
+
+                while (!answerOK || (tries > 0)) {
                     sendCommand(GET_POSITION);
                     try {
                         Thread.sleep(25, 0);
@@ -2465,14 +2461,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                     position += readResponse();
                     tries--;
-                    
-                    if(position.contains("X") && position.contains("Y") && position.contains("Z")&& position.contains("E"))
-                    {
+
+                    if (position.contains("X") && position.contains("Y") && position.contains("Z") && position.contains("E")) {
                         answerOK = true;
                         myCurrentPosition = readPoint5DFromPosition(position);
                         break;
                     }
-                    
+
                 }
             }
         }
@@ -2482,36 +2477,35 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         return myCurrentPosition;
     }
-    
-    private Point5d readPoint5DFromPosition(String position)
-    {
+
+    private Point5d readPoint5DFromPosition(String position) {
         Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
-        
+
         if (position.contains("X")) {
             int indexX = position.indexOf("X");
             int commandLenght = position.length();
             String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
             myCurrentPosition.setX(Double.valueOf(aux));
-        } 
+        }
         if (position.contains("Y")) {
             int indexX = position.indexOf("Y");
             int commandLenght = position.length();
             String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
             myCurrentPosition.setY(Double.valueOf(aux));
-        } 
+        }
         if (position.contains("Z")) {
             int indexX = position.indexOf("Z");
             int commandLenght = position.length();
             String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
             myCurrentPosition.setZ(Double.valueOf(aux));
-        } 
+        }
         if (position.contains("E")) {
             int indexX = position.indexOf("E");
             int commandLenght = position.length();
             String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
             myCurrentPosition.setA(Double.valueOf(aux));
         }
-        
+
         return myCurrentPosition;
     }
 

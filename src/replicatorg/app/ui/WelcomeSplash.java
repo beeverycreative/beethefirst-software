@@ -51,15 +51,11 @@ public class WelcomeSplash extends javax.swing.JFrame {
         window = wind;
         // Loads Splash image
         image = new ImageIcon(Base.getImage("images/welcomeSplash.png", this));
-        Base.writeLog("A");
         Image img = image.getImage();
-        Base.writeLog("B");
         // Loads Splash image for dimensios getter
         BufferedImage img2 = Base.getImage("images/welcomeSplash.png", this);
-        Base.writeLog("C");
         // Gets Screen Dimension
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        Base.writeLog("D");
         // Calculates ratio for modular adjustement to every screen
         double screenRatio = 0.75;
         newWidth = (int) (d.width * screenRatio);
@@ -69,7 +65,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         // Scales original image to new size values with Smooth conversion
         Image newimg = img.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
         image = new ImageIcon(newimg);
-        Base.writeLog("E");
         // Sets bar preferences and size.
         // Bar width is equal to image width. Height has value = 5
         jProgressBar1.setMaximum(newWidth - 5);
@@ -81,9 +76,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
         jPanel1.setSize(new Dimension(newWidth, newHeight));
         this.setPreferredSize(new Dimension(newWidth, newHeight+jProgressBar1.getHeight()));
         this.setSize(new Dimension(newWidth, newHeight+jProgressBar1.getHeight()));
-        Base.writeLog("F");
         this.setLocationRelativeTo(null);
-        Base.writeLog("G");
         // Thread to update JProgress Bar
         new Thread() {
             @Override
@@ -96,7 +89,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
                 while (i < getDuration()) {
                     jProgressBar1.setValue(inc);
                     i++;
-                    Base.writeLog("H");
                     inc += getWidth() / 80;
                     try {
                         sleep(100);
@@ -105,7 +97,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
                     }
 
                 }
-                Base.writeLog("I");
                 changeState();
             }
         }.start();

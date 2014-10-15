@@ -97,7 +97,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         gcodeGenerator = new TransferControlThread(this);
         ut = new UpdateThread4(this, gcodeGenerator);
         Base.systemThreads.add(ut);
-        Base.getMainWindow().setEnabled(false);
+//        Base.getMainWindow().setEnabled(false);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.setName("Autonomous");
     }
@@ -224,6 +224,8 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         dispose();
         Base.bringAllWindowsToFront();
         Base.getMainWindow().setEnabled(true);
+        Base.isPrinting = false;
+        Base.printPaused = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         enableSleep();
 
@@ -322,7 +324,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         tInfo2.setText(Languager.getTagValue("Print", "Print_BuildAborted"));
         tInfo3.setText(Languager.getTagValue("Print", "Print_BuildAborted2"));
         tEstimation.setText(Languager.getTagValue("Print", "Print_BuildAborted3"));
-        tRemaining.setText(Languager.getTagValue("Print", "Print_BuildAborted43"));
+        tRemaining.setText(Languager.getTagValue("Print", "Print_BuildAborted4"));
         jProgressBar1.setVisible(false);
 
     }
@@ -430,10 +432,18 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                             + " " + Languager.getTagValue("Print", "PrintMinutes");
 
                     if (remainingTime > 60) {
-                        textR = hours
-                                + " " + Languager.getTagValue("Print", "PrintHours")
-                                + " " + minutes
-                                + " " + Languager.getTagValue("Print", "PrintMinutes");
+                        if (hours == 1) {
+                            textR = hours
+                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + minutes
+                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                        } else {
+                            textR = hours
+                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + minutes
+                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                        }
+                        
                     } else if (remainingTime == 2) {
                         //In case PrintEstimator fails, dont appear 2min
                         textE = "";
@@ -741,8 +751,13 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             if (duration >= 2 && duration > 60) {
 
                 tInfo2.setText(Languager.getTagValue("Print", "Print_BuildFinished"));
-                tEstimation.setText(Languager.getTagValue("Print", "Print_Completion") + " " + hours + " "
-                        + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                if (duration >= 60 && duration < 120) {
+                    tEstimation.setText(Languager.getTagValue("Print", "Print_Completion") + " " + hours + " "
+                            + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                } else {
+                    tEstimation.setText(Languager.getTagValue("Print", "Print_Completion") + " " + hours + " "
+                            + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                }
                 bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 tRemaining.setText(Languager.getTagValue("Print", "Print_Splash_Info5"));
@@ -788,9 +803,9 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             @Override
             public void run() {
 
-                if (!machine.getDriverQueryInterface().isBusy()) {
+                if (!machine.getDriver().isBusy()) {
                     unloadPressed = true;
-                    while (!machine.getDriverQueryInterface().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineStatus()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -833,7 +848,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                         Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    while (!machine.getDriverQueryInterface().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineStatus()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -846,7 +861,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
 
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode("A0"));
+                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
                 tRemaining.setText(Languager.getTagValue("Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;
@@ -867,9 +882,11 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         ut.stop();
         gcodeGenerator.stop();
         Base.getMainWindow().setEnabled(true);
+        Base.isPrinting = false;
         enableSleep();
         Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetTemperature(0));
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
+        Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.UpdateCoilCode());
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
         Base.bringAllWindowsToFront();
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
@@ -1421,7 +1438,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                         status += driver.dispatchCommand("M625");
                     }
 
-                    machine.getDriverQueryInterface().setBusy(false);
+                    machine.getDriver().setBusy(false);
                     Maintenance p = new Maintenance();
                     p.setVisible(true);
                     bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line12"));
@@ -1661,7 +1678,7 @@ class UpdateThread4 extends Thread {
             Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M104 S" + temperatureGoal));
 
         window.updateTemperatureOnProgressBar(temperature);
@@ -1692,7 +1709,7 @@ class UpdateThread4 extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (machine.getDriverQueryInterface().getMachineStatus() && finished) {
+            if (machine.getDriver().getMachineStatus() && finished) {
                 ready = true;
                 break;
             }
@@ -1705,8 +1722,8 @@ class UpdateThread4 extends Thread {
     public void run() {
 
         if (window.isPrinting()) {
-
             Base.writeLog("Autonomous print resumed");
+            Base.isPrinting = true;
             //Parse of the answer
             AutonomousData variables = driver.getPrintSessionsVariables();
             window.resetProgressBar();
@@ -1726,7 +1743,7 @@ class UpdateThread4 extends Thread {
             System.out.println("NLines: " + nLines);
             System.out.println("Current NLines: " + currentNumberLines);
             System.out.println("*****************");
-
+//            System.out.println("{debug} - "+time);
             /**
              * Set UI elements
              */
@@ -1803,6 +1820,7 @@ class UpdateThread4 extends Thread {
              * Controls temperature for proper print
              */
             boolean temperatureAchieved = false;
+            Base.getMainWindow().getButtons().blockModelsButton(false);
 
             window.resetProgressBar();
             while (temperatureAchieved == false) {
@@ -1817,7 +1835,7 @@ class UpdateThread4 extends Thread {
             /**
              * Reset elapsed time of Autonomous to 0
              */
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M32 A0"));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M32 "+FilamentControler.NO_FILAMENT_CODE));
             
             /**
              * Start printing from SDCard

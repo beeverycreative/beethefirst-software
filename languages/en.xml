@@ -234,7 +234,6 @@
             <Configurations_Save value="Current settings are being saved..."/>
             <StatusMessage value="Status Message"/>
             <GCodeGeneration value="Preparing your print..."/>
-            <MeshError value="Imported model has errors. Try to fix them or import another model."/>
         </FeedbackLabel>
         
         <!-- A próxima secção XML contém o texto a ser apresentado no Processo de Impressão, incluindo SplashScreens --> 
@@ -259,16 +258,18 @@
             <Print_Quality_Low value="Low"/>	
             <Print_Quality_Normal value="Normal"/>	
             <Print_Quality_High value="High"/>	
+            <Print_Quality_SHigh value="High+ (beta)"/>
             <Print_Density value="Density"/>
             <Print_Density_Low value="Low"/>
             <Print_Density_Medium value="Medium"/>
             <Print_Density_High value="High"/>	
+            <Print_Density_Insertion value="Density value (%) :"/>	
             <Print_Raft value="Raft"/>	
             <Print_Support value="Support"/>	
             <Print_Autonomy value="Autonomy"/>
             <Print_GramsTag value="gram(s)"/>
             <Print_EstimationPrintTime value="Print time:"/>
-            <Print_EstimationMaterial value="Material cost:"/>
+            <Print_EstimationMaterial value="Filament weight:"/>
             <Print_Raft_Info value="This option creates a base that will allow the model to adhere to the table and help avoid warping. The raft may be hard to remove from the model, so only use when needed."/>	
             <Print_Support_Info value="This option automatically creates a detachable structure beneath an overhang or highly inclined areas, so as to allow the model to be printed."/>	
             <Print_Autonomy_Info value="This option allows you to print without a computer connection. You will be informed when you can disconnect from your computer."/>
@@ -283,7 +284,7 @@
             <Print_Processing value="Processing... Please wait."/>
             <Print_Pausing value="Pausing... Please wait."/>
             <Print_Resuming value="Resuming... Please wait."/> 
-           <Print_Waiting value="Waiting... Resume when you are ready."/>
+            <Print_Waiting value="Waiting... Resume when you are ready."/>
             <Print_Unloading value="Your BEETHEFIRST is unloading. Please wait."/>
             <Print_Unloaded1 value="You may now remove your spool."/>
             <Print_Unloaded2 value="Cut the tip and store the spool in a cold dry place."/>
@@ -301,7 +302,7 @@
             <Print_Completion value="Completed in"/>
             <Print_BuildAborted value="Building process aborted."/>
             <Print_BuildAborted2 value="Please restart the transfer and try again."/>
-            <Print_BuildAborted3 value="If the problem persists, switch your BEETHEFIRST off. Then restart BEESOFT then switch the printer on."/>
+            <Print_BuildAborted3 value="If the problem persists, switch your BEETHEFIRST off."/>
             <Print_BuildAborted4 value="Then restart BEESOFT then switch the printer on."/>
             <Print_Stopped value="Stopped after"/>
             <Print_DoneBuilding value="Done building."/>
@@ -329,8 +330,8 @@
             <Exchange_Info_Title2 value="Unload filament"/>
             <Exchange_Info value="To unload the filament, push the Unload button and pull the filament steadily.
 To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>
-            <Exchange_Info2 value="To unload the filament, push the Unload button and wait for instructions.
-To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>                    
+            <Exchange_Info2 value="Make sure the spool’s label is facing inside as shown in the image. To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament.
+To unload the filament, push the Unload button and wait for instructions."/>                    
             <Exchange_Info3 value="Gently pull as filament unloads."/>         
             <Title3 value="FILAMENT TYPE"/>
             <Title4 value="Select type"/>
@@ -449,6 +450,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <BTF_Disconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
             <ErrorUpdating value="Sorry about this! Please restart BEESOFT to continue."/>
             <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
+            <MeshError value="Imported model has errors. Try to fix them or import another model."/>
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -524,6 +526,10 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <TRANSPARENT value="TRANSPARENT"/>
             <GREEN value="GREEN"/>
             <ORANGE value="ORANGE"/>
+	    <BLUE value="BLUE"/>
+	    <OLIVE value="OLIVE GREEN"/>
+	    <PINK value="PINK"/>
+	    <SILVER value="SILVER"/>
         </CoilColors>
         
     </tags>      

@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 import replicatorg.app.Base;
 import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
@@ -25,6 +26,7 @@ import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.drivers.Driver;
+
 
 
 /**
@@ -54,7 +56,7 @@ public class PrintPanel extends javax.swing.JFrame {
     private static final String NOK = "NOK";
     private Thread t = null;
     private static final String FORMAT = "%2d:%2d";
-    private String colorCode = "A0";
+    private String colorCode = FilamentControler.NO_FILAMENT_CODE;
     private PrintEstimationThread estimationThread = null;
     private boolean isRunning = true;
     boolean lastUsedRaft;
@@ -69,6 +71,7 @@ public class PrintPanel extends javax.swing.JFrame {
     boolean lastSelectedAutonomous;
     boolean gcodeOK;
     private boolean estimatePressed;
+    private Hashtable<Integer, JLabel> labelTable2;
 
     public PrintPanel() {
         initComponents();
@@ -83,6 +86,7 @@ public class PrintPanel extends javax.swing.JFrame {
         raftPressed = false;
         supportPressed = false;
         autonomousPressed = true;
+        jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
         evaluateConditions();
         matchChanges();
         enableDrag();
@@ -104,6 +108,7 @@ public class PrintPanel extends javax.swing.JFrame {
         jLabel16.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel19.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bEstimate.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lDensity.setFont(GraphicDesignComponents.getSSProRegular("12"));
         filamentType.setFont(GraphicDesignComponents.getSSProRegular("10"));
         estimatedPrintTime.setFont(GraphicDesignComponents.getSSProRegular("10"));
         estimatedMaterial.setFont(GraphicDesignComponents.getSSProRegular("10"));
@@ -137,12 +142,14 @@ public class PrintPanel extends javax.swing.JFrame {
         filamentType.setText(Languager.getTagValue("MaintenancePanel", "Filament_Type"));
         estimatedPrintTime.setText(Languager.getTagValue("Print", "Print_EstimationPrintTime"));
         estimatedMaterial.setText(Languager.getTagValue("Print", "Print_EstimationMaterial"));
+        lDensity.setText(Languager.getTagValue("Print", "Print_Density_Insertion"));
         jLabel23.setText("");
 
 
         quality_prototype.setText(Languager.getTagValue("Print", "Print_Quality_Low"));
-        quality_normal.setText(Languager.getTagValue("Print", "Print_Quality_Normal"));
-        quality_artwork.setText(Languager.getTagValue("Print", "Print_Quality_High"));
+        quality_normal.setText(Languager.getTagValue("Print", "Print_Quality_High"));
+        String artwork = "<html>"+Languager.getTagValue("Print", "Print_Quality_SHigh").split(" ")[0]+"<br>"+Languager.getTagValue("Print", "Print_Quality_SHigh").split(" ")[1]+"</html>";
+        quality_artwork.setText(artwork);
         quality_low.setText(Languager.getTagValue("Print", "Print_Density_Low"));
         quality_medium.setText(Languager.getTagValue("Print", "Print_Density_Medium"));
         quality_solid.setText(Languager.getTagValue("Print", "Print_Density_High"));
@@ -152,7 +159,7 @@ public class PrintPanel extends javax.swing.JFrame {
     private void getCoilCode() {
 
         String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
-
+        Base.writeLog("Print panel coil code: "+code);
         try {
             ;//do nothing
             //driver.updateCoilCode();            
@@ -161,7 +168,7 @@ public class PrintPanel extends javax.swing.JFrame {
         }
 
 
-        if (code.equals("A0") || code.equals("NOK")) {
+        if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
             no_Filament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             code = Languager.getTagValue("Print", "Print_Splash_Info9").toUpperCase();
@@ -170,17 +177,14 @@ public class PrintPanel extends javax.swing.JFrame {
             jLabel23.setText(Languager.getTagValue("Print", "Print_Splash_Info11"));
 
         } else {
-            
+
             code = FilamentControler.getColor(Base.getMainWindow().getMachine().getModel().getCoilCode());
-            
+
             //Checks if user besides having a BEECode, it is one up-to-date.
             //BEECodes may have been changed
-            if(code.equals("NO_FILAMENT") == false)
-            {
+            if (code.equals(FilamentControler.NO_FILAMENT) == false) {
                 colorCode = code;
-            }
-            else
-            {
+            } else {
                 no_Filament = true;
             }
             jLabel22.setText(" " + code);
@@ -247,15 +251,60 @@ public class PrintPanel extends javax.swing.JFrame {
     private void initSliderConfigs() {
         Hashtable labelTable1 = new Hashtable();
         labelTable1.put(new Integer(0), quality_prototype);
-//        labelTable1.put( new Integer( 50), quality_normal );
-        labelTable1.put(new Integer(100), quality_artwork);
+        labelTable1.put(new Integer(50), quality_normal);
+        labelTable1.put( new Integer(100), quality_artwork );
         jSlider1.setLabelTable(labelTable1);
 
-        Hashtable labelTable2 = new Hashtable();
-        labelTable2.put(new Integer(0), quality_low);
-        labelTable2.put(new Integer(50), quality_medium);
-        labelTable2.put(new Integer(100), quality_solid);
-        jSlider2.setLabelTable(labelTable2);
+        labelTable2 = new Hashtable<Integer, JLabel>();
+        
+        JLabel a = new JLabel("O");
+        JLabel a1 = new JLabel(Languager.getTagValue("Print", "Print_Density_Low"));
+        JLabel b = new JLabel("10");
+        b.setBorder(new EmptyBorder(0,10,0,0));
+        JLabel c = new JLabel(Languager.getTagValue("Print", "Print_Density_Medium"));
+        c.setBorder(new EmptyBorder(0,5,0,0));
+        JLabel d = new JLabel("30");
+        JLabel e = new JLabel(Languager.getTagValue("Print", "Print_Density_High"));
+        JLabel f = new JLabel("5O");
+        JLabel g = new JLabel("6O");
+        JLabel h = new JLabel("7O");
+        JLabel i = new JLabel("8O");
+        JLabel j = new JLabel("9O");
+        JLabel k = new JLabel("10O");
+        
+        a.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        a1.setFont(GraphicDesignComponents.getSSProBold("10"));
+        b.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        c.setFont(GraphicDesignComponents.getSSProBold("10"));
+        d.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        e.setFont(GraphicDesignComponents.getSSProBold("10"));
+        f.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        g.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        h.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        i.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        j.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        k.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        f.setForeground(Color.red);
+        g.setForeground(Color.red);
+        h.setForeground(Color.red);
+        i.setForeground(Color.red);
+        j.setForeground(Color.red);
+        k.setForeground(Color.red);
+        labelTable2.put(0, a);
+        labelTable2.put(5, a1);
+        labelTable2.put(10, b);
+        labelTable2.put(20, c);
+        labelTable2.put(30, d);
+        labelTable2.put(40, e);
+        labelTable2.put(50, f);
+        labelTable2.put(60, g);
+        labelTable2.put(70, h);
+        labelTable2.put(80, i);
+        labelTable2.put(90, j);
+        labelTable2.put(100, k);
+
+        densitySlider.setLabelTable(labelTable2);
+
     }
 
     private void initSlidersLables() {
@@ -277,28 +326,17 @@ public class PrintPanel extends javax.swing.JFrame {
             return "LOW";
         }
         if (jSlider1.getValue() == 50) {
-            return "MEDIUM";
+            return "HIGH";
         }
         if (jSlider1.getValue() == 100) {
-            return "HIGH";
+            return "SHIGH";
         }
 
         return "LOW";
     }
 
     private String parseSlider2() {
-
-        if (jSlider2.getValue() == 0) {
-            return "LOW";
-        }
-        if (jSlider2.getValue() == 50) {
-            return "MEDIUM";
-        }
-        if (jSlider2.getValue() == 100) {
-            return "HIGH";
-        }
-
-        return "LOW";
+        return String.valueOf(densitySlider.getValue());
     }
 
     private void evaluateConditions() {
@@ -329,11 +367,11 @@ public class PrintPanel extends javax.swing.JFrame {
         if (!time.contains("NA") || !time.contains("N/A")) {
             printTime.setText(buildTimeEstimationString(time));
         }
-        
+
         if (!cost.contains("NA") && !cost.contains("N/A")) {
             materialCost.setText(tuneCost(cost));
         }
-     
+
     }
 
     private String gramsCalculator(double meters) {
@@ -427,9 +465,8 @@ public class PrintPanel extends javax.swing.JFrame {
 
     public void showLoadingIcon(boolean show) {
         loading.setVisible(show);
-       
-        if(show)
-        {
+
+        if (show) {
             materialCost.setText("N/A");
             printTime.setText("N/A");
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
@@ -471,16 +508,19 @@ public class PrintPanel extends javax.swing.JFrame {
             autonomousPressed = false;
         }
 
-        if (lastUsedDensity.equalsIgnoreCase("LOW")) {
-            jSlider2.setValue(0);
-        } else if (lastUsedDensity.equalsIgnoreCase("MEDIUM")) {
-            jSlider2.setValue(50);
-        } else {
-            jSlider2.setValue(100);
+        int density;
+        try {
+            density = Integer.parseInt(lastUsedDensity);
+        } catch (NumberFormatException e) {
+            density = 5;
         }
+
+        densitySlider.setValue(density);
 
         if (lastUsedResolution.equalsIgnoreCase("LOW")) {
             jSlider1.setValue(0);
+        } else if (lastUsedResolution.equalsIgnoreCase("HIGH")) {
+            jSlider1.setValue(50);
         } else {
             jSlider1.setValue(100);
         }
@@ -556,6 +596,21 @@ public class PrintPanel extends javax.swing.JFrame {
         return prefs;
     }
 
+    private void checkDensitySliderValue(int val) {
+
+        labelTable2.get(5).setForeground(Color.BLACK);
+        labelTable2.get(20).setForeground(Color.BLACK);
+        labelTable2.get(40).setForeground(Color.BLACK);
+            
+        if (val == 5) {
+            labelTable2.get(5).setForeground(new Color(255, 203, 5));
+        } else if (val == 20) {
+            labelTable2.get(20).setForeground(new Color(255, 203, 5));
+        } else if (val == 40) {
+            labelTable2.get(40).setForeground(new Color(255, 203, 5));
+        }
+    }
+    
     private void triggerRaft() {
         lastSelectedRaft = raftPressed;
 
@@ -608,7 +663,7 @@ public class PrintPanel extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jSlider1 = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
-        jSlider2 = new javax.swing.JSlider();
+        densitySlider = new javax.swing.JSlider();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -633,13 +688,14 @@ public class PrintPanel extends javax.swing.JFrame {
         materialCost = new javax.swing.JLabel();
         loading = new javax.swing.JLabel();
         bEstimate = new javax.swing.JLabel();
+        tfDensity = new javax.swing.JTextField();
+        lDensity = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(375, 565));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
@@ -705,6 +761,7 @@ public class PrintPanel extends javax.swing.JFrame {
         jSlider1.setPaintLabels(true);
         jSlider1.setSnapToTicks(true);
         jSlider1.setValue(0);
+        jSlider1.setPreferredSize(new java.awt.Dimension(360, 54));
         jSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jSlider1MouseReleased(evt);
@@ -719,20 +776,21 @@ public class PrintPanel extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Densidade");
 
-        jSlider2.setBackground(new java.awt.Color(248, 248, 248));
-        jSlider2.setForeground(new java.awt.Color(0, 0, 0));
-        jSlider2.setPaintLabels(true);
-        jSlider2.setSnapToTicks(true);
-        jSlider2.setValue(0);
-        jSlider2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jSlider2.addMouseListener(new java.awt.event.MouseAdapter() {
+        densitySlider.setBackground(new java.awt.Color(248, 248, 248));
+        densitySlider.setForeground(new java.awt.Color(0, 0, 0));
+        densitySlider.setMajorTickSpacing(1);
+        densitySlider.setPaintLabels(true);
+        densitySlider.setSnapToTicks(true);
+        densitySlider.setValue(0);
+        densitySlider.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        densitySlider.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jSlider2MouseReleased(evt);
+                densitySliderMouseReleased(evt);
             }
         });
-        jSlider2.addChangeListener(new javax.swing.event.ChangeListener() {
+        densitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSlider2StateChanged(evt);
+                densitySliderStateChanged(evt);
             }
         });
 
@@ -866,90 +924,109 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
+        tfDensity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tfDensity.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tfDensityKeyReleased(evt);
+            }
+        });
+
+        lDensity.setText("Density value (%) :");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(106, 106, 106)
+                .addComponent(jLabel19)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel7))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lDensity)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(estimatedMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
+                                .addGap(15, 15, 15)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(printTime)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(bEstimate))
+                                    .addComponent(materialCost)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(4, 4, 4)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(estimatedMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
-                                        .addGap(15, 15, 15)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(printTime)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(bEstimate))
-                                            .addComponent(materialCost)))
+                                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel10)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(filamentType)
+                                        .addGap(17, 17, 17)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel5)
                                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addGap(4, 4, 4)
-                                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel8)
-                                            .addComponent(jLabel9)
-                                            .addComponent(jLabel10)
+                                                .addComponent(jLabel23)
+                                                .addGap(0, 0, Short.MAX_VALUE))
                                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(filamentType)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addComponent(jLabel23)
-                                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                                        .addComponent(jLabel22)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(loading)))))))
-                                .addGap(15, 15, 15)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(jLabel22)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(loading)))))))
+                        .addGap(19, 19, 19))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(12, 12, 12)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel11))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(densitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel16)
+                                    .addComponent(jLabel11))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(106, 106, 106)
-                .addComponent(jLabel19)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -964,8 +1041,12 @@ public class PrintPanel extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(densitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lDensity))
+                .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel7))
@@ -1057,7 +1138,7 @@ public class PrintPanel extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(214, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bCancel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel12)
@@ -1076,13 +1157,13 @@ public class PrintPanel extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1092,27 +1173,25 @@ public class PrintPanel extends javax.swing.JFrame {
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
 
-        if (jSlider1.getValue() >= 30) {
+        if (jSlider1.getValue() > 1 && jSlider1.getValue() <= 49) {
+            jSlider1.setValue(50);
+        } else if (jSlider1.getValue() >= 51) {
             jSlider1.setValue(100);
-        } else {
+        } else if (jSlider1.getValue() <= 1) {
             jSlider1.setValue(0);
         }
 
         checkChanges();
     }//GEN-LAST:event_jSlider1StateChanged
 
-    private void jSlider2StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider2StateChanged
-
-        if (jSlider2.getValue() > 1 && jSlider2.getValue() <= 49) {
-            jSlider2.setValue(50);
-        } else if (jSlider2.getValue() >= 51) {
-            jSlider2.setValue(100);
-        } else if (jSlider2.getValue() <= 1) {
-            jSlider2.setValue(0);
-        }
-
+    private void densitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_densitySliderStateChanged
+    
+        int val = densitySlider.getValue();
+        tfDensity.setText(String.valueOf(val));
+        
+        checkDensitySliderValue(val);        
         checkChanges();
-    }//GEN-LAST:event_jSlider2StateChanged
+    }//GEN-LAST:event_densitySliderStateChanged
 
     private void jLabel19MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseEntered
         jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
@@ -1148,7 +1227,7 @@ public class PrintPanel extends javax.swing.JFrame {
             t.stop();
         }
         estimationThread.stop();
-        
+
         if (!no_Filament) {
             /*
              * prefs[0] - profile (LOW,HIGH) 
@@ -1176,9 +1255,9 @@ public class PrintPanel extends javax.swing.JFrame {
             Base.getMainWindow().getBed().setLastSupport(supportPressed);
             Base.getMainWindow().getBed().setLastAutonomous(autonomousPressed);
 
-            Base.getMainWindow().setEnabled(false);
+            Base.isPrinting = true;
+            Base.getMainWindow().getButtons().blockModelsButton(true);
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
-
             dispose();
             Base.getMainWindow().getCanvas().unPickAll();
             isRunning = false;
@@ -1308,28 +1387,26 @@ public class PrintPanel extends javax.swing.JFrame {
         lastSelectedResolution = parseSlider1();
     }//GEN-LAST:event_jSlider1MouseReleased
 
-    private void jSlider2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSlider2MouseReleased
+    private void densitySliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_densitySliderMouseReleased
         lastSelectedDensity = parseSlider2();
-    }//GEN-LAST:event_jSlider2MouseReleased
+    }//GEN-LAST:event_densitySliderMouseReleased
 
     private void bEstimateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseEntered
-        if(estimatePressed == false)
-        {
+        if (estimatePressed == false) {
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
         }
     }//GEN-LAST:event_bEstimateMouseEntered
 
     private void bEstimateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseExited
-        if(estimatePressed == false)
-        {
+        if (estimatePressed == false) {
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
         }
     }//GEN-LAST:event_bEstimateMouseExited
 
     private void bEstimateMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMousePressed
-        
-        if(estimatePressed == false)
-        {
+
+        if (estimatePressed == false) {
+
             estimationThread = new PrintEstimationThread(this);
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
             estimatePressed = true;
@@ -1343,9 +1420,29 @@ public class PrintPanel extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_bEstimateMousePressed
 
+    private void tfDensityKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfDensityKeyReleased
+        String tfDesty_value = tfDensity.getText();
+        boolean isNumber = true;
+        try {
+            double d = Double.parseDouble(tfDesty_value);
+        } catch (NumberFormatException nfe) {
+            isNumber = false;
+        }
+
+        if (tfDesty_value.equals("") == false && isNumber) {
+            int densityValue = Integer.valueOf(tfDensity.getText());
+            if (densityValue < 0 || densityValue > 100) {
+                densityValue = 5;
+            }
+            densitySlider.setValue(densityValue);
+            checkDensitySliderValue(densityValue);
+        }
+    }//GEN-LAST:event_tfDensityKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bEstimate;
+    private javax.swing.JSlider densitySlider;
     private javax.swing.JLabel estimatedMaterial;
     private javax.swing.JLabel estimatedPrintTime;
     private javax.swing.JLabel filamentType;
@@ -1377,12 +1474,14 @@ public class PrintPanel extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSlider jSlider1;
-    private javax.swing.JSlider jSlider2;
+    private javax.swing.JLabel lDensity;
     private javax.swing.JLabel loading;
     private javax.swing.JLabel materialCost;
     private javax.swing.JLabel printTime;
+    private javax.swing.JTextField tfDensity;
     // End of variables declaration//GEN-END:variables
 }
+
 class PrintEstimationThread extends Thread {
 
     private PrintPanel printPanel;
@@ -1399,7 +1498,6 @@ class PrintEstimationThread extends Thread {
         Printer prt = new Printer(preferences);
         prt.generateGCode(preferences);
         File gcode = prt.getGCode();
-
         //Estimate time and cost
         PrintEstimator.estimateTime(gcode);
         printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
@@ -1416,7 +1514,7 @@ class PrintEstimationThread extends Thread {
             }
             if (!printPanel.settingsChanged() || nTimes == 0) {
                 printPanel.showLoadingIcon(true);
-                
+
                 if (Base.getMainWindow().isOkToGoOnSave() == false) {
                     Base.getMainWindow().handleSave(true);
                 }
@@ -1426,7 +1524,7 @@ class PrintEstimationThread extends Thread {
                 printPanel.showLoadingIcon(false);
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
                 this.stop();
-            
+
             } else {
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
             }

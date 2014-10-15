@@ -584,7 +584,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
 
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
             Point5d b = machine.getTablePoints("safe");
             double acLow = machine.getAcceleration("acLow");
             double acHigh = machine.getAcceleration("acHigh");
@@ -601,7 +601,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel24MousePressed
 
     private void jLabel23MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
             dispose();
             CalibrationSkrew2 p = new CalibrationSkrew2();
             p.setVisible(true);

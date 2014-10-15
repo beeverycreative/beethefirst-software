@@ -591,7 +591,7 @@ class DisposeFeedbackThread7 extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriverQueryInterface().getMachineStatus()) {
+            if (!machine.getDriver().getMachineStatus()) {
                 calibrationPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -599,8 +599,8 @@ class DisposeFeedbackThread7 extends Thread {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            if (machine.getDriverQueryInterface().getMachineStatus()
-                    && !machine.getDriverQueryInterface().isBusy()) {
+            if (machine.getDriver().getMachineStatus()
+                    && !machine.getDriver().isBusy()) {
                 calibrationPanel.resetFeedbackComponents();
             }
 

@@ -100,7 +100,7 @@ public class CalibrationGCoder {
          * Lets user do calibration test event without filament.
          * Default color = Black
          */
-        if(subTag.equalsIgnoreCase("NO_FILAMENT"))
+        if(subTag.equalsIgnoreCase(FilamentControler.NO_FILAMENT))
         {
             subTag = Languager.getTagValue("CoilColors", "BLACK");
         }
@@ -142,7 +142,7 @@ public class CalibrationGCoder {
 
                                 for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
                                 {
-                                    if (nodeList.item(i).getChildNodes().item(j).getNodeName().contains(subTag)) // Found subTag
+                                    if (nodeList.item(i).getChildNodes().item(j).getNodeName().contains(subTag.toLowerCase())) // Found subTag
                                     {
                                         return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue().toString();
                                     }

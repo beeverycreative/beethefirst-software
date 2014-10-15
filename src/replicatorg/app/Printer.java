@@ -64,6 +64,7 @@ public class Printer {
         String profile = "";
 
         profile = parseProfile(params);
+//        System.out.println(profile);
         generator.setProfile(profile);
         generator.readINI();
         options = parseParameters(params);
@@ -77,14 +78,11 @@ public class Printer {
             Base.writeLog("GCode generated");
 //            parseGCodeToSave();
         } else {
-            if(!gcode.canRead() || gcode.length() == 0)
-            {
+            if (!gcode.canRead() || gcode.length() == 0) {
                 // handles with mesh error
                 Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 return "-2";
-            }
-            else
-            {
+            } else {
                 // handles with no permission error cancelling print and setting error message
                 return "-1";
             }
@@ -101,9 +99,8 @@ public class Printer {
     public void setGCodeFile(File gFile) {
         this.gcode = gFile;
     }
-    
-    public void setPreferences(ArrayList<String> prefs)
-    {
+
+    public void setPreferences(ArrayList<String> prefs) {
         this.params = prefs;
     }
 
@@ -255,10 +252,15 @@ public class Printer {
                 profile = "LowRes";
             } else if (resolution.equalsIgnoreCase("high")) {
                 profile = "HighRes";
+            } else if (resolution.equalsIgnoreCase("shigh")) {
+                profile = "SHighRes";
             }
-            
-            profile += machine.getCoilCode();
-                    //FilamentControler.getBEECode(color);
+
+            if (machine.getCoilCode().contains(FilamentControler.NO_FILAMENT_CODE)) {
+                profile += FilamentControler.getBEECode(""); //To allow base estimation without filament
+            } else {
+                profile += machine.getCoilCode();
+            }
 
         } else {
             profile = curaFileForced;
@@ -278,14 +280,17 @@ public class Printer {
         /**
          * Density
          */
-        if (infill.equalsIgnoreCase("low")) {
-            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(5)));
-        } else if (infill.equalsIgnoreCase("medium")) {
-            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(20)));
-        } else if (infill.equalsIgnoreCase("high")) {
-            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(40)));
-        }
+//        if (infill.equalsIgnoreCase("low")) {
+//            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(5)));
+//        } else if (infill.equalsIgnoreCase("medium")) {
+//            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(20)));
+//        } else if (infill.equalsIgnoreCase("high")) {
+//            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(40)));
+//        }
 
+        System.out.println("infill: "+infill);
+        options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(Integer.valueOf(infill))));
+        
         /**
          * Raft and Support
          */

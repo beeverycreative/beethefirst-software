@@ -168,7 +168,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
             Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M104 S" + temperatureGoal));
 
 
@@ -205,6 +205,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
 //           {
             PrintSplashSimpleWaiting p = new PrintSplashSimpleWaiting(preferences, prt);
             p.setVisible(true);
+            Base.getMainWindow().getButtons().blockModelsButton(false);
 //           }
 //           else
 //           {
@@ -276,6 +277,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER);
         Base.getMainWindow().handleStop();
         Base.getMainWindow().setEnabled(true);
+        Base.isPrinting = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         Base.getMainWindow().getMachine().runCommand(new replicatorg.drivers.commands.SetTemperature(0));
         ut.stop();

@@ -45,7 +45,7 @@ import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
-public class DriverBaseImplementation implements Driver, DriverQueryInterface{
+public class DriverBaseImplementation implements Driver{
 //	// our gcode parser
 //	private GCodeParser parser;
 

@@ -100,6 +100,7 @@ public class Base {
     public static boolean status_thread_died = false;
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
+    public static boolean isPrinting = false;
     public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
 
@@ -110,7 +111,7 @@ public class Base {
         OPEN_SPECIFIC_FILE
     };
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.10.0_beta1-2014-08-12";
+    public static final String VERSION_BEESOFT = "3.12.0_beta1-2014-10-15";
 //    public static final String VERSION_BEESOFT = "3.8.0-beta_2014-05-01";
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
@@ -1145,7 +1146,7 @@ public class Base {
                 // build the editor object
                 editor = new MainWindow();
                 writeLog("Main Window initialized");
-                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
+//                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
                 editor.restorePreferences();
                 writeLog("Preferences restored");
                 // add shutdown hook to store preferences
@@ -1300,31 +1301,6 @@ public class Base {
         stroke = KeyStroke.getKeyStroke('W', modifiers);
         root.registerKeyboardAction(disposer, stroke,
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-
-    /**
-     * "No cookie for you" type messages. Nothing fatal or all that much of a
-     * bummer, but something to notify the user about.
-     */
-    static public void showMessage(String title, String message) {
-        if (notificationHandler == null) {
-            notificationHandler = NotificationHandler.Factory.getHandler(null, false);
-        }
-        notificationHandler.showMessage(title, message);
-    }
-
-    /**
-     * Non-fatal error message with optional stack trace side dish.
-     */
-    static public void showWarning(String title, String message, Exception e) {
-        if (notificationHandler == null) {
-            notificationHandler = NotificationHandler.Factory.getHandler(null, false);
-        }
-        notificationHandler.showWarning(title, message, e);
-
-        if (e != null) {
-            e.printStackTrace();
-        }
     }
 
     /**

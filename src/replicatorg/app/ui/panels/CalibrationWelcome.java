@@ -269,8 +269,8 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
             Base.writeLog("Initializing and Calibrating A");
 
-            machine.getDriverQueryInterface().setMachineReady(false);
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setMachineReady(false);
+            machine.getDriver().setBusy(true);
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
             machine.runCommand(new replicatorg.drivers.commands.GetPosition());
@@ -279,9 +279,9 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             /**
              *  //This is important! without this loop, the following line may
              * not work properly current =
-             * machine.getDriverQueryInterface().getCurrentPosition(false);
+             * machine.getDriver().getCurrentPosition(false);
              */
-            while (!machine.getDriverQueryInterface().getMachineStatus() && machine.getDriverQueryInterface().isBusy()) {
+            while (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
                 try {
                     Thread.sleep(100);
                     machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
@@ -293,7 +293,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
             //This line is cruacial!!
 
-            current = machine.getDriverQueryInterface().getCurrentPosition(false);
+            current = machine.getDriver().getCurrentPosition(false);
 
             AxisId axis = AxisId.valueOf("Z");
             Point5d a = machine.getTablePoints("A");
@@ -308,7 +308,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             double acLow = machine.getAcceleration("acLow");
             double acHigh = machine.getAcceleration("acHigh");
             double spHigh = machine.getFeedrate("spHigh");
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
@@ -321,8 +321,8 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
             Base.writeLog("Initializing and repeating Calibrating A");
 
-            machine.getDriverQueryInterface().setMachineReady(false);
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setMachineReady(false);
+            machine.getDriver().setBusy(true);
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28"));
             machine.runCommand(new replicatorg.drivers.commands.GetPosition());
@@ -332,9 +332,9 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             /**
              *  //This is important! without this loop, the following line may
              * not work properly current =
-             * machine.getDriverQueryInterface().getCurrentPosition(false);
+             * machine.getDriver().getCurrentPosition(false);
              */
-            while (!machine.getDriverQueryInterface().getMachineStatus() && machine.getDriverQueryInterface().isBusy()) {
+            while (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
                 try {
                     Thread.sleep(100);
                     machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
@@ -346,7 +346,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
             //This line is cruacial!!
 
-            current = machine.getDriverQueryInterface().getCurrentPosition(false);
+            current = machine.getDriver().getCurrentPosition(false);
 
             AxisId axis = AxisId.valueOf("Z");
             Point5d a = machine.getTablePoints("A");
@@ -362,7 +362,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             double acHigh = machine.getAcceleration("acHigh");
             double spHigh = machine.getFeedrate("spHigh");
 
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
@@ -826,15 +826,15 @@ public class CalibrationWelcome extends javax.swing.JFrame {
     private void jLabel9MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MousePressed
         jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
         jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             showMessage();
             jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
             jLabel9MouseClickedReady = false;
             jLabel21MouseClickedReady = false;
 
-            Point5d current = machine.getDriverQueryInterface().getCurrentPosition(false);
+            Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
             Base.writeLog("Calibrating table in negative axis");
             current.setAxis(axis, (current.axis(axis) + (-0.05)));
@@ -852,15 +852,15 @@ public class CalibrationWelcome extends javax.swing.JFrame {
         jLabel10.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
         jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
 
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             showMessage();
 
             jLabel10MouseClickedReady = false;
             jLabel21MouseClickedReady = false;
 
-            Point5d current = machine.getDriverQueryInterface().getCurrentPosition(false);
+            Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
             Base.writeLog("Calibrating table in positive axis");
             current.setAxis(axis, (current.axis(axis) + (0.05)));
@@ -886,14 +886,14 @@ public class CalibrationWelcome extends javax.swing.JFrame {
     private void jLabel12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MousePressed
         jLabel12.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3D.png")));
         jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             showMessage();
             jLabel12MouseClickedReady = false;
             jLabel21MouseClickedReady = false;
 
-            Point5d current = machine.getDriverQueryInterface().getCurrentPosition(false);
+            Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
             Base.writeLog("Calibrating table in negative axis");
             current.setAxis(axis, (current.axis(axis) + (-0.5)));
@@ -918,15 +918,15 @@ public class CalibrationWelcome extends javax.swing.JFrame {
     private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
         jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_invertedD.png")));
         jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             showMessage();
 
             jLabel16MouseClickedReady = false;
             jLabel21MouseClickedReady = false;
 
-            Point5d current = machine.getDriverQueryInterface().getCurrentPosition(false);
+            Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
             Base.writeLog("Calibrating table in positive axis");
             current.setAxis(axis, (current.axis(axis) + (0.5)));
@@ -1021,7 +1021,7 @@ class DisposeFeedbackThread2 extends Thread {
             
             machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
-            if (!machine.getDriverQueryInterface().getMachineStatus()) {
+            if (!machine.getDriver().getMachineStatus()) {
                 calibrationPanel.showMessage();
                 machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                 try {
@@ -1030,8 +1030,8 @@ class DisposeFeedbackThread2 extends Thread {
                     Logger.getLogger(DisposeFeedbackThread2.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            if (machine.getDriverQueryInterface().getMachineStatus()
-                    && !machine.getDriverQueryInterface().isBusy()) {
+            if (machine.getDriver().getMachineStatus()
+                    && !machine.getDriver().isBusy()) {
                 calibrationPanel.resetFeedbackComponents();
             }
 

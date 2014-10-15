@@ -31,6 +31,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private boolean jLabel4Bool = false;
     private boolean jLabel6Bool = true;
     private final int NUMBER_PRINTS_LIMIT = 15;
+    private boolean mainWindowEnabled;
 
     public ButtonsPanel(replicatorg.app.ui.MainWindow mainWindow) {
         initComponents();
@@ -125,12 +126,12 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public void updatePressedStateButton(String button) {
         if (button.equals("models")) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
-            jLabel6Bool = true;
+            jLabel6Bool = false;
             models_pressed = false;
         }
         // && gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
         if (button.equals("maintenance")) {
-            if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < NUMBER_PRINTS_LIMIT) {
+            if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
                 jLabel4Bool = true;
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
@@ -203,6 +204,24 @@ public class ButtonsPanel extends javax.swing.JPanel {
         if (machine != null) {
             updateFromState(machine, machine);
         }
+    }
+    
+    public void setMainWindowEnabled(boolean editorEnabled) {
+        this.mainWindowEnabled = editorEnabled;
+    }
+    
+    public void blockModelsButton(boolean block)
+    {
+        if (block) {
+            models_pressed = true;
+        } else {
+            models_pressed = false; 
+        }
+    }
+    
+    public boolean areIOFunctionsBlocked()
+    {
+        return models_pressed;
     }
 
     @SuppressWarnings("unchecked")
@@ -374,13 +393,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseEntered
-        if (jLabel6Bool) {
+        if (jLabel6Bool == false) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
         }
     }//GEN-LAST:event_jLabel6MouseEntered
 
     private void jLabel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseExited
-        if (jLabel6Bool) {
+        if (jLabel6Bool == false) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
         }
     }//GEN-LAST:event_jLabel6MouseExited
@@ -441,7 +460,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
         if (!models_pressed) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-            jLabel6Bool = false;
+            jLabel6Bool = true;
             models_pressed = true;
             editor.updateModelsOperationCenter(new ModelsOperationCenter());
             SceneDetailsPanel sceneDP = new SceneDetailsPanel();
@@ -459,28 +478,30 @@ public class ButtonsPanel extends javax.swing.JPanel {
         if (connected) {
 //            if(!Boolean.valueOf(ProperDefault.get("firstTime")))
 //             {
-
-            //&& gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
-            if (!maintenance_pressed) {
-                if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
-                    jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-                    jLabel4Bool = false;
-                } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > 10) {
-                    jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
-                    jLabel4Bool = false;
-                } 
+            if (Base.isPrinting == false) {
+                //&& gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
+                if (maintenance_pressed == false) {
+                    if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
+                        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+                        jLabel4Bool = false;
+                    } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > 10) {
+                        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
+                        jLabel4Bool = false;
+                    }
 //                else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                    jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
 //                    jLabel4Bool = false;
 //                }
 
-                maintenance_pressed = true;
-                editor.updateModelsOperationCenter(new ModelsOperationCenter());
-                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-                sceneDP.updateBed(Base.getMainWindow().getBed());
-                editor.updateDetailsCenter(sceneDP);
-                Base.getMainWindow().getCanvas().unPickAll();
-                editor.handleMaintenance();
+
+                    maintenance_pressed = true;
+                    editor.updateModelsOperationCenter(new ModelsOperationCenter());
+                    SceneDetailsPanel sceneDP = new SceneDetailsPanel();
+                    sceneDP.updateBed(Base.getMainWindow().getBed());
+                    editor.updateDetailsCenter(sceneDP);
+                    Base.getMainWindow().getCanvas().unPickAll();
+                    editor.handleMaintenance();
+                }
             }
 //            }
 //            else
@@ -497,7 +518,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
         boolean connected = Base.getMachineLoader().isConnected();
 
         if (connected) {
-            if (!quickGuide_pressed) {
+            if (quickGuide_pressed == false && Base.isPrinting == false) {
                 jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
                 jLabel5Bool = false;
                 editor.updateModelsOperationCenter(new ModelsOperationCenter());
@@ -521,7 +542,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             if (machine.getModel().getMachineBusy()) {
                 editor.showFeedBackMessage("moving");
             } else {
-                if (!print_pressed && editor.validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
+                if (!print_pressed && editor.validatePrintConditions() && Base.isPrinting == false && Base.getMainWindow().getBed().getNumberModels() > 0
                         || Boolean.valueOf(ProperDefault.get("localPrint"))) {
                     jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
                     jLabel1Bool = false;
@@ -546,4 +567,5 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
+
 }

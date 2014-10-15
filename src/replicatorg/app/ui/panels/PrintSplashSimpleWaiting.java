@@ -378,7 +378,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
             }
             ProperDefault.put("durationLastPrint", String.valueOf(duration));
-            int nPrints = Integer.valueOf(ProperDefault.get("nTotalPrints"))+1;
+            int nPrints = Integer.valueOf(ProperDefault.get("nTotalPrints")) + 1;
             ProperDefault.put("nTotalPrints", String.valueOf(nPrints));
 
             /**
@@ -999,7 +999,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         //first time you press unload after print is over
         if (printEnded && unloadPressed == false && firstUnloadStep == false) {
             unloadPressed = true;
-
+            System.out.println("First time unload");
             temperatureGoal = 220;
             machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
             bOk.setVisible(false);
@@ -1017,6 +1017,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         if (printEnded && unloadPressed == false && firstUnloadStep) {
             unloadPressed = true;
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
+            System.out.println("Second time unload");
             startUnload();
             return;
         } // no need for else
@@ -1094,7 +1095,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     driver.dispatchCommand("G92 E", COM.BLOCK);
                     driver.dispatchCommand("G1 F6000 E-2", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
-                    
+
                     double actualColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
                     double colorRatio = actualColorRatio / previousColorRatio;
                     /**
@@ -1106,9 +1107,9 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     //Go slowly to pause position
                     //Special attention to models on bed
                     driver.dispatchCommand("G1 F2000 X" + pausePos.x() + " Y" + pausePos.y(), COM.NO_RESPONSE);
-                    driver.dispatchCommand("G1 F1000 Z" + (pausePos.z()+10) + " E-1", COM.NO_RESPONSE);
+                    driver.dispatchCommand("G1 F1000 Z" + (pausePos.z() + 10) + " E-1", COM.NO_RESPONSE);
                     driver.dispatchCommand("G1 F1000 Z" + pausePos.z() + " E0", COM.NO_RESPONSE);
-                    driver.dispatchCommand("G92 E"+pausePos.a(), COM.BLOCK);
+                    driver.dispatchCommand("G92 E" + pausePos.a(), COM.BLOCK);
 
 //            //Sets previous feedrate
                     driver.dispatchCommand("G1 " + machine.getLastFeedrate(), COM.NO_RESPONSE);
@@ -1146,7 +1147,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
 
         if (temperature > (int) (jProgressBar1.getValue() * 2)) {
             int val = (int) (temperature / 2.15);
@@ -1178,6 +1179,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                 dispose();
                 ut.stop();
                 Base.getMainWindow().setEnabled(true);
+                Base.isPrinting = false;
                 enableSleep();
                 Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetTemperature(0));
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
@@ -1247,9 +1249,9 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             @Override
             public void run() {
 
-                if (!machine.getDriverQueryInterface().isBusy()) {
+                if (!machine.getDriver().isBusy()) {
                     unloadPressed = true;
-                    while (!machine.getDriverQueryInterface().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineStatus()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -1292,7 +1294,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                         Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    while (!machine.getDriverQueryInterface().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineStatus()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -1305,7 +1307,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode("A0"));
+                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
                 tRemaining.setText(Languager.getTagValue("Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;
@@ -1332,7 +1334,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (machine.getDriverQueryInterface().getMachineStatus()) {
+            if (machine.getDriver().getMachineStatus()) {
                 ready = true;
                 break;
             }
@@ -1347,6 +1349,8 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         Base.bringAllWindowsToFront();
         Base.getMainWindow().handleStop();
         Base.getMainWindow().setEnabled(true);
+        Base.isPrinting = false;
+        Base.printPaused = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         ut.stop();
 
@@ -1484,6 +1488,7 @@ class UpdateThread3 extends Thread {
                 boolean tempReached = false;
 
                 if (window.isUnloadPressed()) {
+                    System.out.println("Unload Pressed");
                     tempReached = window.updateHeatBar();
                     if (tempReached) {
                         window.startUnload();

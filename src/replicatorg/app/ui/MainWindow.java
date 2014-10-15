@@ -74,10 +74,8 @@ import net.miginfocom.swing.MigLayout;
 import replicatorg.app.Base;
 import replicatorg.app.Base.InitialOpenBehavior;
 import replicatorg.app.MRUList;
-import replicatorg.app.util.StreamLoggerThread;
 import replicatorg.drivers.EstimationDriver;
 import replicatorg.drivers.OnboardParameters;
-import replicatorg.drivers.RealtimeControl;
 import replicatorg.machine.MachineInterface;
 import replicatorg.machine.MachineListener;
 import replicatorg.machine.MachineLoader;
@@ -198,6 +196,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public boolean building;
     public boolean simulating;
     public boolean debugging;
+    private boolean editorEnabled;
     JMenuItem undoItem, redoItem;
     private int realWidth;
     private int realHeight;
@@ -217,6 +216,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         setFocusable(true);
         setFocusableWindowState(true);
         setFocusCycleRoot(true);
+        editorEnabled = true;
         setName("mainWindow");
         setBackground(new Color(255, 255, 255));
         MRJApplicationUtils.registerAboutHandler(this);
@@ -234,7 +234,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         messagesPP = new MessagesPopUp();
         messagesPP.setVisible(false);
         camCtrl = new CameraControl(this, false);
-        Base.writeLog("5");
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         this.getContentPane().addComponentListener(new ComponentListener() {
@@ -278,6 +277,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 } //no need for else {}
 
             }
+            setOktoGoOnSave(false);
         }
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         JMenuBar menubar = new JMenuBar();
@@ -346,12 +346,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void setOktoGoOnSave(boolean oktoGoOnSave) {
         this.oktoGoOnSave = oktoGoOnSave;
     }
-    
-    public boolean isOkToGoOnSave()
-    {
+
+    public boolean isOkToGoOnSave() {
         return this.oktoGoOnSave;
     }
-    
+
     public CategoriesList getCategoriesManager() {
         return categoriesList;
     }
@@ -581,30 +580,29 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                if (bed.isSceneDifferent() && (oktoGoOnSave == false)) 
-                {
-                    int answer;
-                    answer = JOptionPane.showConfirmDialog(null,
-                            Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
-                            Languager.getTagValue("ToolPath", "Line8"), 0, 0);
-                    if (answer == JOptionPane.YES_OPTION) {
-                        if (bed.isSceneDifferent()) {
-                            newSceneOnDialog = true;
-                            handleSaveAs();
-                            bed.setSceneDifferent(false);
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
+                        int answer;
+                        answer = JOptionPane.showConfirmDialog(null,
+                                Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
+                                Languager.getTagValue("ToolPath", "Line8"), 0, 0);
+                        if (answer == JOptionPane.YES_OPTION) {
+                            if (bed.isSceneDifferent()) {
+                                newSceneOnDialog = true;
+                                handleSaveAs();
+                                bed.setSceneDifferent(false);
+                                updateModelsOperationCenter(new ModelsOperationCenter());
+                            }
+                        } else if (answer == JOptionPane.NO_OPTION) {
+                            handleNew(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
                         }
-                    } else if (answer == JOptionPane.NO_OPTION) {
+
+                    } else {
                         handleNew(false);
                         updateModelsOperationCenter(new ModelsOperationCenter());
                     }
-
-                } else {
-                    handleNew(false);
-                    updateModelsOperationCenter(new ModelsOperationCenter());
                 }
-
             }
         });
         menu.add(item);
@@ -614,31 +612,31 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setText(Languager.getTagValue("ApplicationMenus", "File_Open"));
 
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {      
-                
-                if (bed.isSceneDifferent() && (oktoGoOnSave == false)) 
-                {
-                    int answer;
-                    answer = JOptionPane.showConfirmDialog(null,
-                            Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
-                            Languager.getTagValue("ToolPath", "Line8"), 0, 0);
-                    if (answer == JOptionPane.YES_OPTION) {
-                        if (bed.isSceneDifferent()) {
-                            handleSaveAs();
+            public void actionPerformed(ActionEvent e) {
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
+                        int answer;
+                        answer = JOptionPane.showConfirmDialog(null,
+                                Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
+                                Languager.getTagValue("ToolPath", "Line8"), 0, 0);
+                        if (answer == JOptionPane.YES_OPTION) {
+                            if (bed.isSceneDifferent()) {
+                                handleSaveAs();
+                                handleOpenScene(null);
+                                bed.setSceneDifferent(false);
+                                updateModelsOperationCenter(new ModelsOperationCenter());
+                            }
+                        } else if (answer == JOptionPane.NO_OPTION) {
                             handleOpenScene(null);
-                            bed.setSceneDifferent(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
                         }
-                    } else if (answer == JOptionPane.NO_OPTION) {
+
+                    } else {
                         handleOpenScene(null);
                         updateModelsOperationCenter(new ModelsOperationCenter());
                     }
-
-                } else {
-                    handleOpenScene(null);
-                    updateModelsOperationCenter(new ModelsOperationCenter());
                 }
-                
+
 
             }
         });
@@ -651,7 +649,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         saveMenuItem.setText(Languager.getTagValue("ApplicationMenus", "File_Save"));
         saveMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                handleSave(false);
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    handleSave(false);
+                }
             }
         });
         menu.add(saveMenuItem);
@@ -661,7 +661,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         saveAsMenuItem.setText(Languager.getTagValue("ApplicationMenus", "File_Save_as"));
         saveAsMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                handleSaveAs();
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    handleSaveAs();
+                }
             }
         });
         menu.add(saveAsMenuItem);
@@ -706,6 +708,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+//                bed.getModel(0).getEditer().evaluateCollision();
                 bed.undoTransformation();
             }
         });
@@ -897,8 +900,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (machineLoader.isConnected()) {
-                    Maintenance p = new Maintenance();
-                    p.setVisible(true);
+                    if (Base.isPrinting == false) {
+                        Maintenance p = new Maintenance();
+                        p.setVisible(true);
+                    }
                 } else {
                     showFeedBackMessage("btfDisconnect");
                 }
@@ -912,37 +917,37 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setText(Languager.getTagValue("ApplicationMenus", "Printer_Print"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MachineInterface machine = getMachineInterface();
-                machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+                if (Base.isPrinting == false) {
+                    MachineInterface machine = getMachineInterface();
+                    machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
-                try {
-                    Thread.sleep(250, 0);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (!machine.getDriverQueryInterface().getMachineStatus() && machine.getDriverQueryInterface().isBusy()) {
-                    showFeedBackMessage("moving");
-                } else {
-
-                    if (machineLoader.isConnected()) {
-
-                        if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
-                                || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                            handlePrintPanel();
-                        }
-                    } else {
-                        showFeedBackMessage("btfDisconnect");
+                    try {
+                        Thread.sleep(250, 0);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
+                    if (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
+                        showFeedBackMessage("moving");
+                    } else {
+
+                        if (machineLoader.isConnected()) {
+
+                            if (validatePrintConditions() && Base.isPrinting == false && Base.getMainWindow().getBed().getNumberModels() > 0
+                                    || Boolean.valueOf(ProperDefault.get("localPrint"))) {
+                                handlePrintPanel();
+                            }
+                        } else {
+                            showFeedBackMessage("btfDisconnect");
+                        }
+
+                    }
                 }
             }
-            });
-        menu.add (item);
-            return menu ;
-        }
-
-    
+        });
+        menu.add(item);
+        return menu;
+    }
 
     protected JMenu buildHelpMenu() {
         JMenuItem item;
@@ -1010,13 +1015,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setText(Languager.getTagValue("ApplicationMenus", "Help_QuickGuide"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(machineLoader.isConnected())
-                {
+                if (machineLoader.isConnected() && Base.isPrinting == false) {
                     FilamentHeating p = new FilamentHeating();
                     p.setVisible(true);
-                }
-                else
-                {
+                } else {
                     showFeedBackMessage("btfDisconnect");
                 }
             }
@@ -1129,35 +1131,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     }
 
-    protected void handleInfoPanel() {
-        InfoPanel infoPanel = new InfoPanel();
-        infoPanel.setVisible(true);
-    }
-
-    public boolean supportsRealTimeControl() {
-        if (!(machineLoader.getDriver() instanceof RealtimeControl)) {
-            return false;
-        }
-        Base.logger.info("Supports RC");
-        return true;
-    }
-
-    protected void handleRealTimeControl() {
-        if (!this.supportsRealTimeControl()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Real time control is not supported for your machine's driver.",
-                    "Can't enabled real time control", JOptionPane.ERROR_MESSAGE);
-        } else {
-            RealtimePanel window = RealtimePanel.getRealtimePanel(machineLoader.getMachineInterface());
-            if (window != null) {
-                window.pack();
-                window.setVisible(true);
-                window.toFront();
-            }
-        }
-    }
-
     /**
      * Convenience method, see below.
      */
@@ -1209,9 +1182,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 public void run() {
                     if (bed.isSceneDifferent()) {
                         Base.getMainWindow().handleSave(false);
-                    }
-                    else
-                    {
+                    } else {
                         sceneDP = new SceneDetailsPanel();
                         sceneDP.updateBed(bed);
                         sceneDP.updateBedInfo();
@@ -1349,7 +1320,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     /// Enum to indicate target build intention
     /// generate-from-stl and build, cancel build, or siply build from gcode
-     enum BuildFlag {
+    enum BuildFlag {
 
         NONE(0), /// Canceled or software error
         GEN_AND_BUILD(1), //genrate new gcode and build
@@ -1514,9 +1485,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         onboardParamsItem.setEnabled(showParams);
 
         boolean showRealtimeTuning =
-                evt.getState().isConnected()
-                && machineLoader.getDriver() instanceof RealtimeControl
-                && ((RealtimeControl) machineLoader.getDriver()).hasFeatureRealtimeControl();
+                evt.getState().isConnected();
         realtimeControlItem.setVisible(showRealtimeTuning);
         realtimeControlItem.setEnabled(showRealtimeTuning);
 
@@ -1534,6 +1503,23 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         // prepare editor window.
 //        setVisible(true);
         setEnabled(true);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+
+        if (enabled) {
+            editorEnabled = true;
+            buttons.setMainWindowEnabled(editorEnabled);
+        } else {
+            editorEnabled = false;
+            buttons.setMainWindowEnabled(editorEnabled);
+        }
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        return editorEnabled;
     }
 
     /**
@@ -1589,11 +1575,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         doPreheat(false);
 
         building = false;
-        if (machineLoader.isLoaded()) {
-            if (machineLoader.getMachineInterface().getSimulatorDriver() != null) {
-                machineLoader.getMachineInterface().getSimulatorDriver().destroyWindow();
-            }
-        }
 
         setEditorBusy(false);
     }
@@ -1623,9 +1604,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      */
     public void handleStop() {
         Base.writeLog("Stopping ...");
-        
-        if(!Base.printPaused)
-        {
+
+        if (!Base.printPaused) {
             Base.getMachineLoader().getMachineInterface().killSwitch();
         }
         Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("M112"));
@@ -1980,7 +1960,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         }
                         oktoGoOnSave = false;
                     }
-                
+
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -2076,7 +2056,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         // cleanup our machine/driver.
         machineLoader.unload();
-
+        Base.diposeAllOpenWindows();
         System.exit(0);
     }
 
@@ -2117,7 +2097,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         Base.writeConfig();
         Base.loadProperties();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
-                    
+
     }
 
     /**

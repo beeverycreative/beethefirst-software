@@ -665,7 +665,7 @@ class ControlStatus extends Thread {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            //!machine.getDriverQueryInterface().isBusy()
+            //!machine.getDriver().isBusy()
             if (!machine.getModel().getMachineBusy()) {
                 maintenancePanel.setFree();
             }

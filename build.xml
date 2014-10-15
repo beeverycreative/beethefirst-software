@@ -30,9 +30,9 @@
         <property name="ant.build.javac.target" value="1.6" />
         <property name="ant.build.javac.source" value="1.6" />
         <property name="test.src.dir" value="test/src" />
-        <property name="release.name" value="BEESOFT-3.10.0_beta1-2014-08-12" />
+        <property name="release.name" value="BEESOFT-3.12.0_beta1-2014-10-15" />
        <!--  <property name="release.name" value="BEESOFT-3.8.0-beta_2014-05-01" /> -->
-        <property name="release.version" value="3.10.0_beta1" />
+        <property name="release.version" value="3.12.0_beta1" />
         <!-- <property name="release.version" value="3.8.0-beta" /> -->
 
         <path id="classpath">

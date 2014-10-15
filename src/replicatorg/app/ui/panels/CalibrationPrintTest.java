@@ -58,7 +58,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
         setTextLanguage();
 //        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
-        machine.getDriverQueryInterface().resetToolTemperature();
+        machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
         centerOnScreen();
         setProgressBarColor();
@@ -157,7 +157,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
 
         }
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
         double hbp; //halfBarProgress
         hbp = (temperature / temperatureGoal) * 50;
         double current = jProgressBar1.getValue();
@@ -309,7 +309,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
         int n_lines = 0;
         try {
             machine.setStopwatch(0);
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             while ((sCurrentLine = reader.readLine()) != null) {
                 try {
                     /**
@@ -681,7 +681,7 @@ class PrintThread extends Thread {
             } catch (InterruptedException ex) {
                 Logger.getLogger(PrintThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (!machine.getDriverQueryInterface().getMachineStatus() || machine.getDriverQueryInterface().isBusy()) {
+            if (!machine.getDriver().getMachineStatus() || machine.getDriver().isBusy()) {
                 window.showPrintMessage();
                 try {
                     Thread.sleep(1000);

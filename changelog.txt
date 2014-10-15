@@ -1,3 +1,22 @@
+v3.12.0-beta1 (2014-10-15)
+
+Improvements
+* New 50 microns resolution: High + (beta)
+* New management system for BEESOFT windows
+* New print panel density configuration with the possibility to choose the density percentage we want. 
+* New colors added to the color selection window.
+* EN Copy revision
+
+Bugs Fixed
+* Removed bad MCode that was causing erroneous behaviours in autonomous print
+* Print time estimation fixed to be shown correctly
+* Model parsing and rendering events were not being handled correctly
+
+v3.11.0-beta1 (2014-08-18)
+
+Improvements
+* Improved printing quality
+
 v3.10.0-beta1 (2014-08-12)
 
 Improvements

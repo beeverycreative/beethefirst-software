@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -332,11 +333,13 @@ public class FilamentInsertion extends javax.swing.JFrame {
         bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(567, 501));
+        setMinimumSize(new java.awt.Dimension(567, 490));
         setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(571, 490));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.setPreferredSize(new java.awt.Dimension(541, 570));
 
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("INSERIR FILAMENTO");
@@ -351,7 +354,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/inserir_filamento.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/infografia-01.png"))); // NOI18N
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 233));
 
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
@@ -395,10 +398,6 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -406,6 +405,10 @@ public class FilamentInsertion extends javax.swing.JFrame {
                     .addComponent(jLabel6))
                 .addContainerGap())
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(125, 125, 125)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,8 +523,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                .addGap(39, 39, 39))
+                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -605,7 +608,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -698,7 +701,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel17MouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
             if (unloadPressed == false) {
                 dispose();
@@ -747,9 +750,9 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_bExitMousePressed
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "inserir_filamento.png")));
+            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
             jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info2")));
             bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
             unloadPressed = false;
@@ -758,7 +761,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 public void run() {
                     try {
                         Base.writeLog("Load filament pressed");
-                        machine.getDriverQueryInterface().setBusy(true);
+                        machine.getDriver().setBusy(true);
                         showMessage();
                         jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
                         jLabel5MouseClickedReady = false;
@@ -795,9 +798,9 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
             Base.writeLog("Unload filament pressed");
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             showMessage();
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
             jLabel6MouseClickedReady = false;
@@ -818,7 +821,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 public void run() {
                     
                     //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode("A0"));
+                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
                     
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
@@ -902,7 +905,7 @@ class DisposeFeedbackThread extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriverQueryInterface().getMachineStatus()) {
+            if (!machine.getDriver().getMachineStatus()) {
                 filamentPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -911,8 +914,8 @@ class DisposeFeedbackThread extends Thread {
                 }
             }
             
-            if (machine.getDriverQueryInterface().getMachineStatus()
-                    && !machine.getDriverQueryInterface().isBusy()) {
+            if (machine.getDriver().getMachineStatus()
+                    && !machine.getDriver().isBusy()) {
                 filamentPanel.resetFeedbackComponents();
             }
 

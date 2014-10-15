@@ -189,11 +189,11 @@ public class Model implements Serializable, Cloneable {
                 try {
                     candidate = (Shape3D) loadCandidate.load(filePath).getSceneGroup().getChild(0);
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 } catch (IncorrectFormatException ex) {
-                    Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 } catch (ParsingErrorException ex) {
-                    Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 }
             }
         }
@@ -260,25 +260,25 @@ public class Model implements Serializable, Cloneable {
 
         try {
             aInputStream.defaultReadObject();
-                    this.pa = new PolygonAttributes();
-        this.pa.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
-        this.pa.setCapability(PolygonAttributes.ALLOW_MODE_READ);
-        this.picked = false;  
-        loadShape(PrintBed.toFile(stream).getAbsolutePath());
-      
-        transform = new Transform3D();
-        initial = new Transform3D(transform);
-        this.appear = new Appearance();
-        this.pa.setCullFace(PolygonAttributes.POLYGON_FILL);
-        this.pa.setCullFace(PolygonAttributes.CULL_NONE);
-        this.appear.setPolygonAttributes(pa);
-        this.shape.setAppearance(appear);
-        this.shape.setUserData(String.valueOf(Base.getModelID()));
-        this.shape.setPickable(true);
-        this.shape.setCapability(Node.ENABLE_PICK_REPORTING);
-        PickTool.setCapabilities(shape, PickTool.INTERSECT_FULL);
-        editModel = new EditingModel(this);
-        editModel.setShape(this);
+            this.pa = new PolygonAttributes();
+            this.pa.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
+            this.pa.setCapability(PolygonAttributes.ALLOW_MODE_READ);
+            this.picked = false;
+            loadShape(PrintBed.toFile(stream).getAbsolutePath());
+
+            transform = new Transform3D();
+            initial = new Transform3D(transform);
+            this.appear = new Appearance();
+            this.pa.setCullFace(PolygonAttributes.POLYGON_FILL);
+            this.pa.setCullFace(PolygonAttributes.CULL_NONE);
+            this.appear.setPolygonAttributes(pa);
+            this.shape.setAppearance(appear);
+            this.shape.setUserData(String.valueOf(Base.getModelID()));
+            this.shape.setPickable(true);
+            this.shape.setCapability(Node.ENABLE_PICK_REPORTING);
+            PickTool.setCapabilities(shape, PickTool.INTERSECT_FULL);
+            editModel = new EditingModel(this);
+            editModel.setShape(this);
         } catch (IOException ex) {
             Logger.getLogger(PrintBed.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
