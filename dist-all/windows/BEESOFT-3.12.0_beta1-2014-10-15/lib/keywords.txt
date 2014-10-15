@@ -1,0 +1,19 @@
+# LITERAL1 specifies constants
+
+#HIGH	LITERAL1	Constants
+
+# KEYWORD1 specifies datatypes and C/C++ keywords
+
+#boolean	KEYWORD1	BooleanVariables
+
+# operators aren't highlighted, but may have documentation
+
+#+=		IncrementCompound
+
+# these are datatypes, but we've also defined functions to cast to them
+
+#boolean	KEYWORD2	boolean_
+
+# KEYWORD2 specifies methods and functions
+
+#abs	KEYWORD2	Abs

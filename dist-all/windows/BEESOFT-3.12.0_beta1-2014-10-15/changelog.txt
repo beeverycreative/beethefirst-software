@@ -1,0 +1,321 @@
+v3.12.0-beta1 (2014-10-15)
+
+Improvements
+* New 50 microns resolution: High + (beta)
+* New management system for BEESOFT windows
+* New print panel density configuration with the possibility to choose the density percentage we want. 
+* New colors added to the color selection window.
+* EN Copy revision
+
+Bugs Fixed
+* Removed bad MCode that was causing erroneous behaviours in autonomous print
+* Print time estimation fixed to be shown correctly
+* Model parsing and rendering events were not being handled correctly
+
+v3.11.0-beta1 (2014-08-18)
+
+Improvements
+* Improved printing quality
+
+v3.10.0-beta1 (2014-08-12)
+
+Improvements
+* Pause mode
+* Larger click areas when selecting print options
+* Autonomous print windows only appears when main window is visible if BTF was already printing and BEESOFT was started
+* GCode transfer with estimation duration
+* Power saving to reduce BTF energy consumption
+* Better temperature control
+* Model verification for mesh errors and scene unsuccessful model import
+* Scene default name equal to first model imported to be easier to recognize
+* New CuraEngine binaries with improved print intelligence
+
+Bugs Fixed
+* Purge is being done twice
+* Print estimation wrong prediction
+* Calibration finish thread was not stopping
+* Unused command sent in normal print
+* Transfer in windows 8.1 was instable and most of the times unsuccessful
+* Erroneous printing time estimation
+* x86 architecture was set as x64
+
+Firmware:
+* Support for autonomous mode
+* Temperature and power saving control and management
+
+Problems known:
+* No filament type while canceling or finishing autonomous mode
+* Menus not blocked while recovering communication
+* Bad permissions causes CuraEngine to crash silenciously
+* Windows7 - BEESOFT need to be restarted to get connection
+
+
+v3.9.0-beta1 (2014-07-10)
+
+Improvements
+* Autonomous mode and BEESOFT IA for cable plugged in and out with resume of autonomous print session.
+* Open scene asks to save scene if different
+* CuraEngine now runs in 32 bits windows
+* More clickable text areas
+
+Bugs Fixed
+* Cancel on unload was not setting no filament
+* No save option on New scene and open scene now considered
+* Calibration thread was not being ended
+* Print end was being shown early than BTF movements
+* Cancel in Preferences panel was saving preferences
+* Calibration test sometimes didn't start
+
+Firmware:
+* Support for autonomous mode
+
+Problems known:
+* Purge is being done twice
+* No filament type while canceling or finishing autonomous mode
+* Menus not blocked while recovering communication
+* Bad permissions causes CuraEngine to crash silenciously
+* Print estimation wrong prediction
+* Windows7 - BEESOFT need to be restarted to get connection
+
+
+v3.8.0 (2014-05-29)
+
+Improvements
+* Integration with the CuraEngine
+* Improved queue simulation, limit and wait
+* New wall thickness
+* Improved CPU usage when starting to print
+* Windows installer checks if BEESOFT is open;
+* Windows installer asks for restart;
+* Better update management on flash firmware
+* Maintenance panel blocking wizards when BTF is moving
+* Cable USB removable detection in several situations
+* Better read method handling with USB exceptions
+* Improved CPU consumption 
+* Auto-fit on scale operations using text fields
+* Unsaved changes dialog on new scene was not creating a new scene correctly
+* Improved fast moves and retractions when clliping points to prevent blobs
+* New Filament wizard
+* New unload after print flow
+
+Bugs Fixed
+* CoilCode update was not reading all the answer
+* GCode file selection was not correct causing conflicts with the gcode saved on scene
+* GCode dispatcher on calibration test was not blocking until the ACK of previous commands
+* Print estimation was estimated wrongly on 2 min when reusing GCode
+* Test calibration GCode not resseting extrusion value correctly
+* Rotation with 5 degrees was not selected after panel re-opening
+* Arrows were not working with Rotation axis radio buttons selected
+* Load filament panel was not reading BTF status when loaded
+* Raft was not optimized
+* Cancel was not killing temperature thread on Filament heating
+* No pipes validation when reading input COM stream
+* Unloading filament was not setting remaining filament to none
+* Flash firmware was refactoring control variable 
+* Temperature command on filament heating sometimes was not dispatched
+* Calibration welcome init revised to ensure it starts without blocking
+* Fix on busy state on wizards
+* Print panel more leightweight
+* USB exceptions during read methods were not handled correctly
+* Removed elements of more options on 3D Canvas when no model is selected
+* Estimation sometimes was estimating 
+* QuickGuide access was wrong om Help menus
+* Home movements repetition
+* CoilCode was not being saved to BTF
+* Save scene as was not saving models position
+
+Firmware new features:
+* Bigger queue to handle bigger GCodes
+* Fix on reading comments
+* Delay for transitions between FW+SW
+
+v3.7.5 (2014-04-08)
+
+Improvements
+* New Splash Screen
+
+Bugs Fixed
+* Loading the older filament after unload was not setting the coil code correctly
+* Preferences and About menu entry in Mac OSX native application was not working
+* Duration of last print was incomplete in the scene details panel
+
+v3.7.4 (2014-04-01)
+
+Bugs Fixed
+* Coil code was incorrect upon BEETHEFRIST restart
+
+v3.7.3 (2014-03-31)
+
+Improvements
+* New print flow
+
+Bugs Fixed
+* Changing Filament in Print Panel wasn’t dealing with main window buttons
+
+v3.7.0 (2014-03-28)
+
+Improvements
+* New print button with better look and feel
+* COPY revised
+* Unload filament operation added to print panel
+* Fix on Mac OS installer to prevent AppNap
+* New Mac OS icon with better resolution
+* Filament Type is now visible in PrintPanel
+
+Bugs Fixed
+* Unselecting model operation wasn’t possible
+* Improved grid bed
+* User accounts with bee on it was preventing from saving scene
+
+Firmware new features:
+* Coil management
+* New packets transfer protocol 
+
+v3.6.1 (2014-03-03)
+
+Improvements
+* New High Resolution profile -  now available 3 resolution profiles
+* Print estimation now available - Displayed time to print the scene and time remaining
+* Calibration wizard usb connection - previous release crashed while calibrating table height
+* New compatibility for the new Bootloader with most recent Vendor ID
+* New BEETHEFIRST drivers on BEESOFT instalation 
+* PLA purge higher - its easier to remove
+
+Bugs Fixed
+* Delete all models on scene was deleting just one model
+* English COPY revised
+* Saving complex scenes crashed BEESOFT
+* Calibraiton test was extruding less than expected - now it extrudes along all the print table
+* Raft had wrong number of interfaces. 
+* Mac OSX delete shortcut key was wrong. Pressing Delete does what expected
+* Unselecting model operation wasn’t possible
+
+v3.5.1 (2014-02-12)
+
+Bugs Fixed:
+* Calibration was disconnecting printer
+
+v3.5.0 (2014-02-11)
+
+Improvements:
+* Data files are now stored outside from installation directory. 
+* Less memory load on save operations
+
+Bugs Fixed:
+* More feedback at startup when a error occurs during init
+* BEESOFT wasn't starting up with visual interface in W7
+* Bad command sent at communication control
+
+Firmware new features:
+* Stops during print sessions eliminated
+
+
+v3.4.2 2014-01-30
+
+Improvements:
+* Save scene warning on new scene
+* New COM logic 
+
+Bugs Fixed:
+* No permissions to generate GCode
+
+Firmware new features:
+* Echo and keep alive command
+* Blind Dispatch tag
+
+v3.3.3 2014-01-24
+
+Improvements:
+* Disconnect state with more feedback in buttons press actions
+
+Bugs Fixed:
+* Scale in original small models wasn’t working with mouse controls.
+
+v3.3.2 2014-01-22
+
+Improvements:
+
+* Firmware with more IA and more robust
+* Print parser bug had a leak
+
+Bugs Fixed:
+* Print send and read synchronization bug fix
+* Print process screen was starting even withou skeinforge permissions
+* Duplicate was applying bad position vectors to the new cloned model
+
+v3.3.1 2014-01-21
+
+Bugs Fixed:
+* Print send and read synchronization bug fix
+
+v3.3.0 2014-01-20
+
+Software new features:
+
+* New scale method
+* New Bootloader updater v1.1
+
+Improvements:
+
+* Improved CPU and memory usage
+* Better cancel on print
+* Filament type at about menu
+* Better Raft and first layer
+* Better gcode generation feedback
+
+Bugs Fixed:
+
+* Firmware version was unavailable when BTF was already in firmware
+* Scale values weren’t updating on resetting position
+* Model imported by Drang-N-Drop were not being centered and put on platform
+* Print was breaking with pauses and stops
+* Cable disconnect feedback and reinitialize
+* Quit on Mac OSX wasn’t working 
+* Calibration wizard buttons had bad behavior
+* STL generation process was causing anomalies to printing results
+* Canvas was flickering when importing or picking a model
+* Temperature read in wizards after print was not correct
+* Filament remaining calculation was not accurate
+* Models operation center was not being refresh when unpicking model
+* Deleting picked models was deleting the last one picked
+* Default operation with arrows was not resetting on flow: Picking-Unpicking-Picking
+
+Firmware new features:
+
+* Implemented Watchdog timer
+* New descriptor 
+* Commands queue enlarged
+
+v3.1.0 2013-12-10
+
+Software new features:
+
+* Faster GCode generation
+* Scale is now in percentage
+
+Bugs fixed:
+
+* Scale in Z axis 
+* Extreme CPU usage when picking
+* Extruder was not cooling down when it should
+* Main window was at background after printing;
+* Sometimes the wrong model/settings were used when printing
+* Model dimensions are now shown with one decimal place
+
+v3.0.0 2013-11-29
+
+Software new features:
+
+* Improved usability
+* Intuitive design
+* Better connectivity between BEESOFT and BEETHEFIRST
+* Single scene can now have multiple 3D models (STL files) loaded at once
+* Better calibration process
+* Simpler extruder nozzle cleaning process
+* More information about filament usability - Indication of filament remaining
+* Automatic notifications for new BEESOFT updates
+
+Firmware new features:
+
+* Better connectivity between BEESOFT and BEETHEFIRST firmware
+* Incresead the firmware reliability
