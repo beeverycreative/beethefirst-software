@@ -57,12 +57,12 @@ public class About extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel2.setText(Languager.getTagValue("AboutSoftware", "About_SoftwareVersion"));
-        jLabel3.setText(Languager.getTagValue("AboutSoftware", "About_FirmwareVersion"));
-        jLabel4.setText(Languager.getTagValue("AboutSoftware", "About_BootloaderVersion"));
-//        jLabel5.setText(Languager.getTagValue("AboutSoftware", "About_SerialNumber"));
-        jLabel5.setText(Languager.getTagValue("AboutSoftware", "About_FilamentColor"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel2.setText(Languager.getTagValue(1,"AboutSoftware", "About_SoftwareVersion"));
+        jLabel3.setText(Languager.getTagValue(1,"AboutSoftware", "About_FirmwareVersion"));
+        jLabel4.setText(Languager.getTagValue(1,"AboutSoftware", "About_BootloaderVersion"));
+//        jLabel5.setText(Languager.getTagValue(1,"AboutSoftware", "About_SerialNumber"));
+        jLabel5.setText(Languager.getTagValue(1,"AboutSoftware", "About_FilamentColor"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
     }
     
     private void setValues()

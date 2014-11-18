@@ -60,11 +60,11 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title5"));
-        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Title4"));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"FilamentWizard", "Title5"));
+        jLabel3.setText(Languager.getTagValue(1,"FilamentWizard", "Title4"));
+        jLabel17.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
+        bCancel.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -92,7 +92,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 
         if (ProperDefault.get("maintenance").equals("1")) {
             jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
         }
 
         if (Base.printPaused == true) {
@@ -142,15 +142,12 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
              */
             if (String.valueOf(comboModel.getSelectedItem()).contains(enumCodes[i].toString())) {
                 return enumCodes[i].toString();
-            } /**
-             * Color without BEECODE - KDI
-             */
-            else {
-                return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
-            }
+            } 
         }
-
-        return "A302";
+        /**
+         * Color without BEECODE - KDI
+         */
+        return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
     }
 
     private void enableDrag() {

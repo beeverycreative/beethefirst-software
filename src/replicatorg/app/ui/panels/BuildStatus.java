@@ -44,8 +44,8 @@ public class BuildStatus extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel2.setText(Languager.getTagValue(1,"Other", "NotSupported"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
     }
     
     private void centerOnScreen()
@@ -65,15 +65,15 @@ public class BuildStatus extends javax.swing.JFrame {
     
     public void setCompletionMessage(String message)
     {
-        String msgFormatted = "<html>"+Languager.getTagValue("Print", "Print_BuildFinished<br>")+
-                         Languager.getTagValue("Print", "Print_Completion<html> ")+message;
+        String msgFormatted = "<html>"+Languager.getTagValue(1,"Print", "Print_BuildFinished<br>")+
+                         Languager.getTagValue(1,"Print", "Print_Completion<html> ")+message;
         jLabel2.setText(msgFormatted);
     }
     
     public void setFailureMessage(String message)
     {
-        String msgFormatted = "<html>"+Languager.getTagValue("Print", "Print_BuildAborted<br>")+
-                         Languager.getTagValue("Print", "Print_Stopped<html> ")+message;
+        String msgFormatted = "<html>"+Languager.getTagValue(1,"Print", "Print_BuildAborted<br>")+
+                         Languager.getTagValue(1,"Print", "Print_Stopped<html> ")+message;
         jLabel2.setText(msgFormatted);
     }
 

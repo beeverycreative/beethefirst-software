@@ -58,6 +58,7 @@ public class PrintBed implements Serializable {
     private String estimatedTime;
     private final transient String NOT_AVAILABLE = "NA";
     private final transient String UNTITLED = "Untitled";
+    private boolean isGCodeSave;
 
     public PrintBed(File newScene) {
         if (newScene == null) {
@@ -72,6 +73,7 @@ public class PrintBed implements Serializable {
             lastAutonomous = false;
             gcodeOK = false;
             isSceneDifferent = false;
+            isGCodeSave = false;
             gcode = new StringBuffer("M637");
             printBedFile = newScene;
             nModels = 0;
@@ -168,6 +170,14 @@ public class PrintBed implements Serializable {
 
     public boolean isSceneDifferent() {
         return isSceneDifferent;
+    }
+    
+    public void setGCodeSave(boolean save_gcode) {
+         this.isGCodeSave = save_gcode;
+    }
+    
+    public boolean isGCodeSave() {
+        return isGCodeSave;
     }
 
     public void setSceneDifferent(boolean isDifferent) {

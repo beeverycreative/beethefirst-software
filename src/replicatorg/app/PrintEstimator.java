@@ -208,7 +208,7 @@ public class PrintEstimator {
         }
 
         /**
-         * Tune estimation after aplying the patch
+         * Tune estimation after applying the patch
          */
         int[] timeTuned = tuneEstimation(hours, minutes);
         hours = timeTuned[0];
@@ -219,8 +219,8 @@ public class PrintEstimator {
             return String.valueOf(hours).concat(":").concat(String.valueOf(minutes));
         }
         if (minutes == 0) {
-            //Very small prints are estimated in 0 minutes. Lets assume 2 min for them
-            return String.valueOf(minutes + 2);
+            //Very small prints are estimated in 0 minutes. Lets assume big negative int for them
+            return String.valueOf(-100000);
         }
         return String.valueOf(minutes);
 

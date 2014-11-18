@@ -68,7 +68,8 @@ public class EstimationDriver extends DriverBaseImplementation {
 
 		// Calculate the feedrate. This is the speed that the toolhead will
 		// be traveling at.
-		double feedrate = getSafeFeedrate(delta);
+		double feedrate = 0;
+                        //getSafeFeedrate(delta);
 
 		// mostly for estimation driver.
 		

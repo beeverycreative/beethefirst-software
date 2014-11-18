@@ -30,9 +30,9 @@
         <property name="ant.build.javac.target" value="1.6" />
         <property name="ant.build.javac.source" value="1.6" />
         <property name="test.src.dir" value="test/src" />
-        <property name="release.name" value="BEESOFT-3.12.0_beta1-2014-10-15" />
+        <property name="release.name" value="BEESOFT-3.13.0_beta1-2014-11-18" />
        <!--  <property name="release.name" value="BEESOFT-3.8.0-beta_2014-05-01" /> -->
-        <property name="release.version" value="3.12.0_beta1" />
+        <property name="release.version" value="3.13.0_beta1" />
         <!-- <property name="release.version" value="3.8.0-beta" /> -->
 
         <path id="classpath">
@@ -227,9 +227,6 @@
         <copy todir="${reso.dir}/curaEngine/bin">
             <fileset dir="curaEngine/distros/mac" />
         </copy>
-        <copy todir="${reso.dir}/curaEngine/prefs">
-            <fileset dir="curaEngine/prefs" />
-        </copy>
         <copy todir="${reso.dir}/estimator">
             <fileset dir="estimator" />        
         </copy>
@@ -312,10 +309,7 @@
         </copy> 
         <copy todir="${target.dir}/curaEngine/bin">
             <fileset dir="curaEngine/distros/linux" />
-        </copy>
-        <copy todir="${target.dir}/curaEngine/prefs">
-            <fileset dir="curaEngine/prefs" />
-        </copy>        
+        </copy>     
         <copy todir="${target.dir}/firmware">
             <fileset dir="firmware" />
         </copy> 
@@ -352,10 +346,7 @@
         </copy>
         <copy todir="${target.dir}/curaEngine/bin">
             <fileset dir="curaEngine/distros/windows" />
-        </copy>     
-        <copy todir="${target.dir}/curaEngine/prefs">
-            <fileset dir="curaEngine/prefs" />
-        </copy>     
+        </copy>         
         <copy todir="${target.dir}/estimator">
             <fileset dir="estimator" />            
         </copy> 

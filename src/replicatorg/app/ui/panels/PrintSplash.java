@@ -52,10 +52,10 @@ public class PrintSplash extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue("", ""));
-        jLabel2.setText(Languager.getTagValue("", ""));
-        jLabel4.setText(Languager.getTagValue("", "")); 
-        jLabel11.setText(Languager.getTagValue("", "")); 
+        jLabel1.setText(Languager.getTagValue(1,"", ""));
+        jLabel2.setText(Languager.getTagValue(1,"", ""));
+        jLabel4.setText(Languager.getTagValue(1,"", "")); 
+        jLabel11.setText(Languager.getTagValue(1,"", "")); 
     }
     
     private void centerOnScreen()
@@ -306,8 +306,8 @@ public class PrintSplash extends javax.swing.JFrame {
     private void jProgressBar1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jProgressBar1StateChanged
        if(jProgressBar1.getValue()== 100)
        {
-            jLabel1.setText(Languager.getTagValue("", ""));
-            jLabel2.setText(Languager.getTagValue("", ""));
+            jLabel1.setText(Languager.getTagValue(1,"", ""));
+            jLabel2.setText(Languager.getTagValue(1,"", ""));
 //            jPanel3.removeAll();
 //            jPanel3.add(new JWindowControlsPanelPrintSplash(this));
 //            jPanel3.validate();

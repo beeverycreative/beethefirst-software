@@ -25,7 +25,6 @@ import replicatorg.app.tools.XML;
  */
 public class CalibrationGCoder {
 
-
     private static String fileName = "colorsGCode";
 
     /**
@@ -73,6 +72,7 @@ public class CalibrationGCoder {
 
             } else {
                 Base.writeLog("Permission denied over " + "languages/".concat(fileName).concat(".xml"));
+
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -93,18 +93,17 @@ public class CalibrationGCoder {
      */
     private static String getCode() {
         String rootTag = "colors";
-        String beeCode =  Base.getMainWindow().getMachineInterface().getModel().getCoilCode();
+        String beeCode = Base.getMainWindow().getMachineInterface().getModel().getCoilCode();
         String subTag = FilamentControler.getColor(beeCode).toLowerCase();
-        
+
         /**
-         * Lets user do calibration test event without filament.
-         * Default color = Black
+         * Lets user do calibration test event without filament. Default color =
+         * Black
          */
-        if(subTag.equalsIgnoreCase(FilamentControler.NO_FILAMENT))
-        {
-            subTag = Languager.getTagValue("CoilColors", "BLACK");
+        if (subTag.equalsIgnoreCase(FilamentControler.NO_FILAMENT)) {
+            subTag = Languager.getTagValue(3, "CoilColors", "BLACK");
         }
-             
+
         String tag = "gcode";
 
         Document dom;
@@ -127,7 +126,7 @@ public class CalibrationGCoder {
                     Node startnode = XML.getChildNodeByName(rootNode, tag);
                     org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
                     NodeList nodeList = element.getChildNodes(); // NodeList
-                    
+
                     for (int i = 1; i < nodeList.getLength(); i++) {
                         if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
                             if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
@@ -157,7 +156,7 @@ public class CalibrationGCoder {
 
             } else {
                 Base.writeLog("Permission denied over " + "machines/".concat(fileName).concat(".xml"));
-                
+
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -183,6 +182,4 @@ public class CalibrationGCoder {
 
         return code.split(",");
     }
-
-
 }

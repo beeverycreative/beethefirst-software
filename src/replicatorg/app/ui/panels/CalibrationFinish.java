@@ -70,14 +70,14 @@ public class CalibrationFinish extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "FinalStage_Title"));
-        String note = "<html><br><b>" + Languager.getTagValue("CalibrationWizard", "Test_Info_Warning") + "</b></html>";
-        jLabel4.setText(splitString(Languager.getTagValue("CalibrationWizard", "Test_Info")) + note);
-        jLabel5.setText(Languager.getTagValue("CalibrationWizard", "Test_button"));
-        jLabel6.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel23.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"CalibrationWizard", "FinalStage_Title"));
+        String note = "<html><br><b>" + Languager.getTagValue(1,"CalibrationWizard", "Test_Info_Warning") + "</b></html>";
+        jLabel4.setText(splitString(Languager.getTagValue(1,"CalibrationWizard", "Test_Info")) + note);
+        jLabel5.setText(Languager.getTagValue(1,"CalibrationWizard", "Test_button"));
+        jLabel6.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
+        jLabel23.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
+        jLabel24.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
+        jLabel25.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -138,7 +138,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         }
         if (ProperDefault.get("maintenance").equals("1")) {
 //            jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","b_simple_21.png")));
-            jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel24.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
         }
 
 
@@ -172,7 +172,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel6.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel6.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
         moving = true;
     }
 
@@ -584,7 +584,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
 
-        if (!machine.getDriver().isBusy()) {
+//        if (!machine.getDriver().isBusy()) {
             Point5d b = machine.getTablePoints("safe");
             double acLow = machine.getAcceleration("acLow");
             double acHigh = machine.getAcceleration("acHigh");
@@ -597,7 +597,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        }
+//        }
     }//GEN-LAST:event_jLabel24MousePressed
 
     private void jLabel23MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MousePressed

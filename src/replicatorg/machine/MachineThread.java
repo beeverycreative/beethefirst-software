@@ -59,7 +59,6 @@ class MachineThread extends Thread {
     private double previousEParsed = 0;
     private double absoluteDistance = 0;
 
-
     class AssessStatusThread extends Thread {
 
         MachineThread machineThread;
@@ -390,7 +389,6 @@ class MachineThread extends Thread {
                 break;
             case RESET:
                 if (state.isConnected()) {
-                    driver.reset();
                     readName();
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
@@ -481,7 +479,7 @@ class MachineThread extends Thread {
                 }
                 break;
             case STOP_MOTION:
-                driver.stop(false);
+                Base.logger.info("Machine stop called.");
 
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
@@ -498,7 +496,7 @@ class MachineThread extends Thread {
                 driver.getMachine().currentTool().setTargetTemperature(0);
                 driver.getMachine().currentTool().setPlatformTargetTemperature(0);
 
-                driver.stop(true);
+                Base.logger.info("Machine stop called.");
 
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
@@ -591,7 +589,6 @@ class MachineThread extends Thread {
 
                     if (command.command != null) {
                         String cmdValue = command.command.getCommand();
-
                         //Not a Comment
                         if (cmdValue.contains(";") == false) {
                             //If G1 or G0 process  X, Y, Z, E axis values and acceleration and feedrate values
@@ -629,10 +626,10 @@ class MachineThread extends Thread {
                                 int indexE = cmdValue.indexOf("E");
                                 int commandLenght = cmdValue.length();
                                 lastEString = cmdValue.substring(indexE, commandLenght).split(" ")[0];
-                                
+
                                 String parsedE = lastEString.substring(1);
                                 double actualEValue = 0;
-                                
+
                                 //G92 E
                                 if (parsedE.isEmpty() == false) {
                                     actualEValue = Double.valueOf(parsedE);
@@ -735,7 +732,7 @@ class MachineThread extends Thread {
         /**
          * Power saving
          */
-        Base.turnOnPowerSaving();
+        Base.turnOnPowerSaving(true);
 
         this.stop();
         statusThread.stop();
@@ -788,9 +785,9 @@ class MachineThread extends Thread {
     public void setLastPrintedPoint(Point5d point) {
         this.actualPoint = point;
     }
-        
+
     private double getColorRatio(String coilCode) {
- 
+
         return FilamentControler.getColorRatio(coilCode);
     }
 
@@ -802,7 +799,6 @@ class MachineThread extends Thread {
         return this.isFilamentChanged;
     }
 
-    
     public boolean scheduleRequest(MachineCommand request) {
 
         if (!Base.printPaused) {

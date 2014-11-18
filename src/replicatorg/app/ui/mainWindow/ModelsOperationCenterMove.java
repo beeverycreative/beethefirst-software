@@ -54,17 +54,18 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
-        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Move"));
+        int fileKey = 1;
+        jLabel1.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(fileKey,"ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "MoreOptions"));
+        jLabel12.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "Move"));
 //        jLabel13.setText(Languager.getTagValue("", ""));
 //        jLabel14.setText(Languager.getTagValue("", ""));        
 //        jLabel15.setText(Languager.getTagValue("", ""));    
-        jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Move") + " 5 " + Languager.getTagValue("MainWindowButtons", "MM"));
+        jLabel23.setText(Languager.getTagValue(fileKey,"MainWindowButtons", "Move") + " 5 " + Languager.getTagValue(fileKey,"MainWindowButtons", "MM"));
     }
 
     private void toggle5MM() {

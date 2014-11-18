@@ -53,13 +53,13 @@ public class PreferencesPanel extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("Preferences", "Preferences_title").toUpperCase());
-        jLabel3.setText(Languager.getTagValue("Preferences", "Measures") + ": ");
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "MM"));
-        jLabel9.setText(Languager.getTagValue("Preferences", "LockHeight"));
-        jLabel10.setText(Languager.getTagValue("Preferences", "LockHeight_info"));
-        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        jLabel12.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel1.setText(Languager.getTagValue(1,"Preferences", "Preferences_title").toUpperCase());
+        jLabel3.setText(Languager.getTagValue(1,"Preferences", "Measures") + ": ");
+        jLabel5.setText(Languager.getTagValue(1,"MainWindowButtons", "MM"));
+        jLabel9.setText(Languager.getTagValue(1,"Preferences", "LockHeight"));
+        jLabel10.setText(Languager.getTagValue(1,"Preferences", "LockHeight_info"));
+        jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
+        jLabel12.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
 
         String[] languages = {"English",
             "French",

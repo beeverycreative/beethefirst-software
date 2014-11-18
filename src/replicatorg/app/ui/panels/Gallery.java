@@ -99,18 +99,18 @@ public class Gallery extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("ApplicationMenus", "Gallery").toUpperCase());
-        jLabel3.setText(Languager.getTagValue("Gallery", "All"));
-        jLabel45.setText(Languager.getTagValue("Gallery", "Model_Rename"));
-        jLabel5.setText(Languager.getTagValue("Gallery", "ModelCategory_title"));
-        jLabel6.setText(Languager.getTagValue("Gallery", "ModelProperties_title").toUpperCase());
-        jLabel7.setText(Languager.getTagValue("Gallery", "Model_Name"));
-        jLabel8.setText(Languager.getTagValue("Gallery", "Model_Description"));
-        jLabel9.setText(Languager.getTagValue("Gallery", "EraseModel"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line9"));
-        jLabel27.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        jLabel29.setText(Languager.getTagValue("OptionPaneButtons", "Line8"));
-        jTextField1.setText(Languager.getTagValue("Gallery", "SearchModels_text_bar"));
+        jLabel1.setText(Languager.getTagValue(1,"ApplicationMenus", "Gallery").toUpperCase());
+        jLabel3.setText(Languager.getTagValue(1,"Gallery", "All"));
+        jLabel45.setText(Languager.getTagValue(1,"Gallery", "Model_Rename"));
+        jLabel5.setText(Languager.getTagValue(1,"Gallery", "ModelCategory_title"));
+        jLabel6.setText(Languager.getTagValue(1,"Gallery", "ModelProperties_title").toUpperCase());
+        jLabel7.setText(Languager.getTagValue(1,"Gallery", "Model_Name"));
+        jLabel8.setText(Languager.getTagValue(1,"Gallery", "Model_Description"));
+        jLabel9.setText(Languager.getTagValue(1,"Gallery", "EraseModel"));
+        jLabel24.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line9"));
+        jLabel27.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
+        jLabel29.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line8"));
+        jTextField1.setText(Languager.getTagValue(1,"Gallery", "SearchModels_text_bar"));
 
     }
 
@@ -144,9 +144,9 @@ public class Gallery extends javax.swing.JFrame {
             listModel.addElement(categories[i]);
         }
 
-        String[] categories2 = {Languager.getTagValue("Gallery", "All"),
-            Languager.getTagValue("Gallery", "Models"),
-            Languager.getTagValue("Gallery", "Scene")};
+        String[] categories2 = {Languager.getTagValue(1,"Gallery", "All"),
+            Languager.getTagValue(1,"Gallery", "Models"),
+            Languager.getTagValue(1,"Gallery", "Scene")};
         comboModel = new DefaultComboBoxModel(categories2);
         jComboBox1.setModel(comboModel);
         jComboBox1.setSelectedIndex(0);
@@ -393,13 +393,13 @@ public class Gallery extends javax.swing.JFrame {
             if(fileName.toLowerCase().contains(".stl"))
             {
                 extension = ".stl";
-                jLabel9.setText(Languager.getTagValue("Gallery", "EraseModel"));
+                jLabel9.setText(Languager.getTagValue(1,"Gallery", "EraseModel"));
                 enableProperties(false);
             }
             else
             {
                 extension = ".bee";
-                jLabel9.setText(Languager.getTagValue("Gallery", "EraseScene"));
+                jLabel9.setText(Languager.getTagValue(1,"Gallery", "EraseScene"));
                 enableProperties(true);
             }
         }
@@ -1259,24 +1259,24 @@ public class Gallery extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel45MouseExited
 
     private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        if (comboModel.getSelectedItem().equals(Languager.getTagValue("Gallery", "Models"))) {
-            jLabel3.setText(Languager.getTagValue("Gallery", "Models"));
+        if (comboModel.getSelectedItem().equals(Languager.getTagValue(1,"Gallery", "Models"))) {
+            jLabel3.setText(Languager.getTagValue(1,"Gallery", "Models"));
             extension = ".stl";
             unpickModels("");
             resetModelsView(1);
             fullfillModelsSlots(1);
             enableProperties(false);
-            jLabel9.setText(Languager.getTagValue("Gallery", "EraseModel"));
-        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue("Gallery", "Scene"))) {
-            jLabel3.setText(Languager.getTagValue("Gallery", "Scene"));
+            jLabel9.setText(Languager.getTagValue(1,"Gallery", "EraseModel"));
+        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue(1,"Gallery", "Scene"))) {
+            jLabel3.setText(Languager.getTagValue(1,"Gallery", "Scene"));
             extension = ".bee";
             unpickModels("");
             resetModelsView(1);
             fullfillModelsSlots(1);
             enableProperties(true);
-            jLabel9.setText(Languager.getTagValue("Gallery", "EraseScene"));
-        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue("Gallery", "All"))) {
-            jLabel3.setText(Languager.getTagValue("Gallery", "All"));
+            jLabel9.setText(Languager.getTagValue(1,"Gallery", "EraseScene"));
+        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue(1,"Gallery", "All"))) {
+            jLabel3.setText(Languager.getTagValue(1,"Gallery", "All"));
             extension = "all";
             unpickModels("");
             resetModelsView(1);

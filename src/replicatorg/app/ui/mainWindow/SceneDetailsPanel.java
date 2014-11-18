@@ -56,14 +56,14 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue("SceneDetails", "Scene"));
-//        jLabel2.setText(Languager.getTagValue("", ""));
-        jLabel3.setText(Languager.getTagValue("SceneDetails", "Scene_Name"));
-        jLabel4.setText(Languager.getTagValue("SceneDetails", "Scene_Description"));
-        jLabel5.setText(Languager.getTagValue("SceneDetails", "Scene_NModels"));
-        jLabel6.setText(Languager.getTagValue("SceneDetails", "Scene_LastPrintDate"));
-        jLabel7.setText(Languager.getTagValue("SceneDetails", "Scene_LastPrintTime"));
-        jLabel16.setText(Languager.getTagValue("ModelDetails", "Model_Category"));
+        jLabel1.setText(Languager.getTagValue(1,"SceneDetails", "Scene"));
+//        jLabel2.setText(Languager.getTagValue(1,"", ""));
+        jLabel3.setText(Languager.getTagValue(1,"SceneDetails", "Scene_Name"));
+        jLabel4.setText(Languager.getTagValue(1,"SceneDetails", "Scene_Description"));
+        jLabel5.setText(Languager.getTagValue(1,"SceneDetails", "Scene_NModels"));
+        jLabel6.setText(Languager.getTagValue(1,"SceneDetails", "Scene_LastPrintDate"));
+        jLabel7.setText(Languager.getTagValue(1,"SceneDetails", "Scene_LastPrintTime"));
+        jLabel16.setText(Languager.getTagValue(1,"ModelDetails", "Model_Category"));
     }
     
     private String[] fullFillCombo()
@@ -117,24 +117,24 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
             if(duration >= 120)
             {
                 if(min > 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHours") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinutes")); 
+                    jLabel10.setText(hours + " " +Languager.getTagValue(1,"Print","PrintHours") + " " + minutes + " "+Languager.getTagValue(1,"Print","PrintMinutes")); 
                 else if(min == 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHours") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinute")); 
+                    jLabel10.setText(hours + " " +Languager.getTagValue(1,"Print","PrintHours") + " " + minutes + " "+Languager.getTagValue(1,"Print","PrintMinute")); 
                 else
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") );
+                    jLabel10.setText(hours + " " +Languager.getTagValue(1,"Print","PrintHour") );
             }
             else if(duration >= 60 && duration < 120)
             {
                 if(min > 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinutes")); 
+                    jLabel10.setText(hours + " " +Languager.getTagValue(1,"Print","PrintHour") + " " + minutes + " "+Languager.getTagValue(1,"Print","PrintMinutes")); 
                 else if(min == 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinute")); 
+                    jLabel10.setText(hours + " " +Languager.getTagValue(1,"Print","PrintHour") + " " + minutes + " "+Languager.getTagValue(1,"Print","PrintMinute")); 
                 else
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") );
+                    jLabel10.setText(hours + " " +Languager.getTagValue(1,"Print","PrintHour") );
             }
             else
             {
-                 jLabel10.setText(" " + minutes + " "+Languager.getTagValue("Print","PrintMinutes")); 
+                 jLabel10.setText(" " + minutes + " "+Languager.getTagValue(1,"Print","PrintMinutes")); 
             }
         }
         else

@@ -64,8 +64,8 @@ public class Printer {
         String profile = "";
 
         profile = parseProfile(params);
-//        System.out.println(profile);
-        generator.setProfile(profile);
+        String ini_file = generator.preparePrint(profile);
+        generator.setProfile(ini_file);
         generator.readINI();
         options = parseParameters(params);
 
@@ -245,21 +245,27 @@ public class Printer {
 
         if (curaFileForced.contains("none")) {
 
+
+            if (machine.getCoilCode().contains(FilamentControler.NO_FILAMENT_CODE)) {
+                profile += FilamentControler.getBEECode("").toLowerCase(); //To allow base estimation without filament
+            } else {
+                profile += machine.getCoilCode().toLowerCase();
+            }
+
+            //Delimiter
+            profile += ":";
+            
             /**
              * Resolution
              */
             if (resolution.equalsIgnoreCase("low")) {
-                profile = "LowRes";
+                profile += "lowRes";
+            } else if (resolution.equalsIgnoreCase("medium")) {
+                profile += "mediumRes";
             } else if (resolution.equalsIgnoreCase("high")) {
-                profile = "HighRes";
+                profile += "highRes";
             } else if (resolution.equalsIgnoreCase("shigh")) {
-                profile = "SHighRes";
-            }
-
-            if (machine.getCoilCode().contains(FilamentControler.NO_FILAMENT_CODE)) {
-                profile += FilamentControler.getBEECode(""); //To allow base estimation without filament
-            } else {
-                profile += machine.getCoilCode();
+                profile += "shighRes";
             }
 
         } else {

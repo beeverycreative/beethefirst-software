@@ -63,17 +63,17 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
-        jLabel9.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " 90 " + Languager.getTagValue("MainWindowButtons", "Degrees"));
-        jLabel10.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " -90 " + Languager.getTagValue("MainWindowButtons", "Degrees"));
-        jLabel11.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " 90 " + " " + Languager.getTagValue("MainWindowButtons", "Axis2"));
-        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " 5 " + Languager.getTagValue("MainWindowButtons", "Degrees"));
+        jLabel1.setText(Languager.getTagValue(1,"MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(1,"MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(1,"ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(1,"MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(1,"MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(1,"MainWindowButtons", "MoreOptions"));
+        jLabel9.setText(Languager.getTagValue(1,"MainWindowButtons", "Rotate") + " 90 " + Languager.getTagValue(1,"MainWindowButtons", "Degrees"));
+        jLabel10.setText(Languager.getTagValue(1,"MainWindowButtons", "Rotate") + " -90 " + Languager.getTagValue(1,"MainWindowButtons", "Degrees"));
+        jLabel11.setText(Languager.getTagValue(1,"MainWindowButtons", "Rotate") + " 90 " + " " + Languager.getTagValue(1,"MainWindowButtons", "Axis2"));
+        jLabel12.setText(Languager.getTagValue(1,"MainWindowButtons", "Rotate"));
+        jLabel23.setText(Languager.getTagValue(1,"MainWindowButtons", "Rotate") + " 5 " + Languager.getTagValue(1,"MainWindowButtons", "Degrees"));
     }
 
     private void rotateRight() {

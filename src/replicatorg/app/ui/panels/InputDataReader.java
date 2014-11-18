@@ -45,9 +45,9 @@ public class InputDataReader extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue("Other", "InsertValue"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel2.setText(Languager.getTagValue(1,"Other", "InsertValue"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
+        jLabel25.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
     }
 
     private void centerOnScreen() {

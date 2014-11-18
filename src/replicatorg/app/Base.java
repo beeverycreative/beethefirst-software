@@ -103,6 +103,8 @@ public class Base {
     public static boolean isPrinting = false;
     public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
+    public static boolean gcodeToSave = false;
+    public static boolean isPrintingFromGCode = false;
 
     public enum InitialOpenBehavior {
 
@@ -111,13 +113,13 @@ public class Base {
         OPEN_SPECIFIC_FILE
     };
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.12.0_beta1-2014-10-15";
+    public static final String VERSION_BEESOFT = "3.13.0_beta1-2014-11-18";
 //    public static final String VERSION_BEESOFT = "3.8.0-beta_2014-05-01";
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
-    public static String firmware_version_in_use = "BEETHEFIRST-4.35.0.bin";
-    public static final String VERSION_FIRMWARE_FINAL = "4.35.0";
-    public static final String VERSION_FIRMWARE_FINAL_OLD = "3.35.0";
+    public static String firmware_version_in_use = "BEETHEFIRST-7.0.0.bin";
+    public static final String VERSION_FIRMWARE_FINAL = "7.0.0";
+    public static final String VERSION_FIRMWARE_FINAL_OLD = "6.0.0";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
@@ -689,14 +691,20 @@ public class Base {
     static public void cleanDirectoryTempFiles(String dirPath) {
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl") || file.getName().contains(".gcode")) {
+            if (file.getName().contains(".stl") ) { //|| (file.getName().contains(".gcode") && gcodeToSave == false)
                 file.delete();
             }
         }
     }
     
-    public static void turnOnPowerSaving() {
-        editor.getMachine().getDriver().dispatchCommand("M641");
+    public static void turnOnPowerSaving(boolean turnOn) {
+        if(turnOn) {
+            editor.getMachine().getDriver().dispatchCommand("M641 A1");
+        }
+        else
+        {
+            editor.getMachine().getDriver().dispatchCommand("M641 A0");
+        }
     }
 
     private static void getJavaVersion() {
@@ -1135,7 +1143,7 @@ public class Base {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         // use native popups so they don't look so crappy on osx
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 

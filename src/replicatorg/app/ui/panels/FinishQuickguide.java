@@ -48,9 +48,9 @@ public class FinishQuickguide extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title6").toUpperCase());
-        jLabel2.setText(splitString(Languager.getTagValue("QuickGuideWizard", "Jump")));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel1.setText(Languager.getTagValue(1,"FilamentWizard", "Title6").toUpperCase());
+        jLabel2.setText(splitString(Languager.getTagValue(1,"QuickGuideWizard", "Jump")));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
         
     }
     

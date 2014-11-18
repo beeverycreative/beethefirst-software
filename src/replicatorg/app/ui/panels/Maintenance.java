@@ -69,10 +69,11 @@ public class Maintenance extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MaintenancePanel", "Title").toUpperCase());
-        jLabel2.setText(Languager.getTagValue("MaintenancePanel", "Filament_Title"));
-        jLabel3.setText(Languager.getTagValue("MaintenancePanel", "Filament_Intro"));
-        jLabel4.setText(Languager.getTagValue("MaintenancePanel", "FilamentChange_button"));
+        int fileKey = 1;
+        jLabel1.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "Title").toUpperCase());
+        jLabel2.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "Filament_Title"));
+        jLabel3.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "Filament_Intro"));
+        jLabel4.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "FilamentChange_button"));
 
 //        int grams = gramsCalculator((Double.valueOf(ProperDefault.get("filamentCoilRemaining")) / 1000));
 //        
@@ -86,17 +87,17 @@ public class Maintenance extends javax.swing.JFrame {
 //        {
 //            jLabel5.setText(Languager.getTagValue("MaintenancePanel", "Filament_Info_None"));
 //        }
-        jLabel6.setText(String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue("MaintenancePanel", "Calibration_Info").split("x")[1]);
-        jLabel7.setText(Languager.getTagValue("MaintenancePanel", "CalibrationChange_button"));
-        jLabel8.setText(Languager.getTagValue("MaintenancePanel", "Calibration_Intro"));
-        jLabel9.setText(Languager.getTagValue("MaintenancePanel", "Calibration_Title"));
+        jLabel6.setText(String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue(fileKey,"MaintenancePanel", "Calibration_Info").split("x")[1]);
+        jLabel7.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "CalibrationChange_button"));
+        jLabel8.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "Calibration_Intro"));
+        jLabel9.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "Calibration_Title"));
 //        jLabel10.setText("(" + Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[1].split("\\(")[1]);
-        jLabel16.setText(Languager.getTagValue("MaintenancePanel", "ExtruderClean_Title"));
-        jLabel11.setText(Languager.getTagValue("MaintenancePanel", "ExtruderClean_button"));
-        jLabel12.setText(Languager.getTagValue("MaintenancePanel", "ExtruderClean_Intro"));
+        jLabel16.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "ExtruderClean_Title"));
+        jLabel11.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "ExtruderClean_button"));
+        jLabel12.setText(Languager.getTagValue(fileKey,"MaintenancePanel", "ExtruderClean_Intro"));
 //        jLabel16.setText(Languager.getTagValue("MaintenancePanel", ""));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel18.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel17.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line6"));
+        jLabel18.setText(Languager.getTagValue(fileKey,"FeedbackLabel", "MovingMessage"));
 
     }
 
@@ -126,6 +127,8 @@ public class Maintenance extends javax.swing.JFrame {
             jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
         }
 
+        //Disable Power saving in case
+        Base.turnOnPowerSaving(false);
     }
 
     private void centerOnScreen() {
@@ -187,7 +190,16 @@ public class Maintenance extends javax.swing.JFrame {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.enableAllOpenWindows();
         Base.bringAllWindowsToFront();
-        
+
+        /**
+         * If not autonomous then turn power saving on again
+         */
+        if(Base.getMainWindow().getMachine().getDriver().isAutonomous() == false) {
+            /**
+             * Power saving
+             */
+            Base.turnOnPowerSaving(true);
+        }
     }
 
     @SuppressWarnings("unchecked")

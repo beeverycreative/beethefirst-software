@@ -49,9 +49,9 @@ public class WelcomeQuickguide extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue("QuickGuideWizard", "Title1").toUpperCase());
-        jLabel2.setText(splitString(Languager.getTagValue("QuickGuideWizard", "Info")));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        jLabel1.setText(Languager.getTagValue(1,"QuickGuideWizard", "Title1").toUpperCase());
+        jLabel2.setText(splitString(Languager.getTagValue(1,"QuickGuideWizard", "Info")));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
         
     }
     
@@ -122,12 +122,12 @@ public class WelcomeQuickguide extends javax.swing.JFrame {
         {
             Base.getMainWindow().setEnabled(true);
 //            ProperDefault.put("firstTime", String.valueOf(true));
-            jLabel1.setText(Languager.getTagValue("Other", "Warning"));
-            jLabel2.setText(splitString(Languager.getTagValue("Print", "Print_PrinterNotAvailable")));
+            jLabel1.setText(Languager.getTagValue(1,"Other", "Warning"));
+            jLabel2.setText(splitString(Languager.getTagValue(1,"Print", "Print_PrinterNotAvailable")));
 //            jLabel3.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","c_disabled.png")));
 //            jLabel4.setEnabled(false);
 //            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","b_simple_18.png")));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
                     
         }
     }

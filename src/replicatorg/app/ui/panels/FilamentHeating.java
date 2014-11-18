@@ -69,14 +69,14 @@ public class FilamentHeating extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title1"));
-        String warning = "<html><br><b>" + Languager.getTagValue("FilamentWizard", "Info_Warning") + "</b></html>";
-        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Heating_Info_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Heating_Info") + warning));
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"FilamentWizard", "Title1"));
+        String warning = "<html><br><b>" + Languager.getTagValue(1,"FilamentWizard", "Info_Warning") + "</b></html>";
+        jLabel3.setText(Languager.getTagValue(1,"FilamentWizard", "Heating_Info_Title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1,"FilamentWizard", "Heating_Info") + warning));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
+        jLabel17.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
+        jLabel19.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -162,7 +162,7 @@ public class FilamentHeating extends javax.swing.JFrame {
             }
         }
 
-        if (temperature < temperatureGoal) {
+        if (temperature <= (temperatureGoal-10)) {
             achievement = false;
         } else {
             achievement = true;
@@ -182,7 +182,7 @@ public class FilamentHeating extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "HeatingMessage"));
     }
 
     private void moveToPosition() {

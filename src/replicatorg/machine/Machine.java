@@ -47,7 +47,6 @@ import replicatorg.util.Point5d;
  */
 public class Machine implements MachineInterface {
 
-
     public enum RequestType {
         // Set up the connection to the machine
 
@@ -196,9 +195,8 @@ public class Machine implements MachineInterface {
         machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_ALL,
                 ""));
     }
-    
-    public void killSwitch()
-    {        
+
+    public void killSwitch() {
         machineThread.killSwitch();
         runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
@@ -266,55 +264,47 @@ public class Machine implements MachineInterface {
     public void setStopwatch(int stopwatch) {
         machineThread.setStopwatch(stopwatch);
     }
-    
-    public void stopwatch(){
+
+    public void stopwatch() {
         machineThread.stopwatch();
     }
-    
-    public void resumewatch()
-    {
+
+    public void resumewatch() {
         machineThread.resumeWatch();
     }
-    
-    public String getLastFeedrate()
-    {
+
+    public String getLastFeedrate() {
         return machineThread.getLastFeedrate();
     }
-    
+
     public String getLastE() {
         return machineThread.getLastE();
     }
-    
-    public String getLastAcceleration()
-    {
+
+    public String getLastAcceleration() {
         return machineThread.getLastAcceleration();
     }
-    
-    public Point5d getLastPrintedPoint()
-    {
+
+    public Point5d getLastPrintedPoint() {
         return machineThread.getLastPrintedPoint();
     }
-    
-    public void setLastPrintedPoint(Point5d point)
-    {
+
+    public void setLastPrintedPoint(Point5d point) {
         machineThread.setLastPrintedPoint(point);
     }
-    
-    public void setFilamentChanged(boolean isChanged)
-    {
+
+    public void setFilamentChanged(boolean isChanged) {
         machineThread.setFilamentChanged(isChanged);
     }
-    
-    
+
     public boolean hasFilamentChanged() {
         return machineThread.hasFilamentChanged();
     }
 
-    public void setLastBEECode(String code)
-    {
+    public void setLastBEECode(String code) {
         machineThread.setLastBEECode(code);
     }
-    
+
     public Point5d getTablePoints(String pointName) {
         return machineThread.getTablePoints(pointName);
     }
@@ -334,7 +324,7 @@ public class Machine implements MachineInterface {
     protected double getTotalExtrudedValue() {
         return machineThread.getDriver().getTotalExtrudedValue();
     }
-    
+
     @Override
     public String getZValue() {
         return String.valueOf(machineThread.getModel().getzValue());

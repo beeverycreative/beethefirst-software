@@ -81,11 +81,11 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title1"));
-        jLabel3.setText(Languager.getTagValue("Print", "Print_Splash_Gcode_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue("Print", "Print_Calibration_Info")));
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"FilamentWizard", "Title1"));
+        jLabel3.setText(Languager.getTagValue(1,"Print", "Print_Splash_Gcode_Title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1,"Print", "Print_Calibration_Info")));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
+        jLabel19.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -200,12 +200,12 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "HeatingMessage"));
     }
 
     public void showPrintMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
     }
 
     private void moveToPosition() {
@@ -303,7 +303,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
     public int printTest() {
 
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        jLabel1.setText(Languager.getTagValue("Print", "Print_Title"));
+        jLabel1.setText(Languager.getTagValue(1,"Print", "Print_Title"));
 
         String sCurrentLine = "";
         int n_lines = 0;

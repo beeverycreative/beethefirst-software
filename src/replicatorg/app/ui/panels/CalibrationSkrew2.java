@@ -66,13 +66,13 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Title3"));
-        jLabel3.setText(Languager.getTagValue("CalibrationWizard", "RightScrew_title"));
-        jLabel4.setText(splitString(Languager.getTagValue("CalibrationWizard", "RightScrew_Info")));
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel23.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"CalibrationWizard", "Title3"));
+        jLabel3.setText(Languager.getTagValue(1,"CalibrationWizard", "RightScrew_title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1,"CalibrationWizard", "RightScrew_Info")));
+        jLabel5.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
+        jLabel23.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
+        jLabel24.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
+        jLabel25.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -145,7 +145,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel5.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
         jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
         jLabel24MouseClickedReady = false;
     }

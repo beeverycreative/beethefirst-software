@@ -83,9 +83,9 @@ public class FilamentInsertion extends javax.swing.JFrame {
         }
 
         if (!jLabel6MouseClickedReady) {
-            jLabel3.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info_Title2"));
+            jLabel3.setText(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info_Title2"));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unloadImage.png")));
-            jLabel4.setText(splitString(Languager.getTagValue("Print", "Print_Unloaded1").concat(" ").concat(Languager.getTagValue("Print", "Print_Unloaded2")).concat(Languager.getTagValue("Print", "Print_Unloaded3"))));
+            jLabel4.setText(splitString(Languager.getTagValue(1,"Print", "Print_Unloaded1").concat(" ").concat(Languager.getTagValue(1,"Print", "Print_Unloaded2")).concat(Languager.getTagValue(1,"Print", "Print_Unloaded3"))));
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-04.png")));
             jLabel6MouseClickedReady = true;
@@ -135,15 +135,15 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title2"));
-        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info2")));
-        jLabel5.setText(Languager.getTagValue("FilamentWizard", "LoadButton"));
-        jLabel6.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"FilamentWizard", "Title2"));
+        jLabel3.setText(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info_Title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info2")));
+        jLabel5.setText(Languager.getTagValue(1,"FilamentWizard", "LoadButton"));
+        jLabel6.setText(Languager.getTagValue(1,"FilamentWizard", "UnloadButton"));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
+        jLabel17.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -167,7 +167,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         // Active during movement
         // REDSOFT: Implement This timer
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
     }
 
     private void enableMessageDisplay() {
@@ -753,8 +753,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
         if (!machine.getDriver().isBusy()) {
 
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
-            jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info2")));
-            bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+            jLabel4.setText(splitString(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info2")));
+            bNext.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
             unloadPressed = false;
               
             EventQueue.invokeLater(new Runnable() {
@@ -806,12 +806,12 @@ public class FilamentInsertion extends javax.swing.JFrame {
             jLabel6MouseClickedReady = false;
             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
-            jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info3")));
+            jLabel4.setText(splitString(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info3")));
             
             jLabel18MouseClickedReady = false;
             ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
             ProperDefault.put("coilCode", String.valueOf("N/A"));
-            bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            bNext.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
             unloadPressed = true;
             
             Base.writeLog("Unloading Filament");

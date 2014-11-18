@@ -69,14 +69,14 @@ public class NozzleClean extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("ExtruderCleanWizard", "Title1"));
-        jLabel4.setText(Languager.getTagValue("ExtruderCleanWizard", "Title2"));
-        String warning = "<html><br><b>" + Languager.getTagValue("ExtruderCleanWizard", "Info_Warning") + "</b></html>";
-        jLabel5.setText(splitString(Languager.getTagValue("ExtruderCleanWizard", "Info") + warning));
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingNozzleMessage"));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"ExtruderCleanWizard", "Title1"));
+        jLabel4.setText(Languager.getTagValue(1,"ExtruderCleanWizard", "Title2"));
+        String warning = "<html><br><b>" + Languager.getTagValue(1,"ExtruderCleanWizard", "Info_Warning") + "</b></html>";
+        jLabel5.setText(splitString(Languager.getTagValue(1,"ExtruderCleanWizard", "Info") + warning));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "HeatingNozzleMessage"));
+        jLabel17.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
+        jLabel19.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -140,7 +140,7 @@ public class NozzleClean extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingNozzleMessage"));
+        jLabel7.setText(Languager.getTagValue(1,"FeedbackLabel", "HeatingNozzleMessage"));
     }
 
     public void resetFeedbackComponents() {
@@ -189,7 +189,7 @@ public class NozzleClean extends javax.swing.JFrame {
             jLabel17.setVisible(false);
             jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
         }
     }
 
@@ -229,7 +229,7 @@ public class NozzleClean extends javax.swing.JFrame {
         if (ProperDefault.get("maintenance").equals("1")) {
             jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
         }
 
     }

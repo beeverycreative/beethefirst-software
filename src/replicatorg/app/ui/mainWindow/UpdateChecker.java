@@ -76,9 +76,10 @@ public class UpdateChecker extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel19.setText(Languager.getTagValue("Other", "Download"));
+        int fileKey = 1;
+        jLabel2.setText(Languager.getTagValue(fileKey,"Other", "NotSupported"));
+        jLabel18.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line6"));
+        jLabel19.setText(Languager.getTagValue(fileKey,"Other", "Download"));
     }
 
     private void centerOnScreen() {
@@ -240,16 +241,16 @@ public class UpdateChecker extends javax.swing.JFrame {
         {
             if(updateBetaAvailable)
             {
-                jLabel2.setText(splitString(Languager.getTagValue("Updates", "AvailableBeta")));
+                jLabel2.setText(splitString(Languager.getTagValue(1,"Updates", "AvailableBeta")));
             }
             else
             {
-                jLabel2.setText(splitString(Languager.getTagValue("Updates", "AvailableStable")));
+                jLabel2.setText(splitString(Languager.getTagValue(1,"Updates", "AvailableStable")));
             }
         }
         else
         {
-            jLabel2.setText(splitString(Languager.getTagValue("Updates", message)));
+            jLabel2.setText(splitString(Languager.getTagValue(1,"Updates", message)));
         }
     }
 

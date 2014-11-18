@@ -168,7 +168,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/replicatorg/app/ui/mainWindow/b_disabled_2.png"/>
+                  <Image iconType="3" name="/replicatorg/app/ui/mainWindow/b_simple_2.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="PRINT"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>

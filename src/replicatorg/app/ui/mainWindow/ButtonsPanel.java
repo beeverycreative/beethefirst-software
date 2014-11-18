@@ -46,19 +46,19 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel6.setText(Languager.getTagValue("MainWindowButtons", "Models"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Maintenance"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "QuickWizard"));
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Print"));
+        jLabel6.setText(Languager.getTagValue(1,"MainWindowButtons", "Models"));
+        jLabel4.setText(Languager.getTagValue(1,"MainWindowButtons", "Maintenance"));
+        jLabel5.setText(Languager.getTagValue(1,"MainWindowButtons", "QuickWizard"));
+        jLabel1.setText(Languager.getTagValue(1,"MainWindowButtons", "Print"));
     }
 
     public void setMessage(String message) {
 
         if (message.equals("is connected")) {
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "BEETHEFIRST_STATUS3"));
+            jLabel3.setText(Languager.getTagValue(1,"FeedbackLabel", "BEETHEFIRST_STATUS3"));
         }
         if (message.equals("is disconnected")) {
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "BEETHEFIRST_STATUS2"));
+            jLabel3.setText(Languager.getTagValue(1,"FeedbackLabel", "BEETHEFIRST_STATUS2"));
         } else {
             // REDSOFT: CONSIDER OTHER SITUATION ?
         }
@@ -168,12 +168,12 @@ public class ButtonsPanel extends javax.swing.JPanel {
         if (!s.isConnected()) {
             jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_7.png")));
             jLabel5Bool = false;
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
-            jLabel6Bool = false;
             jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_7.png")));
             jLabel4Bool = false;
-            jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_2.png")));
-            jLabel1Bool = false;
+//            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+//            jLabel6Bool = false;
+//            jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_2.png")));
+//            jLabel1Bool = false;
             setMessage("is disconnected");
         }
         else {
@@ -274,7 +274,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jPanel3.setPreferredSize(new java.awt.Dimension(681, 48));
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_disabled_2.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_2.png"))); // NOI18N
         jLabel1.setText("PRINT");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -536,13 +536,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
         boolean connected = Base.getMachineLoader().isConnected();
 
-        if (connected) {
+//        if (connected) {
             MachineInterface machine = Base.getMainWindow().getMachineInterface();
 
             if (machine.getModel().getMachineBusy()) {
                 editor.showFeedBackMessage("moving");
-            } else {
-                if (!print_pressed && editor.validatePrintConditions() && Base.isPrinting == false && Base.getMainWindow().getBed().getNumberModels() > 0
+            } else {//&& Base.isPrinting == false 
+                if (!print_pressed && editor.validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
                         || Boolean.valueOf(ProperDefault.get("localPrint"))) {
                     jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
                     jLabel1Bool = false;
@@ -551,9 +551,9 @@ public class ButtonsPanel extends javax.swing.JPanel {
                 }
             }
 
-        } else {
-            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-        }
+//        } else {
+//            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+//        }
 
     }//GEN-LAST:event_jLabel1MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables

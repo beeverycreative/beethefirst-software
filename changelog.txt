@@ -1,3 +1,23 @@
+v3.13.0-beta1 (2014-11-18)
+
+Improvements
+* Shutdown mode
+* New 200 microns resolution
+* Lock mode in scale operations
+* Improved communication in pause operations 
+* Possibility to save gcode
+* Print from existing GCode 
+
+Bugs Fixed
+* Calibration test wasn't running for new filament colors
+* Power saving was enable when print paused
+
+Firmware:
+* New firmware with support for shutdown feature 
+
+Problems known:
+* Windows7 - BEESOFT need to be restarted to get connection
+
 v3.12.0-beta1 (2014-10-15)
 
 Improvements

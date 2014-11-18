@@ -36,8 +36,8 @@ public class MessagesPopUp extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue("FeedbackLabel", "StatusMessage"));
-        jLabel3.setText(Languager.getTagValue("Tour", "DefaultMessage"));
+        jLabel1.setText(Languager.getTagValue(1,"FeedbackLabel", "StatusMessage"));
+        jLabel3.setText(Languager.getTagValue(1,"Tour", "DefaultMessage"));
     }
     
     private void visibility(boolean vsB)
@@ -102,35 +102,37 @@ public class MessagesPopUp extends javax.swing.JFrame {
     public void setMessage(String message)
     {
         if(message.equals("collision"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageCollision"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageCollision"));
         if(message.equals("notInBed"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotInBed"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageNotInBed"));
         if(message.equals("maxVolume"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageMaxVolume"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageMaxVolume"));
         if(message.equals("outOfBounds"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageOutOfBounds"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageOutOfBounds"));
         if(message.equals("importModel"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageImportModel"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageImportModel"));
         if(message.equals("saveScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageSaveScene"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageSaveScene"));
         if(message.equals("loadScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageLocadScene"));  
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageLocadScene"));  
         if(message.equals("notSaveScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotSaveScene"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageNotSaveScene"));
         if(message.equals("notLoadScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotLocadScene"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageNotLocadScene"));
         if(message.equals("firstTime"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageFirstTime"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageFirstTime"));
         if(message.equals("modelNotPicked"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageModelNotPicked"));
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MessageModelNotPicked"));
         if(message.equals("gcodeGeneration"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "GCodeGeneration"));     
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "GCodeGeneration"));     
         if(message.equals("btfDisconnect"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "BTF_Disconnected"));    
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "BTF_Disconnected"));    
+        if(message.equals("btfPrinting"))
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "BTF_Printing"));         
         if(message.equals("moving"))
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage2")); 
+            jLabel3.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage2")); 
         if(message.equals("modelMeshError"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MeshError")); 
+            jLabel3.setText(Languager.getTagValue(1,"StatusMessages", "MeshError")); 
         
         autoHide();
         setLocation();

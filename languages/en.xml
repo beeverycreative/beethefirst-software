@@ -31,6 +31,7 @@
             <Model_Online value="Online models"/>
             <Printer_Maintenance value="Maintenance"/>
             <Printer_Print value="Print"/>
+            <Printer_Print2D value="Print from 2D image"/>
             <Help_Topics value="Help topics:"/>
             <Help_Topics_Info value="Should you need more help, please consult our FAQs, our website www.beeverycreative.com, or please contact the customer service."/>
             <Help value="Press here for help"/>
@@ -150,6 +151,7 @@
             <Line13 value="Restart"/>            
             <Line14 value="Unload"/> 
             <Line15 value="Estimate"/> 
+            <Line16 value="Shutdown"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -238,6 +240,13 @@
         
         <!-- A próxima secção XML contém o texto a ser apresentado no Processo de Impressão, incluindo SplashScreens --> 
         <Print>
+            <Print2D_Title value="Please select a PNG image you want to print"/>
+            <Print2D_Type_Image value="Choose type of image: "/>
+            <Print2D_GenerateSTL value="Generate STL "/>
+            <Print_SelectImage value="Select image to print"/>
+            <Print_TypeImage value="Choose type of image"/>
+            <Print_LogoType value="Logo"/>
+            <Print_PortraitType value="Portrait"/>
             <Print_Title value="PRINTING"/>
             <Print_Splash_Gcode_Title value="PROCESSING... PLEASE WAIT"/>
             <Print_Splash_Gcode_Info value="This process can take a few minutes"/>	
@@ -256,6 +265,7 @@
             <Print_Splash_Info11 value="To print you have to change the filament now."/>
             <Print_Quality value="Resolution"/>	
             <Print_Quality_Low value="Low"/>	
+            <Print_Quality_Medium value="Medium"/>	
             <Print_Quality_Normal value="Normal"/>	
             <Print_Quality_High value="High"/>	
             <Print_Quality_SHigh value="High+ (beta)"/>
@@ -264,18 +274,24 @@
             <Print_Density_Medium value="Medium"/>
             <Print_Density_High value="High"/>	
             <Print_Density_Insertion value="Density value (%) :"/>	
+            <Print_GCode_Selected value="File selected: "/>
+            <Print_GCode_Clear value="Clear"/>
             <Print_Raft value="Raft"/>	
             <Print_Support value="Support"/>	
             <Print_Autonomy value="Autonomy"/>
+            <Print_GCode value="Save GCode"/>
             <Print_GramsTag value="gram(s)"/>
+            <Print_ChooseGCodeFile value="Please choose a file to print"/>
             <Print_EstimationPrintTime value="Print time:"/>
             <Print_EstimationMaterial value="Filament weight:"/>
             <Print_Raft_Info value="This option creates a base that will allow the model to adhere to the table and help avoid warping. The raft may be hard to remove from the model, so only use when needed."/>	
             <Print_Support_Info value="This option automatically creates a detachable structure beneath an overhang or highly inclined areas, so as to allow the model to be printed."/>	
             <Print_Autonomy_Info value="This option allows you to print without a computer connection. You will be informed when you can disconnect from your computer."/>
+            <Print_GCode_Info value="This option allows you to save the GCode and print it later."/>
             <Print_ChangeFilament value="Change filament now"/>
+            <Print_SelectGCode value="Select GCode to print"/>
             <Print_TimeLeft value="About x minutes remaining"/>
-            <Print_GCode value="Settings will be updated. This process can take several moments."/>
+            <Print_GCode2 value="Settings will be updated. This process can take several moments."/>
             <Print_Filament value="Remaining filament may not be enough for this print session. Are you sure you have selected the correct filament color?"/>
             <Print_Autonomy value="Allows the BEETHEFIRST to print without being connected to the computer.
 				       You'll be informed when you can unplug the cable."/>
@@ -285,6 +301,10 @@
             <Print_Pausing value="Pausing... Please wait."/>
             <Print_Resuming value="Resuming... Please wait."/> 
             <Print_Waiting value="Waiting... Resume when you are ready."/>
+            <Print_Waiting2 value="You may also shutdown to continue printing later."/>
+            <Print_Waiting3 value="Resume if you want to continue printing."/>
+            <Print_Waiting4 value="You may also shutdown to continue printing later."/>
+            <Print_Shutdown value="You may now shutdown BEETHEFIRST."/>
             <Print_Unloading value="Your BEETHEFIRST is unloading. Please wait."/>
             <Print_Unloaded1 value="You may now remove your spool."/>
             <Print_Unloaded2 value="Cut the tip and store the spool in a cold dry place."/>
@@ -448,6 +468,7 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <MessageModelNotPicked value="Select a model."/>
             <GCodeGeneration value="GCode not generated. Check your execute permissions."/>
             <BTF_Disconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
+            <BTF_Printing value="Your BEETHEFIRST is printing. Please make sure it is available for a new print. "/>
             <ErrorUpdating value="Sorry about this! Please restart BEESOFT to continue."/>
             <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
             <MeshError value="Imported model has errors. Try to fix them or import another model."/>

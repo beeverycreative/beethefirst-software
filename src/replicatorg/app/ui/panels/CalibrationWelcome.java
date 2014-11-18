@@ -94,20 +94,21 @@ public class CalibrationWelcome extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Title1"));
-        String warning = "<html><br><b>" + Languager.getTagValue("CalibrationWizard", "Info_Warning") + "</b></html>";
-        jLabel3.setText(splitString(Languager.getTagValue("CalibrationWizard", "Info") + warning));
-        jLabel4.setText(Languager.getTagValue("CalibrationWizard", "Buttons_Info"));
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        int fileKey = 1;
+        jLabel1.setText(Languager.getTagValue(fileKey,"CalibrationWizard", "Title1"));
+        String warning = "<html><br><b>" + Languager.getTagValue(fileKey,"CalibrationWizard", "Info_Warning") + "</b></html>";
+        jLabel3.setText(splitString(Languager.getTagValue(fileKey,"CalibrationWizard", "Info") + warning));
+        jLabel4.setText(Languager.getTagValue(fileKey,"CalibrationWizard", "Buttons_Info"));
+        jLabel5.setText(Languager.getTagValue(fileKey,"FeedbackLabel", "MovingMessage"));
 //        jLabel6.setText(Languager.getTagValue("CalibrationWizard", "CalibrationOldValue"));
 //        jLabel7.setText(Languager.getTagValue("CalibrationWizard", "CalibrationCurrentValue"));
-        jLabel9.setText("0.05 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
-        jLabel10.setText("0.05 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
-        jLabel12.setText("0.5 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
-        jLabel16.setText("0.5 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
-        jLabel20.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel21.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel22.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel9.setText("0.05 " + Languager.getTagValue(fileKey,"MainWindowButtons", "MM").toLowerCase());
+        jLabel10.setText("0.05 " + Languager.getTagValue(fileKey,"MainWindowButtons", "MM").toLowerCase());
+        jLabel12.setText("0.5 " + Languager.getTagValue(fileKey,"MainWindowButtons", "MM").toLowerCase());
+        jLabel16.setText("0.5 " + Languager.getTagValue(fileKey,"MainWindowButtons", "MM").toLowerCase());
+        jLabel20.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line4"));
+        jLabel21.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line7"));
+        jLabel22.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -246,7 +247,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel5.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
         jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
         jLabel21MouseClickedReady = false;
     }

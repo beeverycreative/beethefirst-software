@@ -2,6 +2,7 @@ package replicatorg.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,6 +26,12 @@ import replicatorg.app.tools.XML;
 */
 public class Languager {
     
+    private static final String languager_file = Base.getApplicationDirectory()+"/languages/".concat(Base.language).concat(".xml");
+    private static final String printsetup_file = Base.getApplicationDirectory()+"/machines/printSetup.xml";
+    private static final String colors_file = Base.getApplicationDirectory()+"/machines/colorsGCode.xml";
+    private static final String startend_file = Base.getApplicationDirectory()+"/machines/startEndCode.xml";
+    private static String TAG = "tags";
+    
     /**
      * Languages supported
      */
@@ -35,14 +42,34 @@ public class Languager {
             FR,
             DE
     };
-
     
     /**
-     * Loads XML File
-     * Stores in DataSets also
+     * Gets the file based on a code key
+     * @param code key to access the correct file
+     * @return file path
      */
-    public static void printXML()
-    {
+    private static String getFile(int code) {
+        if(code == 1) {
+            TAG = "tags"; 
+           return languager_file;
+        } else if (code == 2) {
+            TAG = "colors";
+            return printsetup_file;
+        } else if (code == 3) {
+            TAG = "gcode";
+            return colors_file;
+        } else if (code == 4) {
+            TAG = "gcode";
+            return startend_file;
+        }
+        
+        return " ";
+    }
+
+    /**
+     * Loads XML File Stores in DataSets also
+     */
+    public static void printXML() {
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -51,66 +78,74 @@ public class Languager {
             DocumentBuilder db = dbf.newDocumentBuilder();
             // parse using the builder to get the DOM mapping of the    
             // XML file
-            
-            File f = new File(Base.getApplicationDirectory()+"/languages/".concat(Base.language).concat(".xml"));
-            if(f.exists() && f.isFile() && f.canRead())
-            {
-                
+
+            File f = new File(Base.getApplicationDirectory() + "/languages/".concat(Base.language).concat(".xml"));
+            if (f.exists() && f.isFile() && f.canRead()) {
+
                 dom = db.parse(f);
-                Element doc =dom.getDocumentElement();
+                Element doc = dom.getDocumentElement();
                 Node rootNode = doc.cloneNode(true);
                 //System.out.println(doc.getTagName());
-                
-            if (XML.hasChildNode(rootNode,"tags")) {
-                Node startnode = XML.getChildNodeByName(rootNode, "tags");
-                org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                NodeList nodeList = element.getChildNodes(); // NodeList
-                
-                /**
-                 * Print section
-                 */
-                
-                for(int i = 1; i < nodeList.getLength(); i++)
-                {
-                    if(!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes())
-                    {
-                        System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value")+"\n");    
-                    }
-                    else if(!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes() ) //SubNode List
-                    {
-                        for(int j = 1; j< nodeList.item(i).getChildNodes().getLength(); j+=2) //Each NodeSubList
+
+                if (XML.hasChildNode(rootNode, "tags")) {
+                    Node startnode = XML.getChildNodeByName(rootNode, "tags");
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
+                    NodeList nodeList = element.getChildNodes(); // NodeList
+
+                    /**
+                     * Print section
+                     */
+                    for (int i = 1; i < nodeList.getLength(); i++) {
+                        if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
+                            System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value") + "\n");
+                        } else if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) //SubNode List
                         {
-                           System.out.println(nodeList.item(i).getNodeName());
-                           System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " "+nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
+                            for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
+                            {
+                                System.out.println(nodeList.item(i).getNodeName());
+                                System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " " + nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
+                            }
                         }
                     }
                 }
-	    }
-    
+
+            } else {
+                Base.logger.info("Permission denied over " + "languages/".concat(Base.language).concat(".xml"));
             }
-            else
-            {
-                Base.logger.info("Permission denied over "+"languages/".concat(Base.language).concat(".xml"));
-            }
-            } catch (ParserConfigurationException pce) {
-                System.out.println(pce.getMessage());
-            } catch (SAXException se) {
-                System.out.println(se.getMessage());
-            } catch (IOException ioe) {
-                System.err.println(ioe.getMessage());
-            }
-            
+        } catch (ParserConfigurationException pce) {
+            System.out.println(pce.getMessage());
+        } catch (SAXException se) {
+            System.out.println(se.getMessage());
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        }
+
     }
+
+    
     /**
-     * Retrieves Tag value from XML 
-     * @param rootTag Parent Node to search
-     * @param subTag Child Node to get value
-     * @return Child Node value
+     * Parses tag value from XML and removes string chars only.
+     * 
+     * @return plain text array without spaces
      */
-    public static String getTagValue(String rootTag,String subTag)
+    public static String[] getGCodeArray(int code, String rootTag, String subTag)
     {
-        
-         Document dom;
+        String plain_code = getTagValue(code,rootTag,subTag);
+        return plain_code.split(",");
+    }
+    
+    public static String getTagValue(int code, String rootTag, String subTag) {
+        String filePath = getFile(code);
+
+        if (filePath.isEmpty()) {
+            return "Error getting tag value";
+        }
+
+        if (subTag.contains("endCode")) {
+            subTag = "endCode";
+        }
+
+        Document dom;
         // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
@@ -118,65 +153,132 @@ public class Languager {
             DocumentBuilder db = dbf.newDocumentBuilder();
             // parse using the builder to get the DOM mapping of the    
             // XML file
-            
-            File f = new File(Base.getApplicationDirectory()+"/languages/".concat(Base.language).concat(".xml"));
-            if(f.exists() && f.isFile() && f.canRead())
-            {
-                
+
+            File f = new File(filePath);
+            if (f.exists() && f.isFile() && f.canRead()) {
+
                 dom = db.parse(f);
-                Element doc =dom.getDocumentElement();
+                Element doc = dom.getDocumentElement();
                 Node rootNode = doc.cloneNode(true);
-                
-            if (XML.hasChildNode(rootNode,"tags")) 
-            {
-                Node startnode = XML.getChildNodeByName(rootNode, "tags");
-                org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                NodeList nodeList = element.getChildNodes(); // NodeList
-             
-                for(int i = 1; i < nodeList.getLength(); i++)
-                {
-                    if(!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes())
-                    {
-                        if(nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            return nodeList.item(i).getAttributes().getNamedItem("value").getNodeValue();
-                        //System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value")+"\n");    
-                    }
-                    
-                    else if(!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes() ) //SubNode List
-                    {
-                        if(nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                        {
-                            
-                            for(int j = 1; j< nodeList.item(i).getChildNodes().getLength(); j+=2) //Each NodeSubList
+
+                if (XML.hasChildNode(rootNode, TAG)) {
+                    Node startnode = XML.getChildNodeByName(rootNode, TAG);
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
+                    NodeList nodeList = element.getChildNodes(); // NodeList
+
+                    for (int i = 1; i < nodeList.getLength(); i++) {
+                        if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
+                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
                             {
-                                if(nodeList.item(i).getChildNodes().item(j).getNodeName().equals(subTag)) // Found subTag
-                                {
-                                    return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue().toString();
-                                }
-    //                           System.out.println(nodeList.item(i).getNodeName());
-    //                           System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " "+nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
+                                return nodeList.item(i).getAttributes().getNamedItem("value").getNodeValue();
                             }
-                        
+                            //System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value")+"\n");    
+                        } else if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) //SubNode List
+                        {
+                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
+                            {
+                                for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
+                                {
+                                    if (nodeList.item(i).getChildNodes().item(j).getNodeName().equals(subTag)) // Found subTag
+                                    {
+                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue().toString();
+                                    }
+                                    //                           System.out.println(nodeList.item(i).getNodeName());
+                                    //                           System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " "+nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
+                                }
+
+                            }
                         }
                     }
                 }
-	    }
-    
+
+            } else {
+                Base.logger.info("Permission denied over " + "machines/".concat(Base.language).concat(".xml"));
             }
-            else
-            {
-                Base.logger.info("Permission denied over "+"languages/".concat(Base.language).concat(".xml"));
-            }
-            } catch (ParserConfigurationException pce) {
-                System.out.println(pce.getMessage());
-            } catch (SAXException se) {
-                System.out.println(se.getMessage());
-            } catch (IOException ioe) {
-                System.err.println(ioe.getMessage());
-            }
-        
-        
+        } catch (ParserConfigurationException pce) {
+            System.out.println(pce.getMessage());
+        } catch (SAXException se) {
+            System.out.println(se.getMessage());
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        }
+
+
         return null;
     }
     
+    public static HashMap<String,String> getTagValues(int code, String rootTag, String subTag) {
+        String filePath = getFile(code);
+        HashMap<String,String> childNodes_rootag = new HashMap<String, String>();
+                
+        if (filePath.isEmpty()) {
+            return null;
+        }
+        if (subTag.contains("endCode")) {
+            subTag = "endCode";
+        }
+
+        Document dom;
+        // Make an  instance of the DocumentBuilderFactory
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            // use the factory to take an instance of the document builder
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            // parse using the builder to get the DOM mapping of the    
+            // XML file
+
+            File f = new File(filePath);
+            if (f.exists() && f.isFile() && f.canRead()) {
+
+                // Parses file and gets rootNode by it self
+                dom = db.parse(f);
+                Element doc = dom.getDocumentElement();
+                Node rootNode = doc.cloneNode(true);
+
+                //root Node has children with value = TAG var
+                if (XML.hasChildNode(rootNode, TAG)) {
+                    Node startnode = XML.getChildNodeByName(rootNode, TAG);
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
+                    NodeList nodeList = element.getChildNodes(); 
+
+                    //Runs over all children of TAG
+                    for (int i = 1; i < nodeList.getLength(); i++) {
+                        //If
+                        if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) 
+                        {
+                            //If one of the TAG children is the rootTag
+                            if (nodeList.item(i).getNodeName().equals(rootTag)) 
+                            {
+                                //Run over the rootTag children
+                                for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) {
+                                    Node subNode = nodeList.item(i).getChildNodes().item(j);
+
+                                    if (subNode.getNodeName().equals(subTag) && subNode.hasChildNodes()) // Found subTag and it has childs
+                                    {   //Run over the subTag children
+                                        for (int k = 1; k < subNode.getChildNodes().getLength(); k += 2) {
+                                            childNodes_rootag.put(subNode.getChildNodes().item(k).getAttributes().getNamedItem("value").getNodeValue().toString(), subNode.getChildNodes().item(k).getNodeName());
+                                        }
+                                        return childNodes_rootag;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            } else {
+                Base.logger.info("Permission denied over " + "machines/".concat(Base.language).concat(".xml"));
+            }
+        } catch (ParserConfigurationException pce) {
+            System.out.println(pce.getMessage());
+        } catch (SAXException se) {
+            System.out.println(se.getMessage());
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        }
+
+
+        return null;
+    }
 }

@@ -28,7 +28,9 @@ public class CuraEngineConfigurator {
     private final String ON_ALTERATIONS = "[alterations]";
     private final String CURA_CONFIG_DIR = Base.getAppDataDirectory() + "/configs/";
     private String CURA_CONFIG_PATH = "";
+    private String CURA_INI_PATH = "";
     private String CFG_FILENAME = "";
+    private String INI_FILENAME = "";
     private String CFG_EXTENSION = ".cfg";
     private String INI_EXTENSION = ".ini";
     private final String NO_ATTRIBUTE = "Error: Value not existent";
@@ -118,6 +120,86 @@ public class CuraEngineConfigurator {
         return result;
     }
 
+    /**
+     * Fulfills a map with a INI file parameters to be overloaded later for each profile choosen,
+     * @return map of ini parameters 
+     */   
+    private HashMap<String, String> createINI() {
+        HashMap<String, String> result = new HashMap<String, String>();
+
+        result.put("layer_height", "0.3");
+        result.put("wall_thickness", "1.0");
+        result.put("retraction_enable", "True");
+        result.put("solid_layer_thickness", "0.9");
+        result.put("fill_density", "5");
+        result.put("clip_distance", "0.440");
+        result.put("nozzle_size", "0.4");
+        result.put("print_speed", "60");
+        result.put("print_temperature", "220");
+        result.put("print_temperature2", "220"); //100 * extrusionWidth / 20
+        result.put("print_temperature3", "220");
+        result.put("print_temperature4", "220");
+        result.put("print_bed_temperature", "70");
+        result.put("platform_adhesion", "None");
+        result.put("support_dual_extrusion", "Both");
+        result.put("wipe_tower", "False");
+        result.put("wipe_tower_volume", "15");
+        result.put("ooze_shield", "False");
+        result.put("filament_diameter", "1.75");
+        result.put("filament_diameter2", "0");
+        result.put("filament_diameter3", "0");
+        result.put("filament_diameter4", "0");
+        result.put("filament_flow", "88.0");
+        result.put("retraction_speed", "100");
+        result.put("retraction_amount", "0.5");
+        result.put("retraction_dual_amount", "16.5");
+        result.put("retraction_min_travel", "1.0");
+        result.put("retraction_combing", "True");
+        result.put("retraction_minimal_extrusion", "0.2");
+        result.put("retraction_hop", "0.0");
+        result.put("bottom_thickness", "0.3");
+        result.put("object_sink", "0.0");
+        result.put("overlap_dual", "0.15");
+        result.put("travel_speed", "100");
+        result.put("bottom_layer_speed", "15");
+        result.put("infill_speed", "60");
+        result.put("inset0_speed", "60");
+        result.put("insetx_speed", "60");
+        result.put("cool_min_layer_time", "5");
+        result.put("fan_enabled", "True");
+        result.put("skirt_line_count", "0");
+        result.put("skirt_gap", "3.0");
+        result.put("skirt_minimal_length", "150.0");
+        result.put("fan_full_height", "0.5");
+        result.put("fan_speed", "100");
+        result.put("fan_speed_max", "100");
+        result.put("cool_min_feedrate", "15");
+        result.put("cool_head_lift", "False");
+        result.put("solid_top", "True");
+        result.put("solid_bottom", "True");
+        result.put("fill_overlap", "15");
+        result.put("support_type", "Lines");
+        result.put("support_fill_rate", "10");
+        result.put("support_xy_distance", "0.7");
+        result.put("support_z_distance", "0.15");
+        result.put("spiralize", "False");
+        result.put("brim_line_count", "20");
+        result.put("raft_margin", "5");
+        result.put("raft_line_spacing", "1.0");
+        result.put("raft_base_thickness", "0.3");
+        result.put("raft_base_linewidth", "0.7");
+        result.put("raft_interface_linewidth", "0.2");
+        result.put("fix_horrible_union_all_type_a", "True");
+        result.put("fix_horrible_union_all_type_b", "False");
+        result.put("fix_horrible_use_open_bits", "False");
+        result.put("fix_horrible_extensive_stitching", "False");        
+        result.put("plugin_config", "");
+        result.put("object_center_x", "-1");
+        result.put("object_center_y", "-1");
+
+        return result;
+    }
+    
     public int readIni(File curaIniFile) {
         String line = null;
         int error = 0;
@@ -135,12 +217,17 @@ public class CuraEngineConfigurator {
                 if (!line.isEmpty()) {
                     // Value set line
                     if (line.contains("=") && !onAlterations) {
-                        String[] parameters = line.split("=");
-                        String attribute = parameters[0].trim();
-                        String value = parameters[1].trim();
+                        try {
+                            String[] parameters = line.split("=");
+                            String attribute = parameters[0].trim();
+                            String value = parameters[1].trim();
 
-                        // Fills Map with CURA parameters
-                        curaIni.put(attribute, value);
+                            // Fills Map with CURA parameters
+                            curaIni.put(attribute, value);
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            Base.writeLog("Error parsing INI file. "+NO_ATTRIBUTE+" Key<>Value may be empty");
+                            //Do nothing, skip the line
+                        }
 
                     } else if (line.contains(ON_ALTERATIONS)) {
                         onAlterations = true;
@@ -200,18 +287,56 @@ public class CuraEngineConfigurator {
         }
     }
 
+    /**
+     * Overrides internal INI with the values from the XML and creates new INI file.
+     * @param overload_values INI map with the parameters to override
+     * @param bCode actual beecode of the BTF
+     * @param res choosen resolution for the current print
+     * @return path for the INI file created
+     */
+    public String setupINI(HashMap<String,String> overload_values,String bCode, String res){
+        INI_FILENAME = bCode+"-"+res;
+        CURA_INI_PATH = CURA_CONFIG_DIR + INI_FILENAME+INI_EXTENSION;
+
+        HashMap<String, String> ini = createINI();
+
+        Iterator it = overload_values.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry) it.next();
+            //Replace existing pairs by the new ones.
+            // overload_values is a mirrored map with keys and values switched
+            ini.put(pairs.getValue().toString(),pairs.getKey().toString());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+        return createINIFile(ini).getName();
+    }
+    
+    /**
+     * Process existing INI file to map for a CFG file
+     * @param profile path for the INI file
+     */
     public void processINI(String profile) {
-        File f = new File(profile.concat(INI_EXTENSION));
+        File f = new File(profile);
         readIni(f);
     }
 
+    /**
+     * Maps INI file to CFG file
+     * @param profile path for the INI file
+     * @return CFG file
+     */
     public File dotheWork(File profile) {
-        CFG_FILENAME = profile.getName() + CFG_EXTENSION;
+        CFG_FILENAME = profile.getName().split(".ini")[0] + CFG_EXTENSION;
         CURA_CONFIG_PATH = CURA_CONFIG_DIR + CFG_FILENAME;
         mapIniToCFG();
         return createCfgFile();
     }
 
+    /**
+     * Creates the CFG file based on the internal MAP
+     * @return CFG file
+     */
     public File createCfgFile() {
 
         File cfgFile = null;
@@ -251,6 +376,50 @@ public class CuraEngineConfigurator {
         return cfgFile;
     }
 
+    /**
+     * Creates the INI file based on a MAP.
+     * @param iniMap MAP that has all the print parameters to be in the INI file and therefore converted into the CFG file
+     * @return INI file
+     */
+    public File createINIFile(HashMap<String, String> iniMap) {
+
+        File ini = null;
+        try {
+
+            // Creates INI file with the same name as the INI
+            ini = new File(CURA_INI_PATH);
+            // if file exists, delete it first
+            if (ini.exists()) {
+                ini.delete();
+            }
+
+            FileWriter fw = new FileWriter(ini.getAbsolutePath());
+            BufferedWriter bw = new BufferedWriter(fw);
+            Iterator it = iniMap.entrySet().iterator();
+
+            bw.write("[profile]");
+            bw.write("\n");
+            
+            // Reads INI Map to write to file
+            while (it.hasNext()) {
+                Map.Entry pairs = (Map.Entry) it.next();
+                bw.write(pairs.getKey() + "=" + pairs.getValue());
+                bw.write("\n");
+            }
+
+            bw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ini;
+    }
+    
+    /**
+     * Translates INI parameter to CFG parameter
+     * @param key CFG value that will be used to search for the INI corresponding value
+     * @return INI value from file to override the current match CFG key<>value
+     */
     private String getTranslatedValue(String key) {
 
         try {

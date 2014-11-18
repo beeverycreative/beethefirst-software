@@ -5,12 +5,16 @@ package replicatorg.plugin.toolpath.cura;
  */
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import replicatorg.app.Base;
+import replicatorg.app.Languager;
 import replicatorg.app.Oracle;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.ProperDefault;
@@ -21,7 +25,7 @@ import replicatorg.plugin.toolpath.ToolpathGenerator;
 public class CuraGenerator extends ToolpathGenerator {
 
     private static String CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
-    private static String CURA_CONFIGURATION_File_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/prefs/");
+    private static String CURA_CONFIGURATION_File_PATH = Base.getAppDataDirectory() + "/configs/";
     private static String ERROR_MESSAGE = "Can't run Cura!";
     private static String BIN_PATH_UNIX = "python";
     private static String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
@@ -41,7 +45,7 @@ public class CuraGenerator extends ToolpathGenerator {
         if(Base.isLinux() || Base.isMacOS())
         {
             CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
-            CURA_CONFIGURATION_File_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/prefs/");
+            CURA_CONFIGURATION_File_PATH = Base.getAppDataDirectory() + "/configs/";
         }
         else 
         {
@@ -57,7 +61,7 @@ public class CuraGenerator extends ToolpathGenerator {
             {
                 CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x86\\CuraEngine.exe");
             }
-            CURA_CONFIGURATION_File_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\prefs\\");   
+            CURA_CONFIGURATION_File_PATH = Base.getAppDataDirectory() + "\\configs\\";
         }
     }
 
@@ -99,6 +103,14 @@ public class CuraGenerator extends ToolpathGenerator {
     public void readINI()
     {
         curaGenerator.processINI(profile);
+    }
+    
+    public String preparePrint(String profile) {
+        
+        String bee_code = profile.split(":")[0];
+        String resol = profile.split(":")[1];     
+        HashMap<String,String> overload_values = Languager.getTagValues(2, bee_code, resol);
+        return curaGenerator.setupINI(overload_values,bee_code,resol);
     }
 
     @Override

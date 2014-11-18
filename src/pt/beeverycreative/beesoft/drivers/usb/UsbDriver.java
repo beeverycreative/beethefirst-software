@@ -73,13 +73,11 @@ public class UsbDriver extends DriverBaseImplementation {
     private double totalExtrudedDistance = 0;
     private double extruderLimit = 100000; // average string lenght/bobine 105 +- 10 meters
     protected boolean transferMode = false;
+    protected boolean isONShutdown = false;
 
     /**
-     *
-     * @throws SecurityException
-     * @throws UsbException
-     * @throws UnsupportedEncodingException
-     * @throws UsbDisconnectedException
+     * USBDriver high level definition.
+     * 
      */
     protected UsbDriver() {
     }
@@ -99,7 +97,7 @@ public class UsbDriver extends DriverBaseImplementation {
             m_productNew = XML.getChildNodeValue(xml, "product");
         }
     }
-
+    
     /**
      * Reads E value form each G1 and G92 command Calculates extrudedDistance
      * and totalExtrudedDistance
@@ -416,12 +414,6 @@ public class UsbDriver extends DriverBaseImplementation {
         return super.isBootloader;
     }
     
-    public boolean printerRestarted()
-    {
-//        return printerRestarted;
-        return false;
-    }
-
     /**
      * Test pipe for USB device detection
      *

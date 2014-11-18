@@ -67,11 +67,11 @@ public class CalibrationValidation extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Validation_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue("CalibrationWizard", "Validation_Info")));
-        jLabel5.setText(Languager.getTagValue("CalibrationWizard", "Validation_Button2"));
-        jLabel6.setText(Languager.getTagValue("CalibrationWizard", "Validation_Button1"));
-        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1,"CalibrationWizard", "Validation_Title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1,"CalibrationWizard", "Validation_Info")));
+        jLabel5.setText(Languager.getTagValue(1,"CalibrationWizard", "Validation_Button2"));
+        jLabel6.setText(Languager.getTagValue(1,"CalibrationWizard", "Validation_Button1"));
+        jLabel25.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
 
     }
 
@@ -129,7 +129,7 @@ public class CalibrationValidation extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel9.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel9.setText(Languager.getTagValue(1,"FeedbackLabel", "MovingMessage"));
     }
 
     public void resetFeedbackComponents() {
