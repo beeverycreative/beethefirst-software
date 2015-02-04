@@ -1,0 +1,129 @@
+v3.5.1 (2014-02-12)
+
+Bugs Fixed:
+* Calibration was disconnecting printer
+
+v3.5.0 (2014-02-11)
+
+Improvements:
+* Data files are now stored outside from installation directory. 
+* Less memory load on save operations
+
+Bugs Fixed:
+* More feedback at startup when a error occurs during init
+* BEESOFT wasn't starting up with visual interface in W7
+* Bad command sent at communication control
+
+Firmware new features:
+* Stops during print sessions eliminated
+
+
+v3.4.2 2014-01-30
+
+Improvements:
+* Save scene warning on new scene
+* New COM logic 
+
+Bugs Fixed:
+* No permissions to generate GCode
+
+Firmware new features:
+* Echo and keep alive command
+* Blind Dispatch tag
+
+v3.3.3 2014-01-24
+
+Improvements:
+* Disconnect state with more feedback in buttons press actions
+
+Bugs Fixed:
+* Scale in original small models wasn’t working with mouse controls.
+
+v3.3.2 2014-01-22
+
+Improvements:
+
+* Firmware with more IA and more robust
+* Print parser bug had a leak
+
+Bugs Fixed:
+* Print send and read synchronization bug fix
+* Print process screen was starting even withou skeinforge permissions
+* Duplicate was applying bad position vectors to the new cloned model
+
+v3.3.1 2014-01-21
+
+Bugs Fixed:
+* Print send and read synchronization bug fix
+
+v3.3.0 2014-01-20
+
+Software new features:
+
+* New scale method
+* New Bootloader updater v1.1
+
+Improvements:
+
+* Improved CPU and memory usage
+* Better cancel on print
+* Filament type at about menu
+* Better Raft and first layer
+* Better gcode generation feedback
+
+Bugs Fixed:
+
+* Firmware version was unavailable when BTF was already in firmware
+* Scale values weren’t updating on resetting position
+* Model imported by Drang-N-Drop were not being centered and put on platform
+* Print was breaking with pauses and stops
+* Cable disconnect feedback and reinitialize
+* Quit on Mac OSX wasn’t working 
+* Calibration wizard buttons had bad behavior
+* STL generation process was causing anomalies to printing results
+* Canvas was flickering when importing or picking a model
+* Temperature read in wizards after print was not correct
+* Filament remaining calculation was not accurate
+* Models operation center was not being refresh when unpicking model
+* Deleting picked models was deleting the last one picked
+* Default operation with arrows was not resetting on flow: Picking-Unpicking-Picking
+
+Firmware new features:
+
+* Implemented Watchdog timer
+* New descriptor 
+* Commands queue enlarged
+
+v3.1.0 2013-12-10
+
+Software new features:
+
+* Faster GCode generation
+* Scale is now in percentage
+
+Bugs fixed:
+
+* Scale in Z axis 
+* Extreme CPU usage when picking
+* Extruder was not cooling down when it should
+* Main window was at background after printing;
+* Sometimes the wrong model/settings were used when printing
+* Model dimensions are now shown with one decimal place
+
+v3.0.0 2013-11-29
+
+Software new features:
+
+* Improved usability
+* Intuitive design
+* Better connectivity between BEESOFT and BEETHEFIRST
+* Single scene can now have multiple 3D models (STL files) loaded at once
+* Better calibration process
+* Simpler extruder nozzle cleaning process
+* More information about filament usability - Indication of filament remaining
+* Automatic notifications for new BEESOFT updates
+
+Firmware new features:
+
+* Better connectivity between BEESOFT and BEETHEFIRST firmware
+* Incresead the firmware reliability

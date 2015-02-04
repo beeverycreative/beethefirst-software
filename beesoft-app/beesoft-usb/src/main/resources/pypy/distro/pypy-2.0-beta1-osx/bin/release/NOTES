@@ -1,0 +1,2 @@
+This pypy executable is part of a oficial release but it cracks down in Mac OSX 10.6 and 10.7.
+So, the pypy in bin/ is a nigtly build working on 10.6+

@@ -1,0 +1,6 @@
+.DS_Store
+nbactions.xml
+nb-configuration.xml
+target/
+.idea/
+*.iml
