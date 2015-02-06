@@ -1082,23 +1082,21 @@ public class Gallery extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));
         jPanel5.setMinimumSize(new java.awt.Dimension(20, 40));
 
-        jLabel24.setForeground(new java.awt.Color(0, 0, 0));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel24.setText("OK");
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel24.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel24MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel24MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel24MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel24MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel24MouseEntered(evt);
             }
         });
 
-        jLabel27.setForeground(new java.awt.Color(0, 0, 0));
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel27.setText("CANCELAR");
         jLabel27.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1114,7 +1112,6 @@ public class Gallery extends javax.swing.JFrame {
             }
         });
 
-        jLabel29.setForeground(new java.awt.Color(0, 0, 0));
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel29.setText("APPLY");
         jLabel29.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1298,7 +1295,7 @@ public class Gallery extends javax.swing.JFrame {
             if (!modelPressed.equals("")) {
                 mWindow.getBed().addSTL(new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + modelPressed));
                 mWindow.getBed().getModels().get(Base.getMainWindow().getBed().getModels().size() - 1).getEditer().centerAndToBed();
-//                Base.getMainWindow().getBed().getModels().get(Base.getMainWindow().getBed().getModels().size()-1).getEditer().center();
+
                 mWindow.getCanvas().updateBed(Base.getMainWindow().getBed());
                 mWindow.showFeedBackMessage("importModel");
                 mWindow.getBed().setGcodeOK(false);

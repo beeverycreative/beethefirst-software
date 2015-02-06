@@ -1,7 +1,5 @@
 package replicatorg.app.ui.mainWindow;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;

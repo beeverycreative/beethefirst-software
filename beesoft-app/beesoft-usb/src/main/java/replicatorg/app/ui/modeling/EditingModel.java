@@ -263,21 +263,29 @@ public class EditingModel implements Serializable {
         return true;
     }
 
+    /**
+     * Positions the model in the bed
+     */
     public void centerAndToBed() {
         BoundingBox bb = getBoundingBox(shapeTransform);
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         bb.getLower(lower);
         bb.getUpper(upper);
-        double zoff = -lower.z;
-        double xoff = -(upper.x + lower.x) / 2.0d;
+        double zoff = -lower.z;                 
         double yoff = -(upper.y + lower.y) / 2.0d;
-
+        double xoff;
+        
+        int nmodelsInBed = Base.getMainWindow().getBed().getModels().size();
+        if (nmodelsInBed >= 1) {
+            xoff = -(upper.x + lower.x) / 2.0d + (10 * nmodelsInBed);                        
+        } else {
+            xoff = -(upper.x + lower.x) / 2.0d;
+        }
+        
         MachineInterface mc = Base.getMachineLoader().getMachineInterface();
-        BuildVolume buildVol = null;
         if (mc instanceof Machine) {
             MachineModel mm = mc.getModel();
-            buildVol = mm.getBuildVolume();
         }
 
         translateObjectWithoutValidation(xoff, yoff, zoff);
@@ -288,7 +296,7 @@ public class EditingModel implements Serializable {
         double zoff2 = -lower2.z;
         translateObject(0, 0d, zoff2);
         evaluateModelOutOfBounds();
-    }
+    }      
 
     public boolean evaluateModelOutOfBounds() {
         if (modelOutBonds() || !modelInBed()) {
