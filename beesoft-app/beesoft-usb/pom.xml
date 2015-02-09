@@ -228,7 +228,10 @@
                                 </copy> 
                                 <copy todir="${target.dir}/update">
                                     <fileset dir="${resources.dir}/update" />
-                                </copy>         
+                                </copy>       
+                                <copy todir="${target.dir}/machines">
+                                    <fileset dir="${resources.dir}/machines" />
+                                </copy>                                   
                                 <copy todir="${target.dir}/3DModels">
                                     <fileset dir="${resources.dir}/3DModels" />
                                 </copy>    
@@ -294,6 +297,9 @@
                                 <copy todir="${target.dir}/estimator">
                                     <fileset dir="${resources.dir}/estimator" />
                                 </copy>   
+                                <copy todir="${target.dir}/machines">
+                                    <fileset dir="${resources.dir}/machines" />
+                                </copy>                                
                                 <copy todir="${target.dir}">
                                     <filelist dir="." files="changelog.txt" />
                                 </copy>
@@ -351,6 +357,7 @@
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
                             <!-- optional -->
+                            <workingDirectory>${project.basedir}/src/main/resources/</workingDirectory>
                             <systemProperties>
                                 <systemProperty>
                                     <key>java.library.path</key>
@@ -358,7 +365,7 @@
                                 </systemProperty>
                                 <systemProperty>
                                     <key>replicatorg.app-resources</key>
-                                    <value>${project.basedir}/src/main/resources/app_resources</value>
+                                    <value>${project.build.directory}/libs</value>
                                 </systemProperty>
                                 <systemProperty>
                                     <key>replicatorg.toolpath</key>
@@ -396,6 +403,7 @@
                         </executions>
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
+                            <workingDirectory>${project.basedir}/src/main/resources/</workingDirectory>
                             <!-- optional -->
                             <systemProperties>
                                 <systemProperty>
@@ -404,7 +412,7 @@
                                 </systemProperty>
                                 <systemProperty>
                                     <key>replicatorg.app-resources</key>
-                                    <value>${project.basedir}/src/main/resources/app_resources</value>
+                                    <value>${project.build.directory}/libs</value>
                                 </systemProperty>
                                 <systemProperty>
                                     <key>replicatorg.toolpath</key>
@@ -426,7 +434,7 @@
             <activation>
                 <os>
                     <family>linux</family>
-                    <arch>x64</arch>
+                    <arch>x86</arch>
                 </os>
             </activation>
             <build>
@@ -443,15 +451,16 @@
                         </executions>
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
+                            <workingDirectory>${project.basedir}/src/main/resources/</workingDirectory>
                             <!-- optional -->
                             <systemProperties>
                                 <systemProperty>
                                     <key>java.library.path</key>
-                                    <value>${project.basedir}/src/main/resources/installers/linux/dist/lib-x86_64</value>
+                                    <value>${project.basedir}/src/main/resources/installers/linux/dist/lib-i686</value>
                                 </systemProperty>
                                 <systemProperty>
                                     <key>replicatorg.app-resources</key>
-                                    <value>${project.basedir}/src/main/resources/app_resources</value>
+                                    <value>${project.build.directory}/libs</value>
                                 </systemProperty>
                                 <systemProperty>
                                     <key>replicatorg.toolpath</key>
@@ -467,7 +476,55 @@
                     </plugin>                  
                 </plugins>
             </build>
-        </profile>                
+        </profile>    
+        <profile>
+            <id>platform-linux86_64</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>replicatorg.app.Base</mainClass>
+                            <workingDirectory>${project.basedir}/src/main/resources/</workingDirectory>
+                            <!-- optional -->
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>java.library.path</key>
+                                    <value>${project.basedir}/src/main/resources/installers/linux/dist/lib-x86_64</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>replicatorg.app-resources</key>
+                                    <value>${project.build.directory}/libs</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>replicatorg.toolpath</key>
+                                    <value>${project.basedir}/src/main/resources/installers/linux/dist/tools</value>
+                                </systemProperty>                                               
+                            </systemProperties>
+                            <arguments>                        
+                                <argument>-ea</argument>
+                                <argument>-Xmx2048m</argument>
+                                <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>                  
+                </plugins>
+            </build>
+        </profile>                               
     </profiles>  
     <dependencies>
         <dependency>
@@ -540,42 +597,49 @@
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>linux-x86</classifier>
+            <scope>runtime</scope>
         </dependency> 
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>linux-x86_64</classifier>
+            <scope>runtime</scope>
         </dependency> 
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>linux-arm</classifier>
+            <scope>runtime</scope>
         </dependency> 
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>windows-x86</classifier>
+            <scope>runtime</scope>
         </dependency> 
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>windows-x86_64</classifier>
+            <scope>runtime</scope>
         </dependency> 
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>osx-x86</classifier>
+            <scope>runtime</scope>
         </dependency> 
         <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
             <classifier>osx-x86_64</classifier>
+            <scope>runtime</scope>
         </dependency>               
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>
