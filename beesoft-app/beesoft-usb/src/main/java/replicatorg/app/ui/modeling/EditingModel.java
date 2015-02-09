@@ -273,14 +273,53 @@ public class EditingModel implements Serializable {
         bb.getLower(lower);
         bb.getUpper(upper);
         double zoff = -lower.z;                 
-        double yoff = -(upper.y + lower.y) / 2.0d;
+        double yoff;
         double xoff;
         
         int nmodelsInBed = Base.getMainWindow().getBed().getModels().size();
-        if (nmodelsInBed >= 1) {
-            xoff = -(upper.x + lower.x) / 2.0d + (10 * nmodelsInBed);                        
+        if (nmodelsInBed >= 1) { // If there are more models in bed controls their positioning
+            int shift;
+            final int XSHIFT_MM = 10;
+            final int YSHIFT_MM = 10;
+            if (nmodelsInBed > 32) {
+                shift = (nmodelsInBed % 6) + 1;
+                
+                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
+                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * -shift);                
+            } else if (nmodelsInBed > 24) {
+                shift = (nmodelsInBed % 6) + 1;
+                
+                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
+                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * -shift);                
+                
+            } else if (nmodelsInBed > 18) {
+                shift = (nmodelsInBed % 6) + 1;
+                
+                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
+                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * shift);
+                
+            } else if (nmodelsInBed > 12) {
+                shift = (nmodelsInBed % 6) + 1;
+                
+                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
+                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * shift);                
+                
+            } else if (nmodelsInBed > 6) {
+                shift = (nmodelsInBed % 6) + 1;
+                
+                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
+                yoff = (upper.y + lower.y) / 2.0d;
+           
+            } else {
+                shift = nmodelsInBed - 1;
+                
+                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
+                yoff = (upper.y + lower.y) / 2.0d;
+            }            
+            
         } else {
-            xoff = -(upper.x + lower.x) / 2.0d;
+            xoff = (upper.x + lower.x) / 2.0d;
+            yoff = (upper.y + lower.y) / 2.0d;
         }
         
         MachineInterface mc = Base.getMachineLoader().getMachineInterface();
