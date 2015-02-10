@@ -280,7 +280,7 @@ public class Base {
                 if (new File(baseDir + "/BEESOFT.app/Contents/Resources").exists()) {
                     return new File(baseDir + "/BEESOFT.app/Contents/Resources");
                 } else {
-                    Base.logger.severe(baseDir + "/BEESOFT.app not found, using " + baseDir + "/replicatorg/");
+                    Base.logger.log(Level.SEVERE, "{0}/BEESOFT.app not found, using {1}/replicatorg/", new Object[]{baseDir, baseDir});
                 }
                 return new File(baseDir + "/replicatorg");
             } catch (java.io.IOException e) {

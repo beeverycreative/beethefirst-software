@@ -3,7 +3,7 @@
 cd `dirname $0`
 
 
-CLASSPATH=lib:lib/filedrop.jar:lib/j3dcore.jar:lib/j3dutils.jar:lib/jcommon-1.0.16.jar:lib/miglayout-3.7.4.jar:lib/mrj.jar:lib/quaqua.jar:lib/vecmath.jar:lib/commons-lang3-3.1.jar:lib/usb-api-1.0.2.jar:lib/usb4java-1.0.0.jar:lib/BEESOFT.jar:lib/OrangeExtensions-1.2.jar
+CLASSPATH=lib/*
 export CLASSPATH
 
 export PATH

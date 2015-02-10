@@ -342,6 +342,7 @@
                     <family>mac</family>
                 </os>
             </activation>
+            
             <build>
                 <plugins>
                     <plugin>
@@ -357,7 +358,7 @@
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
                             <!-- optional -->
-                            <workingDirectory>${project.basedir}/src/main/resources/</workingDirectory>
+                            <workingDirectory>${project.build.directory}/macosx</workingDirectory>
                             <systemProperties>
                                 <systemProperty>
                                     <key>java.library.path</key>
