@@ -52,6 +52,10 @@
         <repository>
             <id>ooo-maven-repo</id>
             <url>http://ooo-maven.googlecode.com/hg/repository</url>
-        </repository>        
+        </repository>
+        <repository>
+            <id>mednet-repo</id>
+            <url>http://server.mednet.lt/maven2</url>
+        </repository>                       
     </repositories>  
 </project>
