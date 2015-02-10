@@ -5,16 +5,16 @@
     <parent>
         <groupId>pt.bitbox</groupId>
         <artifactId>beesoft-app</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>3.14.0-SNAPSHOT</version>
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.10.0-SNAPSHOT</version>
+    <version>3.14.0-SNAPSHOT</version>
     <name>beesoft-usb</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.release.name>BEESOFT-3.10.0-beta1_2014-08-12</project.release.name>
-        <project.release.version>3.10.0-beta</project.release.version>
+        <project.release.name>BEESOFT-3.14.0-beta1</project.release.name>
+        <project.release.version>3.14.0-beta</project.release.version>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <libusb4java.version>1.2.0</libusb4java.version>
