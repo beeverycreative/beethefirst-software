@@ -310,6 +310,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 Model m = bed.getModels().get(bed.getModels().size() - 1);
                 m.getEditer().centerAndToBed();
                 canvas.updateBedImportedModels(bed);
+                
+                //Selects the inserted model
+                selectLastInsertedModel();
 
             }
         });
@@ -2225,6 +2228,20 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     @Override
     public void updateGenerator(GeneratorEvent evt) {
         // ignore
+    }
+    
+    /**
+     * Selects the last inserted model
+     */
+    public void selectLastInsertedModel() {
+                
+        if (this.getBed().getModels().size() > 0) {
+            this.getCanvas().unPickAll();
+            Model m = this.getBed().getModel(this.getBed().getModels().size() - 1);
+            this.getBed().addPickedModel(m);
+            m.getEditer().updateModelPicked();
+            this.getCanvas().evaluateModelsBed();
+        }
     }
 
     /**
