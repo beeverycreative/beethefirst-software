@@ -2,6 +2,7 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -276,46 +277,20 @@ public class EditingModel implements Serializable {
         double yoff;
         double xoff;
         
-        int nmodelsInBed = Base.getMainWindow().getBed().getModels().size();
-        if (nmodelsInBed >= 1) { // If there are more models in bed controls their positioning
-            int shift;
-            final int XSHIFT_MM = 10;
-            final int YSHIFT_MM = 10;
-            if (nmodelsInBed > 32) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * -shift);                
-            } else if (nmodelsInBed > 24) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * -shift);                
-                
-            } else if (nmodelsInBed > 18) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * shift);
-                
-            } else if (nmodelsInBed > 12) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * shift);                
-                
-            } else if (nmodelsInBed > 6) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
-                yoff = (upper.y + lower.y) / 2.0d;
-           
-            } else {
-                shift = nmodelsInBed - 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
-                yoff = (upper.y + lower.y) / 2.0d;
-            }            
+        ArrayList<Model> models = Base.getMainWindow().getBed().getModels();
+        int nmodelsInBed = models.size();
+        if (nmodelsInBed > 1) { // If there are more models in bed controls their positioning
+            
+            // Gets the model inserted before
+            Model mp = models.get(models.size() -2);                        
+            double offset_prev_model = mp.getEditer().getWidth() / 2.0;
+            Point3d centroid_prev = mp.getEditer().getCentroid();            
+            
+            Model mc = models.get(models.size() -1);                        
+            double offset_curr_model = mc.getEditer().getWidth() / 2.0;
+            
+            xoff = centroid_prev.x + offset_curr_model + offset_prev_model + 5;
+            yoff = (upper.y + lower.y) / 2.0d;
             
         } else {
             xoff = (upper.x + lower.x) / 2.0d;
