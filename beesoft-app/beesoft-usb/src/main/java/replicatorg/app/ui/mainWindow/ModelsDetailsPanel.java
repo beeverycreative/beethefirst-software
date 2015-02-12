@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.modeling.EditingModel;
 import replicatorg.model.Model;
@@ -67,7 +68,13 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel15.setText(Languager.getTagValue("ModelDetails", "Model_N"));
         jLabel5.setText(Languager.getTagValue("ModelDetails", "Model_Selected"));
 
-        jLabel11.setText(Languager.getTagValue("ModelDetails", "Model_Dimensions")+" ("+Languager.getTagValue("MainWindowButtons", "MM")+")");
+        if (ProperDefault.get("measures").equals("inches")) {
+            jLabel11.setText(Languager.getTagValue("ModelDetails", "Model_Dimensions")
+                +" ("+Languager.getTagValue("MainWindowButtons", "Inches")+")");
+        } else {
+            jLabel11.setText(Languager.getTagValue("ModelDetails", "Model_Dimensions")
+                +" ("+Languager.getTagValue("MainWindowButtons", "MM")+")");
+        }
         jLabel12.setText(Languager.getTagValue("ModelDetails", "Model_Name"));
         jLabel4.setText(Languager.getTagValue("ModelDetails", "Model_Description"));
 
@@ -204,6 +211,11 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jTextField3.setText("0");
         jTextField3.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jTextField3.setMinimumSize(new java.awt.Dimension(18, 27));
+        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField3ActionPerformed(evt);
+            }
+        });
 
         jTextField4.setEditable(false);
         jTextField4.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -480,6 +492,10 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
         model.setDescription(String.valueOf(jTextArea1.getText()));
     }//GEN-LAST:event_jTextArea1KeyReleased
+
+    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField3ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
