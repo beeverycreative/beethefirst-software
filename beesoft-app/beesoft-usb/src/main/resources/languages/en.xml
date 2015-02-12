@@ -58,6 +58,7 @@
             <Degrees value="degrees"/>
             <MM value="millimeters"/>
             <Percentage value="percentage"/>
+            <Inches value="inches"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
