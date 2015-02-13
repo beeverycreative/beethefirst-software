@@ -476,6 +476,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             if(mOCS != null)
             {    
                 model.resetScale();
+                Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
 
                 if (mOCS.isScalePercentage()) {
                     mOCS.setXValue(model.getScaleXinPercentage());
