@@ -4,7 +4,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.util.UnitConverter;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -20,11 +22,12 @@ import replicatorg.app.ui.GraphicDesignComponents;
 public class ModelsOperationCenterMove extends javax.swing.JPanel {
 
     private boolean check_pressed, fiveMM_pressed;
-
+    
     public ModelsOperationCenterMove() {
         initComponents();
         this.check_pressed = false;
         this.fiveMM_pressed = false;
+        
         Base.getMainWindow().getCanvas().setControlTool(1);
         setFont();
         this.fiveMM_pressed = Base.getMainWindow().getCanvas().getControlTool(1).getAdvOption();
@@ -33,7 +36,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
             handleAdvancedOption();
         }
         setTextLanguage();
-        Base.getMainWindow().getCanvas().setModelationType("move");
+        Base.getMainWindow().getCanvas().setModelationType("move");                
     }
 
     private void setFont() {
@@ -64,7 +67,11 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
 //        jLabel13.setText(Languager.getTagValue("", ""));
 //        jLabel14.setText(Languager.getTagValue("", ""));        
 //        jLabel15.setText(Languager.getTagValue("", ""));    
-        jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Move") + " 5 " + Languager.getTagValue("MainWindowButtons", "MM"));
+        if (ProperDefault.get("measures").equals("inches")) {
+            jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Move") + " 0.2 " + Languager.getTagValue("MainWindowButtons", "Inches"));
+        } else {
+            jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Move") + " 5 " + Languager.getTagValue("MainWindowButtons", "MM"));
+        }        
     }
 
     private void toggle5MM() {
@@ -362,6 +369,9 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                     }
                 }
 
+                if (ProperDefault.get("measures").equals("inches")) {
+                    xValue = UnitConverter.inchesToMillimeters(xValue);
+                }
 
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(xValue, 0, 0);
             } else {
@@ -386,6 +396,11 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                         jTextField5.setText("");
                     }
                 }
+                
+                if (ProperDefault.get("measures").equals("inches")) {
+                    yValue = UnitConverter.inchesToMillimeters(yValue);
+                }
+                                
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, yValue, 0);
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");
@@ -410,6 +425,11 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                         jTextField6.setText("");
                     }
                 }
+                
+                if (ProperDefault.get("measures").equals("inches")) {
+                    zValue = UnitConverter.inchesToMillimeters(zValue);
+                }
+                   
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, 0, zValue);
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");

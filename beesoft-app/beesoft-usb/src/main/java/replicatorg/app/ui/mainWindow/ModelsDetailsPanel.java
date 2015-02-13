@@ -9,6 +9,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.modeling.EditingModel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
+import replicatorg.util.UnitConverter;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -27,7 +28,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     private boolean panelDisabled;
     private boolean oneModel;
     private DimensionsThread updateThread;
-
+    
     public ModelsDetailsPanel() {
         initComponents();
         setFont();
@@ -93,12 +94,19 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     public void updateBedInfo() {
 //        evaluateBed();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        EditingModel editModel = model.getEditer();
+
         DecimalFormat df = new DecimalFormat("#.0");
         EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
-        jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
-        jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
-        jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+        
+        if (ProperDefault.get("measures").equals("inches")) {
+            jTextField3.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getWidth()))));
+            jTextField4.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getDepth()))));
+            jTextField5.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getHeight()))));
+        } else {
+            jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
+            jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
+            jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+        }
 
         jTextField1.setText(String.valueOf(model.getName()));
         jTextArea1.setText(String.valueOf(model.getDescription()));
@@ -129,9 +137,17 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             DecimalFormat df = new DecimalFormat("#.0");
             EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
-            jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
-            jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
-            jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+
+            if (ProperDefault.get("measures").equals("inches")) {
+                jTextField3.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getWidth()))));
+                jTextField4.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getDepth()))));
+                jTextField5.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getHeight()))));
+            } else {
+                jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
+                jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
+                jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+            }
+
         }
 
     }
