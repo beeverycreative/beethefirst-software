@@ -1,5 +1,6 @@
 package replicatorg.app.ui.mainWindow;
 
+import java.text.DecimalFormat;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -21,7 +22,8 @@ import replicatorg.model.Model;
 public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private boolean check_pressed, mm, percentage;
-
+    private double initialWidth, initialDepth, initialHeight;
+    
     public ModelsOperationCenterScale() {
         initComponents();
         this.check_pressed = false;
@@ -39,10 +41,25 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         canvas.setModelationType("scale");
         Model model = canvas.getModel();
 
-        jTextField4.setText(model.getScaleXinPercentage());
-        jTextField5.setText(model.getScaleYinPercentage());
-        jTextField6.setText(model.getScaleZinPercentage());
+        this.initialWidth = model.getEditer().getWidth();
+        this.initialHeight = model.getEditer().getHeight();
+        this.initialDepth = model.getEditer().getDepth();
+        if (this.mm) {
+            DecimalFormat df = new DecimalFormat("#.0");
+            
+            jTextField4.setText(df.format(this.initialWidth));
+            jTextField5.setText(df.format(this.initialDepth));
+            jTextField6.setText(df.format(this.initialHeight));
+        } else {
+            jTextField4.setText(model.getScaleXinPercentage());
+            jTextField5.setText(model.getScaleYinPercentage());
+            jTextField6.setText(model.getScaleZinPercentage());
+        }
 
+    }
+    
+    public boolean isScalePercentage() {
+        return this.percentage;
     }
 
     private void setFont() {
@@ -69,8 +86,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
         jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
         jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
-        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Scale_Extense"));
+        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));        
+        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Scale")+" ("+Languager.getTagValue("MainWindowButtons", "MM")+")");
 //        jLabel13.setText(Languager.getTagValue("", ""));
 //        jLabel14.setText(Languager.getTagValue("", ""));        
 //        jLabel15.setText(Languager.getTagValue("", ""));    
@@ -453,7 +470,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        double newValuePercentage = 1.0;
+        double newValuePercentage;
         String textFieldValue = jTextField4.getText();
 
         if (!(textFieldValue.length() == 0)) {
@@ -463,7 +480,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 }
 
                 if (mm) {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
+                    double sizeMM = Double.parseDouble(textFieldValue);
+                                        
+                    newValuePercentage = (sizeMM / this.initialWidth) * 100;
                 } else {
                     newValuePercentage = Double.parseDouble(textFieldValue);
                 }
@@ -482,8 +501,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        double newValuePercentage = 1.0;
+
+        double newValuePercentage;
         String textFieldValue = jTextField5.getText();
 
         if (!(textFieldValue.length() == 0)) {
@@ -493,7 +512,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 }
 
                 if (mm) {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
+                    double sizeMM = Double.parseDouble(textFieldValue);
+                                        
+                    newValuePercentage = (sizeMM / this.initialDepth) * 100;
                 } else {
                     newValuePercentage = Double.parseDouble(textFieldValue);
                 }
@@ -513,8 +534,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField6KeyReleased
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        double newValuePercentage = 1.0;
+
+        double newValuePercentage;
         String textFieldValue = jTextField6.getText();
 
         if (!(textFieldValue.length() == 0)) {
@@ -524,7 +545,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 }
 
                 if (mm) {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
+                    double sizeMM = Double.parseDouble(textFieldValue);
+                                        
+                    newValuePercentage = (sizeMM / this.initialHeight) * 100;
                 } else {
                     newValuePercentage = Double.parseDouble(textFieldValue);
                 }
@@ -578,20 +601,44 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void jTextField4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+        if (this.mm) {
+            DecimalFormat df = new DecimalFormat("#.0");
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setYValue(String.valueOf(df.format(model.getEditer().getDepth())));
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setZValue(String.valueOf(df.format(model.getEditer().getHeight())));
+        } else {
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+        }
     }//GEN-LAST:event_jTextField4FocusGained
 
     private void jTextField5FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField5FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+        if (this.mm) {
+            DecimalFormat df = new DecimalFormat("#.0");
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setXValue(String.valueOf(df.format(model.getEditer().getWidth())));
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setZValue(String.valueOf(df.format(model.getEditer().getHeight())));
+        } else {
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+        }
     }//GEN-LAST:event_jTextField5FocusGained
 
     private void jTextField6FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField6FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+        if (this.mm) {
+            DecimalFormat df = new DecimalFormat("#.0");
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setXValue(String.valueOf(df.format(model.getEditer().getWidth())));
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setYValue(String.valueOf(df.format(model.getEditer().getDepth()))); 
+        } else {
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+        }
     }//GEN-LAST:event_jTextField6FocusGained
 
     private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
