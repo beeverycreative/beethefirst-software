@@ -2,6 +2,7 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import javax.swing.Icon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
@@ -99,9 +100,7 @@ public class ScalingTool extends Tool {
                     
                     scaleDragChange += (0.005 * (xd+yd > 0 ? (Math.sqrt(xd*xd+yd*yd)) : -(Math.sqrt(xd*xd+yd*yd)))) ;
 
-                    if(scaleDragChange > 0.1)
-                    {   
-                            
+                    if(scaleDragChange > 0.1) {                               
 //                        System.out.println("scaleDragChange " + scaleDragChange);
                         double currentScale = parent.getModelEditing().model.getTransform().getScale();
 //                        System.out.println("currentScale " + currentScale);
@@ -114,16 +113,25 @@ public class ScalingTool extends Tool {
                         
                         if (!(model.minDimension()< minimumSize && targetScale < minimumSize) ) {
                             parent.getModelEditing().scale(targetScale, isOnPlatform);
+                            
                             model.updateXscale(targetScale);
                             model.updateYscale(targetScale);
                             model.updateZscale(targetScale);
                             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
-                            super.mOCS.setXValue(model.getScaleXinPercentage());
-                            super.mOCS.setYValue(model.getScaleYinPercentage());
-                            super.mOCS.setZValue(model.getScaleZinPercentage());
+                            
+                            if (super.mOCS.isScalePercentage()) {
+                                super.mOCS.setXValue(model.getScaleXinPercentage());
+                                super.mOCS.setYValue(model.getScaleYinPercentage());
+                                super.mOCS.setZValue(model.getScaleZinPercentage());
+                            } else {
+                                DecimalFormat df = new DecimalFormat("#.0");
+                                
+                                super.mOCS.setXValue(df.format(model.getEditer().getWidth()));
+                                super.mOCS.setYValue(df.format(model.getEditer().getDepth()));
+                                super.mOCS.setZValue(df.format(model.getEditer().getHeight()));
+                            }
                             //Base.getMainWindow().getCanvas().getModelsPanel().updateScale?();   
-                        }
-                        
+                        }                        
                     }
 
                     break;

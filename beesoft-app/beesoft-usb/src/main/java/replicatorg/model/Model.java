@@ -336,7 +336,7 @@ public class Model implements Serializable, Cloneable {
     }
 
     public void updateXscale(double targetScale) {
-                this.xScale = targetScale * this.xScale;   
+        this.xScale = targetScale * this.xScale;   
     }
 
     public void updateZscale(double targetScale) {
@@ -345,6 +345,6 @@ public class Model implements Serializable, Cloneable {
     }
 
     public void updateYscale(double targetScale) {
-         this.yScale = targetScale * this.yScale;
+        this.yScale = targetScale * this.yScale;
     }
 }
