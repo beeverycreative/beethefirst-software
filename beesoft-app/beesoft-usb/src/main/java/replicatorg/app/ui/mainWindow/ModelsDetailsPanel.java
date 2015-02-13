@@ -476,9 +476,31 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             if(mOCS != null)
             {    
                 model.resetScale();
-                mOCS.setXValue(model.getScaleXinPercentage());
-                mOCS.setYValue(model.getScaleYinPercentage());
-                mOCS.setZValue(model.getScaleZinPercentage());
+
+                if (mOCS.isScalePercentage()) {
+                    mOCS.setXValue(model.getScaleXinPercentage());
+                    mOCS.setYValue(model.getScaleYinPercentage());
+                    mOCS.setZValue(model.getScaleZinPercentage());
+                } else {
+                    DecimalFormat df = new DecimalFormat("#.0"); 
+
+                    double width = model.getEditer().getWidth();
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        width = UnitConverter.millimetersToInches(width);
+                    }
+                    double depth = model.getEditer().getDepth();
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        depth = UnitConverter.millimetersToInches(depth);
+                    }
+                    double height = model.getEditer().getHeight();
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        height = UnitConverter.millimetersToInches(height);
+                    }                                    
+
+                    mOCS.setXValue(df.format(width));
+                    mOCS.setYValue(df.format(depth));
+                    mOCS.setZValue(df.format(height));                                    
+                }                
             }
         }
     }//GEN-LAST:event_jLabel8MousePressed

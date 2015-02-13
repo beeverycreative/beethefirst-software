@@ -8,10 +8,12 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import replicatorg.app.Base;
+import replicatorg.app.ProperDefault;
 import replicatorg.model.CAMPanel.DragMode;
 import static replicatorg.model.CAMPanel.DragMode.NONE;
 import static replicatorg.model.CAMPanel.DragMode.SCALE_OBJECT;
 import replicatorg.model.Model;
+import replicatorg.util.UnitConverter;
 
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
@@ -125,10 +127,22 @@ public class ScalingTool extends Tool {
                                 super.mOCS.setZValue(model.getScaleZinPercentage());
                             } else {
                                 DecimalFormat df = new DecimalFormat("#.0");
-                                
-                                super.mOCS.setXValue(df.format(model.getEditer().getWidth()));
-                                super.mOCS.setYValue(df.format(model.getEditer().getDepth()));
-                                super.mOCS.setZValue(df.format(model.getEditer().getHeight()));
+                                                    
+                                double width = model.getEditer().getWidth();
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    width = UnitConverter.millimetersToInches(width);
+                                }
+                                double depth = model.getEditer().getDepth();
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    depth = UnitConverter.millimetersToInches(depth);
+                                }
+                                double height = model.getEditer().getHeight();
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    height = UnitConverter.millimetersToInches(height);
+                                } 
+                                super.mOCS.setXValue(df.format(width));
+                                super.mOCS.setYValue(df.format(depth));
+                                super.mOCS.setZValue(df.format(height));
                             }
                             //Base.getMainWindow().getCanvas().getModelsPanel().updateScale?();   
                         }                        
