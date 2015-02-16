@@ -268,15 +268,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         if (Boolean.valueOf(ProperDefault.get("firstTime")) == true) {
             File model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.stl");
             if (model.exists() && model.canRead() && model.isFile()) {
-                bed.addSTL(model);
-                bed.setSceneDifferent(true);
-            } else {
-                model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.STL");
-                if (model.exists() && model.canRead() && model.isFile()) {
+                if (Base.getMainWindow() != null) {
                     bed.addSTL(model);
                     bed.setSceneDifferent(true);
-                } //no need for else {}
-
+                }
             }
         }
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
