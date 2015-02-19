@@ -43,10 +43,10 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
         <MainWindowButtons>
-            <Models value="MODELS"/>
-            <Maintenance value="MAINTENANCE"/>
-            <QuickWizard value="QUICK GUIDE"/>
-            <Print value="PRINT"/>
+            <Models value="MODELLE"/>
+            <Maintenance value="WARTUNG"/>
+            <QuickWizard value="KURZANLEITUNG"/>
+            <Print value="DRUCKEN"/>
             <Mirror value="Mirror"/>
             <Scale value="Scale"/>  
             <Scale_Extense value="Scale in percentage"/>
