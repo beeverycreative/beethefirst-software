@@ -3,42 +3,42 @@
     <tags>
         <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
         <ApplicationMenus>
-            <File value="File"/>
-            <Edit value="Edit"/>
-            <Gallery value="Gallery"/>
-            <Printer value="Printer"/>
-            <Help value="Help"/>
-            <File_New value="New scene"/>
-            <File_Open value="Open scene"/>
-            <File_Save value="Save scene"/>
-            <File_Save_as value="Save scene as"/>
-            <File_Preferences value="Preferences"/>
-            <File_Quit value="Quit"/>
-            <Edit_Undo value="Undo"/>
-            <Edit_Redo value="Redo"/>
-            <Edit_Cut value="Cut"/>
-            <Edit_Copy value="Copy"/>
+            <File value="Datei"/>
+            <Edit value="Bearbeiten"/>
+            <Gallery value="Galerie"/>
+            <Printer value="Drucker"/>
+            <Help value="Hilfe"/>
+            <File_New value="Neue szene"/>
+            <File_Open value="Offene szene"/>
+            <File_Save value="Szene speichern"/>
+            <File_Save_as value="Szene speichern unter"/>
+            <File_Preferences value="Vorlieben"/>
+            <File_Quit value="Verlassen"/>
+            <Edit_Undo value="Rückgängig Machen"/>
+            <Edit_Redo value="Wiederholen"/>
+            <Edit_Cut value="Schnitt"/>
+            <Edit_Copy value="Kopie"/>
             <Edit_Paste value="Paste"/>
-            <Edit_Duplicate value="Duplicate"/>
-            <Edit_Delete value="Delete"/>
-            <Edit_SelectAll value="Select all"/>
-            <Edit_Unselect value="Unselect"/>
-            <Edit_Center value="Center on platform"/>
-            <Edit_PutPlatform value="Place on platform"/>
-            <Edit_Reset value="Reset model"/>
-            <Model_Add value="Add model from gallery"/>
-            <Model_Import value="Import model"/>
-            <Model_Online value="Online models"/>
-            <Printer_Maintenance value="Maintenance"/>
-            <Printer_Print value="Print"/>
-            <Help_Topics value="Help topics:"/>
-            <Help_Topics_Info value="Should you need more help, please consult our FAQs, our website www.beeverycreative.com, or please contact the customer service."/>
-            <Help value="Press here for help"/>
-            <Help_help value="Help"/>
-            <Help_QuickGuide value="Quick Guide"/>
-            <Help_Update value="Check for updates"/>
-            <Help_Support value="Support"/>
-            <Help_About value="About"/>
+            <Edit_Duplicate value="Duplikat"/>
+            <Edit_Delete value="Löschen"/>
+            <Edit_SelectAll value="Alle wählen"/>
+            <Edit_Unselect value="Deaktivieren"/>
+            <Edit_Center value="Zentrieren auf der Plattform"/>
+            <Edit_PutPlatform value="Ort auf der Plattform"/>
+            <Edit_Reset value="Reset-Modell"/>
+            <Model_Add value="Fügen Modell aus der Galerie"/>
+            <Model_Import value="Importmodell"/>
+            <Model_Online value="Online Modelle"/>
+            <Printer_Maintenance value="Wartung"/>
+            <Printer_Print value="Drucken"/>
+            <Help_Topics value="Hilfethemen:"/>
+            <Help_Topics_Info value="Sollten Sie weitere Hilfe benötigen, konsultieren Sie bitte unsere FAQs, unsere Website www.beeverycreative.com, oder wenden Sie sich an den Kundendienst."/>
+            <Help value="Drücken Sie hier, um Hilfe"/>
+            <Help_help value="Hilfe"/>
+            <Help_QuickGuide value="Praktischen Reiseführer"/>
+            <Help_Update value="Nach Updates suchen"/>
+            <Help_Support value="Unterstützung"/>
+            <Help_About value="über"/>
         </ApplicationMenus>
 
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
@@ -47,81 +47,81 @@
             <Maintenance value="WARTUNG"/>
             <QuickWizard value="KURZANLEITUNG"/>
             <Print value="DRUCKEN"/>
-            <Mirror value="Mirror"/>
-            <Scale value="Scale"/>  
-            <Scale_Extense value="Scale in percentage"/>
-            <Move value="Move"/>
-            <Rotate value="Rotate"/>
-            <MoreOptions value="More options"/>
-            <Axis value="Axis"/>
-            <Axis2 value="in axis"/>
-            <Degrees value="degrees"/>
-            <MM value="millimeters"/>
-            <Percentage value="percentage"/>
+            <Mirror value="Spiegel"/>
+            <Scale value="Maßstab"/>  
+            <Scale_Extense value="Skala in Prozent"/>
+            <Move value="Bewegen"/>
+            <Rotate value="Drehen"/>
+            <MoreOptions value="Mehr Optionen"/>
+            <Axis value="Achse"/>
+            <Axis2 value="in Achse"/>
+            <Degrees value="grad"/>
+            <MM value="millimeter"/>
+            <Percentage value="prozentsatz"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
-            <Scene value="Scene"/>
+            <Scene value="Szene"/>
             <Scene_Name value="Name"/>
-            <Scene_Description value="Description"/>
-            <Scene_NModels value="Number of models"/>
-            <Scene_LastPrintDate value="Date of last print"/>
-            <Scene_LastPrintTime value="Duration of last print"/>
+            <Scene_Description value="Beschreibung"/>
+            <Scene_NModels value="Anzahl der Modelle"/>
+            <Scene_LastPrintDate value="Datum der letzten Druck"/>
+            <Scene_LastPrintTime value="Dauer des letzten Druck"/>
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
         <ModelDetails>
-            <Model value="Model"/>
+            <Model value="Modell"/>
             <Model_Name value="Name"/>
-            <Model_Selected value="Selected Model(s)"/>
-            <Model_N value="Number of models"/>
-            <Model_Dimensions value="Dimensions"/>
-            <Model_Description value="Description"/>
-            <Model_Category value="Category"/>
+            <Model_Selected value="Ausgewählte Modell(e)"/>
+            <Model_N value="Anzahl der Modelle"/>
+            <Model_Dimensions value="Größe"/>
+            <Model_Description value="Beschreibung"/>
+            <Model_Category value="Kategorie"/>
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
         <AboutSoftware>
-            <About_SoftwareVersion value="Software version"/> 
-            <About_FirmwareVersion value="Firmware version"/> 
-            <About_BootloaderVersion value="Bootloader version"/> 
-            <About_SerialNumber value="BEETHEFIRST serial number"/> 
-            <About_FilamentColor value="Filament type"/> 
+            <About_SoftwareVersion value="Software-Version"/> 
+            <About_FirmwareVersion value="Firmware-Version"/> 
+            <About_BootloaderVersion value="Bootloader-Version"/> 
+            <About_SerialNumber value="BEETHEFIRST ordnungsnummer"/> 
+            <About_FilamentColor value="Ungezopft"/> 
         </AboutSoftware>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
         <Other>
-            <AdvancedOptions value="Advanced options"/>
-            <View value="View"/>
-            <Properties value="Properties"/>
-            <Select value="Select"/>
-            <Search value="Search"/>
-            <QuickSearch value="Quick search"/>	
-            <Topics value="Topics"/>	
-            <Recent value="Recent"/>
-            <Examples value="Examples"/> 
-            <Informations value="Information"/>
+            <AdvancedOptions value="Erweiterte Optionen"/>
+            <View value="Ansicht"/>
+            <Properties value="Eigenschaften"/>
+            <Select value="Wählen"/>
+            <Search value="Suche"/>
+            <QuickSearch value="Schnellsuche"/>	
+            <Topics value="Themen"/>	
+            <Recent value="Kürzlich"/>
+            <Examples value="Beispiele"/> 
+            <Informations value="Informationen"/>
             <Name value="Name"/>
             <Version value="Version"/>
             <Link value="Link"/>
             <Gcode value="GCode"/>
-            <Model value="MODEL"/>
-            <NewFolder value="New folder"/>
-            <RenameFile value="Rename file"/>
-            <Folders value="Folders"/>
-            <Files value="Files"/>
-            <Selection value="Selection"/>
+            <Model value="MODELL"/>
+            <NewFolder value="Neuen Ordner"/>
+            <RenameFile value="Datei umbenennen"/>
+            <Folders value="Ordner"/>
+            <Files value="Dateien"/>
+            <Selection value="Auswahl"/>
             <Filter value="Filter"/>
-            <View value="View"/>
+            <View value="Ansicht"/>
             <Default value="Default"/>
-            <LayFlat value="Lay flat"/>
-            <RotateZ value="Rotate around"/>
-            <MachineJam value="Communication problem. Please unplug it"/>
+            <LayFlat value="Flach"/>
+            <RotateZ value="Drehen sich um"/>
+            <MachineJam value="Kommunikationsproblem. Bitte ziehen Sie den Stecker"/>
             <Wizard value="Setup wizard"/>
-            <NotSupported value="This functionality is not yet supported."/>
-            <InsertValue value="New category name:"/>
-            <Warning value="WARNING"/>
+            <NotSupported value="Diese Funktion wird noch nicht unterstützt."/>
+            <InsertValue value="Neuen Kategorienamen:"/>
+            <Warning value="WARNUNG"/>
             <Download value="Download"/>
         </Other>
 
