@@ -1,1 +1,530 @@
 <?xml version="1.1" encoding="utf-8"?>
+<languages>
+    <tags>
+        <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
+        <ApplicationMenus>
+            <File value="Datei"/>
+            <Edit value="Bearbeiten"/>
+            <Gallery value="Galerie"/>
+            <Printer value="Drucker"/>
+            <Help value="Hilfe"/>
+            <File_New value="Neue szene"/>
+            <File_Open value="Offene szene"/>
+            <File_Save value="Szene speichern"/>
+            <File_Save_as value="Szene speichern unter"/>
+            <File_Preferences value="Vorlieben"/>
+            <File_Quit value="Verlassen"/>
+            <Edit_Undo value="Rückgängig Machen"/>
+            <Edit_Redo value="Wiederholen"/>
+            <Edit_Cut value="Schnitt"/>
+            <Edit_Copy value="Kopie"/>
+            <Edit_Paste value="Paste"/>
+            <Edit_Duplicate value="Duplikat"/>
+            <Edit_Delete value="Löschen"/>
+            <Edit_SelectAll value="Alle wählen"/>
+            <Edit_Unselect value="Deaktivieren"/>
+            <Edit_Center value="Zentrieren auf der Plattform"/>
+            <Edit_PutPlatform value="Ort auf der Plattform"/>
+            <Edit_Reset value="Reset-Modell"/>
+            <Model_Add value="Fügen Modell aus der Galerie"/>
+            <Model_Import value="Importmodell"/>
+            <Model_Online value="Online Modelle"/>
+            <Printer_Maintenance value="Wartung"/>
+            <Printer_Print value="Drucken"/>
+            <Help_Topics value="Hilfethemen:"/>
+            <Help_Topics_Info value="Sollten Sie weitere Hilfe benötigen, konsultieren Sie bitte unsere FAQs, unsere Website www.beeverycreative.com, oder wenden Sie sich an den Kundendienst."/>
+            <Help value="Drücken Sie hier, um Hilfe"/>
+            <Help_help value="Hilfe"/>
+            <Help_QuickGuide value="Praktischen Reiseführer"/>
+            <Help_Update value="Nach Updates suchen"/>
+            <Help_Support value="Unterstützung"/>
+            <Help_About value="über"/>
+        </ApplicationMenus>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
+        <MainWindowButtons>
+            <Models value="MODELLE"/>
+            <Maintenance value="WARTUNG"/>
+            <QuickWizard value="KURZANLEITUNG"/>
+            <Print value="DRUCKEN"/>
+            <Mirror value="Spiegel"/>
+            <Scale value="Maßstab"/>  
+            <Scale_Extense value="Skala in Prozent"/>
+            <Move value="Bewegen"/>
+            <Rotate value="Drehen"/>
+            <MoreOptions value="Mehr Optionen"/>
+            <Axis value="Achse"/>
+            <Axis2 value="in Achse"/>
+            <Degrees value="grad"/>
+            <MM value="millimeter"/>
+            <Percentage value="prozentsatz"/>
+        </MainWindowButtons>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
+        <SceneDetails>
+            <Scene value="Szene"/>
+            <Scene_Name value="Name"/>
+            <Scene_Description value="Beschreibung"/>
+            <Scene_NModels value="Anzahl der Modelle"/>
+            <Scene_LastPrintDate value="Datum der letzten Druck"/>
+            <Scene_LastPrintTime value="Dauer des letzten Druck"/>
+        </SceneDetails>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
+        <ModelDetails>
+            <Model value="Modell"/>
+            <Model_Name value="Name"/>
+            <Model_Selected value="Ausgewählte Modell(e)"/>
+            <Model_N value="Anzahl der Modelle"/>
+            <Model_Dimensions value="Größe"/>
+            <Model_Description value="Beschreibung"/>
+            <Model_Category value="Kategorie"/>
+        </ModelDetails>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
+        <AboutSoftware>
+            <About_SoftwareVersion value="Software-Version"/> 
+            <About_FirmwareVersion value="Firmware-Version"/> 
+            <About_BootloaderVersion value="Bootloader-Version"/> 
+            <About_SerialNumber value="BEETHEFIRST ordnungsnummer"/> 
+            <About_FilamentColor value="Ungezopft"/> 
+        </AboutSoftware>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
+        <Other>
+            <AdvancedOptions value="Erweiterte Optionen"/>
+            <View value="Ansicht"/>
+            <Properties value="Eigenschaften"/>
+            <Select value="Wählen"/>
+            <Search value="Suche"/>
+            <QuickSearch value="Schnellsuche"/>	
+            <Topics value="Themen"/>	
+            <Recent value="Kürzlich"/>
+            <Examples value="Beispiele"/> 
+            <Informations value="Informationen"/>
+            <Name value="Name"/>
+            <Version value="Version"/>
+            <Link value="Link"/>
+            <Gcode value="GCode"/>
+            <Model value="MODELL"/>
+            <NewFolder value="Neuen Ordner"/>
+            <RenameFile value="Datei umbenennen"/>
+            <Folders value="Ordner"/>
+            <Files value="Dateien"/>
+            <Selection value="Auswahl"/>
+            <Filter value="Filter"/>
+            <View value="Ansicht"/>
+            <Default value="Default"/>
+            <LayFlat value="Flach"/>
+            <RotateZ value="Drehen sich um"/>
+            <MachineJam value="Kommunikationsproblem. Bitte ziehen Sie den Stecker"/>
+            <Wizard value="Setup wizard"/>
+            <NotSupported value="Diese Funktion wird noch nicht unterstützt."/>
+            <InsertValue value="Neuen Kategorienamen:"/>
+            <Warning value="WARNUNG"/>
+            <Download value="Download"/>
+        </Other>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado caso seja preciso disponibilizar informação sobre o JAVA -->
+        <Java>
+            <Line1 value="Installation von Java 1.6 erforderlich"/>
+            <Line2 value="Diese Version benötigt"/>
+            <Line3 value="Java 1.6 oder eine neuere Version benötigt, um ordnungsgemäß ausgeführt"/>
+            <Line4 value="Bitte besuchen Sie java.com zu aktualisieren"/>
+        </Java>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado nos botões de controlo de janelas -->
+        <OptionPaneButtons>
+            <Line1 value="Ja"/>
+            <Line2 value="Keine"/>
+            <Line3 value="Rückgängig Machen"/>
+            <Line4 value="Der Rücken"/>
+            <Line5 value="zum Abschluss bringen"/>
+            <Line6 value="Ok"/>
+            <Line7 value="Als Nächstes"/>
+            <Line8 value="Sich Bewerben"/>
+            <Line9 value="Import"/>
+            <Line10 value="Neue Druck"/>
+            <Line11 value="Pause"/>
+            <Line12 value="Fortsetzen"/>
+            <Line13 value="Wieder beginnen"/>            
+            <Line14 value="Entladen"/> 
+            <Line15 value="Schätzung"/> 
+        </OptionPaneButtons>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
+        <Fileopen>
+            <Line1 value="Die Datei konnte nicht gefunden werden" />
+            <Line2 value="Datei nicht gefunden" />
+        </Fileopen>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de manipulação de ficheiros em directórios -->
+        <BaseDirectories>
+             <Line1 value="Kann nicht in das Verzeichnis schreiben" />
+             <Line2 value="Einige Funktionen wie Werkzeugwege" />
+             <Line3 value="erfordern writting Daten in dieses Verzeichnis. Sie sollten am Ende dieser" />
+             <Line4 value="Sitzung, ändern Sie die Berechtigungen auf dieses Verzeichnis und starten Sie erneut" />
+             <Line5 value="Start Anwendungsverzeichnis ist schreibgeschützt" />
+             <Line6 value="Kann nicht in das Verzeichnis schreiben" />
+             <Line7 value="Sie können dieser Software aus einem Archiv oder anderen schreibgeschützten Verzeichnis werden" />
+             <Line8 value="Bitte beenden Sie die Anwendung und entpacken Sie es auf eine beschreibbare Lage, wieder zu starten" />
+        </BaseDirectories>
+        
+        <!-- A próxima secção XML contém o texto que pode ser usado como informativo em atividades paralelas à impressão --> 
+        <ToolPath>
+            <Line1 value="Der Boden des Modells nicht zu sein scheinen die Gebäudeoberfläche zu berühren" />
+            <Line2 value="und dem Versuch, zu drucken es könnte Ihr BEETHEFIRST beschädigen." />
+            <Line3 value="Ok, um ihn nach der Bauplattform zu bewegen?" />
+            <Line4 value="Platz Modell auf Gebäudefläche?" />
+            <Line5 value="Sie haben Änderungen an diesem Modell gemacht" />
+            <Line6 value="Sie werden alle nicht gespeicherten Änderungen verloren." />
+            <Line7 value="Speichern Sie die Szene jetzt?" />
+            <Line8 value="Szene speichern" />
+            <Line9 value="Dieses Modell ist größer als das, was BEETHEFIRST aufbauen können" />
+            <Line10 value="Sind Sie sicher, dass Sie Code dafür erzeugen wollen?" />
+            <Line11 value="Gene überdimensionalen Modell?" />
+            <Line12 value="Erstellen von Werkzeugwegen für" />
+            <Line13 value="Starten Plugin" />
+            <Line14 value="Gesamt Fortschritt" />
+            <Line15 value="Entfernen druckbare Umfang auf Schicht" />
+            <Line16 value="Verarbeitung Facette" />
+            <Line17 value="Ein Werkzeugweg Generator" />
+            <Line18 value="Basisprofil" />
+            <Line19 value="Print-Modell" />
+            <Line20 value="Gene GCode" />
+            <Line21 value="Drucken" />
+        </ToolPath>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado nas caixas de feedback existentes nos Assistentes e no ecrã principal --> 
+        <FeedbackLabel>
+            <Line1 value="Verbindung zum BEETHEFIRST" />
+            <Line2 value="Verbindungsfehler" />
+            <Line3 value="Es wurde versucht, übergeordnete Verzeichnis im Zugriff" />
+            <Line4 value="Datei laden" />
+            <Line5 value="Speichern als" />
+            <Line6 value="Ausgewählter Pfad" />
+            <Line7 value="Loading ..." />
+            <Line8 value="Saving ..." />
+            <Line9 value="Speichern Vorgang abgeschlossen" />
+            <Line10 value="Speichern Vorgang abgebrochen" />
+            <Line11 value="Laden Driver" />
+            <Line12 value="Die Schätzung Bauzeit und Scancode für Fehler ..." />
+            <Line13 value="Anfang zu bauen" />
+            <Line14 value="Die Schätzung Bauzeit ..." />
+            <Line15 value="Laden-Simulator" />
+            <Line15 value="Anfang Werkzeugwege" />
+            <Line16 value="Das Profil kann in diesem Verzeichnis gefunden werden" />
+            <Line17 value="NOT_ATTACHED" />
+            <Line18 value="READY" />
+            <Line19 value="BUILDING" />
+            <Line20 value="BUILDING_OFFLINE" />
+            <Line21 value="ANSCHLUSS" />
+            <Line22 value="CONNECTED" />
+            <Line23 value="Last Szene" />
+            <Line24 value="Lastmodell" />
+            <Line25 value="Bitte warten" />
+            <BEETHEFIRST_STATUS1 value="angeschlossen" />
+            <BEETHEFIRST_STATUS2 value="getrennt" />
+            <BEETHEFIRST_STATUS3 value="ist bereit" />
+            <MovingMessage value="Verschieben ... Bitte warten." />
+            <MovingMessage2 value="Bitte warten Sie! Immer bereit ..." />
+            <HeatingMessage value="Heizung ... Bitte warten." />
+            <HeatingMessage2 value="Heizung ..." />
+            <HeatingNozzleMessage value="Heizung ... Bitte warten Sie vor der Reinigung." />
+            <Configurations_Save value="Aktuelle Einstellungen gespeichert werden ..." />
+            <Statusmessage value="Statusmeldung" />
+            <GCodeGeneration value="Vorbereiten des Druck ..." />
+            <MeshError value="Importierte Modell hat Fehler. Versuchen Sie, sie zu beheben oder ein anderes Modell zu importieren." />
+        </FeedbackLabel>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no Processo de Impressão, incluindo SplashScreens --> 
+        <Print>
+            <Print_Title value = "DRUCKEN" />
+            <Print_Splash_Gcode_Title value = "WIRD BEARBEITET ... bitte warten" />
+            <Print_Splash_Gcode_Info value = "Dieser Vorgang kann einige Minuten dauern" />
+            <Print_Calibration_Info value = "Dieser Vorgang kann einige Minuten dauern" />
+            <Print_Splash_Title value = "Ihr BEETHEFIRST ist druckbereit" />
+            <Print_Splash_Info value = "Drücken Sie die Taste." />
+            <Print_Splash_Info2 value = "Drucken ... Bitte warten." />
+            <Print_Splash_Info3 value = "Drucken im autonomen Modus. Bitte warten." />
+            <Print_Splash_Info4 value = "Sie können jetzt getrennt werden BEETHEFIRST." />
+            <Print_Splash_Info5 value = "Press New drucken oder auf andere Weise entladen, wenn Sie für heute getan." />
+            <Print_Splash_Info6 value = "Lassen Sie Ihr BEETHEFIRST mit dem Filament geladen." />
+            <Print_Splash_Info7 value = "Dies wird helfen, das Filament in einem optimalen Zustand." />
+            <Print_Splash_Info8 value = "Sie können jetzt entfernen Sie Ihre Spule und speichern sie in einem kalten, trockenen Ort." />
+            <Print_Splash_Info9 value = "Kein Faden" />
+            <Print_Splash_Info10 value = "Ihr BEETHEFIRST entlädt. Bitte warten, bis es fertig ist." />
+            <Print_Splash_Info11 value = "Zum Drucken müssen Sie den Faden nun ändern." />
+            <Print_Quality value = "Resolution" />
+            <Print_Quality_Low value = "Low" />
+            <Print_Quality_Normal value = "Normal" />
+            <Print_Quality_High value = "High" />
+            <Print_Density value = "Dichte" />
+            <Print_Density_Low value = "Low" />
+            <Print_Density_Medium value = "Medium" />
+            <Print_Density_High value = "High" />
+            <Print_Raft value = "Raft" />
+            <Print_Support value = "Support" />
+            <Print_Autonomy value = "Autonomy" />
+            <Print_GramsTag value = "g (n)" />
+            <Print_EstimationPrintTime value = "Druckzeit" />
+            <Print_EstimationMaterial value = "Materialkosten" />
+            <Print_Raft_Info value = "Diese Option erstellt eine Basis, mit denen das Modell auf den Tisch zu halten und helfen Verziehen zu vermeiden. Das Floß kann schwierig sein, aus dem Modell zu entfernen, so dass nur verwenden, wenn nötig wird." />
+            <Print_Support_Info value = "Diese Option wird automatisch eine abnehmbare Struktur unter einem Überhang oder stark geneigten Flächen, um zu ermöglichen, das Modell, die gedruckt werden." />
+            <Print_Autonomy_Info value = "Diese Option ermöglicht es Ihnen, ohne Anschluss an einen Computer auszudrucken. Sie werden informiert, wenn Sie von Ihrem Computer trennen." />
+            <Print_ChangeFilament value = "Filament ändern jetzt" />
+            <Print_TimeLeft value = "Über x Minuten vor" />
+            <Print_GCode value = "Einstellungen werden aktualisiert. Dieser Vorgang kann einige Zeit in Anspruch nehmen." />
+            <Print_Filament value = "Verbleibende Filament kann nicht genug sein für diesen Drucksitzung. Sind Sie sicher, dass Sie den richtigen Faden Farbe gewählt haben?" />
+            <Print_Autonomy value = "Ermöglicht dem BEETHEFIRST zu, ohne an den Computer angeschlossen zu drucken.
+Sie werden informiert, wenn Sie das Kabel ziehen. "/>
+            <Print_Transfering value = "Übertragen ... Bitte warten Sie" />
+            <Print_EstimatorError value = "Kann nicht die gesamte Druckzeit schätzen" />
+            <Print_Processing value = "In Bearbeitung ... Bitte warten Sie." />
+            <Print_Pausing value = "Anhalten ... Bitte warten." />
+            <Print_Resuming value = "Fortsetzen ... Bitte warten." />
+            <Print_Waiting value = "Warten ... Fortsetzen, wenn Sie bereit sind." />
+            <Print_Unloading value = "Ihr BEETHEFIRST entlädt. Bitte warten." />
+            <Print_Unloaded1 value = "Sie können jetzt entfernen Sie Ihre Spule." />
+            <Print_Unloaded2 value = "Schneiden Sie die Spitze und speichern Sie die Spule in einem kalten, trockenen Ort." />
+            <Print_Unloaded3 value = "Wenn der Faden nicht locker ist, drücken Sie die Entnahmetaste erneut." />
+            <Print_Info value = "Dieser Vorgang kann einige Minuten in Anspruch nehmen" />
+            <Print_Info2 value = "Das wird ein wenig länger dauern als erwartet" />
+            <Print_Estimation value = "Dies kann etwa zu nehmen:" />
+            <Print_Remaining value = "Verbleibende Zeit:" />
+            <Print_PercentageCompleted value = "Abgeschlossen:" />
+            <Print_InfoLowStatus value = "Druck starten Sitzung so bald wie möglich" />
+            <Print_Start value = "Taste drücken, um zu starten" />
+            <Print_BuildFinished value = "Gebäude-Prozess abgeschlossen ist." />
+            <Unloading_Title value = "Entladen ..." />
+            <Unload_BuildFinished value = "Unload Prozess beendet." />
+            <Print_Completion value = "Fertiggestellt" />
+            <Print_BuildAborted value = "Gebäude abgebrochen." />
+            <Print_BuildAborted2 value = "Bitte starten Sie die Übertragung und versuchen Sie es erneut." />
+            <Print_BuildAborted3 value = "Wenn das Problem weiterhin besteht, schalten Sie Ihren BEETHEFIRST aus. Starten Sie dann BeeSoft und schalten Sie den Drucker ein." />
+            <Print_BuildAborted4 value = "Starten Sie anschließend BeeSoft und schalten Sie den Drucker ein." />
+            <Print_Stopped value = "nach Stopped" />
+            <Print_DoneBuilding value = "Fertig." />
+            <Print_PrintAborted value = "Sie sind zur Zeit das Drucken aus BeeSoft! Der Bauprozess wird gestoppt." />
+            <Print_PrintAbortedContinue value = "Fortfahren und Abbruch drucken?" />
+            <Print_PrintAbortQuestion value = "Abbruch drucken?" />
+            <Print_PrinterNotAvailable value = "BeeSoft nicht zu Ihrem BEETHEFIRST verbinden. Versuchen Sie die Überprüfung Ihrer Einstellungen und Rücksetzen" />
+            <Print_PrinterNotAvailable2 value = "kann nicht gefunden werden BEETHEFIRST" />
+            <PrintMinutes value = "Minuten" />
+            <PrintMinute value = "Minute" />
+            <PrintHours value = "h" />
+            <PrintHour value = "Stunde" />
+        </Print>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento --> 
+        <FilamentWizard>
+            <Title1 value = "VORBEREITUNG" />
+            <Heating_Info_Title value = "Extruderdüsentemperatur" />
+            <Heating_Info value = "Extruder Düse aufgeheizt werden muss, wenn Sie den Faden zu ändern. Wenn es die ideale Temperatur können Sie auf die nächste Stufe zu bewegen. Erreicht" />
+            <Info_Warning value = "WARNUNG:. NICHT BERÜHREN der Extruderdüse, wenn der Drucker ON" />
+            <Title2 value = "FILAMENT CHANGE" />
+            <Loadbutton value = "Laden" />
+            <UnloadButton value = "Entladen" />
+            <Exchange_Info_Title value = "Wie zum Laden oder Entladen Filament" />
+            <Exchange_Info_Title2 value = "Unload Filament" />
+            <Exchange_Info value = "Um das Filament zu entnehmen, drücken Sie die Auswurftaste und ziehen Sie den Faden fest.
+Um den Faden zu laden fügen Sie ihn in der Einlassöffnung und schieben Sie es, bis es das Ende erreicht. Klicken Sie dann auf die Schaltfläche Laden, und drücken Sie den Faden ein wenig mehr, bis BEETHEFIRST zieht ihn und extrudiert ein wenig Faden. "/>
+            <Exchange_Info2 value = "Um das Filament zu entnehmen, drücken Sie die Auswurftaste und warten Sie auf Anweisungen.
+Um den Faden zu laden fügen Sie ihn in der Einlassöffnung und schieben Sie es, bis es das Ende erreicht. Klicken Sie dann auf die Schaltfläche Laden, und drücken Sie den Faden ein wenig mehr, bis BEETHEFIRST zieht ihn und extrudiert ein wenig Faden. "/>
+            <Exchange_Info3 value = "Ziehen Sie vorsichtig als Filament entlädt." />
+            <TITLE3 value = "ungezopft" />
+            <TITLE4 value = "Typ auswählen" />
+            <Title5 value = "ENDPHASE" />
+            <Title6 value = "Fertig" />
+            <Exchange_Info_Finish value = "Sie können den Druckvorgang fortzusetzen." />
+        </FilamentWizard>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no Assistente Calibração --> 
+        <CalibrationWizard>
+            <Title1 value = "KALIBRIERUNG - Tischhöhe" />
+            <TitleAlt value = "KALIBRIERUNG" />
+            <AjustUpFine_button value = "Feinabstimmung" />
+            <AjustDownFine_button value = "Feinabstimmung" />
+            <AjustUp_button value = "Up" />
+            <AjustDown_button value = "Down" />
+            <Buttons_Info value = "TABELLE FEINABSTIMMUNG" />
+            <CalibrationOldValue value = "Alte Eichwert:" />
+            <CalibrationCurrentValue value = "Aktuelle Kalibrierungswert:" />
+            <Info value = "Stellen Sie sicher, die Extruderdüse sauber vor dieser Operation ist. Legen Sie ein Blatt Papier auf dem Tisch unterhalb des Düsenfeineinstellung der Tabelle. Nach oben oder unten. Sie haben richtig kalibriert die Tabelle, wenn das Papier weder stecken noch komplett lose. "/>
+            <Info_Warning value = "WARNUNG:. Wenn Sie die Tabelle zu weit gegen die Düse bewegt haben, klicken Sie auf 'Abbrechen', und starten Sie den Assistenten" />
+            <AdvancedOptions_title value = "ADVANCED OPTIONS" />
+            <AdvancedOptions_info value = "Verwenden Sie die folgenden Optionen, um die Tabellenposition manuell zu steuern:" />
+            <Slider_info value = "Tischbewegung (mm)" />
+            <Title2 value = "KALIBRIERUNG - TABLE LEVEL" />
+            <Adjust_left value = "Adjust" />
+            <LeftScrew_title value = "Schritt 1" />
+            <LeftScrew_Info value = "Legen Sie ein Blatt Papier auf dem Tisch unterhalb des Düsen. Feineinstellung der Tabelle nach oben oder unten durch Drehen des linken screw.You korrekt kalibriert die Tabelle, wenn das Papier weder stecken noch ganz locker." />
+            <Title3 value = "KALIBRIERUNG - TABLE LEVEL" />
+            <RightScrew_title value = "Schritt 2" />
+            <RightScrew_Info value = "Legen Sie ein Blatt Papier auf dem Tisch unterhalb des Düsen. Feineinstellung der Tabelle nach oben oder unten durch Drehen des rechten screw.You korrekt kalibriert die Tabelle, wenn das Papier weder stecken noch ganz locker." />
+            <Adjust_right value = "Adjust" />
+            <FinalStage_Title value = "ENDPHASE" />
+            <Test_button value = "Calibration Test" />
+            <Test_Info value = "Klicken Sie auf 'Calibration Test', wenn Sie sicherstellen, dass die Tabelle korrekt kalibriert. Die Extruderdüse wird entlang des Tisches verschoben werden soll. "/>
+            <Test_Info_Warning value = ". HINWEIS: Achten Sie darauf, das Papier zu entfernen" />
+            <Validation_Title value = "VALIDATE KALIBRIERUNG" />
+            <Validation_Info value = "Entfernen Sie den Tisch und stellen Sie Ihre results.Compare das resultierende Muster auf den Tisch, um den Bildern oben gezeigt. Wählen Sie die Option für die, die die meisten wie Ihr Ergebnis sieht vor entweder mit einem ausgehend, müssen Sie sowohl reinigen der Tisch und die Extruderdüse Platzierung zurück in der Tabelle am Ende. "/>
+            <Validation_Button1 value = "Kalibrierung erfolgreich" />
+            <Validation_Button2 value = "Kalibrierung wiederholen" />
+        </CalibrationWizard>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Limpeza do Bico -->       
+        <ExtruderCleanWizard>
+             <Title1 value = "SAUBER EXTRUDER" />
+             <Title2 value = "Aufwärmen ... Bitte warten Sie" />
+             <Info value = "Diese Funktion ermöglicht es Ihnen, den Extruder zu reinigen. Verwenden einer Pinzette, um alle Überreste aus der Extruderdüse zu entfernen." />
+             <Info_Warning value = "WARNUNG:. NICHT BERÜHREN der Extruderdüse, wenn der Drucker ON" />
+        </ExtruderCleanWizard>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no 1º ecrã do Guia Rápido --> 
+        <QuickGuideWizard>
+             <Title1 value = "Willkommen" />
+             <Info value = "Diese Kurzanleitung führt Sie durch alle notwendigen, um Ihren Drucker richtig konfigurieren Schritte zu unternehmen. Sie können eine der folgenden Funktionen aus dem Wartungsmenü später darauf zugreifen." />
+             <Jump value = "Meine BEETHEFIRST konfiguriert wurde. Nehmen Sie mich auf dem Hauptbildschirm." />
+        </QuickGuideWizard>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no painel de Manutenção --> 
+        <MaintenancePanel>
+            <Title value = "Wartung" />
+            <Filament_Title value = "Filament Wechsel" />
+            <Filament_Type value = "Filament-Typ:" />
+            <Filament_Intro value = "Diese Operation ist erforderlich, wenn Sie mit einer anderen Farbe oder, wenn der Faden in der Spule vorhanden ist nicht genug gedruckt werden soll." />
+            <FilamentChange_button value = "Filament jetzt ändern" />
+            <Filament_Info value = "Sie haben x Gramm Filament (geschätzt)" />
+            <Filament_Info_None value = "Verbleibende Filament kann nicht genug für den nächsten Druck Sitzung." />
+            <Calibration_Title value = "Kalibrieren" />
+            <Calibration_Intro value = "Dieser Vorgang ist nötig, um die Qualität der 3D-Drucke zu gewährleisten." />
+            <CalibrationChange_button value = "Kalibrieren jetzt" />
+            <Calibration_Info value = "x druckt seit der letzten Kalibrierung vorgenommen." />
+            <ExtruderClean_Title value = "Saubere Extruderdüse" />
+            <ExtruderClean_button value = "Düse reinigen nun" />
+            <ExtruderClean_Intro value = "Dieser Vorgang ist wichtig, dass kein Stück Filament Reste auf das, was Sie drucken." />
+        </MaintenancePanel>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
+        <ToolTips>
+            <Models_tooltip value = "Models" />
+            <Maintenance_tooltip value = "Wartung" />
+            <QuickWizard_tooltip value = "KURZANLEITUNG" />
+            <Open_tooltip value = "Öffnen Sie das Modell das Sie drucken möchten" />
+            <Print_tooltip value = "Drücken Sie hier, um das Modell zu drucken" />
+            <FilamentWizard_tooltip value = "Das wird die Filament-Assistenten zu starten" />
+            <QuickWizard_tooltip value = "Das wird die Quickstart-Assistenten zu starten" />
+            <ControlWizard_tooltip value = "BEETHEFIRST manuelle Kontrollen" />
+            <BVC_tooltip value = "Drücken Sie hier, um auf unsere Seite umgeleitet werden" />
+            <DragRotate_tooltip value = "Ziehen Sie sich zu drehen" />
+            <MouseWheel_tooltip value = "Mausrad zu vergrößern" />
+            <LeftDrag_tooltip value = "links ziehen, um Objekt zu bewegen" />
+            <RightDrag_tooltip value = "Rechts-Ziehen zu drehen Ansicht" />
+            <Move_tooltip value = "Move" />
+            <Rotate_tooltip value = "Rotate" />
+            <LayFlat_tooltip value = "Flach" />
+            <RotateZ_tooltip value = "Drehen um" />
+            <Mirror_tooltip value = "Spiegel" />
+            <Scale_tooltip value = "Scale" />
+        </ToolTips>
+
+        <!-- A próxima secção XML contém o texto a ser apresentado na caixa de Mensagens de Estado -->        
+        <StatusMessages>
+            <!-- Os próximos textos irão aparecer após ser clicado o botão de Imprimir -->
+            <MessageCollision value = "Achtung, einige Modelle überlappen." />
+            <MessageNotInBed value = "Achtung, manche Modelle nicht auf der Plattform." />
+            <MessageMaxVolume value = "Achtung, einige Modelle übertreffen die maximale Druckvolumen." />
+            <MessageOutOfBounds value = "Achtung, einige Modelle aus dem Druckbereich." />
+
+            <!-- Os próximos textos irão aparecer após algumas acções -->
+            <MessageImportModel value = "Modell erfolgreich importiert." />
+            <MessageSaveScene value = "Szene erfolgreich gespeichert." />
+            <MessageNotSaveScene value = "Szene nicht gespeichert. Wenn Sie nicht das Abbrechen Bitte überprüfen Sie Ihren Benutzerschreibrechte." />
+            <MessageLocadScene value = "Szene erfolgreich geöffnet." />
+            <MessageNotLocadScene Wert = "Kann Szene zu öffnen. Überprüfen Sie die Berechtigungen zu lesen oder wenn Datei vorhanden ist." />
+            <MessageFirstTime value = "Bitte lesen 'Quick Guide' den ganzen Weg durch, bevor Sie fortfahren." />
+            <MessageModelNotPicked value = "Wählen Sie ein Modell." />
+            <GCodeGeneration value = "GCode nicht erzeugt. Überprüfen Sie die Ausführungsberechtigungen." />
+            <BTF_Disconnected value = "Ihr BEETHEFIRST ist nicht angeschlossen. Bitte stellen Sie sicher, dass es eingesteckt und eingeschaltet." />
+            <ErrorUpdating value = "Tut mir leid! Bitte starten BeeSoft, um fortzufahren." />
+            <FirmwareOutDateVersion value = "Um die Aktualisierung abzuschließen, schalten Sie bitte Ihre BEETHEFIRST aus. Starten Sie BeeSoft und schalten Sie den Drucker ein." />
+        </StatusMessages>
+
+        <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
+        <Tour>
+            <Tour1_Title value="Fast da..."/>
+            <Tour1_Text value="So starten Sie den Druck Ihrer Modelle, befolgen Sie die nächsten Schritte."/>
+            <Tour1_Jump value="Zum Tutorial."/>
+            <Tour2 value="Fügen Sie ein Modell in der Szene. Sie können ein Modell aus dem Ordner '3D Modele 'in BeeSoft importieren oder Sie können eine Ihrer eigenen Dateien zu importieren."/>
+            <Tour3 value="Verwenden Sie 'Verschieben', 'Drehen', 'Skalieren' oder 'Mirror', das Modell exakt einstellen, wie Sie es gedruckt werden soll."/>
+            <Tour4 value="Sobald Sie mit der Szene zufrieden sind, können Sie mit dem Drucken beginnen."/>
+            <Tour5 value="Wichtige Meldungen über BEETHEFIRST werden hier angezeigt."/>
+            <Tour6 value="BEETHEFIRST Wartungsarbeiten finden Sie hier - Sie sind unerläßlich für die Druckqualität sind."/>
+            <DefaultMessage value="Herzlich Willkommen!"/>
+            <EndMessage value="Fertig"/>
+            <TourFinishMessage value="Sie sind bereit, den Druck zu starten! Machen Sie Ihre Kreativität real!"/>
+        </Tour>
+
+        <!-- A próxima secção XML contém o texto para a janela das Preferências -->
+        <Preferences>
+            <Preferences_title value="Einstellungen"/>
+            <Language value="Sprache"/>
+            <Measures value="Maßnahmen"/>
+            <LockHeight value="Sperren vertikale Achse"/>
+            <LockHeight_info value="Modelle nur parallel zu der Plattform bewegt werden."/>
+        </Preferences>
+        
+        <!-- A próxima secção XML contém o texto para a janela de Help -->
+        <Help>
+            <FAQ value="FAQ"/>
+            <Troubleshooting value="Fehlerbehebung"/>
+            <Support value="Unterstützung"/>
+            <FAQ_Link_PT value="https://www.beeverycreative.com/pt/PF/"/>
+            <Troubleshooting_Link_PT value="https://www.beeverycreative.com/pt/resolucao-de-problemas/"/>
+            <Support_Link_PT value="https://www.beeverycreative.com/customerservice/"/>
+            <FAQ_Link_EN value="https://www.beeverycreative.com/en/FAQ/"/>
+            <Troubleshooting_Link_EN value="https://www.beeverycreative.com/en/resolucao-de-problemas/"/>
+            <Support_Link_EN value="https://www.beeverycreative.com/customerservice/"/>            
+        </Help>
+        
+        <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
+        <Updates>
+            <AvailableStable value="Es gibt Software-Updates für Ihr stabile BEETHEFIRST.To richtig installieren Sie die neue Version verfügbar ist, müssen Sie BeeSoft schließen."/>
+            <AvailableBeta value="Es gibt Software-Beta-Updates für Ihr BEETHEFIRST.To richtig installieren Sie die neue Version verfügbar ist, müssen Sie BeeSoft schließen."/>
+            <NotAvailable value="Es sind keine Software-Updates verfügbar."/>
+            <NoConnection value="Kein Internetzugang."/>
+            <NoAccess value="Dienst nicht verfügbar."/>
+        </Updates>
+
+        <!-- A próxima secção XML contém o texto a apresentar na Biblioteca de Modelos -->
+        <Gallery>
+            <SearchModels_text_bar value="Suche nach Modellen..."/>
+            <EraseScene value="Szene löschen"/>
+            <EraseModel value="Modell löschen"/>
+            <ModelsOnline value="Online Modelle"/>
+            <Model_Import value="Importmodell"/>
+            <Model_Rename value="Umbenennen"/>
+            <ModelProperties_title value="Eigenschaften"/>
+            <Model_Name value="Name"/>
+            <Model_Description value="Beschreibung"/>
+            <ModelCategory_title value="Kategorien"/>
+            <Scene value="Szene"/>
+            <Models value="Modelle"/>
+            <All value="Alle"/>
+        </Gallery>
+        
+        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine -->
+        <CoilColors>
+            <WHITE value="WEIß"/>
+            <BLACK value="SCHWARZ"/>
+            <YELLOW value="GELB"/>
+            <RED value="ROT"/>
+            <TURQUOISE value="TÜRKIS"/>
+            <TRANSPARENT value="TRANSPARENT"/>
+            <GREEN value="GRÜN"/>
+            <ORANGE value="ORANGE"/>
+        </CoilColors>
+        
+    </tags>      
+</languages>
