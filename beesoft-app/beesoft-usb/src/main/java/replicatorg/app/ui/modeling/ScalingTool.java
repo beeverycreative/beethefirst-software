@@ -7,6 +7,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import replicatorg.app.Base;
+import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.model.CAMPanel.DragMode;
 import static replicatorg.model.CAMPanel.DragMode.NONE;
 import static replicatorg.model.CAMPanel.DragMode.SCALE_OBJECT;
@@ -54,6 +55,7 @@ public class ScalingTool extends Tool {
         return "Scale object";
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
 
         if (parent.getModelEditing().model != null) {
@@ -68,11 +70,14 @@ public class ScalingTool extends Tool {
 
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
 //         Base.getMainWindow().getCanvas().redrawBoundingBox(parent.getModelEditing().model, 1);
     }
 
-    public void mouseDragged(MouseEvent e) {
+    @Override
+    public void mouseDragged(MouseEvent e) {        
+        
         if (parent.getModelEditing().model != null ) {
             Base.getMainWindow().getBed().setGcodeOK(false);
             if (startPoint == null) {
@@ -99,40 +104,89 @@ public class ScalingTool extends Tool {
                     
                     scaleDragChange += (0.005 * (xd+yd > 0 ? (Math.sqrt(xd*xd+yd*yd)) : -(Math.sqrt(xd*xd+yd*yd)))) ;
 
-                    if(scaleDragChange > 0.1)
-                    {   
+                    if(scaleDragChange > 0.1) {   
                             
-//                        System.out.println("scaleDragChange " + scaleDragChange);
                         double currentScale = parent.getModelEditing().model.getTransform().getScale();
-//                        System.out.println("currentScale " + currentScale);
                         double targetScale = scaleDragChange / currentScale;
-//                        System.out.println("targetScale " + targetScale);
-//                        System.out.println("");
+
                         Model model = parent.getModelEditing().model;
                         double minimumSize = model.getEditer().getMINIMUM_SIZE_LIMIT();
                         double maximumSize = model.getEditer().getMAXIMUM_SIZE_LIMIT();
                         
                         if (!(model.minDimension()< minimumSize && targetScale < minimumSize) ) {
-                            parent.getModelEditing().scale(targetScale, isOnPlatform);
-                            model.updateXscale(targetScale);
-                            model.updateYscale(targetScale);
-                            model.updateZscale(targetScale);
+                            if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked()) {
+                                
+                                parent.getModelEditing().scale(targetScale, isOnPlatform);
+                                
+                                model.updateXscale(targetScale);
+                                model.updateYscale(targetScale);
+                                model.updateZscale(targetScale);
+
+                                super.mOCS.setXValue(model.getScaleXinPercentage());
+                                super.mOCS.setYValue(model.getScaleYinPercentage());
+                                super.mOCS.setZValue(model.getScaleZinPercentage());                                
+                                
+                            } else if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked() == false) { //X & Y
+                                
+                                parent.getModelEditing().scaleXY(targetScale, isOnPlatform);      
+                                
+                                model.updateXscale(targetScale);
+                                model.updateYscale(targetScale);
+                                super.mOCS.setXValue(model.getScaleXinPercentage());
+                                super.mOCS.setYValue(model.getScaleYinPercentage());                                
+                                
+                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() && mOCS.isZLocked() == false) { // Y
+
+                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "y");
+
+                                model.updateYscale(targetScale);
+                                super.mOCS.setYValue(model.getScaleYinPercentage());
+                               
+                            } else if (mOCS.isXLocked() && mOCS.isYLocked() == false && mOCS.isZLocked() == false) { //X
+                                
+                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "x");
+                                
+                                model.updateXscale(targetScale);
+                                super.mOCS.setXValue(model.getScaleXinPercentage());                               
+                                
+                            } else if (mOCS.isXLocked() && mOCS.isYLocked()== false && mOCS.isZLocked()) { //X & Z
+                                
+                                parent.getModelEditing().scaleXZ(targetScale, isOnPlatform);  
+                                
+                                model.updateXscale(targetScale);
+                                model.updateZscale(targetScale);
+                                super.mOCS.setXValue(model.getScaleXinPercentage());
+                                super.mOCS.setZValue(model.getScaleZinPercentage());                                 
+                                
+                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() && mOCS.isZLocked()) { // Y & Z
+                                
+                                parent.getModelEditing().scaleYZ(targetScale, isOnPlatform);            
+                                
+                                model.updateYscale(targetScale);
+                                model.updateZscale(targetScale);
+                                super.mOCS.setYValue(model.getScaleYinPercentage());
+                                super.mOCS.setZValue(model.getScaleZinPercentage());                                 
+                                
+                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() == false && mOCS.isZLocked()) { // Z
+
+                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "z");       
+                                
+                                model.updateZscale(targetScale);
+                                super.mOCS.setZValue(model.getScaleZinPercentage());                                 
+                            }                                                           
+                            
                             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
-                            super.mOCS.setXValue(model.getScaleXinPercentage());
-                            super.mOCS.setYValue(model.getScaleYinPercentage());
-                            super.mOCS.setZValue(model.getScaleZinPercentage());
-                            //Base.getMainWindow().getCanvas().getModelsPanel().updateScale?();   
-                        }
-                        
+
+                        }                       
                     }
 
                     break;
             }
             startPoint = p;
         }
-        else
-        {
-             if (startPoint == null) {
+        else {
+             
+            if (startPoint == null) {
                 return;
             }
             Point p = e.getPoint();
