@@ -57,6 +57,7 @@
             <Degrees value="מעלות"/>
             <MM value="מילימטרים"/>
             <Percentage value="אחוזים"/>
+            <Inches value="אינץ'" />
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
