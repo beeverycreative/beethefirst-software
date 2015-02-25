@@ -174,7 +174,7 @@ public class UpdateChecker extends javax.swing.JFrame {
         String softServerVersionString = getTagValue("Software", "Version");
         String softServerVersionBetaString = getTagValue("Software", "Version_beta");        
         int betaServerVersion = Integer.valueOf(getTagValue("Software", "BetaVersion"));
-        int betaSoftVersion = 0;
+        int betaSoftVersion;
         String softServerDateString = getTagValue("Software", "Date"); 
         String softServerDateBetaString = getTagValue("Software", "Date_beta"); 
 

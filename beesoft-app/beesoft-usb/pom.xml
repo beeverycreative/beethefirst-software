@@ -44,7 +44,7 @@
                     <include>**/*</include>
                 </includes>           
                 <filtering>false</filtering>
-            </resource>            
+            </resource>                     
         </resources>
         <plugins>
             <plugin>
@@ -55,8 +55,8 @@
                         <phase>package</phase> 
                         <goals> 
                             <goal>copy-dependencies</goal> 
-                        </goals> 
-                        <configuration> 
+                        </goals>
+                        <configuration>                             
                             <outputDirectory>${project.build.directory}/libs</outputDirectory>
                             <excludeArtifactIds>junit,jarbundler</excludeArtifactIds>
                         </configuration>
@@ -151,6 +151,9 @@
                                 <copy todir="${reso.dir}">
                                     <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
                                 </copy>
+                                <copy todir="${reso.dir}">
+                                    <filelist dir="${project.basedir}/src/main/resources/app_resources/images" files="logo.gif,loading.gif" />
+                                </copy>                                
                                 <copy todir="${reso.dir}/curaEngine/bin">
                                     <fileset dir="${project.basedir}/src/main/resources/curaEngine/distros/mac"  />
                                 </copy>
@@ -178,8 +181,7 @@
                                 </copy>
                                 <!-- permissions -->
                                 <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />
-                                <chmod file="${reso.dir}/pypy" perm="ugo+rx" includes="**/*" />
-                                <chmod file="${reso.dir}/skein_engines" perm="ugo+rx" includes="**/*" />               
+                                <chmod file="${reso.dir}/pypy" perm="ugo+rx" includes="**/*" />             
 
                                 <!--   <antcall target="dist-macosx-zip" /> -->
                                 <!--   <antcall target="dist-macosx-dmg" />-->
@@ -593,7 +595,16 @@
             <artifactId>usb-api</artifactId>
             <version>1.0.2</version>
         </dependency>
+        
         <dependency>
+            <groupId>de.ailis.usb4java</groupId>
+            <artifactId>usb4java</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/external_libs/usb4java-1.0.0.jar</systemPath>
+        </dependency>
+                
+<!--        <dependency>
             <groupId>org.usb4java</groupId>
             <artifactId>libusb4java</artifactId>
             <version>${libusb4java.version}</version>
@@ -641,7 +652,7 @@
             <version>${libusb4java.version}</version>
             <classifier>osx-x86_64</classifier>
             <scope>runtime</scope>
-        </dependency>               
+        </dependency>               -->
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>
             <artifactId>jarbundler</artifactId>

@@ -110,13 +110,13 @@ public class Base {
         OPEN_SPECIFIC_FILE
     };
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.10.0_beta1-2014-08-12";
+    public static final String VERSION_BEESOFT = "3.14.0_beta1";
 //    public static final String VERSION_BEESOFT = "3.8.0-beta_2014-05-01";
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
-    public static String firmware_version_in_use = "BEETHEFIRST-4.35.0.bin";
-    public static final String VERSION_FIRMWARE_FINAL = "4.35.0";
-    public static final String VERSION_FIRMWARE_FINAL_OLD = "3.35.0";
+    public static String firmware_version_in_use = "BEETHEFIRST-7.0.1.bin";
+    public static final String VERSION_FIRMWARE_FINAL = "7.0.1";
+    public static final String VERSION_FIRMWARE_FINAL_OLD = "6.0.0";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
