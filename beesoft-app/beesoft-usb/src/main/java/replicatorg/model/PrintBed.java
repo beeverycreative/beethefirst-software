@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.j3d.Shape3D;
@@ -49,6 +50,7 @@ public class PrintBed implements Serializable {
     private int nModels;
     private ArrayList<Model> printBed_Models;
     private ArrayList<Model> pickedModels;
+//    private HashMap<String,String> gridOccupation;
     private String category;
     private boolean gcodeOK;
     private boolean isSceneDifferent;
@@ -56,6 +58,7 @@ public class PrintBed implements Serializable {
     private String estimatedTime;
     private final transient String NOT_AVAILABLE = "NA";
     private final transient String UNTITLED = "Untitled";
+    private boolean isGCodeSave;
 
     public PrintBed(File newScene) {
         if (newScene == null) {
@@ -63,18 +66,20 @@ public class PrintBed implements Serializable {
             category = UNTITLED;
             estimatedTime = NOT_AVAILABLE;
             description = NOT_AVAILABLE;
-            lastResolution = "LOW";
+            lastResolution = "MEDIUM";
             lastDensity = "LOW";
             lasRaft = false;
             lastSupport = false;
             lastAutonomous = false;
             gcodeOK = false;
             isSceneDifferent = false;
+            isGCodeSave = false;
             gcode = new StringBuffer("M637");
             printBedFile = newScene;
             nModels = 0;
             printBed_Models = new ArrayList<Model>();
             pickedModels = new ArrayList<Model>();
+//            gridOccupation = new HashMap<String, String>();
 
         } /**
          * No need for else. All of this bellow its not necessary cause we init
@@ -142,6 +147,14 @@ public class PrintBed implements Serializable {
         this.lastAutonomous = autonomous;
     }
 
+//    public HashMap<String,String> getGridOccupation()
+//    {
+//        return gridOccupation;
+//    }
+//    
+//    public void addPoint(String x, String y) {
+//        gridOccupation.put(x, y);
+//    }
     public StringBuffer getGcode() {
         return gcode;
     }
@@ -158,8 +171,19 @@ public class PrintBed implements Serializable {
         return isSceneDifferent;
     }
 
+    public void setGCodeSave(boolean save_gcode) {
+        this.isGCodeSave = save_gcode;
+    }
+
+    public boolean isGCodeSave() {
+        return isGCodeSave;
+    }
+
     public void setSceneDifferent(boolean isDifferent) {
-        Base.getMainWindow().setOktoGoOnSave(false);
+
+        if (Base.getMainWindow() != null) {
+            Base.getMainWindow().setOktoGoOnSave(false);
+        }
         this.isSceneDifferent = isDifferent;
     }
 

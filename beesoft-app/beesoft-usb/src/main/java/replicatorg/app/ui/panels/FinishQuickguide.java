@@ -14,19 +14,19 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class FinishQuickguide extends javax.swing.JFrame {
 
-    private int posX=0,posY=0;
+    private int posX = 0, posY = 0;
 
     public FinishQuickguide() {
         initComponents();
@@ -38,106 +38,92 @@ public class FinishQuickguide extends javax.swing.JFrame {
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
-     private void setFont()
-    {
+    private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProLight("28"));
         jLabel2.setFont(GraphicDesignComponents.getSSProLight("14"));
         jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
-    
-    private void setTextLanguage()
-    {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title6").toUpperCase());
-        jLabel2.setText(splitString(Languager.getTagValue("QuickGuideWizard", "Jump")));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        
+
+    private void setTextLanguage() {
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title6").toUpperCase());
+        jLabel2.setText(splitString(Languager.getTagValue(1, "QuickGuideWizard", "Jump")));
+        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+
     }
-    
-    private void centerOnScreen()
-    {
+
+    private void centerOnScreen() {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
- 
+
         // Determine the new location of the window
         int w = this.getSize().width;
         int h = this.getSize().height;
-        int x = (dim.width-w)/2;
-        int y = (dim.height-h)/2;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
 
         // Move the window
         this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());        
+        this.setLocationRelativeTo(Base.getMainWindow());
     }
-    
-    private String splitString(String s)
-    {
+
+    private String splitString(String s) {
         int width = 400;
-        return buildString(s.split("\\."),width);
+        return buildString(s.split("\\."), width);
     }
-    
-    private String buildString(String[]parts,int width)
-    {
+
+    private String buildString(String[] parts, int width) {
         String text = "";
         String ihtml = "<html>";
         String ehtml = "</html>";
         String br = "<br>";
-  
-        for(int i = 0; i < parts.length;i++)
-        {
-            if(i+1 < parts.length)
-            {
-                if(getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i+1]) < width)
-                {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i+1]).concat(".").concat(br);
+
+        for (int i = 0; i < parts.length; i++) {
+            if (i + 1 < parts.length) {
+                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
+                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
                     i++;
-                }
-                else
+                } else {
                     text = text.concat(parts[i]).concat(".").concat(br);
-            }
-            else
+                }
+            } else {
                 text = text.concat(parts[i]).concat(".");
+            }
         }
-            
+
         return ihtml.concat(text).concat(ehtml);
     }
- 
-    private int getStringPixelsWidth(String s)
-    {
+
+    private int getStringPixelsWidth(String s) {
         Graphics g = getGraphics();
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s); 
+        return fm.stringWidth(s);
     }
-    
-    private void enableDrag()
-    {
-        this.addMouseListener(new MouseAdapter()
-        {
-           public void mousePressed(MouseEvent e)
-           {
-              posX=e.getX();
-              posY=e.getY();
-           }
-        });
-        
-        
-        this.addMouseMotionListener(new MouseAdapter()
-        {
-             public void mouseDragged(MouseEvent evt)
-             {
-                        //sets frame position when mouse dragged			
-                        setLocation (evt.getXOnScreen()-posX,evt.getYOnScreen()-posY);
 
-             }
+    private void enableDrag() {
+        this.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                posX = e.getX();
+                posY = e.getY();
+            }
         });
-    }    
-    
-    private void doExit()
-    {
+
+
+        this.addMouseMotionListener(new MouseAdapter() {
+            public void mouseDragged(MouseEvent evt) {
+                //sets frame position when mouse dragged			
+                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
+
+            }
+        });
+    }
+
+    private void doExit() {
         dispose();
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().setEnabled(true);
-        Base.bringAllWindowsToFront();    
+        Base.bringAllWindowsToFront();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -294,14 +280,12 @@ public class FinishQuickguide extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel18MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-      setState(ICONIFIED);
+        setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doExit();  
+        doExit();
     }//GEN-LAST:event_jLabel15MousePressed
-
-   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;

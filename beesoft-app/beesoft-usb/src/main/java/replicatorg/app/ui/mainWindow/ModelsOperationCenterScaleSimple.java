@@ -6,30 +6,30 @@ import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class ModelsOperationCenterScaleSimple extends javax.swing.JPanel {
+
     public ModelsOperationCenterScaleSimple() {
         initComponents();
         Base.getMainWindow().getCanvas().setControlTool(3);
         setFont();
         setTextLanguage();
     }
-    
+
     protected static ImageIcon createImageIcon(String path) {
         return new ImageIcon("path");
     }
 
-    private void setFont()
-    {
+    private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel2.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel3.setFont(GraphicDesignComponents.getSSProLight("33"));
@@ -38,17 +38,16 @@ public class ModelsOperationCenterScaleSimple extends javax.swing.JPanel {
         jLabel7.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
-    
-    private void setTextLanguage()
-    {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions")); 
+
+    private void setTextLanguage() {
+        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -244,7 +243,6 @@ public class ModelsOperationCenterScaleSimple extends javax.swing.JPanel {
     private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
         showOptions();
     }//GEN-LAST:event_jLabel7MousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

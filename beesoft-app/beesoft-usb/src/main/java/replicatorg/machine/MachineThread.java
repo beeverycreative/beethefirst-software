@@ -27,8 +27,6 @@ import replicatorg.drivers.DriverError;
 import replicatorg.drivers.DriverFactory;
 import replicatorg.drivers.OnboardParameters;
 import replicatorg.drivers.RetryException;
-import replicatorg.drivers.SDCardCapture;
-import replicatorg.drivers.SimulationDriver;
 import replicatorg.drivers.StopException;
 import replicatorg.drivers.VersionException;
 import replicatorg.drivers.commands.AssessState;
@@ -36,9 +34,6 @@ import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.Machine.JobTarget;
 import replicatorg.machine.Machine.RequestType;
 import replicatorg.machine.model.MachineModel;
-import replicatorg.model.GCodeSource;
-import replicatorg.model.GCodeSourceCollection;
-import replicatorg.model.StringListSource;
 import replicatorg.util.Point5d;
 
 /**
@@ -63,7 +58,6 @@ class MachineThread extends Thread {
     private String lastBEECode = "";
     private double previousEParsed = 0;
     private double absoluteDistance = 0;
-
 
     class AssessStatusThread extends Thread {
 
@@ -169,7 +163,6 @@ class MachineThread extends Thread {
     // Our driver object. Null when no driver is selected.
     private Driver driver = null;
     // the simulator driver
-    private SimulationDriver simulator;
     private MachineState state = new MachineState(MachineState.State.NOT_ATTACHED);
     MachineModel cachedModel = null;
 
@@ -323,14 +316,6 @@ class MachineThread extends Thread {
         }
     }
 
-    GCodeSource buildGCodeJob(GCodeSource source) {
-        Vector<GCodeSource> sources = new Vector<GCodeSource>();
-        sources.add(new StringListSource(warmupCommands));
-        sources.add(source);
-        sources.add(new StringListSource(cooldownCommands));
-        return new GCodeSourceCollection(sources);
-    }
-
     private String readyMessage() {
         String message = "is connected";
         Base.getMainWindow().setMessage(message);
@@ -404,7 +389,6 @@ class MachineThread extends Thread {
                 break;
             case RESET:
                 if (state.isConnected()) {
-                    driver.reset();
                     readName();
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
@@ -442,16 +426,9 @@ class MachineThread extends Thread {
                 break;
             case BUILD_TO_REMOTE_FILE:
                 if (state.canPrint()) {
-                    if (!(driver instanceof SDCardCapture)) {
-                        break;
-                    }
-
                     startTimeMillis = System.currentTimeMillis();
 
                     pollingTimer.start(1000);
-
-                    // Pad the job with start and end code
-                    GCodeSource combinedSource = buildGCodeJob(command.source);
 
                     // TODO: This shouldn't be done here?
                     driver.invalidatePosition();
@@ -464,17 +441,11 @@ class MachineThread extends Thread {
                  * We will accept a disconnected machine or a ready machine.
                  */
                 if (state.canPrint() || state.getState() == MachineState.State.NOT_ATTACHED) {
-                    if (!(driver instanceof SDCardCapture)) {
-                        break;
-                    }
 
                     startTimeMillis = System.currentTimeMillis();
 
                     // There is no need to reconcile the position.
                     pollingTimer.start(1000);
-
-                    // Pad the job with start and end code
-                    GCodeSource combinedSource = buildGCodeJob(command.source);
 
                     if (state.canPrint()) {
                         setState(new MachineState(MachineState.State.BUILDING), buildingMessage());
@@ -485,9 +456,6 @@ class MachineThread extends Thread {
                 break;
             case BUILD_REMOTE:
                 if (state.canPrint()) {
-                    if (!(driver instanceof SDCardCapture)) {
-                        break;
-                    }
 
                     startTimeMillis = System.currentTimeMillis();
 
@@ -511,7 +479,7 @@ class MachineThread extends Thread {
                 }
                 break;
             case STOP_MOTION:
-                driver.stop(false);
+                Base.logger.info("Machine stop called.");
 
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
@@ -528,7 +496,7 @@ class MachineThread extends Thread {
                 driver.getMachine().currentTool().setTargetTemperature(0);
                 driver.getMachine().currentTool().setPlatformTargetTemperature(0);
 
-                driver.stop(true);
+                Base.logger.info("Machine stop called.");
 
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
@@ -621,7 +589,6 @@ class MachineThread extends Thread {
 
                     if (command.command != null) {
                         String cmdValue = command.command.getCommand();
-
                         //Not a Comment
                         if (cmdValue.contains(";") == false) {
                             //If G1 or G0 process  X, Y, Z, E axis values and acceleration and feedrate values
@@ -659,10 +626,10 @@ class MachineThread extends Thread {
                                 int indexE = cmdValue.indexOf("E");
                                 int commandLenght = cmdValue.length();
                                 lastEString = cmdValue.substring(indexE, commandLenght).split(" ")[0];
-                                
+
                                 String parsedE = lastEString.substring(1);
                                 double actualEValue = 0;
-                                
+
                                 //G92 E
                                 if (parsedE.isEmpty() == false) {
                                     actualEValue = Double.valueOf(parsedE);
@@ -765,7 +732,7 @@ class MachineThread extends Thread {
         /**
          * Power saving
          */
-        Base.turnOnPowerSaving();
+        Base.turnOnPowerSaving(true);
 
         this.stop();
         statusThread.stop();
@@ -818,9 +785,9 @@ class MachineThread extends Thread {
     public void setLastPrintedPoint(Point5d point) {
         this.actualPoint = point;
     }
-        
+
     private double getColorRatio(String coilCode) {
- 
+
         return FilamentControler.getColorRatio(coilCode);
     }
 
@@ -832,7 +799,6 @@ class MachineThread extends Thread {
         return this.isFilamentChanged;
     }
 
-    
     public boolean scheduleRequest(MachineCommand request) {
 
         if (!Base.printPaused) {
@@ -927,10 +893,6 @@ class MachineThread extends Thread {
         return driver;
     }
 
-    public SimulationDriver getSimulator() {
-        return simulator;
-    }
-
     public boolean isConnected() {
 
         return (driver != null && driver.isInitialized() && !driver.isBootloader());
@@ -939,9 +901,6 @@ class MachineThread extends Thread {
     private void loadDriver() {
         // load our utility drivers
         if (Boolean.valueOf(ProperDefault.get("machinecontroller.simulator"))) {
-//         Base.logger.info("Loading simulator.");
-            simulator = new SimulationDriver();
-            simulator.setMachine(loadModel());
         }
         Node driverXml = null;
         // load our actual driver
@@ -962,9 +921,6 @@ class MachineThread extends Thread {
     private void dispose() {
         if (driver != null) {
             driver.dispose();
-        }
-        if (simulator != null) {
-            simulator.dispose();
         }
 
         if (statusThread != null) {

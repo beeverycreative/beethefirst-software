@@ -1,11 +1,12 @@
 package replicatorg.drivers.commands;
 
+import replicatorg.app.FilamentControler;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.RetryException;
 
 public class SetCoilCode implements DriverCommand {
 
-    String coilCode = "A0";
+    String coilCode = FilamentControler.NO_FILAMENT_CODE;
 
     public SetCoilCode(String coilCode) {
         this.coilCode = coilCode;

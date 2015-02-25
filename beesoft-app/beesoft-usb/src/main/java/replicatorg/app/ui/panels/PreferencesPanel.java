@@ -25,7 +25,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class PreferencesPanel extends javax.swing.JFrame {
 
-    private boolean lockPressed;
+    private boolean lockPressed, autonomyPressed;
     private int posX = 0, posY = 0;
 
     public PreferencesPanel() {
@@ -38,6 +38,10 @@ public class PreferencesPanel extends javax.swing.JFrame {
             jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
             lockPressed = true;
         }
+        if (Boolean.valueOf(ProperDefault.get("autonomy"))) {
+            autonomous.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
+            autonomyPressed = true;
+        }
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -47,19 +51,23 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("11"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        jLabel16.setFont(GraphicDesignComponents.getSSProRegular("10"));
         jLabel11.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel12.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("Preferences", "Preferences_title").toUpperCase());
-        jLabel3.setText(Languager.getTagValue("Preferences", "Measures") + ": ");
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "MM"));
-        jLabel9.setText(Languager.getTagValue("Preferences", "LockHeight"));
-        jLabel10.setText(Languager.getTagValue("Preferences", "LockHeight_info"));
-        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        jLabel12.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel1.setText(Languager.getTagValue(1, "Preferences", "Preferences_title").toUpperCase());
+        jLabel3.setText(Languager.getTagValue(1, "Preferences", "Measures") + ": ");
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "MM"));
+        jLabel9.setText(Languager.getTagValue(1, "Preferences", "LockHeight"));
+        jLabel17.setText(Languager.getTagValue(1, "Preferences", "Autonomy"));
+        jLabel10.setText(Languager.getTagValue(1, "Preferences", "LockHeight_info"));
+        jLabel16.setText(Languager.getTagValue(1, "Preferences", "Autonomy_info"));
+        jLabel11.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel12.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
 
         String[] languages = {"English",
             "French",
@@ -163,6 +171,9 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        autonomous = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -171,9 +182,9 @@ public class PreferencesPanel extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 255, 255));
         setFocusableWindowState(false);
         setLocationByPlatform(true);
-        setMinimumSize(new java.awt.Dimension(298, 170));
+        setMinimumSize(new java.awt.Dimension(400, 230));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(298, 170));
+        setPreferredSize(new java.awt.Dimension(400, 230));
         setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(248, 248, 248));
@@ -187,8 +198,8 @@ public class PreferencesPanel extends javax.swing.JFrame {
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel8MouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel8MousePressed(evt);
             }
         });
 
@@ -250,6 +261,19 @@ public class PreferencesPanel extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jLabel16.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel16.setText("Suspendisse potenti.");
+
+        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel17.setText("Autonomy mode");
+
+        autonomous.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
+        autonomous.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                autonomousMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -258,9 +282,10 @@ public class PreferencesPanel extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(autonomous)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel17)
+                        .addGap(175, 175, 175))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -274,8 +299,14 @@ public class PreferencesPanel extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,7 +326,13 @@ public class PreferencesPanel extends javax.swing.JFrame {
                     .addComponent(jLabel9))
                 .addGap(2, 2, 2)
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(autonomous)
+                    .addComponent(jLabel17))
+                .addGap(2, 2, 2)
+                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 203, 5));
@@ -339,7 +376,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(160, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel12)
@@ -358,30 +395,19 @@ public class PreferencesPanel extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
-        if (lockPressed) {
-            jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
-            lockPressed = false;
-        } else {
-            jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
-            lockPressed = true;
-        }
-
-    }//GEN-LAST:event_jLabel8MouseClicked
 
     private void jLabel12MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseEntered
         jLabel12.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
@@ -406,6 +432,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
     private void jLabel12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MousePressed
         dispose();
         ProperDefault.put("lockHeight", String.valueOf(lockPressed));
+        ProperDefault.put("autonomy", String.valueOf(autonomyPressed));
         Base.writeConfig();
         Base.loadProperties();
         Base.getMainWindow().getCanvas().updateTool();
@@ -419,7 +446,29 @@ public class PreferencesPanel extends javax.swing.JFrame {
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
         setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
+
+    private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
+        if (lockPressed) {
+            jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
+            lockPressed = false;
+        } else {
+            jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
+            lockPressed = true;
+        }
+    }//GEN-LAST:event_jLabel8MousePressed
+
+    private void autonomousMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_autonomousMousePressed
+        if (autonomyPressed) {
+            autonomous.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
+            autonomyPressed = false;
+        } else {
+            autonomous.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
+            autonomyPressed = true;
+        }
+    }//GEN-LAST:event_autonomousMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel autonomous;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -427,6 +476,8 @@ public class PreferencesPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;

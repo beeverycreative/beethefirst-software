@@ -58,7 +58,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
         setTextLanguage();
 //        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
-        machine.getDriverQueryInterface().resetToolTemperature();
+        machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
         centerOnScreen();
         setProgressBarColor();
@@ -81,11 +81,11 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title1"));
-        jLabel3.setText(Languager.getTagValue("Print", "Print_Splash_Gcode_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue("Print", "Print_Calibration_Info")));
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
+        jLabel3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Gcode_Title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1, "Print", "Print_Calibration_Info")));
+        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -157,7 +157,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
 
         }
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
         double hbp; //halfBarProgress
         hbp = (temperature / temperatureGoal) * 50;
         double current = jProgressBar1.getValue();
@@ -200,12 +200,12 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
+        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
     }
 
     public void showPrintMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
     }
 
     private void moveToPosition() {
@@ -267,7 +267,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
 //        preferences.add(String.valueOf(false));
 //        preferences.add(String.valueOf(false));
 //        preferences.add(String.valueOf(false));
-        
+
         try {
             reader = new BufferedReader(new FileReader(getPrintFile()));
         } catch (FileNotFoundException ex) {
@@ -287,7 +287,7 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
             pw = new PrintWriter(new FileOutputStream(gcode));
 
             String[] code = CalibrationGCoder.getColorGCode();
-            
+
             for (int i = 0; i < code.length; i++) {
                 pw.println(code[i].trim());
             }
@@ -303,13 +303,13 @@ public class CalibrationPrintTest extends javax.swing.JFrame {
     public int printTest() {
 
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        jLabel1.setText(Languager.getTagValue("Print", "Print_Title"));
+        jLabel1.setText(Languager.getTagValue(1, "Print", "Print_Title"));
 
         String sCurrentLine = "";
         int n_lines = 0;
         try {
             machine.setStopwatch(0);
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             while ((sCurrentLine = reader.readLine()) != null) {
                 try {
                     /**
@@ -681,7 +681,7 @@ class PrintThread extends Thread {
             } catch (InterruptedException ex) {
                 Logger.getLogger(PrintThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (!machine.getDriverQueryInterface().getMachineStatus() || machine.getDriverQueryInterface().isBusy()) {
+            if (!machine.getDriver().getMachineStatus() || machine.getDriver().isBusy()) {
                 window.showPrintMessage();
                 try {
                     Thread.sleep(1000);

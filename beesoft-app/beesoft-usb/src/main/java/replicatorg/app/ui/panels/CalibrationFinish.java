@@ -70,14 +70,14 @@ public class CalibrationFinish extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "FinalStage_Title"));
-        String note = "<html><br><b>" + Languager.getTagValue("CalibrationWizard", "Test_Info_Warning") + "</b></html>";
-        jLabel4.setText(splitString(Languager.getTagValue("CalibrationWizard", "Test_Info")) + note);
-        jLabel5.setText(Languager.getTagValue("CalibrationWizard", "Test_button"));
-        jLabel6.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel23.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "FinalStage_Title"));
+        String note = "<html><br><b>" + Languager.getTagValue(1, "CalibrationWizard", "Test_Info_Warning") + "</b></html>";
+        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "Test_Info")) + note);
+        jLabel5.setText(Languager.getTagValue(1, "CalibrationWizard", "Test_button"));
+        jLabel6.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel23.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -138,7 +138,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         }
         if (ProperDefault.get("maintenance").equals("1")) {
 //            jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","b_simple_21.png")));
-            jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
 
 
@@ -151,10 +151,10 @@ public class CalibrationFinish extends javax.swing.JFrame {
         double spHigh = machine.getFeedrate("spHigh");
 
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium,COM.BLOCK));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium, COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(p));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh,COM.BLOCK));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh, COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
 
@@ -172,7 +172,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel6.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel6.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         moving = true;
     }
 
@@ -485,7 +485,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel25)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel23)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel24)
@@ -507,7 +507,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -555,14 +555,14 @@ public class CalibrationFinish extends javax.swing.JFrame {
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
 
 //        if (!moving) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_16.png")));
-            CalibrationPrintTest calPT = new CalibrationPrintTest();
-            calPT.setVisible(true);
-            dispose();
-            disposeThread.stop();
-            //turn off blower before heating
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-            machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
+        jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_16.png")));
+        CalibrationPrintTest calPT = new CalibrationPrintTest();
+        calPT.setVisible(true);
+        dispose();
+        disposeThread.stop();
+        //turn off blower before heating
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
+        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
 //        }
     }//GEN-LAST:event_jLabel5MousePressed
 
@@ -571,7 +571,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         dispose();
         disposeThread.stop();
         Base.maintenanceWizardOpen = false;
-        
+
         ProperDefault.put("nTotalPrints", String.valueOf(0));
         int nCalibrations = Integer.valueOf(ProperDefault.get("nCalibrations"));
         if ((nCalibrations + 1) == 10) {
@@ -579,29 +579,29 @@ public class CalibrationFinish extends javax.swing.JFrame {
         } else {
             ProperDefault.put("nCalibrations", String.valueOf(nCalibrations++));
         }
-        
+
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
 
-        if (!machine.getDriverQueryInterface().isBusy()) {
-            Point5d b = machine.getTablePoints("safe");
-            double acLow = machine.getAcceleration("acLow");
-            double acHigh = machine.getAcceleration("acHigh");
-            double spHigh = machine.getFeedrate("spHigh");
+//        if (!machine.getDriver().isBusy()) {
+        Point5d b = machine.getTablePoints("safe");
+        double acLow = machine.getAcceleration("acLow");
+        double acHigh = machine.getAcceleration("acHigh");
+        double spHigh = machine.getFeedrate("spHigh");
 
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        }
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+//        }
     }//GEN-LAST:event_jLabel24MousePressed
 
     private void jLabel23MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
             dispose();
             CalibrationSkrew2 p = new CalibrationSkrew2();
             p.setVisible(true);

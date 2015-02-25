@@ -19,16 +19,16 @@ import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.ui.panels.WelcomeQuickguide;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class WelcomeSplash extends javax.swing.JFrame {
 
     private MainWindow window;
@@ -51,25 +51,20 @@ public class WelcomeSplash extends javax.swing.JFrame {
         window = wind;
         // Loads Splash image
         image = new ImageIcon(Base.getImage("images/welcomeSplash.png", this));
-        Base.writeLog("A");
         Image img = image.getImage();
-        Base.writeLog("B");
         // Loads Splash image for dimensios getter
         BufferedImage img2 = Base.getImage("images/welcomeSplash.png", this);
-        Base.writeLog("C");
         // Gets Screen Dimension
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        Base.writeLog("D");
         // Calculates ratio for modular adjustement to every screen
         double screenRatio = 0.75;
         newWidth = (int) (d.width * screenRatio);
         double scale = d.width * screenRatio / img2.getWidth();
         newHeight = (int) (img2.getHeight() * scale);
-        
+
         // Scales original image to new size values with Smooth conversion
         Image newimg = img.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
         image = new ImageIcon(newimg);
-        Base.writeLog("E");
         // Sets bar preferences and size.
         // Bar width is equal to image width. Height has value = 5
         jProgressBar1.setMaximum(newWidth - 5);
@@ -79,11 +74,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
         jLabel1.setSize(new Dimension(newWidth, newHeight));
         jPanel1.setPreferredSize(new Dimension(newWidth, newHeight));
         jPanel1.setSize(new Dimension(newWidth, newHeight));
-        this.setPreferredSize(new Dimension(newWidth, newHeight+jProgressBar1.getHeight()));
-        this.setSize(new Dimension(newWidth, newHeight+jProgressBar1.getHeight()));
-        Base.writeLog("F");
+        this.setPreferredSize(new Dimension(newWidth, newHeight + jProgressBar1.getHeight()));
+        this.setSize(new Dimension(newWidth, newHeight + jProgressBar1.getHeight()));
         this.setLocationRelativeTo(null);
-        Base.writeLog("G");
         // Thread to update JProgress Bar
         new Thread() {
             @Override
@@ -96,7 +89,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
                 while (i < getDuration()) {
                     jProgressBar1.setValue(inc);
                     i++;
-                    Base.writeLog("H");
                     inc += getWidth() / 80;
                     try {
                         sleep(100);
@@ -105,7 +97,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
                     }
 
                 }
-                Base.writeLog("I");
                 changeState();
             }
         }.start();
@@ -113,36 +104,32 @@ public class WelcomeSplash extends javax.swing.JFrame {
     }
 
     /**
-     * Monitor changes in MainWindow and performs several operations at startup
+     * Monitor changes in MainWindow and performs several operations at startup.
      */
-    public void changeState()
-    {
+    public void changeState() {
         window.setVisible(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(false);
         Base.writeLog("BEESOFT main window loaded ... ");
-       
+
         //GuideWizard
-        if(Boolean.valueOf(ProperDefault.get("firstTime")))
-        {
+        if (Boolean.valueOf(ProperDefault.get("firstTime"))) {
             Base.writeLog("BEESOFT tour loaded ... ");
 
             TourWelcome p = new TourWelcome();
             p.setVisible(true);
         }
-        
+
         /**
-         * Check is 3DModels folder exists.
-         * If not, create it.
+         * Check is 3DModels folder exists. If not, create it.
          */
         Base.getAppDataDirectory();
         Base.copy3DFiles();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
         window.setEnabled(true);
-        
+
         // Checks for software and firmware updates
-        if(!Boolean.valueOf(ProperDefault.get("firstTime")))
-        {       
+        if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
             UpdateChecker advise = new UpdateChecker();
 
 
@@ -156,47 +143,46 @@ public class WelcomeSplash extends javax.swing.JFrame {
                 advise.dispose();
             }
         }
-        
+
         /**
          * Error occured during driver initialization
          */
-        if(Base.errorOccured == true)
-        {
+        if (Base.errorOccured == true) {
             Warning flashError = new Warning("close");
             flashError.setMessage("ErrorUpdating");
             flashError.setVisible(true);
         }
-        
+
         Base.updateVersions();
     }
-    
+
     /**
-     * Get Splash Width
+     * Get Splash Width.
+     *
      * @return splash width
      */
-    public int getWidth()
-    {
+    public int getWidth() {
         return newWidth;
     }
-    
+
     /**
-     * Set Splash Screen duration
+     * Set Splash Screen duration.
+     *
      * @param milis Duration
      */
-    public void setDuration(int milis)
-    {
+    public void setDuration(int milis) {
         this.duration = milis;
     }
-    
+
     /**
-     * Get Splash Screen Duration
-     * @return duration 
+     * Get Splash Screen Duration.
+     *
+     * @return duration
      */
-    public int getDuration()
-    {
+    public int getDuration() {
         return duration;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -246,12 +232,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
-
-    
 }

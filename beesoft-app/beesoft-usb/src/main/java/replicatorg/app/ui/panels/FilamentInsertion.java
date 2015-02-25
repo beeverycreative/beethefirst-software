@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -82,9 +83,9 @@ public class FilamentInsertion extends javax.swing.JFrame {
         }
 
         if (!jLabel6MouseClickedReady) {
-            jLabel3.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info_Title2"));
+            jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info_Title2"));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unloadImage.png")));
-            jLabel4.setText(splitString(Languager.getTagValue("Print", "Print_Unloaded1").concat(" ").concat(Languager.getTagValue("Print", "Print_Unloaded2")).concat(Languager.getTagValue("Print", "Print_Unloaded3"))));
+            jLabel4.setText(splitString(Languager.getTagValue(1, "Print", "Print_Unloaded1").concat(" ").concat(Languager.getTagValue(1, "Print", "Print_Unloaded2")).concat(Languager.getTagValue(1, "Print", "Print_Unloaded3"))));
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-04.png")));
             jLabel6MouseClickedReady = true;
@@ -115,7 +116,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
             }
             jLabel18MouseClickedReady = true;
         }
-   
+
 
         disableMessageDisplay();
     }
@@ -134,15 +135,15 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title2"));
-        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info2")));
-        jLabel5.setText(Languager.getTagValue("FilamentWizard", "LoadButton"));
-        jLabel6.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title2"));
+        jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info_Title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
+        jLabel5.setText(Languager.getTagValue(1, "FilamentWizard", "LoadButton"));
+        jLabel6.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
+        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel17.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -166,7 +167,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         // Active during movement
         // REDSOFT: Implement This timer
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
     }
 
     private void enableMessageDisplay() {
@@ -186,8 +187,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         double acHigh = machine.getAcceleration("acHigh");
         double spHigh = machine.getFeedrate("spHigh");
 
-        if(Base.printPaused == false)
-        {
+        if (Base.printPaused == false) {
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
@@ -195,15 +195,13 @@ public class FilamentInsertion extends javax.swing.JFrame {
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        }
-        else
-        {
-            
+        } else {
+
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F"+spHigh +" X-85 Y-65"));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + spHigh + " X-85 Y-65"));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));   
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
         }
     }
 
@@ -263,13 +261,10 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }
 
     private void doCancel() {
-        
-        if(Base.printPaused)
-        {
+
+        if (Base.printPaused) {
             return;
-        }
-        else
-        {
+        } else {
             dispose();
             Base.getMainWindow().handleStop();
             Base.bringAllWindowsToFront();
@@ -332,11 +327,13 @@ public class FilamentInsertion extends javax.swing.JFrame {
         bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(567, 501));
+        setMinimumSize(new java.awt.Dimension(567, 490));
         setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(571, 490));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.setPreferredSize(new java.awt.Dimension(541, 570));
 
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("INSERIR FILAMENTO");
@@ -351,7 +348,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/inserir_filamento.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/infografia-01.png"))); // NOI18N
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 233));
 
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
@@ -395,10 +392,6 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -406,6 +399,10 @@ public class FilamentInsertion extends javax.swing.JFrame {
                     .addComponent(jLabel6))
                 .addContainerGap())
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(125, 125, 125)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,8 +517,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                .addGap(39, 39, 39))
+                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addGap(6, 6, 6))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -605,7 +602,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -641,35 +638,26 @@ public class FilamentInsertion extends javax.swing.JFrame {
         }    }//GEN-LAST:event_jLabel6MouseExited
 
     private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
-        if(Base.printPaused)
-        {
-          return;  
-        }
-        else
-        {
+        if (Base.printPaused) {
+            return;
+        } else {
             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
         }
-        
+
     }//GEN-LAST:event_bExitMouseEntered
 
     private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
-        if(Base.printPaused )
-        {
-          return;  
-        }
-        else
-        {
+        if (Base.printPaused) {
+            return;
+        } else {
             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
         }
     }//GEN-LAST:event_bExitMouseExited
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-        if(Base.printPaused && unloadPressed)
-        {
-          return;  
-        }
-        else
-        {        
+        if (Base.printPaused && unloadPressed) {
+            return;
+        } else {
             if (jLabel18MouseClickedReady) {
                 bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
             }
@@ -677,12 +665,9 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
-        if(Base.printPaused && unloadPressed)
-        {
-          return;  
-        }
-        else
-            {
+        if (Base.printPaused && unloadPressed) {
+            return;
+        } else {
             if (jLabel18MouseClickedReady) {
                 bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             }
@@ -698,7 +683,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel17MouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
             if (unloadPressed == false) {
                 dispose();
@@ -747,18 +732,18 @@ public class FilamentInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_bExitMousePressed
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
 
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "inserir_filamento.png")));
-            jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info2")));
-            bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
+            jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
+            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
             unloadPressed = false;
-              
+
             EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
                         Base.writeLog("Load filament pressed");
-                        machine.getDriverQueryInterface().setBusy(true);
+                        machine.getDriver().setBusy(true);
                         showMessage();
                         jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
                         jLabel5MouseClickedReady = false;
@@ -785,41 +770,40 @@ public class FilamentInsertion extends javax.swing.JFrame {
                 }
             });
 
-            if(Base.printPaused == true)
-            {
+            if (Base.printPaused == true) {
                 bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
                 bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             }
-                        
+
         }
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
             Base.writeLog("Unload filament pressed");
-            machine.getDriverQueryInterface().setBusy(true);
+            machine.getDriver().setBusy(true);
             showMessage();
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
             jLabel6MouseClickedReady = false;
             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
-            jLabel4.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info3")));
-            
+            jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3")));
+
             jLabel18MouseClickedReady = false;
             ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
             ProperDefault.put("coilCode", String.valueOf("N/A"));
-            bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
             unloadPressed = true;
-            
+
             Base.writeLog("Unloading Filament");
 
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    
+
                     //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode("A0"));
-                    
+                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
+
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
@@ -841,9 +825,8 @@ public class FilamentInsertion extends javax.swing.JFrame {
 
                 }
             });
-            
-            if(Base.printPaused == true)
-            {
+
+            if (Base.printPaused == true) {
                 bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
                 bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             }
@@ -902,7 +885,7 @@ class DisposeFeedbackThread extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriverQueryInterface().getMachineStatus()) {
+            if (!machine.getDriver().getMachineStatus()) {
                 filamentPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -910,9 +893,9 @@ class DisposeFeedbackThread extends Thread {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
-            if (machine.getDriverQueryInterface().getMachineStatus()
-                    && !machine.getDriverQueryInterface().isBusy()) {
+
+            if (machine.getDriver().getMachineStatus()
+                    && !machine.getDriver().isBusy()) {
                 filamentPanel.resetFeedbackComponents();
             }
 

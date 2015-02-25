@@ -85,11 +85,11 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("Print", "Print_Processing"));
-        jLabel2.setText(Languager.getTagValue("Print", "Print_Info"));
-        jLabel4.setText(Languager.getTagValue("Print", "Print_InfoLowStatus"));
+        jLabel1.setText(Languager.getTagValue(1,"Print", "Print_Processing"));
+        jLabel2.setText(Languager.getTagValue(1,"Print", "Print_Info"));
+        jLabel4.setText(Languager.getTagValue(1,"Print", "Print_InfoLowStatus"));
         jLabel5.setText("");
-        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
     }
 
     private void centerOnScreen() {
@@ -150,12 +150,12 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
     }
 
     public void updateHeatingInfo(int val) {
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage2"));
+        jLabel5.setText(Languager.getTagValue(1,"FeedbackLabel", "HeatingMessage2"));
         jProgressBar1.setValue(val);
     }
 
     public void updateGenerationInfo() {
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "GCodeGeneration"));
+        jLabel5.setText(Languager.getTagValue(1,"FeedbackLabel", "GCodeGeneration"));
         jProgressBar1.setIndeterminate(true);
     }
 
@@ -168,7 +168,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
             Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M104 S" + temperatureGoal));
 
 
@@ -205,6 +205,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
 //           {
             PrintSplashSimpleWaiting p = new PrintSplashSimpleWaiting(preferences, prt);
             p.setVisible(true);
+            Base.getMainWindow().getButtons().blockModelsButton(false);
 //           }
 //           else
 //           {
@@ -215,10 +216,10 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
             dispose();
             disableSleep();
         } else {
-            jLabel11.setText(Languager.getTagValue("ToolPath", "Line19"));
+            jLabel11.setText(Languager.getTagValue(1,"ToolPath", "Line19"));
             jLabel1.setVisible(false);
             jLabel2.setFont(GraphicDesignComponents.getSSProBold("14"));
-            jLabel2.setText(Languager.getTagValue("Print", "Print_Splash_Title"));
+            jLabel2.setText(Languager.getTagValue(1,"Print", "Print_Splash_Title"));
         }
         /**
          * Stop Threads.
@@ -276,6 +277,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER);
         Base.getMainWindow().handleStop();
         Base.getMainWindow().setEnabled(true);
+        Base.isPrinting = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         Base.getMainWindow().getMachine().runCommand(new replicatorg.drivers.commands.SetTemperature(0));
         ut.stop();

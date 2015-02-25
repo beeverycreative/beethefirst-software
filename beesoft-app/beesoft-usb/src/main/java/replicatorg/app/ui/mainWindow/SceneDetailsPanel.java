@@ -9,20 +9,20 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.model.PrintBed;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class SceneDetailsPanel extends javax.swing.JPanel {
 
     private PrintBed bed;
-    private String[]categories;
+    private String[] categories;
     private DefaultComboBoxModel comboModel;
     private static final String FORMAT = "%2d:%2d";
 
@@ -31,13 +31,12 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         setFont();
         setTextLanguage();
         categories = fullFillCombo();
-        comboModel = new DefaultComboBoxModel( categories );
-        jComboBox1.setModel( comboModel );
+        comboModel = new DefaultComboBoxModel(categories);
+        jComboBox1.setModel(comboModel);
         jComboBox1.setSelectedIndex(getModelCategoryIndex());
     }
-    
-    private void setFont()
-    {
+
+    private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProLight("20"));
         jLabel2.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel3.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -45,105 +44,95 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel5.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel6.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel7.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel8.setFont(GraphicDesignComponents.getSSProBold("12"));        
+        jLabel8.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jTextField1.setFont(GraphicDesignComponents.getSSProRegular("12")); 
-        jTextArea1.setFont(GraphicDesignComponents.getSSProRegular("12"));   
+        jTextField1.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jTextArea1.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel16.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12")); 
+        jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
     }
-    
-    private void setTextLanguage()
-    {
-        jLabel1.setText(Languager.getTagValue("SceneDetails", "Scene"));
-//        jLabel2.setText(Languager.getTagValue("", ""));
-        jLabel3.setText(Languager.getTagValue("SceneDetails", "Scene_Name"));
-        jLabel4.setText(Languager.getTagValue("SceneDetails", "Scene_Description"));
-        jLabel5.setText(Languager.getTagValue("SceneDetails", "Scene_NModels"));
-        jLabel6.setText(Languager.getTagValue("SceneDetails", "Scene_LastPrintDate"));
-        jLabel7.setText(Languager.getTagValue("SceneDetails", "Scene_LastPrintTime"));
-        jLabel16.setText(Languager.getTagValue("ModelDetails", "Model_Category"));
+
+    private void setTextLanguage() {
+        jLabel1.setText(Languager.getTagValue(1, "SceneDetails", "Scene"));
+//        jLabel2.setText(Languager.getTagValue(1,"", ""));
+        jLabel3.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name"));
+        jLabel4.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Description"));
+        jLabel5.setText(Languager.getTagValue(1, "SceneDetails", "Scene_NModels"));
+        jLabel6.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintDate"));
+        jLabel7.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintTime"));
+        jLabel16.setText(Languager.getTagValue(1, "ModelDetails", "Model_Category"));
     }
-    
-    private String[] fullFillCombo()
-    {
+
+    private String[] fullFillCombo() {
         return Base.getMainWindow().getCategoriesManager().getCategories();
     }
-    
-    private int getModelCategoryIndex()
-    {
+
+    private int getModelCategoryIndex() {
         String modelCategory = Base.getMainWindow().getBed().getCategory();
-        for(int i = 0; i < categories.length; i++)
-        {
-            if(categories[i].equals(modelCategory))
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i].equals(modelCategory)) {
                 return i;
+            }
         }
-        
+
         return 0;
     }
-    
-    public void updateBed(PrintBed bed)
-    {
+
+    public void updateBed(PrintBed bed) {
         this.bed = bed;
         this.updateBedInfo();
     }
-    
-    private String minutesToHours(int t)
-    {
+
+    private String minutesToHours(int t) {
         int hours = t / 60; //since both are ints, you get an int
         int minute = t % 60;
-        
-        return String.format(FORMAT,hours,minute);
+
+        return String.format(FORMAT, hours, minute);
     }
-    
-    public void updateBedInfo()
-    {
+
+    public void updateBedInfo() {
         jTextField1.setText(bed.getName());
         jTextArea1.setText(bed.getDescription());
         jLabel8.setText(String.valueOf(bed.getNumberModels()));
         jLabel9.setText(ProperDefault.get("dateLastPrint"));
-        
+
         String durT = ProperDefault.get("durationLastPrint");
         int duration = 0;
-        
-        if(!durT.equals("NA"))
-        {
+
+        if (!durT.equals("NA")) {
             duration = Integer.valueOf(durT);
             String hours = minutesToHours(duration).split("\\:")[0];
             String minutes = minutesToHours(duration).split("\\:")[1];
             int min = Integer.valueOf(minutes.trim());
-            
-            if(duration >= 120)
-            {
-                if(min > 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHours") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinutes")); 
-                else if(min == 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHours") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinute")); 
-                else
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") );
-            }
-            else if(duration >= 60 && duration < 120)
-            {
-                if(min > 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinutes")); 
-                else if(min == 1)
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") + " " + minutes + " "+Languager.getTagValue("Print","PrintMinute")); 
-                else
-                    jLabel10.setText(hours + " " +Languager.getTagValue("Print","PrintHour") );
-            }
-            else
-            {
-                 jLabel10.setText(" " + minutes + " "+Languager.getTagValue("Print","PrintMinutes")); 
-            }
-        }
-        else
-            jLabel10.setText(durT); 
 
-        
+            if (duration >= 120) {
+                if (min > 1) {
+                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                } else if (min == 1) {
+                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
+                } else {
+                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
+                }
+            } else if (duration >= 60 && duration < 120) {
+                if (min > 1) {
+                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                } else if (min == 1) {
+                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
+                } else {
+                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
+                }
+            } else {
+                jLabel10.setText(" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+            }
+        } else {
+            jLabel10.setText(durT);
+        }
+
+
         jComboBox1.setSelectedIndex(getModelCategoryIndex());
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -335,7 +324,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     private void jTextArea1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyReleased
         bed.setDescription(jTextArea1.getText());
     }//GEN-LAST:event_jTextArea1KeyReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;

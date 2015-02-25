@@ -2,6 +2,7 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -12,15 +13,18 @@ import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Group;
 import javax.media.j3d.Material;
 import javax.media.j3d.Node;
+import javax.media.j3d.Shape3D;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
+import javax.media.j3d.TriangleArray;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import replicatorg.app.Base;
 import replicatorg.app.ui.MainWindow;
 
@@ -41,6 +45,7 @@ public class EditingModel implements Serializable {
 
     private final double MINIMUM_SIZE_LIMIT = 1;
     private final double MAXIMUM_SIZE_LIMIT = 0.9966;
+    private final DecimalFormat df = new DecimalFormat("#.00"); 
 
     public class ReferenceFrame {
 
@@ -263,68 +268,21 @@ public class EditingModel implements Serializable {
         return true;
     }
 
-    /**
-     * Positions the model in the bed
-     */
     public void centerAndToBed() {
         BoundingBox bb = getBoundingBox(shapeTransform);
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         bb.getLower(lower);
         bb.getUpper(upper);
-        double zoff = -lower.z;                 
-        double yoff;
-        double xoff;
-        
-        int nmodelsInBed = Base.getMainWindow().getBed().getModels().size();
-        if (nmodelsInBed >= 1) { // If there are more models in bed controls their positioning
-            int shift;
-            final int XSHIFT_MM = 10;
-            final int YSHIFT_MM = 10;
-            if (nmodelsInBed > 32) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * -shift);                
-            } else if (nmodelsInBed > 24) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * -shift);                
-                
-            } else if (nmodelsInBed > 18) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * shift);
-                
-            } else if (nmodelsInBed > 12) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
-                yoff = (upper.y + lower.y) / 2.0d + (YSHIFT_MM * shift);                
-                
-            } else if (nmodelsInBed > 6) {
-                shift = (nmodelsInBed % 6) + 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * -shift);
-                yoff = (upper.y + lower.y) / 2.0d;
-           
-            } else {
-                shift = nmodelsInBed - 1;
-                
-                xoff = (upper.x + lower.x) / 2.0d + (XSHIFT_MM * shift);
-                yoff = (upper.y + lower.y) / 2.0d;
-            }            
-            
-        } else {
-            xoff = (upper.x + lower.x) / 2.0d;
-            yoff = (upper.y + lower.y) / 2.0d;
-        }
-        
+        double zoff = -lower.z;
+        double xoff = -(upper.x + lower.x) / 2.0d;
+        double yoff = -(upper.y + lower.y) / 2.0d;
+
         MachineInterface mc = Base.getMachineLoader().getMachineInterface();
+        BuildVolume buildVol = null;
         if (mc instanceof Machine) {
             MachineModel mm = mc.getModel();
+            buildVol = mm.getBuildVolume();
         }
 
         translateObjectWithoutValidation(xoff, yoff, zoff);
@@ -335,7 +293,7 @@ public class EditingModel implements Serializable {
         double zoff2 = -lower2.z;
         translateObject(0, 0d, zoff2);
         evaluateModelOutOfBounds();
-    }      
+    }
 
     public boolean evaluateModelOutOfBounds() {
         if (modelOutBonds() || !modelInBed()) {
@@ -350,6 +308,49 @@ public class EditingModel implements Serializable {
         }
         return false;
     }
+    
+    public boolean evaluateCollision(){
+                TriangleArray vertices = null;
+                Geometry g = Base.getMainWindow().getBed().getModel(0).getShape().getGeometry();
+		if (g instanceof TriangleArray) { vertices = (TriangleArray)g; }
+                
+		if (g == null) {
+			Base.logger.info("Couldn't find valid geometry during save.");
+			return false;
+		}
+
+		int faces = vertices.getVertexCount()/3;
+		float[] norm = new float[3];
+		double[] coord = new double[3];
+		for (int faceIdx = 0; faceIdx < faces; faceIdx++) {
+//			vertices.getNormal(faceIdx*3, norm);
+//			Vector3f norm3f = new Vector3f(norm);
+
+//			norm3f.normalize();
+//			System.out.println("  facet normal %e %e %e\n"+ " "+ norm3f.x+ " "+norm3f.y+ " "+norm3f.z);
+//			System.out.println("    outer loop\n");
+			Point3d face3d;
+			vertices.getCoordinate(faceIdx*3, coord);
+			face3d = new Point3d(coord);
+
+//			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
+//                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
+			vertices.getCoordinate((faceIdx*3)+1, coord);
+			face3d = new Point3d(coord);
+	
+//			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
+//                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
+			vertices.getCoordinate((faceIdx*3)+2, coord);
+			face3d = new Point3d(coord);
+	
+//			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
+//                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
+		}
+                System.err.println("evaluateCollision: DONE");
+        
+        return false;
+    }
+   
     
     public boolean evaluateModelOutOfBoundsX()
     {

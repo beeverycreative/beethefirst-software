@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import replicatorg.app.Base;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.tools.XML;
 import replicatorg.util.Point5d;
 
@@ -82,7 +83,7 @@ public class MachineModel
         
         
         // Filament code currently on the printer
-        private String CoilCode = "A0";
+        private String CoilCode = FilamentControler.NO_FILAMENT_CODE;
 
 
 	/*************************************

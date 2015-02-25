@@ -76,9 +76,10 @@ public class UpdateChecker extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel19.setText(Languager.getTagValue("Other", "Download"));
+        int fileKey = 1;
+        jLabel2.setText(Languager.getTagValue(fileKey, "Other", "NotSupported"));
+        jLabel18.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
+        jLabel19.setText(Languager.getTagValue(fileKey, "Other", "Download"));
     }
 
     private void centerOnScreen() {
@@ -103,12 +104,9 @@ public class UpdateChecker extends javax.swing.JFrame {
 
         if (fileFromServer != null) {
             if (seekUpdates()) {
-                if(updateBetaAvailable)
-                {
+                if (updateBetaAvailable) {
                     setMessage("AvailableBeta");
-                }
-                else
-                {
+                } else {
                     setMessage("AvailableStable");
                 }
                 updateBetaAvailable = true;
@@ -159,24 +157,22 @@ public class UpdateChecker extends javax.swing.JFrame {
         return fm.stringWidth(s);
     }
 
-    public boolean isUpdateBetaAvailable()
-    {
+    public boolean isUpdateBetaAvailable() {
         return updateBetaAvailable;
     }
-    
-    public boolean isUpdateStableAvailable()
-    {
+
+    public boolean isUpdateStableAvailable() {
         return updateStableAvailable;
     }
-    
+
     public boolean seekUpdates() {
         String softVersionString = Base.VERSION_BEESOFT.split("-")[0];
         String softServerVersionString = getTagValue("Software", "Version");
-        String softServerVersionBetaString = getTagValue("Software", "Version_beta");        
+        String softServerVersionBetaString = getTagValue("Software", "Version_beta");
         int betaServerVersion = Integer.valueOf(getTagValue("Software", "BetaVersion"));
-        int betaSoftVersion;
-        String softServerDateString = getTagValue("Software", "Date"); 
-        String softServerDateBetaString = getTagValue("Software", "Date_beta"); 
+        int betaSoftVersion = 0;
+        String softServerDateString = getTagValue("Software", "Date");
+        String softServerDateBetaString = getTagValue("Software", "Date_beta");
 
 //        String firmVersionString = Base.firmware_version_in_use;
 //        String firmServerVersionString = getTagValue("Firmware", "Version");
@@ -199,8 +195,7 @@ public class UpdateChecker extends javax.swing.JFrame {
         /**
          * If is a beta versions, alert for updates of betas or stable
          */
-        if(softVersionString.contains("beta"))
-        {
+        if (softVersionString.contains("beta")) {
             betaSoftVersion = Integer.valueOf(softVersionString.split("beta")[1]);
 
             //Base beta version may be different
@@ -212,44 +207,36 @@ public class UpdateChecker extends javax.swing.JFrame {
                 //Same base beta version but different version number
                 updateBetaAvailable = true;
                 updateString = softServerVersionBetaString + "-" + softServerDateBetaString;
-                return true; 
-            } else if(currentSoftwareVersion.compareTo(softwareFromServer) < 0){
+                return true;
+            } else if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
                 //In case of none beta update may exist a stable update
                 updateStableAvailable = true;
                 updateString = softServerVersionString + "-" + softServerDateString;
-                return true; 
+                return true;
             }
-        }
-        else
-        {
+        } else {
             /**
              * Alert for stable updates if BEESOFT version is stable
-             */            
+             */
             if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
                 updateStableAvailable = true;
                 updateString = softServerVersionString + "-" + softServerDateString;
                 return true;
-            }  
+            }
         }
 
         return false;
     }
-       
+
     public void setMessage(String message) {
-        if(message.contains("Available") && !message.equals("NotAvailable"))
-        {
-            if(updateBetaAvailable)
-            {
-                jLabel2.setText(splitString(Languager.getTagValue("Updates", "AvailableBeta")));
+        if (message.contains("Available") && !message.equals("NotAvailable")) {
+            if (updateBetaAvailable) {
+                jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", "AvailableBeta")));
+            } else {
+                jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", "AvailableStable")));
             }
-            else
-            {
-                jLabel2.setText(splitString(Languager.getTagValue("Updates", "AvailableStable")));
-            }
-        }
-        else
-        {
-            jLabel2.setText(splitString(Languager.getTagValue("Updates", message)));
+        } else {
+            jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", message)));
         }
     }
 

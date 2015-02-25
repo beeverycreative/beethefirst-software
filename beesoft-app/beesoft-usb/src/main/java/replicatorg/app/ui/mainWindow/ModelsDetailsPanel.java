@@ -63,17 +63,17 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel15.setText(Languager.getTagValue("ModelDetails", "Model_N"));
-        jLabel5.setText(Languager.getTagValue("ModelDetails", "Model_Selected"));
+        jLabel1.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
+        jLabel15.setText(Languager.getTagValue(1, "ModelDetails", "Model_N"));
+        jLabel5.setText(Languager.getTagValue(1, "ModelDetails", "Model_Selected"));
 
-        jLabel11.setText(Languager.getTagValue("ModelDetails", "Model_Dimensions")+" ("+Languager.getTagValue("MainWindowButtons", "MM")+")");
-        jLabel12.setText(Languager.getTagValue("ModelDetails", "Model_Name"));
-        jLabel4.setText(Languager.getTagValue("ModelDetails", "Model_Description"));
+        jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions") + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
+        jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
+        jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
 
-        jLabel6.setText(Languager.getTagValue("ApplicationMenus", "Edit_PutPlatform"));
-        jLabel7.setText(Languager.getTagValue("ApplicationMenus", "Edit_Center"));
-        jLabel8.setText(Languager.getTagValue("ApplicationMenus", "Edit_Reset"));
+        jLabel6.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
+        jLabel7.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
+        jLabel8.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
 
     }
 
@@ -445,8 +445,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             Model model = Base.getMainWindow().getBed().getFirstPickedModel();
             ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
 
-            if(mOCS != null)
-            {    
+            if (mOCS != null) {
                 model.resetScale();
                 mOCS.setXValue(model.getScaleXinPercentage());
                 mOCS.setYValue(model.getScaleYinPercentage());
@@ -480,7 +479,6 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
         model.setDescription(String.valueOf(jTextArea1.getText()));
     }//GEN-LAST:event_jTextArea1KeyReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;

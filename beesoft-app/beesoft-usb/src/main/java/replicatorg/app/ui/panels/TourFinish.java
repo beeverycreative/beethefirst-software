@@ -45,9 +45,9 @@ public class TourFinish extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue("Tour", "EndMessage"));
-        jLabel2.setText(splitString(Languager.getTagValue("Tour", "TourFinishMessage")));
-        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line6")); 
+        jLabel1.setText(Languager.getTagValue(1,"Tour", "EndMessage"));
+        jLabel2.setText(splitString(Languager.getTagValue(1,"Tour", "TourFinishMessage")));
+        jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6")); 
     }
     
     private void centerOnScreen()

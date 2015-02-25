@@ -51,6 +51,12 @@ public class Printer {
         generator = new CuraGenerator();
     }
 
+    /**
+     * Generates GCode based on the print parameters choosen.
+     *
+     * @param params parameters list
+     * @return estimated time for gcode generated or error code
+     */
     public String generateGCode(ArrayList<String> params) {
 
         stl = generateSTL();
@@ -64,7 +70,8 @@ public class Printer {
         String profile = "";
 
         profile = parseProfile(params);
-        generator.setProfile(profile);
+        String ini_file = generator.preparePrint(profile);
+        generator.setProfile(ini_file);
         generator.readINI();
         options = parseParameters(params);
 
@@ -77,14 +84,11 @@ public class Printer {
             Base.writeLog("GCode generated");
 //            parseGCodeToSave();
         } else {
-            if(!gcode.canRead() || gcode.length() == 0)
-            {
+            if (!gcode.canRead() || gcode.length() == 0) {
                 // handles with mesh error
                 Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 return "-2";
-            }
-            else
-            {
+            } else {
                 // handles with no permission error cancelling print and setting error message
                 return "-1";
             }
@@ -92,21 +96,36 @@ public class Printer {
         return PrintEstimator.getEstimatedTime();
     }
 
+    /**
+     * Destroy gcode generation
+     */
     public void endGCodeGeneration() {
         if (generator != null) {
             generator.destroyProcess();
         }
     }
 
+    /**
+     * Set gcode file if already generated.
+     * @param gFile gcode file.
+     */
     public void setGCodeFile(File gFile) {
         this.gcode = gFile;
     }
-    
-    public void setPreferences(ArrayList<String> prefs)
-    {
+
+    /**
+     * Set print parameters.
+     * @param prefs print parameters.
+     */
+    public void setPreferences(ArrayList<String> prefs) {
         this.params = prefs;
     }
 
+    /**
+     * Generate STL from Scene loaded.
+     *
+     * @return path for STL file
+     */
     private File generateSTL() {
 
         File stl = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + bed.getPrintBedFile().getName().split(".bee")[0]
@@ -172,11 +191,23 @@ public class Printer {
         return stl;
     }
 
+    /**
+     * Run GCode generator.
+     *
+     * @param mw MainWindow object
+     * @param options CuraEngine options
+     * @return path for gcode file
+     */
     private File runToolpathGenerator(MainWindow mw, ArrayList<CuraGenerator.CuraEngineOption> options) {
 
         return generator.generateToolpath(stl, options);
     }
 
+    /**
+     * Get generated GCode.
+     *
+     * @return
+     */
     public File getGCode() {
         //Save GCode if we are not printing locally
 //        if (!Boolean.valueOf(ProperDefault.get("localPrint"))) {
@@ -186,6 +217,11 @@ public class Printer {
 
     }
 
+    /**
+     * Calculates number of lines in GCode
+     *
+     * @return number of lines of GCode.
+     */
     public int getGCodeNLines() {
         LineNumberReader lnrGCode = null;
         try {
@@ -206,39 +242,12 @@ public class Printer {
         }
     }
 
-    private void parseGCodeToSave() {
-        StringBuffer code = new StringBuffer();
-        try {
-
-            BufferedReader br = new BufferedReader(new FileReader(gcode));
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                code.append(line);
-                code.append(Base.GCODE_DELIMITER);
-            }
-            Base.getMainWindow().getBed().setGcode(code);
-            br.close();
-        } catch (Exception e) {
-            Base.writeLog("Error saving GCode to scene " + bed.getPrintBedFile() + " . Exception: " + e.getMessage());
-        }
-
-        saveGCode();
-    }
-
-    private void saveGCode() {
-        ObjectOutputStream oos;
-
-        try {
-            oos = new ObjectOutputStream(new FileOutputStream(bed.getPrintBedFile()));
-            oos.writeObject(bed);
-            oos.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+    /**
+     * Parses profile from parameters to determine the profile type.
+     *
+     * @param params print parameters.
+     * @return profile type
+     */
     private String parseProfile(ArrayList<String> params) {
         String profile = "";
         MachineModel machine = Base.getMainWindow().getMachine().getModel();
@@ -248,17 +257,27 @@ public class Printer {
 
         if (curaFileForced.contains("none")) {
 
+            if (machine.getCoilCode().equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE)) {
+                profile += FilamentControler.getBEECode("").toLowerCase(); //To allow base estimation without filament
+            } else {
+                profile += machine.getCoilCode().toLowerCase();
+            }
+
+            //Delimiter
+            profile += ":";
+
             /**
              * Resolution
              */
             if (resolution.equalsIgnoreCase("low")) {
-                profile = "LowRes";
+                profile += "lowRes";
+            } else if (resolution.equalsIgnoreCase("medium")) {
+                profile += "mediumRes";
             } else if (resolution.equalsIgnoreCase("high")) {
-                profile = "HighRes";
+                profile += "highRes";
+            } else if (resolution.equalsIgnoreCase("shigh")) {
+                profile += "shighRes";
             }
-            
-            profile += machine.getCoilCode();
-                    //FilamentControler.getBEECode(color);
 
         } else {
             profile = curaFileForced;
@@ -266,6 +285,12 @@ public class Printer {
         return profile;
     }
 
+    /**
+     * Parses parameters based on print parameters.
+     *
+     * @param params print parameters.
+     * @return list of CuraEngine options to be passed to CuraEngine bin.
+     */
     private ArrayList<CuraGenerator.CuraEngineOption> parseParameters(ArrayList<String> params) {
 
         ArrayList<CuraGenerator.CuraEngineOption> options = new ArrayList<CuraGenerator.CuraEngineOption>();
@@ -276,15 +301,9 @@ public class Printer {
         isAutonomous = params.get(5).equalsIgnoreCase("true");
 
         /**
-         * Density
-         */
-        if (infill.equalsIgnoreCase("low")) {
-            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(5)));
-        } else if (infill.equalsIgnoreCase("medium")) {
-            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(20)));
-        } else if (infill.equalsIgnoreCase("high")) {
-            options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(40)));
-        }
+         * Density 
+        */
+        options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(Integer.valueOf(infill))));
 
         /**
          * Raft and Support
@@ -332,3 +351,37 @@ public class Printer {
         return options;
     }
 }
+
+
+//    private void parseGCodeToSave() {
+//        StringBuffer code = new StringBuffer();
+//        try {
+//
+//            BufferedReader br = new BufferedReader(new FileReader(gcode));
+//            String line = "";
+//            while ((line = br.readLine()) != null) {
+//                code.append(line);
+//                code.append(Base.GCODE_DELIMITER);
+//            }
+//            Base.getMainWindow().getBed().setGcode(code);
+//            br.close();
+//        } catch (Exception e) {
+//            Base.writeLog("Error saving GCode to scene " + bed.getPrintBedFile() + " . Exception: " + e.getMessage());
+//        }
+//
+//        saveGCode();
+//    }
+//
+//    private void saveGCode() {
+//        ObjectOutputStream oos;
+//
+//        try {
+//            oos = new ObjectOutputStream(new FileOutputStream(bed.getPrintBedFile()));
+//            oos.writeObject(bed);
+//            oos.close();
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (IOException ex) {
+//            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }

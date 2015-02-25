@@ -28,32 +28,29 @@ import static replicatorg.model.PrintBed.StlToByteArray;
 import replicatorg.model.j3d.StlAsciiWriter;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class Model implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 7526471155622776147L;
     private String name;
     private String description;
     private byte[] stream;
-    
     //Internal scale in order to keep the object scalling absolute
     private double xScale = 1.0;
     private double yScale = 1.0;
     private double zScale = 1.0;
-    
     private double xScaleInit = xScale;
     private double yScaleInit = yScale;
     private double zScaleInit = zScale;
-        
     private transient Shape3D shape = null;
     private transient EditingModel editListener = null;
     private transient PolygonAttributes pa;
@@ -63,7 +60,7 @@ public class Model implements Serializable, Cloneable {
     private transient Transform3D transform;
     private transient Transform3D initial;
     private transient ModelUndoEntry undo;
-    
+
     public Model(File stl) {
         this.name = stl.getName();
         this.description = "ND";
@@ -71,7 +68,7 @@ public class Model implements Serializable, Cloneable {
         this.pa = new PolygonAttributes();
         this.pa.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
         this.pa.setCapability(PolygonAttributes.ALLOW_MODE_READ);
-        this.picked = false;  
+        this.picked = false;
         loadShape(stl.getAbsolutePath());
 
         transform = new Transform3D();
@@ -88,28 +85,27 @@ public class Model implements Serializable, Cloneable {
         editModel = new EditingModel(this);
         editModel.setShape(this);
     }
-   
-    public void saveModelPositions()
-    {
+
+    public void saveModelPositions() {
         FileOutputStream ostream = null;
         StlAsciiWriter saw;
         File f = PrintBed.toFile(stream);
         try {
-                ostream = new FileOutputStream(f);
-                saw = new StlAsciiWriter(ostream);
-                saw.writeShape(shape,transform);
-                ostream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(PrintBed.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+            ostream = new FileOutputStream(f);
+            saw = new StlAsciiWriter(ostream);
+            saw.writeShape(shape, transform);
+            ostream.close();
+        } catch (IOException ex) {
+            Logger.getLogger(PrintBed.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         stream = StlToByteArray(f);
     }
 
     public String getName() {
         return name;
     }
-    
+
     public byte[] getStream() {
         return stream;
     }
@@ -121,7 +117,7 @@ public class Model implements Serializable, Cloneable {
     public void setDescription(String desc) {
         this.description = desc;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -129,9 +125,8 @@ public class Model implements Serializable, Cloneable {
     public EditingModel getEditer() {
         return editModel;
     }
-    
-    public ModelUndoEntry getUndoManager()
-    {
+
+    public ModelUndoEntry getUndoManager() {
         return undo;
     }
 
@@ -142,12 +137,11 @@ public class Model implements Serializable, Cloneable {
     public BranchGroup getGroup() {
         return editModel.getGroup();
     }
-    
-    public void updateScale()
-    {
-         this.xScaleInit = xScale;
-         this.yScaleInit = yScale;
-         this.zScaleInit = zScale;
+
+    public void updateScale() {
+        this.xScaleInit = xScale;
+        this.yScaleInit = yScale;
+        this.zScaleInit = zScale;
 
     }
 
@@ -189,11 +183,11 @@ public class Model implements Serializable, Cloneable {
                 try {
                     candidate = (Shape3D) loadCandidate.load(filePath).getSceneGroup().getChild(0);
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 } catch (IncorrectFormatException ex) {
-                    Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 } catch (ParsingErrorException ex) {
-                    Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    Base.getMainWindow().showFeedBackMessage("modelMeshError");
                 }
             }
         }
@@ -230,9 +224,8 @@ public class Model implements Serializable, Cloneable {
     public Transform3D getTransform() {
         return transform;
     }
-    
-    public void resetPosition()
-    {
+
+    public void resetPosition() {
         setTransform(initial, "reset", true);
     }
 
@@ -246,7 +239,7 @@ public class Model implements Serializable, Cloneable {
             throw new AssertionError();
         }
     }
-    
+
     private void writeObject(ObjectOutputStream aOutputStream) {
         try {
             aOutputStream.defaultWriteObject();
@@ -260,25 +253,25 @@ public class Model implements Serializable, Cloneable {
 
         try {
             aInputStream.defaultReadObject();
-                    this.pa = new PolygonAttributes();
-        this.pa.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
-        this.pa.setCapability(PolygonAttributes.ALLOW_MODE_READ);
-        this.picked = false;  
-        loadShape(PrintBed.toFile(stream).getAbsolutePath());
-      
-        transform = new Transform3D();
-        initial = new Transform3D(transform);
-        this.appear = new Appearance();
-        this.pa.setCullFace(PolygonAttributes.POLYGON_FILL);
-        this.pa.setCullFace(PolygonAttributes.CULL_NONE);
-        this.appear.setPolygonAttributes(pa);
-        this.shape.setAppearance(appear);
-        this.shape.setUserData(String.valueOf(Base.getModelID()));
-        this.shape.setPickable(true);
-        this.shape.setCapability(Node.ENABLE_PICK_REPORTING);
-        PickTool.setCapabilities(shape, PickTool.INTERSECT_FULL);
-        editModel = new EditingModel(this);
-        editModel.setShape(this);
+            this.pa = new PolygonAttributes();
+            this.pa.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
+            this.pa.setCapability(PolygonAttributes.ALLOW_MODE_READ);
+            this.picked = false;
+            loadShape(PrintBed.toFile(stream).getAbsolutePath());
+
+            transform = new Transform3D();
+            initial = new Transform3D(transform);
+            this.appear = new Appearance();
+            this.pa.setCullFace(PolygonAttributes.POLYGON_FILL);
+            this.pa.setCullFace(PolygonAttributes.CULL_NONE);
+            this.appear.setPolygonAttributes(pa);
+            this.shape.setAppearance(appear);
+            this.shape.setUserData(String.valueOf(Base.getModelID()));
+            this.shape.setPickable(true);
+            this.shape.setCapability(Node.ENABLE_PICK_REPORTING);
+            PickTool.setCapabilities(shape, PickTool.INTERSECT_FULL);
+            editModel = new EditingModel(this);
+            editModel.setShape(this);
         } catch (IOException ex) {
             Logger.getLogger(PrintBed.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -288,43 +281,46 @@ public class Model implements Serializable, Cloneable {
     }
 
     public String getScaleXinPercentage() {
-        return String.format("%3.1f", xScale*100);
+        return String.format("%3.1f", xScale * 100);
     }
 
     public String getScaleYinPercentage() {
-        return String.format("%3.1f", yScale*100);
+        return String.format("%3.1f", yScale * 100);
     }
 
     public String getScaleZinPercentage() {
-        return String.format("%3.1f", zScale*100);
+        return String.format("%3.1f", zScale * 100);
     }
 
     public double getXscalePercentage() {
         return xScale * 100;
     }
+
     public double getYscalePercentage() {
         return yScale * 100;
     }
+
     public double getZscalePercentage() {
         return zScale * 100;
     }
-    
-    public void resetScale()
-    {
+
+    public void resetScale() {
         xScale = xScaleInit;
         yScale = yScaleInit;
         zScale = zScaleInit;
     }
-    
+
     public void setXscale(double scale) {
-       this.xScale = scale;
+        this.xScale = scale;
     }
+
     public void setYscale(double scale) {
         this.yScale = scale;
-       
+
     }
+
     public void setZscale(double scale) {
-        this.zScale = scale;   
+        this.zScale = scale;
     }
 
     public double getScaleFloor() {
@@ -336,15 +332,15 @@ public class Model implements Serializable, Cloneable {
     }
 
     public void updateXscale(double targetScale) {
-                this.xScale = targetScale * this.xScale;   
+        this.xScale = targetScale * this.xScale;
     }
 
     public void updateZscale(double targetScale) {
         this.zScale = targetScale * this.zScale;
-    
+
     }
 
     public void updateYscale(double targetScale) {
-         this.yScale = targetScale * this.yScale;
+        this.yScale = targetScale * this.yScale;
     }
 }

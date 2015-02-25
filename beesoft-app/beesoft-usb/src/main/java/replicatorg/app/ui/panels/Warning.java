@@ -91,8 +91,8 @@ public class Warning extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel2.setText(Languager.getTagValue(1,"Other", "NotSupported"));
+        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
     }
 
     private void centerOnScreen() {
@@ -110,7 +110,7 @@ public class Warning extends javax.swing.JFrame {
     }
 
     public void setMessage(String message) {
-        jLabel2.setText(splitString(Languager.getTagValue("StatusMessages", message)));
+        jLabel2.setText(splitString(Languager.getTagValue(1,"StatusMessages", message)));
     }
 
     private void enableDrag() {

@@ -20,7 +20,8 @@ import replicatorg.model.Model;
  */
 public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
-    private boolean check_pressed, mm, percentage;
+    private boolean check_pressed, mm, percentage, lockedRatio;
+    private boolean scaleLocked;
 
     public ModelsOperationCenterScale() {
         initComponents();
@@ -58,43 +59,41 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel15.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel24.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel27.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        l_lockRatio.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jTextField4.setFont(GraphicDesignComponents.getSSProRegular("13"));
         jTextField5.setFont(GraphicDesignComponents.getSSProRegular("13"));
         jTextField6.setFont(GraphicDesignComponents.getSSProRegular("13"));
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
-        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Scale_Extense"));
-//        jLabel13.setText(Languager.getTagValue("", ""));
-//        jLabel14.setText(Languager.getTagValue("", ""));        
-//        jLabel15.setText(Languager.getTagValue("", ""));    
-        jLabel24.setText(Languager.getTagValue("MainWindowButtons", "MM"));
-        jLabel27.setText(Languager.getTagValue("MainWindowButtons", "Percentage"));
+        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
+        jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale_Extense"));
+//        jLabel13.setText(Languager.getTagValue(1,"", ""));
+//        jLabel14.setText(Languager.getTagValue(1,"", ""));        
+//        jLabel15.setText(Languager.getTagValue(1,"", ""));    
+        jLabel24.setText(Languager.getTagValue(1, "MainWindowButtons", "MM"));
+        jLabel27.setText(Languager.getTagValue(1, "MainWindowButtons", "Percentage"));
+        l_lockRatio.setText(Languager.getTagValue(1, "MainWindowButtons", "LockRatio"));
     }
-    
-    public void setXValue(String val)
-    {
+
+    public void setXValue(String val) {
         this.jTextField4.setText(val);
     }
 
-    public void setYValue(String val)
-    {
+    public void setYValue(String val) {
         this.jTextField5.setText(val);
     }
-        
-    public void setZValue(String val)
-    {
+
+    public void setZValue(String val) {
         this.jTextField6.setText(val);
     }
-    
-    private void toggleOptions()
-    {
+
+    private void toggleOptions() {
         if (check_pressed) {
             jPanel2.setVisible(false);
             check_pressed = false;
@@ -105,7 +104,37 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
         }
     }
+
+    /**
+     * Lock scale fields for a unified operation
+     *
+     * @param b <li> true, if to lock
+     * <li> false, if to unlock
+     */
+    private void lockScale(boolean b) {
+        if (b) {
+            scaleLocked = true;
+        } else {
+            scaleLocked = false;
+        }
+    }
     
+    private void lockRatio() {
+        if (lockedRatio) {
+            lockedRatio = false;
+            lockRatio.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
+        } else {
+            lockedRatio = true;
+            lockRatio.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
+        }
+        
+        if (scaleLocked) {
+            lockScale(false);
+        } else {
+            lockScale(true);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -134,6 +163,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel25 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
+        lockRatio = new javax.swing.JLabel();
+        l_lockRatio = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
 
@@ -299,15 +330,28 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel27.setFont(new java.awt.Font("Ubuntu", 0, 13)); // NOI18N
         jLabel27.setText("percentage");
 
+        lockRatio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_unchecked.png"))); // NOI18N
+        lockRatio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lockRatioMousePressed(evt);
+            }
+        });
+
+        l_lockRatio.setFont(new java.awt.Font("Ubuntu", 0, 13)); // NOI18N
+        l_lockRatio.setText("Lock aspect ratio");
+        l_lockRatio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                l_lockRatioMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jLabel12)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel15)
@@ -315,25 +359,27 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField4)
-                            .addComponent(jTextField5)
-                            .addComponent(jTextField6)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                                .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel25, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel26, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lockRatio))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel27)
-                                    .addComponent(jLabel24))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                    .addComponent(jLabel24)
+                                    .addComponent(l_lockRatio))))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE))
@@ -348,13 +394,18 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel26)
+                        .addComponent(lockRatio)
                         .addGap(10, 10, 10)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel25)
-                            .addComponent(jLabel24)))
-                    .addComponent(jLabel27))
-                .addContainerGap(30, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel25)
+                                    .addComponent(jLabel24))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel26))
+                            .addComponent(jLabel27, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(l_lockRatio))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_checked.png"))); // NOI18N
@@ -370,21 +421,24 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel16))
-                        .addGap(51, 51, 51)
-                        .addComponent(jLabel7))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel16))
+                                .addGap(51, 51, 51)
+                                .addComponent(jLabel7))
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3))
+                        .addGap(0, 5, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -470,7 +524,16 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
                 if (newValuePercentage > 0) {
 //                    System.out.println("newValue/model.getXscalePercentage()" + newValuePercentage + "/" + model.getXscalePercentage());
-                    Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform,false);
+                    if (scaleLocked) {
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
+
+                        jTextField5.setText(textFieldValue);
+                        jTextField6.setText(textFieldValue);
+                    } else {
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
+                    }
                 }
 
             } else {
@@ -500,14 +563,23 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
                 if (newValuePercentage > 0) {
 //                    System.out.println("newValue/model.getXscalePercentage()" + newValuePercentage + "/" + model.getYscalePercentage());
-                    Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform,false);
+                    if (scaleLocked) {
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
+
+                        jTextField4.setText(textFieldValue);
+                        jTextField6.setText(textFieldValue);
+                    } else {
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
+                    }
                 }
 
             } else {
                 //jTextField4.setText("");
             }
         }
-        
+
     }//GEN-LAST:event_jTextField5KeyReleased
 
     private void jTextField6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField6KeyReleased
@@ -531,14 +603,23 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
                 if (newValuePercentage > 0) {
 //                    System.out.println("newValue/model.getXscalePercentage()" + newValuePercentage + "/" + model.getZscalePercentage());
-                    Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform,false);
+                    if (scaleLocked) {
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
+
+                        jTextField4.setText(textFieldValue);
+                        jTextField5.setText(textFieldValue);
+                    } else {
+                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
+                    }
                 }
 
             } else {
                 //jTextField4.setText("");
             }
         }
-        
+
     }//GEN-LAST:event_jTextField6KeyReleased
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
@@ -602,6 +683,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         toggleOptions();
     }//GEN-LAST:event_jLabel7MousePressed
 
+    private void lockRatioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lockRatioMousePressed
+       lockRatio();
+    }//GEN-LAST:event_lockRatioMousePressed
+
+    private void l_lockRatioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_l_lockRatioMousePressed
+        lockRatio();
+    }//GEN-LAST:event_l_lockRatioMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
@@ -624,5 +713,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JLabel l_lockRatio;
+    private javax.swing.JLabel lockRatio;
     // End of variables declaration//GEN-END:variables
 }

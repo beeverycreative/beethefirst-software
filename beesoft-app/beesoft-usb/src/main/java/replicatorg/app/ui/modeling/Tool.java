@@ -124,7 +124,7 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
             return;
         }
         Point p = e.getPoint();
-        DragMode mode = DragMode.ROTATE_VIEW;
+        DragMode mode = DragMode.NONE;
 
         if (Base.isMacOS()) {
             if (button == MouseEvent.BUTTON1 && !e.isShiftDown()) {
@@ -135,9 +135,10 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
                 mode = DragMode.CONTROL_VIEW;
             }
         } else {
-            if (button == MouseEvent.BUTTON1) {
-                mode = DragMode.ROTATE_VIEW;
-            } else if (button == MouseEvent.BUTTON3) {
+//            if (button == MouseEvent.BUTTON1) {
+//                mode = DragMode.ROTATE_VIEW;
+//            } else 
+            if (button == MouseEvent.BUTTON3) {
                 mode = DragMode.ROTATE_VIEW;
             }
             if (button == MouseEvent.BUTTON3 && e.isShiftDown()) {
@@ -158,29 +159,29 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
                 parent.preview.adjustViewTranslation(-0.5 * xd, 0.5 * yd);
                 break;
             case CONTROL_VIEW:
-                Base.getMainWindow().deactivateCameraControls();
-
-                if (Base.isMacOS()) {
-                    if (xd > 0.0 && yd == 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationRight(xd, yd);
-                    } else if (xd < 0.0 && yd == 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationLeft(xd, yd);
-                    } else if (xd == 0.0 && yd > 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationTop(xd, yd);
-                    } else if (xd == 0.0 && yd < 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationBottom(xd, yd);
-                    }
-                } else {
-                    if (xd > 0.0 && yd == 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationRight(-xd, yd);
-                    } else if (xd < 0.0 && yd == 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationLeft(-xd, yd);
-                    } else if (xd == 0.0 && yd > 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationTop(xd, yd);
-                    } else if (xd == 0.0 && yd < 0.0) {
-                        Base.getMainWindow().getCameraControl().adjustViewTranslationBottom(xd, yd);
-                    }
-                }
+//                Base.getMainWindow().deactivateCameraControls();
+//
+//                if (Base.isMacOS()) {
+//                    if (xd > 0.0 && yd == 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationRight(xd, yd);
+//                    } else if (xd < 0.0 && yd == 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationLeft(xd, yd);
+//                    } else if (xd == 0.0 && yd > 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationTop(xd, yd);
+//                    } else if (xd == 0.0 && yd < 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationBottom(xd, yd);
+//                    }
+//                } else {
+//                    if (xd > 0.0 && yd == 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationRight(-xd, yd);
+//                    } else if (xd < 0.0 && yd == 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationLeft(-xd, yd);
+//                    } else if (xd == 0.0 && yd > 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationTop(xd, yd);
+//                    } else if (xd == 0.0 && yd < 0.0) {
+//                        Base.getMainWindow().getCameraControl().adjustViewTranslationBottom(xd, yd);
+//                    }
+//                }
 
 
         }

@@ -110,15 +110,15 @@ public class MainButtonPanel extends BGPanel implements MachineListener, MouseLi
 
     private void setTextLanguage()
     {
-        models.setText(Languager.getTagValue("", ""));
-        maintenance.setText(Languager.getTagValue("", ""));
-        quick_guide.setText(Languager.getTagValue("", ""));
-        print.setText(Languager.getTagValue("", ""));       
+        models.setText(Languager.getTagValue(1,"", ""));
+        maintenance.setText(Languager.getTagValue(1,"", ""));
+        quick_guide.setText(Languager.getTagValue(1,"", ""));
+        print.setText(Languager.getTagValue(1,"", ""));       
     }
        
     public void setMessage(String message)
     {
-        //machine_info.setText(Languager.getTagValue("", ""));
+        //machine_info.setText(Languager.getTagValue(1,"", ""));
         machine_info.setText(message);
     }
     
@@ -410,7 +410,7 @@ public class MainButtonPanel extends BGPanel implements MachineListener, MouseLi
             buttons.add(logo);
             buttons.add(Box.createHorizontalStrut(5));
             buttons.add(machine_info);
-//            machine_info.setText(Languager.getTagValue("", ""));
+//            machine_info.setText(Languager.getTagValue(1,"", ""));
             buttons.add(Box.createHorizontalStrut(122));
             buttons.add(models);
             buttons.add(maintenance);
@@ -435,7 +435,7 @@ public class MainButtonPanel extends BGPanel implements MachineListener, MouseLi
             buttons.add(logo);
             buttons.add(Box.createHorizontalStrut(5));
             buttons.add(machine_info);
-//            machine_info.setText(Languager.getTagValue("", ""));            
+//            machine_info.setText(Languager.getTagValue(1,"", ""));            
             buttons.add(Box.createHorizontalStrut(122));
             buttons.add(models);
             buttons.add(maintenance);

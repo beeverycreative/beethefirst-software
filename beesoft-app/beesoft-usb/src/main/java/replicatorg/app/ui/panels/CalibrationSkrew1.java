@@ -66,13 +66,13 @@ public class CalibrationSkrew1 extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Title2"));
-        jLabel3.setText(Languager.getTagValue("CalibrationWizard", "LeftScrew_title"));
-        jLabel4.setText(splitString(Languager.getTagValue("CalibrationWizard", "LeftScrew_Info")));
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
-        jLabel23.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Title2"));
+        jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_Info")));
+        jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel23.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -145,7 +145,7 @@ public class CalibrationSkrew1 extends javax.swing.JFrame {
 
     public void showMessage() {
         enableMessageDisplay();
-        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
         jLabel24MouseClickedReady = false;
 
@@ -153,17 +153,17 @@ public class CalibrationSkrew1 extends javax.swing.JFrame {
 
     private void moveToB() {
         Base.writeLog("Calibrating B");
-        Point5d current = machine.getDriverQueryInterface().getCurrentPosition(false);
+        Point5d current = machine.getDriver().getCurrentPosition(false);
 
 //        System.err.println("Z: "+current.z());
 
 //        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M605" + " Z " + current.z()));
-        machine.getDriverQueryInterface().setBusy(true);
+        machine.getDriver().setBusy(true);
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M603"));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M601"));
 
         machine.runCommand(new replicatorg.drivers.commands.SetCurrentPosition(new Point5d(current.x(), current.y(), 0)));
-        current = machine.getDriverQueryInterface().getCurrentPosition(false);
+        current = machine.getDriver().getCurrentPosition(false);
         Point5d b = machine.getTablePoints("B");
         Point5d raise = new Point5d(current.x(), current.y(), current.z() + 10);
         Point5d bRaise = new Point5d(b.x(), b.y(), b.z() + 10);
@@ -180,7 +180,7 @@ public class CalibrationSkrew1 extends javax.swing.JFrame {
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spMedium));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.getDriverQueryInterface().setBusy(false);
+        machine.getDriver().setBusy(false);
 
     }
 
@@ -501,7 +501,7 @@ public class CalibrationSkrew1 extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel23MouseEntered
 
     private void jLabel23MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MousePressed
-        if (!machine.getDriverQueryInterface().isBusy()) {
+        if (!machine.getDriver().isBusy()) {
             jLabel23.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             dispose();
             disposeThread.stop();
@@ -588,7 +588,7 @@ class DisposeFeedbackThread3 extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriverQueryInterface().getMachineStatus()) {
+            if (!machine.getDriver().getMachineStatus()) {
                 calibrationPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -596,8 +596,8 @@ class DisposeFeedbackThread3 extends Thread {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            if (machine.getDriverQueryInterface().getMachineStatus()
-                    && !machine.getDriverQueryInterface().isBusy()) {
+            if (machine.getDriver().getMachineStatus()
+                    && !machine.getDriver().isBusy()) {
                 calibrationPanel.resetFeedbackComponents();
             }
 

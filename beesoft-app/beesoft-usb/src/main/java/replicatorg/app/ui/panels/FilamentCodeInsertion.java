@@ -60,11 +60,11 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title5"));
-        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Title4"));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title5"));
+        jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
+        jLabel17.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -92,19 +92,19 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 
         if (ProperDefault.get("maintenance").equals("1")) {
             jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
-        
+
         if (Base.printPaused == true) {
             bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
         }
 
     }
-    
+
     private int getModelCategoryIndex() {
         FilamentControler.FilamentCodes[] enumCodes = FilamentControler.FilamentCodes.values();
         String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
-        
+
         for (int i = 0; i < categories.length; i++) {
             /**
              * Colors available in languages XML coilCode is one of the list
@@ -137,12 +137,17 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         FilamentControler.FilamentCodes[] enumCodes = FilamentControler.FilamentCodes.values();
 
         for (int i = 0; i < enumCodes.length; i++) {
+            /**
+             * Color with BEECODE - Filkemp new
+             */
             if (String.valueOf(comboModel.getSelectedItem()).contains(enumCodes[i].toString())) {
                 return enumCodes[i].toString();
             }
         }
-
-        return "A302";
+        /**
+         * Color without BEECODE - KDI
+         */
+        return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
     }
 
     private void enableDrag() {
@@ -163,9 +168,8 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private void doCancel() {
-        
-        if(Base.printPaused == false)
-        {
+
+        if (Base.printPaused == false) {
             dispose();
             Base.bringAllWindowsToFront();
             Base.maintenanceWizardOpen = false;
@@ -173,7 +177,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.enableAllOpenWindows();
 
-            if(Base.printPaused == false){
+            if (Base.printPaused == false) {
                 Point5d b = machine.getTablePoints("safe");
                 double acLow = machine.getAcceleration("acLow");
                 double acHigh = machine.getAcceleration("acHigh");
@@ -467,15 +471,13 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel17MouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
-        if(Base.printPaused == false)
-        {
+        if (Base.printPaused == false) {
             bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
         }
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
-        if(Base.printPaused == false)
-        {        
+        if (Base.printPaused == false) {
             bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
         }
     }//GEN-LAST:event_bCancelMouseExited
@@ -484,25 +486,25 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 //        if (validateCode()) {
 
         String code = parseComboCode();
-        
+
         /**
          * Checks if color switch was between this combinations
          */
         boolean blackTurquoise = previousColor.equals("A335") && code.equals("A332")
-                                  || previousColor.equals("A332") && code.equals("A335");
-        
+                || previousColor.equals("A332") && code.equals("A335");
+
         boolean yellowRed = previousColor.equals("A333") && code.equals("A334")
-                          || previousColor.equals("A334") && code.equals("A333");
-        
+                || previousColor.equals("A334") && code.equals("A333");
+
         /**
-         * If this is made on print paused and color is not the same then flag it to machineThread to process GCode on runCommand
+         * If this is made on print paused and color is not the same then flag
+         * it to machineThread to process GCode on runCommand
          */
-        if(Base.printPaused && !blackTurquoise && !yellowRed)
-        {
+        if (Base.printPaused && !blackTurquoise && !yellowRed) {
             machine.setFilamentChanged(true);
             machine.setLastBEECode(previousColor);
         }//no need for else
-        
+
         //set the coil code: M400 <COILCODE>
         machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
@@ -514,29 +516,28 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         Base.loadProperties();
         Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()));
         Base.getMainWindow().getBed().setGcodeOK(false);
-        
+
         if (!ProperDefault.get("maintenance").equals("1")) {
             dispose();
             NozzleClean p = new NozzleClean();
             p.setVisible(true);
         } else {
             dispose();
-            
+
             /**
              * If print is not paused, cool down
              */
-            if(Base.printPaused == false)
-            {
+            if (Base.printPaused == false) {
                 finalizeHeat();
             }//no need for else
-            
+
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.maintenanceWizardOpen = false;
             Base.enableAllOpenWindows();
             Base.bringAllWindowsToFront();
-            
-            if(Base.printPaused == false){
+
+            if (Base.printPaused == false) {
                 Point5d b = machine.getTablePoints("safe");
                 double acLow = machine.getAcceleration("acLow");
                 double acHigh = machine.getAcceleration("acHigh");
@@ -549,9 +550,9 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-    //            ProperDefault.remove("maintenance");
+                //            ProperDefault.remove("maintenance");
             }
-            
+
         }
     }//GEN-LAST:event_jLabel18MousePressed
 
@@ -595,5 +596,3 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
 }
-
-

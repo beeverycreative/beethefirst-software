@@ -30,14 +30,30 @@ public class PrintEstimator {
     private static final double patch = 1.50;
     private static final String dayKeyWord = "day";
 
+    /**
+     * Get Estimated time from estimator process.
+     *
+     * @return estimated time for gcode.
+     */
     public static String getEstimatedTime() {
         return estimatedTime;
     }
 
+    /**
+     * Get Estimated cost from estimator process.
+     *
+     * @return estimated cost for gcode.
+     */
     public static String getEstimatedCost() {
         return estimatedCost;
     }
 
+    /**
+     * Runs process to calculate time and material cost.
+     *
+     * @param gcode gcode to be analysed.
+     * @return estimated time as hh:mm
+     */
     public static String estimateTime(File gcode) {
 
         //Validates if estimator dir exists
@@ -104,6 +120,12 @@ public class PrintEstimator {
         return estimatedTime;
     }
 
+    /**
+     * Parses process output when it contains no days in the estimated time.
+     *
+     * @param duration estimated time from process.
+     * @return estimated time in hh:mm
+     */
     private static String noDays(String duration) {
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "((?:(?:[0-1][0-9])|(?:[2][0-3])|(?:[0-9])):(?:[0-5][0-9])(?::[0-5][0-9])?(?:\\s?(?:am|AM|pm|PM))?)";	// HourMinuteSec 1
@@ -119,6 +141,12 @@ public class PrintEstimator {
         return time1.toString();
     }
 
+    /**
+     * Parses process output when it contains days in the estimated time.
+     *
+     * @param duration estimated time from process.
+     * @return estimated time in hh:mm
+     */
     private static String withDays(String duration) {
 
         String re1 = ".*?";	// Non-greedy match on filler
@@ -170,6 +198,13 @@ public class PrintEstimator {
         return time1;
     }
 
+    /**
+     * Parses at top level the output from process. It calls low level methods
+     * for better parsing.
+     *
+     * @param out output from parsing.
+     * @return estimated time filtered and tuned.
+     */
     private static String parseTimeOutput(String out) {
         if (!out.isEmpty()) {
             String timeParsed = "ND";
@@ -186,6 +221,12 @@ public class PrintEstimator {
         return "ND";
     }
 
+    /**
+     * Patches base estimation from process to be more accurate.
+     *
+     * @param baseEstimation base estimation already parsed from process output.
+     * @return parsed and patched estimation time.
+     */
     private static String filterTime(String baseEstimation) {
         String estimation = "ND";
         int hours = 0;
@@ -208,7 +249,7 @@ public class PrintEstimator {
         }
 
         /**
-         * Tune estimation after aplying the patch
+         * Tune estimation after applying the patch
          */
         int[] timeTuned = tuneEstimation(hours, minutes);
         hours = timeTuned[0];
@@ -219,17 +260,24 @@ public class PrintEstimator {
             return String.valueOf(hours).concat(":").concat(String.valueOf(minutes));
         }
         if (minutes == 0) {
-            //Very small prints are estimated in 0 minutes. Lets assume 2 min for them
-            return String.valueOf(minutes + 2);
+            //Very small prints are estimated in 0 minutes. Lets assume big negative int for them
+            return String.valueOf(-100000);
         }
         return String.valueOf(minutes);
 
     }
 
+    /**
+     * Tune estimation after applying the patch. Parcels can exceed maximum
+     * value.
+     *
+     * @param hr patched hours.
+     * @param mnt patched minutes.
+     * @return estimation tuned.
+     */
     private static int[] tuneEstimation(int hr, int mnt) {
 
         int[] time = new int[2];
-
         int hours = hr;
         int minutes = mnt;
 
@@ -245,20 +293,24 @@ public class PrintEstimator {
 
     }
 
+    /**
+     * Get model cost from process output.
+     *
+     * @param out process output
+     * @return material cost
+     */
     private static String parseCostOutput(String out) {
 
         String costParsed = ERROR_MESSAGE;
 
         if (!out.isEmpty()) {
             String tag = "Filament used: ";
-            try{
+            try {
                 costParsed = out.substring(out.indexOf(tag), out.indexOf("mm")).split(tag)[1];
-            }
-            catch(StringIndexOutOfBoundsException e)
-            {
+            } catch (StringIndexOutOfBoundsException e) {
                 ;//Do nothing - just avoid throw
             }
-            
+
         }
         return costParsed;
     }

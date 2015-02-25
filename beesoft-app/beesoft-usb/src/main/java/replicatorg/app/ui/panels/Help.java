@@ -59,20 +59,20 @@ public class Help extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("ApplicationMenus", "Help").toUpperCase());
-        jLabel10.setText(Languager.getTagValue("Help", "FAQ"));
-        jLabel11.setText(Languager.getTagValue("Help", "Troubleshooting"));
-        jLabel16.setText(Languager.getTagValue("Help", "Support"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
-        jLabel25.setText(Languager.getTagValue("MainWindowButtons", "QuickWizard"));
+        jLabel1.setText(Languager.getTagValue(1,"ApplicationMenus", "Help").toUpperCase());
+        jLabel10.setText(Languager.getTagValue(1,"Help", "FAQ"));
+        jLabel11.setText(Languager.getTagValue(1,"Help", "Troubleshooting"));
+        jLabel16.setText(Languager.getTagValue(1,"Help", "Support"));
+        jLabel24.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
+        jLabel25.setText(Languager.getTagValue(1,"MainWindowButtons", "QuickWizard"));
         if (Base.language.equals("en")) {
-            jLabel8.setText("<html><u>" + Languager.getTagValue("Help", "FAQ_Link_EN") + "</u></html>");
-            jLabel9.setText("<html><u>" + Languager.getTagValue("Help", "Troubleshooting_Link_EN") + "</u></html>");
-            jLabel12.setText("<html><u>" + Languager.getTagValue("Help", "Support_Link_EN") + "</u></html>");
+            jLabel8.setText("<html><u>" + Languager.getTagValue(1,"Help", "FAQ_Link_EN") + "</u></html>");
+            jLabel9.setText("<html><u>" + Languager.getTagValue(1,"Help", "Troubleshooting_Link_EN") + "</u></html>");
+            jLabel12.setText("<html><u>" + Languager.getTagValue(1,"Help", "Support_Link_EN") + "</u></html>");
         } else if (Base.language.equals("pt")) {
-            jLabel8.setText("<html><u>" + Languager.getTagValue("Help", "FAQ_Link_PT") + "</u></html>");
-            jLabel9.setText("<html><u>" + Languager.getTagValue("Help", "Troubleshooting_Link_PT") + "</u></html>");
-            jLabel12.setText("<html><u>" + Languager.getTagValue("Help", "Support_Link_PT") + "</u></html>");
+            jLabel8.setText("<html><u>" + Languager.getTagValue(1,"Help", "FAQ_Link_PT") + "</u></html>");
+            jLabel9.setText("<html><u>" + Languager.getTagValue(1,"Help", "Troubleshooting_Link_PT") + "</u></html>");
+            jLabel12.setText("<html><u>" + Languager.getTagValue(1,"Help", "Support_Link_PT") + "</u></html>");
         }
 
     }
@@ -442,9 +442,11 @@ public class Help extends javax.swing.JFrame {
         
         if(Base.getMachineLoader().isConnected())
         {
-            this.dispose();
-            FilamentHeating p = new FilamentHeating();
-            p.setVisible(true);
+            if (Base.isPrinting == false) {
+                this.dispose();
+                FilamentHeating p = new FilamentHeating();
+                p.setVisible(true);
+            }
         }
         else
         {

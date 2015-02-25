@@ -24,11 +24,10 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
     private double cambioFactor = 0.0174532925;
 
     public ModelsOperationCenterRotate() {
-        initComponents(); 
+        initComponents();
         this.check_pressed = false;
         this.fiveDegrees_pressed = Base.getMainWindow().getCanvas().getControlTool(2).getAdvOption();
-        if(fiveDegrees_pressed)   
-        {
+        if (fiveDegrees_pressed) {
             fiveDegrees_pressed = false; //trigger value for handler to work
             handleAdvancedOption();
         }
@@ -63,17 +62,17 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
-        jLabel9.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " 90 " + Languager.getTagValue("MainWindowButtons", "Degrees"));
-        jLabel10.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " -90 " + Languager.getTagValue("MainWindowButtons", "Degrees"));
-        jLabel11.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " 90 " + " " + Languager.getTagValue("MainWindowButtons", "Axis2"));
-        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Rotate") + " 5 " + Languager.getTagValue("MainWindowButtons", "Degrees"));
+        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
+        jLabel9.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " 90 " + Languager.getTagValue(1, "MainWindowButtons", "Degrees"));
+        jLabel10.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " -90 " + Languager.getTagValue(1, "MainWindowButtons", "Degrees"));
+        jLabel11.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " 90 " + " " + Languager.getTagValue(1, "MainWindowButtons", "Axis2"));
+        jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        jLabel23.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " 5 " + Languager.getTagValue(1, "MainWindowButtons", "Degrees"));
     }
 
     private void rotateRight() {
@@ -90,9 +89,8 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
     }
-    
-    private void rotateLeft()
-    {
+
+    private void rotateLeft() {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             if (jRadioButton1.isSelected()) {
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(1d, 0d, 0d, Math.PI / 2));
@@ -104,9 +102,9 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             Base.getMainWindow().getBed().setGcodeOK(false);
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
-        }   
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -611,7 +609,7 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");
             }
-            
+
             jTextField5.setText("");
         }
     }//GEN-LAST:event_jTextField5KeyPressed
@@ -634,7 +632,7 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");
             }
-            
+
             jTextField6.setText("");
         }
     }//GEN-LAST:event_jTextField6KeyPressed
@@ -730,7 +728,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
     private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
         toggleOptions();
     }//GEN-LAST:event_jLabel7MousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

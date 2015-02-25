@@ -1,5 +1,7 @@
 package replicatorg.app.ui.mainWindow;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -29,6 +31,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private boolean jLabel4Bool = false;
     private boolean jLabel6Bool = true;
     private final int NUMBER_PRINTS_LIMIT = 15;
+    private boolean mainWindowEnabled;
 
     public ButtonsPanel(replicatorg.app.ui.MainWindow mainWindow) {
         initComponents();
@@ -43,19 +46,19 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel6.setText(Languager.getTagValue("MainWindowButtons", "Models"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Maintenance"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "QuickWizard"));
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Print"));
+        jLabel6.setText(Languager.getTagValue(1, "MainWindowButtons", "Models"));
+        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Maintenance"));
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "QuickWizard"));
+        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
     }
 
     public void setMessage(String message) {
 
         if (message.equals("is connected")) {
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "BEETHEFIRST_STATUS3"));
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "BEETHEFIRST_STATUS3"));
         }
         if (message.equals("is disconnected")) {
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "BEETHEFIRST_STATUS2"));
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "BEETHEFIRST_STATUS2"));
         } else {
             // REDSOFT: CONSIDER OTHER SITUATION ?
         }
@@ -87,8 +90,8 @@ public class ButtonsPanel extends javax.swing.JPanel {
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
                 jLabel4Bool = false;
-            } 
-            
+            }
+
 //            else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
 //                jLabel4Bool = false;
@@ -114,7 +117,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
         } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
             jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
-        } 
+        }
 //        else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
 //        }
@@ -123,18 +126,18 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public void updatePressedStateButton(String button) {
         if (button.equals("models")) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
-            jLabel6Bool = true;
+            jLabel6Bool = false;
             models_pressed = false;
         }
         // && gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
         if (button.equals("maintenance")) {
-            if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < NUMBER_PRINTS_LIMIT) {
+            if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
                 jLabel4Bool = true;
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
                 jLabel4Bool = true;
-            } 
+            }
 //            else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
 //                jLabel4Bool = true;
@@ -163,21 +166,20 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private void updateFromState(final MachineInterface s, final MachineInterface machine) {
 
         if (!s.isConnected()) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_7.png")));
-            jLabel5Bool = false;
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
-            jLabel6Bool = false;
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_7.png")));
-            jLabel4Bool = false;
-            jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_2.png")));
-            jLabel1Bool = false;
+//            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_7.png")));
+//            jLabel5Bool = false;
+//            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_disabled_7.png")));
+//            jLabel4Bool = false;
+//            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+//            jLabel6Bool = false;
+//            jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_2.png")));
+//            jLabel1Bool = false;
             setMessage("is disconnected");
-        }
-        else {
+        } else {
 
             jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             jLabel5Bool = true;
-            
+
             // && gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
             if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
@@ -185,7 +187,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
                 jLabel4Bool = true;
-            } 
+            }
 //            else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
 //                jLabel4Bool = true;
@@ -201,6 +203,22 @@ public class ButtonsPanel extends javax.swing.JPanel {
         if (machine != null) {
             updateFromState(machine, machine);
         }
+    }
+
+    public void setMainWindowEnabled(boolean editorEnabled) {
+        this.mainWindowEnabled = editorEnabled;
+    }
+
+    public void blockModelsButton(boolean block) {
+        if (block) {
+            models_pressed = true;
+        } else {
+            models_pressed = false;
+        }
+    }
+
+    public boolean areIOFunctionsBlocked() {
+        return models_pressed;
     }
 
     @SuppressWarnings("unchecked")
@@ -253,7 +271,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jPanel3.setPreferredSize(new java.awt.Dimension(681, 48));
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_disabled_2.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_2.png"))); // NOI18N
         jLabel1.setText("PRINT");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -268,7 +286,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_disabled_7.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
         jLabel4.setText("Maintenance");
         jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -283,7 +301,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_disabled_7.png"))); // NOI18N
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
         jLabel5.setText("Quick Guide");
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -372,13 +390,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseEntered
-        if (jLabel6Bool) {
+        if (jLabel6Bool == false) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
         }
     }//GEN-LAST:event_jLabel6MouseEntered
 
     private void jLabel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseExited
-        if (jLabel6Bool) {
+        if (jLabel6Bool == false) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
         }
     }//GEN-LAST:event_jLabel6MouseExited
@@ -390,7 +408,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7_btn.png")));
-            } 
+            }
 //            else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7_btn.png")));
 //            }
@@ -404,7 +422,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
                 jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
-            } 
+            }
 //            else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
 //            }
@@ -439,14 +457,15 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
         if (!models_pressed) {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-            jLabel6Bool = false;
+            jLabel6Bool = true;
             models_pressed = true;
             editor.updateModelsOperationCenter(new ModelsOperationCenter());
             SceneDetailsPanel sceneDP = new SceneDetailsPanel();
             sceneDP.updateBed(Base.getMainWindow().getBed());
             editor.updateDetailsCenter(sceneDP);
             Base.getMainWindow().getCanvas().unPickAll();
-            editor.handleGallery();
+//            editor.handleGallery();
+            editor.handleNewModel();
         }
 
     }//GEN-LAST:event_jLabel6MousePressed
@@ -454,83 +473,86 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
         boolean connected = Base.getMachineLoader().isConnected();
 
-        if (connected) {
+//        if (connected) {
 //            if(!Boolean.valueOf(ProperDefault.get("firstTime")))
 //             {
-
-            //&& gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
-            if (!maintenance_pressed) {
-                if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
-                    jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-                    jLabel4Bool = false;
-                } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > 10) {
-                    jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
-                    jLabel4Bool = false;
-                } 
+            if (Base.isPrinting == false) {
+                //&& gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) > 100
+                if (maintenance_pressed == false) {
+                    if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
+                        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+                        jLabel4Bool = false;
+                    } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > 10) {
+                        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
+                        jLabel4Bool = false;
+                    }
 //                else if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //                    jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
 //                    jLabel4Bool = false;
 //                }
 
-                maintenance_pressed = true;
-                editor.updateModelsOperationCenter(new ModelsOperationCenter());
-                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-                sceneDP.updateBed(Base.getMainWindow().getBed());
-                editor.updateDetailsCenter(sceneDP);
-                Base.getMainWindow().getCanvas().unPickAll();
-                editor.handleMaintenance();
+
+                    maintenance_pressed = true;
+                    editor.updateModelsOperationCenter(new ModelsOperationCenter());
+                    SceneDetailsPanel sceneDP = new SceneDetailsPanel();
+                    sceneDP.updateBed(Base.getMainWindow().getBed());
+                    editor.updateDetailsCenter(sceneDP);
+                    Base.getMainWindow().getCanvas().unPickAll();
+                    editor.handleMaintenance();
+                }
             }
 //            }
 //            else
 //            {
 //                editor.showFeedBackMessage("firstTime");
 //            }
-        } else {
-            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-        }
+//        } else {
+//            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+//        }
 
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        boolean connected = Base.getMachineLoader().isConnected();
+//        boolean connected = Base.getMachineLoader().isConnected();
 
-        if (connected) {
-            if (!quickGuide_pressed) {
-                jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-                jLabel5Bool = false;
-                editor.updateModelsOperationCenter(new ModelsOperationCenter());
-                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-                sceneDP.updateBed(Base.getMainWindow().getBed());
-                editor.updateDetailsCenter(sceneDP);
-                Base.getMainWindow().getCanvas().unPickAll();
-                editor.handleQuickStartWizard();
-            }
-        } else {
-            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-        }
+//        if (connected) {
+//            if (quickGuide_pressed == false && Base.isPrinting == false) {
+//                jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+//                jLabel5Bool = false;
+//                editor.updateModelsOperationCenter(new ModelsOperationCenter());
+//                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
+//                sceneDP.updateBed(Base.getMainWindow().getBed());
+//                editor.updateDetailsCenter(sceneDP);
+//                Base.getMainWindow().getCanvas().unPickAll();
+//                editor.handleQuickStartWizard();
+                Base.getMainWindow().launchBrowser("https://beeverycreative.com/");
+//            }
+//        } else {
+//            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+//        }
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
         boolean connected = Base.getMachineLoader().isConnected();
 
-        if (connected) {
-            MachineInterface machine = Base.getMainWindow().getMachineInterface();
+//        if (connected) {
+        MachineInterface machine = Base.getMainWindow().getMachineInterface();
 
-            if (machine.getModel().getMachineBusy()) {
-                editor.showFeedBackMessage("moving");
-            } else {
-                if (!print_pressed && editor.validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
-                        || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                    jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
-                    jLabel1Bool = false;
-                    print_pressed = true;
-                    editor.handlePrintPanel();
-                }
+        if (machine.getModel().getMachineBusy()) {
+            editor.showFeedBackMessage("moving");
+        } else {//&& Base.isPrinting == false 
+            if (!print_pressed && editor.validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
+                    || Boolean.valueOf(ProperDefault.get("localPrint"))) {
+                jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
+                jLabel1Bool = false;
+                print_pressed = true;
+                editor.handlePrintPanel();
             }
-
-        } else {
-            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
         }
+
+//        } else {
+//            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+//        }
 
     }//GEN-LAST:event_jLabel1MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables

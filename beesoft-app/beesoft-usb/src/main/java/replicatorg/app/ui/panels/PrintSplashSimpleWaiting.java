@@ -10,12 +10,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -29,16 +27,12 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
 import replicatorg.app.DoNotSleep;
 import replicatorg.app.FilamentControler;
-import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.ProperDefault;
 import replicatorg.drivers.Driver;
-import replicatorg.machine.Machine;
 import replicatorg.machine.MachineInterface;
-import replicatorg.model.CAMPanel;
 import replicatorg.model.PrintBed;
-import replicatorg.plugin.toolpath.cura.XMLGCoder;
 import replicatorg.util.Point5d;
 
 /**
@@ -85,10 +79,10 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         isPaused = false;
         tInfo6.setText("");
         tInfo7.setText("");
-        bPause.setVisible(true);
+        bPause.setVisible(false);
         bOk.setVisible(false);
         bCancel.setVisible(false);
-        bUnload.setVisible(true);
+        bUnload.setVisible(false);
         enableDrag();
         addWindowListener(this);
         ut = new UpdateThread3(this);
@@ -113,13 +107,13 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }
 
     private void setTextLanguage() {
-        tInfo2.setText(Languager.getTagValue("Print", "Print_Splash_Info2"));
-        tEstimation.setText(Languager.getTagValue("Print", "Print_Estimation"));
-        tRemaining.setText(Languager.getTagValue("Print", "Print_Remaining"));
-        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line10"));
-        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
-        bUnload.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info2"));
+        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Estimation"));
+        tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Remaining"));
+        bCancel.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
+        bOk.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line10"));
+        bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line11"));
+        bUnload.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
     }
 
     private void centerOnScreen() {
@@ -219,7 +213,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/start.gcode");
             pw = new PrintWriter(new FileOutputStream(gcode));
 
-            String[] code = XMLGCoder.getGCode("startCode");
+            String[] code = Languager.getGCodeArray(4, "operationCode", "startCode");
 
             for (int i = 0; i < code.length; i++) {
                 pw.println(code[i].trim());
@@ -246,7 +240,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/end.gcode");
             pw = new PrintWriter(new FileOutputStream(gcode));
 
-            String[] code = XMLGCoder.getGCode("endCode");
+            String[] code = Languager.getGCodeArray(4, "operationCode", "endCode");
 
             for (int i = 0; i < code.length; i++) {
                 pw.println(code[i].trim());
@@ -322,7 +316,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             // Not able to estimate print time
             // 00 - error code
             if (remainingTime == 00) {
-                tRemaining.setText(Languager.getTagValue("Print", "Print_Info"));
+                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Info"));
                 vRemaining.setVisible(false);
             } else {
                 // Subtract one minute to remaining time
@@ -331,7 +325,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                 if (remainingTime > 0) {
                     updatePrintEstimation(String.valueOf(remainingTime), false);
                 } else {
-                    tRemaining.setText(Languager.getTagValue("Print", "Print_Info2"));
+                    tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Info2"));
                     vRemaining.setVisible(false);
                 }
             }
@@ -360,36 +354,36 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             bCancel.setVisible(false);
             bPause.setVisible(false);
             bOk.setVisible(true);
-            bUnload.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
+            bUnload.setText(Languager.getTagValue(1,"FilamentWizard", "UnloadButton"));
 
             jProgressBar1.setValue(100);
             jProgressBar1.setVisible(false);
 
             if (duration >= 2 && duration > 60) {
 
-                tInfo2.setText(Languager.getTagValue("Print", "Print_BuildFinished"));
-                tEstimation.setText(Languager.getTagValue("Print", "Print_Completion") + " " + hours + " "
-                        + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                tInfo2.setText(Languager.getTagValue(1,"Print", "Print_BuildFinished"));
+                tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Completion") + " " + hours + " "
+                        + Languager.getTagValue(1,"Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
                 bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                tRemaining.setText(Languager.getTagValue("Print", "Print_Splash_Info5"));
+                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info5"));
 
             } else {
-                tInfo2.setText(Languager.getTagValue("Print", "Print_BuildFinished"));
-                tEstimation.setText(Languager.getTagValue("Print", "Print_Completion") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
+                tInfo2.setText(Languager.getTagValue(1,"Print", "Print_BuildFinished"));
+                tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Completion") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
                 bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                tRemaining.setText(Languager.getTagValue("Print", "Print_Splash_Info5"));
+                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info5"));
 
             }
             ProperDefault.put("durationLastPrint", String.valueOf(duration));
-            int nPrints = Integer.valueOf(ProperDefault.get("nTotalPrints"))+1;
+            int nPrints = Integer.valueOf(ProperDefault.get("nTotalPrints")) + 1;
             ProperDefault.put("nTotalPrints", String.valueOf(nPrints));
 
             /**
              * Power saving
              */
-            Base.turnOnPowerSaving();
+            Base.turnOnPowerSaving(true);
 
         } else if (!printEnded) {
             abortPrint();
@@ -425,22 +419,22 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
                         if (minutes > 1) {
                             textE = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else {
                             textE = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                         }
                         vRemaining.setText(textR);
                         vEstimation.setText(textE);
@@ -448,14 +442,14 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
                         if (minutes > 1) {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                         }
                         vRemaining.setText(textR);
                     }
@@ -465,30 +459,30 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                         if (minutes > 1) {
 
                             textE = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
 
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else if (minutes == 2) {
                             //In case PrintEstimator fails, dont appear 2min
                             textE = "";
                             vEstimation.setVisible(false);
-                            tEstimation.setText(Languager.getTagValue("Print", "Print_EstimatorError"));
+                            tEstimation.setText(Languager.getTagValue(1,"Print", "Print_EstimatorError"));
                             return;
                         } else {
                             textE = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
 
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                         }
 
                         vEstimation.setText(textE);
@@ -496,14 +490,14 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     } else {
                         if (minutes > 1 || minutes == 0) {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                         }
                         vRemaining.setText(textR);
                     }
@@ -528,35 +522,35 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
                 if (cutout) {
 //                    textE = printEstimation
-//                            + " " + Languager.getTagValue("Print", "PrintMinutes");
+//                            + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
 
                     if (remainingTime > 60) {
                         if (minutes > 1 && hours > 1) {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         }
                     } else {
                         if (remainingTime > 1) {
                             textR = remainingTime
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else if (remainingTime == 2) {
                             //In case PrintEstimator fails, dont appear 2min
                             textR = "";
                             vEstimation.setVisible(false);
                             tRemaining.setVisible(false);
                             vRemaining.setVisible(false);
-                            tEstimation.setText(Languager.getTagValue("Print", "Print_EstimatorError"));
+                            tEstimation.setText(Languager.getTagValue(1,"Print", "Print_EstimatorError"));
                             return;
                         } else {
                             textR = remainingTime
-                                    + " " + Languager.getTagValue("Print", "PrintMinute");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                         }
                     }
                     vEstimation.setText(textR);
@@ -566,24 +560,24 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
                         if ((minutes > 1 || minutes == 0)) {
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else {
 
                             textR = hours
-                                    + " " + Languager.getTagValue("Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
 
                         }
                     }
                     if (remainingTime > 1 && remainingTime <= 60) {
                         textR = remainingTime
-                                + " " + Languager.getTagValue("Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                     } else if (remainingTime == 1) {
                         textR = remainingTime
-                                + " " + Languager.getTagValue("Print", "PrintMinute");
+                                + " " + Languager.getTagValue(1,"Print", "PrintMinute");
                     }
                     // no need for else. Parse is being made before calling thin method
 
@@ -593,7 +587,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             }
         } else {
             remainingTime = 00;
-            tEstimation.setText(Languager.getTagValue("Print", "Print_EstimatorError"));
+            tEstimation.setText(Languager.getTagValue(1,"Print", "Print_EstimatorError"));
             vEstimation.setText("");
             tRemaining.setText("");
             vRemaining.setText("");
@@ -602,7 +596,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }
 
     private void setPreparingNewFilamentInfo() {
-        tInfo2.setText(Languager.getTagValue("Print", "Print_Pausing"));
+        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Pausing"));
         tRemaining.setVisible(false);
         vRemaining.setVisible(false);
         tEstimation.setVisible(false);
@@ -611,13 +605,13 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }
 
     private void disablePreparingNewFilamentInfo() {
-        tInfo2.setText(Languager.getTagValue("Print", "Print_Splash_Info2"));
+        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info2"));
         tRemaining.setVisible(true);
         vRemaining.setVisible(true);
         tEstimation.setVisible(true);
         vEstimation.setVisible(true);
         jProgressBar1.setVisible(true);
-        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
+        bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line11"));
     }
 
     @Override
@@ -1004,14 +998,14 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         //first time you press unload after print is over
         if (printEnded && unloadPressed == false && firstUnloadStep == false) {
             unloadPressed = true;
-
+            System.out.println("First time unload");
             temperatureGoal = 220;
             machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
             bOk.setVisible(false);
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
             iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-02.png")));
-            tInfo2.setText(Languager.getTagValue("Print", "Unloading_Title"));
-            tRemaining.setText(Languager.getTagValue("Print", "Print_Unloading"));
+            tInfo2.setText(Languager.getTagValue(1,"Print", "Unloading_Title"));
+            tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloading"));
             jPanel1.setVisible(false);
             jProgressBar1.setVisible(true);
             jProgressBar1.setValue(0);
@@ -1022,6 +1016,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         if (printEnded && unloadPressed == false && firstUnloadStep) {
             unloadPressed = true;
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
+            System.out.println("Second time unload");
             startUnload();
             return;
         } // no need for else
@@ -1084,13 +1079,13 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
                     Maintenance p = new Maintenance();
                     p.setVisible(true);
-                    bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line12"));
-                    tInfo2.setText(Languager.getTagValue("Print", "Print_Waiting"));
+                    bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
+                    tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Waiting"));
                 }
             });
         } else {
             isPaused = false;
-            tInfo2.setText(Languager.getTagValue("Print", "Print_Resuming"));
+            tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Resuming"));
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -1099,7 +1094,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     driver.dispatchCommand("G92 E", COM.BLOCK);
                     driver.dispatchCommand("G1 F6000 E-2", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
-                    
+
                     double actualColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
                     double colorRatio = actualColorRatio / previousColorRatio;
                     /**
@@ -1111,9 +1106,9 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     //Go slowly to pause position
                     //Special attention to models on bed
                     driver.dispatchCommand("G1 F2000 X" + pausePos.x() + " Y" + pausePos.y(), COM.NO_RESPONSE);
-                    driver.dispatchCommand("G1 F1000 Z" + (pausePos.z()+10) + " E-1", COM.NO_RESPONSE);
+                    driver.dispatchCommand("G1 F1000 Z" + (pausePos.z() + 10) + " E-1", COM.NO_RESPONSE);
                     driver.dispatchCommand("G1 F1000 Z" + pausePos.z() + " E0", COM.NO_RESPONSE);
-                    driver.dispatchCommand("G92 E"+pausePos.a(), COM.BLOCK);
+                    driver.dispatchCommand("G92 E" + pausePos.a(), COM.BLOCK);
 
 //            //Sets previous feedrate
                     driver.dispatchCommand("G1 " + machine.getLastFeedrate(), COM.NO_RESPONSE);
@@ -1151,7 +1146,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        double temperature = machine.getDriverQueryInterface().getTemperature();
+        double temperature = machine.getDriver().getTemperature();
 
         if (temperature > (int) (jProgressBar1.getValue() * 2)) {
             int val = (int) (temperature / 2.15);
@@ -1174,15 +1169,16 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             if (firstUnloadStep) {
                 bUnload.setVisible(false);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-07.png")));
-                bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+                bOk.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
                 firstUnloadStep = false;
-                tRemaining.setText(Languager.getTagValue("Print", "Print_Unloaded2"));
+                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloaded2"));
                 tInfo6.setVisible(false);
 
             } else {
                 dispose();
                 ut.stop();
                 Base.getMainWindow().setEnabled(true);
+                Base.isPrinting = false;
                 enableSleep();
                 Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetTemperature(0));
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
@@ -1246,15 +1242,15 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     public void startUnload() {
         jProgressBar1.setVisible(false);
         iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
-        tRemaining.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info3"));
+        tRemaining.setText(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info3"));
 
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
 
-                if (!machine.getDriverQueryInterface().isBusy()) {
+                if (!machine.getDriver().isBusy()) {
                     unloadPressed = true;
-                    while (!machine.getDriverQueryInterface().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineStatus()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -1297,7 +1293,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                         Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    while (!machine.getDriverQueryInterface().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineStatus()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -1308,16 +1304,16 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     }
                 }
 
-                bUnload.setVisible(true);
+                bUnload.setVisible(false);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode("A0"));
-                tRemaining.setText(Languager.getTagValue("Print", "Print_Unloaded1"));
+                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
+                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;
-                bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+                bOk.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
                 tInfo6.setText("");
-                tInfo2.setText(Languager.getTagValue("Print", "Unload_BuildFinished"));
-                tInfo6.setText(Languager.getTagValue("Print", "Print_Unloaded3"));
+                tInfo2.setText(Languager.getTagValue(1,"Print", "Unload_BuildFinished"));
+                tInfo6.setText(Languager.getTagValue(1,"Print", "Print_Unloaded3"));
                 unloadPressed = false;
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
@@ -1337,7 +1333,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (machine.getDriverQueryInterface().getMachineStatus()) {
+            if (machine.getDriver().getMachineStatus()) {
                 ready = true;
                 break;
             }
@@ -1352,9 +1348,13 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         Base.bringAllWindowsToFront();
         Base.getMainWindow().handleStop();
         Base.getMainWindow().setEnabled(true);
+        Base.isPrinting = false;
+        Base.printPaused = false;
+        Base.isPrintingFromGCode = false;
+        Base.gcodeToSave = false;        
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         ut.stop();
-
+        Base.turnOnPowerSaving(true);
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
 
         enableSleep();
@@ -1490,6 +1490,7 @@ class UpdateThread3 extends Thread {
                 boolean tempReached = false;
 
                 if (window.isUnloadPressed()) {
+                    System.out.println("Unload Pressed");
                     tempReached = window.updateHeatBar();
                     if (tempReached) {
                         window.startUnload();

@@ -10,16 +10,16 @@ import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class MessagesPopUp extends javax.swing.JFrame {
 
     public MessagesPopUp() {
@@ -28,115 +28,124 @@ public class MessagesPopUp extends javax.swing.JFrame {
         setTextLanguage();
     }
 
-    private void setFont()
-    {
+    private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
     }
-    
-    private void setTextLanguage()
-    {
-        jLabel1.setText(Languager.getTagValue("FeedbackLabel", "StatusMessage"));
-        jLabel3.setText(Languager.getTagValue("Tour", "DefaultMessage"));
+
+    private void setTextLanguage() {
+        jLabel1.setText(Languager.getTagValue(1, "FeedbackLabel", "StatusMessage"));
+        jLabel3.setText(Languager.getTagValue(1, "Tour", "DefaultMessage"));
     }
-    
-    private void visibility(boolean vsB)
-    {
+
+    private void visibility(boolean vsB) {
         this.setVisible(vsB);
         dispose();
-        this.setSize(new Dimension(550,57));
-        this.setPreferredSize(new Dimension(550,57));
+        this.setSize(new Dimension(550, 57));
+        this.setPreferredSize(new Dimension(550, 57));
         this.validate();
     }
-    
-    public boolean getActiveness()
-    {
+
+    public boolean getActiveness() {
         return isVisible();
     }
-    
-    private void autoHide()
-    {
+
+    private void autoHide() {
         Timer t = new Timer();
         t.schedule(new TimerTask() {
-
             @Override
             public void run() {
                 visibility(false);
             }
         }, 5000);
-        
+
     }
-    
-    private void setLocation()
-    {
+
+    private void setLocation() {
         GraphicsEnvironment ge = GraphicsEnvironment
-                        .getLocalGraphicsEnvironment();
+                .getLocalGraphicsEnvironment();
         Rectangle screenRect = ge.getMaximumWindowBounds();
         int posX = 0, posY = 0;
         boolean exception = false;
-        
-        try{
-            posY = Base.getMainWindow().getLocationOnScreen().y + Base.getMainWindow().getContentPane().getHeight()-50;
+
+        try {
+            posY = Base.getMainWindow().getLocationOnScreen().y + Base.getMainWindow().getContentPane().getHeight() - 50;
             posX = Base.getMainWindow().getLocationOnScreen().x + 220;
-        }catch(Exception e)
-        {
+        } catch (Exception e) {
             exception = true;
         }
-        
-        if(!exception)
-        {
-            if(Base.getMainWindow().getContentPane().getWidth() > 1050)
-            {
-                int witdh = Base.getMainWindow().getWidth()-450;
-                this.setSize(new Dimension(this.getWidth()+(witdh-this.getWidth()),this.getHeight()));
-                this.setPreferredSize(new Dimension(this.getWidth()+(witdh-this.getWidth()),this.getHeight()));
+
+        if (!exception) {
+            if (Base.getMainWindow().getContentPane().getWidth() > 1050) {
+                int witdh = Base.getMainWindow().getWidth() - 450;
+                this.setSize(new Dimension(this.getWidth() + (witdh - this.getWidth()), this.getHeight()));
+                this.setPreferredSize(new Dimension(this.getWidth() + (witdh - this.getWidth()), this.getHeight()));
                 this.validate();
             }
 
-            this.setLocation(posX,posY);
+            this.setLocation(posX, posY);
             setVisible(true);
         }
-        
+
     }
-    
-    public void setMessage(String message)
-    {
-        if(message.equals("collision"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageCollision"));
-        if(message.equals("notInBed"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotInBed"));
-        if(message.equals("maxVolume"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageMaxVolume"));
-        if(message.equals("outOfBounds"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageOutOfBounds"));
-        if(message.equals("importModel"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageImportModel"));
-        if(message.equals("saveScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageSaveScene"));
-        if(message.equals("loadScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageLocadScene"));  
-        if(message.equals("notSaveScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotSaveScene"));
-        if(message.equals("notLoadScene"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotLocadScene"));
-        if(message.equals("firstTime"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageFirstTime"));
-        if(message.equals("modelNotPicked"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageModelNotPicked"));
-        if(message.equals("gcodeGeneration"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "GCodeGeneration"));     
-        if(message.equals("btfDisconnect"))
-            jLabel3.setText(Languager.getTagValue("StatusMessages", "BTF_Disconnected"));    
-        if(message.equals("moving"))
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage2")); 
-        if(message.equals("modelMeshError"))
-            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "MeshError")); 
-        
+
+    public void setMessage(String message) {
+        if (message.equals("collision")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageCollision"));
+        }
+        if (message.equals("notInBed")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageNotInBed"));
+        }
+        if (message.equals("maxVolume")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageMaxVolume"));
+        }
+        if (message.equals("outOfBounds")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageOutOfBounds"));
+        }
+        if (message.equals("importModel")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageImportModel"));
+        }
+        if (message.equals("saveScene")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageSaveScene"));
+        }
+        if (message.equals("loadScene")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageLocadScene"));
+        }
+        if (message.equals("notSaveScene")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageNotSaveScene"));
+        }
+        if (message.equals("notLoadScene")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageNotLocadScene"));
+        }
+        if (message.equals("firstTime")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageFirstTime"));
+        }
+        if (message.equals("modelNotPicked")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageModelNotPicked"));
+        }
+        if (message.equals("gcodeGeneration")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "GCodeGeneration"));
+        }
+        if (message.equals("btfDisconnect")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "BTF_Disconnected"));
+        }
+        if (message.equals("btfPrinting")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "BTF_Printing"));
+        }
+        if (message.equals("moving")) {
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage2"));
+        }
+        if (message.equals("modelMeshError")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MeshError"));
+        }
+        if (message.equals("reinstallError")) {
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "ReinstallError"));
+        }
+
         autoHide();
         setLocation();
     }
-    
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -207,7 +216,6 @@ public class MessagesPopUp extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -1,21 +1,11 @@
 package replicatorg.machine;
 
-import javax.usb.UsbClaimException;
-import javax.usb.UsbDisconnectedException;
-import javax.usb.UsbException;
-import javax.usb.UsbNotActiveException;
 import org.w3c.dom.Node;
 
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.DriverQueryInterface;
-import replicatorg.drivers.RetryException;
-import replicatorg.drivers.SimulationDriver;
-import replicatorg.drivers.StopException;
-import replicatorg.drivers.VersionException;
 import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.Machine.JobTarget;
 import replicatorg.machine.model.MachineModel;
-import replicatorg.model.GCodeSource;
 import replicatorg.util.Point5d;
 
 /**
@@ -38,21 +28,10 @@ public interface MachineInterface {
 
     /**
      * Get the driver instance. Note that this interface will not be supported
-     * in the future; instead use getDriverQueryInterface() *
+     * in the future; instead use getDriver() *
      */
     //@Deprecated
     public Driver getDriver();
-
-    /**
-     * Get an interface to use to query the driver *
-     */
-    public DriverQueryInterface getDriverQueryInterface();
-
-    /**
-     * Get the simulation driver instance. Note that this interface will not be
-     * supported in the future *
-     */
-    public SimulationDriver getSimulatorDriver();
 
     /**
      * Dispose of this machine controller *
@@ -91,45 +70,10 @@ public interface MachineInterface {
     public String getMachineName();
 
     // Job level commands
-    /**
-     * Estimate the time required to process a job
-     *
-     * @param source GCode source of job to estimate
-     * @throws UsbException
-     * @throws UsbDisconnectedException
-     * @throws UsbNotActiveException
-     * @throws UsbClaimException
-     * @throws VersionException
-     * @throws StopException
-     * @throws RetryException
-     */
-    public void estimate(GCodeSource source) throws VersionException, UsbClaimException, UsbNotActiveException, UsbDisconnectedException, UsbException, RetryException, StopException;
-
-    /**
-     * Run the job in a simulator
-     */
-    /**
-     * Simulate the job on screen TODO: Pull this out of the driver and let the
-     * UI handle it.
-     *
-     * @param source
-     * @throws UsbException
-     * @throws UsbDisconnectedException
-     * @throws UsbNotActiveException
-     * @throws UsbClaimException
-     * @throws VersionException
-     * @throws StopException
-     * @throws RetryException
-     */
-    public void simulate(GCodeSource source) throws VersionException, UsbClaimException, UsbNotActiveException, UsbDisconnectedException, UsbException, RetryException, StopException;
 
     public boolean buildDirect(String arg);
 
     public boolean buildRemote(String remoteName);
-
-    public void buildToFile(GCodeSource source, String path);
-
-    public void upload(GCodeSource source, String remoteName);
 
     public void pause();
 

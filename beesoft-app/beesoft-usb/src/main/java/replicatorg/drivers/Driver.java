@@ -21,559 +21,552 @@
  along with this program; if not, write to the Free Software Foundation,
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 package replicatorg.drivers;
 
 import java.io.File;
-import java.util.EnumSet;
-
-import javax.vecmath.Point3d;
 
 import org.w3c.dom.Node;
-import replicatorg.app.Base;
 
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.util.AutonomousData;
-import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
-// import org.xml.sax.*;
-// import org.xml.sax.helpers.XMLReaderFactory;
-
+/**
+ * Driver interface with all methods definition.
+ */
 public interface Driver {
-	
-	/**
-	 * High level functions
-	 */
-
-	/**
-	 * parse and load configuration data from XML
-	 */
-	public void loadXML(Node xml);
-	
-	/**
-	 * Should we bypass the parser?
-	 * @return true if this driver executes GCodes directly, false if the parser should be used to exercise it's interface. 
-	 */
-	public boolean isPassthroughDriver();
-	
-	/**
-	 * Execute a line of GCode directly (ie, don't use the parser)
-	 * @param code The line of GCode that we should execute
-	 */
-	public void executeGCodeLine(String code);
-        
-        /**
-	 * Execute a line of GCode directly (ie, don't use the parser)
-	 * @param code The line of GCode that we should execute
-	 */
-        
-        public String dispatchCommand(String command);
-        public String dispatchCommand(String command, Enum comtype);
-        public int sendCommandBytes(byte[] next);  
-        
-        /**
-         * Transfer GCode in Autonomous mode
-         * @param gcode
-         * @return 
-         */
-        public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous); 
-        
-        /**
-         * GCode simple transfer without SDCard init and creation and set session variables 
-         * @param gcode
-         * @param psAutonomous
-         * @return 
-         */
-        public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous);
-        
-        /**
-         * Start autonomous print
-         * @return 
-         */
-        public String startPrintAutonomous();
-        
-        /**
-         * Return a data structure of 5 elements of an autonomous print session
-         * @return 
-         */
-        public AutonomousData getPrintSessionsVariables();
-        
-        /**
-         * Get GCode percentage completed
-         * @return 
-         */
-        public double getTransferPercentage();
-        
-        /**
-	 * Read answer from USB Line
-	 */
-	public double read();
-        
-        /**
-         * Read offset value from flash
-         * @return Z value
-         */
-        public void readZValue();
-        
-        /**
-         * Control cancel operation on UI to abort driver operations
-         * @param errorOccured 
-         */
-        public void setDriverError(boolean errorOccured);
-        public boolean isDriverError();
-        
-        /**
-         * Return if BEESOFT is in transfer mode
-         * @return boolean indicating if it is in transfer mode
-         */
-        public boolean isTransferMode();
-        
-        /**
-         * Stores the BEECODE/COIL CODE/Fillament Code in the printer.
-         * 
-         * coilCode is AXXX printer stores return AXXX
-         * @param coilCode 
-         */        
-        public void setCoilCode(String coilCode);
-        
-        /**
-         * Return the BEECODE/COILCODE/Filament Code in the printer.
-         * coilCode is AXXX printer stores return AXXX
-         * @return 
-         */
-        public void updateCoilCode();
-        
-        
-        public String readResponse();
-        
-        /**
-	 * Get Total Extruded Value
-	 */
-        public double getTotalExtrudedValue();
-        
-        /**
-         * Get Firmware version
-         * @return 
-         */
-        public String getFirmwareVersion();
-
-        /**
-         * Get Bootloader version
-         * @return 
-         */
-        public String getBootloaderVersion();
-
-        /**
-         * Get SerialNumber version
-         * @return 
-         */
-        public String getSerialNumber();
-        
-        /**
-	 * Resets extrusion variables
-	 */
-         public void resetExtrudeSession();
-        
-	/**
-	 * are we finished with the last command?
-	 */
-	public boolean isFinished();
-
-	/**
-	 * Is our buffer empty? If don't have a buffer, its always true.
-	 */
-	public boolean isBufferEmpty();
-	
-        /**
-         * Checks if BTF in bootloader
-         * @return 
-         */
-        public boolean isBootloader();
-        
-        /**
-         * Checks if BTF was restart with BEESOFT opened
-         * @return 
-         */
-        public boolean printerRestarted();
-	
-        public void hiccup();
-        
-        public void hiccup(int mili, int nano);
-        
-	/**
-	 * Check that the communication line is still up, the machine is still connected,
-	 * and that the machine state is still good.
-	 * TODO: Rename this? 
-	 * @return 
-	 */
-	public void assessState();
-	
-	/**
-	 * Check if the device has reported an error
-	 * @return True if there is an error waiting.
-	 */
-	public boolean hasError();
-
-	/**
-	 * Get a string message for the first driver error.
-	 * @return
-	 */
-	public DriverError getError();
-	
-	/**
-	 * do we have any errors? this method handles them.
-	 */
-	public void checkErrors() throws BuildFailureException;
-
-	/**
-	 * setup our driver for use.
-	 */
-	public void initialize() throws VersionException;
-		
-	/**
-	 * uninitializes driver (disconnects from machine)
-	 */
-	public void uninitialize();
-
-	/**
-	 * See if the driver has been successfully initialized.
-	 * 
-	 * @return true if the driver is initialized
-	 */
-	public boolean isInitialized();
-
-	/**
-	 * clean up the driver
-	 */
-	public void dispose();
-
-	/***************************************************************************
-	 * Machine interface functions
-	 **************************************************************************/
-	public MachineModel getMachine();
-
-	public void setMachine(MachineModel m);
-
-	/**
-	 * get version, driver and firmware name information
-	 */
-	public String getDriverName(); 
-
-	public String getFirmwareInfo();
-
-	public Version getVersion();
-	
-	/**
-	 * set driver name information
-	 */
-	public void setDriverName(String name);
-	
-	/** Called at regular intervals when under manual control. Allows insertion of 
-	 * machine-specific logic into each manual control panel update. 
-	 * @throws InterruptedException */
-	public void updateManualControl();
-
-	public Version getMinimumVersion();
-	
-	public Version getPreferredVersion();
-	
-	/**
-	 * Positioning Methods
-	 */
-	/**
-	 * Tell the machine to consider its current position as being at p. Should
-	 * not move the machine position.
-	 * 
-	 * @param p
-	 *            the point to map the current position to
-	 * @throws RetryException 
-	 */
-	public void setCurrentPosition(Point5d p) throws RetryException;
-
-	/** 
-	 * Tell the machine to record it's current position into storage 
-	 */
-	public void storeHomePositions(EnumSet<AxisId> axes) throws RetryException;
-	
-	/** 
-	 * Tell the machine to restore it's current position from storage 
-	 */
-	public void recallHomePositions(EnumSet<AxisId> axes) throws RetryException;
-	
-	/**
-	 * @return true if the machine position is unknown
-	 */
-	public boolean positionLost();
-	
-	/**
-	 * Get the current machine position
-	 * @param update True if the driver should be forced to query the machine
-	 * for its position, instead of using the cached value.
-	 * @return
-	 */
-	public Point5d getCurrentPosition(boolean update);
-
-	/**
-	 * Indicate that the currently maintained position may no longer be the machine's position,
-	 * and that the machine should be queried for its actual location.
-	 */
-	void invalidatePosition();
-
-	/**
-	 * Queue the next point to move to.
-	 * @param p The location to move to, in mm.
-	 * @throws RetryException 
-	 */
-	public void queuePoint(Point5d p) throws RetryException;
-
-	public Point3d getOffset(int i);
-
-	public void setOffsetX(int i, double j);
-
-	public void setOffsetY(int i, double j);
-
-	public void setOffsetZ(int i, double j);
-
-	public Point5d getPosition();
-        
-        
-
-	/**
-	 * Tool methods
-	 * @throws RetryException 
-	 */
-	public void requestToolChange(int toolIndex, int timeout) throws RetryException;
-
-	public void selectTool(int toolIndex) throws RetryException;
-
-	/**
-	 * sets the feedrate in mm/minute
-	 */
-	public void setFeedrate(double feed);
-
-	/**
-	 * sets the feedrate in mm/minute
-	 */
-	public double getCurrentFeedrate();
-
-	/**
-	 * Home the given set of axes at the given feedrate.  If the feedrate is <=0, run at
-	 * maximum feedrate for the appropriate axes.
-	 * @throws RetryException 
-	 */
-	public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException;
-
-	/**
-	 * delay / pause function
-	 * @throws RetryException 
-	 */
-	public void delay(long millis) throws RetryException;
-
-	/**
-	 * functions for dealing with clamps
-	 */
-	public void openClamp(int clampIndex);
-
-	public void closeClamp(int clampIndex);
-
-	/**
-	 * enabling/disabling our drivers (steppers, servos, etc.)
-	 * @throws RetryException 
-	 */
-	public void enableDrives() throws RetryException;
-
-	public void disableDrives() throws RetryException;
-
-	/**
-	 * enabling/disabling our drivers for individual axes. A disabled axis is
-	 * generally able to move freely, while an enabled axis is clamped.
-	 * @throws RetryException
-	 */
-	public void enableAxes(EnumSet<AxisId> axes) throws RetryException;
-	
-	public void disableAxes(EnumSet<AxisId> axes) throws RetryException;
-	
-	/**
-	 * change our gear ratio
-	 */
-	public void changeGearRatio(int ratioIndex);
-	
-	public void readToolStatus();
-	
-	public int getToolStatus();
-
-	/***************************************************************************
-	 * Motor interface functions
-	 **************************************************************************/
-	public void setMotorDirection(int dir);
-
-	public void setMotorRPM(double rpm) throws RetryException;
-
-	public void setMotorSpeedPWM(int pwm) throws RetryException;
-
-	public double getMotorRPM();
-
-	public int getMotorSpeedPWM();
-
-	/**
-	 * Enable motor until stopped by disableMotor
-	 * @throws RetryException 
-	 */
-	public void enableMotor() throws RetryException;
-
-	/**
-	 * Enable motor for a fixed duration, then disable
-	 * @throws RetryException 
-	 */
-	public void enableMotor(long millis) throws RetryException;
-
-	public void disableMotor() throws RetryException;
-
-	/***************************************************************************
-	 * Spindle interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setSpindleRPM(double rpm) throws RetryException;
-
-	public void setSpindleSpeedPWM(int pwm) throws RetryException;
-
-	public void setSpindleDirection(int dir);
-
-	public double getSpindleRPM();
-
-	public int getSpindleSpeedPWM();
-
-	public void enableSpindle() throws RetryException;
-
-	public void disableSpindle() throws RetryException;
-
-	/***************************************************************************
-	 * Temperature interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setTemperature(double temperature) throws RetryException;
-	
-	public void readTemperature();
-	
-	public double getTemperature();
-	
-	public double getTemperatureSetting();
-	
-	/***************************************************************************
-	 * Platform Temperature interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setPlatformTemperature(double temperature) throws RetryException;
-	
-	public void readPlatformTemperature();
-	
-	public double getPlatformTemperature();
-
-	public double getPlatformTemperatureSetting();
-
-	/***************************************************************************
-	 * Build chamber interface functions
-	 **************************************************************************/
-	public void setChamberTemperature(double temperature);
-	
-	public void readChamberTemperature();
-	
-	public double getChamberTemperature();
-
-	/***************************************************************************
-	 * Flood Coolant interface functions
-	 **************************************************************************/
-	public void enableFloodCoolant();
-
-	public void disableFloodCoolant();
-
-	/***************************************************************************
-	 * Mist Coolant interface functions
-	 **************************************************************************/
-	public void enableMistCoolant();
-
-	public void disableMistCoolant();
-
-	/***************************************************************************
-	 * Fan interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void enableFan() throws RetryException;
-
-	public void disableFan() throws RetryException;
-
-	
-	/***************************************************************************
-	 * abp interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException;
-	
-	/***************************************************************************
-	 * Valve interface functions
-	 * @throws RetryException 
-	 **************************************************************************/
-	public void openValve() throws RetryException;
-
-	public void closeValve() throws RetryException;
-
-	/***************************************************************************
-	 * Collet interface functions
-	 **************************************************************************/
-	public void openCollet();
-
-	public void closeCollet();
-
-	/***************************************************************************
-	 * Pause/unpause functionality for asynchronous devices
-	 **************************************************************************/
-	public void pause();
-
-	public void unpause();
-
-	/***************************************************************************
-	 * Stop and system state reset
-	 **************************************************************************/
-	/** Stop the motion of the machine. A normal stop will merely halt all steppers.
-	 * An abort (a stop with the abort bit set true) will also instruct the machine
-	 * to stop all subsystems and toolhead.
-	 */
-	public void stop(boolean abort);
-
-	public boolean hasSoftStop();
-
-	public boolean hasEmergencyStop();
-	
-	public void reset();
-
-	/***************************************************************************
-	 * Heartbeat
-	 **************************************************************************/
-	public boolean heartbeat();
 
+    /**
+     * Loads a machine XML to load the driver params.
+     *
+     * @param xml Machine XML file.
+     */
+    public void loadXML(Node xml);
+
+    /**
+     * Should we bypass the parser?
+     *
+     * @return true if this driver executes GCodes directly, false if the parser
+     * should be used to exercise it's interface.
+     */
+    public boolean isPassthroughDriver();
+
+    /**
+     * Execute a line of GCode directly (ie, don't use the parser)
+     *
+     * @param code The line of GCode that we should execute
+     */
+    public void executeGCodeLine(String code);
+
+    /**
+     * Execute a line of GCode directly (ie, don't use the parser)
+     *
+     * @param code The line of GCode that we should execute
+     */
+    public String dispatchCommand(String command);
+
+    /**
+     * Dispatch a command to the Driver agent.
+     *
+     * @param command Command as a string. '\n' is inserted in this method.
+     * @param comtype Type of communication we want to do (e.g - with or withoud
+     * answer)
+     * @return answer for the command sent
+     */
+    public String dispatchCommand(String command, Enum comtype);
+
+    /**
+     * Dispatch a command to the Driver agent in byte[] instead of string.
+     *
+     * @param next message byte[]
+     * @return number of bytes written into endpoint buffer
+     */
+    public int sendCommandBytes(byte[] next);
+
+    /**
+     * Transfer a GCode file content.
+     *
+     * @param gcode GCode file
+     * @param estimatedTime Estimated time for print duration
+     * @param nLines Number of lines of GCode file
+     * @param psAutonomous Autonomous agent that handles print with autonomy
+     * @return error or success message
+     */
+    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous);
+
+    /**
+     * Transfer a GCode file content - simple transfer.
+     *
+     * @param gcode GCode file
+     * @param psAutonomous Autonomous agent that handles print with autonomy
+     * @return error or success message
+     */
+    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous);
+
+    /**
+     * Start print via Autonomous mode.
+     *
+     * @return
+     */
+    public String startPrintAutonomous();
+
+    /**
+     * Get print session variables during autonomous print.
+     *
+     * @return AutonomousData structure with all variables.
+     */
+    public AutonomousData getPrintSessionsVariables();
+
+    /**
+     * Getter for current transfer percentage during a transfer.
+     *
+     * @return transfer percentage during a transfer.
+     */
+    public double getTransferPercentage();
+
+    /**
+     * Read machine temperature.
+     *
+     * @return actual temperature
+     */
+    public double read();
+
+    /**
+     * Read offset value from flash
+     */
+    public void readZValue();
+
+    /**
+     * Control cancel operation on UI to abort driver operations
+     *
+     * @param errorOccured type of error
+     */
+    public void setDriverError(boolean errorOccured);
+
+    /**
+     * Checks if driver is at a error condition.
+     *
+     * @return <li> true, if an error occured
+     * <li> false, if is all ok
+     */
+    public boolean isDriverError();
+
+    /**
+     * Returns if BEESOFT is in transfer mode
+     *
+     * @return boolean indicating if it is in transfer mode
+     */
+    public boolean isTransferMode();
+
+    /**
+     * Stores the BEECODE/COIL CODE/Fillament Code in the printer.
+     *
+     * coilCode is AXXX printer stores return AXXX
+     *
+     * @param coilCode code to be set on the printer
+     */
+    public void setCoilCode(String coilCode);
+
+    /**
+     * Return the BEECODE/COILCODE/Filament Code in the printer. coilCode is
+     * AXXX printer stores return AXXX.
+     */
+    public void updateCoilCode();
+
+    /**
+     * Read data from the read endpoint.
+     *
+     * @return data available at the endpoint
+     */
+    public String readResponse();
+
+    /**
+     * Get Total Extruded Value since filament change.
+     */
+    public double getTotalExtrudedValue();
+
+    /**
+     * Get Firmware version.
+     *
+     * @return x.yy.z
+     */
+    public String getFirmwareVersion();
+
+    /**
+     * Get Bootloader version.
+     *
+     * @return x.yy.z
+     */
+    public String getBootloaderVersion();
+
+    /**
+     * Get SerialNumber version
+     *
+     * @return xxxxxxxxxx - 10 digits
+     */
+    public String getSerialNumber();
+
+    /**
+     * Resets extrusion variables.
+     */
+    public void resetExtrudeSession();
+
+    /**
+     * Checks if we finished with the last command.
+     *
+     * @return <li> true, if last command was processed
+     * <li> false, if not.
+     */
+    public boolean isFinished();
+
+    /**
+     * Is our buffer empty? If don't have a buffer, its always true.
+     *
+     * @return <li> true, if buffer is empty
+     * <li> false, if not.
+     */
+    public boolean isBufferEmpty();
+
+    /**
+     * Checks if printer is in bootloader
+     *
+     * @return <li> true, if printer answers as bootloader
+     * <li> false, if not.
+     */
+    public boolean isBootloader();
+
+    /**
+     * Holds BEESOFT for 1 nano.
+     */
+    public void hiccup();
+
+    /**
+     * Holds BEESOFT for a period of mili and nano.
+     *
+     * @param mili miliseconds for application to be held
+     * @param nano nanoseconds for application to be held
+     */
+    public void hiccup(int mili, int nano);
+
+    /**
+     * Check that the communication line is still up, the machine is still
+     * connected, and that the machine state is still good.
+     */
+    public void assessState();
+
+    /**
+     * Check if the device has reported an error
+     *
+     * @return <li> true, if driver as an error
+     * <li> false, if not.
+     */
+    public boolean hasError();
+
+    /**
+     * Get a string message for the first driver error.
+     *
+     * @return DriverError type.
+     */
+    public DriverError getError();
+
+    /**
+     * Checks for errors and handles them.
+     *
+     * @throws BuildFailureException exception due bad BEESOFT driver build
+     */
+    public void checkErrors() throws BuildFailureException;
+
+    /**
+     * Setups driver for use.
+     *
+     * @throws VersionException exception due driver version
+     */
+    public void initialize() throws VersionException;
+
+    /**
+     * Uninitializes driver (disconnects from machine).
+     */
+    public void uninitialize();
+
+    /**
+     * See if the driver has been successfully initialized.
+     *
+     * @return <li >true if the driver is initialized
+     * <li> false, if not
+     */
+    public boolean isInitialized();
+
+    /**
+     * Clean up the driver.
+     */
+    public void dispose();
+
+    /**
+     * Get Machine object that handles BEESOFT.
+     *
+     * @return the current and only machine object
+     */
+    public MachineModel getMachine();
+
+    /**
+     * Sets machine agent through the machine model.
+     *
+     * @param m machine configuration.
+     */
+    public void setMachine(MachineModel m);
+
+    /**
+     * Get version, driver and firmware name information.
+     *
+     * @return Driver name as a string
+     */
+    public String getDriverName();
+
+    /**
+     * Gets firmware version
+     *
+     * @return firmware version as a string
+     */
+    public String getFirmwareInfo();
+
+    /**
+     * Gets firmware version.
+     *
+     * @return firmware version as a Version object to be comparable easily.
+     */
+    public Version getVersion();
+
+    /**
+     * Set driver name information.
+     *
+     * @param name Driver name.
+     */
+    public void setDriverName(String name);
+
+    /**
+     * Called at regular intervals when under manual control. Allows insertion
+     * of machine-specific logic into each manual control panel update.
+     */
+    public void updateManualControl();
+
+    /**
+     * Gets minimum version accepted to be in the printer.
+     *
+     * @return lowest version accepted
+     */
+    public Version getMinimumVersion();
+
+    /**
+     * Gets prefered version accepted to be in the printer.
+     *
+     * @return prefered version accepted
+     */
+    public Version getPreferredVersion();
+
+    /**
+     * Tell the machine to consider its current position as being at p. Should
+     * not move the machine position.
+     *
+     * @param p the point to map the current position to
+     * @throws RetryException
+     */
+    public void setCurrentPosition(Point5d p) throws RetryException;
+
+    /**
+     * Checks if the machine is lost in space.
+     *
+     * @return <li> true, if doesn't know the current position
+     * <li> false, if not.
+     */
+    public boolean positionLost();
+
+    /**
+     * Get the current machine position
+     *
+     * @param update True if the driver should be forced to query the machine
+     * for its position, instead of using the cached value.
+     * @return 5D point with all coordinates.
+     */
+    public Point5d getCurrentPosition(boolean update);
+
+    /**
+     * Indicate that the currently maintained position may no longer be the
+     * machine's position, and that the machine should be queried for its actual
+     * location.
+     */
+    void invalidatePosition();
+
+    /**
+     * Queue the next point to move to.
+     *
+     * @param p The location to move to, in mm.
+     * @throws RetryException exception due queue attempts
+     */
+    public void queuePoint(Point5d p) throws RetryException;
+
+    /**
+     * Get the current machine position - bypass version of getCurrentPosition
+     *
+     * @return 5D point with all coordinates.
+     */
+    public Point5d getPosition();
+
+    /**
+     * Sets the feedrate in mm/minute
+     *
+     * @param feed motor speed
+     */
+    public void setFeedrate(double feed);
+
+    /**
+     * Gets the feedrate in mm/minute
+     *
+     * @return current feedrate
+     */
+    public double getCurrentFeedrate();
+
+    /**
+     * Sets machine temperature.
+     *
+     * @param temperature Goal temperature
+     * @throws RetryException
+     */
+    public void setTemperature(double temperature) throws RetryException;
+
+    /**
+     * Read temperature from machine and updates internal variable.
+     */
+    public void readTemperature();
+
+    /**
+     * Reads temperature variable.
+     *
+     * @return actual machine temperature after synchronization
+     */
+    public double getTemperature();
+
+    /**
+     * Reads status from machine.
+     */
     public void readStatus();
 
+    /**
+     * Sets if machine is busy - software side
+     *
+     * @param machineBusy <li> true, if machine is busy
+     * <false> to free busy state
+     */
     public void setBusy(boolean machineBusy);
 
+    /**
+     * Listener for main window buttons
+     *
+     * @param buttons object that handles main window buttons
+     */
     public void addMachineListener(ButtonsPanel buttons);
 
+    /**
+     * Sets Autonomous state.
+     *
+     * @param b <li> true, if machine is in autonomy mode
+     * <false> false, to free autonomy mode
+     */
     public void setAutonomous(boolean b);
-    
-    public void stopTransfer();
-    
-    public boolean isAutonomous();
-    
-    public int getLastLineNumber();
 
+    /**
+     * Stops current gcode transfer.
+     */
+    public void stopTransfer();
+
+    /**
+     * Checks if machine is in autonomy mode.
+     *
+     * @return <li> true, if so
+     * <li> false if not
+     */
+    public boolean isAutonomous();
+
+    /**
+     * Checks if machine is in shutdown mode.
+     *
+     * @return <li> true, if so
+     * <li> false if not
+     */
+    public boolean isONShutdown();
+
+    /**
+     * Gets last line number of the gcode processed in firmware (autonomy).
+     *
+     * @return last executed command line number
+     */
     public void readLastLineNumber();
 
+    /**
+     * Get the current machine position more directly than other 2 methods.
+     *
+     * @return 5D point with all coordinates.
+     */
     public Point5d getActualPosition();
-    
-    public String setElapsedTime(long time);
-    
 
+    /**
+     * Get the machine position when shutdown was order.
+     *
+     * @return 5D point with all coordinates.
+     */
+    public Point5d getShutdownPosition();
+
+    /**
+     * Sets elapsed time for pause feature.
+     *
+     * @param time long time until now.
+     * @return answer if set went ok
+     */
+    public String setElapsedTime(long time);
+
+    /**
+     * Sets if machine is ready - firmware side
+     *
+     * @param b <li> true, if machine is ready
+     * <li> false,if not
+     */
+    public void setMachineReady(boolean b);
+
+    /**
+     * Checks if machine is ready - firmware side.
+     *
+     * @return <true> if machine ready
+     * <false> if not
+     */
+    public boolean getMachineStatus();
+
+    /**
+     * Checks if machine is ready - firmware side.
+     *
+     * @return <li> true, if so
+     * <li> false if not
+     */
+    public boolean isReady(boolean forceCheck);
+
+    /**
+     * Checks if machine is busy - software side.
+     *
+     * @return <li> true, if so
+     * <li> false if not
+     */
+    public boolean isBusy();
+
+    /**
+     * Set machine temperature to 0.
+     */
+    public void resetToolTemperature();
+
+    /**
+     * Returns coil code.
+     *
+     * @return string containing coil code: Axxxx
+     */
+    public String getCoilCode();
 }

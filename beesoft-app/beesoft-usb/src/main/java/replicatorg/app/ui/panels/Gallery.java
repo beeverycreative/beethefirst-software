@@ -99,18 +99,18 @@ public class Gallery extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("ApplicationMenus", "Gallery").toUpperCase());
-        jLabel3.setText(Languager.getTagValue("Gallery", "All"));
-        jLabel45.setText(Languager.getTagValue("Gallery", "Model_Rename"));
-        jLabel5.setText(Languager.getTagValue("Gallery", "ModelCategory_title"));
-        jLabel6.setText(Languager.getTagValue("Gallery", "ModelProperties_title").toUpperCase());
-        jLabel7.setText(Languager.getTagValue("Gallery", "Model_Name"));
-        jLabel8.setText(Languager.getTagValue("Gallery", "Model_Description"));
-        jLabel9.setText(Languager.getTagValue("Gallery", "EraseModel"));
-        jLabel24.setText(Languager.getTagValue("OptionPaneButtons", "Line9"));
-        jLabel27.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        jLabel29.setText(Languager.getTagValue("OptionPaneButtons", "Line8"));
-        jTextField1.setText(Languager.getTagValue("Gallery", "SearchModels_text_bar"));
+        jLabel1.setText(Languager.getTagValue(1, "ApplicationMenus", "Gallery").toUpperCase());
+        jLabel3.setText(Languager.getTagValue(1, "Gallery", "All"));
+        jLabel45.setText(Languager.getTagValue(1, "Gallery", "Model_Rename"));
+        jLabel5.setText(Languager.getTagValue(1, "Gallery", "ModelCategory_title"));
+        jLabel6.setText(Languager.getTagValue(1, "Gallery", "ModelProperties_title").toUpperCase());
+        jLabel7.setText(Languager.getTagValue(1, "Gallery", "Model_Name"));
+        jLabel8.setText(Languager.getTagValue(1, "Gallery", "Model_Description"));
+        jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseModel"));
+        jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line9"));
+        jLabel27.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel29.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line8"));
+        jTextField1.setText(Languager.getTagValue(1, "Gallery", "SearchModels_text_bar"));
 
     }
 
@@ -144,9 +144,9 @@ public class Gallery extends javax.swing.JFrame {
             listModel.addElement(categories[i]);
         }
 
-        String[] categories2 = {Languager.getTagValue("Gallery", "All"),
-            Languager.getTagValue("Gallery", "Models"),
-            Languager.getTagValue("Gallery", "Scene")};
+        String[] categories2 = {Languager.getTagValue(1, "Gallery", "All"),
+            Languager.getTagValue(1, "Gallery", "Models"),
+            Languager.getTagValue(1, "Gallery", "Scene")};
         comboModel = new DefaultComboBoxModel(categories2);
         jComboBox1.setModel(comboModel);
         jComboBox1.setSelectedIndex(0);
@@ -165,7 +165,9 @@ public class Gallery extends javax.swing.JFrame {
             jLabel37, jLabel38, jLabel39,
             jLabel40};
 
-        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+        if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+            Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+        }
         resetModelsView(1);
         fullfillModelsSlots(1);
     }
@@ -379,66 +381,51 @@ public class Gallery extends javax.swing.JFrame {
         mWindow.getButtons().updatePressedStateButton("models");
         mWindow.setEnabled(true);
         Base.bringAllWindowsToFront();
-
     }
-    
-    
+
     private void evaluatePickedModel(int modelID) {
-        
+
         String fileName = getPickedFileName(modelID);
-        
-        if(fileName != null)
-        {
-            if(fileName.toLowerCase().contains(".stl"))
-            {
+
+        if (fileName != null) {
+            if (fileName.toLowerCase().contains(".stl")) {
                 extension = ".stl";
-                jLabel9.setText(Languager.getTagValue("Gallery", "EraseModel"));
+                jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseModel"));
                 enableProperties(false);
-            }
-            else
-            {
+            } else {
                 extension = ".bee";
-                jLabel9.setText(Languager.getTagValue("Gallery", "EraseScene"));
+                jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseScene"));
                 enableProperties(true);
             }
         }
     }
-    
-    private String getPickedFileName(int ID)
-    {
-        
-        if(ID == 12)
-        {
+
+    private String getPickedFileName(int ID) {
+
+        if (ID == 12) {
             return modelsPerCategoryNames[0].getText();
         }
-        if(ID == 16)
-        {
+        if (ID == 16) {
             return modelsPerCategoryNames[1].getText();
         }
-        if(ID == 17)
-        {
+        if (ID == 17) {
             return modelsPerCategoryNames[2].getText();
         }
-        if(ID == 18)
-        {
+        if (ID == 18) {
             return modelsPerCategoryNames[3].getText();
-        }     
-        if(ID == 21)
-        {
+        }
+        if (ID == 21) {
             return modelsPerCategoryNames[4].getText();
         }
-        if(ID == 22)
-        {
+        if (ID == 22) {
             return modelsPerCategoryNames[5].getText();
         }
-        if(ID == 23)
-        {
+        if (ID == 23) {
             return modelsPerCategoryNames[6].getText();
         }
-        if(ID == 28)
-        {
+        if (ID == 28) {
             return modelsPerCategoryNames[7].getText();
-        }            
+        }
         return null;
     }
 
@@ -1081,22 +1068,25 @@ public class Gallery extends javax.swing.JFrame {
 
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));
         jPanel5.setMinimumSize(new java.awt.Dimension(20, 40));
+        jPanel5.setPreferredSize(new java.awt.Dimension(256, 46));
 
+        jLabel24.setForeground(new java.awt.Color(0, 0, 0));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel24.setText("OK");
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel24.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel24MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel24MouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel24MouseExited(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel24MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel24MousePressed(evt);
             }
         });
 
+        jLabel27.setForeground(new java.awt.Color(0, 0, 0));
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel27.setText("CANCELAR");
         jLabel27.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1112,6 +1102,7 @@ public class Gallery extends javax.swing.JFrame {
             }
         });
 
+        jLabel29.setForeground(new java.awt.Color(0, 0, 0));
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel29.setText("APPLY");
         jLabel29.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1134,11 +1125,11 @@ public class Gallery extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel29)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 741, Short.MAX_VALUE)
                 .addComponent(jLabel27)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel24)
-                .addGap(12, 12, 12))
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1156,14 +1147,14 @@ public class Gallery extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 991, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -1255,24 +1246,24 @@ public class Gallery extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel45MouseExited
 
     private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        if (comboModel.getSelectedItem().equals(Languager.getTagValue("Gallery", "Models"))) {
-            jLabel3.setText(Languager.getTagValue("Gallery", "Models"));
+        if (comboModel.getSelectedItem().equals(Languager.getTagValue(1, "Gallery", "Models"))) {
+            jLabel3.setText(Languager.getTagValue(1, "Gallery", "Models"));
             extension = ".stl";
             unpickModels("");
             resetModelsView(1);
             fullfillModelsSlots(1);
             enableProperties(false);
-            jLabel9.setText(Languager.getTagValue("Gallery", "EraseModel"));
-        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue("Gallery", "Scene"))) {
-            jLabel3.setText(Languager.getTagValue("Gallery", "Scene"));
+            jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseModel"));
+        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue(1, "Gallery", "Scene"))) {
+            jLabel3.setText(Languager.getTagValue(1, "Gallery", "Scene"));
             extension = ".bee";
             unpickModels("");
             resetModelsView(1);
             fullfillModelsSlots(1);
             enableProperties(true);
-            jLabel9.setText(Languager.getTagValue("Gallery", "EraseScene"));
-        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue("Gallery", "All"))) {
-            jLabel3.setText(Languager.getTagValue("Gallery", "All"));
+            jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseScene"));
+        } else if (comboModel.getSelectedItem().equals(Languager.getTagValue(1, "Gallery", "All"))) {
+            jLabel3.setText(Languager.getTagValue(1, "Gallery", "All"));
             extension = "all";
             unpickModels("");
             resetModelsView(1);
@@ -1295,7 +1286,7 @@ public class Gallery extends javax.swing.JFrame {
             if (!modelPressed.equals("")) {
                 mWindow.getBed().addSTL(new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + modelPressed));
                 mWindow.getBed().getModels().get(Base.getMainWindow().getBed().getModels().size() - 1).getEditer().centerAndToBed();
-
+//                Base.getMainWindow().getBed().getModels().get(Base.getMainWindow().getBed().getModels().size()-1).getEditer().center();
                 mWindow.getCanvas().updateBed(Base.getMainWindow().getBed());
                 mWindow.showFeedBackMessage("importModel");
                 mWindow.getBed().setGcodeOK(false);
@@ -1457,9 +1448,8 @@ public class Gallery extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel28MousePressed
 
     private void jLabel27MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel27MousePressed
-       doExit();
+        doExit();
     }//GEN-LAST:event_jLabel27MousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
@@ -1518,5 +1508,4 @@ public class Gallery extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
-
 }

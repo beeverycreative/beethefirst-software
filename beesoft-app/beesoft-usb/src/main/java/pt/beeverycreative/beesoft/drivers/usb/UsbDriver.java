@@ -73,19 +73,19 @@ public class UsbDriver extends DriverBaseImplementation {
     private double totalExtrudedDistance = 0;
     private double extruderLimit = 100000; // average string lenght/bobine 105 +- 10 meters
     protected boolean transferMode = false;
+    protected boolean isONShutdown = false;
 
     /**
+     * USBDriver high level definition.
      *
-     * @throws SecurityException
-     * @throws UsbException
-     * @throws UnsupportedEncodingException
-     * @throws UsbDisconnectedException
      */
     protected UsbDriver() {
     }
 
     /**
-     * @param xml
+     * Loads machine xml.
+     *
+     * @param xml XML file with machine properties.
      */
     public void loadXml(Node xml) {
         super.loadXML(xml);
@@ -115,12 +115,11 @@ public class UsbDriver extends DriverBaseImplementation {
          */
         if (command.contains("G1") && command.contains("E")) // Movement and extrusion command
         {
-            int indexDot= command.indexOf(";");
-            if(indexDot > 0)
-            {
-                command = command.substring(0,indexDot);
+            int indexDot = command.indexOf(";");
+            if (indexDot > 0) {
+                command = command.substring(0, indexDot);
             }
-            
+
             c_Value = Double.parseDouble(command.split("E")[1].split("N")[0]); // Gets E value  
             if (c_Value > extrudedDistance) // Compares E value with previous stored for update 
             {
@@ -154,7 +153,7 @@ public class UsbDriver extends DriverBaseImplementation {
     }
 
     /**
-     * Resets extrusion variables
+     * Resets extrusion variables.
      */
     @Override
     public void resetExtrudeSession() {
@@ -163,7 +162,7 @@ public class UsbDriver extends DriverBaseImplementation {
     }
 
     /**
-     * Returns totalExtrudedValue
+     * Returns totalExtrudedValue.
      *
      * @return extrudedValue
      */
@@ -171,6 +170,11 @@ public class UsbDriver extends DriverBaseImplementation {
         return totalExtrudedDistance;
     }
 
+    /**
+     * Inits USB device.
+     *
+     * @param device USB device from descriptor.
+     */
     public void InitUsbDevice(UsbDevice device) {
 
         try {
@@ -209,7 +213,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         Base.writeLog(SerialNumberString);
 
                     }//else{System.out.println("No need for else.");}
-                } 
+                }
                 if (idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID) {
 
                     String manufacturerString = device.getManufacturerString();
@@ -238,6 +242,9 @@ public class UsbDriver extends DriverBaseImplementation {
         }
     }
 
+    /**
+     * Scans descriptor and inits usb device if match.
+     */
     public void InitUsbDevice() {
         m_usbDeviceList.clear();
 
@@ -286,9 +293,15 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("Failed to find USB device.");
             setInitialized(false);
         }
-        
+
     }
 
+    /**
+     * Checks if device is connected.
+     *
+     * @return <li> true, if it is connected.
+     * <li> false, if not.
+     */
     public boolean deviceFound() {
         if (m_usbDevice == null) {
             Base.writeLog("USB Device not found");
@@ -316,11 +329,17 @@ public class UsbDriver extends DriverBaseImplementation {
         return true;
     }
 
+    /**
+     * Gets pipe from a USB device
+     *
+     * @param device USB device connected.
+     * @return USB Pipes with Endpoints set.
+     */
     protected UsbPipes GetPipe(UsbDevice device) {
         UsbConfiguration config = device.getActiveUsbConfiguration();
         if (pipes == null || !testPipes(pipes)) {
             pipes = new UsbPipes();
-            
+
         } else {
             return pipes;
         }
@@ -350,7 +369,7 @@ public class UsbDriver extends DriverBaseImplementation {
             if (pipes.getUsbPipeRead() != null && pipes.getUsbPipeWrite() != null) {
 
 //                if (testPipes(pipes)) {
-                    return pipes;
+                return pipes;
 //                } else {
 //                    continue;
 //                }
@@ -363,63 +382,15 @@ public class UsbDriver extends DriverBaseImplementation {
 
         return null;
     }
-    
-    protected UsbPipes GetPipeWOTest(UsbDevice device) {
-        UsbConfiguration config = device.getActiveUsbConfiguration();
-        if (pipes == null) {
-            pipes = new UsbPipes();
-        } else {
-            return pipes;
-        }
-        List interfaces = config.getUsbInterfaces();
-        for (Object ifaceObj : interfaces) {
-            UsbInterface iface = (UsbInterface) ifaceObj;
-            if (iface.isClaimed() || !iface.isActive()) {
-                continue;
-            }
 
-            List endpoints = iface.getUsbEndpoints();
-            for (Object endpointObj : endpoints) {
-                UsbEndpoint endpoint = (UsbEndpoint) endpointObj;
-
-                if (endpoint.getType() != UsbConst.ENDPOINT_TYPE_BULK) {
-                    continue;
-                }
-
-                if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_OUT) {
-                    this.pipes.setUsbPipeWrite(endpoint.getUsbPipe());
-                }
-
-                if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_IN) {
-                    this.pipes.setUsbPipeRead(endpoint.getUsbPipe());
-                }
-            }
-            if (pipes.getUsbPipeRead() != null && pipes.getUsbPipeWrite() != null) {
-
-//                if (testPipes(pipes)) {
-                    return pipes;
-//                } else {
-//                    continue;
-//                }
-
-            } else {
-                pipes.setUsbPipeWrite(null);
-                pipes.setUsbPipeRead(null);
-            }
-        }
-
-        return null;
-    }
-    
-    public boolean isBootloader()
-    {
+    /**
+     * Checks if printer is in bootloader.
+     *
+     * @return <li> true, if in bootloader.
+     * <false> false, if not.
+     */
+    public boolean isBootloader() {
         return super.isBootloader;
-    }
-    
-    public boolean printerRestarted()
-    {
-//        return printerRestarted;
-        return false;
     }
 
     /**
@@ -458,16 +429,16 @@ public class UsbDriver extends DriverBaseImplementation {
         usbIrp.setData("M637\n".getBytes());
         UsbIrp readUsbIrp = pipes.getUsbPipeRead().createUsbIrp();
         readUsbIrp.setAcceptShortPacket(true);
-        
+
         try {
-            
+
             if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
                 pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
             }
             if (!pipes.isOpen()) {
                 pipes.open();
             }
-            
+
             if (!isBootloader) {
                 if (!transferMode) {
                     if (pipes != null) {
@@ -481,7 +452,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 }
             }
 
-            
+
         } catch (UsbException ex) {
             Base.writeLog("USB exception: " + ex.getMessage());
             //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
@@ -510,7 +481,6 @@ public class UsbDriver extends DriverBaseImplementation {
         return true;
 
     }
-    
 
     /**
      *
@@ -572,10 +542,19 @@ public class UsbDriver extends DriverBaseImplementation {
         }
     }
 
+    /**
+     * Sleeps driver for 1 nano second.
+     */
     public void hiccup() {
         hiccup(0, 1);
     }
 
+    /**
+     * Sleeps driver for specified duration.
+     *
+     * @param mili miliseconds to sleep.
+     * @param nano nanoseconds to sleep.
+     */
     public void hiccup(int mili, int nano) {
         //sleep for a nano second just for luck
         try {

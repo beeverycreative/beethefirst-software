@@ -50,7 +50,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
@@ -74,10 +73,7 @@ import net.miginfocom.swing.MigLayout;
 import replicatorg.app.Base;
 import replicatorg.app.Base.InitialOpenBehavior;
 import replicatorg.app.MRUList;
-import replicatorg.app.util.StreamLoggerThread;
-import replicatorg.drivers.EstimationDriver;
 import replicatorg.drivers.OnboardParameters;
-import replicatorg.drivers.RealtimeControl;
 import replicatorg.machine.MachineInterface;
 import replicatorg.machine.MachineListener;
 import replicatorg.machine.MachineLoader;
@@ -95,6 +91,7 @@ import com.apple.mrj.MRJPrefsHandler;
 import com.apple.mrj.MRJQuitHandler;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Robot;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -102,20 +99,20 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.CategoriesList;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -129,6 +126,7 @@ import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.About;
 import replicatorg.app.ui.panels.BuildStatus;
+import replicatorg.app.ui.panels.ControlPanel;
 
 import replicatorg.app.ui.panels.FilamentHeating;
 import replicatorg.app.ui.panels.Gallery;
@@ -139,6 +137,8 @@ import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.PrintSplashSimple;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.ui.panels.WelcomeQuickguide;
+import replicatorg.app.util.ExtensionFilter;
+import replicatorg.drivers.EstimationDriver;
 
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
@@ -198,6 +198,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public boolean building;
     public boolean simulating;
     public boolean debugging;
+    private boolean editorEnabled;
     JMenuItem undoItem, redoItem;
     private int realWidth;
     private int realHeight;
@@ -217,6 +218,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         setFocusable(true);
         setFocusableWindowState(true);
         setFocusCycleRoot(true);
+        editorEnabled = true;
         setName("mainWindow");
         setBackground(new Color(255, 255, 255));
         MRJApplicationUtils.registerAboutHandler(this);
@@ -233,8 +235,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         categoriesList = CategoriesList.getMRUList();
         messagesPP = new MessagesPopUp();
         messagesPP.setVisible(false);
-        camCtrl = new CameraControl(this, false);
-        Base.writeLog("5");
+//        camCtrl = new CameraControl(this, false);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         this.getContentPane().addComponentListener(new ComponentListener() {
@@ -268,11 +269,17 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         if (Boolean.valueOf(ProperDefault.get("firstTime")) == true) {
             File model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.stl");
             if (model.exists() && model.canRead() && model.isFile()) {
-                if (Base.getMainWindow() != null) {
+                bed.addSTL(model);
+                bed.setSceneDifferent(true);
+            } else {
+                model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.STL");
+                if (model.exists() && model.canRead() && model.isFile()) {
                     bed.addSTL(model);
                     bed.setSceneDifferent(true);
-                }
+                } //no need for else {}
+
             }
+            setOktoGoOnSave(false);
         }
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         JMenuBar menubar = new JMenuBar();
@@ -280,7 +287,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         menubar.add(buildFileMenu());
         menubar.add(buildEditMenu());
-        menubar.add(buildModelsMenu());
+//        menubar.add(buildModelsMenu());
         menubar.add(buildPrinterMenu());
         menubar.add(buildHelpMenu());
         setJMenuBar(menubar);
@@ -341,12 +348,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void setOktoGoOnSave(boolean oktoGoOnSave) {
         this.oktoGoOnSave = oktoGoOnSave;
     }
-    
-    public boolean isOkToGoOnSave()
-    {
+
+    public boolean isOkToGoOnSave() {
         return this.oktoGoOnSave;
     }
-    
+
     public CategoriesList getCategoriesManager() {
         return categoriesList;
     }
@@ -466,6 +472,20 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     if (new File(lastOpened).exists()) {
                         handleOpen2Scene(lastOpened);
                     }
+                } else {
+                    handleNew(false);
+                    File model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.stl");
+                    if (model.exists() && model.canRead() && model.isFile()) {
+                        bed.addSTL(model);
+                        bed.setSceneDifferent(true);
+                    } else {
+                        model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.STL");
+                        if (model.exists() && model.canRead() && model.isFile()) {
+                            bed.addSTL(model);
+                            bed.setSceneDifferent(true);
+                        } //no need for else {}
+
+                    }
                 }
             }
         }
@@ -520,12 +540,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     }
 
     public void activateCameraControls() {
-        camCtrl.setVisible(true);
+//        camCtrl.setVisible(true);
     }
 
     public void deactivateCameraControls() {
 //        if (camCtrl.isVisible()) {
-        camCtrl.setVisible(false);
+//        camCtrl.setVisible(false);
 //        }
     }
 
@@ -568,95 +588,110 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         JMenu menu = new JMenu("File");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue("ApplicationMenus", "File"));
+        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "File"));
 
         item = newJMenuItem("New Scene", 'N');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "File_New"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_New"));
 
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                if (bed.isSceneDifferent() && (oktoGoOnSave == false)) 
-                {
-                    int answer;
-                    answer = JOptionPane.showConfirmDialog(null,
-                            Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
-                            Languager.getTagValue("ToolPath", "Line8"), 0, 0);
-                    if (answer == JOptionPane.YES_OPTION) {
-                        if (bed.isSceneDifferent()) {
-                            newSceneOnDialog = true;
-                            handleSaveAs();
-                            bed.setSceneDifferent(false);
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
+                        int answer;
+                        answer = JOptionPane.showConfirmDialog(null,
+                                Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
+                                Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
+                        if (answer == JOptionPane.YES_OPTION) {
+                            if (bed.isSceneDifferent()) {
+                                newSceneOnDialog = true;
+                                handleSaveAs();
+                                bed.setSceneDifferent(false);
+                                updateModelsOperationCenter(new ModelsOperationCenter());
+                            }
+                        } else if (answer == JOptionPane.NO_OPTION) {
+                            handleNew(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
                         }
-                    } else if (answer == JOptionPane.NO_OPTION) {
+
+                    } else {
                         handleNew(false);
                         updateModelsOperationCenter(new ModelsOperationCenter());
                     }
-
-                } else {
-                    handleNew(false);
-                    updateModelsOperationCenter(new ModelsOperationCenter());
                 }
-
             }
         });
         menu.add(item);
 
         item = newJMenuItem("Open Scene...", 'O', false);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "File_Open"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Open"));
 
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {      
-                
-                if (bed.isSceneDifferent() && (oktoGoOnSave == false)) 
-                {
-                    int answer;
-                    answer = JOptionPane.showConfirmDialog(null,
-                            Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
-                            Languager.getTagValue("ToolPath", "Line8"), 0, 0);
-                    if (answer == JOptionPane.YES_OPTION) {
-                        if (bed.isSceneDifferent()) {
-                            handleSaveAs();
+            public void actionPerformed(ActionEvent e) {
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
+                        int answer;
+                        answer = JOptionPane.showConfirmDialog(null,
+                                Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
+                                Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
+                        if (answer == JOptionPane.YES_OPTION) {
+                            if (bed.isSceneDifferent()) {
+                                handleSaveAs();
+                                handleOpenScene(null);
+                                bed.setSceneDifferent(false);
+                                updateModelsOperationCenter(new ModelsOperationCenter());
+                            }
+                        } else if (answer == JOptionPane.NO_OPTION) {
                             handleOpenScene(null);
-                            bed.setSceneDifferent(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
                         }
-                    } else if (answer == JOptionPane.NO_OPTION) {
+
+                    } else {
                         handleOpenScene(null);
                         updateModelsOperationCenter(new ModelsOperationCenter());
                     }
-
-                } else {
-                    handleOpenScene(null);
-                    updateModelsOperationCenter(new ModelsOperationCenter());
                 }
-                
+
 
             }
         });
 
         menu.add(item);
         menu.addSeparator();
+        
+        item = newJMenuItem("Import Model ", 'I');
+        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                handleNewModel();
+            }
+        });
+        menu.add(item);
+        
+        menu.addSeparator();
 
         saveMenuItem = newJMenuItem("Save Scene", 'S');
         saveMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        saveMenuItem.setText(Languager.getTagValue("ApplicationMenus", "File_Save"));
+        saveMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save"));
         saveMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                handleSave(false);
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    handleSave(false);
+                }
             }
         });
         menu.add(saveMenuItem);
 
         saveAsMenuItem = newJMenuItem("Save As...", 'S', true);
         saveAsMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        saveAsMenuItem.setText(Languager.getTagValue("ApplicationMenus", "File_Save_as"));
+        saveAsMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save_as"));
         saveAsMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                handleSaveAs();
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    handleSaveAs();
+                }
             }
         });
         menu.add(saveAsMenuItem);
@@ -664,7 +699,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Settings...", 'P', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "File_Preferences"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Preferences"));
 
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -677,7 +712,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         menu.addSeparator();
         item = newJMenuItem("Quit", 'Q', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "File_Quit"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Quit"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleQuitInternal();
@@ -691,38 +726,39 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         JMenu menu = new JMenu("Edit");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue("ApplicationMenus", "Edit"));
+        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit"));
 
         JMenuItem item;
 
         item = newJMenuItem("Undo", 'Z');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Undo"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Undo"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+//                bed.getModel(0).getEditer().evaluateCollision();
                 bed.undoTransformation();
             }
         });
 
-        menu.add(item);
+//        menu.add(item);
 
         item = newJMenuItem("Redo", 'Y');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Redo"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Redo"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 bed.redoTransformation();
             }
         });
-        menu.add(item);
+//        menu.add(item);
 
-        menu.addSeparator();
+//        menu.addSeparator();
 
         item = newJMenuItem("Duplicate", 'V');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Duplicate"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Duplicate"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -734,11 +770,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 }
             }
         });
-        menu.add(item);
+//        menu.add(item);
 
         item = newJMenuItem("Delete", 'D');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Delete"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Delete"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -750,7 +786,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Select all", 'A');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_SelectAll"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_SelectAll"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -765,7 +801,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Unselect", 'Z', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Unselect"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Unselect"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -780,7 +816,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Put on Platform", 'L');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_PutPlatform"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -794,7 +830,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Center in Platform", 'C');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Center"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -808,7 +844,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Reset Original Position", 'R');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Reset"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -839,11 +875,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         JMenu menu = new JMenu("Gallery");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue("ApplicationMenus", "Gallery"));
+        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Gallery"));
 
         item = newJMenuItem("Import Model from Library", 'G');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Model_Add"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Add"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Gallery p = new Gallery();
@@ -854,11 +890,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 canvas.unPickAll();
             }
         });
-        menu.add(item);
+//        menu.add(item);
 
         item = newJMenuItem("Import Model ", 'I');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Model_Import"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 handleNewModel();
@@ -868,7 +904,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Online Models", 'I', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Model_Online"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Online"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Warning p = new Warning();
@@ -884,29 +920,33 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         JMenu menu = new JMenu("Printer");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue("ApplicationMenus", "Printer"));
+        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer"));
 
         item = newJMenuItem("Maintenance", 'M');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Printer_Maintenance"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_Maintenance"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (machineLoader.isConnected()) {
-                    Maintenance p = new Maintenance();
-                    p.setVisible(true);
+                    if (Base.isPrinting == false) {
+                        Maintenance p = new Maintenance();
+                        p.setVisible(true);
+                    }
                 } else {
                     showFeedBackMessage("btfDisconnect");
                 }
             }
         });
         menu.add(item);
+
         menu.addSeparator();
 
         item = newJMenuItem("Print ", 'P');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Printer_Print"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_Print"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+//                if (Base.isPrinting == false) {
                 MachineInterface machine = getMachineInterface();
                 machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
@@ -916,60 +956,45 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (!machine.getDriverQueryInterface().getMachineStatus() && machine.getDriverQueryInterface().isBusy()) {
+                if (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
                     showFeedBackMessage("moving");
                 } else {
-
-                    if (machineLoader.isConnected()) {
-
-                        if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
-                                || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                            handlePrintPanel();
-                        }
-                    } else {
-                        showFeedBackMessage("btfDisconnect");
+                    if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
+                            || Boolean.valueOf(ProperDefault.get("localPrint"))) {
+                        handlePrintPanel();
                     }
-
                 }
             }
-            });
-        menu.add (item);
-            return menu ;
-        }
+        });
+        menu.add(item);
 
-    
+        return menu;
+    }
 
     protected JMenu buildHelpMenu() {
         JMenuItem item;
         JMenu menu = new JMenu("Help");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue("ApplicationMenus", "Help"));
+        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Help"));
 
         item = newJMenuItem("FAQ", 'F', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("Help", "FAQ"));
+        item.setText(Languager.getTagValue(1, "Help", "FAQ"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Base.language.equals("en")) {
-                    launchBrowser("https://www.beeverycreative.com/en/FAQ");
-                } else if (Base.language.equals("pt")) {
-                    launchBrowser("https://www.beeverycreative.com/pt/PF");
-                }
+                launchBrowser("https://beeverycreative.com/faq/");
+
             }
         });
         menu.add(item);
 
         item = newJMenuItem("Troubleshooting", 'T', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("Help", "Troubleshooting"));
+        item.setText(Languager.getTagValue(1, "Help", "Troubleshooting"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Base.language.equals("en")) {
-                    launchBrowser("https://www.beeverycreative.com/en/resolucao-de-problemas");
-                } else if (Base.language.equals("pt")) {
-                    launchBrowser("https://www.beeverycreative.com/pt/resolucao-de-problemas");
-                }
+                launchBrowser("https://beeverycreative.com/troubleshooting/");
             }
         });
         menu.add(item);
@@ -977,43 +1002,31 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Support ", 'J');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Help_Support"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Support"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Base.language.equals("en")) {
-                    launchBrowser("https://www.beeverycreative.com/customerservice/");
-                } else if (Base.language.equals("pt")) {
-                    launchBrowser("https://www.beeverycreative.com/customerservice/");
-                }
+                launchBrowser("https://beeverycreative.com/support/");
             }
         });
         menu.add(item);
 
         item = newJMenuItem("Help", 'H');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Help"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Help p = new Help();
                 p.setVisible(true);
             }
         });
-        menu.add(item);
+//        menu.add(item);
 
         item = newJMenuItem("Quick Guide ", 'Q');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Help_QuickGuide"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_QuickGuide"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(machineLoader.isConnected())
-                {
-                    FilamentHeating p = new FilamentHeating();
-                    p.setVisible(true);
-                }
-                else
-                {
-                    showFeedBackMessage("btfDisconnect");
-                }
+                launchBrowser("https://beeverycreative.com/");
             }
         });
         menu.add(item);
@@ -1021,7 +1034,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("Check for Updates ", 'U');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Help_Update"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Update"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 UpdateChecker p = new UpdateChecker();
@@ -1033,7 +1046,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         item = newJMenuItem("About ", 'K');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue("ApplicationMenus", "Help_About"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_About"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 About p = new About();
@@ -1051,7 +1064,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         JMenu menu = new JMenu("About");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue("ApplicationMenus", "Help_About"));
+        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_About"));
         menu.addMenuListener(new MenuListener() {
             public void menuSelected(MenuEvent e) {
                 About p = new About();
@@ -1124,35 +1137,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     }
 
-    protected void handleInfoPanel() {
-        InfoPanel infoPanel = new InfoPanel();
-        infoPanel.setVisible(true);
-    }
-
-    public boolean supportsRealTimeControl() {
-        if (!(machineLoader.getDriver() instanceof RealtimeControl)) {
-            return false;
-        }
-        Base.logger.info("Supports RC");
-        return true;
-    }
-
-    protected void handleRealTimeControl() {
-        if (!this.supportsRealTimeControl()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Real time control is not supported for your machine's driver.",
-                    "Can't enabled real time control", JOptionPane.ERROR_MESSAGE);
-        } else {
-            RealtimePanel window = RealtimePanel.getRealtimePanel(machineLoader.getMachineInterface());
-            if (window != null) {
-                window.pack();
-                window.setVisible(true);
-                window.toFront();
-            }
-        }
-    }
-
     /**
      * Convenience method, see below.
      */
@@ -1188,10 +1172,20 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         p.setVisible(true);
     }
 
+    public void captureScreen(String fileName) throws Exception {
+
+        Robot robot = new Robot();
+        // Capture the screen shot of the area of the screen defined by the rectangle
+        BufferedImage bi = robot.createScreenCapture(new Rectangle(100, 100));
+        ImageIO.write(bi, "jpg", new File("imageTest.jpg"));
+
+    }
+
     public void handlePrintPanel() {
         this.setEnabled(false);
         boolean localPrint = Boolean.valueOf(ProperDefault.get("localPrint"));
         handleGenBuild();
+
 
         if (!localPrint) {
             PrintPanel p = new PrintPanel();
@@ -1204,9 +1198,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 public void run() {
                     if (bed.isSceneDifferent()) {
                         Base.getMainWindow().handleSave(false);
-                    }
-                    else
-                    {
+                    } else {
                         sceneDP = new SceneDetailsPanel();
                         sceneDP.updateBed(bed);
                         updateDetailsCenter(sceneDP);
@@ -1343,7 +1335,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     /// Enum to indicate target build intention
     /// generate-from-stl and build, cancel build, or siply build from gcode
-     enum BuildFlag {
+    enum BuildFlag {
 
         NONE(0), /// Canceled or software error
         GEN_AND_BUILD(1), //genrate new gcode and build
@@ -1406,44 +1398,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 //            doBuild();
         }
     }
-
-    private class ExtensionFilter extends FileFilter {
-
-        private LinkedList<String> extensions = new LinkedList<String>();
-        private String description;
-
-        public ExtensionFilter(String extension, String description) {
-            this.extensions.add(extension);
-            this.description = description;
-        }
-
-        public ExtensionFilter(String[] extensions, String description) {
-            for (String e : extensions) {
-                this.extensions.add(e);
-            }
-            this.description = description;
-        }
-
-        public boolean accept(File f) {
-            if (f.isDirectory()) {
-                return !f.isHidden();
-            }
-            for (String extension : extensions) {
-                if (f.getPath().toLowerCase().endsWith(extension)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getFirstExtension() {
-            return extensions.getFirst();
-        }
-    };
 
     public MachineInterface getMachine() {
         return this.machineLoader.getMachineInterface();
@@ -1508,9 +1462,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         onboardParamsItem.setEnabled(showParams);
 
         boolean showRealtimeTuning =
-                evt.getState().isConnected()
-                && machineLoader.getDriver() instanceof RealtimeControl
-                && ((RealtimeControl) machineLoader.getDriver()).hasFeatureRealtimeControl();
+                evt.getState().isConnected();
         realtimeControlItem.setVisible(showRealtimeTuning);
         realtimeControlItem.setEnabled(showRealtimeTuning);
 
@@ -1528,6 +1480,23 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         // prepare editor window.
 //        setVisible(true);
         setEnabled(true);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+
+        if (enabled) {
+            editorEnabled = true;
+            buttons.setMainWindowEnabled(editorEnabled);
+        } else {
+            editorEnabled = false;
+            buttons.setMainWindowEnabled(editorEnabled);
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return editorEnabled;
     }
 
     /**
@@ -1583,11 +1552,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         doPreheat(false);
 
         building = false;
-        if (machineLoader.isLoaded()) {
-            if (machineLoader.getMachineInterface().getSimulatorDriver() != null) {
-                machineLoader.getMachineInterface().getSimulatorDriver().destroyWindow();
-            }
-        }
 
         setEditorBusy(false);
     }
@@ -1617,12 +1581,16 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      */
     public void handleStop() {
         Base.writeLog("Stopping ...");
-        
-        if(!Base.printPaused)
-        {
+
+        if (Base.printPaused == false) {
             Base.getMachineLoader().getMachineInterface().killSwitch();
         }
-        Base.getMachineLoader().getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("M112"));
+        if (getMachineInterface().getDriver().isONShutdown() == false) {
+            getMachineInterface().getDriver().dispatchCommand("M112");
+        } else {
+            getMachineInterface().getDriver().dispatchCommand("M112");
+            Base.getMachineLoader().getMachineInterface().stopwatch();
+        }
         doStop();
         Base.writeLog("Print stopped ...");
         setEditorBusy(false);
@@ -1685,7 +1653,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      */
     public void doPause() {
         if (machineLoader.getMachineInterface().isPaused()) {
-            machineLoader.getMachineInterface().getDriver().unpause();
 
             if (simulating) {
                 message("Simulating...");
@@ -1693,9 +1660,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 message("Building...");
             }
 
-            //buttons.inactivate(MainButtonPanel.PAUSE);
         } else {
-            machineLoader.getMachineInterface().getDriver().pause();
             int atWhichLine = machineLoader.getMachineInterface().getLinesProcessed();
             message("Paused at line " + atWhichLine + ".");
         }
@@ -1811,8 +1776,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 fc.getSelectedFile().getName();
                 ProperDefault.put("ui.open_dir0", fc.getCurrentDirectory().getAbsolutePath());
                 Base.writeLog("File selected " + fc.getSelectedFile().getAbsolutePath());
+                Base.getMainWindow().getButtons().updatePressedStateButton("models");
+                Base.getMainWindow().setEnabled(true);
                 return fc.getSelectedFile().getAbsolutePath();
             } else {
+                Base.getMainWindow().getButtons().updatePressedStateButton("models");
+                Base.getMainWindow().setEnabled(true);
                 return null;
             }
         } else if (opt == 1) {
@@ -1974,7 +1943,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         }
                         oktoGoOnSave = false;
                     }
-                
+
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -2070,7 +2039,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         // cleanup our machine/driver.
         machineLoader.unload();
-
+        Base.diposeAllOpenWindows();
         System.exit(0);
     }
 
@@ -2111,7 +2080,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         Base.writeConfig();
         Base.loadProperties();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
-                    
+
     }
 
     /**
@@ -2264,14 +2233,13 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void componentResized(ComponentEvent e) {
         //refresh();
 //        updateSizeVariables(e.getComponent().getWidth(), e.getComponent().getHeight());
-        camCtrl.setLocation();
+//        camCtrl.setLocation();
 //        updateGUI();
-
     }
 
     @Override
     public void componentMoved(ComponentEvent e) {
-        camCtrl.setLocation();
+//        camCtrl.setLocation();
     }
 
     @Override
@@ -2304,18 +2272,18 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     @Override
     public void windowDeiconified(WindowEvent e) {
-        camCtrl = new CameraControl(this, false);
-//        camCtrl.setLocation();
-        if (!messagesPP.isVisible()) {
-            activateCameraControls();
-        }
+//        camCtrl = new CameraControl(this, false);
+////        camCtrl.setLocation();
+//        if (!messagesPP.isVisible()) {
+//            activateCameraControls();
+//        }
     }
 
     @Override
     public void windowActivated(WindowEvent e) {
-        if (!messagesPP.isVisible()) {
-            activateCameraControls();
-        }
+//        if (!messagesPP.isVisible()) {
+//            activateCameraControls();
+//        }
     }
 
     @Override

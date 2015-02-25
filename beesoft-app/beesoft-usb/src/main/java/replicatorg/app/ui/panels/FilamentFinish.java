@@ -54,12 +54,12 @@ public class FilamentFinish extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title5"));
-        jLabel4.setText(Languager.getTagValue("FilamentWizard", "Title6"));
-        jLabel5.setText(splitString(Languager.getTagValue("FilamentWizard", "Exchange_Info_Finish")));
-        jLabel17.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
-        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title5"));
+        jLabel4.setText(Languager.getTagValue(1, "FilamentWizard", "Title6"));
+        jLabel5.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info_Finish")));
+        jLabel17.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -112,7 +112,7 @@ public class FilamentFinish extends javax.swing.JFrame {
     private void evaluateInitialConditions() {
         Base.getMainWindow().setEnabled(false);
         if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+            jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
     }
 

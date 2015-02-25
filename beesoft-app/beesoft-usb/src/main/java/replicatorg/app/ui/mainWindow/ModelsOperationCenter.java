@@ -38,12 +38,12 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
+        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
     }
 
     @SuppressWarnings("unchecked")
@@ -266,7 +266,6 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
     }//GEN-LAST:event_jLabel5MousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

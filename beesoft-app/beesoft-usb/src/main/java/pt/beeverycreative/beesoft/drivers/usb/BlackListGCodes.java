@@ -13,8 +13,18 @@ package pt.beeverycreative.beesoft.drivers.usb;
  */
 public enum BlackListGCodes {
 
-    M29,M82, M84, M101, M103, M108, M113, M117, M140, G21, G90, G91;
+    /**
+     * List of all bad GCodes for BTF's driver.
+     */
+    M29, M82, M84, M101, M103, M108, M113, M117, M140, G21, G90, G91;
 
+    /**
+     * Checks if gcode line contains any of denied gcodes.
+     *
+     * @param test gcode line
+     * @return <li> true, if contains
+     * <li> false, if not
+     */
     public static boolean contains(String test) {
 
         for (BlackListGCodes c : BlackListGCodes.values()) {

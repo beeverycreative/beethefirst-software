@@ -88,6 +88,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.WelcomeSplash;
 
 /**
@@ -100,8 +101,11 @@ public class Base {
     public static boolean status_thread_died = false;
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
+    public static boolean isPrinting = false;
     public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
+    public static boolean gcodeToSave = false;
+    public static boolean isPrintingFromGCode = false;
 
     public enum InitialOpenBehavior {
 
@@ -110,12 +114,12 @@ public class Base {
         OPEN_SPECIFIC_FILE
     };
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.14.0_beta1";
+    public static final String VERSION_BEESOFT = "3.10.0_stable-2015-01-31";
 //    public static final String VERSION_BEESOFT = "3.8.0-beta_2014-05-01";
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
-    public static String firmware_version_in_use = "BEETHEFIRST-7.0.1.bin";
-    public static final String VERSION_FIRMWARE_FINAL = "7.0.1";
+    public static String firmware_version_in_use = "BEETHEFIRST-7.0.0.bin";
+    public static final String VERSION_FIRMWARE_FINAL = "7.0.0";
     public static final String VERSION_FIRMWARE_FINAL_OLD = "6.0.0";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
@@ -280,7 +284,7 @@ public class Base {
                 if (new File(baseDir + "/BEESOFT.app/Contents/Resources").exists()) {
                     return new File(baseDir + "/BEESOFT.app/Contents/Resources");
                 } else {
-                    Base.logger.log(Level.SEVERE, "{0}/BEESOFT.app not found, using {1}/replicatorg/", new Object[]{baseDir, baseDir});
+                    Base.logger.severe(baseDir + "/BEESOFT.app not found, using " + baseDir + "/replicatorg/");
                 }
                 return new File(baseDir + "/replicatorg");
             } catch (java.io.IOException e) {
@@ -688,14 +692,22 @@ public class Base {
     static public void cleanDirectoryTempFiles(String dirPath) {
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl") || file.getName().contains(".gcode")) {
+            if (file.getName().contains(".stl") ) { //|| (file.getName().contains(".gcode") && gcodeToSave == false)
                 file.delete();
             }
         }
     }
     
-    public static void turnOnPowerSaving() {
-        editor.getMachine().getDriver().dispatchCommand("M641");
+    public static void turnOnPowerSaving(boolean turnOn) {
+        if(turnOn) {
+//            editor.getMachine().getDriver().dispatchCommand("M641 A1");
+            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1",UsbPassthroughDriver.COM.NO_RESPONSE));
+        }
+        else
+        {
+//            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
+            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0",UsbPassthroughDriver.COM.NO_RESPONSE));
+        }
     }
 
     private static void getJavaVersion() {
@@ -1134,7 +1146,7 @@ public class Base {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         // use native popups so they don't look so crappy on osx
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
@@ -1145,7 +1157,7 @@ public class Base {
                 // build the editor object
                 editor = new MainWindow();
                 writeLog("Main Window initialized");
-                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
+//                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
                 editor.restorePreferences();
                 writeLog("Preferences restored");
                 // add shutdown hook to store preferences
@@ -1300,31 +1312,6 @@ public class Base {
         stroke = KeyStroke.getKeyStroke('W', modifiers);
         root.registerKeyboardAction(disposer, stroke,
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-
-    /**
-     * "No cookie for you" type messages. Nothing fatal or all that much of a
-     * bummer, but something to notify the user about.
-     */
-    static public void showMessage(String title, String message) {
-        if (notificationHandler == null) {
-            notificationHandler = NotificationHandler.Factory.getHandler(null, false);
-        }
-        notificationHandler.showMessage(title, message);
-    }
-
-    /**
-     * Non-fatal error message with optional stack trace side dish.
-     */
-    static public void showWarning(String title, String message, Exception e) {
-        if (notificationHandler == null) {
-            notificationHandler = NotificationHandler.Factory.getHandler(null, false);
-        }
-        notificationHandler.showWarning(title, message, e);
-
-        if (e != null) {
-            e.printStackTrace();
-        }
     }
 
     /**

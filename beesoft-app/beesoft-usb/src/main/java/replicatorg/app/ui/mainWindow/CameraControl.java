@@ -8,16 +8,16 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.model.CAMPanel;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class CameraControl extends javax.swing.JDialog {
 
     public CameraControl(java.awt.Frame parent, boolean modal) {
@@ -26,54 +26,47 @@ public class CameraControl extends javax.swing.JDialog {
         setLocation();
     }
 
-    
-    public void setLocation()
-    {
+    public void setLocation() {
         GraphicsEnvironment ge = GraphicsEnvironment
-                                .getLocalGraphicsEnvironment();
+                .getLocalGraphicsEnvironment();
         Rectangle screenRect = ge.getMaximumWindowBounds();
         int posX = 0, posY = 0, windowUpperCornerX = 0, windowUpperCornerY = 0,
-            gapH = 0, gapV = 0;
-        
-        try{
+                gapH = 0, gapV = 0;
+
+        try {
             posY = Base.getMainWindow().getLocationOnScreen().y + 130;
-            posX = screenRect.width-Base.getMainWindow().getWidth() -200;
-            windowUpperCornerX = Base.getMainWindow().getLocationOnScreen().x + 
-                                Base.getMainWindow().getWidth();
-            windowUpperCornerY = Base.getMainWindow().getLocationOnScreen().y + 
-                    Base.getMainWindow().getWidth();
-            gapH = screenRect.width-windowUpperCornerX;
-            
-        }catch(Exception e)
-        {
+            posX = screenRect.width - Base.getMainWindow().getWidth() - 200;
+            windowUpperCornerX = Base.getMainWindow().getLocationOnScreen().x
+                    + Base.getMainWindow().getWidth();
+            windowUpperCornerY = Base.getMainWindow().getLocationOnScreen().y
+                    + Base.getMainWindow().getWidth();
+            gapH = screenRect.width - windowUpperCornerX;
+
+        } catch (Exception e) {
         }
-        this.setLocation(screenRect.width - gapH - 292  , posY );
+        this.setLocation(screenRect.width - gapH - 292, posY);
     }
-    
-    public void adjustViewTranslationLeft(double xd, double yd)
-    { 
+
+    public void adjustViewTranslationLeft(double xd, double yd) {
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(xd,yd);
+        canvas.adjustViewTranslation(xd, yd);
     }
-    
-    public void adjustViewTranslationRight(double xd, double yd)
-    { 
+
+    public void adjustViewTranslationRight(double xd, double yd) {
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(xd,yd);       
+        canvas.adjustViewTranslation(xd, yd);
     }
-    
-    public void adjustViewTranslationTop(double xd, double yd)
-    {
+
+    public void adjustViewTranslationTop(double xd, double yd) {
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(xd,yd); 
+        canvas.adjustViewTranslation(xd, yd);
     }
-    
-    public void adjustViewTranslationBottom(double xd, double yd)
-    {
+
+    public void adjustViewTranslationBottom(double xd, double yd) {
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(xd,yd);
-    }    
-    
+        canvas.adjustViewTranslation(xd, yd);
+    }
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -246,7 +239,7 @@ public class CameraControl extends javax.swing.JDialog {
     }//GEN-LAST:event_jLabel2MouseEntered
 
     private void jLabel2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseExited
-       jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_4_left.png")));
+        jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_4_left.png")));
     }//GEN-LAST:event_jLabel2MouseExited
 
     private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
@@ -254,7 +247,7 @@ public class CameraControl extends javax.swing.JDialog {
     }//GEN-LAST:event_jLabel1MouseEntered
 
     private void jLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseExited
-       jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_4.png")));
+        jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_4.png")));
     }//GEN-LAST:event_jLabel1MouseExited
 
     private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
@@ -266,7 +259,7 @@ public class CameraControl extends javax.swing.JDialog {
     }//GEN-LAST:event_jLabel4MouseExited
 
     private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
-         jLabel3.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_4_down.png")));
+        jLabel3.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_4_down.png")));
     }//GEN-LAST:event_jLabel3MouseEntered
 
     private void jLabel3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseExited
@@ -291,22 +284,22 @@ public class CameraControl extends javax.swing.JDialog {
 
     private void jLabel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MousePressed
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(2,0);
+        canvas.adjustViewTranslation(2, 0);
     }//GEN-LAST:event_jLabel2MousePressed
 
     private void jLabel3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MousePressed
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(0,2);
+        canvas.adjustViewTranslation(0, 2);
     }//GEN-LAST:event_jLabel3MousePressed
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(-2,0);
+        canvas.adjustViewTranslation(-2, 0);
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
         CAMPanel canvas = Base.getMainWindow().getCanvas();
-        canvas.adjustViewTranslation(0,-2);
+        canvas.adjustViewTranslation(0, -2);
     }//GEN-LAST:event_jLabel1MousePressed
 
     private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed

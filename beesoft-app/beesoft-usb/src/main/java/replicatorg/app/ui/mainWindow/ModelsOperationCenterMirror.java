@@ -43,16 +43,16 @@ public class ModelsOperationCenterMirror extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
-        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
-        jLabel13.setText("X " + Languager.getTagValue("MainWindowButtons", "Axis"));
-        jLabel14.setText("Y " + Languager.getTagValue("MainWindowButtons", "Axis"));
-        jLabel15.setText("Z " + Languager.getTagValue("MainWindowButtons", "Axis"));
+        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
+        jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel13.setText("X " + Languager.getTagValue(1, "MainWindowButtons", "Axis"));
+        jLabel14.setText("Y " + Languager.getTagValue(1, "MainWindowButtons", "Axis"));
+        jLabel15.setText("Z " + Languager.getTagValue(1, "MainWindowButtons", "Axis"));
     }
 
     /**
@@ -423,7 +423,6 @@ public class ModelsOperationCenterMirror extends javax.swing.JPanel {
     private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
         showOptions();
     }//GEN-LAST:event_jLabel16MousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
