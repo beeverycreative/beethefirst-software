@@ -157,9 +157,6 @@
                                 <copy todir="${reso.dir}/curaEngine/bin">
                                     <fileset dir="${project.basedir}/src/main/resources/curaEngine/distros/mac"  />
                                 </copy>
-                                <copy todir="${reso.dir}/curaEngines/prefs">
-                                    <fileset dir="${project.basedir}/src/main/resources/curaEngine/prefs" />
-                                </copy>
 
                                 <copy todir="${reso.dir}/firmware">
                                     <fileset dir="${project.basedir}/src/main/resources/firmware" />
@@ -218,9 +215,6 @@
                                 </copy>
                                 <copy todir="${target.dir}/curaEngine/bin">
                                     <fileset dir="${resources.dir}/curaEngine/distros/windows" />
-                                </copy>
-                                <copy todir="${target.dir}/curaEngine/prefs">
-                                    <fileset dir="${resources.dir}/curaEngine/prefs" />
                                 </copy>
                                 <copy todir="${target.dir}/estimator">
                                     <fileset dir="${resources.dir}/estimator" />            
@@ -286,9 +280,6 @@
                                 </copy>
                                 <copy todir="${target.dir}/curaEngine/bin">
                                     <fileset dir="${resources.dir}/curaEngine/distros/linux" />
-                                </copy>
-                                <copy todir="${target.dir}/curaEngine/prefs">
-                                    <fileset dir="${resources.dir}/curaEngine/prefs" />
                                 </copy>
                                 <copy todir="${target.dir}/firmware">
                                     <fileset dir="${resources.dir}/firmware" />
