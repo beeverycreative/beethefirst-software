@@ -402,20 +402,20 @@ public class PrintPanel extends javax.swing.JFrame {
             if (button.isSelected()) {
                 String labelText = button.getText();
 
-                if (labelText.contains("LOW")) {
-                    return "LOW";
-                }
-                if (labelText.contains("Medium")) {
-                    return "MEDIUM";
-                }
-                if (labelText.contains("High+")) {
-                    return "SHIGH";
-                }
-                if (labelText.contains("High")) {
-                    return "HIGH";
+                    if (labelText.contains("LOW")) {
+                        return "LOW";
+                    }
+                    if (labelText.contains("Medium")) {
+                        return "MEDIUM";
+                    }
+                    if (labelText.contains("High+")) {
+                        return "SHIGH";
+                    }
+                    if (labelText.contains("High")) {
+                        return "HIGH";
+                    }
                 }
             }
-        }
 
         return "LOW";
     }

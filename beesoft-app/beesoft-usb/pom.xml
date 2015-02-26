@@ -5,16 +5,16 @@
     <parent>
         <groupId>pt.bitbox</groupId>
         <artifactId>beesoft-app</artifactId>
-        <version>3.14.0-SNAPSHOT</version>
+        <version>3.10.0-SNAPSHOT</version>
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.14.0-SNAPSHOT</version>
+    <version>3.10.0-SNAPSHOT</version>
     <name>beesoft-usb</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.release.name>BEESOFT-3.14.0-beta1</project.release.name>
-        <project.release.version>3.14.0-beta</project.release.version>
+        <project.release.name>BEESOFT-3.10.0-beta1</project.release.name>
+        <project.release.version>3.10.0-beta1</project.release.version>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <libusb4java.version>1.2.0</libusb4java.version>
@@ -28,6 +28,9 @@
                     <include>*.properties</include>
                     <include>**/*.png</include>
                     <include>**/*.gif</include>
+                    <include>**/*.dylib</include>
+                    <include>**/*.so</include>
+                    <include>**/*.dll</include>
                 </includes>                                   
                 <filtering>false</filtering>
             </resource>                         
@@ -104,7 +107,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>false</skipTests>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>                  
             <plugin>
@@ -137,10 +140,9 @@
                                     <jarfileset dir="${lib.dir}" includes="*.jar" />
                                     <jarfileset dir="${resources.dir}/external_libs" includes="*.jar" />
                                     <jarfileset dir="${installer.dir}" includes="*.jnilib" />
-                                    
-                                    <documenttype name="CNC GCode document" extensions="gcode" iconFile="${installer.dir}/bee" role="Editor" />
-                                    <documenttype name="CNC GCode document" extensions="g" iconFile="${installer.dir}/bee" role="Editor" />
-                                    <documenttype name="STL 3D model" extensions="stl" iconFile="${installer.dir}/bee.icns" role="Editor" />
+                                                                        
+                                    <documenttype name="STL 3D model" extensions="stl" iconFile="${dist.dir}/bee.icns" role="Editor" />
+                                    <documenttype name="STL 3D model" extensions="STL" iconFile="${dist.dir}/bee.icns" role="Editor" />
                                     <javaproperty name="beesoft.app-resources" value="$APP_PACKAGE/Contents/Resources" />
                                     <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
                                 </jarbundler>  
@@ -179,8 +181,11 @@
                                 </copy>
                                 <!-- permissions -->
                                 <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />
-                                <chmod file="${reso.dir}/pypy" perm="ugo+rx" includes="**/*" />             
-
+                                <chmod file="${installer.dir}/app-permissions.sh" perm="ugo+rx" />             
+                                
+                                <exec executable="${installer.dir}/app-permissions.sh">
+                                    <arg value="${target.app.dir}/BEESOFT.app" />
+                                </exec>
                                 <!--   <antcall target="dist-macosx-zip" /> -->
                                 <!--   <antcall target="dist-macosx-dmg" />-->
                             </target>                                                                                                
@@ -309,6 +314,7 @@
                                 <!-- permissions -->
                                 <chmod file="${target.dir}/BEESOFT" perm="ugo+rx" />
                                 <chmod file="${target.dir}/pypy/bin/pypy" perm="ugo+rx" />
+                                <chmod file="${target.dir}/curaEngine" perm="ugo+rx" includes="**/*" />
                                 
                                 <!--       <tar destfile="dist/${release.name}-linux.tgz" compression="gzip" longfile="gnu">
                                     <tarfileset dir="dist/linux/${release.name}" prefix="${release.name}" />
@@ -353,6 +359,7 @@
                             <mainClass>replicatorg.app.Base</mainClass>
                             <!-- optional -->
                             <workingDirectory>${project.build.directory}/macosx</workingDirectory>
+                            
                             <systemProperties>
                                 <systemProperty>
                                     <key>java.library.path</key>

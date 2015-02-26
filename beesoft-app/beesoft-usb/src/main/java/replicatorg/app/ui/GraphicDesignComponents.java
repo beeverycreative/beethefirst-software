@@ -78,7 +78,7 @@ public class GraphicDesignComponents {
     
     private static URL getFont(String name)
     {
-        URL url = null;
+        URL url;
         
         if(!isHebrew)
         {

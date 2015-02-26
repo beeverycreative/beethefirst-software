@@ -8,10 +8,15 @@
             <Gallery value="Gallery"/>
             <Printer value="Printer"/>
             <Help value="Help"/>
-            <File_New value="New scene"/>
-            <File_Open value="Open scene"/>
-            <File_Save value="Save scene"/>
-            <File_Save_as value="Save scene as"/>
+            <REDMEC value="REDMEC"/>
+            <REDMEC_ControlPanel value="Advanced users control panel"/>
+            <REDMEC_Console value="Console"/>
+            <REDMEC_GCode value="GCode panel"/>
+            <REDMEC_Bootloader value="Bootloader updater"/>
+            <File_New value="New work area"/>
+            <File_Open value="Open work area"/>
+            <File_Save value="Save work area"/>
+            <File_Save_as value="Save work area as"/>
             <File_Preferences value="Preferences"/>
             <File_Quit value="Quit"/>
             <Edit_Undo value="Undo"/>
@@ -31,6 +36,7 @@
             <Model_Online value="Online models"/>
             <Printer_Maintenance value="Maintenance"/>
             <Printer_Print value="Print"/>
+            <Printer_Print2D value="Print from 2D image"/>
             <Help_Topics value="Help topics:"/>
             <Help_Topics_Info value="Should you need more help, please consult our FAQs, our website www.beeverycreative.com, or please contact the customer service."/>
             <Help value="Press here for help"/>
@@ -41,6 +47,119 @@
             <Help_About value="About"/>
         </ApplicationMenus>
 
+        <ControlPanel>
+            <Jog_Title value="Jog Controls"/>
+            <Temp_Title value="Temperature Controls"/>
+            <Feedrate value="Feedrate"/>
+            <Motor_Control value="Motor control"/>
+            <Console_History value="History"/>
+            <Console_Results value="Results"/>
+            <Jog_Mode value="Jog Mode (mm)"/>
+            <Jog_Mode value="Feedrate"/>
+            <CenterX value="Home X"/>
+            <CenterY value="Home Y"/>
+            <CenterZ value="Home Z"/>
+            <SetX value="Set X"/>
+            <SetY value="Set Y"/>
+            <SetZ value="Set Z"/>
+            <FreeJog value="Free jog"/>
+            <CurrentPosition value="Set position as Zero"/>
+            <CalibrateA value="Calibrate A"/>
+            <CalibrateB value="Calibrate B"/>
+            <CalibrateC value="Calibrate C"/>
+            <Current_Temperature value="Current temperature (ºC)"/>
+            <Target_Temperature value="Target temperature (max 250ºC)"/>
+            <Motor_Speed value="Motor speed (mm/60s)"/>
+            <Extrude_Duration value="Extrude duration (s)"/>
+            <Reverse value="Reverse"/>
+            <SpecialReverse value="Special reverse"/>
+            <Stop value="Stop"/>
+            <Foward value="Foward"/>
+            <Cooling_Fan value="Cooling fan (blower)"/>
+            <Log_Temperature value="Log temperature"/>
+            <XY_Feedrate value="XY (mm/s)"/>
+            <Z_Feedrate value="Z (mm/s)"/>
+        </ControlPanel>
+        
+        <GCodePanel>
+            <LoadFile value="Load from file"/>
+            <GenerateFile value="Generate f/ STL"/>
+            <RunGCode value="Run Gcode"/>
+            <TransferGCode value="Transfer Gcode"/>
+            <ClearGCode value="Clear Gcode"/>
+            <SaveGCode value="Save Gcode"/>
+            <LoadGCode value="Load Gcode"/>
+            <RefreshGCodeList value="Refresh list"/>
+            <Info value="Notes:"/>
+        </GCodePanel>
+        
+        <BootloaderPanel>
+            <Update value="Update bootloader"/>
+            <Refresh value="Refresh list"/>
+            <LoadBootloaderFile value="Load bootloader file"/>
+            <Prepare value="Prepare"/>
+        </BootloaderPanel>     
+        
+        <AdvancedPrintPanel>
+            <SetUP value="Set up your print"/>
+            <PrintSectionTitle value="Print"/>
+            <LayerHeight value="Layer Height"/>
+            <WallThickness value="Wall thickness"/>
+            <SLayerThickness value="Solid layer thickness"/>
+            <BottomThickness value="Bottom thickness"/>
+            <FillDensity value="Fill density"/>
+            <FilamentDiameter value="Filament diameter"/>
+            <FilamentFlow value="Filament flow"/>
+            <NozzleSize value="Nozzle size"/>
+            <RetractionEnable value="Retraction enable"/>
+            <RaftEnable value="Raft enable"/>
+            <SupportEnable value="Support enable"/>
+            <AutonomousEnable value="Autonomous enable"/>
+            <FanEnable value="Fan enable"/>
+            <SolidTop value="Solid top"/>
+            <SolidBottom value="Solid bottom"/>
+            <Spiralize value="Spiralize"/>
+            <OozeShield value="Ooze shield"/>
+            <WipeTower value="Wipe tower"/>
+            <WipeTowerVolume value="Wipe tower volume"/>
+            <RaftSectionTitle value="Raft"/>
+            <Margin value="Margin"/>
+            <LineSpacing value="Line spacing"/>
+            <BaseThickness value="Base thickness"/>
+            <BaseLinewidth value="Base linewidth"/>
+            <InterfaceThickness value="Interface thickness"/>
+            <InterfaceLinewidth value="Interface linewidth"/>
+            <SpeedSectionTitle value="Speed"/>
+            <PrintSpeed value="Print speed"/>
+            <InnerSpeed value="Inner speed"/>
+            <OuterSpeed value="Outer speed"/>
+            <InfillSpeed value="Infill speed"/>
+            <BottomLayerSpeed value="Bottom layer Speed"/>
+            <FanSpeed value="Fan speed"/>
+            <FanSpeedMax value="Fan speed max"/>
+            <TravelSpeed value="Travel speed"/>
+            <CoolSectionTitle value="Cool"/>
+            <CoolMinFeedrate value="Cool min feedrate"/>
+            <CoolHeadLift value="Cool head lift"/>
+            <CoolMinLayerTime value="Cool min layer time"/>
+            <SupportSectionTitle value="Support"/>
+            <SupportType value="Type"/>
+            <SupportFillrate value="Fill rate"/>
+            <SupportAngle value="Overhang angle"/>
+            <SupportXYDistance value="XY distance"/>
+            <SupportZDistance value="Z distance"/>
+            <SupportZHop value="Z hop"/>
+            <RetractionSectionTitle value="Retraction"/>
+            <RetractionSpeed value="Speed"/>
+            <RetractionAmount value="Amount"/>
+            <RetractionDualAmount value="Dual amount"/>
+            <RetractionMinTravel value="Min travel"/>
+            <RetractionCombing value="Combing"/>
+            <RetractionMinimalExtrusion value="Minimal extrusion"/>
+            <InfillSectionTitle value="Infill"/>
+            <InfillOverlap value="Infill overlap"/>
+        </AdvancedPrintPanel>      
+    
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
         <MainWindowButtons>
             <Models value="MODELS"/>
@@ -58,6 +177,7 @@
             <Degrees value="degrees"/>
             <MM value="millimeters"/>
             <Percentage value="percentage"/>
+            <LockRatio value="Lock aspect ratio"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
@@ -150,6 +270,8 @@
             <Line13 value="Restart"/>            
             <Line14 value="Unload"/> 
             <Line15 value="Estimate"/> 
+            <Line17 value="Stop"/>  
+            <Line16 value="Shutdown"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -168,6 +290,7 @@
             <Line6 value="Cannot write to the directory"/>
             <Line7 value="You may be running this software from an archive or other read-only directory"/>
             <Line8 value="Please quit the application and extract it to a writeable location, then start again"/>
+            <Line9 value="All files are stored in BEESOFT folder in user directory."/>
         </BaseDirectories>
         
         <!-- A próxima secção XML contém o texto que pode ser usado como informativo em atividades paralelas à impressão --> 
@@ -178,8 +301,8 @@
             <Line4 value="Place model on building surface?"/>
             <Line5 value="You have made changes to this model"/>
             <Line6 value="You will lose any unsaved changes."/>
-            <Line7 value="Save the scene now?"/>
-            <Line8 value="Save scene"/>
+            <Line7 value="Save the work area now?"/>
+            <Line8 value="Save work area"/>
             <Line9 value="This model is bigger than what BEETHEFIRST can build"/>
             <Line10 value="Are you sure you want to generate code for it?"/>
             <Line11 value="Generate oversized model?"/>
@@ -220,7 +343,7 @@
             <Line20 value="BUILDING_OFFLINE"/>
             <Line21 value="CONNECTING"/>
             <Line22 value="CONNECTED"/>
-            <Line23 value="Load scene"/>
+            <Line23 value="Load work area"/>
             <Line24 value="Load model"/>
             <Line25 value="Please wait"/>
             <BEETHEFIRST_STATUS1 value="is connected"/>
@@ -234,11 +357,17 @@
             <Configurations_Save value="Current settings are being saved..."/>
             <StatusMessage value="Status Message"/>
             <GCodeGeneration value="Preparing your print..."/>
-            <MeshError value="Imported model has errors. Try to fix them or import another model."/>
         </FeedbackLabel>
         
         <!-- A próxima secção XML contém o texto a ser apresentado no Processo de Impressão, incluindo SplashScreens --> 
         <Print>
+            <Print2D_Title value="Please select a PNG image you want to print"/>
+            <Print2D_Type_Image value="Choose type of image: "/>
+            <Print2D_GenerateSTL value="Generate STL "/>
+            <Print_SelectImage value="Select image to print"/>
+            <Print_TypeImage value="Choose type of image"/>
+            <Print_LogoType value="Logo"/>
+            <Print_PortraitType value="Portrait"/>
             <Print_Title value="PRINTING"/>
             <Print_Splash_Gcode_Title value="PROCESSING... PLEASE WAIT"/>
             <Print_Splash_Gcode_Info value="This process can take a few minutes"/>	
@@ -257,24 +386,33 @@
             <Print_Splash_Info11 value="To print you have to change the filament now."/>
             <Print_Quality value="Resolution"/>	
             <Print_Quality_Low value="Low"/>	
+            <Print_Quality_Medium value="Medium"/>	
             <Print_Quality_Normal value="Normal"/>	
             <Print_Quality_High value="High"/>	
+            <Print_Quality_SHigh value="High+"/>
             <Print_Density value="Density"/>
             <Print_Density_Low value="Low"/>
             <Print_Density_Medium value="Medium"/>
             <Print_Density_High value="High"/>	
+            <Print_Density_Insertion value="Density value (%) :"/>	
+            <Print_GCode_Selected value="File selected: "/>
+            <Print_GCode_Clear value="Clear"/>
             <Print_Raft value="Raft"/>	
             <Print_Support value="Support"/>	
             <Print_Autonomy value="Autonomy"/>
+            <Print_GCode value="Save GCode"/>
             <Print_GramsTag value="gram(s)"/>
+            <Print_ChooseGCodeFile value="Please choose a file to print"/>
             <Print_EstimationPrintTime value="Print time:"/>
-            <Print_EstimationMaterial value="Material cost:"/>
+            <Print_EstimationMaterial value="Filament weight:"/>
             <Print_Raft_Info value="This option creates a base that will allow the model to adhere to the table and help avoid warping. The raft may be hard to remove from the model, so only use when needed."/>	
             <Print_Support_Info value="This option automatically creates a detachable structure beneath an overhang or highly inclined areas, so as to allow the model to be printed."/>	
             <Print_Autonomy_Info value="This option allows you to print without a computer connection. You will be informed when you can disconnect from your computer."/>
+            <Print_GCode_Info value="This option allows you to save the GCode and print it later."/>
             <Print_ChangeFilament value="Change filament now"/>
+            <Print_SelectGCode value="Select GCode to print"/>
             <Print_TimeLeft value="About x minutes remaining"/>
-            <Print_GCode value="Settings will be updated. This process can take several moments."/>
+            <Print_GCode2 value="Settings will be updated. This process can take several moments."/>
             <Print_Filament value="Remaining filament may not be enough for this print session. Are you sure you have selected the correct filament color?"/>
             <Print_Autonomy value="Allows the BEETHEFIRST to print without being connected to the computer.
 				       You'll be informed when you can unplug the cable."/>
@@ -283,7 +421,11 @@
             <Print_Processing value="Processing... Please wait."/>
             <Print_Pausing value="Pausing... Please wait."/>
             <Print_Resuming value="Resuming... Please wait."/> 
-           <Print_Waiting value="Waiting... Resume when you are ready."/>
+            <Print_Waiting value="Waiting... Resume when you are ready."/>
+            <Print_Waiting2 value="You may also shutdown to continue printing later."/>
+            <Print_Waiting3 value="Resume if you want to continue printing."/>
+            <Print_Waiting4 value="You may also shutdown to continue printing later."/>
+            <Print_Shutdown value="You may now shutdown BEETHEFIRST."/>
             <Print_Unloading value="Your BEETHEFIRST is unloading. Please wait."/>
             <Print_Unloaded1 value="You may now remove your spool."/>
             <Print_Unloaded2 value="Cut the tip and store the spool in a cold dry place."/>
@@ -301,7 +443,7 @@
             <Print_Completion value="Completed in"/>
             <Print_BuildAborted value="Building process aborted."/>
             <Print_BuildAborted2 value="Please restart the transfer and try again."/>
-            <Print_BuildAborted3 value="If the problem persists, switch your BEETHEFIRST off. Then restart BEESOFT then switch the printer on."/>
+            <Print_BuildAborted3 value="If the problem persists, switch your BEETHEFIRST off."/>
             <Print_BuildAborted4 value="Then restart BEESOFT then switch the printer on."/>
             <Print_Stopped value="Stopped after"/>
             <Print_DoneBuilding value="Done building."/>
@@ -329,8 +471,8 @@
             <Exchange_Info_Title2 value="Unload filament"/>
             <Exchange_Info value="To unload the filament, push the Unload button and pull the filament steadily.
 To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>
-            <Exchange_Info2 value="To unload the filament, push the Unload button and wait for instructions.
-To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>                    
+            <Exchange_Info2 value="Make sure the spool’s label is facing inside as shown in the image. To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament.
+To unload the filament, push the Unload button and wait for instructions."/>                    
             <Exchange_Info3 value="Gently pull as filament unloads."/>         
             <Title3 value="FILAMENT TYPE"/>
             <Title4 value="Select type"/>
@@ -442,13 +584,16 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <MessageSaveScene value="Scene successfully saved."/>
             <MessageNotSaveScene value="Scene not saved. If you didn't cancel please check your user write permissions."/>
             <MessageLocadScene value="Scene successfully opened."/>
-            <MessageNotLocadScene value="Unable to open scene. Check read permissions or if file exists."/>
+            <MessageNotLocadScene value="Unable to open work area. Check read permissions or if file exists."/>
             <MessageFirstTime value="Please view 'Quick Guide' all the way through before continuing."/>
             <MessageModelNotPicked value="Select a model."/>
             <GCodeGeneration value="GCode not generated. Check your execute permissions."/>
             <BTF_Disconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
+            <BTF_Printing value="Your BEETHEFIRST is printing. Please make sure it is available for a new print. "/>
             <ErrorUpdating value="Sorry about this! Please restart BEESOFT to continue."/>
             <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
+            <MeshError value="Imported model has errors. Try to fix them or import another model."/>
+            <ReinstallError value="Re-install BEESOFT in order to install all proper files that are missing."/>
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -456,9 +601,9 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Tour1_Title value="Almost there..."/>
             <Tour1_Text value="To start printing your models, follow the next steps."/>
             <Tour1_Jump value="Skip Tutorial."/>
-            <Tour2 value="Add a model to the scene. You can import a model from the '3DModels' folder in BEESOFT or you can import one of your own files."/>
+            <Tour2 value="Add a model to the work area. You can import a model from the '3DModels' folder in BEESOFT or you can import or drag one of your own files."/>
             <Tour3 value="Use 'Move', 'Rotate', 'Scale' or 'Mirror' to set the model up exactly how you want it to be printed."/>
-            <Tour4 value="Once you are satisfied with your scene, you can start printing."/>
+            <Tour4 value="Once you are satisfied with your work area, you can start printing."/>
             <Tour5 value="Important messages regarding BEETHEFIRST will appear here."/>
             <Tour6 value="BEETHEFIRST maintenance operations can be found here - they are essential for printing quality."/>
             <DefaultMessage value="Welcome!"/>
@@ -473,6 +618,8 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Measures value="Measures"/>
             <LockHeight value="Lock vertical axis"/>
             <LockHeight_info value="Models can only be moved parallel to the platform."/>
+            <Autonomy value="Autonomy mode"/>
+            <Autonomy_info value="Allows BEETHEFIRST to print without being connected to the computer."/>
         </Preferences>
         
         <!-- A próxima secção XML contém o texto para a janela de Help -->
@@ -500,7 +647,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         <!-- A próxima secção XML contém o texto a apresentar na Biblioteca de Modelos -->
         <Gallery>
             <SearchModels_text_bar value="Search for models..."/>
-            <EraseScene value="Delete scene"/>
+            <EraseScene value="Delete work area"/>
             <EraseModel value="Delete model"/>
             <ModelsOnline value="Online models"/>
             <Model_Import value="Import model"/>
@@ -524,6 +671,10 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <TRANSPARENT value="TRANSPARENT"/>
             <GREEN value="GREEN"/>
             <ORANGE value="ORANGE"/>
+            <BLUE value="BLUE"/>
+            <OLIVE value="OLIVE GREEN"/>
+            <PINK value="PINK"/>
+            <SILVER value="SILVER"/>
         </CoilColors>
         
     </tags>      
