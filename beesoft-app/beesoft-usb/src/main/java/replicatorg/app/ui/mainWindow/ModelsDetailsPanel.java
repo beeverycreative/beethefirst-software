@@ -1,6 +1,7 @@
 package replicatorg.app.ui.mainWindow;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -46,6 +47,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel6.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel7.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel8.setFont(GraphicDesignComponents.getSSProBold("12"));
+        deleteButton.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel11.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel12.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -59,7 +61,6 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jTextField4.setFont(GraphicDesignComponents.getSSProLight("12"));
         jTextField5.setFont(GraphicDesignComponents.getSSProLight("12"));
 
-
     }
 
     private void setTextLanguage() {
@@ -71,9 +72,10 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
         jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
 
-        jLabel6.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
-        jLabel7.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
-        jLabel8.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
+        jLabel6.setText(Languager.getTagValue("ApplicationMenus", "Edit_PutPlatform"));
+        jLabel7.setText(Languager.getTagValue("ApplicationMenus", "Edit_Center"));
+        jLabel8.setText(Languager.getTagValue("ApplicationMenus", "Edit_Reset"));
+        deleteButton.setText(Languager.getTagValue("ApplicationMenus", "Edit_Delete"));
 
     }
 
@@ -104,6 +106,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_8.png")));
             jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_8.png")));
             jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_8.png")));
+            deleteButton.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_8.png")));
             jTextField3.setEnabled(false);
             jTextField4.setEnabled(false);
             jTextField5.setEnabled(false);
@@ -158,6 +161,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        deleteButton = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
 
@@ -272,14 +276,14 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel8.setText("Retomar Posicao Original");
         jLabel8.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel8MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel8MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel8MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel8MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel8MouseEntered(evt);
             }
         });
 
@@ -299,6 +303,21 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jTextArea1);
 
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_8.png"))); // NOI18N
+        deleteButton.setText("Apagar");
+        deleteButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                deleteButtonMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseEntered(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -308,7 +327,6 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel4)
                     .addComponent(jLabel11)
@@ -340,7 +358,9 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel15)
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -381,6 +401,8 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deleteButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -389,15 +411,14 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 39, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -479,7 +500,27 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
         model.setDescription(String.valueOf(jTextArea1.getText()));
     }//GEN-LAST:event_jTextArea1KeyReleased
+
+    private void deleteButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMousePressed
+        if (!panelDisabled) {            
+            Base.getMainWindow().handleCAMDelete();
+        }
+    }//GEN-LAST:event_deleteButtonMousePressed
+
+    private void deleteButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseExited
+        if (oneModel) {
+            deleteButton.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_8.png")));
+        }
+    }//GEN-LAST:event_deleteButtonMouseExited
+
+    private void deleteButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseEntered
+        if (oneModel) {
+            deleteButton.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_8.png")));
+        }
+    }//GEN-LAST:event_deleteButtonMouseEntered
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel deleteButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
