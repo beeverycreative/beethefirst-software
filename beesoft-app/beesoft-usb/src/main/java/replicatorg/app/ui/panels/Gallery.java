@@ -32,6 +32,8 @@ import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.MainWindow;
+import replicatorg.app.ui.mainWindow.ModelsDetailsPanel;
+import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
 
 /**
@@ -1302,6 +1304,10 @@ public class Gallery extends javax.swing.JFrame {
 
         mWindow.getButtons().updatePressedStateButton("models");
         mWindow.setEnabled(true);
+        
+        //Selects the inserted model
+        mWindow.selectLastInsertedModel();
+        
         Base.bringAllWindowsToFront();
         dispose();
     }//GEN-LAST:event_jLabel24MousePressed
