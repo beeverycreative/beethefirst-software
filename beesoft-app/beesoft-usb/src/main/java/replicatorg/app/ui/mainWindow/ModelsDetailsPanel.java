@@ -1,7 +1,6 @@
 package replicatorg.app.ui.mainWindow;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -72,10 +71,10 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
         jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
 
-        jLabel6.setText(Languager.getTagValue("ApplicationMenus", "Edit_PutPlatform"));
-        jLabel7.setText(Languager.getTagValue("ApplicationMenus", "Edit_Center"));
-        jLabel8.setText(Languager.getTagValue("ApplicationMenus", "Edit_Reset"));
-        deleteButton.setText(Languager.getTagValue("ApplicationMenus", "Edit_Delete"));
+        jLabel6.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
+        jLabel7.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
+        jLabel8.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
+        deleteButton.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Delete"));
 
     }
 

@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
@@ -126,9 +125,7 @@ import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.About;
 import replicatorg.app.ui.panels.BuildStatus;
-import replicatorg.app.ui.panels.ControlPanel;
 
-import replicatorg.app.ui.panels.FilamentHeating;
 import replicatorg.app.ui.panels.Gallery;
 import replicatorg.app.ui.panels.Help;
 import replicatorg.app.ui.panels.Maintenance;
@@ -308,6 +305,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 console);
         new FileDrop(null, cardPanel, /* dragBorder, */
                 new FileDrop.Listener() {
+            @Override
             public void filesDropped(java.io.File[] files) {
                 bed.addSTL(files[0]);
                 bed.setSceneDifferent(true);
@@ -1571,9 +1569,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             editor = edit;
         }
 
+        @Override
         public void run() {
             message("Simulating...");
             EventQueue.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     simulationOver();
                 }
@@ -1629,7 +1629,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     }
 
     /**
-     * Send stop commnad to loaded machine, Disables pre-heating, and sets
+     * Send stop command to loaded machine, Disables pre-heating, and sets
      * building values to false/off
      */
     public void doStop() {
@@ -1693,10 +1693,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     /**
      * New scene with BEE default model if first time running app.
+     * @param shift
      */
     public void handleNew(final boolean shift) {
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 bed = bed.makePrintBed(null);
                 canvas.updateBed(bed);
@@ -1714,6 +1716,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void handleNewModel() {
         Base.writeLog("Opening model ...");
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 String path = null;
                 if (path == null) { // "open..." selected from the menu
@@ -1734,6 +1737,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 Base.getMainWindow().getBed().setGcodeOK(false);
                 bed.setSceneDifferent(true);
                 oktoGoOnSave = false;
+                
+                //Selects the last inserted model
+                Base.getMainWindow().selectLastInsertedModel();
             }
         });
     }
@@ -1741,7 +1747,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     /**
      * This is the implementation of the MRJ open document event, and the
      * Windows XP open document will be routed through this too.
+     * @param file
      */
+    @Override
     public void handleOpenFile(File file) {
         handleOpenScene(file.getAbsolutePath());
     }
@@ -1815,10 +1823,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     /**
      * Open a sketch given the full path to the BEE file. Pass in 'null' to
      * prompt the user for the name of the sketch.
+     * @param ipath
      */
     public void handleOpenScene(final String ipath) {
         Base.writeLog("Opening scene ...");
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 String path = ipath;
                 if (path == null) { // "open..." selected from the menu
@@ -1844,6 +1854,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     updateDetailsCenter(sceneDP);
                     showFeedBackMessage("loadScene");
                     ois.close();
+                    
+                    //Selects inserted model
+                    Base.getMainWindow().selectLastInsertedModel();
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -1858,6 +1871,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     /**
      * Second stage of open that calls handleOpenScene after extension
      * validation. Updates also the mruList.
+     * @param path
      */
     protected void handleOpen2Scene(String path) {
         if (path != null && !new File(path).exists()) {
@@ -1900,9 +1914,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     /**
      * Handle Save the Scene. This consists in serializing the PrintBed Object.
+     * @param force
      */
     public void handleSave(final boolean force) {
         Runnable saveWork = new Runnable() {
+            @Override
             public void run() {
                 Base.logger.info("Saving Scene...");
                 Base.writeLog("Saving Scene...");
@@ -1970,6 +1986,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      */
     public void handleSaveAs() {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 // TODO: lock sketch?
                 Base.logger.info("Saving...");
@@ -2055,9 +2072,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * requires an exception to be thrown in order to properly cancel a quit
      * message.
      */
+    @Override
     public void handleQuit() {
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
                 public void run() {
                     handleQuitInternal();
                 }
