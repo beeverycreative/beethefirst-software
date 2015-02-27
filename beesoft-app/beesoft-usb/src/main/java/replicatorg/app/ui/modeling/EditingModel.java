@@ -2,7 +2,7 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -274,10 +274,30 @@ public class EditingModel implements Serializable {
         Point3d upper = new Point3d();
         bb.getLower(lower);
         bb.getUpper(upper);
-        double zoff = -lower.z;
-        double xoff = -(upper.x + lower.x) / 2.0d;
-        double yoff = -(upper.y + lower.y) / 2.0d;
-
+        double zoff = -lower.z;                 
+        double yoff;
+        double xoff;
+        
+        ArrayList<Model> models = Base.getMainWindow().getBed().getModels();
+        int nmodelsInBed = models.size();
+        if (nmodelsInBed > 1) { // If there are more models in bed controls their positioning
+            
+            // Gets the model inserted before
+            Model mp = models.get(models.size() -2);                        
+            double offset_prev_model = mp.getEditer().getWidth() / 2.0;
+            Point3d centroid_prev = mp.getEditer().getCentroid();            
+            
+            Model mc = models.get(models.size() -1);                        
+            double offset_curr_model = mc.getEditer().getWidth() / 2.0;
+            
+            xoff = centroid_prev.x + offset_curr_model + offset_prev_model + 5;
+            yoff = (upper.y + lower.y) / 2.0d;
+            
+        } else {
+            xoff = (upper.x + lower.x) / 2.0d;
+            yoff = (upper.y + lower.y) / 2.0d;
+        }
+        
         MachineInterface mc = Base.getMachineLoader().getMachineInterface();
         BuildVolume buildVol = null;
         if (mc instanceof Machine) {
