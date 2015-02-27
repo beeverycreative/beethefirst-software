@@ -104,6 +104,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -140,6 +141,7 @@ import replicatorg.drivers.EstimationDriver;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
+import replicatorg.util.UnitConverter;
 
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
@@ -539,7 +541,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     @Override
     public void handlePrefs() throws IllegalStateException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     public void activateCameraControls() {
@@ -858,9 +860,30 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                     if (mOCS != null) {
                         model.resetScale();
-                        mOCS.setXValue(model.getScaleXinPercentage());
-                        mOCS.setYValue(model.getScaleYinPercentage());
-                        mOCS.setZValue(model.getScaleZinPercentage());
+                        if (mOCS.isScalePercentage()) {
+                            mOCS.setXValue(model.getScaleXinPercentage());
+                            mOCS.setYValue(model.getScaleYinPercentage());
+                            mOCS.setZValue(model.getScaleZinPercentage());
+                        } else {
+                            DecimalFormat df = new DecimalFormat("#.0"); 
+
+                            double width = model.getEditer().getWidth();
+                            if (ProperDefault.get("measures").equals("inches")) {
+                                width = UnitConverter.millimetersToInches(width);
+                            }
+                            double depth = model.getEditer().getDepth();
+                            if (ProperDefault.get("measures").equals("inches")) {
+                                depth = UnitConverter.millimetersToInches(depth);
+                            }
+                            double height = model.getEditer().getHeight();
+                            if (ProperDefault.get("measures").equals("inches")) {
+                                height = UnitConverter.millimetersToInches(height);
+                            }                                    
+
+                            mOCS.setXValue(df.format(width));
+                            mOCS.setYValue(df.format(depth));
+                            mOCS.setZValue(df.format(height));                                    
+                        }  
                     }
                     model.getEditer().updateModelPicked();
 

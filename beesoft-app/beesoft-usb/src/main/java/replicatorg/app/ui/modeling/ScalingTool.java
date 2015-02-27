@@ -2,15 +2,18 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import javax.swing.Icon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 
 import replicatorg.app.Base;
+import replicatorg.app.ProperDefault;
 import replicatorg.model.CAMPanel.DragMode;
 import static replicatorg.model.CAMPanel.DragMode.NONE;
 import static replicatorg.model.CAMPanel.DragMode.SCALE_OBJECT;
 import replicatorg.model.Model;
+import replicatorg.util.UnitConverter;
 
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
@@ -99,15 +102,11 @@ public class ScalingTool extends Tool {
                     
                     scaleDragChange += (0.005 * (xd+yd > 0 ? (Math.sqrt(xd*xd+yd*yd)) : -(Math.sqrt(xd*xd+yd*yd)))) ;
 
-                    if(scaleDragChange > 0.1)
-                    {   
+                    if(scaleDragChange > 0.1){   
                             
-//                        System.out.println("scaleDragChange " + scaleDragChange);
                         double currentScale = parent.getModelEditing().model.getTransform().getScale();
-//                        System.out.println("currentScale " + currentScale);
                         double targetScale = scaleDragChange / currentScale;
-//                        System.out.println("targetScale " + targetScale);
-//                        System.out.println("");
+
                         Model model = parent.getModelEditing().model;
                         double minimumSize = model.getEditer().getMINIMUM_SIZE_LIMIT();
                         double maximumSize = model.getEditer().getMAXIMUM_SIZE_LIMIT();
@@ -118,10 +117,30 @@ public class ScalingTool extends Tool {
                             model.updateYscale(targetScale);
                             model.updateZscale(targetScale);
                             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
-                            super.mOCS.setXValue(model.getScaleXinPercentage());
-                            super.mOCS.setYValue(model.getScaleYinPercentage());
-                            super.mOCS.setZValue(model.getScaleZinPercentage());
-                            //Base.getMainWindow().getCanvas().getModelsPanel().updateScale?();   
+ 
+                            if (super.mOCS.isScalePercentage()) {
+                                super.mOCS.setXValue(model.getScaleXinPercentage());
+                                super.mOCS.setYValue(model.getScaleYinPercentage());
+                                super.mOCS.setZValue(model.getScaleZinPercentage());
+                            } else {
+                                DecimalFormat df = new DecimalFormat("#.0");
+                                                    
+                                double width = model.getEditer().getWidth();
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    width = UnitConverter.millimetersToInches(width);
+                                }
+                                double depth = model.getEditer().getDepth();
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    depth = UnitConverter.millimetersToInches(depth);
+                                }
+                                double height = model.getEditer().getHeight();
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    height = UnitConverter.millimetersToInches(height);
+                                } 
+                                super.mOCS.setXValue(df.format(width));
+                                super.mOCS.setYValue(df.format(depth));
+                                super.mOCS.setZValue(df.format(height));
+                            } 
                         }
                         
                     }

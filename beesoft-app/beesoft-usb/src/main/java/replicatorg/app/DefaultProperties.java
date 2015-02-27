@@ -88,6 +88,7 @@ public class DefaultProperties {
         defaultHash.put("curaFile", "none");
         defaultHash.put("transferSpeed", "42.0");
         defaultHash.put("autonomy", String.valueOf(true));
+        defaultHash.put("measures", "mm");
     }
 
     /**

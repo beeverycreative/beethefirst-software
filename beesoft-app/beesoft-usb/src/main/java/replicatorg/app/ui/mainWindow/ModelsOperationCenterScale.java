@@ -1,11 +1,14 @@
 package replicatorg.app.ui.mainWindow;
 
+import java.text.DecimalFormat;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
+import replicatorg.util.UnitConverter;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -22,6 +25,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private boolean check_pressed, mm, percentage, lockedRatio;
     private boolean scaleLocked;
+    private final double initialWidth, initialDepth, initialHeight;
 
     public ModelsOperationCenterScale() {
         initComponents();
@@ -40,10 +44,33 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         canvas.setModelationType("scale");
         Model model = canvas.getModel();
 
-        jTextField4.setText(model.getScaleXinPercentage());
-        jTextField5.setText(model.getScaleYinPercentage());
-        jTextField6.setText(model.getScaleZinPercentage());
-
+        this.initialWidth = model.getEditer().getWidth();
+        this.initialHeight = model.getEditer().getHeight();
+        this.initialDepth = model.getEditer().getDepth();
+        
+        if (this.percentage) {
+            jTextField4.setText(model.getScaleXinPercentage());
+            jTextField5.setText(model.getScaleYinPercentage());
+            jTextField6.setText(model.getScaleZinPercentage());
+ 
+        } else {
+            
+            DecimalFormat df = new DecimalFormat("#.0");
+            
+            if (ProperDefault.get("measures").equals("inches")) {
+                jTextField4.setText(df.format(UnitConverter.millimetersToInches(this.initialWidth)));
+                jTextField5.setText(df.format(UnitConverter.millimetersToInches(this.initialDepth)));
+                jTextField6.setText(df.format(UnitConverter.millimetersToInches(this.initialHeight)));
+            } else {
+                jTextField4.setText(df.format(this.initialWidth));
+                jTextField5.setText(df.format(this.initialDepth));
+                jTextField6.setText(df.format(this.initialHeight));
+            }            
+        }
+    }
+    
+    public boolean isScalePercentage() {
+        return this.percentage;
     }
 
     private void setFont() {
@@ -71,8 +98,19 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
         jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
         jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
-        jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale_Extense"));
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions")); 
+        
+        if (this.percentage) {
+             jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale_Extense"));
+        } else {
+            if (ProperDefault.get("measures").equals("inches")) {
+                jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
+                        +" ("+Languager.getTagValue(1, "MainWindowButtons", "Inches")+")");
+            } else {
+                jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
+                        +" ("+Languager.getTagValue(1, "MainWindowButtons", "MM")+")");
+            }
+        }
 //        jLabel13.setText(Languager.getTagValue(1,"", ""));
 //        jLabel14.setText(Languager.getTagValue(1,"", ""));        
 //        jLabel15.setText(Languager.getTagValue(1,"", ""));    
@@ -507,7 +545,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        double newValuePercentage = 1.0;
+        double newValuePercentage;
         String textFieldValue = jTextField4.getText();
 
         if (!(textFieldValue.length() == 0)) {
@@ -516,10 +554,21 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     textFieldValue = textFieldValue.replace(",", ".");
                 }
 
-                if (mm) {
+                if (this.percentage) {
                     newValuePercentage = Double.parseDouble(textFieldValue);
+
                 } else {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
+
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        double sizeInches = Double.parseDouble(textFieldValue);
+
+                        double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
+                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                    } else {
+                        double sizeMM = Double.parseDouble(textFieldValue);
+
+                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                    }
                 }
 
                 if (newValuePercentage > 0) {
@@ -546,7 +595,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        double newValuePercentage = 1.0;
+        double newValuePercentage;
         String textFieldValue = jTextField5.getText();
 
         if (!(textFieldValue.length() == 0)) {
@@ -555,10 +604,20 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     textFieldValue = textFieldValue.replace(",", ".");
                 }
 
-                if (mm) {
+                if (this.percentage) {
                     newValuePercentage = Double.parseDouble(textFieldValue);
                 } else {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
+
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        double sizeInches = Double.parseDouble(textFieldValue);
+
+                        double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
+                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                    } else {
+                        double sizeMM = Double.parseDouble(textFieldValue);
+
+                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                    }
                 }
 
                 if (newValuePercentage > 0) {
@@ -586,7 +645,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        double newValuePercentage = 1.0;
+        double newValuePercentage;
         String textFieldValue = jTextField6.getText();
 
         if (!(textFieldValue.length() == 0)) {
@@ -595,10 +654,21 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     textFieldValue = textFieldValue.replace(",", ".");
                 }
 
-                if (mm) {
+                if (this.percentage) {
                     newValuePercentage = Double.parseDouble(textFieldValue);
+
                 } else {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
+
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        double sizeInches = Double.parseDouble(textFieldValue);
+
+                        double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
+                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                    } else {
+                        double sizeMM = Double.parseDouble(textFieldValue);
+
+                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                    }
                 }
 
                 if (newValuePercentage > 0) {
@@ -659,20 +729,74 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void jTextField4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+
+        if (this.percentage) {
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());            
+        } else {
+            DecimalFormat df = new DecimalFormat("#.0");
+
+            double depth = model.getEditer().getDepth();
+            if (ProperDefault.get("measures").equals("inches")) {
+                depth = UnitConverter.millimetersToInches(depth);
+            }
+            double height = model.getEditer().getHeight();
+            if (ProperDefault.get("measures").equals("inches")) {
+                height = UnitConverter.millimetersToInches(height);
+            }         
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setYValue(String.valueOf(df.format(depth)));
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setZValue(String.valueOf(df.format(height)));            
+        }        
     }//GEN-LAST:event_jTextField4FocusGained
 
     private void jTextField5FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField5FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+        if (this.percentage) {
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());            
+
+        } else {
+            DecimalFormat df = new DecimalFormat("#.0");
+            
+            double width = model.getEditer().getWidth();
+            if (ProperDefault.get("measures").equals("inches")) {
+                width = UnitConverter.millimetersToInches(width);
+            }
+            double height = model.getEditer().getHeight();
+            if (ProperDefault.get("measures").equals("inches")) {
+                height = UnitConverter.millimetersToInches(height);
+            }             
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setXValue(String.valueOf(df.format(width)));
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setZValue(String.valueOf(df.format(height)));
+        }
     }//GEN-LAST:event_jTextField5FocusGained
 
     private void jTextField6FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField6FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-        Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+        if (this.percentage) {
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+        } else {
+            DecimalFormat df = new DecimalFormat("#.0");
+            
+            double width = model.getEditer().getWidth();
+            if (ProperDefault.get("measures").equals("inches")) {
+                width = UnitConverter.millimetersToInches(width);
+            }
+            double depth = model.getEditer().getDepth();
+            if (ProperDefault.get("measures").equals("inches")) {
+                depth = UnitConverter.millimetersToInches(depth);
+            }  
+            
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setXValue(String.valueOf(df.format(width)));
+            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+                    setYValue(String.valueOf(df.format(depth))); 
+        }
     }//GEN-LAST:event_jTextField6FocusGained
 
     private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed

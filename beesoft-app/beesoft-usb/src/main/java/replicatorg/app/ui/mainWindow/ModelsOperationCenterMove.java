@@ -4,7 +4,9 @@ import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.util.UnitConverter;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -65,7 +67,11 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
 //        jLabel13.setText(Languager.getTagValue("", ""));
 //        jLabel14.setText(Languager.getTagValue("", ""));        
 //        jLabel15.setText(Languager.getTagValue("", ""));    
-        jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM"));
+        if (ProperDefault.get("measures").equals("inches")) {
+            jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 0.2 " + Languager.getTagValue(fileKey, "MainWindowButtons", "Inches"));
+        } else {
+            jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM"));
+        } 
     }
 
     private void toggle5MM() {
@@ -362,7 +368,10 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                         jTextField4.setText("");
                     }
                 }
-
+                    
+                if (ProperDefault.get("measures").equals("inches")) {
+                    xValue = UnitConverter.inchesToMillimeters(xValue);
+                }
 
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(xValue, 0, 0);
             } else {
@@ -386,6 +395,10 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                     } else {
                         jTextField5.setText("");
                     }
+                }
+                
+                if (ProperDefault.get("measures").equals("inches")) {
+                    yValue = UnitConverter.inchesToMillimeters(yValue);
                 }
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, yValue, 0);
             } else {
@@ -411,6 +424,10 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                         jTextField6.setText("");
                     }
                 }
+
+                if (ProperDefault.get("measures").equals("inches")) {
+                    zValue = UnitConverter.inchesToMillimeters(zValue);
+                }                
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, 0, zValue);
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");

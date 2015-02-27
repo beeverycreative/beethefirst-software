@@ -42,6 +42,16 @@ public class PreferencesPanel extends javax.swing.JFrame {
             autonomous.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
             autonomyPressed = true;
         }
+                
+        if (ProperDefault.get("measures").equals("inches")) {
+            radioInches.setSelected(true);
+        } else {
+            radioMM.setSelected(true);
+        }
+
+        buttonGroup1.add(radioMM);
+        buttonGroup1.add(radioInches);
+        
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -50,6 +60,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("11"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLabel6.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
@@ -62,6 +73,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jLabel1.setText(Languager.getTagValue(1, "Preferences", "Preferences_title").toUpperCase());
         jLabel3.setText(Languager.getTagValue(1, "Preferences", "Measures") + ": ");
         jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "MM"));
+        jLabel6.setText(Languager.getTagValue(1, "MainWindowButtons", "Inches"));
         jLabel9.setText(Languager.getTagValue(1, "Preferences", "LockHeight"));
         jLabel17.setText(Languager.getTagValue(1, "Preferences", "Autonomy"));
         jLabel10.setText(Languager.getTagValue(1, "Preferences", "LockHeight_info"));
@@ -160,6 +172,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel2 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -174,6 +187,9 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         autonomous = new javax.swing.JLabel();
+        radioMM = new javax.swing.JRadioButton();
+        radioInches = new javax.swing.JRadioButton();
+        jLabel6 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -190,10 +206,8 @@ public class PreferencesPanel extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(248, 248, 248));
         jPanel2.setPreferredSize(new java.awt.Dimension(298, 230));
 
-        jLabel10.setForeground(new java.awt.Color(0, 0, 0));
         jLabel10.setText("Suspendisse potenti.");
 
-        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Lock Vertical Axis");
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
@@ -203,13 +217,10 @@ public class PreferencesPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Milimeters");
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Measures");
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("PREFERENCES");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -244,7 +255,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -257,14 +268,12 @@ public class PreferencesPanel extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        jLabel16.setForeground(new java.awt.Color(0, 0, 0));
         jLabel16.setText("Suspendisse potenti.");
 
-        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
         jLabel17.setText("Autonomy mode");
 
         autonomous.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
@@ -273,6 +282,12 @@ public class PreferencesPanel extends javax.swing.JFrame {
                 autonomousMousePressed(evt);
             }
         });
+
+        radioMM.setToolTipText("");
+
+        radioInches.setToolTipText("");
+
+        jLabel6.setText("Inches");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -295,8 +310,14 @@ public class PreferencesPanel extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel5)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioMM)
+                                .addGap(39, 39, 39)
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(radioInches)))
+                        .addGap(0, 103, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
@@ -317,9 +338,14 @@ public class PreferencesPanel extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel5))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel5)
+                        .addComponent(radioMM, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(radioInches, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -332,14 +358,13 @@ public class PreferencesPanel extends javax.swing.JFrame {
                     .addComponent(jLabel17))
                 .addGap(2, 2, 2)
                 .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 203, 5));
         jPanel1.setMinimumSize(new java.awt.Dimension(20, 26));
         jPanel1.setPreferredSize(new java.awt.Dimension(20, 26));
 
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel11.setText("CANCELAR");
         jLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -355,7 +380,6 @@ public class PreferencesPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel12.setText("OK");
         jLabel12.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -431,8 +455,17 @@ public class PreferencesPanel extends javax.swing.JFrame {
 
     private void jLabel12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MousePressed
         dispose();
+
+        String selectedMeasure = "mm";
+        
+        if (this.radioInches.isSelected()) {
+            selectedMeasure = "inches";
+        }
+        
         ProperDefault.put("lockHeight", String.valueOf(lockPressed));
         ProperDefault.put("autonomy", String.valueOf(autonomyPressed));
+        ProperDefault.put("measures", selectedMeasure);
+        
         Base.writeConfig();
         Base.loadProperties();
         Base.getMainWindow().getCanvas().updateTool();
@@ -469,6 +502,7 @@ public class PreferencesPanel extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel autonomous;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -480,10 +514,13 @@ public class PreferencesPanel extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JRadioButton radioInches;
+    private javax.swing.JRadioButton radioMM;
     // End of variables declaration//GEN-END:variables
 }

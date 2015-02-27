@@ -4,10 +4,12 @@ import java.text.DecimalFormat;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.modeling.EditingModel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
+import replicatorg.util.UnitConverter;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -66,8 +68,14 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel1.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
         jLabel15.setText(Languager.getTagValue(1, "ModelDetails", "Model_N"));
         jLabel5.setText(Languager.getTagValue(1, "ModelDetails", "Model_Selected"));
-
-        jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions") + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
+             
+        if (ProperDefault.get("measures").equals("inches")) {
+            jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
+                +" ("+Languager.getTagValue(1, "MainWindowButtons", "Inches")+")");
+        } else {
+             jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
+                 +" ("+Languager.getTagValue(1, "MainWindowButtons", "MM")+")");
+        }
         jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
         jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
 
@@ -87,12 +95,19 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     public void updateBedInfo() {
 //        evaluateBed();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        EditingModel editModel = model.getEditer();
+
         DecimalFormat df = new DecimalFormat("#.0");
         EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
-        jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
-        jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
-        jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+
+        if (ProperDefault.get("measures").equals("inches")) {
+            jTextField3.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getWidth()))));
+            jTextField4.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getDepth()))));
+            jTextField5.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getHeight()))));
+        } else {
+            jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
+            jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
+            jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+        }
 
         jTextField1.setText(String.valueOf(model.getName()));
         jTextArea1.setText(String.valueOf(model.getDescription()));
@@ -124,9 +139,16 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             DecimalFormat df = new DecimalFormat("#.0");
             EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
-            jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
-            jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
-            jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+
+            if (ProperDefault.get("measures").equals("inches")) {
+                jTextField3.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getWidth()))));
+                jTextField4.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getDepth()))));
+                jTextField5.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getHeight()))));
+            } else {
+                jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
+                jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
+                jTextField5.setText(String.valueOf(df.format(modelEditer.getHeight())));
+            }
         }
 
     }
@@ -460,16 +482,39 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
         if (!panelDisabled) {
             Base.getMainWindow().getBed().resetTransformation();
-//        Base.getMainWindow().getCanvas().resetView();
+
             Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPicked();
             Model model = Base.getMainWindow().getBed().getFirstPickedModel();
             ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
 
             if (mOCS != null) {
                 model.resetScale();
-                mOCS.setXValue(model.getScaleXinPercentage());
-                mOCS.setYValue(model.getScaleYinPercentage());
-                mOCS.setZValue(model.getScaleZinPercentage());
+               Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+
+                if (mOCS.isScalePercentage()) {
+                    mOCS.setXValue(model.getScaleXinPercentage());
+                    mOCS.setYValue(model.getScaleYinPercentage());
+                    mOCS.setZValue(model.getScaleZinPercentage());
+                } else {
+                    DecimalFormat df = new DecimalFormat("#.0"); 
+
+                    double width = model.getEditer().getWidth();
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        width = UnitConverter.millimetersToInches(width);
+                    }
+                    double depth = model.getEditer().getDepth();
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        depth = UnitConverter.millimetersToInches(depth);
+                    }
+                    double height = model.getEditer().getHeight();
+                    if (ProperDefault.get("measures").equals("inches")) {
+                        height = UnitConverter.millimetersToInches(height);
+                    }                                    
+
+                    mOCS.setXValue(df.format(width));
+                    mOCS.setYValue(df.format(depth));
+                    mOCS.setZValue(df.format(height));                                    
+                }  
             }
         }
     }//GEN-LAST:event_jLabel8MousePressed

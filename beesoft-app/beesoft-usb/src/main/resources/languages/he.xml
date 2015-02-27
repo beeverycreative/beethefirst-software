@@ -43,20 +43,21 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
         <MainWindowButtons>
-           <Models value="דגמים"/>
-           <Maintenance value="תחזוקה"/>
-           <QuickWizard value="מדריך מהיר"/>
-           <Print value="הדפס"/>
+            <Models value="דגמים"/>
+            <Maintenance value="תחזוקה"/>
+            <QuickWizard value="מדריך מהיר"/>
+            <Print value="הדפס"/>
             <Mirror value="ראי"/>
             <Scale value="סולם"/>
             <Move value="מהלך"/>
             <Rotate value="לסובב"/>
-	    <MoreOptions value="אפשרויות נוספות"/>
+            <MoreOptions value="אפשרויות נוספות"/>
             <Axis value="ציר"/>
             <Axis2 value="בציר"/>
             <Degrees value="מעלות"/>
             <MM value="מילימטרים"/>
             <Percentage value="אחוזים"/>
+            <Inches value="אינץ'" />
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
