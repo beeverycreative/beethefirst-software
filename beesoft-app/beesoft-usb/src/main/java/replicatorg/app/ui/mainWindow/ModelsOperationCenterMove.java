@@ -22,7 +22,7 @@ import replicatorg.util.UnitConverter;
 public class ModelsOperationCenterMove extends javax.swing.JPanel {
 
     private boolean check_pressed, fiveMM_pressed;
-
+    
     public ModelsOperationCenterMove() {
         initComponents();
         this.check_pressed = false;
@@ -349,7 +349,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -512,6 +512,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
     private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
         showOptions();
     }//GEN-LAST:event_jLabel7MousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;

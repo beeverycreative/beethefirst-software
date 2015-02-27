@@ -57,6 +57,7 @@ public class ScalingTool extends Tool {
         return "Scale object";
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
 
         if (parent.getModelEditing().model != null) {
@@ -71,10 +72,12 @@ public class ScalingTool extends Tool {
 
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
 //         Base.getMainWindow().getCanvas().redrawBoundingBox(parent.getModelEditing().model, 1);
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         if (parent.getModelEditing().model != null ) {
             Base.getMainWindow().getBed().setGcodeOK(false);
@@ -112,10 +115,55 @@ public class ScalingTool extends Tool {
                         double maximumSize = model.getEditer().getMAXIMUM_SIZE_LIMIT();
                         
                         if (!(model.minDimension()< minimumSize && targetScale < minimumSize) ) {
-                            parent.getModelEditing().scale(targetScale, isOnPlatform);
-                            model.updateXscale(targetScale);
-                            model.updateYscale(targetScale);
-                            model.updateZscale(targetScale);
+
+                          if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked()) {
+                                
+                                parent.getModelEditing().scale(targetScale, isOnPlatform);
+                                
+                                model.updateXscale(targetScale);
+                                model.updateYscale(targetScale);
+                                model.updateZscale(targetScale);                              
+                                
+                            } else if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked() == false) { //X & Y
+                                
+                                parent.getModelEditing().scaleXY(targetScale, isOnPlatform);      
+                                
+                                model.updateXscale(targetScale);
+                                model.updateYscale(targetScale);                              
+                                
+                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() && mOCS.isZLocked() == false) { // Y
+
+                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "y");
+
+                                model.updateYscale(targetScale);
+                               
+                            } else if (mOCS.isXLocked() && mOCS.isYLocked() == false && mOCS.isZLocked() == false) { //X
+                                
+                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "x");
+                                
+                                model.updateXscale(targetScale);                             
+                                
+                            } else if (mOCS.isXLocked() && mOCS.isYLocked()== false && mOCS.isZLocked()) { //X & Z
+                                
+                                parent.getModelEditing().scaleXZ(targetScale, isOnPlatform);  
+                                
+                                model.updateXscale(targetScale);
+                                model.updateZscale(targetScale);                               
+                                
+                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() && mOCS.isZLocked()) { // Y & Z
+                                
+                                parent.getModelEditing().scaleYZ(targetScale, isOnPlatform);            
+                                
+                                model.updateYscale(targetScale);
+                                model.updateZscale(targetScale);                              
+                                
+                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() == false && mOCS.isZLocked()) { // Z
+
+                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "z");       
+                                
+                                model.updateZscale(targetScale);                               
+                            }                               
+                            
                             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
  
                             if (super.mOCS.isScalePercentage()) {

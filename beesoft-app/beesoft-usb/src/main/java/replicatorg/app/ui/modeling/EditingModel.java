@@ -908,6 +908,24 @@ public class EditingModel implements Serializable {
             }
         }
     }
+    
+        
+    public void scaleXY(double scale2, boolean isOnPlatform) {
+        if (model != null && validSizeConstraints()) {
+            this.scale = scale / 100;
+            Transform3D t = new Transform3D();
+            t.setNonUniformScale(scale2, scale2, 1);
+            if (isOnPlatform) {
+                t = transformOnBottom(t);
+            } else {
+                t = transformOnCentroid(t);
+            }
+            shapeTransform.setTransform(t);
+            model.setTransform(t, "resize", isNewOp());
+            evaluateModelOutOfBounds();
+            Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+        }
+    }   
 
     public void scaleY(double scale2, boolean isOnPlatform, boolean arrowsScale) {
         if (model != null) {
@@ -946,6 +964,23 @@ public class EditingModel implements Serializable {
         }
     }
 
+    public void scaleYZ(double scale2, boolean isOnPlatform) {
+        if (model != null && validSizeConstraints()) {
+            this.scale = scale / 100;
+            Transform3D t = new Transform3D();
+            t.setNonUniformScale(1, scale2, scale2);
+            if (isOnPlatform) {
+                t = transformOnBottom(t);
+            } else {
+                t = transformOnCentroid(t);
+            }
+            shapeTransform.setTransform(t);
+            model.setTransform(t, "resize", isNewOp());
+            evaluateModelOutOfBounds();
+            Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+        }
+    }
+    
     public void scaleZ(double scale2, boolean isOnPlatform, boolean arrowsScale) {
         if (model != null) {
             double currentScale = model.getZscalePercentage();
@@ -982,12 +1017,54 @@ public class EditingModel implements Serializable {
         }
     }
 
+    public void scaleXZ(double scale2, boolean isOnPlatform) {
+        if (model != null && validSizeConstraints()) {
+            this.scale = scale / 100;
+            Transform3D t = new Transform3D();
+            t.setNonUniformScale(scale2, 1, scale2);
+            if (isOnPlatform) {
+                t = transformOnBottom(t);
+            } else {
+                t = transformOnCentroid(t);
+            }
+            shapeTransform.setTransform(t);
+            model.setTransform(t, "resize", isNewOp());
+            evaluateModelOutOfBounds();
+            Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+        }
+    }
+    
+    public void scaleAxisLock(double scale2, boolean isOnPlatform, String axis) {
+        if (model != null && validSizeConstraints()) {
+            this.scale = scale / 100;
+            Transform3D t = new Transform3D();
+            if (axis.equals("x")) {
+                t.setNonUniformScale(scale2, 1, 1);
+            } else if (axis.equals("y")) {
+                t.setNonUniformScale(1, scale2, 1);
+            } else if (axis.equals("z")) {
+                t.setNonUniformScale(1, 1, scale2);
+            } else {
+                t.setNonUniformScale(1, 1, 1);
+            }
+            
+            if (isOnPlatform) {
+                t = transformOnBottom(t);
+            } else {
+                t = transformOnCentroid(t);
+            }
+            shapeTransform.setTransform(t);
+            model.setTransform(t, "resize", isNewOp());
+            evaluateModelOutOfBounds();
+            Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+        }
+    }    
+        
     private double calculateOverplus(char axis) {
-        double diffDistance = 0.0;
-        double diffFactor = 0.0;
-        double excess = 0.0;
-        double max = 0.0;
-        double error = -1;
+        double diffDistance;
+        double diffFactor;
+        double excess;
+        double max;
 
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
 
