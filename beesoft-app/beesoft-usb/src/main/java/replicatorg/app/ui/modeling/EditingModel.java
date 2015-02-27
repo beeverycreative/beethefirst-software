@@ -2,6 +2,7 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -13,7 +14,6 @@ import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Group;
 import javax.media.j3d.Material;
 import javax.media.j3d.Node;
-import javax.media.j3d.Shape3D;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
@@ -24,7 +24,6 @@ import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
 import replicatorg.app.Base;
 import replicatorg.app.ui.MainWindow;
 
