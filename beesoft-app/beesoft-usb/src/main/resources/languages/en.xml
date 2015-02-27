@@ -179,6 +179,7 @@
             <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
             <Inches value="inches"/>
+            <ScaleToMax value="Scale to Max"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->

@@ -58,6 +58,7 @@
             <MM value="מילימטרים"/>
             <Percentage value="אחוזים"/>
             <Inches value="אינץ'" />
+            <ScaleToMax value="קנה מידה למקסימום" />     
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
