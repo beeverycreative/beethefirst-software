@@ -5,6 +5,7 @@ package replicatorg.plugin.toolpath.cura;
  */
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -167,9 +168,7 @@ public class CuraGenerator extends ToolpathGenerator {
         String[] filesArguments = {"-o", gcodePath, path};
 
         // Adds base arguments to the process
-        for (String arg : baseArguments) {
-            arguments.add(arg);
-        }
+        arguments.addAll(Arrays.asList(baseArguments));
 
         /**
          * Adds overload parameters: - resolution - density- raft - support
@@ -183,9 +182,7 @@ public class CuraGenerator extends ToolpathGenerator {
         }
 
         // Adds files arguments to the process
-        for (String arg : filesArguments) {
-            arguments.add(arg);
-        }
+        arguments.addAll(Arrays.asList(filesArguments));
 //        System.out.println("********************");
 //        // Prints arguments
         Base.writeLog("Cura Path " + CURA_BIN_PATH);
@@ -286,7 +283,7 @@ public class CuraGenerator extends ToolpathGenerator {
         /**
          * CuraEngine options constructor. Empty value.
          *
-         * @param param option attribute
+         * @param parameter
          */
         public CuraEngineOption(String parameter) {
             this.parameter = parameter;

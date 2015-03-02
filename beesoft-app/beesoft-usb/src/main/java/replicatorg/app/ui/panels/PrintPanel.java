@@ -20,7 +20,6 @@ import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import replicatorg.app.Base;
@@ -55,7 +54,7 @@ public class PrintPanel extends javax.swing.JFrame {
     private ArrayList<String> prefs;
     private boolean raftPressed, supportPressed, autonomousPressed, gcodeSavePressed;
     private int posX = 0, posY = 0;
-    private Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+    private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
     private boolean no_Filament = false;
     private static final String NOK = "NOK";
     private Thread t = null;
@@ -177,7 +176,7 @@ public class PrintPanel extends javax.swing.JFrame {
      */
     private void getCoilCode() {
 
-        String code = FilamentControler.NO_FILAMENT_CODE;
+        String code;
 
         if (Base.getMachineLoader().isConnected() == false) {
             code = Base.getMainWindow().getMachine().getModel().getCoilCode();
@@ -186,13 +185,6 @@ public class PrintPanel extends javax.swing.JFrame {
             code = Base.getMainWindow().getMachine().getModel().getCoilCode();
         }
         Base.writeLog("Print panel coil code: " + code);
-        try {
-            ;//do nothing
-            //driver.updateCoilCode();            
-        } catch (Exception e) {
-            Base.writeLog("driver.update coil code failed: " + e.getMessage());
-        }
-
 
         if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
             no_Filament = true;
@@ -551,7 +543,7 @@ public class PrintPanel extends javax.swing.JFrame {
      * @return complete text build with based duration.
      */
     private String buildTimeEstimationString(String durT) {
-        String text = "N/A";
+        String text;
         if (!durT.equals("NA")) {
             int duration = estimatorTimeToMinutes(durT);
             String hours = minutesToHours(duration).split("\\:")[0];
@@ -591,6 +583,7 @@ public class PrintPanel extends javax.swing.JFrame {
      */
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -599,6 +592,7 @@ public class PrintPanel extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -718,6 +712,7 @@ public class PrintPanel extends javax.swing.JFrame {
 
     /**
      * Checks if current settings match old ones.
+     * @return 
      */
     public boolean checkChanges() {
         boolean equal = false;
@@ -745,17 +740,14 @@ public class PrintPanel extends javax.swing.JFrame {
 
     /**
      * Checks if settings that affect gcode were changed.
+     * @return 
      */
     public boolean settingsChanged() {
 
-        if (parseSlider1().equals(lastSelectedResolution)
+        return parseSlider1().equals(lastSelectedResolution)
                 && parseSlider2().equals(lastSelectedDensity)
                 && raftPressed == lastSelectedRaft
-                && supportPressed == lastSelectedSupport) {
-            return true;
-        }
-
-        return false;
+                && supportPressed == lastSelectedSupport;
     }
 
     /**
@@ -1474,6 +1466,7 @@ public class PrintPanel extends javax.swing.JFrame {
                 private int counter = 0;
                 private int tries = 0;
 
+                @Override
                 public void run() {
 
                     /**
@@ -1507,7 +1500,7 @@ public class PrintPanel extends javax.swing.JFrame {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Base.writeLog(e.getMessage());
                         }
                     }
                 }
@@ -1684,7 +1677,7 @@ public class PrintPanel extends javax.swing.JFrame {
 
 class PrintEstimationThread extends Thread {
 
-    private PrintPanel printPanel;
+    private final PrintPanel printPanel;
     private int nTimes;
 
     public PrintEstimationThread(PrintPanel panel) {

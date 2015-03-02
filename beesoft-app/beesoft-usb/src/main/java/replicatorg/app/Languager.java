@@ -3,6 +3,7 @@ package replicatorg.app;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -112,7 +113,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.info("Permission denied over " + "languages/".concat(Base.language).concat(".xml"));
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "languages/".concat(Base.language).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -127,6 +128,9 @@ public class Languager {
     /**
      * Parses tag value from XML and removes string chars only.
      *
+     * @param code
+     * @param rootTag
+     * @param subTag
      * @return plain text array without spaces
      */
     public static String[] getGCodeArray(int code, String rootTag, String subTag) {
@@ -189,7 +193,7 @@ public class Languager {
                                 {
                                     if (nodeList.item(i).getChildNodes().item(j).getNodeName().equals(subTag)) // Found subTag
                                     {
-                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue().toString();
+                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue();
                                     }
                                     //                           System.out.println(nodeList.item(i).getNodeName());
                                     //                           System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " "+nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
@@ -201,7 +205,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.info("Permission denied over " + "machines/".concat(Base.language).concat(".xml"));
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -271,7 +275,7 @@ public class Languager {
                                     if (subNode.getNodeName().equals(subTag) && subNode.hasChildNodes()) // Found subTag and it has childs
                                     {   //Run over the subTag children
                                         for (int k = 1; k < subNode.getChildNodes().getLength(); k += 2) {
-                                            childNodes_rootag.put(subNode.getChildNodes().item(k).getAttributes().getNamedItem("value").getNodeValue().toString(), subNode.getChildNodes().item(k).getNodeName());
+                                            childNodes_rootag.put(subNode.getChildNodes().item(k).getAttributes().getNamedItem("value").getNodeValue(), subNode.getChildNodes().item(k).getNodeName());
                                         }
                                         return childNodes_rootag;
                                     }
@@ -283,7 +287,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.info("Permission denied over " + "machines/".concat(Base.language).concat(".xml"));
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());

@@ -101,6 +101,8 @@ public class EditingModel implements Serializable {
 
     /**
      * Create the branchgroup that will display the object.
+     * @param model
+     * @return 
      */
     public BranchGroup makeShape2(Model model) {
         originalShape = model.getShape();
@@ -253,18 +255,7 @@ public class EditingModel implements Serializable {
 //        System.out.println(machineVolume.getX() + " " + machineVolume.getY());
 //        System.out.println("Lx = " + lower.x + " Ly= "+ lower.y + " Lz= "+ lower.z);
 //        System.out.println("Ux = " + upper.x + " Uy= "+ upper.y+ " Uz= "+ upper.z);
-
-//        if (lower.x < -(machineVolume.getX() / 2) || upper.x > (machineVolume.getX() / 2)) {
-//            return true;
-//        }
-//        if (lower.y < -(machineVolume.getY() / 2) || upper.y > (machineVolume.getY() / 2)) {
-//            return true;
-//        }
-        if (lower.z > (machineVolume.getZ()) || !isOnPlatform()) {
-            return false;
-        }
-
-        return true;
+        return !(lower.z > (machineVolume.getZ()) || !isOnPlatform());
     }
 
     public void centerAndToBed() {
@@ -329,9 +320,12 @@ public class EditingModel implements Serializable {
     }
     
     public boolean evaluateCollision(){
-                TriangleArray vertices = null;
-                Geometry g = Base.getMainWindow().getBed().getModel(0).getShape().getGeometry();
-		if (g instanceof TriangleArray) { vertices = (TriangleArray)g; }
+                
+        TriangleArray vertices = null;        
+        Geometry g = Base.getMainWindow().getBed().getModel(0).getShape().getGeometry();
+		if (g instanceof TriangleArray) { 
+            vertices = (TriangleArray)g; 
+        }
                 
 		if (g == null) {
 			Base.logger.info("Couldn't find valid geometry during save.");
@@ -364,8 +358,8 @@ public class EditingModel implements Serializable {
 	
 //			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
 //                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
-		}
-                System.err.println("evaluateCollision: DONE");
+		}                
+        System.err.println("evaluateCollision: DONE");
         
         return false;
     }
@@ -488,7 +482,6 @@ public class EditingModel implements Serializable {
         if (group == null) {
             group = makeShape2(model);
         }
-//		
         return group;
     }
 
@@ -506,7 +499,6 @@ public class EditingModel implements Serializable {
      * object.
      *
      * @param transform
-     * @param name
      * @return
      */
     public Transform3D transformOnCentroid(Transform3D transform) {
@@ -534,7 +526,6 @@ public class EditingModel implements Serializable {
      * object.
      *
      * @param transform
-     * @param name
      * @return
      */
     public Transform3D transformOnBottom(Transform3D transform) {
