@@ -1,7 +1,5 @@
 package replicatorg.app.ui.mainWindow;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -9,6 +7,7 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProLight;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProRegular;
+import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.machine.MachineInterface;
 
 /**
@@ -25,7 +24,7 @@ import replicatorg.machine.MachineInterface;
 public class ButtonsPanel extends javax.swing.JPanel {
 
     private boolean models_pressed, maintenance_pressed, quickGuide_pressed, print_pressed;
-    private replicatorg.app.ui.MainWindow editor;
+    private final replicatorg.app.ui.MainWindow editor;
     private boolean jLabel1Bool = false;
     private boolean jLabel5Bool = false;
     private boolean jLabel4Bool = false;
@@ -210,11 +209,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     public void blockModelsButton(boolean block) {
-        if (block) {
-            models_pressed = true;
-        } else {
-            models_pressed = false;
-        }
+        models_pressed = block;
     }
 
     public boolean areIOFunctionsBlocked() {
@@ -513,23 +508,11 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-//        boolean connected = Base.getMachineLoader().isConnected();
+          
+        Base.writeLog("BEESOFT tour loaded ... ");
 
-//        if (connected) {
-//            if (quickGuide_pressed == false && Base.isPrinting == false) {
-//                jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-//                jLabel5Bool = false;
-//                editor.updateModelsOperationCenter(new ModelsOperationCenter());
-//                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-//                sceneDP.updateBed(Base.getMainWindow().getBed());
-//                editor.updateDetailsCenter(sceneDP);
-//                Base.getMainWindow().getCanvas().unPickAll();
-//                editor.handleQuickStartWizard();
-                Base.getMainWindow().launchBrowser("https://beeverycreative.com/");
-//            }
-//        } else {
-//            Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-//        }
+        TourWelcome p = new TourWelcome();
+        p.setVisible(true);
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed

@@ -133,6 +133,7 @@ import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PreferencesPanel;
 import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.PrintSplashSimple;
+import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.ui.panels.WelcomeQuickguide;
 import replicatorg.app.util.ExtensionFilter;
@@ -1008,6 +1009,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "Help", "FAQ"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 launchBrowser("https://beeverycreative.com/faq/");
 
@@ -1019,6 +1021,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "Help", "Troubleshooting"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 launchBrowser("https://beeverycreative.com/troubleshooting/");
             }
@@ -1030,6 +1033,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Support"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 launchBrowser("https://beeverycreative.com/support/");
             }
@@ -1040,6 +1044,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Help p = new Help();
                 p.setVisible(true);
@@ -1051,8 +1056,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_QuickGuide"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                launchBrowser("https://beeverycreative.com/");
+                Base.writeLog("BEESOFT tour loaded ... ");
+
+                TourWelcome p = new TourWelcome();
+                p.setVisible(true);
             }
         });
         menu.add(item);
@@ -1062,6 +1071,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Update"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 UpdateChecker p = new UpdateChecker();
                 p.setVisible(true);
@@ -1074,6 +1084,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_About"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 About p = new About();
                 p.setVisible(true);

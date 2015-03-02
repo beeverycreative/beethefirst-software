@@ -114,7 +114,7 @@ public class Base {
         OPEN_SPECIFIC_FILE
     };
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.10.0_stable-2015-01-31";
+    public static final String VERSION_BEESOFT = "3.10.0-beta-2015-03-03";
 //    public static final String VERSION_BEESOFT = "3.8.0-beta_2014-05-01";
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
@@ -141,7 +141,7 @@ public class Base {
     /**
      * The general-purpose logging object.
      */
-    public static Logger logger = Logger.getLogger("replicatorg.log");
+    public static final Logger logger = Logger.getLogger("replicatorg.log");
     public static FileHandler logFileHandler = null;
     public static String logFilePath = null;
     /**
@@ -159,7 +159,7 @@ public class Base {
     private static FileOutputStream writer;
     private static FileInputStream read;
     /* Date time instance variables */
-    private static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     public static boolean maintenanceOpened = false;
     public static boolean maintenanceWizardOpen = false;
     public static ArrayList<Thread> systemThreads;
@@ -197,7 +197,7 @@ public class Base {
      * SimpleG uses. If null, this instance will use the default preferences
      * set.
      */
-    static private String alternatePrefs = null;
+    private static final String alternatePrefs = null;
 
     /**
      * Get the preferences node for SimpleG.
@@ -228,6 +228,7 @@ public class Base {
      * Get the the user preferences and profiles directory. By default this is
      * ~/.replicatorg; if an alternate preferences set is selected, it will
      * instead be ~/.replicatorg/alternatePrefs/<i>alternate_prefs_name</i>.
+     * @return 
      */
     static public File getUserDirectory() {
         String path = System.getProperty("user.home") + File.separator + ".replicatorg";
@@ -238,7 +239,7 @@ public class Base {
         if (!dir.exists()) {
             dir.mkdirs();
             if (!dir.exists()) { // we failed to create our user dir. Log the failure, try to continue
-                Base.logger.severe("We could not create a user directory at: " + path);
+                Base.logger.log(Level.SEVERE, "We could not create a user directory at: {0}", path);
                 return null;
             }
         }
@@ -1144,13 +1145,14 @@ public class Base {
                 writeLog("Operating System: Windows");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            writeLog(e.getMessage());
         }
         
         // use native popups so they don't look so crappy on osx
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 ProperDefault.put("machine.name", MACHINE_NAME);
                 String machineName = ProperDefault.get("machine.name");
@@ -1164,6 +1166,7 @@ public class Base {
                 Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
                     final private MainWindow w = editor;
 
+                    @Override
                     public void run() {
                         w.onShutdown();
                     }
@@ -1214,7 +1217,7 @@ public class Base {
      * this to be a float because there's no good way to specify a double with
      * the preproc.
      */
-    public static final float javaVersion = new Float(javaVersionName.substring(0, 3)).floatValue();
+    public static final float javaVersion = Float.parseFloat(javaVersionName.substring(0, 3));
     /**
      * Current platform in use
      */
@@ -1231,7 +1234,7 @@ public class Base {
         // figure out which operating system
         // this has to be first, since editor needs to know
 
-        if (platformName.toLowerCase().indexOf("mac") != -1) {
+        if (platformName.toLowerCase().contains("mac")) {
             // can only check this property if running on a mac
             // on a pc it throws a security exception and kills the applet
             // (but on the mac it does just fine)
@@ -1243,7 +1246,7 @@ public class Base {
         } else {
             String osname = System.getProperty("os.name");
 
-            if (osname.indexOf("Windows") != -1) {
+            if (osname.contains("Windows")) {
                 platform = Platform.WINDOWS;
 
             } else if (osname.equals("Linux")) { // true for the ibm vm
@@ -1269,6 +1272,7 @@ public class Base {
     /**
      * returns true if the ReplicatorG is running on a Mac OS machine,
      * specifically a Mac OS X machine because it doesn't run on OS 9 anymore.
+     * @return 
      */
     static public boolean isMacOS() {
         return platform == Platform.MACOSX;
@@ -1276,6 +1280,7 @@ public class Base {
 
     /**
      * returns true if running on windows.
+     * @return 
      */
     static public boolean isWindows() {
         return platform == Platform.WINDOWS;
@@ -1283,6 +1288,7 @@ public class Base {
 
     /**
      * true if running on linux.
+     * @return 
      */
     static public boolean isLinux() {
         return platform == Platform.LINUX;
@@ -1299,6 +1305,8 @@ public class Base {
     /**
      * Registers key events for a Ctrl-W and ESC with an ActionListener that
      * will take care of disposing the window.
+     * @param root
+     * @param disposer
      */
     static public void registerWindowCloseKeys(JRootPane root, // Window
             // window,
@@ -1318,6 +1326,9 @@ public class Base {
      * Show an error message that's actually fatal to the program. This is an
      * error that can't be recovered. Use showWarning() for errors that allow
      * ReplicatorG to continue running.
+     * @param title
+     * @param message
+     * @param e
      */
     static public void quitWithError(String title, String message, Throwable e) {
 

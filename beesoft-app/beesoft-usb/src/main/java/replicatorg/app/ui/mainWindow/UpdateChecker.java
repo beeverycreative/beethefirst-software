@@ -50,7 +50,7 @@ import replicatorg.drivers.Driver;
 public class UpdateChecker extends javax.swing.JFrame {
 
     private int posX = 0, posY = 0;
-    private Driver driver;
+    private final Driver driver;
     private File fileFromServer = null;
     private boolean updateStableAvailable;
     private boolean updateBetaAvailable;
@@ -170,7 +170,7 @@ public class UpdateChecker extends javax.swing.JFrame {
         String softServerVersionString = getTagValue("Software", "Version");
         String softServerVersionBetaString = getTagValue("Software", "Version_beta");
         int betaServerVersion = Integer.valueOf(getTagValue("Software", "BetaVersion"));
-        int betaSoftVersion = 0;
+        int betaSoftVersion;
         String softServerDateString = getTagValue("Software", "Date");
         String softServerDateBetaString = getTagValue("Software", "Date_beta");
 
@@ -242,6 +242,7 @@ public class UpdateChecker extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -250,6 +251,7 @@ public class UpdateChecker extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -339,7 +341,7 @@ public class UpdateChecker extends javax.swing.JFrame {
                                 {
                                     if (nodeList.item(i).getChildNodes().item(j).getNodeName().equals(subTag)) // Found subTag
                                     {
-                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue().toString();
+                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue();
                                     }
                                 }
 
