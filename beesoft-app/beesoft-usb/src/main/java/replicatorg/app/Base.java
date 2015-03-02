@@ -80,6 +80,7 @@ import com.apple.eawt.Application;
 
 import com.apple.mrj.MRJApplicationUtils;
 import com.apple.mrj.MRJOpenDocumentHandler;
+import java.awt.Window;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -285,7 +286,7 @@ public class Base {
                 if (new File(baseDir + "/BEESOFT.app/Contents/Resources").exists()) {
                     return new File(baseDir + "/BEESOFT.app/Contents/Resources");
                 } else {
-                    Base.logger.severe(baseDir + "/BEESOFT.app not found, using " + baseDir + "/replicatorg/");
+                    Base.logger.log(Level.SEVERE, "{0}/BEESOFT.app not found, using {1}/replicatorg/", new Object[]{baseDir, baseDir});
                 }
                 return new File(baseDir + "/replicatorg");
             } catch (java.io.IOException e) {
@@ -363,38 +364,36 @@ public class Base {
     }
 
     public static void clearFileContent(File inputFile) {
-        PrintWriter writer = null;
+        PrintWriter wrtr = null;
         try {
-            writer = new PrintWriter(inputFile);
+            wrtr = new PrintWriter(inputFile);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        writer.print("");
-        writer.close();
+        wrtr.print("");
+        wrtr.close();
     }
 
     private static Map<String, String> getGalleryMap(File[] models) {
         Map<String, String> mod = new HashMap<String, String>();
 
-        for (int i = 0; i < models.length; i++) {
-            mod.put(models[i].getName(), models[i].getAbsolutePath());
+        for (File model : models) {
+            mod.put(model.getName(), model.getAbsolutePath());
         }
         return mod;
     }
 
     public static void copy3DFiles() {
-        InputStream inStream = null;
-        OutputStream outStream = null;
+        InputStream inStream;
+        OutputStream outStream;
 
         File[] models = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER).listFiles();
         Map<String, String> galleryModels = getGalleryMap(new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER).listFiles());
 
-        for (int i = 0; i < models.length; i++) {
+        for (File model : models) {
             try {
-
-                File afile = new File(models[i].getAbsolutePath());
-                File bfile = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + models[i].getName());
-
+                File afile = new File(model.getAbsolutePath());
+                File bfile = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + model.getName());
                 if (!galleryModels.containsKey(afile.getName())) {
 
                     inStream = new FileInputStream(afile);
@@ -412,9 +411,8 @@ public class Base {
                     inStream.close();
                     outStream.close();
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            }catch (IOException e) {
+                Base.writeLog(e.getMessage());
             }
         }
 
@@ -487,7 +485,8 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            fw.close();
+            if (fw != null)
+                fw.close();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -520,7 +519,8 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            fw.close();
+            if (fw != null)
+                fw.close();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -550,7 +550,8 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            fw.close();
+            if (fw != null)
+                fw.close();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -566,25 +567,22 @@ public class Base {
              * Does this to avoid FileNotFoundException Therefore, file exists
              * and writes a empty string to validate existence
              */
-            PrintWriter w = null;
+            PrintWriter w;
             try {
                 w = new PrintWriter(f.getAbsolutePath());
+                w.print("");
+                w.close();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
-            w.print("");
-            w.close();
 
-            FileInputStream fileInput = null;
+            FileInputStream fileInput;
             try {
                 fileInput = new FileInputStream(f);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
                 nw.load(fileInput);
                 fileInput.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);            
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -605,11 +603,11 @@ public class Base {
         PrintWriter w = null;
         try {
             w = new PrintWriter(f.getAbsolutePath());
+            w.print("");
+            w.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        w.print("");
-        w.close();
 
         /**
          * FileOutputStream for Properties usage
@@ -640,7 +638,7 @@ public class Base {
      * Write new property to the config file
      *
      * @param param new atribute to be added to configs
-     * @param value atribute value
+     * @return 
      */
     public static String readConfig(String param) {
 
@@ -717,29 +715,29 @@ public class Base {
         probuilder.redirectErrorStream(true);
 
         Process process = null;
-        try {
-            process = probuilder.start();
-        } catch (IOException ex) {
-        }
-
-        //Read out dir output
-        InputStream is = process.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String line = "";
         String out = "";
         try {
+            process = probuilder.start();
+            //Read out dir output
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+
+            String line;
+
             while ((line = br.readLine()) != null) {
                 out += line + "\n";
             }
         } catch (IOException ex) {
+            Base.writeLog(ex.getMessage());
         }
+        
         //Wait to get exit value
         try {
-            int exitValue = process.waitFor();
+            if (process != null)
+                process.waitFor();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Base.writeLog(e.getMessage());
         }
 
         VERSION_JAVA = out.trim();
@@ -747,9 +745,9 @@ public class Base {
 
     static public void diposeAllOpenWindows() {
         java.awt.Window win[] = java.awt.Window.getWindows();
-        for (int i = 0; i < win.length; i++) {
-            if (!win[i].getName().equals("mainWindow")) {
-                win[i].dispose();
+        for (Window win1 : win) {
+            if (!win1.getName().equals("mainWindow")) {
+                win1.dispose();
             }
 //            System.out.println(win[i].getName());
         }
@@ -757,24 +755,24 @@ public class Base {
         editor.getButtons().resetVariables();
         THREAD_KEEP_ALIVE = false;
 
-        for (int i = 0; i < systemThreads.size(); i++) {
-            systemThreads.get(i).stop();
+        for (Thread systemThread : systemThreads) {
+            systemThread.stop();
         }
 
     }
     
     static public void enableAllOpenWindows() {
         java.awt.Window win[] = java.awt.Window.getWindows();
-        for (int i = 0; i < win.length; i++) {
-            if (win[i].getName().equals("mainWindow")) { //|| win[i].getName().equals("Autonomous") 
+        for (Window win1 : win) {
+            if (win1.getName().equals("mainWindow")) {
+                //|| win[i].getName().equals("Autonomous")
                 if (printPaused) {
-                    win[i].setEnabled(false);
+                    win1.setEnabled(false);
                 } else {
-                    win[i].setEnabled(true);
+                    win1.setEnabled(true);
                 }
-
             } else {
-                win[i].setEnabled(true);
+                win1.setEnabled(true);
             }
 //            }
 //            System.out.println(win[i].getName());
@@ -785,9 +783,9 @@ public class Base {
     static public void bringAllWindowsToFront() {
         bringMainWindowOK();
         java.awt.Window win[] = java.awt.Window.getOwnerlessWindows();
-        for (int i = 0; i < win.length; i++) {
-            win[i].toFront();
-            win[i].requestFocusInWindow();
+        for (Window win1 : win) {
+            win1.toFront();
+            win1.requestFocusInWindow();
         }
     }
 
@@ -804,7 +802,7 @@ public class Base {
     /**
      * Checks if string is a numeric number
      *
-     * @param s string to validate
+     * @param str
      * @return boolean <li> true, if it is numeric
      * <li> false, if not
      */
@@ -817,7 +815,7 @@ public class Base {
      * Singleton NumberFormat used for parsing and displaying numbers to GUI in
      * the localized format. Use for all non-GCode, numbers output and input.
      */
-    static private NumberFormat localNF = NumberFormat.getInstance();
+    private static final NumberFormat localNF = NumberFormat.getInstance();
 
     static public NumberFormat getLocalFormat() {
         return localNF;
@@ -827,9 +825,9 @@ public class Base {
      * strings when generating gcode (minimum one decimal places) using . as
      * decimal separator
      */
-    static private NumberFormat gcodeNF;
+    private static final NumberFormat gcodeNF;
 
-    {
+    static {
         // We don't use DFS.getInstance here to maintain compatibility with Java 5
         DecimalFormatSymbols dfs;
         gcodeNF = new DecimalFormat("##0.0##");
@@ -850,7 +848,7 @@ public class Base {
      */
     static public File getUserFile(String path, boolean autoCopy) {
         if (path.contains("..")) {
-            Base.logger.info("Attempted to access parent directory in " + path + ", skipping");
+            Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
             return null;
         }
         // First look in the user's local .replicatorG directory for the path.
@@ -877,7 +875,7 @@ public class Base {
 
     static public File getUserDir(String path, boolean autoCopy) {
         if (path.contains("..")) {
-            Base.logger.info("Attempted to access parent directory in " + path + ", skipping");
+            Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
             return null;
         }
         // First look in the user's local .replicatorG directory for the path.
@@ -909,8 +907,8 @@ public class Base {
         String fontname = st.nextToken();
         String fontstyle = st.nextToken();
         return new Font(fontname,
-                ((fontstyle.indexOf("bold") != -1) ? Font.BOLD : 1)
-                | ((fontstyle.indexOf("italic") != -1) ? Font.ITALIC
+                ((fontstyle.contains("bold")) ? Font.BOLD : 1)
+                | ((fontstyle.contains("italic")) ? Font.ITALIC
                 : 0), Integer.parseInt(st.nextToken()));
     }
 
@@ -935,9 +933,10 @@ public class Base {
     public static MainWindow getEditor() {
         return editor;
     }
-    private static NotificationHandler notificationHandler = null;
+    private static final NotificationHandler notificationHandler = null;
     private static final String[] supportedExtensions = {
-        "stl", "bee"};
+        "stl", "bee"
+    };
 
     /**
      * Return the extension of a path, converted to lowercase.
@@ -1028,6 +1027,7 @@ public class Base {
         // because the event may be lost (sometimes, not always) by the time
         // that MainWindow is properly constructed.
         MRJOpenDocumentHandler startupOpen = new MRJOpenDocumentHandler() {
+            @Override
             public void handleOpenFile(File file) {
                 // this will only get set once.. later will be handled
                 // by the MainWindow version of this fella
@@ -1083,8 +1083,6 @@ public class Base {
 
     /**
      *
-     * @param cleanPrefs Before starting ReplicatorG proper, erase the user
-     * preferences.
      */
     public Base() {
 
@@ -1335,7 +1333,7 @@ public class Base {
         notificationHandler.showError(title, message, e);
 
         if (e != null) {
-            e.printStackTrace();
+            Base.writeLog(e.getMessage());
         }
         System.exit(1);
     }
@@ -1422,9 +1420,7 @@ public class Base {
         }
         to.flush();
         from.close(); // ??
-        from = null;
         to.close(); // ??
-        to = null;
 
         bfile.setLastModified(afile.lastModified()); // jdk13+ required
         // } catch (IOException e) {
@@ -1434,9 +1430,12 @@ public class Base {
 
     /**
      * Grab the contents of a file as a string.
+     * @param file
+     * @return 
+     * @throws java.io.IOException
      */
     static public String loadFile(File file) throws IOException {
-        Base.logger.info("Load file : " + file.getAbsolutePath());
+        Base.logger.log(Level.INFO, "Load file : {0}", file.getAbsolutePath());
         // empty code file.. no worries, might be getting filled up later
         if (file.length() == 0) {
             return "";
@@ -1445,8 +1444,8 @@ public class Base {
         InputStreamReader isr = new InputStreamReader(new FileInputStream(file));
         BufferedReader reader = new BufferedReader(isr);
 
-        StringBuffer buffer = new StringBuffer();
-        String line = null;
+        StringBuilder buffer = new StringBuilder();
+        String line;
         while ((line = reader.readLine()) != null) {
             buffer.append(line);
             buffer.append('\n');
@@ -1456,36 +1455,39 @@ public class Base {
     }
 
     /**
-     * Spew the contents of a String object out to a file.
+     * Spew the contents of a String object out to a fil
+     * @param str
+     * @param file
+     * @throws java.io.IOException
      */
     static public void saveFile(String str, File file) throws IOException {
-        Base.logger.info("Saving as " + file.getCanonicalPath());
+        Base.logger.log(Level.INFO, "Saving as {0}", file.getCanonicalPath());
 
         ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
         InputStreamReader isr = new InputStreamReader(bis);
         BufferedReader reader = new BufferedReader(isr);
 
         FileWriter fw = new FileWriter(file);
-        PrintWriter writer = new PrintWriter(new BufferedWriter(fw));
+        PrintWriter wrtr = new PrintWriter(new BufferedWriter(fw));
 
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
-            writer.println(line);
+            wrtr.println(line);
         }
-        writer.flush();
-        writer.close();
+        wrtr.flush();
+        wrtr.close();
     }
 
     static public void copyDir(File sourceDir, File targetDir)
             throws IOException {
         targetDir.mkdirs();
         String files[] = sourceDir.list();
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].equals(".") || files[i].equals("..")) {
+        for (String file : files) {
+            if (file.equals(".") || file.equals("..")) {
                 continue;
             }
-            File source = new File(sourceDir, files[i]);
-            File target = new File(targetDir, files[i]);
+            File source = new File(sourceDir, file);
+            File target = new File(targetDir, file);
             if (source.isDirectory()) {
                 // target.mkdirs();
                 copyDir(source, target);
@@ -1499,6 +1501,9 @@ public class Base {
     /**
      * Gets a list of all files within the specified folder, and returns a list
      * of their relative paths. Ignores any files/folders prefixed with a dot.
+     * @param path
+     * @param relative
+     * @return 
      */
     static public String[] listFiles(String path, boolean relative) {
         return listFiles(new File(path), relative);
@@ -1521,12 +1526,11 @@ public class Base {
             return;
         }
 
-        for (int i = 0; i < list.length; i++) {
-            if (list[i].charAt(0) == '.') {
+        for (String list1 : list) {
+            if (list1.charAt(0) == '.') {
                 continue;
             }
-
-            File file = new File(path, list[i]);
+            File file = new File(path, list1);
             String newPath = file.getAbsolutePath();
             if (newPath.startsWith(basePath)) {
                 newPath = newPath.substring(basePath.length());
@@ -1540,6 +1544,7 @@ public class Base {
 
     /**
      * Get a reference to the currently selected machine *
+     * @return 
      */
     static public MachineLoader getMachineLoader() {
         if (machineLoader == null) {

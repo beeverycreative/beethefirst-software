@@ -170,8 +170,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public CAMPanel canvas;
     CardLayout cardLayout = new CardLayout();
     JPanel cardPanel = new JPanel(new BorderLayout());
-    private MRUList mruList;
-    private CategoriesList categoriesList;
+    private final MRUList mruList;
+    private final CategoriesList categoriesList;
     MachineStatusPanel machineStatusPanel;
     MessagePanel console;
     JSplitPane splitPane;
@@ -538,7 +538,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * @param skipConfig true if we want to skip skeinforge config, and simply
      * slice the model with the existing settings
      */
-    private JMenu mruMenu = null;
+    private final JMenu mruMenu = null;
 
     @Override
     public void handlePrefs() throws IllegalStateException {
@@ -563,6 +563,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             this.path = path;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             handleOpenScene(path);
         }
@@ -601,6 +602,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_New"));
 
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
                     if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
@@ -634,6 +636,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Open"));
 
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
                     if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
@@ -670,6 +673,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 handleNewModel();
             }
@@ -682,6 +686,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         saveMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
         saveMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save"));
         saveMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
                     handleSave(false);
@@ -694,6 +699,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         saveAsMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
         saveAsMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save_as"));
         saveAsMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
                     handleSaveAs();
@@ -708,6 +714,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Preferences"));
 
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 PreferencesPanel p = new PreferencesPanel();
                 p.setVisible(true);
@@ -720,6 +727,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Quit"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 handleQuitInternal();
             }
@@ -908,6 +916,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Add"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Gallery p = new Gallery();
                 p.setVisible(true);
@@ -923,6 +932,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 handleNewModel();
             }
@@ -933,6 +943,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Online"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Warning p = new Warning();
                 p.setVisible(true);
@@ -953,6 +964,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_Maintenance"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (machineLoader.isConnected()) {
                     if (Base.isPrinting == false) {
@@ -972,6 +984,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_Print"));
         item.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
 //                if (Base.isPrinting == false) {
                 MachineInterface machine = getMachineInterface();
@@ -1103,6 +1116,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
         menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_About"));
         menu.addMenuListener(new MenuListener() {
+            @Override
             public void menuSelected(MenuEvent e) {
                 About p = new About();
                 p.setVisible(true);
@@ -1110,12 +1124,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
             @Override
             public void menuDeselected(MenuEvent e) {
-                return;
             }
 
             @Override
             public void menuCanceled(MenuEvent e) {
-                return;
             }
         });
         return menu;
@@ -1169,13 +1181,17 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
 
         } else {
-            machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
+            if (machine != null)
+                machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
         }
 
     }
 
     /**
      * Convenience method, see below.
+     * @param title
+     * @param what
+     * @return 
      */
     static public JMenuItem newJMenuItem(String title, int what) {
         return newJMenuItem(title, what, false);
@@ -1186,6 +1202,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * In some countries they jail or beat people for writing the sort of API
      * that would require a five line helper function just to set the command
      * key for a menu item.
+     * @param title
+     * @param what
+     * @param shift
+     * @return 
      */
     static public JMenuItem newJMenuItem(String title, int what, boolean shift) {
         JMenuItem menuItem = new JMenuItem(title);
@@ -1200,6 +1220,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         return menuItem;
     }
 
+    @Override
     public void handleAbout() {
     }
 
@@ -1283,10 +1304,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     /**
      * Handles the functionality of 'disconnect' buttons
      *
-     * @param leavePreheatRunning Do not turn of the heat on the bot, leave bot
-     * warm/running/hot.
-     * @param clearMLSingleton Clear the MachineLoader singleton (ie, totally
-     * dispose the local model of the bot state/settings
      */
     public void handleDisconnect() {
         if (building) {
@@ -1445,7 +1462,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void machineStateChanged(MachineStateChangeEvent evt) {
 
         if (Base.logger.isLoggable(Level.FINE)) {
-            Base.logger.finest("Machine state changed to " + evt.getState().getState());
+            Base.logger.log(Level.FINEST, "Machine state changed to {0}", evt.getState().getState());
         }
 
         if (building) {
@@ -1455,6 +1472,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                 SwingUtilities.invokeLater(new Runnable() {
                     // TODO: Does this work?
+                    @Override
                     public void run() {
                         if (endState.canPrint()) {
                             notifyBuildComplete(buildStart, new Date());
@@ -1490,7 +1508,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                             cause += "[firmware doesn't support onboard parameters]";
                         }
                     }
-                    Base.logger.finest("Couldn't show onboard parameters: " + cause);
+                    Base.logger.log(Level.FINEST, "Couldn''t show onboard parameters: {0}", cause);
                 }
             }
         }
@@ -1653,6 +1671,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             editor = edit;
         }
 
+        @Override
         public void run() {
             message("Estimating...");
             editor.estimationOver();
@@ -1734,7 +1753,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                bed = bed.makePrintBed(null);
+                bed = PrintBed.makePrintBed(null);
                 canvas.updateBed(bed);
                 sceneDP = new SceneDetailsPanel();
                 updateDetailsCenter(sceneDP);
@@ -1759,7 +1778,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         return;
                     }
                 }
-                Base.logger.info("Loading " + path);
+                Base.logger.log(Level.INFO, "Loading {0}", path);
                 Base.writeLog("Loading" + path + " ...");
 
                 bed.addSTL(new File(path));
@@ -1871,7 +1890,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         return;
                     }
                 }
-                Base.logger.info("Loading " + path);
+                Base.logger.log(Level.INFO, "Loading {0}", path);
                 Base.writeLog("Loading" + path + " ...");
                 handleOpenPath = path;
 
@@ -2143,6 +2162,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     /**
      * Show an error int the status bar.
+     * @param what
      */
     public void error(String what) {
         Base.logger.severe(what);
@@ -2192,7 +2212,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         MachineInterface mi = machineLoader.getMachineInterface(name);
 
         if (mi == null) {
-            Base.logger.severe("could not load machine '" + name + "' please check Driver");
+            Base.logger.log(Level.SEVERE, "could not load machine ''{0}'' please check Driver", name);
             return;
         }
 
@@ -2207,13 +2227,16 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     }
 
+    @Override
     public void machineProgress(MachineProgressEvent event) {
     }
 
+    @Override
     public void toolStatusChanged(MachineToolStatusEvent event) {
     }
     PrintBed currentElement;
 
+    @Override
     public void stateChanged(ChangeEvent e) {
         // We get a change event when another tab is selected.
 //        setCurrentElement(header.getSelectedElement());
@@ -2223,8 +2246,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * Function called automatically when new gcode generation completes does
      * post-processing for newly created gcode
      *
-     * @param completion
-     * @param details
+     * @param evt
      */
     @Override
     public void generationComplete(GeneratorEvent evt) {
@@ -2265,40 +2287,34 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     /**
      * ****************************** LISTENERS ******************************
+     * @param e
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        return;
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        return;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        return;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        return;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        return;
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        return;
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        return;
     }
 
     @Override
@@ -2324,17 +2340,14 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     @Override
     public void windowOpened(WindowEvent e) {
-        return;
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        return;
     }
 
     @Override
     public void windowClosed(WindowEvent e) {
-        return;
     }
 
     @Override
