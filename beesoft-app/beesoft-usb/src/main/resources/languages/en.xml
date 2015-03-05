@@ -639,8 +639,8 @@ To unload the filament, push the Unload button and wait for instructions."/>
         
         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
         <Updates>
-            <AvailableStable value="There are software stable updates available for your BEETHEFIRST.To properly install the new version, you will need to close BEESOFT."/>
-            <AvailableBeta value="There are software beta updates available for your BEETHEFIRST.To properly install the new version, you will need to close BEESOFT."/>
+            <AvailableStable value="There are stable software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
+            <AvailableBeta value="There are beta software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
             <NotAvailable value="There are no software updates available."/>
             <NoConnection value="No Internet access."/>
             <NoAccess value="Service Unavailable."/>
