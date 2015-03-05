@@ -583,7 +583,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         tEstimation.setVisible(true);
         vEstimation.setVisible(true);
         vRemaining.setVisible(true);
-        bPause.setVisible(false);
+        bPause.setVisible(true);
         bShutdown.setVisible(false);
     }
 
@@ -1040,7 +1040,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         vEstimation.setVisible(false);
         jProgressBar1.setVisible(false); 
 //        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
-        bPause.setVisible(false);
+        bPause.setVisible(true);
 
         bShutdown.setVisible(false);
         bShutdown.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
@@ -1597,6 +1597,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             isPaused = true;
             //Pause print
             driver.dispatchCommand(PAUSE_PRINT);
+            driver.dispatchCommand("M625", COM.BLOCK);
             //Disable power saving to avoid temperature lowering down
             Base.turnOnPowerSaving(false);
             
@@ -1605,6 +1606,9 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                 public void run() {
 
                     pausePos = driver.getActualPosition();
+                    
+                    //DEBUG
+                    System.out.println("pausePos: "+pausePos);
 
 //                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                     machine.getDriver().dispatchCommand("G28", COM.BLOCK);
@@ -1643,9 +1647,11 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                 public void run() {
 
                     //Little retraction to avoid filament break
-                    driver.dispatchCommand("G1 F300 E50", COM.NO_RESPONSE);
-                    driver.dispatchCommand("G92 E", COM.NO_RESPONSE);
-//                    driver.dispatchCommand("G1 F6000 E-2", COM.BLOCK);
+//                    driver.dispatchCommand("G92 E", COM.NO_RESPONSE);
+//                    driver.dispatchCommand("G1 F400 E-5", COM.NO_RESPONSE);
+//                    driver.dispatchCommand("G92 E", COM.NO_RESPONSE);
+                    
+//                    driver.dispatchCommand("G1 F6000 E-0.5", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
 
                     double actualColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
@@ -2046,7 +2052,7 @@ class UpdateThread4 extends Thread {
             AutonomousData variables = driver.getPrintSessionsVariables();
             window.resetProgressBar();
 
-            String estimatedTime = variables.getEstimatedTime().toString();
+            estimatedTime = variables.getEstimatedTime().toString();
             String elapsedTime = variables.getElapsedTime().toString();
             nLines = Integer.valueOf(variables.getNLines().toString());
             int currentNumberLines = Integer.valueOf(variables.getCurrentNLines().toString());

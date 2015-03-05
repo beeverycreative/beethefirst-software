@@ -2292,15 +2292,31 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
         int tries = 10;
-        sendCommand(GET_POSITION);
-        try {
-            Thread.sleep(10, 0);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+        String position = "n/a";
+        String old ="n/b";
+        while (true) {
+            try {
+                Thread.sleep(10, 0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            sendCommand(GET_POSITION);
+            try {
+                Thread.sleep(10, 0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            old = position;
+            position = readResponse();
+            tries--;
+            if(old.contains(position)){
+                break;
+            }
+            if(tries < 0){
+                return myCurrentPosition;
+            }
         }
-
-        String position = readResponse();
-
         System.out.println("position1: " + position);
 
         /**
