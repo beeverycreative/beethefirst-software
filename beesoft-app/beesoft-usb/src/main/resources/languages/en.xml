@@ -178,8 +178,6 @@
             <MM value="millimeters"/>
             <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
-            <Inches value="inches"/>
-            <ScaleToMax value="Scale to Max"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
@@ -466,15 +464,14 @@
             <Heating_Info_Title value="Extruder nozzle temperature"/>
             <Heating_Info value="Extruder nozzle has to be heated whenever you change the filament. When it reaches the ideal temperature you may move to the next stage. "/>
             <Info_Warning value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
-            <Title2 value="FILAMENT CHANGE"/>
+            <Title2 value="Filament Unload"/>
             <LoadButton value="Load"/>
             <UnloadButton value="Unload"/>
-            <Exchange_Info_Title value="How to load or unload filament"/>
+            <Exchange_Info_Title value="Make sure the filament is correctly unloaded before proceeding."/>
             <Exchange_Info_Title2 value="Unload filament"/>
             <Exchange_Info value="To unload the filament, push the Unload button and pull the filament steadily.
 To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>
-            <Exchange_Info2 value="Make sure the spool’s label is facing inside as shown in the image. To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament.
-To unload the filament, push the Unload button and wait for instructions."/>                    
+            <Exchange_Info2 value="Push the Unload button and wait for instructions."/>                    
             <Exchange_Info3 value="Gently pull as filament unloads."/>         
             <Title3 value="FILAMENT TYPE"/>
             <Title4 value="Select type"/>
@@ -548,6 +545,17 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <ExtruderClean_Title value="Clean extruder nozzle"/>
             <ExtruderClean_button value="Clean nozzle now"/>
             <ExtruderClean_Intro value="This operation is important to avoid getting pieces of filament leftovers on what you are printing."/>
+
+            <ExtruderMaintenance_Title value="Extruder Maintenance"/>
+            <ExtruderMaintenance_button value="Start extruder maintenance"/>
+            <ExtruderMaintenance_Intro value="This operation enables you to unclog the nozzle  using the Maintenance Kit."/>
+
+            <NozzleSwitch_Title value="Replace nozzle "/>
+            <NozzleSwitch_button value="Replace nozzle  now"/>
+            <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
+
+
+
         </MaintenancePanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       

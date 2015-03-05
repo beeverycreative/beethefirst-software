@@ -335,11 +335,14 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
         jPanel1.setPreferredSize(new java.awt.Dimension(541, 570));
 
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("INSERIR FILAMENTO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Como descarregar ou carregar o filamento");
 
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Suspendisse potenti. ");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -348,6 +351,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/infografia-01.png"))); // NOI18N
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 233));
 
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
         jLabel5.setText("Load");
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -363,6 +367,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
             }
         });
 
+        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
         jLabel6.setText("Unload");
         jLabel6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -462,6 +467,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));
         jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
 
+        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Moving...Please wait.");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -470,7 +476,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -519,6 +525,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
+        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel17.setText("ANTERIOR");
         jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -534,6 +541,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
             }
         });
 
+        bNext.setForeground(new java.awt.Color(0, 0, 0));
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -549,6 +557,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
             }
         });
 
+        bExit.setForeground(new java.awt.Color(0, 0, 0));
         bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bExit.setText("SAIR");
         bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -571,7 +580,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 348, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -724,7 +733,7 @@ public class FilamentInsertion extends javax.swing.JFrame {
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
         if (!machine.getDriver().isBusy()) {
-            
+
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
             jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
             bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
