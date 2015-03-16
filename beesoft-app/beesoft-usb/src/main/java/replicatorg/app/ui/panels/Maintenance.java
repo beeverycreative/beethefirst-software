@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -32,8 +31,9 @@ public class Maintenance extends javax.swing.JFrame {
     private int posX = 0, posY = 0;
     private final int NUMBER_PRINTS_LIMIT = 10;
     private boolean moving;
-    private ControlStatus ctrlStatus;
-
+    private final ControlStatus ctrlStatus;
+    private boolean isConnected = true;
+    
     public Maintenance() {
         initComponents();
         setFont();
@@ -47,7 +47,7 @@ public class Maintenance extends javax.swing.JFrame {
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
         ctrlStatus.start();
-        Base.systemThreads.add(ctrlStatus);
+        Base.systemThreads.add(ctrlStatus);        
     }
 
     private void setFont() {
@@ -125,6 +125,13 @@ public class Maintenance extends javax.swing.JFrame {
         if (Base.printPaused) {
             jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
         }
+        
+        if (!Base.getMainWindow().getMachineInterface().isConnected()) {
+            this.isConnected = false;
+            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+        }        
 
         //Disable Power saving in case
         Base.turnOnPowerSaving(false);
@@ -146,6 +153,7 @@ public class Maintenance extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -153,6 +161,7 @@ public class Maintenance extends javax.swing.JFrame {
         });
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -200,7 +209,7 @@ public class Maintenance extends javax.swing.JFrame {
             Base.turnOnPowerSaving(true);
         }
     }
-
+  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -540,31 +549,39 @@ public class Maintenance extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel17MouseExited
 
     private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
-        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        if (isConnected) {
+            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        }
     }//GEN-LAST:event_jLabel4MouseEntered
 
     private void jLabel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseExited
-        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        if (isConnected) {
+            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        }
     }//GEN-LAST:event_jLabel4MouseExited
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
-        if (!Base.printPaused) {
+        if (!Base.printPaused && isConnected) {
             jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
         }
     }//GEN-LAST:event_jLabel7MouseEntered
 
     private void jLabel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseExited
-        if (!Base.printPaused) {
+        if (!Base.printPaused && isConnected) {
             jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
         }
     }//GEN-LAST:event_jLabel7MouseExited
 
     private void jLabel11MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseEntered
-        jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        if (isConnected) {
+            jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        }
     }//GEN-LAST:event_jLabel11MouseEntered
 
     private void jLabel11MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseExited
-        jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        if (isConnected) {
+            jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        }
     }//GEN-LAST:event_jLabel11MouseExited
 
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
@@ -573,7 +590,7 @@ public class Maintenance extends javax.swing.JFrame {
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
 
-        if (!moving) {
+        if (!moving && isConnected) {
             dispose();
             ctrlStatus.stop();
             if (Base.printPaused) {
@@ -589,7 +606,7 @@ public class Maintenance extends javax.swing.JFrame {
 
     private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
 
-        if (!moving && !Base.printPaused) {
+        if (!moving && !Base.printPaused && isConnected) {
             dispose();
             ctrlStatus.stop();
 //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(true));
@@ -602,7 +619,7 @@ public class Maintenance extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel7MousePressed
 
     private void jLabel11MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MousePressed
-        if (!moving) {
+        if (!moving && isConnected) {
             dispose();
             ctrlStatus.stop();
             NozzleClean p = new NozzleClean();
@@ -648,8 +665,8 @@ public class Maintenance extends javax.swing.JFrame {
 
 class ControlStatus extends Thread {
 
-    private MachineInterface machine;
-    private Maintenance maintenancePanel;
+    private final MachineInterface machine;
+    private final Maintenance maintenancePanel;
 
     public ControlStatus(Maintenance filIns, MachineInterface mach) {
         super("Maintenance Thread");
@@ -680,7 +697,6 @@ class ControlStatus extends Thread {
             if (!machine.getModel().getMachineBusy()) {
                 maintenancePanel.setFree();
             }
-
         }
     }
 }
