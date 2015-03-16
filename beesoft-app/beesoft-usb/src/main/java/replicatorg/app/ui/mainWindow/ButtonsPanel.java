@@ -26,9 +26,9 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private boolean models_pressed, maintenance_pressed, quickGuide_pressed, print_pressed;
     private final replicatorg.app.ui.MainWindow editor;
     private boolean jLabel1Bool = false;
-    private boolean jLabel5Bool = false;
-    private boolean jLabel4Bool = false;
-    private boolean jLabel6Bool = true;
+    private boolean jLabel5Bool = true;
+    private boolean jLabel4Bool = true;
+    private boolean jLabel6Bool = false;
     private final int NUMBER_PRINTS_LIMIT = 15;
     private boolean mainWindowEnabled;
 
