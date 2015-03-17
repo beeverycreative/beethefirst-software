@@ -48,7 +48,25 @@
                     <include>**/*</include>
                 </includes>           
                 <filtering>false</filtering>
-            </resource>                     
+            </resource>  
+            <!-- Copies the images from the resources to the src packages
+            because of the way swing loads the images -->
+            <resource>
+                <directory>src/main/resources/app_resources/mainWindow</directory>
+                <targetPath>replicatorg/app/ui/mainWindow</targetPath>
+                <includes>
+                    <include>*</include>                    
+                </includes>           
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/app_resources/panels</directory>
+                <targetPath>replicatorg/app/ui/panels</targetPath>
+                <includes>
+                    <include>*</include>                    
+                </includes>           
+                <filtering>false</filtering>
+            </resource>                                                 
         </resources>
         <plugins>
             <plugin>
@@ -573,21 +591,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
-        </dependency> 
-        
-        <!-- For using just usb4java without javax-usb -->
-        <!--                <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>usb4java</artifactId>
-            <version>1.2.0</version>
-        </dependency>-->
-
-        <!-- For using usb4java with javax-usb -->
-        <!--                <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>usb4java-javax</artifactId>
-            <version>1.2.0</version>
-        </dependency>-->
+        </dependency>         
         
         <dependency>
             <groupId>javax.usb</groupId>
@@ -602,56 +606,7 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/external_libs/usb4java-1.0.0.jar</systemPath>
         </dependency>
-                
-<!--        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>linux-x86</classifier>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>linux-x86_64</classifier>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>linux-arm</classifier>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>windows-x86</classifier>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>windows-x86_64</classifier>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>osx-x86</classifier>
-            <scope>runtime</scope>
-        </dependency> 
-        <dependency>
-            <groupId>org.usb4java</groupId>
-            <artifactId>libusb4java</artifactId>
-            <version>${libusb4java.version}</version>
-            <classifier>osx-x86_64</classifier>
-            <scope>runtime</scope>
-        </dependency>               -->
+
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>
             <artifactId>jarbundler</artifactId>
