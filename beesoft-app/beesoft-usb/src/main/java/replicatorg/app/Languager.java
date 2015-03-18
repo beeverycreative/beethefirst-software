@@ -2,7 +2,9 @@ package replicatorg.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,7 +33,6 @@ public class Languager {
     private static final String printsetup_file = Base.getApplicationDirectory() + "/machines/printSetup.xml";
     private static final String colors_file = Base.getApplicationDirectory() + "/machines/colorsGCode.xml";
     private static final String startend_file = Base.getApplicationDirectory() + "/machines/startEndCode.xml";
-    private static String TAG = "tags";
 
     /**
      * Languages supported
@@ -53,21 +54,36 @@ public class Languager {
      */
     private static String getFile(int code) {
         if (code == 1) {
-            TAG = "tags";
             return languager_file;
         } else if (code == 2) {
-            TAG = "colors";
             return printsetup_file;
         } else if (code == 3) {
-            TAG = "gcode";
             return colors_file;
         } else if (code == 4) {
-            TAG = "gcode";
             return startend_file;
         }
 
         return " ";
     }
+    
+    /**
+     * Gets the base tag from the file type
+     *
+     * @param code key to access the correct file
+     * @return file path
+     */
+    private static String getBaseTag(int code) {
+        if (code == 1) {
+            return "tags";            
+        } else if (code == 2) {
+            return "colors";            
+        } else if (code == 3) {
+            return "gcode";
+        } else if (code == 4) {
+            return "gcode";
+        }
+        return " ";
+    }    
 
     /**
      * Loads XML File Stores in DataSets also.
@@ -148,7 +164,8 @@ public class Languager {
      */
     public static String getTagValue(int code, String rootTag, String subTag) {
         String filePath = getFile(code);
-
+        String BASE_TAG = getBaseTag(code);
+        
         if (filePath.isEmpty()) {
             return "Error getting tag value";
         }
@@ -173,8 +190,8 @@ public class Languager {
                 Element doc = dom.getDocumentElement();
                 Node rootNode = doc.cloneNode(true);
 
-                if (XML.hasChildNode(rootNode, TAG)) {
-                    Node startnode = XML.getChildNodeByName(rootNode, TAG);
+                if (XML.hasChildNode(rootNode, BASE_TAG)) {
+                    Node startnode = XML.getChildNodeByName(rootNode, BASE_TAG);
                     org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
                     NodeList nodeList = element.getChildNodes(); // NodeList
 
@@ -230,6 +247,8 @@ public class Languager {
      */
     public static HashMap<String, String> getTagValues(int code, String rootTag, String subTag) {
         String filePath = getFile(code);
+        String BASE_TAG = getBaseTag(code);
+        
         HashMap<String, String> childNodes_rootag = new HashMap<String, String>();
 
         if (filePath.isEmpty()) {
@@ -257,8 +276,8 @@ public class Languager {
                 Node rootNode = doc.cloneNode(true);
 
                 //root Node has children with value = TAG var
-                if (XML.hasChildNode(rootNode, TAG)) {
-                    Node startnode = XML.getChildNodeByName(rootNode, TAG);
+                if (XML.hasChildNode(rootNode, BASE_TAG)) {
+                    Node startnode = XML.getChildNodeByName(rootNode, BASE_TAG);
                     org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
                     NodeList nodeList = element.getChildNodes();
 
@@ -300,4 +319,69 @@ public class Languager {
 
         return null;
     }
+    
+    /**
+     * Gets the list of tag names under rootTag
+     *
+     * @param code access code to a specific file.
+     * @param rootTag root tag for file.
+     * 
+     * @return copy or null value.
+     */
+    public static List<String> getTagList(int code, String rootTag) {
+        String filePath = getFile(code);
+        String BASE_TAG = rootTag;
+        
+        List<String> childNodes_rootag = new ArrayList<String>();
+
+        if (filePath.isEmpty()) {
+            return null;
+        }
+
+        Document dom;
+        // Make an  instance of the DocumentBuilderFactory
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            // use the factory to take an instance of the document builder
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            // parse using the builder to get the DOM mapping of the    
+            // XML file
+
+            File f = new File(filePath);
+            if (f.exists() && f.isFile() && f.canRead()) {
+
+                // Parses file and gets rootNode by it self
+                dom = db.parse(f);
+                Element doc = dom.getDocumentElement();
+                Node rootNode = doc.cloneNode(true);
+
+                //root Node has children with value = TAG var
+                if (XML.hasChildNode(rootNode, BASE_TAG)) {
+                    Node startnode = XML.getChildNodeByName(rootNode, BASE_TAG);
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
+                    NodeList nodeList = element.getChildNodes();
+
+                    //Runs over all children of TAG
+                    for (int i = 1; i < nodeList.getLength(); i++) {
+                        if (!nodeList.item(i).getNodeName().equals("#text")) {
+                            childNodes_rootag.add(nodeList.item(i).getNodeName());
+                        }
+                    }
+                    
+                    return childNodes_rootag;
+                }
+
+            } else {
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "file with root tag" + BASE_TAG);
+            }
+        } catch (ParserConfigurationException pce) {
+            System.out.println(pce.getMessage());
+        } catch (SAXException se) {
+            System.out.println(se.getMessage());
+        } catch (IOException ioe) {
+            System.err.println(ioe.getMessage());
+        }
+
+        return null;
+    }    
 }
