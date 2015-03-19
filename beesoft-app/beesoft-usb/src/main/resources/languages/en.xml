@@ -682,8 +682,8 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <a010 value="TURQUOISE - A010"/>
             <a336 value="TRANSPARENT"/>
             <a001 value="TRANSPARENT - A001"/>
-            <a336 value="TRANSPARENT"/>
-            <a101 value="TRANSPARENT"/>
+            <a306 value="TRANSPARENT"/>
+            <a336 value="TRANSPARENT"/>            
             <a337 value="GREEN"/>
             <a321 value="GREEN"/>
             <a011 value="GREEN - A011"/>
@@ -695,14 +695,15 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <a008 value="PINK - A008"/>
             <a009 value="SILVER - A009"/>
             
+            <a101 value="TRANSPARENT"/>
             <a102 value="BLANC GRIS"/>
             <a103 value="ZINC YELLOW"/>
             <a104 value="SIGNAL YELLOW"/>
             <a105 value="BRIGHT RED ORANGE"/>
             <a106 value="TRAFFIC RED"/>
             <a107 value="TOMATO RED"/>
-            <a108 value="TRAFFIC RED"/>
-            <a109 value="LIGHT PINK"/>
+            <a108 value="LIGHT PINK"/>
+            <a109 value="TRAFFIC PURPLE"/>
             <a110 value="VIOLET"/>
             <a111 value="SKY BLUE"/>
             <a112 value="TRAFFIC BLUE"/>

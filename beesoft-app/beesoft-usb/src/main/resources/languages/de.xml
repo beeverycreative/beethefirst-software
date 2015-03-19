@@ -665,18 +665,57 @@ To unload the filament, push the Unload button and wait for instructions."/>
         
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine -->
         <CoilColors>
-            <WHITE value="WHITE"/>
-            <BLACK value="BLACK"/>
-            <YELLOW value="YELLOW"/>
-            <RED value="RED"/>
-            <TURQUOISE value="TURQUOISE"/>
-            <TRANSPARENT value="TRANSPARENT"/>
-            <GREEN value="GREEN"/>
-            <ORANGE value="ORANGE"/>
-            <BLUE value="BLUE"/>
-            <OLIVE value="OLIVE GREEN"/>
-            <PINK value="PINK"/>
-            <SILVER value="SILVER"/>
+            <a002 value="WHITE - A002"/>
+            <a331 value="WHITE"/>
+            <a301 value="WHITE"/>
+            <a003 value="BLACK - A003"/>
+            <a332 value="BLACK"/>
+            <a302 value="BLACK"/>
+            <a333 value="YELLOW"/>
+            <a303 value="YELLOW"/>
+            <a005 value="YELLOW - A005"/>
+            <a004 value="RED - A004"/>
+            <a334 value="RED"/>
+            <a304 value="RED"/>
+            <a335 value="TURQUOISE"/>
+            <a305 value="TURQUOISE"/>
+            <a010 value="TURQUOISE - A010"/>
+            <a336 value="TRANSPARENT"/>
+            <a001 value="TRANSPARENT - A001"/>
+            <a306 value="TRANSPARENT"/>
+            <a336 value="TRANSPARENT"/>            
+            <a337 value="GREEN"/>
+            <a321 value="GREEN"/>
+            <a011 value="GREEN - A011"/>
+            <a338 value="ORANGE"/>
+            <a322 value="ORANGE"/>
+            <a012 value="ORANGE - A012"/>
+            <a006 value="BLUE - A006"/>
+            <a007 value="OLIVE GREEN - A007"/>
+            <a008 value="PINK - A008"/>
+            <a009 value="SILVER - A009"/>
+            
+            <a101 value="TRANSPARENT"/>
+            <a102 value="BLANC GRIS"/>
+            <a103 value="ZINC YELLOW"/>
+            <a104 value="SIGNAL YELLOW"/>
+            <a105 value="BRIGHT RED ORANGE"/>
+            <a106 value="TRAFFIC RED"/>
+            <a107 value="TOMATO RED"/>
+            <a108 value="LIGHT PINK"/>
+            <a109 value="TRAFFIC PURPLE"/>
+            <a110 value="VIOLET"/>
+            <a111 value="SKY BLUE"/>
+            <a112 value="TRAFFIC BLUE"/>
+            <a113 value="ULTRAMARINE BLUE"/>
+            <a114 value="YELLOW GREEN"/>
+            <a115 value="PURE GREEN"/>
+            <a116 value="CHROME GREEN"/>
+            <a117 value="CHOCOLATE BROWN"/>
+            <a118 value="TELEGREY"/>
+            <a119 value="SIGNAL BLACK"/>
+            <a120 value="PEARL GOLD"/>
+            <a121 value="PEARL LIGHT GREY"/>
         </CoilColors>
         
     </tags>      
