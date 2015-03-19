@@ -1653,9 +1653,9 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                     
 //                    driver.dispatchCommand("G1 F6000 E-0.5", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
-
-                    double actualColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
-                    double colorRatio = actualColorRatio / Base.originalColorRatio;
+                    
+                    double colorRatio = FilamentControler.getColorRatio(
+                            machine.getModel().getCoilCode(), machine.getModel().getResolution());
                     /**
                      * Signals FW about the color ratio between previous and
                      * actual color
@@ -2313,6 +2313,7 @@ class TransferControlThread extends Thread {
             Base.writeLog("Gcode estimation successful...");
         }
 
-        Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode());
+        Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),
+                Base.getMainWindow().getMachine().getModel().getResolution());
     }
 }

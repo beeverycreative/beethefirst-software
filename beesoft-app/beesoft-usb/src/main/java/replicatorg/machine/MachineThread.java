@@ -7,20 +7,14 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.usb.UsbClaimException;
 import javax.usb.UsbDisconnectedException;
 import javax.usb.UsbException;
 import javax.usb.UsbNotActiveException;
-
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import replicatorg.app.ProperDefault;
-
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.tools.XML;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.DriverError;
@@ -48,16 +42,16 @@ class MachineThread extends Thread {
     private String lastFeedrate;
     private String lastEString;
     private String lastAcceleration;
-    private HashMap<String, Point5d> tablePoints;
+    private final HashMap<String, Point5d> tablePoints;
     private static final String COMMAND_ACCELERATION = "M206";
     private int stopwatch;
     private boolean isPaused;
-    private Point5d lastPoint = new Point5d();
+    private final Point5d lastPoint = new Point5d();
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
     private String lastBEECode = "";
     private double previousEParsed = 0;
-    private double absoluteDistance = 0;
+    private final double absoluteDistance = 0;
 
     class AssessStatusThread extends Thread {
 
@@ -143,13 +137,13 @@ class MachineThread extends Thread {
             return false;
         }
     }
-    private Timer pollingTimer;
+    private final Timer pollingTimer;
     // Link of machine commands to run
     ConcurrentLinkedQueue<MachineCommand> pendingQueue;
     ConcurrentLinkedQueue<MachineCommand> auxiliarQueue;
     // this is the xml config for this machine.
-    private Node machineNode;
-    private Machine controller;
+    private final Node machineNode;
+    private final Machine controller;
     // our warmup/cooldown commands
     private Vector<String> warmupCommands;
     private Vector<String> cooldownCommands;
@@ -290,16 +284,16 @@ class MachineThread extends Thread {
     }
 
     private void loadExtraPrefs() {
-        String[] commands = null;
-        String command = null;
+        String[] commands;
+        String command;
 
         warmupCommands = new Vector<String>();
         if (XML.hasChildNode(machineNode, "warmup")) {
             String warmup = XML.getChildNodeValue(machineNode, "warmup");
             commands = warmup.split("\n");
 
-            for (int i = 0; i < commands.length; i++) {
-                command = commands[i].trim();
+            for (String command1 : commands) {
+                command = command1.trim();
                 warmupCommands.add(command);
             }
         }
@@ -309,8 +303,8 @@ class MachineThread extends Thread {
             String cooldown = XML.getChildNodeValue(machineNode, "cooldown");
             commands = cooldown.split("\n");
 
-            for (int i = 0; i < commands.length; i++) {
-                command = commands[i].trim();
+            for (String command1 : commands) {
+                command = command1.trim();
                 cooldownCommands.add(command);
             }
         }
@@ -533,7 +527,7 @@ class MachineThread extends Thread {
                 interrupt();
                 break;
             default:
-                Base.logger.log(Level.SEVERE, "Ignored command: " + command.type.toString());
+                Base.logger.log(Level.SEVERE, "Ignored command: {0}", command.type.toString());
         }
     }
 
@@ -784,11 +778,6 @@ class MachineThread extends Thread {
 
     public void setLastPrintedPoint(Point5d point) {
         this.actualPoint = point;
-    }
-
-    private double getColorRatio(String coilCode) {
-
-        return FilamentControler.getColorRatio(coilCode);
     }
 
     public void setFilamentChanged(boolean changed) {

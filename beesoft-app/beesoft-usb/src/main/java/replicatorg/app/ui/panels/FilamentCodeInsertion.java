@@ -7,7 +7,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.FilamentControler;
@@ -30,7 +29,7 @@ import replicatorg.util.Point5d;
  */
 public class FilamentCodeInsertion extends javax.swing.JFrame {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
     private DefaultComboBoxModel comboModel;
     private String[] categories;
@@ -102,7 +101,6 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private int getModelCategoryIndex() {
-        FilamentControler.FilamentCodes[] enumCodes = FilamentControler.FilamentCodes.values();
         String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
 
         for (int i = 0; i < categories.length; i++) {
@@ -134,14 +132,14 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }
 
     private String parseComboCode() {
-        FilamentControler.FilamentCodes[] enumCodes = FilamentControler.FilamentCodes.values();
+        String[] filamentCodes = FilamentControler.getFilamentCodes();
 
-        for (int i = 0; i < enumCodes.length; i++) {
+        for (String enumCode : filamentCodes) {
             /**
              * Color with BEECODE - Filkemp new
              */
-            if (String.valueOf(comboModel.getSelectedItem()).contains(enumCodes[i].toString())) {
-                return enumCodes[i].toString();
+            if (String.valueOf(comboModel.getSelectedItem()).contains(enumCode)) {
+                return enumCode;
             }
         }
         /**
@@ -152,6 +150,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -160,6 +159,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);

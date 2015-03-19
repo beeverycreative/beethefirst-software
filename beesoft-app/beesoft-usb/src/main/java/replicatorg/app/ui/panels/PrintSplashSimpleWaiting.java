@@ -48,12 +48,12 @@ import replicatorg.util.Point5d;
  */
 public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements WindowListener {
 
-    private Printer prt;
+    private final Printer prt;
     private boolean printEnded;
     private int posX = 0, posY = 0;
     private double startTimeMillis;
     private double startTimeMillis2;
-    private UpdateThread3 ut;
+    private final UpdateThread3 ut;
     private int progression;
     private static final String FORMAT = "%2d:%2d";
     private int remainingTime = 0;
@@ -64,7 +64,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     private static final String PAUSE_PRINT = "M300";
     final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
     private double temperatureGoal = 220;
-    private double ambientTemperature = 20.0;
+    private final double ambientTemperature = 20.0;
     private boolean firstUnloadStep = false;
 
     public PrintSplashSimpleWaiting(ArrayList<String> preferences, Printer p) {
@@ -147,7 +147,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     private String minutesToHours(int minutes, boolean format) {
         int hoursTrunked = 0;
         int minutesTrunked = minutes;
-        double quocient = 0;
+        double quocient;
         final int BASE = 60;
 
         if (format) {
@@ -207,7 +207,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
      */
     public File getStartCode() {
         File gcode = null;
-        PrintWriter pw = null;
+        PrintWriter pw;
 
         try {
             gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/start.gcode");
@@ -215,8 +215,8 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
             String[] code = Languager.getGCodeArray(4, "operationCode", "startCode");
 
-            for (int i = 0; i < code.length; i++) {
-                pw.println(code[i].trim());
+            for (String code1 : code) {
+                pw.println(code1.trim());
             }
 
             pw.close();
@@ -234,7 +234,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
      */
     public File getEndCode() {
         File gcode = null;
-        PrintWriter pw = null;
+        PrintWriter pw;
 
         try {
             gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/end.gcode");
@@ -242,8 +242,8 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
             String[] code = Languager.getGCodeArray(4, "operationCode", "endCode");
 
-            for (int i = 0; i < code.length; i++) {
-                pw.println(code[i].trim());
+            for (String code1 : code) {
+                pw.println(code1.trim());
             }
 
             pw.close();
@@ -282,6 +282,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -289,6 +290,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         });
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -402,8 +404,8 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }
 
     public void updatePrintEstimation(String printEstimation, boolean cutout) {
-        String[] duration = null;
-        String textE = "";
+        String[] duration;
+        String textE;
         String textR = "";
 
         if (!printEstimation.contains("NA")) {
@@ -468,8 +470,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                                     + " " + minutes
                                     + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else if (minutes == 2) {
-                            //In case PrintEstimator fails, dont appear 2min
-                            textE = "";
+                            //In case PrintEstimator fails, dont appear 2min                            
                             vEstimation.setVisible(false);
                             tEstimation.setText(Languager.getTagValue(1,"Print", "Print_EstimatorError"));
                             return;
@@ -541,8 +542,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                             textR = remainingTime
                                     + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
                         } else if (remainingTime == 2) {
-                            //In case PrintEstimator fails, dont appear 2min
-                            textR = "";
+                            //In case PrintEstimator fails, dont appear 2min                          
                             vEstimation.setVisible(false);
                             tRemaining.setVisible(false);
                             vRemaining.setVisible(false);
@@ -616,23 +616,19 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
     @Override
     public void windowOpened(WindowEvent e) {
-        return;
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-        return;
     }
 
     @Override
     public void windowClosed(WindowEvent e) {
-        return;
     }
 
     @Override
     public void windowIconified(WindowEvent e) {
         Base.getMainWindow().setState(JFrame.ICONIFIED);
-        return;
     }
 
     @Override
@@ -644,12 +640,10 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
     @Override
     public void windowActivated(WindowEvent e) {
-        return;
     }
 
     @Override
     public void windowDeactivated(WindowEvent e) {
-        return;
     }
 
     public boolean isPrintPaused() {
@@ -1023,7 +1017,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
         if (printEnded == false) {
             doCancel();
-            return;
         } // no need for else
 
     }//GEN-LAST:event_bUnloadMousePressed
@@ -1041,12 +1034,11 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }//GEN-LAST:event_bUnloadMouseEntered
 
     private void bPauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMousePressed
-        final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+        final MachineInterface mchn = Base.getMachineLoader().getMachineInterface();
         final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-        final double previousColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
 
         if (!isPaused) {
-            machine.stopwatch();
+            mchn.stopwatch();
             setPreparingNewFilamentInfo();
             Base.printPaused = true;
             isPaused = true;
@@ -1075,7 +1067,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     //Flags firmware to stop queued commands
                     driver.dispatchCommand(PAUSE_PRINT, COM.DEFAULT);
 
-                    machine.getModel().setMachineBusy(false);
+                    mchn.getModel().setMachineBusy(false);
 
                     Maintenance p = new Maintenance();
                     p.setVisible(true);
@@ -1095,8 +1087,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     driver.dispatchCommand("G1 F6000 E-2", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
 
-                    double actualColorRatio = FilamentControler.getColorRatio(machine.getModel().getCoilCode());
-                    double colorRatio = actualColorRatio / previousColorRatio;
+                    double colorRatio = FilamentControler.getColorRatio(mchn.getModel().getCoilCode(), mchn.getModel().getResolution());
                     /**
                      * Signals FW about the color ratio between previous and
                      * actual color
@@ -1111,15 +1102,15 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     driver.dispatchCommand("G92 E" + pausePos.a(), COM.BLOCK);
 
 //            //Sets previous feedrate
-                    driver.dispatchCommand("G1 " + machine.getLastFeedrate(), COM.NO_RESPONSE);
+                    driver.dispatchCommand("G1 " + mchn.getLastFeedrate(), COM.NO_RESPONSE);
 //            //Sets last acceleration
-                    driver.dispatchCommand(machine.getLastAcceleration(), COM.NO_RESPONSE);
+                    driver.dispatchCommand(mchn.getLastAcceleration(), COM.NO_RESPONSE);
 
                     //Flags firmware to resume queued commands
                     driver.dispatchCommand(RESUME_PRINT, COM.NO_RESPONSE);
 
                     //Resume printing
-                    machine.resumewatch();
+                    mchn.resumewatch();
                     Base.printPaused = false;
                     disablePreparingNewFilamentInfo();
                 }
@@ -1391,14 +1382,14 @@ class UpdateThread3 extends Thread {
     public void run() {
         try {
             window.startPrintCounter();
-            int nLines = 0;
+            int nLines;
             boolean finished = false;
             BufferedReader readerGCode = null;
-            String sCurrentLinereaderGCode = "";
+            String sCurrentLinereaderGCode;
             BufferedReader readerStartGCode = null;
-            String sCurrentLinereaderStartGCode = "";
+            String sCurrentLinereaderStartGCode;
             BufferedReader readerEndGCode = null;
-            String sCurrentLinereaderEndGCode = "";
+            String sCurrentLinereaderEndGCode;
             MachineInterface machine = Base.getMachineLoader().getMachineInterface();
 
             try {
@@ -1451,7 +1442,7 @@ class UpdateThread3 extends Thread {
             ProperDefault.put("transferingGCode", String.valueOf(false));
             ProperDefault.remove("transferingGCode");
 
-            double lines = 0.0;
+            double lines;
 
             /**
              * Update visual elements
@@ -1487,7 +1478,7 @@ class UpdateThread3 extends Thread {
 
 
             while (true) {
-                boolean tempReached = false;
+                boolean tempReached;
 
                 if (window.isUnloadPressed()) {
                     System.out.println("Unload Pressed");

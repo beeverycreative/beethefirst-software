@@ -1,7 +1,8 @@
 package replicatorg.app;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -21,12 +22,14 @@ public class FilamentControler {
     
     /**
      * Get Color Copy from coil code.
+     * 
      * @param coilCode spool code.
+     * 
      * @return color copy.
      */
     public static String getColor(String coilCode) {
 
-        String color = Languager.getTagValue(1,"CoilColors", coilCode);
+        String color = Languager.getTagValue(1,"CoilColors", coilCode.toLowerCase());
         
         if (color == null) {
             color = NO_FILAMENT;
@@ -36,7 +39,8 @@ public class FilamentControler {
     }
 
     /**
-     * Get array of available colors and their copy.
+     * Gets an array of the available colors copy.
+     * 
      * @return array of colors.
      */
     public static String[] getColors() {
@@ -44,16 +48,54 @@ public class FilamentControler {
         //Gets list of colors
         List<String> colorTags = Languager.getTagList(2, "colors");
         
-        List<String> colorLabels = new ArrayList<String>();
+        String[]colors = new String[colorTags.size()];
+        int i=0;
         for (String colorTag : colorTags) {
-            colorLabels.add(Languager.getTagValue(1, "CoilColors", colorTag));
+            colors[i] = Languager.getTagValue(1, "CoilColors", colorTag);
+            i++;
         }                                
 
-        return ((String []) colorLabels.toArray());
+        return colors;
     }
+    
+    /**
+     * Gets an HashMap of available color codes and their copy.
+     * @return array of colors.
+     */
+    public static Map<String,String> getColorsMap() {
+                
+        //Gets list of colors
+        List<String> colorTags = Languager.getTagList(2, "colors");
+        
+        HashMap<String, String> colorsMap = new HashMap<String, String>();
+        for (String colorTag : colorTags) {
+            colorsMap.put(colorTag, Languager.getTagValue(1, "CoilColors", colorTag));
+        }                                
+
+        return colorsMap;
+    }    
+    
+    /**
+     * Get array of available filament codes
+     * 
+     * @return array of codes.
+     */
+    public static String[] getFilamentCodes() {
+                
+        //Gets list of colors
+        List<String> colorTags = Languager.getTagList(2, "colors");
+        
+        String[] colorCodes = new String[colorTags.size()];
+        int i = 0;
+        for (String colorTag : colorTags) {
+            colorCodes[i] = colorTag.toUpperCase();
+            i++;
+        }                                
+        return colorCodes;
+    }    
 
     /**
-     * Get color code and copy based on coil code.
+     * Get color name and copy based on coil code.
      * @param code coil code.
      * @return color copy and code.
      */
@@ -69,84 +111,23 @@ public class FilamentControler {
     /**
      * Get color ratio from coil code.
      * @param coilCode coil code.
+     * @param resolution resolution
      * @return ratio for each color. 
      */
-    public static double getColorRatio(String coilCode) {
+    public static double getColorRatio(String coilCode, String resolution) {
 
-        //A001-TRANSPARENT
-        if (coilCode.contains("001")) {
-            return 0.91;
+        double result = 0.92; //Default
+        HashMap<String, String> tagValues = Languager.getTagValues(2, coilCode, resolution);
+        
+        if (tagValues != null && !tagValues.isEmpty()) {
+            for (Map.Entry pair : tagValues.entrySet()) {
+                if (pair.getValue().equals("filament_flow")) {
+                    return ((Double)pair.getKey() / 100);
+                }
+            }
         }
-        //A002-WHITE
-        if (coilCode.contains("002")) {
-            return 0.89;
-        }
-        //A003-BLACK
-        if (coilCode.contains("003")) {
-            return 0.88;
-        }
-        //A004-RED
-        if (coilCode.contains("004")) {
-            return 0.96;
-        }
-        //A005-YELLOW
-        if (coilCode.contains("005")) {
-            return 0.96;
-        }
-        //A006-BLUE
-        if (coilCode.contains("006")) {
-            return 0.92;
-        }
-        //A007-BRONZE
-        if (coilCode.contains("007")) {
-            return 0.88;
-        }
-        //A008-PINK
-        if (coilCode.contains("008")) {
-            return 0.90;
-        }
-        //A009-SILVER
-        if (coilCode.contains("009")) {
-            return 0.91;
-        }
-        //A010-TURQUOISE
-        if (coilCode.contains("010")) {
-            return 0.86;
-        }
-        //A011-NEON GREEN
-        if (coilCode.contains("011")) {
-            return 0.86;
-        }
-        //A012-ORANGE  
-        if (coilCode.contains("012")) {
-            return 0.88;
-        }
-      
-        if (coilCode.contains("331") || coilCode.contains("301")) {
-            return 0.93;
-        }
-        if (coilCode.contains("332") || coilCode.contains("302")) {
-            return 0.90;
-        }
-        if (coilCode.contains("333") || coilCode.contains("303")) {
-            return 0.86;
-        }
-        if (coilCode.contains("334") || coilCode.contains("304")) {
-            return 0.86;
-        }
-        if (coilCode.contains("335") || coilCode.contains("305")) {
-            return 0.90;
-        }
-        if (coilCode.contains("336") || coilCode.contains("306")) {
-            return 0.96;
-        }
-        if (coilCode.contains("337") || coilCode.contains("321")) {
-            return 0.91;
-        }
-        if (coilCode.contains("338") || coilCode.contains("322")) {
-            return 0.98;
-        }
-        return 0.92;
+        
+        return result;
     }
     
     /**
@@ -155,69 +136,17 @@ public class FilamentControler {
      * @return coil code.
      */
     public static String getBEECode(String color) {
-        if (color.contains("WHITE")) {
-            return "A301";
-        }
-        if (color.contains("BLACK")) {
-            return "A302";
-        }
-        if (color.contains("YELLOW")) {
-            return "A303";
-        }
-        if (color.contains("RED")) {
-            return "A304";
-        }
-        if (color.contains("TURQUOISE")) {
-            return "A305";
-        }
-        if (color.contains("TRANSPARENT")) {
-            return "A306";
-        }
-        if (color.contains("GREEN")) {
-            return "A321";
-        }
-        if (color.contains("ORANGE")) {
-            return "A322";
-        }
+
+        Map<String, String> colorsMap = getColorsMap();
+        
+        for (Map.Entry pair : colorsMap.entrySet()) {
+            String colorName = (String) pair.getValue();
+            
+            if (colorName.contains(color)) {
+                return ((String) pair.getKey()).toUpperCase();
+            }
+        }        
         
         return "A302"; 
     }
-
-    /**
-     * Enum with all coils code.
-     */
-    public enum FilamentCodes {
-
-        A001, // FILLKEMPT - Transparent
-        A002, // FILLKEMPT - White
-        A003, // FILLKEMPT - Black
-        A004, // FILLKEMPT - Red
-        A005, // FILLKEMPT - Yellow
-        A006, // FILLKEMPT - Blue
-        A007, // FILLKEMPT - Bronze
-        A008, // FILLKEMPT - Fuchsia
-        A009, // FILLKEMPT - Silver
-        A010, // FILLKEMPT - Turquoise
-        A011, // FILLKEMPT - Neon Green
-        A012, // FILLKEMPT - Orange
-        
-        A301, // WHITE
-        A302, // BLACK
-        A303, //YELLOW
-        A304, //RED
-        A305, // VIOLET
-        A306, //TRANSPARENT
-        A321, // GREEN
-        A322,  //ORANGE
-//        
-//        A331, // WHITE
-//        A332, // BLACK
-//        A333, //YELLOW
-//        A334, //RED
-//        A335, // VIOLET
-//        A336, //TRANSPARENT
-//        A337, // GREEN
-//        A338, //ORANGE
-    }
-
 }
