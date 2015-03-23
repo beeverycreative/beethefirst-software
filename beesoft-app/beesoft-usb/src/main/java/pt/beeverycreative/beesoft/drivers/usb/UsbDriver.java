@@ -32,7 +32,6 @@ import replicatorg.app.Base;
 
 import replicatorg.app.tools.XML;
 import replicatorg.drivers.DriverBaseImplementation;
-import replicatorg.machine.MachineState;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -52,8 +51,8 @@ public class UsbDriver extends DriverBaseImplementation {
     private String m_productNew = "BEETHEFIRST";
     protected String m_productOld = "BEETHEFIRST - ";
     protected String oldCompatibleVersion = "BEETHEFIRST-3.";
-    private short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
-    private short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
+    private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
+    private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
     protected boolean isNewVendorID = false;
     protected ArrayList<UsbDevice> m_usbDeviceList = new ArrayList<UsbDevice>();
     /**
@@ -71,7 +70,7 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     private double extrudedDistance = 0;
     private double totalExtrudedDistance = 0;
-    private double extruderLimit = 100000; // average string lenght/bobine 105 +- 10 meters
+    private final double extruderLimit = 100000; // average string lenght/bobine 105 +- 10 meters
     protected boolean transferMode = false;
     protected boolean isONShutdown = false;
 
@@ -107,7 +106,7 @@ public class UsbDriver extends DriverBaseImplementation {
      * @param command command sent to machine
      */
     protected void getEValue(String command) {
-        double c_Value = 0;
+        double c_Value;
 
         /**
          * It can consider two possible switch cases: G1 X-100.0 Y-20.0 Z5.0
@@ -166,6 +165,7 @@ public class UsbDriver extends DriverBaseImplementation {
      *
      * @return extrudedValue
      */
+    @Override
     public double getTotalExtrudedValue() {
         return totalExtrudedDistance;
     }
@@ -235,7 +235,15 @@ public class UsbDriver extends DriverBaseImplementation {
                     }//else{System.out.println("No need for else.");}
                 }
             }
-        } catch (Exception ex) {
+        } catch (UsbException ex) {
+            m_usbDevice = null;
+            Base.writeLog("Could not verify or add device:"
+                    + ex.getMessage() + ":" + ex.toString());
+        } catch (UnsupportedEncodingException ex) {
+            m_usbDevice = null;
+            Base.writeLog("Could not verify or add device:"
+                    + ex.getMessage() + ":" + ex.toString());
+        } catch (UsbDisconnectedException ex) {
             m_usbDevice = null;
             Base.writeLog("Could not verify or add device:"
                     + ex.getMessage() + ":" + ex.toString());
@@ -336,47 +344,51 @@ public class UsbDriver extends DriverBaseImplementation {
      * @return USB Pipes with Endpoints set.
      */
     protected UsbPipes GetPipe(UsbDevice device) {
-        UsbConfiguration config = device.getActiveUsbConfiguration();
-        if (pipes == null || !testPipes(pipes)) {
-            pipes = new UsbPipes();
 
-        } else {
-            return pipes;
-        }
-        List interfaces = config.getUsbInterfaces();
-        for (Object ifaceObj : interfaces) {
-            UsbInterface iface = (UsbInterface) ifaceObj;
-            if (iface.isClaimed() || !iface.isActive()) {
-                continue;
+        if (device != null) {
+            UsbConfiguration config = device.getActiveUsbConfiguration();
+
+            if (pipes == null || !testPipes(pipes)) {
+                pipes = new UsbPipes();
+
+            } else {
+                return pipes;
             }
-
-            List endpoints = iface.getUsbEndpoints();
-            for (Object endpointObj : endpoints) {
-                UsbEndpoint endpoint = (UsbEndpoint) endpointObj;
-
-                if (endpoint.getType() != UsbConst.ENDPOINT_TYPE_BULK) {
+            List interfaces = config.getUsbInterfaces();
+            for (Object ifaceObj : interfaces) {
+                UsbInterface iface = (UsbInterface) ifaceObj;
+                if (iface.isClaimed() || !iface.isActive()) {
                     continue;
                 }
 
-                if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_OUT) {
-                    this.pipes.setUsbPipeWrite(endpoint.getUsbPipe());
-                }
+                List endpoints = iface.getUsbEndpoints();
+                for (Object endpointObj : endpoints) {
+                    UsbEndpoint endpoint = (UsbEndpoint) endpointObj;
 
-                if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_IN) {
-                    this.pipes.setUsbPipeRead(endpoint.getUsbPipe());
+                    if (endpoint.getType() != UsbConst.ENDPOINT_TYPE_BULK) {
+                        continue;
+                    }
+
+                    if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_OUT) {
+                        this.pipes.setUsbPipeWrite(endpoint.getUsbPipe());
+                    }
+
+                    if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_IN) {
+                        this.pipes.setUsbPipeRead(endpoint.getUsbPipe());
+                    }
                 }
-            }
-            if (pipes.getUsbPipeRead() != null && pipes.getUsbPipeWrite() != null) {
+                if (pipes.getUsbPipeRead() != null && pipes.getUsbPipeWrite() != null) {
 
 //                if (testPipes(pipes)) {
-                return pipes;
+                    return pipes;
 //                } else {
 //                    continue;
 //                }
 
-            } else {
-                pipes.setUsbPipeWrite(null);
-                pipes.setUsbPipeRead(null);
+                } else {
+                    pipes.setUsbPipeWrite(null);
+                    pipes.setUsbPipeRead(null);
+                }
             }
         }
 
@@ -386,9 +398,10 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Checks if printer is in bootloader.
      *
-     * @return <li> true, if in bootloader.
-     * <false> false, if not.
+     * @return true, if in bootloader.
+     *  false, if not.
      */
+    @Override
     public boolean isBootloader() {
         return super.isBootloader;
     }
@@ -452,7 +465,6 @@ public class UsbDriver extends DriverBaseImplementation {
                 }
             }
 
-
         } catch (UsbException ex) {
             Base.writeLog("USB exception: " + ex.getMessage());
             //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
@@ -484,11 +496,9 @@ public class UsbDriver extends DriverBaseImplementation {
 
     /**
      *
-     * @param pipe
-     * @throws UsbClaimException
+     * @param pipes
      * @throws UsbNotActiveException
      * @throws UsbDisconnectedException
-     * @throws UsbException
      */
     protected void openPipe(UsbPipes pipes) {
         try {
@@ -516,11 +526,9 @@ public class UsbDriver extends DriverBaseImplementation {
 
     /**
      *
-     * @param pipe
-     * @throws UsbClaimException
+     * @param pipes
      * @throws UsbNotActiveException
      * @throws UsbDisconnectedException
-     * @throws UsbException
      */
     protected void closePipe(UsbPipes pipes) {
         try {
@@ -545,6 +553,7 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Sleeps driver for 1 nano second.
      */
+    @Override
     public void hiccup() {
         hiccup(0, 1);
     }
@@ -555,6 +564,7 @@ public class UsbDriver extends DriverBaseImplementation {
      * @param mili miliseconds to sleep.
      * @param nano nanoseconds to sleep.
      */
+    @Override
     public void hiccup(int mili, int nano) {
         //sleep for a nano second just for luck
         try {

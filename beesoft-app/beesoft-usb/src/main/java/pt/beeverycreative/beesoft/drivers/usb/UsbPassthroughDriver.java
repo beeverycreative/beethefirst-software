@@ -10,7 +10,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -33,7 +32,6 @@ import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.VersionException;
-import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
@@ -153,7 +151,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     /**
      * the size of the buffer on the GCode host TEST VALUE FOR USB
      */
-    private int maxBufferSize = 60;
+    private final int maxBufferSize = 60;
     /**
      * the amount of data we've sent and is in the buffer.
      */
@@ -162,11 +160,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * What did we get back from serial?
      */
     private String result = "";
-    private DecimalFormat df;
+    private final DecimalFormat df;
     private boolean showMessage = true;
-    private int commandNumber = 1;
-    private int counter = 0;
-    private boolean comLog;
+    private final int commandNumber = 1;
+    private final int counter = 0;
+    private final boolean comLog;
 
     /**
      *
@@ -1862,27 +1860,34 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         if (comLog) {
             long time = (System.currentTimeMillis() - startTS);
-//                Base.writecomLog(time,"Error while sending command to BEETHEFIRST: " + ex.getMessage());
+            //Base.writecomLog(time,"Error while sending command to BEETHEFIRST: " + ex.getMessage());
         }
-//        }
 
         try {
-            synchronized (m_usbDevice) {
-                if (!pipes.isOpen()) {
-                    openPipe(pipes);
+            if (m_usbDevice != null) {
+                synchronized (m_usbDevice) {
+                    if (!pipes.isOpen()) {
+                        openPipe(pipes);
+                    }
+                    pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
+                    cmdlen = next.length() + 1;
+
                 }
-                pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
-                cmdlen = next.length() + 1;
-//                System.out.println("SENT: " + message.trim());
             }
-        } catch (Exception ex) {
-//            System.out.println("Error while sending command " + next + " : " + ex.getMessage());
+        } catch (UsbException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+        } catch (UsbNotActiveException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+        } catch (UsbNotOpenException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+        } catch (UsbDisconnectedException ex) {
             Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
         }
 
         if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
             Base.writeLog("SENT: " + message.trim());
-//            System.err.println
         }
 
         if (comLog) {
@@ -1892,6 +1897,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return cmdlen;
     }
 
+    @Override
     public String readResponse() {
 
         while (SEND_WAIT > (System.currentTimeMillis() - lastDispathTime)) {
@@ -1908,22 +1914,23 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         int nBits = 0;
         try {
-            synchronized (m_usbDevice) {
+            if (m_usbDevice != null) {
+                synchronized (m_usbDevice) {
 
-                if (pipes != null) {
-                    nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
-                } else {
-                    Base.writeLog("PIPES NULL");
-                    System.out.println("PIPES NULL");
-                    /**
-                     * REDSOFT: Was this causing prints to stop ????
-                     */
-//                    setInitialized(false);
-                    return NOK;
-//                    throw new UsbException("Pipe not found");
+                    if (pipes != null) {
+                        nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
+                    } else {
+                        Base.writeLog("PIPES NULL");
+                        System.out.println("PIPES NULL");
+                        /**
+                         * REDSOFT: Was this causing prints to stop ????
+                         */
+                        //  setInitialized(false);
+                        return NOK;
+                        //throw new UsbException("Pipe not found");
+                    }
                 }
             }
-//            System.out.println(nBits);
         } catch (UsbException ex) {
             // Cable removable
             if (ex.getMessage().contains("LIBUSB_ERROR_NO_DEVICE")) {

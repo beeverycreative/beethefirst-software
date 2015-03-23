@@ -81,7 +81,7 @@ public class PrintPanel extends javax.swing.JFrame {
 
     public PrintPanel() {
         initComponents();
-        initSlidersLables();
+        initSlidersLabels();
         setFont();
         setTextLanguage();
         initSliderConfigs();
@@ -368,7 +368,7 @@ public class PrintPanel extends javax.swing.JFrame {
     /**
      * Inits Density and resolution fields labels.
      */
-    private void initSlidersLables() {
+    private void initSlidersLabels() {
         quality_prototype = new JLabel("prototype");
         quality_normal = new JLabel("normal");
         quality_artwork = new JLabel("artwork");

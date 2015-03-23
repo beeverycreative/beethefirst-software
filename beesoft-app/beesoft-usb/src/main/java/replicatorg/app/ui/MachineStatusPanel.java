@@ -110,12 +110,13 @@ public class MachineStatusPanel extends BGPanel implements MachineListener {
 	
 	/**
 	 * Display the current status of this machine.
+     * @param evt
 	 */
 	public void updateMachineStatus(MachineStateChangeEvent evt) {
 		MachineState.State state = evt.getState().getState();
 		
 		// Determine what color to use
-		Color bgColor = null;
+		Color bgColor;
 		
 		switch (state) {
 		case READY:
@@ -161,7 +162,7 @@ public class MachineStatusPanel extends BGPanel implements MachineListener {
 			double proportion = (double)event.getLines()/(double)event.getTotalLines();
 			double percentComplete = Math.round(proportion*10000.0)/100.0;
 	
-			double remaining= event.getEstimated() * (1.0 - proportion);;
+			double remaining= event.getEstimated() * (1.0 - proportion);
 			if (event.getTotalLines() == 0) {
 				remaining = 0;
 			}
@@ -177,27 +178,33 @@ public class MachineStatusPanel extends BGPanel implements MachineListener {
 		}
 	}
 	
+    @Override
 	public void machineStateChanged(MachineStateChangeEvent evt) {
 		final MachineStateChangeEvent e = evt;
 		SwingUtilities.invokeLater(new Runnable() {
+            @Override
 			public void run() {
 				updateMachineStatus(e);
 			}
 		});
 	}
 
+    @Override
 	public void machineProgress(MachineProgressEvent event) {
 		final MachineProgressEvent e = event;
 		SwingUtilities.invokeLater(new Runnable() {
+            @Override
 			public void run() {
 				updateBuildStatus(e);
 			}
 		});
 	}
 
+    @Override
 	public void toolStatusChanged(MachineToolStatusEvent event) {
 		final MachineToolStatusEvent e = event;
 		SwingUtilities.invokeLater(new Runnable() {
+            @Override
 			public void run() {
 				double temperature = e.getTool().getCurrentTemperature();
 				tempLabel.setText(String.format("Temp: %1$3.1f\u00B0C", temperature));
