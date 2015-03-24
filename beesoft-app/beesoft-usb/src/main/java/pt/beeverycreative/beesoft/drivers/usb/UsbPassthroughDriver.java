@@ -98,7 +98,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final int QUEUE_WAIT = 30;
     private static final int SEND_WAIT = 10; //2 did not work
     private int queue_size;
-    private Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
+    private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispathTime;
     private Version bootloader_version = new Version();
     private Version firmware_version = new Version();
@@ -162,8 +162,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String result = "";
     private final DecimalFormat df;
     private boolean showMessage = true;
-    private final int commandNumber = 1;
-    private final int counter = 0;
     private final boolean comLog;
 
     /**
@@ -435,7 +433,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             if (!isInitialized()) {
 
                 // record our start time.
-                Date date = new Date();
+                Date date;
                 //long end = date.getTime() + 10000;
 
                 Base.writeLog("Initializing usb device.");
@@ -492,7 +490,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Actually execute the GCode we just parsed.
-     */
+     * @param code
+     */     
     @Override
     public void executeGCodeLine(String code) {
         dispatchCommand(code);
@@ -519,15 +518,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private void recoverFromSDCardTransfer() {
-        String out = "";
-        int sent;
-        int tries = 30;
-        String response;
-        response = "";
-        ByteRead res;
-        int bytesRead = 0;
-        byte[] buf = DUMMY.getBytes();
-        int nBytes = buf.length;
+        String out = "";;
 
         //Waits for a Status OK to unlock Transfer
         while (!out.toLowerCase().contains(STATUS_OK)
@@ -722,11 +713,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         while (comLost) {
 
             int myID = (int) (Math.random() * 100.0);
-            String ans = NOK;
+            String ans;
 
             String message = ECHO + " E" + myID;
             String expected = "E" + String.valueOf(myID);
-            String response = "############";
+            String response;
 
             while (true) {
                 response = _dispatchCommand(message);
@@ -814,7 +805,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         QueueCommand temp = null;
 
-        if (next != DUMMY) {
+        if (next != null && !next.equals(DUMMY)) {
             sendCommand(next);
 
             /**
@@ -867,14 +858,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     }
 
+    @Override
     public String getFirmwareVersion() {
         return firmware_version.getVerionString();
     }
 
+    @Override
     public String getBootloaderVersion() {
         return bootloader_version.toString();
     }
 
+    @Override
     public String getSerialNumber() {
         return serialNumberString.trim();
     }
@@ -929,7 +923,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     /**
      * Gets the CoilCode from printer AXXX for code, A0 for none NOK for error
      *
-     * @return
      */
     @Override
     public void updateCoilCode() {
@@ -1024,23 +1017,25 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     }
 
+    @Override
     public double getTransferPercentage() {
         return transferPercentage;
     }
 
+    @Override
     public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous) {
 
         long loop = System.currentTimeMillis();
         long time;
         int file_size;
         byte[] gcodeBytes;
-        int srcPos = 0;
+        int srcPos;
         int offset = MESSAGE_SIZE;
         int destPos = 0;
-        int totalMessages = 0;
+        int totalMessages;
         int message = 0;
         int totalBytes = 0;
-        int totalBlocks = 0;
+        int totalBlocks;
         String logTransfer = "";
 
         file_size = (int) gcode.length();
@@ -1124,8 +1119,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
 
                 message++;
-                //Get byte array with MESSAGE_SIZE
-                time = System.currentTimeMillis();
 
                 // Updates variables
                 srcPos = destPos;
@@ -1227,19 +1220,20 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return RESPONSE_OK;
     }
 
+    @Override
     public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
 
         long loop = System.currentTimeMillis();
         long time;
         int file_size;
         byte[] gcodeBytes;
-        int srcPos = 0;
+        int srcPos;
         int offset = MESSAGE_SIZE;
         int destPos = 0;
-        int totalMessages = 0;
+        int totalMessages;
         int message = 0;
         int totalBytes = 0;
-        int totalBlocks = 0;
+        int totalBlocks;
         String logTransfer = "";
 
         file_size = (int) gcode.length();
@@ -1390,6 +1384,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return RESPONSE_OK;
     }
 
+    @Override
     public String startPrintAutonomous() {
         //Begin print from SDCard
         String answer = "";
@@ -1415,6 +1410,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return RESPONSE_OK;
     }
 
+    @Override
     public AutonomousData getPrintSessionsVariables() {
 
 //        Data:
@@ -1436,7 +1432,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String[] parseData(String printSession) {
         String[] variables = new String[4];
 
-        String[] result = printSession.split(" ");
+        String[] res = printSession.split(" ");
 
         String aTag = "A";
         String bTag = "B";
@@ -1447,15 +1443,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String cValue = "0";
         String dValue = "0";
 
-        for (int i = 0; i < result.length; i++) {
-            if (result[i].contains(aTag)) {
-                aValue = result[i].substring(1);
-            } else if (result[i].contains(bTag)) {
-                bValue = result[i].substring(1);
-            } else if (result[i].contains(cTag)) {
-                cValue = result[i].substring(1);
-            } else if (result[i].contains(dTag) && !result[i].equalsIgnoreCase("Done")) {
-                dValue = result[i].substring(1);
+        for (int i = 0; i < res.length; i++) {
+            if (res[i].contains(aTag)) {
+                aValue = res[i].substring(1);
+            } else if (res[i].contains(bTag)) {
+                bValue = res[i].substring(1);
+            } else if (res[i].contains(cTag)) {
+                cValue = res[i].substring(1);
+            } else if (res[i].contains(dTag) && !res[i].equalsIgnoreCase("Done")) {
+                dValue = res[i].substring(1);
             }
         }
 
@@ -1503,15 +1499,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private String transferMessage(byte[] iBlock) {
         int sent;
-        String command;
-        int i = 0;
         String out = "";
-        int tries = 10;
+        int tries;
         String response;
         response = "";
-        ByteRead res;
-        long loop = 0;
-        int nBytes = iBlock.length;
 
         out += "Sending \n";
 
@@ -1614,10 +1605,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private String setVariables(String estimatedTime, int nLines) {
-        String out = "";
+        String out;
         String response = "";
         int tries = 10;
-        String setVariables = null;
+        String setVariables;
 
         /**
          * Considering that may occur an error and crash autonomous print.
@@ -1666,15 +1657,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private String setTransferSize(int srcPos, int destPos) {
-        int sent;
+
         String command;
-        int i = 0;
         String out = "";
         int tries = 10;
-        String response;
-        response = "";
-        ByteRead res;
-        long loop = 0;
+        String response;        
 
         command = TRANSFER_BLOCK + "A" + srcPos + " D" + destPos;
         out += command + "\n";
@@ -1728,7 +1715,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private byte[] getBytesFromFile(File gcode) {
-        FileInputStream in = null;
+        FileInputStream in;
 
         byte[] bytes = new byte[(int) gcode.length()];
 
@@ -1749,8 +1736,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     /**
      * Return a new byte array containing a sub-portion of the source array
      *
+     * @param source
      * @param srcBegin The beginning index (inclusive)
      * @param srcEnd The ending index (exclusive)
+     * 
      * @return The new, populated byte array
      */
     public byte[] subbytes(byte[] source, int srcBegin, int srcEnd) {
@@ -1798,7 +1787,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         pipes = GetPipe(m_usbDevice);
 
         // do the actual send.
-        String message = "";
+        String message;
 
         getEValue(next); // Process each command for extruded material calculation
 
@@ -1807,15 +1796,25 @@ public final class UsbPassthroughDriver extends UsbDriver {
         resendQueue.add(new QueueCommand(message, ID));
 
         try {
-            synchronized (m_usbDevice) {
-                if (!pipes.isOpen()) {
-                    openPipe(pipes);
+            if (m_usbDevice != null) {
+                synchronized (m_usbDevice) {
+                    if (!pipes.isOpen()) {
+                        openPipe(pipes);
+                    }
+                    pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
+                    cmdlen = next.length() + 1;
+    //                System.out.println("SENTWO: " + message.trim())
                 }
-                pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
-                cmdlen = next.length() + 1;
-//                System.out.println("SENTWO: " + message.trim())
             }
-        } catch (Exception ex) {
+        } catch (UsbException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+        } catch (UsbNotActiveException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+        } catch (UsbNotOpenException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+        } catch (IllegalArgumentException ex) {
+            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+        } catch (UsbDisconnectedException ex) {
             Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
         }
 
@@ -1833,6 +1832,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Actually sends command over USB.
+     * @param next
+     * @return 
      */
     protected int sendCommand(String next) {
 
@@ -2047,10 +2048,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
         this.driverError = errorOccured;
     }
 
+    @Override
     public boolean isDriverError() {
         return driverError;
     }
 
+    @Override
     public boolean isTransferMode() {
         return this.transferMode;
     }
@@ -2074,14 +2077,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Is our buffer empty? If don't have a buffer, its always true.
+     * @return 
      */
     @Override
     public boolean isBufferEmpty() {
-        /*try
-         {
-         //         readResponse();
-         } catch (Exception e) {
-         }*/
+
         return (bufferSize == 0);
     }
 
@@ -2095,8 +2095,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * *************************************************************************
      * commands for interfacing with the driver directly
      *
-     * @throws RetryException
-     * @throws UsbException
+     * @param p
+     * 
      * @throws UsbDisconnectedException
      * @throws IllegalArgumentException
      * @throws UsbNotOpenException
@@ -2142,7 +2142,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     /**
      * *************************************************************************
      * Motor interface functions
-     * ************************************************************************
+     * 
+     * @param rpm
      */
     @Override
     public void setMotorRPM(double rpm) {
@@ -2180,6 +2181,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * *************************************************************************
      * Temperature interface functions
      *
+     * @param temperature
      * @throws RetryException
      * ************************************************************************
      */
@@ -2203,7 +2205,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public void readLastLineNumber() {
 
-        String result = dispatchCommand(GET_LINE_NUMBER, COM.DEFAULT);
+        String res = dispatchCommand(GET_LINE_NUMBER, COM.DEFAULT);
         //parse value
         String txt = "* last N:0 SDPOS:0 ok Q:0";
 
@@ -2213,7 +2215,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String re4 = "(\\d+)";	// Integer Number 1
 
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(result);
+        Matcher m = p.matcher(res);
         if (m.find()) {
             String word1 = m.group(1);
             String c1 = m.group(2);
@@ -2283,6 +2285,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return myCurrentPosition;
     }
 
+    @Override
     public String setElapsedTime(long time) {
         sendCommand("M32 A" + time);
         try {
@@ -2300,7 +2303,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
         int tries = 10;
         String position = "n/a";
-        String old ="n/b";
+        String old;
         while (true) {
             try {
                 Thread.sleep(10, 0);
@@ -2599,7 +2602,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void readTemperature() {
         //sendCommand(_getToolCode() + "M105");
         String temp = dispatchCommand("M105");
-        double temperature = 0.0;
+        double temperature;
 
         String re1 = "(T)";	// Variable Name 1
         String re2 = "(:)";	// Any Single Character 1
@@ -2643,11 +2646,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public boolean isInitialized() {
-        if (super.isInitialized() && testPipes(pipes)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (super.isInitialized() && testPipes(pipes));
     }
 
     private String checkFirmwareType() {
@@ -2701,7 +2700,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private void setFirmware(String firmwareName) {
-        String file_name = "";
+        String file_name;
         if (firmwareName.contains("LT")) {
             Base.writeLog("Flashing..");
 
@@ -2727,8 +2726,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         ByteRead res;
         boolean state;
         String command;
-
-        String out = "";
 
         File f = new File(filename);
 //        System.out.println();
@@ -2881,7 +2878,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         byte[] result_local = new byte[64];
         byte[] readBuffer = new byte[64];
 
-        int nBits = 0;
+        int nBits;
 
         nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
 
@@ -2996,7 +2993,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private void updateFirmware() {
 
-        String versionToCompare = "no_version_available";
+        String versionToCompare;
         if (isNewVendorID) {
             versionToCompare = Base.VERSION_FIRMWARE_FINAL;
         } else {
@@ -3018,20 +3015,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         File firmwareFile = null;
 
-        for (int i = 0; i < firmwarelist.length; i++) {
-            System.out.println(firmwarelist[i].getAbsoluteFile());
+        for (File firmwarelist1 : firmwarelist) {
+            System.out.println(firmwarelist1.getAbsoluteFile());
             Base.writeLog("Version to compare: " + versionToCompare);
-
-            if (firmwarelist[i].getName().contains(versionToCompare)) {
-                firmwareFile = firmwarelist[i];
-
+            if (firmwarelist1.getName().contains(versionToCompare)) {
+                firmwareFile = firmwarelist1;
                 /**
                  * Checks if major to flash is bigger than the one installed.
                  */
                 if (new Version().fromMachine4(versionToCompare).getMajor() > firmware_version.getMajor()) {
                     needForConfigReset = true;
                 }
-
                 Base.writeLog("Firmware update necessary." + "f:" + firmwareFile);
                 break;
             }

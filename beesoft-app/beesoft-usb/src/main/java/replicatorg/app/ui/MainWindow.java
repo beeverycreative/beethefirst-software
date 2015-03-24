@@ -261,6 +261,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         // add listener to handle window close box hit event
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 handleQuitInternal();
             }
