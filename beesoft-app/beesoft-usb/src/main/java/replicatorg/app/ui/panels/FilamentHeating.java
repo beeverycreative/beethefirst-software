@@ -32,12 +32,12 @@ import replicatorg.util.Point5d;
  */
 public class FilamentHeating extends javax.swing.JFrame {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private boolean achievement;
     private boolean quickGuide;
     private int posX = 0, posY = 0;
     private double temperatureGoal;
-    private UpdateThread updateThread;
+    private final UpdateThread updateThread;
 
     public FilamentHeating() {
         initComponents();
@@ -214,6 +214,7 @@ public class FilamentHeating extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -222,6 +223,7 @@ public class FilamentHeating extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);

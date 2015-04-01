@@ -13,8 +13,8 @@
     <name>beesoft-usb</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.release.name>BEESOFT-3.10.0-beta1</project.release.name>
-        <project.release.version>3.10.0-beta1</project.release.version>
+        <project.release.name>BEESOFT-3.10.0-beta.1</project.release.name>
+        <project.release.version>3.10.0-beta.1</project.release.version>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <libusb4java.version>1.2.0</libusb4java.version>
