@@ -86,7 +86,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -118,10 +117,10 @@ public class Base {
     };
     
     public static int ID = 0;
-    private static final DateFormat alphaDateFormat = new SimpleDateFormat("dd-MM-yy_HHmm");
+
     public static final String VERSION_BEESOFT = 
             appProperties.getProperty("release.type").equals("alpha") ? 
-            appProperties.getProperty("application.version") + "-alpha-" + alphaDateFormat.format(new Date()) :
+            appProperties.getProperty("application.version") + "-alpha-" + appProperties.getProperty("build.number") :
                 appProperties.getProperty("release.type").equals("") ?
                 appProperties.getProperty("application.version") :
                 appProperties.getProperty("application.version") + "-" + appProperties.getProperty("release.type");
