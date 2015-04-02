@@ -1114,9 +1114,9 @@
 				<insetx_speed value="60"/>
 				<filament_flow value="105"/>
 				<cool_min_layer_time value="5"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
-			</lowRes>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
+            </lowRes>
 			<mediumRes>
 				<layer_height value="0.2"/>
 				<wall_thickness value="1.0"/>
@@ -1128,8 +1128,8 @@
 				<insetx_speed value="0"/>
 				<filament_flow value="105"/>
 				<cool_min_layer_time value="30"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</mediumRes>
 			<highRes>
 				<layer_height value="0.1"/>
@@ -1142,8 +1142,8 @@
 				<insetx_speed value="40"/>
 				<filament_flow value="105"/>
 				<cool_min_layer_time value="5"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</highRes>
 			<shighRes>
 				<layer_height value="0.05"/>
@@ -1156,8 +1156,8 @@
 				<insetx_speed value="40"/>
 				<filament_flow value="105"/>
 				<cool_min_layer_time value="5"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</shighRes>
 		</a104>
 		<a105>
@@ -1272,8 +1272,8 @@
 				<insetx_speed value="60"/>
 				<filament_flow value="104"/>
 				<cool_min_layer_time value="5"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</lowRes>
 			<mediumRes>
 				<layer_height value="0.2"/>
@@ -1286,8 +1286,8 @@
 				<insetx_speed value="0"/>
 				<filament_flow value="105"/>
 				<cool_min_layer_time value="30"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</mediumRes>
 			<highRes>
 				<layer_height value="0.1"/>
@@ -1300,8 +1300,8 @@
 				<insetx_speed value="40"/>
 				<filament_flow value="106"/>
 				<cool_min_layer_time value="5"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</highRes>
 			<shighRes>
 				<layer_height value="0.05"/>
@@ -1314,8 +1314,8 @@
 				<insetx_speed value="40"/>
 				<filament_flow value="106"/>
 				<cool_min_layer_time value="5"/>
-                                <retraction_speed value="125"/>
-                                <retraction_amount value="0.75"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="0.75"/>
 			</shighRes>
 		</a107>
 		<a108>
@@ -2020,4 +2020,3 @@
 		</a121>                                                                    
 	</colors>
 </printSetup>
-
