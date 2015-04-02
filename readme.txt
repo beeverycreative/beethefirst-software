@@ -1,3 +1,43 @@
+The development is happens on "development" branch here: https://github.com/beeverycreative/beethefirst-software/tree/development
+
+
+How to build on Linux (builds BEESOFT for Linux, MAC OS and Windows):
+NOTE: there are tools ont the list that we use for development of even other projects.
+
+#Install JDK 8:
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get -y install oracle-java8-installer
+sudo apt-get -y install oracle-java8-set-default
+
+sudo apt-get install libjava3d-java
+sudo cp /usr/share/java/j3d*.jar  /usr/lib/jvm/java-8-oracle/jre/lib/ext/
+	
+sudo apt-get install libjava3d-jni
+sudo cp /usr/lib/jni/libj3dcore-ogl.so /usr/lib/jvm/java-8-oracle/jre/lib/amd64/
+
+sudo pip install pyusb
+sudo pip install pyserial
+
+#Install Nautilus:
+
+sudo apt-get -y install nautilus-open-terminal
+nautilus -q
+
+#Install Git and Other tools:
+sudo apt-get -y install git mesa-utils chromium-browser gitg vim ant
+
+
+- Git clone the BEESOFT repositorie
+- Change to "development" branch: git checkout development
+- Install NetBeans 8, Java SE version
+- Open NetBeans
+- Open the project "beesoft-app"
+- Do the "Clean and Build" of the project "beesfot-app"
+- You can find the BEESOFT application on the folders: beethefirst-software/beesoft-app/beesoft-usb/target/linux
+
+
+-------------
 BEESOFT is the software that works with BEETHEFIRST. It's open source software adapted form ReplicatorG.
 
 ReplicatorG is an open-source GCode based controller for RepRap / CNC machines.  It has 3 main goals:
