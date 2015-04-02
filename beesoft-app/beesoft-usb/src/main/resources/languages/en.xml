@@ -663,7 +663,7 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <All value="All"/>
         </Gallery>
         
-        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine -->
+        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
             <a002 value="WHITE - A002"/>
             <a331 value="WHITE"/>
@@ -695,27 +695,28 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <a008 value="PINK - A008"/>
             <a009 value="SILVER - A009"/>
             
-            <a101 value="TRANSPARENT"/>
-            <a102 value="BLANC GRIS"/>
-            <a103 value="ZINC YELLOW"/>
-            <a104 value="SIGNAL YELLOW"/>
-            <a105 value="BRIGHT RED ORANGE"/>
-            <a106 value="TRAFFIC RED"/>
-            <a107 value="TOMATO RED"/>
-            <a108 value="LIGHT PINK"/>
-            <a109 value="TRAFFIC PURPLE"/>
-            <a110 value="VIOLET"/>
-            <a111 value="SKY BLUE"/>
-            <a112 value="TRAFFIC BLUE"/>
-            <a113 value="ULTRAMARINE BLUE"/>
-            <a114 value="YELLOW GREEN"/>
-            <a115 value="PURE GREEN"/>
-            <a116 value="CHROME GREEN"/>
-            <a117 value="CHOCOLATE BROWN"/>
-            <a118 value="TELEGREY"/>
-            <a119 value="SIGNAL BLACK"/>
-            <a120 value="PEARL GOLD"/>
-            <a121 value="PEARL LIGHT GREY"/>
+            <!-- Filamentos da FiberForce -->
+            <a101 value="TRANSPARENT - A101"/>
+            <a102 value="BLANC GRIS - A102"/>
+            <a103 value="ZINC YELLOW - A103"/>
+            <a104 value="SIGNAL YELLOW - A104"/>
+            <a105 value="BRIGHT RED ORANGE - A105"/>
+            <a106 value="TRAFFIC RED - A106"/>
+            <a107 value="TOMATO RED - A107"/>
+            <a108 value="LIGHT PINK - A108"/>
+            <a109 value="TRAFFIC PURPLE - A109"/>
+            <a110 value="VIOLET - A110"/>
+            <a111 value="SKY BLUE - A111"/>
+            <a112 value="TRAFFIC BLUE - A112"/>
+            <a113 value="ULTRAMARINE BLUE - A113"/>
+            <a114 value="YELLOW GREEN - A114"/>
+            <a115 value="PURE GREEN - A115"/>
+            <a116 value="CHROME GREEN - A116"/>
+            <a117 value="CHOCOLATE BROWN - A117"/>
+            <a118 value="TELEGREY - A118"/>
+            <a119 value="SIGNAL BLACK - A119"/>
+            <a120 value="PEARL GOLD - A120"/>
+            <a121 value="PEARL LIGHT GREY - A121"/>
         </CoilColors>
         
     </tags>      

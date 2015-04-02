@@ -10,7 +10,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -21,7 +21,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -32,7 +32,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -43,7 +43,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a001>
@@ -56,7 +56,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="89.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -67,7 +67,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="89.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -78,7 +78,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="89.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -89,7 +89,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="89.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a002>
@@ -102,7 +102,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -113,7 +113,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -124,7 +124,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -135,7 +135,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a003>
@@ -148,7 +148,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -159,7 +159,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="30"/>	
 			</mediumRes>
 			<highRes>
@@ -170,7 +170,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -181,7 +181,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a004>
@@ -194,7 +194,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -205,7 +205,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>    
 			<highRes>
@@ -216,7 +216,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -227,7 +227,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a005>
@@ -240,7 +240,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="92.0"/>
+				<filament_flow value="107.8"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -251,7 +251,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="92.0"/>
+				<filament_flow value="107.8"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -262,7 +262,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="92.0"/>
+				<filament_flow value="107.8"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -273,7 +273,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="92.0"/>
+				<filament_flow value="107.8"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a006>
@@ -285,7 +285,7 @@
 				<print_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -296,7 +296,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -307,7 +307,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -318,7 +318,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a007>
@@ -331,7 +331,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -342,7 +342,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -353,7 +353,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -364,7 +364,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a008>
@@ -377,7 +377,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -388,7 +388,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0.3"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -399,7 +399,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -410,7 +410,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a009>
@@ -423,7 +423,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -434,7 +434,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -445,7 +445,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -456,7 +456,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a010>
@@ -469,7 +469,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -480,7 +480,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -491,7 +491,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -502,7 +502,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a011>
@@ -515,7 +515,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -526,7 +526,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="89.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -537,7 +537,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -548,7 +548,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="103.1"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a012>
@@ -562,7 +562,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="93.0"/>
+				<filament_flow value="108.9"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -574,7 +574,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="93.0"/>
+				<filament_flow value="108.9"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -586,7 +586,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="93.0"/>
+				<filament_flow value="108.9"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -598,7 +598,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="93.0"/>
+				<filament_flow value="108.9"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a301>
@@ -612,7 +612,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -624,7 +624,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -636,7 +636,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -648,7 +648,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a302>
@@ -662,7 +662,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -674,7 +674,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -686,7 +686,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="88.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -698,7 +698,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a303>
@@ -712,7 +712,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -724,7 +724,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -736,7 +736,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -748,7 +748,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="100.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a304>
@@ -762,7 +762,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -774,7 +774,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="89.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -786,7 +786,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="90.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -798,7 +798,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="86.0"/>
+				<filament_flow value="105.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a305>
@@ -812,7 +812,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -824,7 +824,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -836,7 +836,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -848,7 +848,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="96.0"/>
+				<filament_flow value="112.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a306>
@@ -862,7 +862,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -874,7 +874,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -886,7 +886,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -898,7 +898,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="91.0"/>
+				<filament_flow value="106.6"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a321>
@@ -912,7 +912,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="114.8"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -936,7 +936,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="114.8"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -948,7 +948,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="114.8"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a322>
@@ -962,7 +962,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.5"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -974,7 +974,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.5"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -986,7 +986,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.5"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -998,7 +998,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.5"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a101>
@@ -1012,7 +1012,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1024,7 +1024,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1036,7 +1036,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1048,7 +1048,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.2"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a102>
@@ -1062,7 +1062,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.4"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1074,7 +1074,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.4"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1086,7 +1086,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.4"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1098,7 +1098,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.4"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a103>        
@@ -1112,8 +1112,10 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105"/>
 				<cool_min_layer_time value="5"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</lowRes>
 			<mediumRes>
 				<layer_height value="0.2"/>
@@ -1124,8 +1126,10 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105"/>
 				<cool_min_layer_time value="30"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</mediumRes>
 			<highRes>
 				<layer_height value="0.1"/>
@@ -1136,8 +1140,10 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105"/>
 				<cool_min_layer_time value="5"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</highRes>
 			<shighRes>
 				<layer_height value="0.05"/>
@@ -1148,8 +1154,10 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105"/>
 				<cool_min_layer_time value="5"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</shighRes>
 		</a104>
 		<a105>
@@ -1162,7 +1170,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.6"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1174,7 +1182,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.6"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1186,7 +1194,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.6"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1198,7 +1206,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.6"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a105>
@@ -1212,7 +1220,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.9"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1224,7 +1232,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.9"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1236,7 +1244,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.9"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1248,7 +1256,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.9"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a106>
@@ -1262,8 +1270,10 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104"/>
 				<cool_min_layer_time value="5"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</lowRes>
 			<mediumRes>
 				<layer_height value="0.2"/>
@@ -1274,8 +1284,10 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105"/>
 				<cool_min_layer_time value="30"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</mediumRes>
 			<highRes>
 				<layer_height value="0.1"/>
@@ -1286,8 +1298,10 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106"/>
 				<cool_min_layer_time value="5"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</highRes>
 			<shighRes>
 				<layer_height value="0.05"/>
@@ -1298,8 +1312,10 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106"/>
 				<cool_min_layer_time value="5"/>
+                                <retraction_speed value="125"/>
+                                <retraction_amount value="0.75"/>
 			</shighRes>
 		</a107>
 		<a108>
@@ -1312,7 +1328,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1324,7 +1340,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1336,7 +1352,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1348,7 +1364,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a108>
@@ -1362,7 +1378,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.3"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1374,7 +1390,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.3"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1386,7 +1402,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.3"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1398,7 +1414,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.3"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a109>                                                        
@@ -1412,7 +1428,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1424,7 +1440,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1436,7 +1452,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1448,7 +1464,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a110>
@@ -1462,7 +1478,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="103.5"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1474,7 +1490,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="103.5"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1486,7 +1502,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="103.5"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1498,7 +1514,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="103.5"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a111>
@@ -1512,7 +1528,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.2"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1524,7 +1540,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.2"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1536,7 +1552,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.2"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1548,7 +1564,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.2"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a112>
@@ -1562,7 +1578,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.6"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1574,7 +1590,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.6"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1586,7 +1602,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.6"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1598,7 +1614,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="105.6"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a113>
@@ -1612,7 +1628,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1624,7 +1640,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1636,7 +1652,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1648,7 +1664,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a114>
@@ -1662,7 +1678,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1674,7 +1690,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1686,7 +1702,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1698,7 +1714,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a115>
@@ -1712,7 +1728,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.5"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1724,7 +1740,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.5"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1736,7 +1752,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.5"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1748,7 +1764,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.5"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a116>
@@ -1762,7 +1778,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.0"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1774,7 +1790,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.0"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1786,7 +1802,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.0"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1798,7 +1814,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="108.0"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a117>
@@ -1812,7 +1828,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1824,7 +1840,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1836,7 +1852,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1848,7 +1864,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="107.5"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a118>
@@ -1862,7 +1878,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1874,7 +1890,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1886,7 +1902,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1898,7 +1914,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="104.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a119>
@@ -1912,7 +1928,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.7"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1924,7 +1940,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.7"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1936,7 +1952,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.7"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1948,7 +1964,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="106.7"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a120>
@@ -1962,7 +1978,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="60"/>
 				<insetx_speed value="60"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="109.8"/>
 				<cool_min_layer_time value="5"/>
 			</lowRes>
 			<mediumRes>
@@ -1974,7 +1990,7 @@
 				<infill_speed value="0"/>
 				<inset0_speed value="0"/>
 				<insetx_speed value="0"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="109.8"/>
 				<cool_min_layer_time value="30"/>
 			</mediumRes>
 			<highRes>
@@ -1986,7 +2002,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="40"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="109.8"/>
 				<cool_min_layer_time value="5"/>
 			</highRes>
 			<shighRes>
@@ -1998,7 +2014,7 @@
 				<infill_speed value="60"/>
 				<inset0_speed value="30"/>
 				<insetx_speed value="40"/>
-				<filament_flow value="98.0"/>
+				<filament_flow value="109.8"/>
 				<cool_min_layer_time value="5"/>
 			</shighRes>
 		</a121>                                                                    
