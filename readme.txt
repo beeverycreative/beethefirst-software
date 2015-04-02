@@ -1,7 +1,6 @@
-The development is happens on "development" branch here: https://github.com/beeverycreative/beethefirst-software/tree/development
+The development happens on "develop" branch here: https://github.com/beeverycreative/beethefirst-software/tree/develop
 
-
-How to build on Linux (builds BEESOFT for Linux, MAC OS and Windows):
+~~How to build on Linux (builds BEESOFT for Linux, MAC OS and Windows)~~
 NOTE: there are tools ont the list that we use for development of even other projects.
 
 #Install JDK 8:
@@ -20,14 +19,13 @@ sudo pip install pyusb
 sudo pip install pyserial
 
 #Install Nautilus:
-
 sudo apt-get -y install nautilus-open-terminal
 nautilus -q
 
 #Install Git and Other tools:
 sudo apt-get -y install git mesa-utils chromium-browser gitg vim ant
 
-
+#Install NetBeans IDE and build the application
 - Git clone the BEESOFT repositorie
 - Change to "development" branch: git checkout development
 - Install NetBeans 8, Java SE version
