@@ -5,16 +5,29 @@
     <parent>
         <groupId>pt.bitbox</groupId>
         <artifactId>beesoft-app</artifactId>
-        <version>3.10.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.10.0-SNAPSHOT</version>
+    <version>3.10.0</version>
     <name>beesoft-usb</name>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.release.name>BEESOFT-3.10.0-beta.1</project.release.name>
-        <project.release.version>3.10.0-beta.1</project.release.version>
+    <properties>       
+        <maven.build.timestamp.format>yyMMdd_HHmm</maven.build.timestamp.format>
+        <build.number>${maven.build.timestamp}</build.number>
+        <!-- BEESOFT software / firmware versions -->
+        <!-- if release.type = 'alpha' the app internally will append the 
+        current Date to the version -->
+        <release.type>beta.1</release.type>
+        <project.release.version>3.10.0</project.release.version> 
+               
+        <firmware.current.version>9.0.0</firmware.current.version>
+        <firmware.old.version>8.0.0</firmware.old.version>
+        
+        <bootloader.version>3.1.1-beta</bootloader.version>
+        <project.release.name>BEESOFT-${project.release.version}</project.release.name>
+        <!-- #################################### -->
+               
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>       
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <libusb4java.version>1.2.0</libusb4java.version>
@@ -38,9 +51,16 @@
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*</exclude>
-                </excludes>           
+                </excludes>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <directory>src/main/resources/config</directory>
+                <includes>
+                    <include>*</include>
+                </includes>           
+                <filtering>true</filtering>
+            </resource>             
             <resource>
                 <directory>src/main/resources/app_resources</directory>
                 <includes>

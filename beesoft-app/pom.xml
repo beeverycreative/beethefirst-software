@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-app</artifactId>
-    <version>3.10.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
     <name>beesoft-app</name>
     <modules>

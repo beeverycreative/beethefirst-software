@@ -86,11 +86,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.WelcomeSplash;
+import replicatorg.util.AppProperties;
 
 /**
  * Primary role of this class is for platform identification and general
@@ -99,6 +101,7 @@ import replicatorg.app.ui.WelcomeSplash;
  */
 public class Base {
 
+    private static final AppProperties appProperties = new AppProperties();
     public static boolean status_thread_died = false;
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
@@ -106,21 +109,30 @@ public class Base {
     public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
-    public static boolean isPrintingFromGCode = false;
-
+    public static boolean isPrintingFromGCode = false;    
+    
     public enum InitialOpenBehavior {
-
         OPEN_LAST,
         OPEN_NEW,
         OPEN_SPECIFIC_FILE
     };
+    
     public static int ID = 0;
-    public static final String VERSION_BEESOFT = "3.10.0-beta.1";
+    private static final DateFormat alphaDateFormat = new SimpleDateFormat("dd-MM-yy_HHmm");
+    public static final String VERSION_BEESOFT = 
+            appProperties.getProperty("release.type").equals("alpha") ? 
+            appProperties.getProperty("application.version") + "-alpha-" + alphaDateFormat.format(new Date()) :
+                appProperties.getProperty("release.type").equals("") ?
+                appProperties.getProperty("application.version") :
+                appProperties.getProperty("application.version") + "-" + appProperties.getProperty("release.type");
+    
+    
     public static final String PROGRAM = "BEESOFT";
-    public static String VERSION_BOOTLOADER = "Bootloader v3.1.1-beta";
-    public static String firmware_version_in_use = "BEETHEFIRST-9.0.0.bin";
-    public static final String VERSION_FIRMWARE_FINAL = "9.0.0";
-    public static final String VERSION_FIRMWARE_FINAL_OLD = "8.0.0";
+    public static String VERSION_BOOTLOADER = "Bootloader v"+appProperties.getProperty("bootloader.version");;
+    
+    public static final String VERSION_FIRMWARE_FINAL = appProperties.getProperty("firmware.current.version");
+    public static final String VERSION_FIRMWARE_FINAL_OLD = appProperties.getProperty("firmware.old.version");
+    public static String firmware_version_in_use = "BEETHEFIRST-"+ VERSION_FIRMWARE_FINAL +".bin";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
