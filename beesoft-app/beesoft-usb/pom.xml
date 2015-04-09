@@ -150,97 +150,7 @@
             </plugin>                  
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>macos-package</id>
-                        <phase>package</phase>
-                        <configuration>
-                            <condition property="isWindows">
-                                <os family="windows" />
-                            </condition>
-                            <condition property="isNotWindows">
-                                <not>
-                                    <os family="windows" />
-                                </not>                                
-                            </condition>                       
-                            <target name="macPackage" unless="isWindows">
-                                <!-- creates target directory -->
-                                <mkdir dir="${project.build.directory}/macosx"/>
-                                                                
-                                <property name="compile_classpath" refid="maven.compile.classpath"/>
-                                <property name="target.app.dir" value="${project.build.directory}/macosx" />
-                                <property name="resources.dir" value="${project.basedir}/src/main/resources" />
-                                <property name="installer.dir" value="${resources.dir}/installers/macosx/dist" />
-                                <property name="reso.dir" value="${target.app.dir}/BEESOFT.app/Contents/Resources" />
-                                <property name="lib.dir" value="${project.build.directory}/libs" />
-                                <property name="app.resources.dir" value="${project.basedir}/src/main/resources/app_resources" />                                
-                                
-                                <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${compile_classpath}" />
-                                  
-                                <jarbundler dir="${target.app.dir}" name="BEESOFT" bundleid="org.beesoft.app" mainclass="replicatorg.app.Base" icon="${installer.dir}/bee.icns" 
-                                            extraclasspath="/System/Library/Java" jvmversion="1.6+" vmoptions="-ea -Xmx1G" 
-                                            infostring="BEESOFT, © 2013-${current.year} BEEVC - Electronic Systems" 
-                                            version="${project.release.version}" stubfile="${installer.dir}/BEESOFT">
-                                    
-                                    <jarfileset dir="${project.build.directory}" includes="BEESOFT.jar" />
-                                    <jarfileset dir="${lib.dir}" includes="*.jar" />
-                                    <jarfileset dir="${resources.dir}/external_libs" includes="*.jar" />
-                                    <jarfileset dir="${installer.dir}" includes="*.jnilib" />
-                                                                        
-                                    <documenttype name="STL 3D model" extensions="stl" iconFile="${dist.dir}/bee.icns" role="Editor" />
-                                    <documenttype name="STL 3D model" extensions="STL" iconFile="${dist.dir}/bee.icns" role="Editor" />
-                                    <javaproperty name="beesoft.app-resources" value="$APP_PACKAGE/Contents/Resources" />
-                                    <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
-                                </jarbundler>  
-                
-                                <copy todir="${reso.dir}">
-                                    <fileset dir="${installer.dir}" includes="drivers/*.dmg" />
-                                </copy>
-                
-                                <copy todir="${reso.dir}">
-                                    <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
-                                </copy>
-                                <copy todir="${reso.dir}">
-                                    <filelist dir="${project.basedir}/src/main/resources/app_resources/images" files="logo.gif,loading.gif" />
-                                </copy>                                
-                                <copy todir="${reso.dir}/curaEngine/bin">
-                                    <fileset dir="${project.basedir}/src/main/resources/curaEngine/distros/mac"  />
-                                </copy>
-
-                                <copy todir="${reso.dir}/firmware">
-                                    <fileset dir="${project.basedir}/src/main/resources/firmware" />
-                                </copy>
-                                <copy todir="${reso.dir}/3DModels">
-                                    <fileset dir="${project.basedir}/src/main/resources/3DModels" />
-                                </copy>
-                                <copy todir="${reso.dir}/pypy">
-                                    <fileset dir="${project.basedir}/src/main/resources/pypy/distro/pypy-2.0-beta1-osx" />
-                                </copy>
-                                <copy todir="${reso.dir}/estimator">
-                                    <fileset dir="${project.basedir}/src/main/resources/estimator" />
-                                </copy>
-                                <copy todir="${reso.dir}/machines">
-                                    <fileset dir="${project.basedir}/src/main/resources/machines" />
-                                </copy>
-                                <copy todir="${reso.dir}/languages">
-                                    <fileset dir="${project.basedir}/src/main/resources/languages" />
-                                </copy>
-                                <!-- permissions -->
-                                <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />
-                                <chmod file="${installer.dir}/app-permissions.sh" perm="ugo+rx" />             
-                                
-                                <exec executable="${installer.dir}/app-permissions.sh">
-                                    <arg value="${target.app.dir}/BEESOFT.app" />
-                                </exec>
-                                <!--   <antcall target="dist-macosx-zip" /> -->
-                                <!--   <antcall target="dist-macosx-dmg" />-->
-                            </target>                                                                                                
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    
+                <executions>                    
                     <execution>
                         <id>windows-package</id>
                         <phase>package</phase>
@@ -391,6 +301,92 @@
             
             <build>
                 <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                <id>macos-package</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <target name="macPackage">
+                                        <!-- creates target directory -->
+                                        <mkdir dir="${project.build.directory}/macosx"/>
+
+                                        <property name="compile_classpath" refid="maven.compile.classpath"/>
+                                        <property name="target.app.dir" value="${project.build.directory}/macosx" />
+                                        <property name="resources.dir" value="${project.basedir}/src/main/resources" />
+                                        <property name="installer.dir" value="${resources.dir}/installers/macosx/dist" />
+                                        <property name="reso.dir" value="${target.app.dir}/BEESOFT.app/Contents/Resources" />
+                                        <property name="lib.dir" value="${project.build.directory}/libs" />
+                                        <property name="app.resources.dir" value="${project.basedir}/src/main/resources/app_resources" />                                
+
+                                        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${compile_classpath}" />
+
+                                        <jarbundler dir="${target.app.dir}" name="BEESOFT" bundleid="org.beesoft.app" mainclass="replicatorg.app.Base" icon="${installer.dir}/bee.icns" 
+                                                    extraclasspath="/System/Library/Java" jvmversion="1.6+" vmoptions="-ea -Xmx1G" 
+                                                    infostring="BEESOFT, © 2013-${current.year} BEEVC - Electronic Systems" 
+                                                    version="${project.release.version}" stubfile="${installer.dir}/BEESOFT">
+
+                                            <jarfileset dir="${project.build.directory}" includes="BEESOFT.jar" />
+                                            <jarfileset dir="${lib.dir}" includes="*.jar" />
+                                            <jarfileset dir="${resources.dir}/external_libs" includes="*.jar" />
+                                            <jarfileset dir="${installer.dir}" includes="*.jnilib" />
+
+                                            <documenttype name="STL 3D model" extensions="stl" iconFile="${dist.dir}/bee.icns" role="Editor" />
+                                            <documenttype name="STL 3D model" extensions="STL" iconFile="${dist.dir}/bee.icns" role="Editor" />
+                                            <javaproperty name="beesoft.app-resources" value="$APP_PACKAGE/Contents/Resources" />
+                                            <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+                                        </jarbundler>  
+
+                                        <copy todir="${reso.dir}">
+                                            <fileset dir="${installer.dir}" includes="drivers/*.dmg" />
+                                        </copy>
+
+                                        <copy todir="${reso.dir}">
+                                            <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
+                                        </copy>
+                                        <copy todir="${reso.dir}">
+                                            <filelist dir="${project.basedir}/src/main/resources/app_resources/images" files="logo.gif,loading.gif" />
+                                        </copy>                                
+                                        <copy todir="${reso.dir}/curaEngine/bin">
+                                            <fileset dir="${project.basedir}/src/main/resources/curaEngine/distros/mac"  />
+                                        </copy>
+
+                                        <copy todir="${reso.dir}/firmware">
+                                            <fileset dir="${project.basedir}/src/main/resources/firmware" />
+                                        </copy>
+                                        <copy todir="${reso.dir}/3DModels">
+                                            <fileset dir="${project.basedir}/src/main/resources/3DModels" />
+                                        </copy>
+                                        <copy todir="${reso.dir}/pypy">
+                                            <fileset dir="${project.basedir}/src/main/resources/pypy/distro/pypy-2.0-beta1-osx" />
+                                        </copy>
+                                        <copy todir="${reso.dir}/estimator">
+                                            <fileset dir="${project.basedir}/src/main/resources/estimator" />
+                                        </copy>
+                                        <copy todir="${reso.dir}/machines">
+                                            <fileset dir="${project.basedir}/src/main/resources/machines" />
+                                        </copy>
+                                        <copy todir="${reso.dir}/languages">
+                                            <fileset dir="${project.basedir}/src/main/resources/languages" />
+                                        </copy>
+                                        <!-- permissions -->
+                                        <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />
+                                        <chmod file="${installer.dir}/app-permissions.sh" perm="ugo+rx" />             
+
+                                        <exec executable="${installer.dir}/app-permissions.sh">
+                                            <arg value="${target.app.dir}/BEESOFT.app" />
+                                        </exec>
+                                        <!--   <antcall target="dist-macosx-zip" /> -->
+                                        <!--   <antcall target="dist-macosx-dmg" />-->
+                                    </target>                                                                                                
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution> 
+                        </executions>
+                    </plugin>                       
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
