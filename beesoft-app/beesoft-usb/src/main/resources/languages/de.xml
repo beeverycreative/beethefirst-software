@@ -664,31 +664,15 @@ To unload the filament, push the Unload button and wait for instructions."/>
         </Gallery>
         
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
-        <CoilColors>
+                <CoilColors>
+            <!-- Filamentos da Filkemp -->
             <a002 value="WHITE - A002"/>
-            <a331 value="WHITE"/>
-            <a301 value="WHITE"/>
             <a003 value="BLACK - A003"/>
-            <a332 value="BLACK"/>
-            <a302 value="BLACK"/>
-            <a333 value="YELLOW"/>
-            <a303 value="YELLOW"/>
             <a005 value="YELLOW - A005"/>
             <a004 value="RED - A004"/>
-            <a334 value="RED"/>
-            <a304 value="RED"/>
-            <a335 value="TURQUOISE"/>
-            <a305 value="TURQUOISE"/>
             <a010 value="TURQUOISE - A010"/>
-            <a336 value="TRANSPARENT"/>
             <a001 value="TRANSPARENT - A001"/>
-            <a306 value="TRANSPARENT"/>
-            <a336 value="TRANSPARENT"/>            
-            <a337 value="GREEN"/>
-            <a321 value="GREEN"/>
             <a011 value="GREEN - A011"/>
-            <a338 value="ORANGE"/>
-            <a322 value="ORANGE"/>
             <a012 value="ORANGE - A012"/>
             <a006 value="BLUE - A006"/>
             <a007 value="OLIVE GREEN - A007"/>
