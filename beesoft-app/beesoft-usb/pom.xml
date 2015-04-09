@@ -155,7 +155,13 @@
                         <id>macos-package</id>
                         <phase>package</phase>
                         <configuration>
-                            <target >
+                            <condition property="windowsos">
+                                <os family="windows" />
+                            </condition>
+                            <condition property="unix">
+                                <os family="unix" />
+                            </condition>
+                            <target if="unix">
                                 <!-- creates target directory -->
                                 <mkdir dir="${project.build.directory}/macosx"/>
                                                                 
