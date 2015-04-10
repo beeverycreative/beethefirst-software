@@ -922,8 +922,15 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
         
-        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
-        scale = scale - 0.02; //Small adjustment to avoid the model being out of bounds
+        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));        
+        scale = UnitConverter.round(scale, 3); 
+        
+        if (scale > 1.03) {
+            //Small adjustment to avoid the model being out of bounds
+            scale -= 0.035;
+        } else {
+            scale = 1.0;
+        }
         
         model.getEditer().scale(scale, true);
         
