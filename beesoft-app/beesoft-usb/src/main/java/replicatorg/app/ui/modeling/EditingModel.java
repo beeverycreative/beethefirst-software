@@ -842,7 +842,7 @@ public class EditingModel implements Serializable {
         return lower.z < 0.001d && lower.z > -0.001d;
     }
 
-    public void scale(double scale, boolean isOnPlatform) {
+    public void scale(double scale, boolean isOnPlatform, boolean evaluateOutOfBounds) {
         if (model != null && validSizeConstraints()) {
             this.scale = scale / 100;
             Transform3D t = new Transform3D();
@@ -854,7 +854,8 @@ public class EditingModel implements Serializable {
             }
             shapeTransform.setTransform(t);
             model.setTransform(t, "resize", isNewOp());
-            evaluateModelOutOfBounds();
+            if (evaluateOutOfBounds)
+                evaluateModelOutOfBounds();
             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
         }
     }

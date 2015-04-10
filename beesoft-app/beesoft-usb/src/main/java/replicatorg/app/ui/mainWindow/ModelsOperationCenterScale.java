@@ -923,16 +923,16 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
         
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));        
-        scale = UnitConverter.round(scale, 3); 
+        scale = UnitConverter.round(scale, 3);         
         
-        if (scale > 1.03) {
+        model.getEditer().centerAndToBed();
+        model.getEditer().scale(scale, true, false);
+        
+        if (model.getEditer().modelOutBonds()) {
             //Small adjustment to avoid the model being out of bounds
-            scale -= 0.035;
-        } else {
-            scale = 1.0;
+            scale = 0.975;
+            model.getEditer().scale(scale, true, true);
         }
-        
-        model.getEditer().scale(scale, true);
         
         if (this.isScalePercentage()) {
             setXValue(model.getScaleXinPercentage());

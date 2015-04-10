@@ -118,7 +118,7 @@ public class ScalingTool extends Tool {
 
                           if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked()) {
                                 
-                                parent.getModelEditing().scale(targetScale, isOnPlatform);
+                                parent.getModelEditing().scale(targetScale, isOnPlatform, true);
                                 
                                 model.updateXscale(targetScale);
                                 model.updateYscale(targetScale);
