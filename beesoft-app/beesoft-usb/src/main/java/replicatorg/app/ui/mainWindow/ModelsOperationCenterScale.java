@@ -194,11 +194,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
      * <li> false, if to unlock
      */
     private void lockScale(boolean b) {
-        if (b) {
-            scaleLocked = true;
-        } else {
-            scaleLocked = false;
-        }
+        scaleLocked = b;
     }
     
     private void lockRatio() {
@@ -628,7 +624,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+        
         double newValuePercentage;
         String textFieldValue = jTextField4.getText();
 
@@ -678,7 +674,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+
         double newValuePercentage;
         String textFieldValue = jTextField5.getText();
 
@@ -696,11 +692,11 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                         double sizeInches = Double.parseDouble(textFieldValue);
 
                         double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
-                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                        newValuePercentage = (sizeMM / this.initialDepth) * 100;
                     } else {
                         double sizeMM = Double.parseDouble(textFieldValue);
 
-                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                        newValuePercentage = (sizeMM / this.initialDepth) * 100;
                     }
                 }
 
@@ -728,7 +724,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField6KeyReleased
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+        
         double newValuePercentage;
         String textFieldValue = jTextField6.getText();
 
@@ -747,11 +743,11 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                         double sizeInches = Double.parseDouble(textFieldValue);
 
                         double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
-                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                        newValuePercentage = (sizeMM / this.initialHeight) * 100;
                     } else {
                         double sizeMM = Double.parseDouble(textFieldValue);
 
-                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
+                        newValuePercentage = (sizeMM / this.initialHeight) * 100;
                     }
                 }
 
@@ -926,10 +922,17 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
         
-        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
-        scale = scale - 0.02; //Small adjustment to avoid the model being out of bounds
+        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));        
+        scale = UnitConverter.round(scale, 3);         
         
-        model.getEditer().scale(scale, true);
+        model.getEditer().centerAndToBed();
+        model.getEditer().scale(scale, true, false);
+        
+        if (model.getEditer().modelOutBonds()) {
+            //Small adjustment to avoid the model being out of bounds
+            scale = 0.975;
+            model.getEditer().scale(scale, true, true);
+        }
         
         if (this.isScalePercentage()) {
             setXValue(model.getScaleXinPercentage());
