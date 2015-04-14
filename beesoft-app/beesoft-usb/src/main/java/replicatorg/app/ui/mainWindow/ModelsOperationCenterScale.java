@@ -26,7 +26,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private boolean check_pressed, lockedRatio;
     private boolean scaleLocked;
-    private final double initialWidth, initialDepth, initialHeight;
+    private double initialWidth, initialDepth, initialHeight;
     private final boolean mm, percentage;
     private boolean checkX = true, checkY = true, checkZ = true;
     
@@ -658,8 +658,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
 
-                        jTextField5.setText(textFieldValue);
-                        jTextField6.setText(textFieldValue);
                     } else {
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
                     }
@@ -674,7 +672,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
 
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-
+        
         double newValuePercentage;
         String textFieldValue = jTextField5.getText();
 
@@ -707,8 +705,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
 
-                        jTextField4.setText(textFieldValue);
-                        jTextField6.setText(textFieldValue);
                     } else {
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
                     }
@@ -758,8 +754,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
 
-                        jTextField4.setText(textFieldValue);
-                        jTextField5.setText(textFieldValue);
                     } else {
                         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
                     }
@@ -956,9 +950,25 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             setXValue(df.format(width));
             setYValue(df.format(depth));
             setZValue(df.format(height));
-        }
+        } 
+        
+        //Sets the initial sizing variables to the current values
+        this.resetInitialScaleVariables();
+        model.resetScale();
     }                                         
 
+    /**
+     * Sets the initial sizing variables to the new max scale size
+     */
+    public void resetInitialScaleVariables() {
+                
+        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+        
+        this.initialWidth = model.getEditer().getWidth();
+        this.initialHeight = model.getEditer().getHeight();
+        this.initialDepth = model.getEditer().getDepth();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
