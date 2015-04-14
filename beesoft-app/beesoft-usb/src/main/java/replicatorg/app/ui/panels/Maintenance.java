@@ -61,7 +61,7 @@ public class Maintenance extends javax.swing.JFrame {
         lCalibration_desc.setFont(GraphicDesignComponents.getSSProLight("12"));
         lCalibration.setFont(GraphicDesignComponents.getSSProBold("14"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        bExtruderMaintenance.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bExtruderMaintenance.setFont(GraphicDesignComponents.getSSProRegular("11"));
         lExtruderMaintenanceDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
         lExtruderMaintenance.setFont(GraphicDesignComponents.getSSProBold("14"));
         bNozzleSwitch.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -95,6 +95,10 @@ public class Maintenance extends javax.swing.JFrame {
         lCalibration_desc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Intro"));
         lCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Title"));
 //        jLabel10.setText("(" + Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[1].split("\\(")[1]);
+        
+        
+      
+        
         lExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Title"));
         bExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_button"));
         lExtruderMaintenanceDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Intro"));
@@ -734,14 +738,11 @@ public class Maintenance extends javax.swing.JFrame {
         if (!moving) {
             dispose();
             ctrlStatus.stop();
-            if (Base.printPaused) {
-                FilamentInsertion p = new FilamentInsertion();
-                p.setVisible(true);
-            } else {
-                FilamentHeating p = new FilamentHeating();
-                p.setVisible(true);
-            }
+            ExtruderSwitch1 p = new ExtruderSwitch1();
+            p.setVisible(true);
+
             Base.getMainWindow().getCanvas().unPickAll();
+
         }    }//GEN-LAST:event_bNozzleSwitchMousePressed
 
     private void bCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMousePressed

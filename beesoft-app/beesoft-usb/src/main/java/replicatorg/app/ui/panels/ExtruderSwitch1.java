@@ -30,14 +30,14 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance3 extends javax.swing.JFrame {
+public class ExtruderSwitch1 extends javax.swing.JFrame {
 
     private MachineInterface machine;
     private boolean quickGuide;
     private int posX = 0, posY = 0;
     private double temperatureGoal;
 
-    public ExtruderMaintenance3() {
+    public ExtruderSwitch1() {
         initComponents();
         setFont();
         evaluateInitialConditions();
@@ -65,18 +65,19 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title3"));
-        pWarning.setText(Languager.getTagValue(1, "ExtruderMaintenance", "HeatingMessage3"));
+        lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title1"));
+        pWarning.setText(Languager.getTagValue(1, "ExtruderSwitch", "HeatingMessage1"));
         
         String text1 = "<html>"
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info3a")
+                + Languager.getTagValue(1, "ExtruderSwitch", "Info1a")
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info3b")
+                + Languager.getTagValue(1, "ExtruderSwitch", "Info1b")
                 + "</html>";
         pText1.setText(splitString(text1));
         
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info_Warning3") + "</b></html>";
+        
+        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning1") + "</b></html>";
         
         pText2.setText(splitString(warning));
         
@@ -200,10 +201,8 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         Base.getMainWindow().setEnabled(false);
         //disableMessageDisplay();
 
-        bBack.setVisible(true);
-        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bBack.setVisible(false);
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        
 
 
     }
@@ -263,6 +262,7 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(567, 501));
+        setResizable(false);
 
         pButtons.setBackground(new java.awt.Color(255, 203, 5));
         pButtons.setMinimumSize(new java.awt.Dimension(20, 38));
@@ -345,7 +345,7 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         lTitle.setText("EM_Start");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        pExtruder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/remove_lid_sized.png"))); // NOI18N
+        pExtruder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/bico_extrusao.png"))); // NOI18N
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
@@ -436,7 +436,7 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(128, 128, 128)
+                        .addGap(186, 186, 186)
                         .addComponent(pExtruder))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -462,9 +462,9 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lTitle, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(43, 43, 43)
                 .addComponent(pExtruder)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(90, 90, 90)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pText1)
@@ -519,16 +519,18 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
 
             dispose();
-            ExtruderMaintenance4 p = new ExtruderMaintenance4();
+            ExtruderSwitch2 p = new ExtruderSwitch2();
             p.setVisible(true);
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
-      
+        if (quickGuide) {
             dispose();
-            ExtruderMaintenance2 p = new ExtruderMaintenance2();
+            WelcomeQuickguide p = new WelcomeQuickguide();
             p.setVisible(true);
-        
+            finalizeHeat();
+
+        }
     }//GEN-LAST:event_bBackMousePressed
 
     private void bQuitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuitMousePressed

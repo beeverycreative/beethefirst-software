@@ -30,14 +30,14 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance3 extends javax.swing.JFrame {
+public class ExtruderSwitch3 extends javax.swing.JFrame {
 
     private MachineInterface machine;
     private boolean quickGuide;
     private int posX = 0, posY = 0;
     private double temperatureGoal;
 
-    public ExtruderMaintenance3() {
+    public ExtruderSwitch3() {
         initComponents();
         setFont();
         evaluateInitialConditions();
@@ -47,10 +47,9 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
 
-
         centerOnScreen();
         //moveToPosition();
-         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -65,23 +64,23 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title3"));
-        pWarning.setText(Languager.getTagValue(1, "ExtruderMaintenance", "HeatingMessage3"));
-        
+        lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title3"));
+        pWarning.setText(Languager.getTagValue(1, "ExtruderSwitch", "HeatingMessage3"));
+
         String text1 = "<html>"
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info3a")
+                + Languager.getTagValue(1, "ExtruderSwitch", "Info3a")
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info3b")
+                + Languager.getTagValue(1, "ExtruderSwitch", "Info3b")
                 + "</html>";
         pText1.setText(splitString(text1));
-        
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info_Warning3") + "</b></html>";
-        
+
+        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning3") + "</b></html>";
+
         pText2.setText(splitString(warning));
-        
+
         bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6")); // ok
         bQuit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
@@ -134,7 +133,7 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
         return fm.stringWidth(s);
     }
-   
+
     private void enableMessageDisplay() {
         jPanel3.setBackground(new Color(255, 205, 3));
         pWarning.setForeground(new Color(0, 0, 0));
@@ -185,7 +184,6 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
             }
         });
 
-
         this.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
@@ -200,11 +198,9 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         Base.getMainWindow().setEnabled(false);
         //disableMessageDisplay();
 
-        bBack.setVisible(true);
+        bBack.setVisible(false);
         bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        
-
 
     }
 
@@ -230,7 +226,6 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
@@ -345,7 +340,7 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
         lTitle.setText("EM_Start");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        pExtruder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/remove_lid_sized.png"))); // NOI18N
+        pExtruder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/switch_nozzle_sized.png"))); // NOI18N
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
@@ -500,35 +495,52 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
     }//GEN-LAST:event_bQuitMouseExited
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
     private void bBackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseEntered
-            bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bBackMouseEntered
 
     private void bBackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseExited
-            bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
 
     }//GEN-LAST:event_bBackMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
+        finalizeHeat();
+        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        Base.maintenanceWizardOpen = false;
+        Base.enableAllOpenWindows();
+        Base.bringAllWindowsToFront();
 
-            dispose();
-            ExtruderMaintenance4 p = new ExtruderMaintenance4();
-            p.setVisible(true);
+        Point5d b = machine.getTablePoints("safe");
+        double acLow = machine.getAcceleration("acLow");
+        double acHigh = machine.getAcceleration("acHigh");
+        double spHigh = machine.getFeedrate("spHigh");
+
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+                //            ProperDefault.remove("maintenance");
+
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
-      
-            dispose();
-            ExtruderMaintenance2 p = new ExtruderMaintenance2();
-            p.setVisible(true);
-        
+
+        dispose();
+        ExtruderMaintenance2 p = new ExtruderMaintenance2();
+        p.setVisible(true);
+
     }//GEN-LAST:event_bBackMousePressed
 
     private void bQuitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuitMousePressed
@@ -561,4 +573,3 @@ public class ExtruderMaintenance3 extends javax.swing.JFrame {
     private javax.swing.JLabel pWarning;
     // End of variables declaration//GEN-END:variables
 }
-
