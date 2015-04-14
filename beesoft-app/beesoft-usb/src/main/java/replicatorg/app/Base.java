@@ -99,7 +99,90 @@ import replicatorg.util.AppProperties;
  * that comes from that.
  */
 public class Base {
+    
+    /**
+     * enum for fast/easy OS checking
+     */
+    public enum Platform {
 
+        WINDOWS, MACOS9, MACOSX, LINUX, OTHER
+    }
+
+    /**
+     * enum for fast/easy arch checking
+     */
+    public enum Arch {
+
+        x86_64, x86, ARM, PPC, OTHER
+    }
+    /**
+     * Full name of the Java version (i.e. 1.5.0_11). Prior to 0125, this was
+     * only the first three digits.
+     */
+    public static final String javaVersionName = System.getProperty("java.version");
+    /**
+     * Version of Java that's in use, whether 1.1 or 1.3 or whatever, stored as
+     * a float.
+     * <P>
+     * Note that because this is stored as a float, the values may not be
+     * <EM>exactly</EM>
+     * 1.3 or 1.4. Instead, make sure you're comparing against 1.3f or 1.4f,
+     * which will have the same amount of error (i.e. 1.40000001). This could
+     * just be a double, but since Processing only uses floats, it's safer for
+     * this to be a float because there's no good way to specify a double with
+     * the preproc.
+     */
+    public static final float javaVersion = Float.parseFloat(javaVersionName.substring(0, 3));
+    /**
+     * Current platform in use
+     */
+    static public Platform platform;
+    static public Arch arch;
+    /**
+     * Current platform in use.
+     * <P>
+     * Equivalent to System.getProperty("os.name"), just used internally.
+     */
+    static public String platformName = System.getProperty("os.name");
+
+    static {
+        // figure out which operating system
+        // this has to be first, since editor needs to know
+
+        if (platformName.toLowerCase().contains("mac")) {
+            // can only check this property if running on a mac
+            // on a pc it throws a security exception and kills the applet
+            // (but on the mac it does just fine)
+            if (System.getProperty("mrj.version") != null) { // running on a
+                // mac
+                platform = (platformName.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
+            }
+
+        } else {
+            String osname = System.getProperty("os.name");
+
+            if (osname.contains("Windows")) {
+                platform = Platform.WINDOWS;
+
+            } else if (osname.equals("Linux")) { // true for the ibm vm
+                platform = Platform.LINUX;
+
+            } else {
+                platform = Platform.OTHER;
+            }
+            String aString = System.getProperty("os.arch");
+            COMPUTER_ARCHITECTURE = aString;
+            if ("i386".equals(aString)) {
+                arch = Arch.x86;
+            } else if ("x86_64".equals(aString) || "amd64".equals(aString)) {
+                arch = Arch.x86_64;
+            } else if ("universal".equals(aString) || "ppc".equals(aString)) {
+                arch = Arch.OTHER;
+                throw new RuntimeException("Can not use use arch: '" + arch + "'");
+            }
+        }
+    }
+    
     private static final AppProperties appProperties = new AppProperties();
     public static boolean status_thread_died = false;
     public static boolean errorOccured = false;
@@ -1191,89 +1274,6 @@ public class Base {
                 writeLog("Log file created");
             }
         });
-    }
-
-    /**
-     * enum for fast/easy OS checking
-     */
-    public enum Platform {
-
-        WINDOWS, MACOS9, MACOSX, LINUX, OTHER
-    }
-
-    /**
-     * enum for fast/easy arch checking
-     */
-    public enum Arch {
-
-        x86_64, x86, ARM, PPC, OTHER
-    }
-    /**
-     * Full name of the Java version (i.e. 1.5.0_11). Prior to 0125, this was
-     * only the first three digits.
-     */
-    public static final String javaVersionName = System.getProperty("java.version");
-    /**
-     * Version of Java that's in use, whether 1.1 or 1.3 or whatever, stored as
-     * a float.
-     * <P>
-     * Note that because this is stored as a float, the values may not be
-     * <EM>exactly</EM>
-     * 1.3 or 1.4. Instead, make sure you're comparing against 1.3f or 1.4f,
-     * which will have the same amount of error (i.e. 1.40000001). This could
-     * just be a double, but since Processing only uses floats, it's safer for
-     * this to be a float because there's no good way to specify a double with
-     * the preproc.
-     */
-    public static final float javaVersion = Float.parseFloat(javaVersionName.substring(0, 3));
-    /**
-     * Current platform in use
-     */
-    static public Platform platform;
-    static public Arch arch;
-    /**
-     * Current platform in use.
-     * <P>
-     * Equivalent to System.getProperty("os.name"), just used internally.
-     */
-    static public String platformName = System.getProperty("os.name");
-
-    static {
-        // figure out which operating system
-        // this has to be first, since editor needs to know
-
-        if (platformName.toLowerCase().contains("mac")) {
-            // can only check this property if running on a mac
-            // on a pc it throws a security exception and kills the applet
-            // (but on the mac it does just fine)
-            if (System.getProperty("mrj.version") != null) { // running on a
-                // mac
-                platform = (platformName.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
-            }
-
-        } else {
-            String osname = System.getProperty("os.name");
-
-            if (osname.contains("Windows")) {
-                platform = Platform.WINDOWS;
-
-            } else if (osname.equals("Linux")) { // true for the ibm vm
-                platform = Platform.LINUX;
-
-            } else {
-                platform = Platform.OTHER;
-            }
-            String aString = System.getProperty("os.arch");
-            COMPUTER_ARCHITECTURE = aString;
-            if ("i386".equals(aString)) {
-                arch = Arch.x86;
-            } else if ("x86_64".equals(aString) || "amd64".equals(aString)) {
-                arch = Arch.x86_64;
-            } else if ("universal".equals(aString) || "ppc".equals(aString)) {
-                arch = Arch.OTHER;
-                throw new RuntimeException("Can not use use arch: '" + arch + "'");
-            }
-        }
     }
 
     // .................................................................

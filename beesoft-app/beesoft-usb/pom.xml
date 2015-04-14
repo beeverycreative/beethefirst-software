@@ -11,26 +11,12 @@
     <artifactId>beesoft-usb</artifactId>
     <version>3.10.0</version>
     <name>beesoft-usb</name>
-    <properties>       
-        <maven.build.timestamp.format>yyyy.MM.dd_HH'h'mm</maven.build.timestamp.format>
-        <build.number>${maven.build.timestamp}</build.number>
-        <!-- BEESOFT software / firmware versions -->
-        <!-- if release.type = 'alpha' the app internally will append the 
-        current Date to the version -->
-        <release.type>alpha</release.type>
-        <project.release.version>3.10.0</project.release.version> 
-               
-        <firmware.current.version>9.0.0</firmware.current.version>
-        <firmware.old.version>8.0.0</firmware.old.version>
-        
-        <bootloader.version>3.1.1-beta</bootloader.version>
-        <project.release.name>BEESOFT-${project.release.version}</project.release.name>
-        <!-- #################################### -->
-               
+    <properties>                      
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>       
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <libusb4java.version>1.2.0</libusb4java.version>
+        <project.release.name>BEESOFT-${project.version}</project.release.name>
     </properties>
     <build>
         <finalName>BEESOFT</finalName>
@@ -53,14 +39,7 @@
                     <exclude>**/*</exclude>
                 </excludes>
                 <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources/config</directory>
-                <includes>
-                    <include>*</include>
-                </includes>           
-                <filtering>true</filtering>
-            </resource>             
+            </resource>          
             <resource>
                 <directory>src/main/resources/app_resources</directory>
                 <includes>
@@ -178,6 +157,9 @@
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />
                                 </copy>  
+                                <copy todir="${target.dir}/config">
+                                    <fileset dir="${resources.dir}/config" />
+                                </copy> 
                                 <copy todir="${target.dir}">
                                     <filelist dir="${project.basedir}" files="changelog.txt" />
                                 </copy>        
@@ -245,7 +227,10 @@
                                 </copy>
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />
-                                </copy>  
+                                </copy>
+                                <copy todir="${target.dir}/config">
+                                    <fileset dir="${resources.dir}/config" />
+                                </copy>                                 
                                 <copy todir="${target.dir}/lib-i686">
                                     <fileset dir="${dist.dir}/lib-i686" includes="*.so" />
                                 </copy>
@@ -355,6 +340,9 @@
                                         <copy todir="${reso.dir}/languages">
                                             <fileset dir="${project.basedir}/src/main/resources/languages" />
                                         </copy>
+                                        <copy todir="${reso.dir}/config">
+                                            <fileset dir="${project.basedir}/src/main/resources/config" />
+                                        </copy> 
                                         <!-- permissions -->
                                         <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />
                                         <chmod file="${installer.dir}/app-permissions.sh" perm="ugo+rx" />             
