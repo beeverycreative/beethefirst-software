@@ -132,6 +132,10 @@
                                     <fileset dir="${project.build.directory}" includes="*.jar" />                                    
                                 </copy>
                                 
+                                <copy todir="${target.dir}">
+                                    <filelist dir="${app.resources.dir}/images" files="logo.gif, loading.gif" />
+                                </copy>
+                                
                                 <!-- standard files -->                                
                                 <copy todir="${target.dir}/pypy">
                                     <fileset dir="${resources.dir}/pypy/distro/pypy-2.0-beta1-win32" />
