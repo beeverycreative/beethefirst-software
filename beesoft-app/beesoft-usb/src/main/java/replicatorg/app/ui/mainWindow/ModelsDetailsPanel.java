@@ -489,7 +489,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
 
             if (mOCS != null) {
                 model.resetScale();
-               Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+                Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
 
                 if (mOCS.isScalePercentage()) {
                     mOCS.setXValue(model.getScaleXinPercentage());
@@ -514,7 +514,10 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                     mOCS.setXValue(df.format(width));
                     mOCS.setYValue(df.format(depth));
                     mOCS.setZValue(df.format(height));                                    
-                }  
+                }
+                
+                //Sets the initial sizing variables to the new max scale size
+                mOCS.resetInitialScaleVariables();
             }
         }
     }//GEN-LAST:event_jLabel8MousePressed
