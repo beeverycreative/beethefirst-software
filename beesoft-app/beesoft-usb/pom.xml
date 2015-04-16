@@ -161,8 +161,8 @@
                                     <fileset dir="${resources.dir}/config" />
                                 </copy> 
                                 <copy todir="${target.dir}">
-                                    <filelist dir="${project.basedir}" files="changelog.txt" />
-                                </copy>        
+                                    <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
+                                </copy>                                       
                                 <copy todir="${target.dir}">
                                     <fileset dir="${dist.dir}" includes="*.dll" />
                                     <filelist dir="${dist.dir}" files="BEESOFT.exe" />
@@ -221,9 +221,9 @@
                                 </copy>   
                                 <copy todir="${target.dir}/machines">
                                     <fileset dir="${resources.dir}/machines" />
-                                </copy>                                
+                                </copy>                                                               
                                 <copy todir="${target.dir}">
-                                    <filelist dir="." files="changelog.txt" />
+                                    <filelist dir="." files="license.txt,readme.txt,contributors.txt,changelog.txt" />
                                 </copy>
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />

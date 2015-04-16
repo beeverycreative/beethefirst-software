@@ -728,9 +728,9 @@ public class Base {
     }
 
     /**
-     * Write new property to the config file
+     * Reads a property from the config file
      *
-     * @param param new atribute to be added to configs
+     * @param param atribute to be loaded from configs
      * @return 
      */
     public static String readConfig(String param) {
