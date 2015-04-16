@@ -31,6 +31,7 @@
                         <heat>-30,0,10</heat>
                         <rest>-50,0,110</rest>
                         <safe>-80,-60,100</safe>
+                        <nozzle>0,-60,120</nozzle>
 		</trailPositions>
                 <gcode>
                 <code value = 

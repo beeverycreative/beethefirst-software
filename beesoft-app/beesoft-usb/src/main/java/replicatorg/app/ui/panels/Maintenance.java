@@ -33,7 +33,7 @@ public class Maintenance extends javax.swing.JFrame {
     private boolean moving;
     private final ControlStatus ctrlStatus;
     private boolean isConnected = true;
-    
+
     public Maintenance() {
         initComponents();
         setFont();
@@ -47,33 +47,36 @@ public class Maintenance extends javax.swing.JFrame {
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
         ctrlStatus.start();
-        Base.systemThreads.add(ctrlStatus);        
+        Base.systemThreads.add(ctrlStatus);
     }
 
     private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel2.setFont(GraphicDesignComponents.getSSProBold("14"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel6.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel8.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jLabel9.setFont(GraphicDesignComponents.getSSProBold("14"));
+        l_tittle.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        lChangeFilament.setFont(GraphicDesignComponents.getSSProBold("14"));
+        lChangeFilamentDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
+        bChangeFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lChangeFilament_warn.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        lCalibration_warn.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        bCalibration.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lCalibration_desc.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lCalibration.setFont(GraphicDesignComponents.getSSProBold("14"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel11.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel12.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jLabel16.setFont(GraphicDesignComponents.getSSProBold("14"));
-        jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bExtruderMaintenance.setFont(GraphicDesignComponents.getSSProRegular("11"));
+        lExtruderMaintenanceDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lExtruderMaintenance.setFont(GraphicDesignComponents.getSSProBold("14"));
+        bNozzleSwitch.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lNozzleSwitchDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lNozzleSwitch.setFont(GraphicDesignComponents.getSSProBold("14"));
+        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel18.setFont(GraphicDesignComponents.getSSProRegular("14"));
     }
 
     private void setTextLanguage() {
         int fileKey = 1;
-        jLabel1.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Title").toUpperCase());
-        jLabel2.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Title"));
-        jLabel3.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Intro"));
-        jLabel4.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "FilamentChange_button"));
+        l_tittle.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Title").toUpperCase());
+        lChangeFilament.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Title"));
+        lChangeFilamentDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Intro"));
+        bChangeFilament.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "FilamentChange_button"));
 
 //        int grams = gramsCalculator((Double.valueOf(ProperDefault.get("filamentCoilRemaining")) / 1000));
 //        
@@ -87,16 +90,20 @@ public class Maintenance extends javax.swing.JFrame {
 //        {
 //            jLabel5.setText(Languager.getTagValue("MaintenancePanel", "Filament_Info_None"));
 //        }
-        jLabel6.setText(String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Info").split("x")[1]);
-        jLabel7.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "CalibrationChange_button"));
-        jLabel8.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Intro"));
-        jLabel9.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Title"));
-//        jLabel10.setText("(" + Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[1].split("\\(")[1]);
-        jLabel16.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderClean_Title"));
-        jLabel11.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderClean_button"));
-        jLabel12.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderClean_Intro"));
+        lCalibration_warn.setText(String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Info").split("x")[1]);
+        bCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "CalibrationChange_button"));
+        lCalibration_desc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Intro"));
+        lCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Title"));
+//        jLabel10.setText("(" + Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[1].split("\\(")[1]);                           
+        lExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Title"));
+        bExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_button"));
+        lExtruderMaintenanceDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Intro"));
+        
+        lNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Title"));
+        bNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_button"));
+        lNozzleSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Intro"));
 //        jLabel16.setText(Languager.getTagValue("MaintenancePanel", ""));
-        jLabel17.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
+        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
         jLabel18.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
 
     }
@@ -113,24 +120,25 @@ public class Maintenance extends javax.swing.JFrame {
 
     private void evaluateInitialConditions() {
         moving = true;
-        jLabel5.setVisible(false);
+        lChangeFilament_warn.setVisible(false);
         jLabel10.setVisible(false);
 //        if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
 //            jLabel5.setForeground(Color.red);
 //        } else 
         if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-            jLabel6.setForeground(Color.red);
+            lCalibration_warn.setForeground(Color.red);
         }
 
         if (Base.printPaused) {
-            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
         }
-        
+
         if (!Base.getMainWindow().getMachineInterface().isConnected()) {
             this.isConnected = false;
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-            jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
         }        
 
         //Disable Power saving in case
@@ -171,12 +179,12 @@ public class Maintenance extends javax.swing.JFrame {
     }
 
     public void disableMessageDisplay() {
-        jPanel7.setBackground(new Color(248, 248, 248));
+        l_machine_status_warn.setBackground(new Color(248, 248, 248));
         jLabel18.setForeground(new Color(248, 248, 248));
     }
 
     private void enableMessageDisplay() {
-        jPanel7.setBackground(new Color(255, 205, 3));
+        l_machine_status_warn.setBackground(new Color(255, 205, 3));
         jLabel18.setForeground(new Color(0, 0, 0));
     }
 
@@ -209,49 +217,62 @@ public class Maintenance extends javax.swing.JFrame {
             Base.turnOnPowerSaving(true);
         }
     }
-  
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        pMaintenance = new javax.swing.JPanel();
+        pTop = new javax.swing.JPanel();
+        l_tittle = new javax.swing.JLabel();
+        p_controls = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        jSeparator2 = new javax.swing.JSeparator();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
+        l_machine_status_warn = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
+        pChangeFilament = new javax.swing.JPanel();
+        bChangeFilament = new javax.swing.JLabel();
+        lChangeFilament_warn = new javax.swing.JLabel();
+        lChangeFilamentDesc = new javax.swing.JLabel();
+        lChangeFilament = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        pCalibration = new javax.swing.JPanel();
+        lCalibration_warn = new javax.swing.JLabel();
+        bCalibration = new javax.swing.JLabel();
+        lCalibration_desc = new javax.swing.JLabel();
+        lCalibration = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        pExtruderMaintenance = new javax.swing.JPanel();
+        bExtruderMaintenance = new javax.swing.JLabel();
+        lExtruderMaintenanceDesc = new javax.swing.JLabel();
+        lExtruderMaintenance = new javax.swing.JLabel();
+        pNozzleSwitch = new javax.swing.JPanel();
+        bNozzleSwitch = new javax.swing.JLabel();
+        lNozzleSwitchDesc = new javax.swing.JLabel();
+        lNozzleSwitch = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
+        pBottom = new javax.swing.JPanel();
+        bCancel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(747, 565));
         setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(747, 577));
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("MANUTENCAO");
-        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        pTop.setBackground(new java.awt.Color(248, 248, 248));
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel4.setMinimumSize(new java.awt.Dimension(62, 30));
-        jPanel4.setRequestFocusEnabled(false);
+        l_tittle.setForeground(new java.awt.Color(0, 0, 0));
+        l_tittle.setText("MANUTENCAO");
+        l_tittle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+
+        p_controls.setBackground(new java.awt.Color(255, 203, 5));
+        p_controls.setMinimumSize(new java.awt.Dimension(62, 30));
+        p_controls.setRequestFocusEnabled(false);
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_11.png"))); // NOI18N
         jLabel13.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -269,11 +290,11 @@ public class Maintenance extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout p_controlsLayout = new javax.swing.GroupLayout(p_controls);
+        p_controls.setLayout(p_controlsLayout);
+        p_controlsLayout.setHorizontalGroup(
+            p_controlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(p_controlsLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -282,143 +303,21 @@ public class Maintenance extends javax.swing.JFrame {
                 .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        p_controlsLayout.setVerticalGroup(
+            p_controlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(p_controlsLayout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(p_controlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(p_controlsLayout.createSequentialGroup()
+                        .addGroup(p_controlsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Mudar FIlamento");
-
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Lorem ipsum dolor sit amet.");
-
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
-        jLabel4.setText("Mudar filamento agora");
-        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel4MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel4MouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel4MousePressed(evt);
-            }
-        });
-
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setText("Tem 5 metros de filamento");
-
-        jSeparator1.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator1.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator1.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator1.setPreferredSize(new java.awt.Dimension(50, 1));
-
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
-
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel6.setText("Foram feitas 10 impressoes desde a ultima calibracao");
-
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
-        jLabel7.setText("Calibrar agora");
-        jLabel7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel7MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel7MouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel7MousePressed(evt);
-            }
-        });
-
-        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel8.setText("Lorem ipsum dolor sit amet.");
-
-        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel9.setText("Calibrar");
-
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
-        jLabel11.setText("Limpar bico agora");
-        jLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel11MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel11MouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel11MousePressed(evt);
-            }
-        });
-
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel12.setText("Lorem ipsum dolor sit amet.");
-
-        jLabel16.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel16.setText("Limpar bico de extrusao");
-
-        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel2.setMinimumSize(new java.awt.Dimension(20, 26));
-        jPanel2.setPreferredSize(new java.awt.Dimension(139, 26));
-
-        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
-        jLabel17.setText("CANCELAR");
-        jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel17MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel17MouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel17MousePressed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(649, Short.MAX_VALUE)
-                .addComponent(jLabel17)
-                .addGap(12, 12, 12))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(jLabel17)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jLabel10.setForeground(new java.awt.Color(139, 139, 139));
-        jLabel10.setText("(estimativa)");
-
-        jPanel7.setBackground(new java.awt.Color(255, 203, 5));
+        l_machine_status_warn.setBackground(new java.awt.Color(255, 203, 5));
 
         jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setText("Moving...Please wait.");
@@ -426,169 +325,470 @@ public class Maintenance extends javax.swing.JFrame {
         jLabel18.setMinimumSize(new java.awt.Dimension(140, 17));
         jLabel18.setPreferredSize(new java.awt.Dimension(140, 17));
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        javax.swing.GroupLayout l_machine_status_warnLayout = new javax.swing.GroupLayout(l_machine_status_warn);
+        l_machine_status_warn.setLayout(l_machine_status_warnLayout);
+        l_machine_status_warnLayout.setHorizontalGroup(
+            l_machine_status_warnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(l_machine_status_warnLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        l_machine_status_warnLayout.setVerticalGroup(
+            l_machine_status_warnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(l_machine_status_warnLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout pTopLayout = new javax.swing.GroupLayout(pTop);
+        pTop.setLayout(pTopLayout);
+        pTopLayout.setHorizontalGroup(
+            pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pTopLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(183, 183, 183)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel16)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
+                .addComponent(l_tittle)
+                .addGap(183, 183, 183)
+                .addComponent(l_machine_status_warn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(p_controls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        pTopLayout.setVerticalGroup(
+            pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pTopLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(l_tittle)
+                    .addComponent(l_machine_status_warn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(p_controls, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0))
+        );
+
+        pChangeFilament.setBackground(new java.awt.Color(248, 248, 248));
+
+        bChangeFilament.setForeground(new java.awt.Color(0, 0, 0));
+        bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
+        bChangeFilament.setText("Mudar filamento agora");
+        bChangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bChangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bChangeFilamentMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bChangeFilamentMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bChangeFilamentMousePressed(evt);
+            }
+        });
+
+        lChangeFilament_warn.setForeground(new java.awt.Color(0, 0, 0));
+        lChangeFilament_warn.setText("Tem 5 metros de filamento");
+
+        lChangeFilamentDesc.setForeground(new java.awt.Color(0, 0, 0));
+        lChangeFilamentDesc.setText("Lorem ipsum dolor sit amet.");
+
+        lChangeFilament.setForeground(new java.awt.Color(0, 0, 0));
+        lChangeFilament.setText("Mudar FIlamento");
+
+        jLabel10.setForeground(new java.awt.Color(139, 139, 139));
+        jLabel10.setText("(estimativa)");
+
+        javax.swing.GroupLayout pChangeFilamentLayout = new javax.swing.GroupLayout(pChangeFilament);
+        pChangeFilament.setLayout(pChangeFilamentLayout);
+        pChangeFilamentLayout.setHorizontalGroup(
+            pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                        .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lChangeFilament)
+                            .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                                .addComponent(bChangeFilament)
                                 .addGap(10, 10, 10)
-                                .addComponent(jLabel5)
+                                .addComponent(lChangeFilament_warn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel10))
-                            .addComponent(jLabel9)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
+                                .addComponent(jLabel10)))
+                        .addGap(188, 188, 188))
+                    .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        pChangeFilamentLayout.setVerticalGroup(
+            pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lChangeFilament)
+                .addGap(2, 2, 2)
+                .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bChangeFilament)
+                    .addComponent(lChangeFilament_warn)
+                    .addComponent(jLabel10))
+                .addGap(0, 0, 0))
+        );
+
+        jSeparator1.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator1.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator1.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator1.setPreferredSize(new java.awt.Dimension(1, 1));
+
+        pCalibration.setBackground(new java.awt.Color(248, 248, 248));
+
+        lCalibration_warn.setForeground(new java.awt.Color(0, 0, 0));
+        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
+
+        bCalibration.setForeground(new java.awt.Color(0, 0, 0));
+        bCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
+        bCalibration.setText("Calibrar agora");
+        bCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCalibrationMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bCalibrationMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCalibrationMousePressed(evt);
+            }
+        });
+
+        lCalibration_desc.setForeground(new java.awt.Color(0, 0, 0));
+        lCalibration_desc.setText("Lorem ipsum dolor sit amet.");
+
+        lCalibration.setForeground(new java.awt.Color(0, 0, 0));
+        lCalibration.setText("Calibrar");
+
+        javax.swing.GroupLayout pCalibrationLayout = new javax.swing.GroupLayout(pCalibration);
+        pCalibration.setLayout(pCalibrationLayout);
+        pCalibrationLayout.setHorizontalGroup(
+            pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pCalibrationLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lCalibration_desc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pCalibrationLayout.createSequentialGroup()
+                        .addGroup(pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lCalibration)
+                            .addGroup(pCalibrationLayout.createSequentialGroup()
+                                .addComponent(bCalibration)
                                 .addGap(10, 10, 10)
-                                .addComponent(jLabel6))
-                            .addComponent(jLabel11))
+                                .addComponent(lCalibration_warn)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        pCalibrationLayout.setVerticalGroup(
+            pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pCalibrationLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lCalibration)
+                .addGap(2, 2, 2)
+                .addComponent(lCalibration_desc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bCalibration)
+                    .addComponent(lCalibration_warn))
+                .addGap(0, 0, 0))
+        );
+
+        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator2.setPreferredSize(new java.awt.Dimension(1, 1));
+
+        pExtruderMaintenance.setBackground(new java.awt.Color(248, 248, 248));
+
+        bExtruderMaintenance.setForeground(new java.awt.Color(0, 0, 0));
+        bExtruderMaintenance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
+        bExtruderMaintenance.setText("Limpar bico agora");
+        bExtruderMaintenance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExtruderMaintenance.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bExtruderMaintenanceMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bExtruderMaintenanceMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExtruderMaintenanceMousePressed(evt);
+            }
+        });
+
+        lExtruderMaintenanceDesc.setForeground(new java.awt.Color(0, 0, 0));
+        lExtruderMaintenanceDesc.setText("Lorem ipsum dolor sit amet.");
+
+        lExtruderMaintenance.setForeground(new java.awt.Color(0, 0, 0));
+        lExtruderMaintenance.setText("Limpar bico de extrusao");
+
+        javax.swing.GroupLayout pExtruderMaintenanceLayout = new javax.swing.GroupLayout(pExtruderMaintenance);
+        pExtruderMaintenance.setLayout(pExtruderMaintenanceLayout);
+        pExtruderMaintenanceLayout.setHorizontalGroup(
+            pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
+                        .addComponent(bExtruderMaintenance)
+                        .addGap(575, 575, 575))
+                    .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
+                        .addComponent(lExtruderMaintenance)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        pExtruderMaintenanceLayout.setVerticalGroup(
+            pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lExtruderMaintenance)
                 .addGap(2, 2, 2)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel10))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(jLabel9)
-                .addGap(2, 2, 2)
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel6))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(jLabel16)
-                .addGap(2, 2, 2)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(bExtruderMaintenance)
+                .addGap(0, 0, 0))
+        );
+
+        pNozzleSwitch.setBackground(new java.awt.Color(248, 248, 248));
+
+        bNozzleSwitch.setForeground(new java.awt.Color(0, 0, 0));
+        bNozzleSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
+        bNozzleSwitch.setText("Limpar bico agora");
+        bNozzleSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNozzleSwitch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNozzleSwitchMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bNozzleSwitchMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNozzleSwitchMousePressed(evt);
+            }
+        });
+
+        lNozzleSwitchDesc.setForeground(new java.awt.Color(0, 0, 0));
+        lNozzleSwitchDesc.setText("Lorem ipsum dolor sit amet.");
+
+        lNozzleSwitch.setForeground(new java.awt.Color(0, 0, 0));
+        lNozzleSwitch.setText("Limpar bico de extrusao");
+
+        javax.swing.GroupLayout pNozzleSwitchLayout = new javax.swing.GroupLayout(pNozzleSwitch);
+        pNozzleSwitch.setLayout(pNozzleSwitchLayout);
+        pNozzleSwitchLayout.setHorizontalGroup(
+            pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pNozzleSwitchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pNozzleSwitchLayout.createSequentialGroup()
+                        .addComponent(bNozzleSwitch)
+                        .addGap(575, 575, 575))
+                    .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pNozzleSwitchLayout.createSequentialGroup()
+                        .addComponent(lNozzleSwitch)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        pNozzleSwitchLayout.setVerticalGroup(
+            pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pNozzleSwitchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lNozzleSwitch)
+                .addGap(2, 2, 2)
+                .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bNozzleSwitch)
+                .addGap(24, 24, 24))
+        );
+
+        jSeparator3.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator3.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator3.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator3.setPreferredSize(new java.awt.Dimension(1, 1));
+
+        javax.swing.GroupLayout pMaintenanceLayout = new javax.swing.GroupLayout(pMaintenance);
+        pMaintenance.setLayout(pMaintenanceLayout);
+        pMaintenanceLayout.setHorizontalGroup(
+            pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pMaintenanceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pExtruderMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pCalibration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pNozzleSwitch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        pMaintenanceLayout.setVerticalGroup(
+            pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pMaintenanceLayout.createSequentialGroup()
+                .addComponent(pTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pCalibration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pExtruderMaintenance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pNozzleSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+
+        pBottom.setBackground(new java.awt.Color(255, 203, 5));
+        pBottom.setMinimumSize(new java.awt.Dimension(20, 26));
+        pBottom.setPreferredSize(new java.awt.Dimension(139, 26));
+
+        bCancel.setForeground(new java.awt.Color(0, 0, 0));
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bCancel.setText("CANCELAR");
+        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bCancelMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pBottomLayout = new javax.swing.GroupLayout(pBottom);
+        pBottom.setLayout(pBottomLayout);
+        pBottomLayout.setHorizontalGroup(
+            pBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pBottomLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bCancel)
+                .addGap(12, 12, 12))
+        );
+        pBottomLayout.setVerticalGroup(
+            pBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pBottomLayout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addComponent(bCancel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(pBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel17MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseEntered
-        jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-    }//GEN-LAST:event_jLabel17MouseEntered
+    private void bExtruderMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMousePressed
 
-    private void jLabel17MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseExited
-        jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-    }//GEN-LAST:event_jLabel17MouseExited
+        if (!moving && isConnected) {
+            dispose();
+            ctrlStatus.stop();
+            ExtruderMaintenance1 p = new ExtruderMaintenance1();
+            p.setVisible(true);
 
-    private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
+            Base.getMainWindow().getCanvas().unPickAll();
+        }
+    }//GEN-LAST:event_bExtruderMaintenanceMousePressed
+
+    private void bExtruderMaintenanceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseExited
+    if (isConnected){
+        bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+    }
+    }//GEN-LAST:event_bExtruderMaintenanceMouseExited
+
+    private void bExtruderMaintenanceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseEntered
         if (isConnected) {
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+            bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
         }
-    }//GEN-LAST:event_jLabel4MouseEntered
+    }//GEN-LAST:event_bExtruderMaintenanceMouseEntered
 
-    private void jLabel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseExited
-        if (isConnected) {
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
-    }//GEN-LAST:event_jLabel4MouseExited
-
-    private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
-        if (!Base.printPaused && isConnected) {
-            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
-        }
-    }//GEN-LAST:event_jLabel7MouseEntered
-
-    private void jLabel7MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseExited
-        if (!Base.printPaused && isConnected) {
-            jLabel7.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
-    }//GEN-LAST:event_jLabel7MouseExited
-
-    private void jLabel11MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseEntered
-        if (isConnected) {
-            jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
-        }
-    }//GEN-LAST:event_jLabel11MouseEntered
-
-    private void jLabel11MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseExited
-        if (isConnected) {
-            jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
-    }//GEN-LAST:event_jLabel11MouseExited
-
-    private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
+    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         doExit();
-    }//GEN-LAST:event_jLabel17MousePressed
+    }//GEN-LAST:event_bCancelMousePressed
 
-    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
+    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+    }//GEN-LAST:event_bCancelMouseExited
+
+    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+    }//GEN-LAST:event_bCancelMouseEntered
+
+    private void bNozzleSwitchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMouseEntered
+        if (isConnected) {
+            bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        }
+    }//GEN-LAST:event_bNozzleSwitchMouseEntered
+
+    private void bNozzleSwitchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMouseExited
+        if (isConnected){
+            bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        }
+    }//GEN-LAST:event_bNozzleSwitchMouseExited
+
+
+    private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
+
+        if (!moving && isConnected) {
+            dispose();
+            ctrlStatus.stop();
+            ExtruderSwitch1 p = new ExtruderSwitch1();
+            p.setVisible(true);
+
+            Base.getMainWindow().getCanvas().unPickAll();
+
+        }    }//GEN-LAST:event_bNozzleSwitchMousePressed
+
+    private void bCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMousePressed
+
+        if (!moving && !Base.printPaused && isConnected) {
+            dispose();
+            ctrlStatus.stop();
+            //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(true));
+            //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("G28",COM.BLOCK));
+            //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            CalibrationWelcome p = new CalibrationWelcome(false);
+            p.setVisible(true);
+            Base.getMainWindow().getCanvas().unPickAll();
+        }
+    }//GEN-LAST:event_bCalibrationMousePressed
+
+    private void bCalibrationMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMouseExited
+        if (!Base.printPaused && isConnected) {
+            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        }
+    }//GEN-LAST:event_bCalibrationMouseExited
+
+    private void bCalibrationMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMouseEntered
+        if (!Base.printPaused && isConnected) {
+            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+        }
+    }//GEN-LAST:event_bCalibrationMouseEntered
+
+    private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
 
         if (!moving && isConnected) {
             dispose();
@@ -602,71 +802,69 @@ public class Maintenance extends javax.swing.JFrame {
             }
             Base.getMainWindow().getCanvas().unPickAll();
         }
-    }//GEN-LAST:event_jLabel4MousePressed
+    }//GEN-LAST:event_bChangeFilamentMousePressed
 
-    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
-
-        if (!moving && !Base.printPaused && isConnected) {
-            dispose();
-            ctrlStatus.stop();
-//            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(true));
-//            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("G28",COM.BLOCK));
-//            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(false));
-            CalibrationWelcome p = new CalibrationWelcome(false);
-            p.setVisible(true);
-            Base.getMainWindow().getCanvas().unPickAll();
+    private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
+        if (isConnected){
+            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
         }
-    }//GEN-LAST:event_jLabel7MousePressed
+    }//GEN-LAST:event_bChangeFilamentMouseExited
 
-    private void jLabel11MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MousePressed
-        if (!moving && isConnected) {
-            dispose();
-            ctrlStatus.stop();
-            NozzleClean p = new NozzleClean();
-            p.setVisible(true);
-            Base.getMainWindow().getCanvas().unPickAll();
+    private void bChangeFilamentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseEntered
+        if (isConnected) {
+            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
         }
-    }//GEN-LAST:event_jLabel11MousePressed
+    }//GEN-LAST:event_bChangeFilamentMouseEntered
+
+    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+        doExit();
+    }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
         setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doExit();
-    }//GEN-LAST:event_jLabel15MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel bCalibration;
+    private javax.swing.JLabel bCancel;
+    private javax.swing.JLabel bChangeFilament;
+    private javax.swing.JLabel bExtruderMaintenance;
+    private javax.swing.JLabel bNozzleSwitch;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel lCalibration;
+    private javax.swing.JLabel lCalibration_desc;
+    private javax.swing.JLabel lCalibration_warn;
+    private javax.swing.JLabel lChangeFilament;
+    private javax.swing.JLabel lChangeFilamentDesc;
+    private javax.swing.JLabel lChangeFilament_warn;
+    private javax.swing.JLabel lExtruderMaintenance;
+    private javax.swing.JLabel lExtruderMaintenanceDesc;
+    private javax.swing.JLabel lNozzleSwitch;
+    private javax.swing.JLabel lNozzleSwitchDesc;
+    private javax.swing.JPanel l_machine_status_warn;
+    private javax.swing.JLabel l_tittle;
+    private javax.swing.JPanel pBottom;
+    private javax.swing.JPanel pCalibration;
+    private javax.swing.JPanel pChangeFilament;
+    private javax.swing.JPanel pExtruderMaintenance;
+    private javax.swing.JPanel pMaintenance;
+    private javax.swing.JPanel pNozzleSwitch;
+    private javax.swing.JPanel pTop;
+    private javax.swing.JPanel p_controls;
     // End of variables declaration//GEN-END:variables
 }
 
 class ControlStatus extends Thread {
 
-    private final MachineInterface machine;
-    private final Maintenance maintenancePanel;
+    private MachineInterface machine;
+    private Maintenance maintenancePanel;
 
     public ControlStatus(Maintenance filIns, MachineInterface mach) {
         super("Maintenance Thread");
@@ -697,6 +895,7 @@ class ControlStatus extends Thread {
             if (!machine.getModel().getMachineBusy()) {
                 maintenancePanel.setFree();
             }
+
         }
     }
 }

@@ -178,8 +178,6 @@
             <MM value="millimeters"/>
             <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
-            <Inches value="inches"/>
-            <ScaleToMax value="Scale to Max"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
@@ -466,15 +464,14 @@
             <Heating_Info_Title value="Extruder nozzle temperature"/>
             <Heating_Info value="Extruder nozzle has to be heated whenever you change the filament. When it reaches the ideal temperature you may move to the next stage. "/>
             <Info_Warning value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
-            <Title2 value="FILAMENT CHANGE"/>
+            <Title2 value="Filament Unload"/>
             <LoadButton value="Load"/>
             <UnloadButton value="Unload"/>
-            <Exchange_Info_Title value="How to load or unload filament"/>
+            <Exchange_Info_Title value="Make sure the filament is correctly unloaded before proceeding."/>
             <Exchange_Info_Title2 value="Unload filament"/>
             <Exchange_Info value="To unload the filament, push the Unload button and pull the filament steadily.
 To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>
-            <Exchange_Info2 value="Make sure the spool’s label is facing inside as shown in the image. To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament.
-To unload the filament, push the Unload button and wait for instructions."/>                    
+            <Exchange_Info2 value="Push the Unload button and wait for instructions."/>                    
             <Exchange_Info3 value="Gently pull as filament unloads."/>         
             <Title3 value="FILAMENT TYPE"/>
             <Title4 value="Select type"/>
@@ -525,6 +522,72 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <Info_Warning value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
         </ExtruderCleanWizard>
 
+
+<!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
+        <ExtruderMaintenance>
+
+            <Title1 value="Extruder Maintenance"/>
+            <HeatingMessage1 value="Heating up.."/>
+            <Info1a value="This operation allows you to clean the extruder."/>
+            <Info1b value = "Please use the tools available in your maintenance kit and make sure you have watched the instructional material before continuing."/>
+            <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+
+            <Title2 value="Extruder Maintenance"/>
+            <HeatingMessage2 value="Heating..."/>
+            <Info2a value="Use the tool included in your maintenance kit to remove the screws on the top cover of your BEETHEFIRST. Remove the cover by gently pulling upwards."/>
+            <Info2b value = "Make sure to place screws in a secure location."/>
+            <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+
+            <Title3 value="Extruder Maintenance"/>
+            <HeatingMessage3 value="Heating..."/>
+            <Info3a value="Using the same tool as before, remove the screw that attachs the cover plate to your BEETHEFIRST. Afterwards slide the cover plate in the direction indicated OPEN."/>
+            <Info3b value = "Remember to place the screws in a save location."/>
+            <Info_Warning3 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+
+            <Title4 value="Extruder Maintenance"/>
+            <HeatingMessage4 value="Heating..."/>
+            <Info4a value="Your BEETHEFIRST must finish heating before continuing this operation."/>
+            <Info4b value = " "/>
+            <Info_Warning4 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
+
+            <Title5 value="Extruder Maintenance"/>
+            <HeatingMessage5 value="Heating..."/>
+            <Info5a value = "Make sure to unload any fillament still loaded in your BEETHEFIRST. Apply the cleaning tool to remove any leftover material that might have lodged inside the extruder."/>
+            <Info5b value = "After cleaning the extruder, press load and make sure the fillament is extruding normally."/>
+            <Info_Warning5 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+
+            <Title6 value="Extruder Maintenance"/>
+            <HeatingMessage6 value="Heating..."/>
+            <Info6a value = " "/>
+            <Info6b value = " "/>
+            <Info_Warning6 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+
+
+        </ExtruderMaintenance>
+
+        
+        <ExtruderSwitch>
+
+            <Title1 value="Extruder Switch"/>
+            <HeatingMessage1 value="Heating..."/>
+            <Info1a value="Use this operation if wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
+            <Info1b value = " "/>
+            <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
+
+            <Title2 value="Extruder Switch"/>
+            <HeatingMessage2 value="Heating..."/>
+            <Info2a value="Your BEETHEFIRST must finish heating before continuing this operation."/>
+            <Info2b value ="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
+            <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
+            
+            <Title3 value="Extruder Switch"/>
+            <HeatingMessage3 value="Heating..."/>
+            <Info3a value="Use the nozzle tool to unscrew the nozzle and place it on a heat-resistant surface until it has cooled down."/>
+            <Info3b value="Screw in the new nozzle, stop tightening as soon as you feel hard resistance. You can now load some fresh filament and see the result of the new extruder. The filament will be thick and even."/>
+            <Info_Warning3 value = "WARNING: BE CAREFULL NOT TO TOUCH THE HOT EXTRUDER."/>
+        </ExtruderSwitch>
+
+
         <!-- A próxima secção XML contém o texto a ser apresentado no 1º ecrã do Guia Rápido --> 
         <QuickGuideWizard>
             <Title1 value="Welcome"/>
@@ -548,6 +611,17 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <ExtruderClean_Title value="Clean extruder nozzle"/>
             <ExtruderClean_button value="Clean nozzle now"/>
             <ExtruderClean_Intro value="This operation is important to avoid getting pieces of filament leftovers on what you are printing."/>
+
+            <ExtruderMaintenance_Title value="Extruder Maintenance"/>
+            <ExtruderMaintenance_button value="Start extruder maintenance"/>
+            <ExtruderMaintenance_Intro value="This operation enables you to unclog the nozzle  using the Maintenance Kit."/>
+
+            <NozzleSwitch_Title value="Replace nozzle "/>
+            <NozzleSwitch_button value="Replace nozzle  now"/>
+            <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
+
+
+
         </MaintenancePanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
@@ -639,8 +713,8 @@ To unload the filament, push the Unload button and wait for instructions."/>
         
         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
         <Updates>
-            <AvailableStable value="There are software stable updates available for your BEETHEFIRST.To properly install the new version, you will need to close BEESOFT."/>
-            <AvailableBeta value="There are software beta updates available for your BEETHEFIRST.To properly install the new version, you will need to close BEESOFT."/>
+            <AvailableStable value="There are stable software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
+            <AvailableBeta value="There are beta software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
             <NotAvailable value="There are no software updates available."/>
             <NoConnection value="No Internet access."/>
             <NoAccess value="Service Unavailable."/>
@@ -663,7 +737,7 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <All value="All"/>
         </Gallery>
         
-<!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
+        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
             <!-- Filamentos da Filkemp -->
             <a002 value="A002 - White"/>
@@ -688,7 +762,7 @@ To unload the filament, push the Unload button and wait for instructions."/>
             <a106 value="A106 - Traffic Red"/>
             <a107 value="A107 - Tomato Red"/>
             <a108 value="A108 - Light Pink"/>
-            <a109 value="A109 - Traffic Purple/>
+            <a109 value="A109 - Traffic Purple"/>
             <a110 value="A110 - Violet"/>
             <a111 value="A111 - Sky Blue"/>
             <a112 value="A112 - Traffic Blue"/>
