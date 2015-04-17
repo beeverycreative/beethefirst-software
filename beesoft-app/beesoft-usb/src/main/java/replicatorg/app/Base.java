@@ -91,7 +91,7 @@ import java.util.Map;
 import java.util.Properties;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.WelcomeSplash;
-import replicatorg.util.AppProperties;
+import replicatorg.util.ConfigProperties;
 
 /**
  * Primary role of this class is for platform identification and general
@@ -183,7 +183,7 @@ public class Base {
         }
     }
     
-    private static final AppProperties appProperties = new AppProperties();
+    private static final ConfigProperties configProperties = new ConfigProperties();
     public static boolean status_thread_died = false;
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
@@ -202,18 +202,17 @@ public class Base {
     public static int ID = 0;
 
     public static final String VERSION_BEESOFT = 
-            appProperties.getProperty("release.type").equals("alpha") ? 
-            appProperties.getProperty("application.version") + "-alpha-" + appProperties.getProperty("build.number") :
-                appProperties.getProperty("release.type").equals("") ?
-                appProperties.getProperty("application.version") :
-                appProperties.getProperty("application.version") + "-" + appProperties.getProperty("release.type");
-    
+            configProperties.getBuildProperty("release.type").equals("alpha") ? 
+            configProperties.getBuildProperty("application.version") + "-alpha-" + configProperties.getBuildProperty("build.number") :
+                configProperties.getBuildProperty("release.type").equals("") ?
+                configProperties.getBuildProperty("application.version") :
+                configProperties.getBuildProperty("application.version") + "-" + configProperties.getBuildProperty("release.type");    
     
     public static final String PROGRAM = "BEESOFT";
-    public static String VERSION_BOOTLOADER = "Bootloader v"+appProperties.getProperty("bootloader.version");;
+    public static String VERSION_BOOTLOADER = "Bootloader v"+configProperties.getAppProperty("bootloader.version");;
     
-    public static final String VERSION_FIRMWARE_FINAL = appProperties.getProperty("firmware.current.version");
-    public static final String VERSION_FIRMWARE_FINAL_OLD = appProperties.getProperty("firmware.old.version");
+    public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
+    public static final String VERSION_FIRMWARE_FINAL_OLD = configProperties.getAppProperty("firmware.old.version");
     public static String firmware_version_in_use = "BEETHEFIRST-"+ VERSION_FIRMWARE_FINAL +".bin";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
