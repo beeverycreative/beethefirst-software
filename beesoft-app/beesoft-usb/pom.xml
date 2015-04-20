@@ -283,10 +283,10 @@
     </build>
     <profiles>
         <profile>
-            <id>platform-macosx</id>
+            <id>platform-unix</id>
             <activation>
                 <os>
-                    <family>mac</family>
+                    <family>unix</family>
                 </os>
             </activation>
             
@@ -381,6 +381,54 @@
                             </execution> 
                         </executions>
                     </plugin>                       
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>replicatorg.app.Base</mainClass>
+                            <!-- optional -->
+                            <workingDirectory>${project.build.directory}/macosx</workingDirectory>
+                            
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>java.library.path</key>
+                                    <value>${project.basedir}/src/main/resources/installers/macosx/dist</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>replicatorg.app-resources</key>
+                                    <value>${project.build.directory}/libs</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>replicatorg.toolpath</key>
+                                    <value>${project.basedir}/src/main/resources/installers/macosx/dist/tools</value>
+                                </systemProperty>                                               
+                            </systemProperties>
+                            <arguments>                        
+                                <argument>-ea</argument>
+                                <argument>-Xmx2048m</argument>
+                                <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>                  
+                </plugins>
+            </build>
+        </profile>        
+        <profile>
+            <id>platform-macosx</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>            
+            <build>
+                <plugins>                                          
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
