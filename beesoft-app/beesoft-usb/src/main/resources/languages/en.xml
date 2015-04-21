@@ -168,6 +168,7 @@
             <Print value="PRINT"/>
             <Mirror value="Mirror"/>
             <Scale value="Scale"/>  
+            <ScaleToMax value="Scale to Max"/>  
             <Scale_Extense value="Scale in percentage"/>
             <Move value="Move"/>
             <Rotate value="Rotate"/>
