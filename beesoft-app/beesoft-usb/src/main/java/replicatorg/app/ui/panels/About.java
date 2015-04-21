@@ -1,7 +1,7 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,11 +23,12 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class About extends javax.swing.JFrame {
+public class About extends javax.swing.JDialog {
 
     private int posX = 0, posY = 0;
 
     public About() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         centerOnScreen();
@@ -146,7 +147,7 @@ public class About extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
@@ -362,7 +363,7 @@ public class About extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

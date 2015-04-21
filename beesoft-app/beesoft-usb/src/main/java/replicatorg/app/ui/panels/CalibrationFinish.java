@@ -1,9 +1,9 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -34,16 +34,17 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationFinish extends javax.swing.JFrame {
+public class CalibrationFinish extends javax.swing.JDialog {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
     private boolean jLabel5MouseClickedReady = true;
-    private boolean jLabel7MouseClickedReady = true;
-    private DisposeFeedbackThread5 disposeThread;
+    private final boolean jLabel7MouseClickedReady = true;
+    private final DisposeFeedbackThread5 disposeThread;
     private boolean moving = false;
 
     public CalibrationFinish() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -188,6 +189,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -196,6 +198,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -206,7 +209,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
     private File getPrintFile() {
         File gcode = null;
-        PrintWriter pw = null;
+        PrintWriter pw;
 
         try {
             gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + Base.GCODE_TEMP_FILENAME);
@@ -214,8 +217,8 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
             String[] code = Base.getMachineLoader().getMachineInterface().getGCodePrintTest("calibration").split(",");
 
-            for (int i = 0; i < code.length; i++) {
-                pw.println(code[i].trim());
+            for (String code1 : code) {
+                pw.println(code1.trim());
             }
 
             pw.close();
@@ -275,7 +278,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(572, 493));
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(572, 490));
@@ -313,7 +316,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -326,7 +329,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -335,17 +338,14 @@ public class CalibrationFinish extends javax.swing.JFrame {
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("FIM");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/etapa_final.png"))); // NOI18N
 
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Suspendisse potenti.");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
         jLabel5.setText("Teste de Calibracao");
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -364,7 +364,6 @@ public class CalibrationFinish extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setText("Moving...Please wait.");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -374,7 +373,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -430,7 +429,6 @@ public class CalibrationFinish extends javax.swing.JFrame {
         jPanel6.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel6.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel23.setForeground(new java.awt.Color(0, 0, 0));
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel23.setText("ANTERIOR");
         jLabel23.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -446,7 +444,6 @@ public class CalibrationFinish extends javax.swing.JFrame {
             }
         });
 
-        jLabel24.setForeground(new java.awt.Color(0, 0, 0));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel24.setText("SEGUINTE");
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -462,7 +459,6 @@ public class CalibrationFinish extends javax.swing.JFrame {
             }
         });
 
-        jLabel25.setForeground(new java.awt.Color(0, 0, 0));
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel25.setText("SAIR");
         jLabel25.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -617,7 +613,7 @@ public class CalibrationFinish extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -641,8 +637,8 @@ public class CalibrationFinish extends javax.swing.JFrame {
 
 class DisposeFeedbackThread5 extends Thread {
 
-    private MachineInterface machine;
-    private CalibrationFinish calibrationPanel;
+    private final MachineInterface machine;
+    private final CalibrationFinish calibrationPanel;
 
     public DisposeFeedbackThread5(CalibrationFinish filIns, MachineInterface mach) {
         super("Calibration Finish Thread");

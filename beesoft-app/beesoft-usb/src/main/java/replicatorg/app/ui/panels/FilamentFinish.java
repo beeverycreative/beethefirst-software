@@ -1,5 +1,6 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import static java.awt.Frame.ICONIFIED;
@@ -27,12 +28,13 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentFinish extends javax.swing.JFrame {
+public class FilamentFinish extends javax.swing.JDialog {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
 
     public FilamentFinish() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -123,6 +125,7 @@ public class FilamentFinish extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -131,6 +134,7 @@ public class FilamentFinish extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -181,7 +185,7 @@ public class FilamentFinish extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
@@ -190,7 +194,6 @@ public class FilamentFinish extends javax.swing.JFrame {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel17.setText("ANTERIOR");
         jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -206,7 +209,6 @@ public class FilamentFinish extends javax.swing.JFrame {
             }
         });
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel18.setText("SEGUINTE");
         jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -222,7 +224,6 @@ public class FilamentFinish extends javax.swing.JFrame {
             }
         });
 
-        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
         jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel19.setText("SAIR");
         jLabel19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -245,7 +246,7 @@ public class FilamentFinish extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 355, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 363, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
@@ -267,7 +268,6 @@ public class FilamentFinish extends javax.swing.JFrame {
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento.png"))); // NOI18N
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("FIM");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -276,10 +276,8 @@ public class FilamentFinish extends javax.swing.JFrame {
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Concluido");
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Suspendisse potenti.");
         jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -314,7 +312,7 @@ public class FilamentFinish extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -327,7 +325,7 @@ public class FilamentFinish extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -454,7 +452,7 @@ public class FilamentFinish extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel19MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

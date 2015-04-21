@@ -1,8 +1,8 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -32,8 +32,6 @@ import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.MainWindow;
-import replicatorg.app.ui.mainWindow.ModelsDetailsPanel;
-import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
 
 /**
@@ -47,7 +45,7 @@ import replicatorg.model.PrintBed;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Gallery extends javax.swing.JFrame {
+public class Gallery extends javax.swing.JDialog {
 
     private JLabel[] modelsPerCategoryList;
     private JLabel[] modelsPerCategoryNames;
@@ -56,11 +54,12 @@ public class Gallery extends javax.swing.JFrame {
     private DefaultComboBoxModel comboModel;
     private File[] listExistingModels;
     private int posX = 0, posY = 0;
-    private String modelsDir = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
+    private final String modelsDir = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
     private String extension;
-    private MainWindow mWindow;
+    private final MainWindow mWindow;
 
     public Gallery() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         initCategoriesList();
         initJLabelsArray();
@@ -142,8 +141,8 @@ public class Gallery extends javax.swing.JFrame {
 
         String[] categories = Base.getMainWindow().getCategoriesManager().getCategories();
 
-        for (int i = 0; i < categories.length; i++) {
-            listModel.addElement(categories[i]);
+        for (String categorie : categories) {
+            listModel.addElement(categorie);
         }
 
         String[] categories2 = {Languager.getTagValue(1, "Gallery", "All"),
@@ -257,6 +256,7 @@ public class Gallery extends javax.swing.JFrame {
                         new FileNameExtensionFilter("BEESOFT files",
                         "stl", "bee");
 
+                @Override
                 public boolean accept(File file) {
                     return filter.accept(file);
                 }
@@ -349,6 +349,7 @@ public class Gallery extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -357,6 +358,7 @@ public class Gallery extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -492,7 +494,7 @@ public class Gallery extends javax.swing.JFrame {
         jLabel27 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(991, 520));
         setResizable(false);
@@ -1045,7 +1047,7 @@ public class Gallery extends javax.swing.JFrame {
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                         .addGap(10, 10, 10)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
@@ -1072,7 +1074,6 @@ public class Gallery extends javax.swing.JFrame {
         jPanel5.setMinimumSize(new java.awt.Dimension(20, 40));
         jPanel5.setPreferredSize(new java.awt.Dimension(256, 46));
 
-        jLabel24.setForeground(new java.awt.Color(0, 0, 0));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel24.setText("OK");
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1088,7 +1089,6 @@ public class Gallery extends javax.swing.JFrame {
             }
         });
 
-        jLabel27.setForeground(new java.awt.Color(0, 0, 0));
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel27.setText("CANCELAR");
         jLabel27.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1104,7 +1104,6 @@ public class Gallery extends javax.swing.JFrame {
             }
         });
 
-        jLabel29.setForeground(new java.awt.Color(0, 0, 0));
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel29.setText("APPLY");
         jLabel29.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1398,7 +1397,7 @@ public class Gallery extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel9MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

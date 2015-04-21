@@ -1,9 +1,9 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -30,7 +30,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentHeating extends javax.swing.JFrame {
+public class FilamentHeating extends javax.swing.JDialog {
 
     private final MachineInterface machine;
     private boolean achievement;
@@ -40,6 +40,7 @@ public class FilamentHeating extends javax.swing.JFrame {
     private final UpdateThread updateThread;
 
     public FilamentHeating() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -304,7 +305,7 @@ public class FilamentHeating extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
@@ -608,7 +609,7 @@ public class FilamentHeating extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel19MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import static java.awt.Frame.ICONIFIED;
@@ -30,14 +31,15 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationSkrew2 extends javax.swing.JFrame {
+public class CalibrationSkrew2 extends javax.swing.JDialog {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
-    private DisposeFeedbackThread4 disposeThread;
+    private final DisposeFeedbackThread4 disposeThread;
     private boolean jLabel24MouseClickedReady = true;
 
     public CalibrationSkrew2() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -175,6 +177,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -183,6 +186,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -239,7 +243,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
         jLabel24 = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
         setResizable(false);
@@ -277,7 +281,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -290,7 +294,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -299,23 +303,19 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("CABECA DE IMPRESSAO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/cabeca_impressao_2.png"))); // NOI18N
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("2 Passo");
 
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Suspendisse potenti.");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Moving...Please wait.");
         jLabel5.setMaximumSize(new java.awt.Dimension(140, 17));
         jLabel5.setMinimumSize(new java.awt.Dimension(140, 17));
@@ -383,7 +383,6 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
         jPanel6.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel6.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel23.setForeground(new java.awt.Color(0, 0, 0));
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel23.setText("ANTERIOR");
         jLabel23.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -399,7 +398,6 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
             }
         });
 
-        jLabel24.setForeground(new java.awt.Color(0, 0, 0));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         jLabel24.setText("SEGUINTE");
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -415,7 +413,6 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
             }
         });
 
-        jLabel25.setForeground(new java.awt.Color(0, 0, 0));
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel25.setText("SAIR");
         jLabel25.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -438,7 +435,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel25)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
                 .addComponent(jLabel23)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel24)
@@ -526,7 +523,7 @@ public class CalibrationSkrew2 extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel25MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

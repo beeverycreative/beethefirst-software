@@ -1,5 +1,6 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
@@ -27,7 +28,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentCodeInsertion extends javax.swing.JFrame {
+public class FilamentCodeInsertion extends javax.swing.JDialog {
 
     private final MachineInterface machine;
     private int posX = 0, posY = 0;
@@ -38,6 +39,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     private String previousColor = "";
 
     public FilamentCodeInsertion(String prevColor) {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -218,7 +220,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
         jComboBox1 = new javax.swing.JComboBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
@@ -229,7 +231,6 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel17.setText("ANTERIOR");
         jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -245,7 +246,6 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             }
         });
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel18.setText("SEGUINTE");
         jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -261,7 +261,6 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             }
         });
 
-        bCancel.setForeground(new java.awt.Color(0, 0, 0));
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bCancel.setText("SAIR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -284,7 +283,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 354, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 362, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
@@ -335,7 +334,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -348,11 +347,10 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("BEM-VINDO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -360,7 +358,6 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento.png"))); // NOI18N
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Troca de Filamento");
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
@@ -568,7 +565,7 @@ public class FilamentCodeInsertion extends javax.swing.JFrame {
     }//GEN-LAST:event_bCancelMousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

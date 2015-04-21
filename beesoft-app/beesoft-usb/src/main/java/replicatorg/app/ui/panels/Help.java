@@ -1,10 +1,9 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,11 +28,12 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Help extends javax.swing.JFrame {
+public class Help extends javax.swing.JDialog {
 
     private int posX = 0, posY = 0;
 
     public Help() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -93,6 +93,7 @@ public class Help extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -101,6 +102,7 @@ public class Help extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -176,7 +178,7 @@ public class Help extends javax.swing.JFrame {
 
         jLabel17.setText("jLabel17");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
@@ -323,7 +325,6 @@ public class Help extends javax.swing.JFrame {
         jPanel5.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel5.setPreferredSize(new java.awt.Dimension(567, 27));
 
-        jLabel24.setForeground(new java.awt.Color(0, 0, 0));
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel24.setText("SAIR");
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -339,7 +340,6 @@ public class Help extends javax.swing.JFrame {
             }
         });
 
-        jLabel25.setForeground(new java.awt.Color(0, 0, 0));
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_17.png"))); // NOI18N
         jLabel25.setText("GUIA RAPIDO");
         jLabel25.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -411,27 +411,27 @@ public class Help extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel25MouseExited
 
     private void jLabel8MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseEntered
-        this.setCursor(Cursor.HAND_CURSOR);
+        //this.setCursor(Cursor.HAND_CURSOR);
     }//GEN-LAST:event_jLabel8MouseEntered
 
     private void jLabel8MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseExited
-        this.setCursor(Cursor.DEFAULT_CURSOR);
+        //this.setCursor(Cursor.DEFAULT_CURSOR);
     }//GEN-LAST:event_jLabel8MouseExited
 
     private void jLabel9MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseEntered
-        this.setCursor(Cursor.HAND_CURSOR);
+        //this.setCursor(Cursor.HAND_CURSOR);
     }//GEN-LAST:event_jLabel9MouseEntered
 
     private void jLabel9MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseExited
-        this.setCursor(Cursor.DEFAULT_CURSOR);
+        //this.setCursor(Cursor.DEFAULT_CURSOR);
     }//GEN-LAST:event_jLabel9MouseExited
 
     private void jLabel12MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseEntered
-        this.setCursor(Cursor.HAND_CURSOR);
+        //this.setCursor(Cursor.HAND_CURSOR);
     }//GEN-LAST:event_jLabel12MouseEntered
 
     private void jLabel12MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseExited
-        this.setCursor(Cursor.DEFAULT_CURSOR);
+        //this.setCursor(Cursor.DEFAULT_CURSOR);
     }//GEN-LAST:event_jLabel12MouseExited
 
     private void jLabel24MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel24MousePressed
@@ -455,7 +455,7 @@ public class Help extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel25MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

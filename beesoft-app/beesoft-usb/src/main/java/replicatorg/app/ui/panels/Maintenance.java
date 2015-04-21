@@ -267,7 +267,6 @@ public class Maintenance extends javax.swing.JDialog {
 
         pTop.setBackground(new java.awt.Color(248, 248, 248));
 
-        l_tittle.setForeground(new java.awt.Color(0, 0, 0));
         l_tittle.setText("MANUTENCAO");
         l_tittle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -320,7 +319,6 @@ public class Maintenance extends javax.swing.JDialog {
 
         l_machine_status_warn.setBackground(new java.awt.Color(255, 203, 5));
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setText("Moving...Please wait.");
         jLabel18.setMaximumSize(new java.awt.Dimension(140, 17));
         jLabel18.setMinimumSize(new java.awt.Dimension(140, 17));
@@ -369,7 +367,6 @@ public class Maintenance extends javax.swing.JDialog {
 
         pChangeFilament.setBackground(new java.awt.Color(248, 248, 248));
 
-        bChangeFilament.setForeground(new java.awt.Color(0, 0, 0));
         bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bChangeFilament.setText("Mudar filamento agora");
         bChangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -385,13 +382,10 @@ public class Maintenance extends javax.swing.JDialog {
             }
         });
 
-        lChangeFilament_warn.setForeground(new java.awt.Color(0, 0, 0));
         lChangeFilament_warn.setText("Tem 5 metros de filamento");
 
-        lChangeFilamentDesc.setForeground(new java.awt.Color(0, 0, 0));
         lChangeFilamentDesc.setText("Lorem ipsum dolor sit amet.");
 
-        lChangeFilament.setForeground(new java.awt.Color(0, 0, 0));
         lChangeFilament.setText("Mudar FIlamento");
 
         jLabel10.setForeground(new java.awt.Color(139, 139, 139));
@@ -439,10 +433,8 @@ public class Maintenance extends javax.swing.JDialog {
 
         pCalibration.setBackground(new java.awt.Color(248, 248, 248));
 
-        lCalibration_warn.setForeground(new java.awt.Color(0, 0, 0));
         lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
 
-        bCalibration.setForeground(new java.awt.Color(0, 0, 0));
         bCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bCalibration.setText("Calibrar agora");
         bCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -458,10 +450,8 @@ public class Maintenance extends javax.swing.JDialog {
             }
         });
 
-        lCalibration_desc.setForeground(new java.awt.Color(0, 0, 0));
         lCalibration_desc.setText("Lorem ipsum dolor sit amet.");
 
-        lCalibration.setForeground(new java.awt.Color(0, 0, 0));
         lCalibration.setText("Calibrar");
 
         javax.swing.GroupLayout pCalibrationLayout = new javax.swing.GroupLayout(pCalibration);
@@ -503,7 +493,6 @@ public class Maintenance extends javax.swing.JDialog {
 
         pExtruderMaintenance.setBackground(new java.awt.Color(248, 248, 248));
 
-        bExtruderMaintenance.setForeground(new java.awt.Color(0, 0, 0));
         bExtruderMaintenance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bExtruderMaintenance.setText("Limpar bico agora");
         bExtruderMaintenance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -519,10 +508,8 @@ public class Maintenance extends javax.swing.JDialog {
             }
         });
 
-        lExtruderMaintenanceDesc.setForeground(new java.awt.Color(0, 0, 0));
         lExtruderMaintenanceDesc.setText("Lorem ipsum dolor sit amet.");
 
-        lExtruderMaintenance.setForeground(new java.awt.Color(0, 0, 0));
         lExtruderMaintenance.setText("Limpar bico de extrusao");
 
         javax.swing.GroupLayout pExtruderMaintenanceLayout = new javax.swing.GroupLayout(pExtruderMaintenance);
@@ -554,7 +541,6 @@ public class Maintenance extends javax.swing.JDialog {
 
         pNozzleSwitch.setBackground(new java.awt.Color(248, 248, 248));
 
-        bNozzleSwitch.setForeground(new java.awt.Color(0, 0, 0));
         bNozzleSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bNozzleSwitch.setText("Limpar bico agora");
         bNozzleSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -570,10 +556,8 @@ public class Maintenance extends javax.swing.JDialog {
             }
         });
 
-        lNozzleSwitchDesc.setForeground(new java.awt.Color(0, 0, 0));
         lNozzleSwitchDesc.setText("Lorem ipsum dolor sit amet.");
 
-        lNozzleSwitch.setForeground(new java.awt.Color(0, 0, 0));
         lNozzleSwitch.setText("Limpar bico de extrusao");
 
         javax.swing.GroupLayout pNozzleSwitchLayout = new javax.swing.GroupLayout(pNozzleSwitch);
@@ -650,7 +634,6 @@ public class Maintenance extends javax.swing.JDialog {
         pBottom.setMinimumSize(new java.awt.Dimension(20, 26));
         pBottom.setPreferredSize(new java.awt.Dimension(139, 26));
 
-        bCancel.setForeground(new java.awt.Color(0, 0, 0));
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

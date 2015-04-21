@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import static java.awt.Frame.ICONIFIED;
@@ -34,27 +35,28 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationWelcome extends javax.swing.JFrame {
+public class CalibrationWelcome extends javax.swing.JDialog {
 
     private JLabel val_0;
     private JLabel val_35;
     private JLabel val_65;
     private JLabel val_100;
-    private boolean panelHidden;
-    private MachineInterface machine;
+    private final boolean panelHidden;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
     private boolean jLabel12MouseClickedReady = true;
     private boolean jLabel16MouseClickedReady = true;
     private boolean jLabel9MouseClickedReady = true;
     private boolean jLabel10MouseClickedReady = true;
     private boolean jLabel21MouseClickedReady = true;
-    private DisposeFeedbackThread2 disposeThread;
+    private final DisposeFeedbackThread2 disposeThread;
     private boolean keepZ;
     private double currentValue;
     private double height;
-    private double safeDistance;
+    private final double safeDistance;
 
     public CalibrationWelcome(boolean repeat) {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         initSlidersLables();
         setFont();
@@ -375,6 +377,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -383,6 +386,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -443,7 +447,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
         setResizable(false);
@@ -480,7 +484,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -493,7 +497,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -504,7 +508,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Suspendisse potenti.");
         jLabel3.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -512,7 +515,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
         jPanel2.setMaximumSize(new java.awt.Dimension(192, 17));
 
         jLabel1.setBackground(new java.awt.Color(248, 248, 248));
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("CALIBRACAO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -532,7 +534,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
         jPanel7.setBackground(new java.awt.Color(255, 203, 5));
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Moving...Please wait.");
         jLabel5.setMaximumSize(new java.awt.Dimension(140, 17));
         jLabel5.setMinimumSize(new java.awt.Dimension(140, 17));
@@ -555,7 +556,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
                 .addGap(0, 0, 0))
         );
 
-        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
         jLabel9.setText("Afinar");
         jLabel9.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -571,7 +571,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setForeground(new java.awt.Color(0, 0, 0));
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
         jLabel10.setText("Afinar");
         jLabel10.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -587,7 +586,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
         });
 
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3D.png"))); // NOI18N
         jLabel12.setText("Afinar");
         jLabel12.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -603,7 +601,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
         });
 
-        jLabel16.setForeground(new java.awt.Color(0, 0, 0));
         jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_invertedD.png"))); // NOI18N
         jLabel16.setText("Afinar");
         jLabel16.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -686,7 +683,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
         jPanel4.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel4.setPreferredSize(new java.awt.Dimension(567, 27));
 
-        jLabel20.setForeground(new java.awt.Color(0, 0, 0));
         jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel20.setText("ANTERIOR");
         jLabel20.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -702,7 +698,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
         });
 
-        jLabel21.setForeground(new java.awt.Color(0, 0, 0));
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         jLabel21.setText("SEGUINTE");
         jLabel21.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -718,7 +713,6 @@ public class CalibrationWelcome extends javax.swing.JFrame {
             }
         });
 
-        jLabel22.setForeground(new java.awt.Color(0, 0, 0));
         jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel22.setText("SAIR");
         jLabel22.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -965,7 +959,7 @@ public class CalibrationWelcome extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel22MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
@@ -998,8 +992,8 @@ public class CalibrationWelcome extends javax.swing.JFrame {
 
 class DisposeFeedbackThread2 extends Thread {
 
-    private MachineInterface machine;
-    private CalibrationWelcome calibrationPanel;
+    private final MachineInterface machine;
+    private final CalibrationWelcome calibrationPanel;
 
     public DisposeFeedbackThread2(CalibrationWelcome filIns, MachineInterface mach) {
         super("Calibration Welcome Thread");

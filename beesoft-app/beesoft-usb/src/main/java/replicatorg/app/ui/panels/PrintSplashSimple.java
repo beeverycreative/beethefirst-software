@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
@@ -36,23 +37,24 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintSplashSimple extends javax.swing.JFrame implements WindowListener {
+public class PrintSplashSimple extends javax.swing.JDialog implements WindowListener {
 
-    private Printer prt;
+    private final Printer prt;
     private boolean printSoonPressed;
-    private ArrayList<String> preferences;
+    private final ArrayList<String> preferences;
     private boolean gcodeEnded;
     private int posX = 0, posY = 0;
     private long updateSleep;
     private MachineInterface machine;
     private double temperatureGoal = 220; //default
-    private GCodeGenerationThread ut1;
-    private UpdateThread2 ut;
+    private final GCodeGenerationThread ut1;
+    private final UpdateThread2 ut;
     private double progression;
     private boolean temperatureAchieved;
-    private boolean autonomousMode;
+    private final boolean autonomousMode;
 
     public PrintSplashSimple(ArrayList<String> prefs) {
+        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         setFont();
         setTextLanguage();
@@ -317,7 +319,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
         jLabel4 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
@@ -427,7 +429,6 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
         jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
         jLabel4.setText("INCIAR A IMPRESSAO LOGO QUE POSSIVEL");
 
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel11.setText("CANCELAR");
         jLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -512,7 +513,7 @@ public class PrintSplashSimple extends javax.swing.JFrame implements WindowListe
     }//GEN-LAST:event_jLabel11MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
         Base.getMainWindow().setState(ICONIFIED);
         Base.getMainWindow().deactivateCameraControls();
     }//GEN-LAST:event_jLabel13MousePressed

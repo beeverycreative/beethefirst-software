@@ -1,9 +1,9 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -47,17 +47,17 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowListener {
+public class PrintSplashAutonomous extends javax.swing.JDialog implements WindowListener {
 
-    private Printer prt;
-    private ArrayList<String> preferences;
+    private final Printer prt;
+    private final ArrayList<String> preferences;
     private boolean printEnded;
     private int posX = 0, posY = 0;
     private double startTimeMillis;
     private double startTimeMillis2;
-    private MachineInterface machine;
-    private UpdateThread4 ut;
-    private TransferControlThread gcodeGenerator;
+    private final MachineInterface machine;
+    private final UpdateThread4 ut;
+    private final TransferControlThread gcodeGenerator;
     private int progression;
     private static final String FORMAT = "%2d:%2d";
     private int remainingTime = 0;
@@ -70,7 +70,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
     private boolean isPaused;
     private static final String PAUSE_PRINT = "M640";
     private Point5d pausePos;
-    private double newEvalue = 0;
+    private final double newEvalue = 0;
     private Double newFvalue;
     private long pausedTime = 0;
     private boolean isShutdown;
@@ -78,6 +78,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
     private boolean shutdownFromDisconnect;
 
     public PrintSplashAutonomous(boolean printingState, ArrayList<String> prefs) {
+        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         setFont();
         setTextLanguage();
@@ -206,7 +207,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
     private String minutesToHours(int minutes, boolean format) {
         int hoursTrunked = 0;
         int minutesTrunked = minutes;
-        double quocient = 0;
+        double quocient;
         final int BASE = 60;
 
         if (format) {
@@ -1150,7 +1151,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         bPause = new javax.swing.JLabel();
         bShutdown = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
@@ -1263,7 +1264,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(vEstimation))
                             .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 30, Short.MAX_VALUE))
+                        .addGap(0, 49, Short.MAX_VALUE))
                     .addComponent(tInfo7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(tInfo3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -1316,7 +1317,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
                         .addGap(6, 6, 6)
                         .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(iPrinting, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(4, 4, 4))
         );
@@ -1325,7 +1326,6 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         jPanel3.setMinimumSize(new java.awt.Dimension(20, 46));
         jPanel3.setPreferredSize(new java.awt.Dimension(423, 127));
 
-        bCancel.setForeground(new java.awt.Color(0, 0, 0));
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1341,7 +1341,6 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             }
         });
 
-        bOk.setForeground(new java.awt.Color(0, 0, 0));
         bOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_14.png"))); // NOI18N
         bOk.setText("OK");
         bOk.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1357,7 +1356,6 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             }
         });
 
-        bUnload.setForeground(new java.awt.Color(0, 0, 0));
         bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bUnload.setText("Unload");
         bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1373,7 +1371,6 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             }
         });
 
-        bPause.setForeground(new java.awt.Color(0, 0, 0));
         bPause.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bPause.setText("PAUSE");
         bPause.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1389,7 +1386,6 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
             }
         });
 
-        bShutdown.setForeground(new java.awt.Color(0, 0, 0));
         bShutdown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bShutdown.setText("Shutdown");
         bShutdown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1516,7 +1512,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
         Base.getMainWindow().deactivateCameraControls();
     }//GEN-LAST:event_jLabel13MousePressed
 

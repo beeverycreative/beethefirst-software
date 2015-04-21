@@ -1,14 +1,11 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,10 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.border.TitledBorder;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
@@ -42,7 +37,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ControlPanel extends javax.swing.JFrame {
+public class ControlPanel extends javax.swing.JDialog {
 
     private MachineInterface machine;
     private double temperatureGoal;
@@ -56,8 +51,8 @@ public class ControlPanel extends javax.swing.JFrame {
     private static final String HOME = "G28";
     private static final String FAN_OFF = "M107";
     private static final String FAN_ON = "M106";
-    private double safeDistance = 122;
-    private TemperatureThread disposeThread;
+    private final double safeDistance = 122;
+    private final TemperatureThread disposeThread;
     private boolean coolFanPressed;
     private boolean loggingTemperature;
     private boolean freeJogging;
@@ -68,6 +63,7 @@ public class ControlPanel extends javax.swing.JFrame {
     private boolean jogButtonPressed = false;
 
     public ControlPanel() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         Base.writeLog("Advanced panel opened...");
         setFont();
@@ -409,7 +405,7 @@ public class ControlPanel extends javax.swing.JFrame {
         bOK = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(1029, 515));
         setResizable(false);
@@ -418,7 +414,6 @@ public class ControlPanel extends javax.swing.JFrame {
         jPanel1.setToolTipText("");
 
         jPanel2.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel2.setBorder(null);
         jPanel2.setToolTipText("");
         jPanel2.setPreferredSize(new java.awt.Dimension(415, 409));
 
@@ -734,7 +729,7 @@ public class ControlPanel extends javax.swing.JFrame {
                         .addComponent(bCenterZ, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bCurrentPosition, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
                     .addComponent(jogCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -812,7 +807,6 @@ public class ControlPanel extends javax.swing.JFrame {
         );
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel3.setBorder(null);
 
         targetTemperature.setText("Target temperature");
 
@@ -998,7 +992,6 @@ public class ControlPanel extends javax.swing.JFrame {
         jPanel4.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel4.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bOK.setForeground(new java.awt.Color(0, 0, 0));
         bOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bOK.setText("OK");
         bOK.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1014,7 +1007,6 @@ public class ControlPanel extends javax.swing.JFrame {
             }
         });
 
-        bCancel.setForeground(new java.awt.Color(0, 0, 0));
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bCancel.setText("Cancel");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1068,7 +1060,7 @@ public class ControlPanel extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 443, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1653,8 +1645,8 @@ public class ControlPanel extends javax.swing.JFrame {
 
 class TemperatureThread extends Thread {
 
-    private MachineInterface machine;
-    private ControlPanel controlPanel;
+    private final MachineInterface machine;
+    private final ControlPanel controlPanel;
 
     public TemperatureThread(ControlPanel cPanel, MachineInterface mach) {
         super("Cleanup Thread");

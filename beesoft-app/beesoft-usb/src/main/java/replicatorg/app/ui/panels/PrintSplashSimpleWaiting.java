@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import static java.awt.Frame.ICONIFIED;
@@ -46,7 +47,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements WindowListener {
+public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements WindowListener {
 
     private final Printer prt;
     private boolean printEnded;
@@ -68,6 +69,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     private boolean firstUnloadStep = false;
 
     public PrintSplashSimpleWaiting(ArrayList<String> preferences, Printer p) {
+        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         setFont();
         setTextLanguage();
@@ -677,7 +679,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         bPause = new javax.swing.JLabel();
         bUnload = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(248, 248, 248));
         setUndecorated(true);
         setResizable(false);
@@ -809,7 +811,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                             .addComponent(tInfo6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
                             .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 12, Short.MAX_VALUE))
                     .addComponent(tInfo7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -860,7 +862,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(iPrinting, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -869,7 +871,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         jPanel3.setMinimumSize(new java.awt.Dimension(20, 46));
         jPanel3.setPreferredSize(new java.awt.Dimension(423, 127));
 
-        bCancel.setForeground(new java.awt.Color(0, 0, 0));
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -885,7 +886,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             }
         });
 
-        bOk.setForeground(new java.awt.Color(0, 0, 0));
         bOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bOk.setText("OK");
         bOk.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -901,7 +901,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             }
         });
 
-        bPause.setForeground(new java.awt.Color(0, 0, 0));
         bPause.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bPause.setText("PAUSE");
         bPause.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -917,7 +916,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             }
         });
 
-        bUnload.setForeground(new java.awt.Color(0, 0, 0));
         bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bUnload.setText("Unload");
         bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -983,7 +981,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
     }//GEN-LAST:event_bCloseMousePressed
 
     private void bMinimizeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinimizeMousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
         Base.getMainWindow().deactivateCameraControls();
     }//GEN-LAST:event_bMinimizeMousePressed
 
@@ -1335,7 +1333,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
 
     private void doCancel() {
         dispose();
-        MachineInterface machine = Base.getMainWindow().getMachine();
+        MachineInterface mchn = Base.getMainWindow().getMachine();
         Base.bringAllWindowsToFront();
         Base.getMainWindow().handleStop();
         Base.getMainWindow().setEnabled(true);
@@ -1349,10 +1347,10 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
 
         enableSleep();
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
+        Point5d b = mchn.getTablePoints("safe");
+        double acLow = mchn.getAcceleration("acLow");
+        double acHigh = mchn.getAcceleration("acHigh");
+        double spHigh = mchn.getFeedrate("spHigh");
 
         // Sleep before home after M112
         try {
@@ -1361,10 +1359,10 @@ public class PrintSplashSimpleWaiting extends javax.swing.JFrame implements Wind
             Logger.getLogger(PrintSplashSimpleWaiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 Z", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 XY", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        mchn.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+        mchn.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 Z", COM.BLOCK));
+        mchn.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 XY", COM.BLOCK));
+        mchn.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
     }
 }

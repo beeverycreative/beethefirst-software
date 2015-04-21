@@ -3,13 +3,10 @@ package replicatorg.app.ui.panels;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
@@ -30,9 +27,9 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderSwitch1 extends javax.swing.JFrame {
+public class ExtruderSwitch1 extends javax.swing.JDialog {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private boolean quickGuide;
     private int posX = 0, posY = 0;
     private double temperatureGoal;
@@ -180,6 +177,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -188,6 +186,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -259,7 +258,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         pWarning = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
@@ -268,7 +267,6 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
         pButtons.setMinimumSize(new java.awt.Dimension(20, 38));
         pButtons.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bBack.setForeground(new java.awt.Color(0, 0, 0));
         bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bBack.setText("ANTERIOR");
         bBack.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -284,7 +282,6 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
             }
         });
 
-        bNext.setForeground(new java.awt.Color(0, 0, 0));
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -300,7 +297,6 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
             }
         });
 
-        bQuit.setForeground(new java.awt.Color(0, 0, 0));
         bQuit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bQuit.setText("SAIR");
         bQuit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -323,7 +319,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 348, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 365, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -388,7 +384,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -401,14 +397,13 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 203, 5));
         jPanel3.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        pWarning.setForeground(new java.awt.Color(0, 0, 0));
         pWarning.setText("Heating...Please wait.");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -417,7 +412,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -538,7 +533,7 @@ public class ExtruderSwitch1 extends javax.swing.JFrame {
     }//GEN-LAST:event_bQuitMousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

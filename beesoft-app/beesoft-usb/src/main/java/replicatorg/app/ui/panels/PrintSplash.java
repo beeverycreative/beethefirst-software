@@ -2,8 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,12 +23,13 @@ import replicatorg.model.CAMPanel;
 * for more details. You should have received a copy of the GNU General
 * Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
 */
-public class PrintSplash extends javax.swing.JFrame {
+public class PrintSplash extends javax.swing.JDialog {
 
-    private double estimatedTime;
+    private final double estimatedTime;
     private int posX=0,posY=0;
     
     public PrintSplash(double estdTime) {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         this.estimatedTime = estdTime;
         setFont();
@@ -82,6 +83,7 @@ public class PrintSplash extends javax.swing.JFrame {
     {
         this.addMouseListener(new MouseAdapter()
         {
+           @Override
            public void mousePressed(MouseEvent e)
            {
               posX=e.getX();
@@ -92,6 +94,7 @@ public class PrintSplash extends javax.swing.JFrame {
         
         this.addMouseMotionListener(new MouseAdapter()
         {
+             @Override
              public void mouseDragged(MouseEvent evt)
              {
                         //sets frame position when mouse dragged			
@@ -118,7 +121,7 @@ public class PrintSplash extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(423, 501));
         setResizable(false);
@@ -236,7 +239,6 @@ public class PrintSplash extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(255, 203, 5));
         jPanel3.setMinimumSize(new java.awt.Dimension(20, 46));
 
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_13.png"))); // NOI18N
         jLabel11.setText("CANCELAR");
         jLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -319,7 +321,7 @@ public class PrintSplash extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     

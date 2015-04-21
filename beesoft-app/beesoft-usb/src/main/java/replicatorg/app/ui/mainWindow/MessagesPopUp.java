@@ -20,7 +20,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class MessagesPopUp extends javax.swing.JFrame {
+public class MessagesPopUp extends javax.swing.JDialog {
 
     public MessagesPopUp() {
         initComponents();
@@ -155,7 +155,7 @@ public class MessagesPopUp extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setFocusable(false);
         setFocusableWindowState(false);
         setMinimumSize(new java.awt.Dimension(550, 57));

@@ -1,9 +1,9 @@
 package replicatorg.app.ui.mainWindow;
 
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,7 +46,7 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class UpdateChecker extends javax.swing.JFrame {
+public class UpdateChecker extends javax.swing.JDialog {
 
     private int posX = 0, posY = 0;
     private final Driver driver;
@@ -57,6 +56,7 @@ public class UpdateChecker extends javax.swing.JFrame {
     private String updateString;
 
     public UpdateChecker() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -393,7 +393,7 @@ public class UpdateChecker extends javax.swing.JFrame {
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(350, 180));
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(350, 180));
@@ -401,7 +401,6 @@ public class UpdateChecker extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("BEESOFT");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -483,7 +482,6 @@ public class UpdateChecker extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 46));
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel18.setText("OK");
         jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -499,7 +497,6 @@ public class UpdateChecker extends javax.swing.JFrame {
             }
         });
 
-        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
         jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
         jLabel19.setText("Download");
         jLabel19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -604,7 +601,7 @@ public class UpdateChecker extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

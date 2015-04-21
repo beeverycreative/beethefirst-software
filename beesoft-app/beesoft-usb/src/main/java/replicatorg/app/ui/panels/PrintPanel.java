@@ -1,10 +1,10 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -43,7 +43,7 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintPanel extends javax.swing.JFrame {
+public class PrintPanel extends javax.swing.JDialog {
 
     private JLabel quality_prototype;
     private JLabel quality_normal;
@@ -51,7 +51,7 @@ public class PrintPanel extends javax.swing.JFrame {
     private JLabel quality_low;
     private JLabel quality_medium;
     private JLabel quality_solid;
-    private ArrayList<String> prefs;
+    private final ArrayList<String> prefs;
     private boolean raftPressed, supportPressed, autonomousPressed, gcodeSavePressed;
     private int posX = 0, posY = 0;
     private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
@@ -80,6 +80,7 @@ public class PrintPanel extends javax.swing.JFrame {
     private String gcodeToPrint = null;
 
     public PrintPanel() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         initSlidersLabels();
         setFont();
@@ -891,7 +892,7 @@ public class PrintPanel extends javax.swing.JFrame {
         bCancel = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
@@ -929,7 +930,7 @@ public class PrintPanel extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -942,22 +943,18 @@ public class PrintPanel extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("IMPRIMIR");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Qualidade");
 
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Densidade");
 
         densitySlider.setBackground(new java.awt.Color(248, 248, 248));
-        densitySlider.setForeground(new java.awt.Color(0, 0, 0));
         densitySlider.setMajorTickSpacing(1);
         densitySlider.setPaintLabels(true);
         densitySlider.setSnapToTicks(true);
@@ -988,7 +985,6 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Raft");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -996,7 +992,6 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Suspendisse potenti.");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1004,7 +999,6 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel9.setForeground(new java.awt.Color(0, 0, 0));
         jLabel9.setText("Support");
         jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1012,7 +1006,6 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel10.setForeground(new java.awt.Color(0, 0, 0));
         jLabel10.setText("Suspendisse potenti.");
         jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1020,36 +1013,28 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        filamentType.setForeground(new java.awt.Color(0, 0, 0));
         filamentType.setText("Filament Type");
 
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        jLabel22.setForeground(new java.awt.Color(0, 0, 0));
         jLabel22.setText("NO_FILAMENT");
 
-        jLabel23.setForeground(new java.awt.Color(0, 0, 0));
         jLabel23.setText("a");
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        estimatedPrintTime.setForeground(new java.awt.Color(0, 0, 0));
         estimatedPrintTime.setText("Print time:");
 
         jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        estimatedMaterial.setForeground(new java.awt.Color(0, 0, 0));
         estimatedMaterial.setText("Material cost:");
 
-        printTime.setForeground(new java.awt.Color(0, 0, 0));
         printTime.setText("N/A");
 
-        materialCost.setForeground(new java.awt.Color(0, 0, 0));
         materialCost.setText("N/A");
 
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
 
-        bEstimate.setForeground(new java.awt.Color(0, 0, 0));
         bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
         bEstimate.setText("Estimate");
         bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -1112,7 +1097,6 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        b_changeFilament.setForeground(new java.awt.Color(0, 0, 0));
         b_changeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
         b_changeFilament.setText("Mudar filamento agora");
         b_changeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1212,7 +1196,7 @@ public class PrintPanel extends javax.swing.JFrame {
                                 .addComponent(lDensity)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(68, Short.MAX_VALUE))))
+                        .addContainerGap(42, Short.MAX_VALUE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(137, 137, 137)
                 .addComponent(b_changeFilament)
@@ -1281,14 +1265,13 @@ public class PrintPanel extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
                 .addComponent(b_changeFilament)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 26));
         jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
 
-        bCancel.setForeground(new java.awt.Color(0, 0, 0));
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1304,7 +1287,6 @@ public class PrintPanel extends javax.swing.JFrame {
             }
         });
 
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
         jLabel12.setText("IMPRIMIR");
         jLabel12.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1515,7 +1497,7 @@ public class PrintPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_bCancelMousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

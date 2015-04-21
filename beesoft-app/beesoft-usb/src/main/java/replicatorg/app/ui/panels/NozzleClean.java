@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import static java.awt.Frame.ICONIFIED;
@@ -30,15 +31,16 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class NozzleClean extends javax.swing.JFrame {
+public class NozzleClean extends javax.swing.JDialog {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
     private boolean achievement;
-    private double heatTemperature = 120;
-    private DisposeFeedbackThread6 disposeThread;
+    private final double heatTemperature = 120;
+    private final DisposeFeedbackThread6 disposeThread;
 
     public NozzleClean() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -192,6 +194,7 @@ public class NozzleClean extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -200,6 +203,7 @@ public class NozzleClean extends javax.swing.JFrame {
 
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -212,11 +216,7 @@ public class NozzleClean extends javax.swing.JFrame {
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
         double temperature = machine.getDriver().getTemperature();
 
-        if (temperature < heatTemperature) {
-            achievement = false;
-        } else {
-            achievement = true;
-        }
+        achievement = temperature >= heatTemperature;
         return achievement;
     }
 
@@ -283,7 +283,7 @@ public class NozzleClean extends javax.swing.JFrame {
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
@@ -321,7 +321,7 @@ public class NozzleClean extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 9, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -334,7 +334,7 @@ public class NozzleClean extends javax.swing.JFrame {
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 3, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -348,17 +348,14 @@ public class NozzleClean extends javax.swing.JFrame {
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Limpeza do bico de extrusao");
 
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Suspendisse potenti.");
         jLabel5.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jPanel3.setBackground(new java.awt.Color(255, 203, 5));
         jPanel3.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Heating...Please wait.");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -368,7 +365,7 @@ public class NozzleClean extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -422,7 +419,6 @@ public class NozzleClean extends javax.swing.JFrame {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 27));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 27));
 
-        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel17.setText("ANTERIOR");
         jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -438,7 +434,6 @@ public class NozzleClean extends javax.swing.JFrame {
             }
         });
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel18.setText("SEGUINTE");
         jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -454,7 +449,6 @@ public class NozzleClean extends javax.swing.JFrame {
             }
         });
 
-        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
         jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         jLabel19.setText("SAIR");
         jLabel19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -477,7 +471,7 @@ public class NozzleClean extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 353, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 361, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
@@ -596,7 +590,7 @@ public class NozzleClean extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel19MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
@@ -624,8 +618,8 @@ public class NozzleClean extends javax.swing.JFrame {
 
 class DisposeFeedbackThread6 extends Thread {
 
-    private MachineInterface machine;
-    private NozzleClean nozzlePanel;
+    private final MachineInterface machine;
+    private final NozzleClean nozzlePanel;
 
     public DisposeFeedbackThread6(NozzleClean filIns, MachineInterface mach) {
         super("Nozzle Clean Thread");

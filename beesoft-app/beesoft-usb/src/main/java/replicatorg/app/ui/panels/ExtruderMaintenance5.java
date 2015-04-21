@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
@@ -32,15 +33,16 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance5 extends javax.swing.JFrame {
+public class ExtruderMaintenance5 extends javax.swing.JDialog {
 
-    private MachineInterface machine;
+    private final MachineInterface machine;
     private int posX = 0, posY = 0;
-    private ExtruderMaintenanceDisposeFeedbackThread disposeThread;
+    private final ExtruderMaintenanceDisposeFeedbackThread disposeThread;
     private boolean unloadPressed;
     private String previousColor = "";
 
     public ExtruderMaintenance5() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -184,6 +186,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
 
     private void enableDrag() {
         this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 posX = e.getX();
                 posY = e.getY();
@@ -191,6 +194,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
         });
 
         this.addMouseMotionListener(new MouseAdapter() {
+            @Override
             public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged			
                 setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
@@ -265,7 +269,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(248, 248, 248));
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
@@ -278,22 +282,18 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
         jPanel1.setRequestFocusEnabled(false);
 
         pText2.setBackground(new java.awt.Color(248, 248, 248));
-        pText2.setForeground(new java.awt.Color(0, 0, 0));
         pText2.setText("Suspendisse potenti. ");
         pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         lTitle.setBackground(new java.awt.Color(248, 248, 248));
-        lTitle.setForeground(new java.awt.Color(0, 0, 0));
         lTitle.setText("INSERIR FILAMENTO");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         pText1.setBackground(new java.awt.Color(248, 248, 248));
-        pText1.setForeground(new java.awt.Color(0, 0, 0));
         pText1.setText("Como descarregar ou carregar o filamento");
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        bLoad.setForeground(new java.awt.Color(0, 0, 0));
         bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
         bLoad.setText("Load");
         bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -309,7 +309,6 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
             }
         });
 
-        bUnload.setForeground(new java.awt.Color(0, 0, 0));
         bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
         bUnload.setText("Unload");
         bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -411,7 +410,6 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));
         jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        pWarning.setForeground(new java.awt.Color(0, 0, 0));
         pWarning.setText("Moving...Please wait.");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -420,7 +418,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -465,14 +463,13 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
                 .addComponent(pText1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addGap(0, 19, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bBack.setForeground(new java.awt.Color(0, 0, 0));
         bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bBack.setText("ANTERIOR");
         bBack.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -488,7 +485,6 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
             }
         });
 
-        bNext.setForeground(new java.awt.Color(0, 0, 0));
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -504,7 +500,6 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
             }
         });
 
-        bExit.setForeground(new java.awt.Color(0, 0, 0));
         bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
         bExit.setText("SAIR");
         bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -527,7 +522,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 348, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 371, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -564,7 +559,6 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
 
     private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
         if (Base.printPaused) {
-            return;
         } else {
             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
         }
@@ -573,7 +567,6 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
 
     private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
         if (Base.printPaused) {
-            return;
         } else {
             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
         }
@@ -617,7 +610,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
     }//GEN-LAST:event_bExitMousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
@@ -693,6 +686,7 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
             unloadPressed = false;
 
             EventQueue.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         Base.writeLog("Load filament pressed");
@@ -756,8 +750,8 @@ public class ExtruderMaintenance5 extends javax.swing.JFrame {
 
 class ExtruderMaintenanceDisposeFeedbackThread extends Thread {
 
-    private MachineInterface machine;
-    private ExtruderMaintenance5 filamentPanel;
+    private final MachineInterface machine;
+    private final ExtruderMaintenance5 filamentPanel;
 
     public ExtruderMaintenanceDisposeFeedbackThread(ExtruderMaintenance5 filIns, MachineInterface mach) {
         super("Filament Insertion Thread");

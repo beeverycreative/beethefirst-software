@@ -1,5 +1,6 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import static java.awt.Frame.ICONIFIED;
@@ -24,12 +25,13 @@ import replicatorg.app.ui.GraphicDesignComponents;
 * for more details. You should have received a copy of the GNU General
 * Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
 */
-public class WelcomeQuickguide extends javax.swing.JFrame {
+public class WelcomeQuickguide extends javax.swing.JDialog {
 
     boolean configuredPressed;
     private int posX=0,posY=0;
     
     public WelcomeQuickguide() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -169,17 +171,15 @@ public class WelcomeQuickguide extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
         jPanel1.setPreferredSize(new java.awt.Dimension(410, 204));
 
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("BEM-VINDO");
 
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Suspendisse potenti.");
         jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -261,7 +261,6 @@ public class WelcomeQuickguide extends javax.swing.JFrame {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 27));
         jPanel2.setPreferredSize(new java.awt.Dimension(91, 27));
 
-        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
         jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel18.setText("SEGUINTE");
         jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -282,7 +281,7 @@ public class WelcomeQuickguide extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(329, Short.MAX_VALUE)
+                .addContainerGap(330, Short.MAX_VALUE)
                 .addComponent(jLabel18)
                 .addGap(12, 12, 12))
         );
@@ -343,7 +342,7 @@ public class WelcomeQuickguide extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel18MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
