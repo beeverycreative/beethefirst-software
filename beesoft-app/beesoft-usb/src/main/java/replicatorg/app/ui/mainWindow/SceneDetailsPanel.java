@@ -1,6 +1,5 @@
 package replicatorg.app.ui.mainWindow;
 
-import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultComboBoxModel;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -22,8 +21,8 @@ import replicatorg.model.PrintBed;
 public class SceneDetailsPanel extends javax.swing.JPanel {
 
     private PrintBed bed;
-    private String[] categories;
-    private DefaultComboBoxModel comboModel;
+    private final String[] categories;
+    private final DefaultComboBoxModel comboModel;
     private static final String FORMAT = "%2d:%2d";
 
     public SceneDetailsPanel() {
@@ -32,8 +31,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         setTextLanguage();
         categories = fullFillCombo();
         comboModel = new DefaultComboBoxModel(categories);
-        jComboBox1.setModel(comboModel);
-        jComboBox1.setSelectedIndex(getModelCategoryIndex());
     }
 
     private void setFont() {
@@ -49,8 +46,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jTextField1.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jTextArea1.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel16.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
     }
 
     private void setTextLanguage() {
@@ -61,7 +56,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel5.setText(Languager.getTagValue(1, "SceneDetails", "Scene_NModels"));
         jLabel6.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintDate"));
         jLabel7.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintTime"));
-        jLabel16.setText(Languager.getTagValue(1, "ModelDetails", "Model_Category"));
     }
 
     private String[] fullFillCombo() {
@@ -128,9 +122,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         } else {
             jLabel10.setText(durT);
         }
-
-
-        jComboBox1.setSelectedIndex(getModelCategoryIndex());
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -150,8 +141,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jComboBox1 = new javax.swing.JComboBox();
-        jLabel16 = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
 
@@ -223,19 +212,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jTextArea1);
 
-        jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                jComboBox1FocusLost(evt);
-            }
-        });
-
-        jLabel16.setFont(new java.awt.Font("Ubuntu", 1, 12)); // NOI18N
-        jLabel16.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel16.setText("Category");
-        jLabel16.setName("nameTitle"); // NOI18N
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -259,12 +235,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(9, 9, 9))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel16)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 13, Short.MAX_VALUE))))
+                        .addGap(9, 9, 9))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,11 +250,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel4)
                 .addGap(1, 1, 1)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel16)
-                .addGap(1, 1, 1)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(67, 67, 67)
                 .addComponent(jLabel5)
                 .addGap(1, 1, 1)
                 .addComponent(jLabel8)
@@ -295,7 +262,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel7)
                 .addGap(1, 1, 1)
                 .addComponent(jLabel10)
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -313,10 +280,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jComboBox1FocusLost
-        Base.getMainWindow().getBed().setCategory(String.valueOf(comboModel.getSelectedItem()));
-    }//GEN-LAST:event_jComboBox1FocusLost
-
     private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
         bed.setName(jTextField1.getText());
     }//GEN-LAST:event_jTextField1KeyReleased
@@ -325,10 +288,8 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         bed.setDescription(jTextArea1.getText());
     }//GEN-LAST:event_jTextArea1KeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

@@ -49,6 +49,7 @@
             <Print value="הדפס"/>
             <Mirror value="ראי"/>
             <Scale value="סולם"/>
+            <ScaleToMax value="קנה מידה למקסימום"/>
             <Move value="מהלך"/>
             <Rotate value="לסובב"/>
             <MoreOptions value="אפשרויות נוספות"/>
@@ -63,7 +64,7 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
-            <Scene value="סצנה"/>
+            <Scene value="אזור עבודה"/>
 	        <Scene_Name value="שם"/>
     	    <Scene_Description value="תיאור"/>
 	        <Scene_NModels value="מספר הדגמים"/>

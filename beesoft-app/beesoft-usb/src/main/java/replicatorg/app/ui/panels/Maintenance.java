@@ -847,8 +847,8 @@ public class Maintenance extends javax.swing.JDialog {
 
 class ControlStatus extends Thread {
 
-    private MachineInterface machine;
-    private Maintenance maintenancePanel;
+    private final MachineInterface machine;
+    private final Maintenance maintenancePanel;
 
     public ControlStatus(Maintenance filIns, MachineInterface mach) {
         super("Maintenance Thread");
