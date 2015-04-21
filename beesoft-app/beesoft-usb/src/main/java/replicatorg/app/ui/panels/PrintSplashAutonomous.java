@@ -583,7 +583,7 @@ public class PrintSplashAutonomous extends javax.swing.JFrame implements WindowL
         tEstimation.setVisible(true);
         vEstimation.setVisible(true);
         vRemaining.setVisible(true);
-        bPause.setVisible(true);
+        bPause.setVisible(false);
         bShutdown.setVisible(false);
     }
 
