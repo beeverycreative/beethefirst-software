@@ -1,8 +1,8 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,7 +26,7 @@ import replicatorg.machine.MachineInterface;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Maintenance extends javax.swing.JFrame {
+public class Maintenance extends javax.swing.JDialog {
 
     private int posX = 0, posY = 0;
     private final int NUMBER_PRINTS_LIMIT = 10;
@@ -35,6 +35,7 @@ public class Maintenance extends javax.swing.JFrame {
     private boolean isConnected = true;
 
     public Maintenance() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -256,7 +257,7 @@ public class Maintenance extends javax.swing.JFrame {
         pBottom = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(747, 565));
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(747, 577));
@@ -821,7 +822,7 @@ public class Maintenance extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        setState(ICONIFIED);
+        //setState(ICONIFIED);
     }//GEN-LAST:event_jLabel13MousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
