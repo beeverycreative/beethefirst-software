@@ -47,8 +47,12 @@ public class Maintenance extends javax.swing.JDialog {
         Base.maintenanceOpened = true;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
-        ctrlStatus.start();
-        Base.systemThreads.add(ctrlStatus);
+        if (isConnected) {
+            Base.turnOnPowerSaving(false);
+            ctrlStatus.start();
+            Base.systemThreads.add(ctrlStatus);
+        }
+
     }
 
     private void setFont() {
@@ -99,7 +103,7 @@ public class Maintenance extends javax.swing.JDialog {
         lExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Title"));
         bExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_button"));
         lExtruderMaintenanceDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Intro"));
-        
+
         lNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Title"));
         bNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_button"));
         lNozzleSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Intro"));
@@ -140,10 +144,7 @@ public class Maintenance extends javax.swing.JDialog {
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
             bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
             bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-        }        
-
-        //Disable Power saving in case
-        Base.turnOnPowerSaving(false);
+        }
     }
 
     private void centerOnScreen() {
@@ -211,11 +212,13 @@ public class Maintenance extends javax.swing.JDialog {
         /**
          * If not autonomous then turn power saving on again
          */
-        if (Base.getMainWindow().getMachine().getDriver().isAutonomous() == false) {
-            /**
-             * Power saving
-             */
-            Base.turnOnPowerSaving(true);
+        if (isConnected) {
+            if (Base.getMainWindow().getMachine().getDriver().isAutonomous() == false) {
+                /**
+                 * Power saving
+                 */
+                Base.turnOnPowerSaving(true);
+            }
         }
     }
 
@@ -698,9 +701,9 @@ public class Maintenance extends javax.swing.JDialog {
     }//GEN-LAST:event_bExtruderMaintenanceMousePressed
 
     private void bExtruderMaintenanceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseExited
-    if (isConnected){
-        bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-    }
+        if (isConnected) {
+            bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+        }
     }//GEN-LAST:event_bExtruderMaintenanceMouseExited
 
     private void bExtruderMaintenanceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseEntered
@@ -728,7 +731,7 @@ public class Maintenance extends javax.swing.JDialog {
     }//GEN-LAST:event_bNozzleSwitchMouseEntered
 
     private void bNozzleSwitchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMouseExited
-        if (isConnected){
+        if (isConnected) {
             bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
         }
     }//GEN-LAST:event_bNozzleSwitchMouseExited
@@ -789,7 +792,7 @@ public class Maintenance extends javax.swing.JDialog {
     }//GEN-LAST:event_bChangeFilamentMousePressed
 
     private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
-        if (isConnected){
+        if (isConnected) {
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
         }
     }//GEN-LAST:event_bChangeFilamentMouseExited
