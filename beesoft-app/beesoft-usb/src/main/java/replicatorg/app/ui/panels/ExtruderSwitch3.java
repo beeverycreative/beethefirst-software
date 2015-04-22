@@ -47,7 +47,7 @@ public class ExtruderSwitch3 extends javax.swing.JDialog {
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
 
         centerOnScreen();
-        //moveToPosition();
+        moveToPosition();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -149,22 +149,16 @@ public class ExtruderSwitch3 extends javax.swing.JDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Heating...");
-        Point5d heat = machine.getTablePoints("heat");
+        Point5d nozzle = machine.getTablePoints("nozzle");
 
+        double acLow = machine.getAcceleration("acLow");
         double acHigh = machine.getAcceleration("acHigh");
-        double acMedium = machine.getAcceleration("acMedium");
         double spHigh = machine.getFeedrate("spHigh");
 
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        //turn off blower before heating
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(nozzle));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
@@ -509,27 +503,7 @@ public class ExtruderSwitch3 extends javax.swing.JDialog {
     }//GEN-LAST:event_bBackMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        finalizeHeat();
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.maintenanceWizardOpen = false;
-        Base.enableAllOpenWindows();
-        Base.bringAllWindowsToFront();
-
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                //            ProperDefault.remove("maintenance");
-
+        doCancel();
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
