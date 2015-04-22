@@ -262,15 +262,7 @@
                                 <chmod file="${target.dir}/BEESOFT" perm="ugo+rx" />
                                 <chmod file="${target.dir}/pypy/bin/pypy" perm="ugo+rx" />
                                 <chmod file="${target.dir}/curaEngine" perm="ugo+rx" includes="**/*" />
-                                
-                                <!--       <tar destfile="dist/${release.name}-linux.tgz" compression="gzip" longfile="gnu">
-                                    <tarfileset dir="dist/linux/${release.name}" prefix="${release.name}" />
-                                    <tarfileset dir="dist/linux/${release.name}" prefix="${release.name}" filemode="755">
-                                        <include name="BEESOFT" />
-                                        <include name="skein_engines/slic3r_engines/linux/bin/slic3r" />
-                                        <include name="skein_engines/slic3r_engines/linux/bin/do_install" />
-                                    </tarfileset>
-                                </tar>  -->                          
+                                                        
                             </target>                                        
                         </configuration>
                         <goals>
@@ -389,8 +381,6 @@
                                         <exec executable="${installer.dir}/app-permissions.sh">
                                             <arg value="${target.app.dir}/BEESOFT.app" />
                                         </exec>
-                                        <!--   <antcall target="dist-macosx-zip" /> -->
-                                        <!--   <antcall target="dist-macosx-dmg" />-->
                                     </target>                                                                                                
                                 </configuration>
                                 <goals>
