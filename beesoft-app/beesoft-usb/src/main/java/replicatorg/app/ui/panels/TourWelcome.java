@@ -126,7 +126,6 @@ public class TourWelcome extends javax.swing.JFrame {
         jPanel3.setMinimumSize(new java.awt.Dimension(20, 26));
         jPanel3.setPreferredSize(new java.awt.Dimension(370, 26));
 
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel11.setText("SEGUINTE");
         jLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -150,7 +149,6 @@ public class TourWelcome extends javax.swing.JFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("JA SEI USAR A APLICACAO,SALTAR O TUTORIAL");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);

@@ -450,7 +450,7 @@
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
                             <!-- optional -->
-                            <workingDirectory>${project.build.directory}/macosx</workingDirectory>
+                            <workingDirectory>${project.build.directory}/mac-${project.release.name}</workingDirectory>
                             
                             <systemProperties>
                                 <systemProperty>
