@@ -63,7 +63,7 @@ public class Model implements Serializable, Cloneable {
 
     public Model(File stl) {
         this.name = stl.getName();
-        this.description = "ND";
+        this.description = " ";
         this.stream = PrintBed.StlToByteArray(stl);
         this.pa = new PolygonAttributes();
         this.pa.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
