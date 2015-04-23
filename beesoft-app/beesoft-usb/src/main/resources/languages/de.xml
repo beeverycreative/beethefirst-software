@@ -162,12 +162,13 @@
     
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
         <MainWindowButtons>
-            <Models value="MODELS"/>
+            <Models value="IMPORT MODEL"/>
             <Maintenance value="MAINTENANCE"/>
             <QuickWizard value="QUICK GUIDE"/>
             <Print value="PRINT"/>
             <Mirror value="Mirror"/>
             <Scale value="Scale"/>  
+            <ScaleToMax value="Scale to Max"/>  
             <Scale_Extense value="Scale in percentage"/>
             <Move value="Move"/>
             <Rotate value="Rotate"/>
@@ -182,7 +183,7 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
-            <Scene value="Scene"/>
+            <Scene value="Work Area"/>
             <Scene_Name value="Name"/>
             <Scene_Description value="Description"/>
             <Scene_NModels value="Number of models"/>
@@ -585,6 +586,8 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Info3a value="Use the nozzle tool to unscrew the nozzle and place it on a heat-resistant surface until it has cooled down."/>
             <Info3b value="Screw in the new nozzle, stop tightening as soon as you feel hard resistance. You can now load some fresh filament and see the result of the new extruder. The filament will be thick and even."/>
             <Info_Warning3 value = "WARNING: BE CAREFULL NOT TO TOUCH THE HOT EXTRUDER."/>
+ 
+            <Title4 value="Extruder Switch"/>
         </ExtruderSwitch>
 
 

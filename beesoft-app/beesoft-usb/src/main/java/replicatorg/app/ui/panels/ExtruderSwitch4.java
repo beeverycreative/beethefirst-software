@@ -28,7 +28,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentCodeInsertion extends javax.swing.JDialog {
+public class ExtruderSwitch4 extends javax.swing.JDialog {
 
     private final MachineInterface machine;
     private int posX = 0, posY = 0;
@@ -38,7 +38,7 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
     private static final String WRITE_CONFIG = "M601";
     private String previousColor = "";
 
-    public FilamentCodeInsertion(String prevColor) {
+    public ExtruderSwitch4(String prevColor) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
@@ -53,18 +53,18 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bBack.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
 
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title5"));
-        jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
-        jLabel17.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        jLabel1.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title4"));
+        jLabel3.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title4"));
+        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
@@ -86,14 +86,15 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
 
     private void evaluateInitialConditions() {
         Base.getMainWindow().setEnabled(false);
+        bBack.setVisible(false);
         categories = fullFillCombo();
         comboModel = new DefaultComboBoxModel(categories);
         jComboBox1.setModel(comboModel);
         jComboBox1.setSelectedIndex(getModelCategoryIndex());
 
         if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-            jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
 
         if (Base.printPaused == true) {
@@ -159,7 +160,6 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
             }
         });
 
-
         this.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent evt) {
@@ -205,8 +205,8 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
+        bBack = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -222,40 +222,39 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel17.setText("ANTERIOR");
-        jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
+        bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bBack.setText("ANTERIOR");
+        bBack.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bBack.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel17MouseEntered(evt);
+                bBackMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel17MouseExited(evt);
+                bBackMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel17MousePressed(evt);
+                bBackMousePressed(evt);
             }
         });
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel18.setText("SEGUINTE");
-        jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("SEGUINTE");
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel18MouseEntered(evt);
+                bNextMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel18MouseExited(evt);
+                bNextMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel18MousePressed(evt);
+                bNextMousePressed(evt);
             }
         });
 
@@ -282,9 +281,9 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(bCancel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 362, Short.MAX_VALUE)
-                .addComponent(jLabel17)
+                .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel18)
+                .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
         jPanel2Layout.setVerticalGroup(
@@ -292,8 +291,8 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(jLabel18)
+                    .addComponent(bBack)
+                    .addComponent(bNext)
                     .addComponent(bCancel))
                 .addGap(20, 20, 20))
         );
@@ -422,29 +421,29 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel18MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseEntered
+    private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
         if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
         } else {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
         }
-    }//GEN-LAST:event_jLabel18MouseEntered
+    }//GEN-LAST:event_bNextMouseEntered
 
-    private void jLabel18MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseExited
+    private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
         if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
         } else {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         }
-    }//GEN-LAST:event_jLabel18MouseExited
+    }//GEN-LAST:event_bNextMouseExited
 
-    private void jLabel17MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseEntered
-        jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_jLabel17MouseEntered
+    private void bBackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseEntered
+        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bBackMouseEntered
 
-    private void jLabel17MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseExited
-        jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_jLabel17MouseExited
+    private void bBackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseExited
+        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bBackMouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
         if (Base.printPaused == false) {
@@ -458,28 +457,10 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_bCancelMouseExited
 
-    private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
+    private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
 //        if (validateCode()) {
 
         String code = parseComboCode();
-
-        /**
-         * Checks if color switch was between this combinations
-         */
-        boolean blackTurquoise = previousColor.equals("A335") && code.equals("A332")
-                || previousColor.equals("A332") && code.equals("A335");
-
-        boolean yellowRed = previousColor.equals("A333") && code.equals("A334")
-                || previousColor.equals("A334") && code.equals("A333");
-
-        /**
-         * If this is made on print paused and color is not the same then flag
-         * it to machineThread to process GCode on runCommand
-         */
-        if (Base.printPaused && !blackTurquoise && !yellowRed) {
-            machine.setFilamentChanged(true);
-            machine.setLastBEECode(previousColor);
-        }//no need for else
 
         //set the coil code: M400 <COILCODE>
         machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
@@ -492,52 +473,44 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
         Base.loadProperties();
         Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()));
         Base.getMainWindow().getBed().setGcodeOK(false);
+        dispose();
 
-        if (!ProperDefault.get("maintenance").equals("1")) {
-            dispose();
-            NozzleClean p = new NozzleClean();
-            p.setVisible(true);
-        } else {
-            dispose();
+        /**
+         * If print is not paused, cool down
+         */
+        if (Base.printPaused == false) {
+            finalizeHeat();
+        }//no need for else
 
-            /**
-             * If print is not paused, cool down
-             */
-            if (Base.printPaused == false) {
-                finalizeHeat();
-            }//no need for else
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
 
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
-            Base.enableAllOpenWindows();
-            Base.bringAllWindowsToFront();
+        Base.enableAllOpenWindows();
+        Base.bringAllWindowsToFront();
 
-            if (Base.printPaused == false) {
-                Point5d b = machine.getTablePoints("safe");
-                double acLow = machine.getAcceleration("acLow");
-                double acHigh = machine.getAcceleration("acHigh");
-                double spHigh = machine.getFeedrate("spHigh");
+        if (Base.printPaused == false) {
+            Point5d b = machine.getTablePoints("safe");
+            double acLow = machine.getAcceleration("acLow");
+            double acHigh = machine.getAcceleration("acHigh");
+            double spHigh = machine.getFeedrate("spHigh");
 
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                //            ProperDefault.remove("maintenance");
-            }
-
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
+            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            //            ProperDefault.remove("maintenance");
         }
-    }//GEN-LAST:event_jLabel18MousePressed
 
-    private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
+    }//GEN-LAST:event_bNextMousePressed
+
+    private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
         FilamentInsertion p = new FilamentInsertion();
         p.setVisible(true);
         dispose();
 
-    }//GEN-LAST:event_jLabel17MousePressed
+    }//GEN-LAST:event_bBackMousePressed
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         doCancel();
@@ -551,12 +524,12 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
         itemChanged = true;
     }//GEN-LAST:event_jComboBox1ItemStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bBack;
     private javax.swing.JLabel bCancel;
+    private javax.swing.JLabel bNext;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;

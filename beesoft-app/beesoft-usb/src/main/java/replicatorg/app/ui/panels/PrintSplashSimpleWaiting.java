@@ -659,8 +659,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
         jPanel2 = new javax.swing.JPanel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jPanel4 = new javax.swing.JPanel();
-        bMinimize = new javax.swing.JLabel();
-        bMaximize = new javax.swing.JLabel();
         bClose = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         tInfo6 = new javax.swing.JLabel();
@@ -693,15 +691,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setRequestFocusEnabled(false);
 
-        bMinimize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_11.png"))); // NOI18N
-        bMinimize.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bMinimizeMousePressed(evt);
-            }
-        });
-
-        bMaximize.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_10.png"))); // NOI18N
-
         bClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
         bClose.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -714,11 +703,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(bMinimize, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bMaximize)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(51, 51, 51)
                 .addComponent(bClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -726,14 +711,8 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bMinimize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(bClose, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
-                            .addComponent(bMaximize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addComponent(bClose, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel7.setBackground(new java.awt.Color(248, 248, 248));
@@ -980,11 +959,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
         doCancel();
     }//GEN-LAST:event_bCloseMousePressed
 
-    private void bMinimizeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinimizeMousePressed
-        //setState(ICONIFIED);
-        Base.getMainWindow().deactivateCameraControls();
-    }//GEN-LAST:event_bMinimizeMousePressed
-
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
 
         //first time you press unload after print is over
@@ -1205,8 +1179,6 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bClose;
-    private javax.swing.JLabel bMaximize;
-    private javax.swing.JLabel bMinimize;
     private javax.swing.JLabel bOk;
     private javax.swing.JLabel bPause;
     private javax.swing.JLabel bUnload;
