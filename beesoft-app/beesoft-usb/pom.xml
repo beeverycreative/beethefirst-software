@@ -468,7 +468,7 @@
                             </systemProperties>
                             <arguments>                        
                                 <argument>-ea</argument>
-                                <argument>-Xmx2048m</argument>
+                                <argument>-Xmx4098m</argument>
                                 <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
                             </arguments>
                         </configuration>
