@@ -29,15 +29,15 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private double initialWidth, initialDepth, initialHeight;
     private final boolean mm, percentage;
     private boolean checkX = true, checkY = true, checkZ = true;
-    
+    private double oldX, oldY, oldZ;
+    DecimalFormat df = new DecimalFormat("#.0");
+
     public ModelsOperationCenterScale() {
         initComponents();
         this.check_pressed = false;
         this.mm = true;
         this.percentage = false;
 
-        jLabel26.setVisible(false);
-        jLabel27.setVisible(false);
         Base.getMainWindow().getCanvas().setControlTool(3);
         Base.getMainWindow().getCanvas().getControlTool(3).setModelsOperationScale(this);
         setFont();
@@ -49,28 +49,31 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         this.initialWidth = model.getEditer().getWidth();
         this.initialHeight = model.getEditer().getHeight();
         this.initialDepth = model.getEditer().getDepth();
-        
+
         if (this.percentage) {
-            jTextField4.setText(model.getScaleXinPercentage());
-            jTextField5.setText(model.getScaleYinPercentage());
-            jTextField6.setText(model.getScaleZinPercentage());
- 
+            iFieldX.setText(model.getScaleXinPercentage());
+            iFieldY.setText(model.getScaleYinPercentage());
+            iFieldZ.setText(model.getScaleZinPercentage());
+
         } else {
-            
-            DecimalFormat df = new DecimalFormat("#.0");
-            
+
             if (ProperDefault.get("measures").equals("inches")) {
-                jTextField4.setText(df.format(UnitConverter.millimetersToInches(this.initialWidth)));
-                jTextField5.setText(df.format(UnitConverter.millimetersToInches(this.initialDepth)));
-                jTextField6.setText(df.format(UnitConverter.millimetersToInches(this.initialHeight)));
+                iFieldX.setText(df.format(UnitConverter.millimetersToInches(this.initialWidth)));
+                iFieldY.setText(df.format(UnitConverter.millimetersToInches(this.initialDepth)));
+                iFieldZ.setText(df.format(UnitConverter.millimetersToInches(this.initialHeight)));
             } else {
-                jTextField4.setText(df.format(this.initialWidth));
-                jTextField5.setText(df.format(this.initialDepth));
-                jTextField6.setText(df.format(this.initialHeight));
-            }            
+                iFieldX.setText(df.format(this.initialWidth));
+                iFieldY.setText(df.format(this.initialDepth));
+                iFieldZ.setText(df.format(this.initialHeight));
+            }
         }
+
+        oldX = Double.parseDouble(iFieldX.getText());
+        oldY = Double.parseDouble(iFieldY.getText());
+        oldZ = Double.parseDouble(iFieldZ.getText());
+
     }
-    
+
     public boolean isScalePercentage() {
         return this.percentage;
     }
@@ -86,12 +89,11 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel13.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel14.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel15.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel27.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        l_lockRatio.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jTextField4.setFont(GraphicDesignComponents.getSSProRegular("13"));
-        jTextField5.setFont(GraphicDesignComponents.getSSProRegular("13"));
-        jTextField6.setFont(GraphicDesignComponents.getSSProRegular("13"));
-        jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        iFieldX.setFont(GraphicDesignComponents.getSSProRegular("13"));
+        iFieldY.setFont(GraphicDesignComponents.getSSProRegular("13"));
+        iFieldZ.setFont(GraphicDesignComponents.getSSProRegular("13"));
+        bScaleToMax.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bApply.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
@@ -100,81 +102,79 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
         jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
         jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions")); 
-        
+        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
+
         if (this.percentage) {
-             jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale_Extense"));
+            jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale_Extense"));
         } else {
             if (ProperDefault.get("measures").equals("inches")) {
                 jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
-                        +" ("+Languager.getTagValue(1, "MainWindowButtons", "Inches")+")");
+                        + " (" + Languager.getTagValue(1, "MainWindowButtons", "Inches") + ")");
             } else {
                 jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
-                        +" ("+Languager.getTagValue(1, "MainWindowButtons", "MM")+")");
+                        + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
             }
         }
 
-        jLabel27.setText(Languager.getTagValue(1, "MainWindowButtons", "Percentage"));
-        l_lockRatio.setText(Languager.getTagValue(1, "MainWindowButtons", "LockRatio"));
-        jLabel18.setText(Languager.getTagValue(1, "MainWindowButtons", "ScaleToMax"));
+        bScaleToMax.setText(Languager.getTagValue(1, "MainWindowButtons", "ScaleToMax"));
+        bApply.setText(Languager.getTagValue(1, "MainWindowButtons", "Apply"));
+
     }
 
     public void setXValue(String val) {
-        this.jTextField4.setText(val);
+        this.iFieldX.setText(val);
     }
 
     public void setYValue(String val) {
-        this.jTextField5.setText(val);
+        this.iFieldY.setText(val);
     }
 
     public void setZValue(String val) {
-        this.jTextField6.setText(val);
+        this.iFieldZ.setText(val);
     }
 
-    private void toggleX()
-    {
+    private void toggleX() {
         if (checkX) {
             checkX = false;
             jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
-        } else {            
+        } else {
             checkX = true;
             jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
         }
     }
-    
-    private void toggleY()
-    {
+
+    private void toggleY() {
         if (checkY) {
             checkY = false;
             jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
-        } else {            
+        } else {
             checkY = true;
             jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
         }
     }
-    
-    private void toggleZ()
-    {
+
+    private void toggleZ() {
         if (checkZ) {
             checkZ = false;
             jLabel20.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
-        } else {            
+        } else {
             checkZ = true;
             jLabel20.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
         }
-    }    
-    
+    }
+
     public boolean isXLocked() {
         return this.checkX;
     }
-    
+
     public boolean isYLocked() {
         return this.checkY;
     }
-        
+
     public boolean isZLocked() {
         return this.checkZ;
     }
+
     private void toggleOptions() {
         if (check_pressed) {
             jPanel2.setVisible(false);
@@ -184,32 +184,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             jPanel2.setVisible(true);
             check_pressed = true;
             jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
-        }
-    }
-
-    /**
-     * Lock scale fields for a unified operation
-     *
-     * @param b <li> true, if to lock
-     * <li> false, if to unlock
-     */
-    private void lockScale(boolean b) {
-        scaleLocked = b;
-    }
-    
-    private void lockRatio() {
-        if (lockedRatio) {
-            lockedRatio = false;
-            lockRatio.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
-        } else {
-            lockedRatio = true;
-            lockRatio.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
-        }
-        
-        if (scaleLocked) {
-            lockScale(false);
-        } else {
-            lockScale(true);
         }
     }
 
@@ -234,17 +208,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jLabel26 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        lockRatio = new javax.swing.JLabel();
-        l_lockRatio = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
+        iFieldX = new javax.swing.JTextField();
+        iFieldY = new javax.swing.JTextField();
+        iFieldZ = new javax.swing.JTextField();
+        bScaleToMax = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
+        bApply = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
 
@@ -354,81 +325,56 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel15.setText("Z");
         jLabel15.setName("zAxisButton"); // NOI18N
 
-        jTextField4.setName("xScaleValue"); // NOI18N
-        jTextField4.addFocusListener(new java.awt.event.FocusAdapter() {
+        iFieldX.setName("xScaleValue"); // NOI18N
+        iFieldX.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField4FocusGained(evt);
+                iFieldXFocusGained(evt);
             }
         });
-        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
+        iFieldX.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField4KeyReleased(evt);
+                iFieldXKeyReleased(evt);
             }
         });
 
-        jTextField5.setName("yScaleValue"); // NOI18N
-        jTextField5.addFocusListener(new java.awt.event.FocusAdapter() {
+        iFieldY.setName("yScaleValue"); // NOI18N
+        iFieldY.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField5FocusGained(evt);
+                iFieldYFocusGained(evt);
             }
         });
-        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
+        iFieldY.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField5KeyReleased(evt);
+                iFieldYKeyReleased(evt);
             }
         });
 
-        jTextField6.setName("zScaleValue"); // NOI18N
-        jTextField6.addFocusListener(new java.awt.event.FocusAdapter() {
+        iFieldZ.setName("zScaleValue"); // NOI18N
+        iFieldZ.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField6FocusGained(evt);
+                iFieldZFocusGained(evt);
             }
         });
-        jTextField6.addKeyListener(new java.awt.event.KeyAdapter() {
+        iFieldZ.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField6KeyReleased(evt);
+                iFieldZKeyReleased(evt);
             }
         });
 
-        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_checked.png"))); // NOI18N
-        jLabel26.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel26MouseClicked(evt);
-            }
-        });
-
-        jLabel27.setFont(new java.awt.Font("Ubuntu", 0, 13)); // NOI18N
-        jLabel27.setText("percentage");
-
-        lockRatio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_unchecked.png"))); // NOI18N
-        lockRatio.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                lockRatioMousePressed(evt);
-            }
-        });
-
-        l_lockRatio.setFont(new java.awt.Font("Ubuntu", 0, 13)); // NOI18N
-        l_lockRatio.setText("Lock aspect ratio");
-        l_lockRatio.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                l_lockRatioMousePressed(evt);
-            }
-        });
-
-        jLabel18.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_12.png"))); // NOI18N
-        jLabel18.setText("Scale to Max");
-        jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel18.setName("xAxisButton"); // NOI18N
-        jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel18MousePressed(evt);
+        bScaleToMax.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bScaleToMax.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_12.png"))); // NOI18N
+        bScaleToMax.setText("Scale to Max");
+        bScaleToMax.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bScaleToMax.setName("xAxisButton"); // NOI18N
+        bScaleToMax.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bScaleToMaxMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel18MouseExited(evt);
+                bScaleToMaxMouseExited(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel18MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bScaleToMaxMousePressed(evt);
             }
         });
 
@@ -453,6 +399,23 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             }
         });
 
+        bApply.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bApply.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_12.png"))); // NOI18N
+        bApply.setText("Apply");
+        bApply.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bApply.setName("xAxisButton"); // NOI18N
+        bApply.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bApplyMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bApplyMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bApplyMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -466,33 +429,24 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                             .addComponent(jLabel14)
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(iFieldZ, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                            .addComponent(iFieldY, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(iFieldX, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel26, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lockRatio))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel27)
-                                    .addComponent(l_lockRatio))
+                                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-                                    .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                        .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bScaleToMax, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+                            .addComponent(bApply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -505,35 +459,26 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(iFieldX, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(4, 4, 4)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(iFieldY, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel14)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(44, 44, 44)
                         .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel15))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lockRatio)
-                            .addComponent(l_lockRatio))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel27)
-                            .addComponent(jLabel26))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(17, 17, 17))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(iFieldZ, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel15))
+                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bApply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(bScaleToMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(17, 17, 17))
         );
 
         jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_checked.png"))); // NOI18N
@@ -558,12 +503,12 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                             .addComponent(jLabel16))
                         .addGap(51, 51, 51)
                         .addComponent(jLabel7))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -587,16 +532,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jLabel26MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel26MouseClicked
-//            jLabel25.setIcon(new ImageIcon(RESOURCES_PATH+"c_unchecked.png"));
-//            jLabel26.setIcon(new ImageIcon(RESOURCES_PATH+"c_checked.png"));
-//            mm = false;
-//            percentage = true;
-    }//GEN-LAST:event_jLabel26MouseClicked
 
     private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
         jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
@@ -621,150 +559,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jLabel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseExited
         jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
     }//GEN-LAST:event_jLabel5MouseExited
-
-    private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
-        boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        
-        double newValuePercentage;
-        String textFieldValue = jTextField4.getText();
-
-        if (!(textFieldValue.length() == 0)) {
-            if (Base.isNumeric(jTextField4.getText())) {
-                if (textFieldValue.contains(",")) {
-                    textFieldValue = textFieldValue.replace(",", ".");
-                }
-
-                if (this.percentage) {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
-
-                } else {
-
-                    if (ProperDefault.get("measures").equals("inches")) {
-                        double sizeInches = Double.parseDouble(textFieldValue);
-
-                        double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
-                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
-                    } else {
-                        double sizeMM = Double.parseDouble(textFieldValue);
-
-                        newValuePercentage = (sizeMM / this.initialWidth) * 100;
-                    }
-                }
-
-                if (newValuePercentage > 0) {
-//                    System.out.println("newValue/model.getXscalePercentage()" + newValuePercentage + "/" + model.getXscalePercentage());
-                    if (scaleLocked) {
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
-
-                    } else {
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
-                    }
-                }
-
-            } else {
-                //jTextField4.setText("");
-            }
-        }
-    }//GEN-LAST:event_jTextField4KeyReleased
-
-    private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
-
-        boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        
-        double newValuePercentage;
-        String textFieldValue = jTextField5.getText();
-
-        if (!(textFieldValue.length() == 0)) {
-            if (Base.isNumeric(jTextField5.getText())) {
-                if (textFieldValue.contains(",")) {
-                    textFieldValue = textFieldValue.replace(",", ".");
-                }
-
-                if (this.percentage) {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
-                } else {
-
-                    if (ProperDefault.get("measures").equals("inches")) {
-                        double sizeInches = Double.parseDouble(textFieldValue);
-
-                        double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
-                        newValuePercentage = (sizeMM / this.initialDepth) * 100;
-                    } else {
-                        double sizeMM = Double.parseDouble(textFieldValue);
-
-                        newValuePercentage = (sizeMM / this.initialDepth) * 100;
-                    }
-                }
-
-                if (newValuePercentage > 0) {
-//                    System.out.println("newValue/model.getXscalePercentage()" + newValuePercentage + "/" + model.getYscalePercentage());
-                    if (scaleLocked) {
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
-
-                    } else {
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
-                    }
-                }
-
-            } else {
-                //jTextField4.setText("");
-            }
-        }
-
-    }//GEN-LAST:event_jTextField5KeyReleased
-
-    private void jTextField6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField6KeyReleased
-
-        boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        
-        double newValuePercentage;
-        String textFieldValue = jTextField6.getText();
-
-        if (!(textFieldValue.length() == 0)) {
-            if (Base.isNumeric(jTextField6.getText())) {
-                if (textFieldValue.contains(",")) {
-                    textFieldValue = textFieldValue.replace(",", ".");
-                }
-
-                if (this.percentage) {
-                    newValuePercentage = Double.parseDouble(textFieldValue);
-
-                } else {
-
-                    if (ProperDefault.get("measures").equals("inches")) {
-                        double sizeInches = Double.parseDouble(textFieldValue);
-
-                        double sizeMM = UnitConverter.inchesToMillimeters(sizeInches);
-                        newValuePercentage = (sizeMM / this.initialHeight) * 100;
-                    } else {
-                        double sizeMM = Double.parseDouble(textFieldValue);
-
-                        newValuePercentage = (sizeMM / this.initialHeight) * 100;
-                    }
-                }
-
-                if (newValuePercentage > 0) {
-//                    System.out.println("newValue/model.getXscalePercentage()" + newValuePercentage + "/" + model.getZscalePercentage());
-                    if (scaleLocked) {
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(newValuePercentage, modelOnPlatform, false);
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(newValuePercentage, modelOnPlatform, false);
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
-
-                    } else {
-                        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(newValuePercentage, modelOnPlatform, false);
-                    }
-                }
-
-            } else {
-                //jTextField4.setText("");
-            }
-        }
-
-    }//GEN-LAST:event_jTextField6KeyReleased
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
@@ -801,78 +595,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jLabel5MousePressed
 
-    private void jTextField4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusGained
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-
-        if (this.percentage) {
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());            
-        } else {
-            DecimalFormat df = new DecimalFormat("#.0");
-
-            double depth = model.getEditer().getDepth();
-            if (ProperDefault.get("measures").equals("inches")) {
-                depth = UnitConverter.millimetersToInches(depth);
-            }
-            double height = model.getEditer().getHeight();
-            if (ProperDefault.get("measures").equals("inches")) {
-                height = UnitConverter.millimetersToInches(height);
-            }         
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-                    setYValue(String.valueOf(df.format(depth)));
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-                    setZValue(String.valueOf(df.format(height)));            
-        }        
-    }//GEN-LAST:event_jTextField4FocusGained
-
-    private void jTextField5FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField5FocusGained
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        if (this.percentage) {
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());            
-
-        } else {
-            DecimalFormat df = new DecimalFormat("#.0");
-            
-            double width = model.getEditer().getWidth();
-            if (ProperDefault.get("measures").equals("inches")) {
-                width = UnitConverter.millimetersToInches(width);
-            }
-            double height = model.getEditer().getHeight();
-            if (ProperDefault.get("measures").equals("inches")) {
-                height = UnitConverter.millimetersToInches(height);
-            }             
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-                    setXValue(String.valueOf(df.format(width)));
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-                    setZValue(String.valueOf(df.format(height)));
-        }
-    }//GEN-LAST:event_jTextField5FocusGained
-
-    private void jTextField6FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField6FocusGained
-        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        if (this.percentage) {
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
-        } else {
-            DecimalFormat df = new DecimalFormat("#.0");
-            
-            double width = model.getEditer().getWidth();
-            if (ProperDefault.get("measures").equals("inches")) {
-                width = UnitConverter.millimetersToInches(width);
-            }
-            double depth = model.getEditer().getDepth();
-            if (ProperDefault.get("measures").equals("inches")) {
-                depth = UnitConverter.millimetersToInches(depth);
-            }  
-            
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-                    setXValue(String.valueOf(df.format(width)));
-            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-                    setYValue(String.valueOf(df.format(depth))); 
-        }
-    }//GEN-LAST:event_jTextField6FocusGained
-
     private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
         toggleOptions();
     }//GEN-LAST:event_jLabel16MousePressed
@@ -881,53 +603,64 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         toggleOptions();
     }//GEN-LAST:event_jLabel7MousePressed
 
-    private void lockRatioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lockRatioMousePressed
-       lockRatio();
-    }//GEN-LAST:event_lockRatioMousePressed
+    private void bApplyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMousePressed
 
-    private void l_lockRatioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_l_lockRatioMousePressed
-        lockRatio();
-    }//GEN-LAST:event_l_lockRatioMousePressed
-    private void jLabel18MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseEntered
-        jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_12.png")));
-    }//GEN-LAST:event_jLabel18MouseEntered
+        System.out.println("cliicked");
+        boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
+        double ratioX = Double.parseDouble(iFieldX.getText()) / oldX * 100.0;
+        System.out.println("ratioZ: "+ratioX);
+        double ratioY = Double.parseDouble(iFieldY.getText()) / oldY * 100.0;
+        System.out.println("ratioY: "+ratioY);
+        double ratioZ = Double.parseDouble(iFieldZ.getText()) / oldZ * 100.0;
+        System.out.println("ratioZ: "+ratioZ);
 
-    private void jLabel18MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseExited
-        jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_12.png")));
-    }//GEN-LAST:event_jLabel18MouseExited
+        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(ratioX, modelOnPlatform, false);
+        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(ratioY, modelOnPlatform, false);
+        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(ratioZ, modelOnPlatform, false);
+    }//GEN-LAST:event_bApplyMousePressed
 
-    private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
-        toggleX();
-    }//GEN-LAST:event_jLabel17MousePressed
+    private void bApplyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseExited
+        System.out.println("exited");
+        bApply.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_12.png")));
+    }//GEN-LAST:event_bApplyMouseExited
 
-    private void jLabel19MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MousePressed
-        toggleY();
-    }//GEN-LAST:event_jLabel19MousePressed
+    private void bApplyMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseEntered
+        System.out.println("entered");
+        bApply.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_12.png")));
+    }//GEN-LAST:event_bApplyMouseEntered
 
     private void jLabel20MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel20MousePressed
         toggleZ();
     }//GEN-LAST:event_jLabel20MousePressed
 
-    private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {                                      
+    private void jLabel19MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MousePressed
+        toggleY();
+    }//GEN-LAST:event_jLabel19MousePressed
+
+    private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
+        toggleX();
+    }//GEN-LAST:event_jLabel17MousePressed
+
+    private void bScaleToMaxMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMousePressed
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
-        
+
         double scaleX = machineVolume.getX() / model.getEditer().getWidth();
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
-        
-        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));        
-        scale = UnitConverter.round(scale, 3);         
-        
+
+        double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
+        scale = UnitConverter.round(scale, 3);
+
         model.getEditer().centerAndToBed();
         model.getEditer().scale(scale, true, false);
-        
+
         if (model.getEditer().modelOutBonds()) {
             //Small adjustment to avoid the model being out of bounds
             scale = 0.975;
             model.getEditer().scale(scale, true, true);
         }
-        
+
         if (this.isScalePercentage()) {
             setXValue(model.getScaleXinPercentage());
             setYValue(model.getScaleYinPercentage());
@@ -950,26 +683,193 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             setXValue(df.format(width));
             setYValue(df.format(depth));
             setZValue(df.format(height));
-        } 
-        
+        }
+
         //Sets the initial sizing variables to the current values
         this.resetInitialScaleVariables();
-        model.resetScale();
-    }                                         
+        model.resetScale();    }//GEN-LAST:event_bScaleToMaxMousePressed
+
+    private void bScaleToMaxMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMouseExited
+        bScaleToMax.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_12.png")));
+    }//GEN-LAST:event_bScaleToMaxMouseExited
+
+    private void bScaleToMaxMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMouseEntered
+        bScaleToMax.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_12.png")));
+    }//GEN-LAST:event_bScaleToMaxMouseEntered
+
+    private void iFieldZKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldZKeyReleased
+
+        double zVal = Double.parseDouble(iFieldZ.getText());
+        double ratio = zVal / this.oldZ;
+
+        //If i'm unselected do just this one
+        if (checkZ == false) {
+            this.oldZ = zVal;
+            return;
+        }
+
+        //Or else, scale or the selected ones
+        if (checkX == true) {
+            double newX = ratio * Double.parseDouble(iFieldX.getText());
+            iFieldX.setText(df.format(newX));
+            this.oldX = newX;
+        }
+        if (checkY == true) {
+            double newY = ratio * Double.parseDouble(iFieldY.getText());
+            iFieldY.setText(df.format(newY));
+            this.oldY = newY;
+        }
+        if (checkZ == true) {
+            this.oldZ = zVal;
+        }
+    }//GEN-LAST:event_iFieldZKeyReleased
+
+    private void iFieldZFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldZFocusGained
+//        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+//        if (this.percentage) {
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+//        } else {
+//            DecimalFormat df = new DecimalFormat("#.0");
+//
+//            double width = model.getEditer().getWidth();
+//            if (ProperDefault.get("measures").equals("inches")) {
+//                width = UnitConverter.millimetersToInches(width);
+//            }
+//            double depth = model.getEditer().getDepth();
+//            if (ProperDefault.get("measures").equals("inches")) {
+//                depth = UnitConverter.millimetersToInches(depth);
+//            }
+//
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+//            setXValue(String.valueOf(df.format(width)));
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+//            setYValue(String.valueOf(df.format(depth)));
+//        }
+    }//GEN-LAST:event_iFieldZFocusGained
+
+    private void iFieldYKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldYKeyReleased
+
+        double yVal = Double.parseDouble(iFieldY.getText());
+        double ratio = yVal / this.oldY;
+
+        DecimalFormat df = new DecimalFormat("#.0");
+
+        //If i'm unselected do just this one
+        if (checkY == false) {
+            this.oldY = yVal;
+            return;
+        }
+
+        //Or else, scale or the selected ones
+        if (checkX == true) {
+            double newX = ratio * Double.parseDouble(iFieldX.getText());
+            iFieldX.setText(df.format(newX));
+            this.oldX = newX;
+        }
+        if (checkY == true) {
+            this.oldY = yVal;
+        }
+        if (checkZ == true) {
+            double newZ = ratio * Double.parseDouble(iFieldZ.getText());
+            iFieldZ.setText(df.format(newZ));
+            this.oldZ = newZ;
+        }
+    }//GEN-LAST:event_iFieldYKeyReleased
+
+    private void iFieldYFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldYFocusGained
+//        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+//        if (this.percentage) {
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+//
+//        } else {
+//            DecimalFormat df = new DecimalFormat("#.0");
+//
+//            double width = model.getEditer().getWidth();
+//            if (ProperDefault.get("measures").equals("inches")) {
+//                width = UnitConverter.millimetersToInches(width);
+//            }
+//            double height = model.getEditer().getHeight();
+//            if (ProperDefault.get("measures").equals("inches")) {
+//                height = UnitConverter.millimetersToInches(height);
+//            }
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+//            setXValue(String.valueOf(df.format(width)));
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+//            setZValue(String.valueOf(df.format(height)));
+//        }
+    }//GEN-LAST:event_iFieldYFocusGained
+
+    private void iFieldXKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldXKeyReleased
+
+        double xVal = Double.parseDouble(iFieldX.getText());
+        double ratio = xVal / this.oldX;
+
+        //If i'm unselected do just this one
+        if (checkX == false) {
+            this.oldX = xVal;
+            return;
+        }
+
+        //Or else, scale or the selected ones
+        if (checkX == true) {
+            this.oldX = xVal;
+        }
+        if (checkY == true) {
+            double newY = ratio * Double.parseDouble(iFieldY.getText());
+            iFieldY.setText(df.format(newY));
+            this.oldY = newY;
+        }
+        if (checkZ == true) {
+            double newZ = ratio * Double.parseDouble(iFieldZ.getText());
+            iFieldZ.setText(df.format(newZ));
+            this.oldZ = newZ;
+        }
+    }//GEN-LAST:event_iFieldXKeyReleased
+
+    private void iFieldXFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldXFocusGained
+//        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+//
+//        if (this.percentage) {
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
+//        } else {
+//            DecimalFormat df = new DecimalFormat("#.0");
+//
+//            double depth = model.getEditer().getDepth();
+//            if (ProperDefault.get("measures").equals("inches")) {
+//                depth = UnitConverter.millimetersToInches(depth);
+//            }
+//            double height = model.getEditer().getHeight();
+//            if (ProperDefault.get("measures").equals("inches")) {
+//                height = UnitConverter.millimetersToInches(height);
+//            }
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+//            setYValue(String.valueOf(df.format(depth)));
+//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
+//            setZValue(String.valueOf(df.format(height)));
+//        }
+    }//GEN-LAST:event_iFieldXFocusGained
 
     /**
      * Sets the initial sizing variables to the new max scale size
      */
     public void resetInitialScaleVariables() {
-                
+
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        
+
         this.initialWidth = model.getEditer().getWidth();
         this.initialHeight = model.getEditer().getHeight();
         this.initialDepth = model.getEditer().getDepth();
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bApply;
+    private javax.swing.JLabel bScaleToMax;
+    private javax.swing.JTextField iFieldX;
+    private javax.swing.JTextField iFieldY;
+    private javax.swing.JTextField iFieldZ;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -977,12 +877,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -990,10 +887,5 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JLabel l_lockRatio;
-    private javax.swing.JLabel lockRatio;
     // End of variables declaration//GEN-END:variables
 }

@@ -169,6 +169,7 @@
             <Mirror value="Mirror"/>
             <Scale value="Scale"/>  
             <ScaleToMax value="Scale to Max"/>  
+            <Apply value="Apply Scale"/>  
             <Scale_Extense value="Scale in percentage"/>
             <Move value="Move"/>
             <Rotate value="Rotate"/>
