@@ -741,18 +741,30 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
             <!-- Filamentos da Filkemp -->
+            <a001 value="A001 - Transparent"/>
             <a002 value="A002 - White"/>
             <a003 value="A003 - Black"/>
-            <a005 value="A005 - Yellow"/>
             <a004 value="A004 - Red"/>
-            <a010 value="A010 - Turquoise"/>
-            <a001 value="A001 - Transparent"/>
-            <a011 value="A011 - Green"/>
-            <a012 value="A012 - Orange"/>
+            <a005 value="A005 - Yellow"/>
             <a006 value="A006 - Blue"/>
             <a007 value="A007 - Olive Green"/>
             <a008 value="A008 - Pink"/>
             <a009 value="A009 - Silver"/>
+            <a010 value="A010 - Turquoise"/>
+            <a011 value="A011 - Green"/>
+            <a012 value="A012 - Orange"/>
+            <a021 value="A021 - Transparent"/>
+            <a022 value="A022 - White"/>
+            <a023 value="A023 - Black"/>
+            <a024 value="A024 - Red"/>
+            <a025 value="A025 - Yellow"/>
+            <a026 value="A026 - Blue"/>
+            <a027 value="A027 - Olive Green"/>
+            <a028 value="A028 - Fuschia"/>
+            <a029 value="A029 - Silver"/>
+            <a030 value="A030 - Turquoise"/>
+            <a031 value="A031 - Neon Green"/>
+            <a032 value="A032 - Orange"/>
             
             <!-- Filamentos da FiberForce -->
             <a101 value="A101 - Transparent"/>
