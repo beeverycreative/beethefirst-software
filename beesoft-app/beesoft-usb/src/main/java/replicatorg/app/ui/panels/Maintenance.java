@@ -621,6 +621,12 @@ public class Maintenance extends BaseDialog {
             p.setVisible(true);
 
             Base.getMainWindow().getCanvas().unPickAll();
+        } else {
+            if (Base.getMachineLoader().isConnected() == false) {
+                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+            } else if (Base.isPrinting) {
+                Base.getMainWindow().showFeedBackMessage("btfPrinting");
+            }
         }
     }//GEN-LAST:event_bExtruderMaintenanceMousePressed
 
@@ -671,7 +677,14 @@ public class Maintenance extends BaseDialog {
 
             Base.getMainWindow().getCanvas().unPickAll();
 
-        }    }//GEN-LAST:event_bNozzleSwitchMousePressed
+        } else {
+            if (Base.getMachineLoader().isConnected() == false) {
+                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+            } else if (Base.isPrinting) {
+                Base.getMainWindow().showFeedBackMessage("btfPrinting");
+            }
+        }   
+    }//GEN-LAST:event_bNozzleSwitchMousePressed
 
     private void bCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMousePressed
 
@@ -684,6 +697,12 @@ public class Maintenance extends BaseDialog {
             CalibrationWelcome p = new CalibrationWelcome(false);
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
+        } else {
+            if (Base.getMachineLoader().isConnected() == false) {
+                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+            } else if (Base.isPrinting) {
+                Base.getMainWindow().showFeedBackMessage("btfPrinting");
+            }
         }
     }//GEN-LAST:event_bCalibrationMousePressed
 
@@ -712,6 +731,12 @@ public class Maintenance extends BaseDialog {
                 p.setVisible(true);
             }
             Base.getMainWindow().getCanvas().unPickAll();
+        } else {
+            if (Base.getMachineLoader().isConnected() == false) {
+                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+            } else if (Base.isPrinting) {
+                Base.getMainWindow().showFeedBackMessage("btfPrinting");
+            }
         }
     }//GEN-LAST:event_bChangeFilamentMousePressed
 
