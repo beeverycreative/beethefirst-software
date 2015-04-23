@@ -338,11 +338,11 @@ public class ExtruderMaintenance5 extends BaseDialog {
                 .addGap(0, 15, Short.MAX_VALUE))
         );
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);
@@ -354,16 +354,16 @@ public class ExtruderMaintenance5 extends BaseDialog {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
+                .addGap(43, 43, 43)
                 .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
+                .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));

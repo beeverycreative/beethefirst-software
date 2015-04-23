@@ -263,12 +263,12 @@ public class NozzleClean extends BaseDialog {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setPreferredSize(new java.awt.Dimension(62, 30));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);
@@ -279,7 +279,7 @@ public class NozzleClean extends BaseDialog {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
                 .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 9, Short.MAX_VALUE)
                 .addContainerGap())
@@ -287,9 +287,9 @@ public class NozzleClean extends BaseDialog {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
+                .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         jLabel1.setText("CLEAN EXTRUDER");

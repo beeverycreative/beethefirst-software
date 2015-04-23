@@ -332,12 +332,12 @@ public class ExtruderMaintenance2 extends BaseDialog {
         pText2.setText("Suspendisse potenti.");
         pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);
