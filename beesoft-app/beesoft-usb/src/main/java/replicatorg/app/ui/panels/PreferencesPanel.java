@@ -3,8 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
@@ -23,10 +21,9 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PreferencesPanel extends javax.swing.JDialog {
+public class PreferencesPanel extends BaseDialog {
 
     private boolean lockPressed, autonomyPressed;
-    private int posX = 0, posY = 0;
 
     public PreferencesPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -34,6 +31,7 @@ public class PreferencesPanel extends javax.swing.JDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
+        enableDrag();
         lockPressed = false;
         if (Boolean.valueOf(ProperDefault.get("lockHeight"))) {
             jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
@@ -145,25 +143,6 @@ public class PreferencesPanel extends javax.swing.JDialog {
         // Move the window
         this.setLocation(x, y);
         this.setLocationRelativeTo(Base.getMainWindow());
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void doExit() {

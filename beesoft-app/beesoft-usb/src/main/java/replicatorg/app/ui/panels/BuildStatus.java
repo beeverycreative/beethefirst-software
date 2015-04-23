@@ -2,10 +2,7 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -22,9 +19,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class BuildStatus extends javax.swing.JDialog {
-
-    private int posX = 0, posY = 0;
+public class BuildStatus extends BaseDialog {
 
     public BuildStatus() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -72,24 +67,6 @@ public class BuildStatus extends javax.swing.JDialog {
         String msgFormatted = "<html>" + Languager.getTagValue(1, "Print", "Print_BuildAborted<br>")
                 + Languager.getTagValue(1, "Print", "Print_Stopped<html> ") + message;
         jLabel2.setText(msgFormatted);
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     @SuppressWarnings("unchecked")

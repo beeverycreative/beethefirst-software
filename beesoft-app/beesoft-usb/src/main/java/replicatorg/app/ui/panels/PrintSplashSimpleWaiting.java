@@ -47,11 +47,10 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements WindowListener {
+public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListener {
 
     private final Printer prt;
     private boolean printEnded;
-    private int posX = 0, posY = 0;
     private double startTimeMillis;
     private double startTimeMillis2;
     private final UpdateThread3 ut;
@@ -281,25 +280,7 @@ public class PrintSplashSimpleWaiting extends javax.swing.JDialog implements Win
             Base.writeLog("Error stoping Sleep!");
         }
     }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
-    }
-
+    
     public int getNGCodeLines() {
         return prt.getGCodeNLines();
     }

@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,6 +31,7 @@ import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.tools.XML;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.panels.BaseDialog;
 import replicatorg.drivers.Driver;
 
 /**
@@ -46,9 +45,8 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class UpdateChecker extends javax.swing.JDialog {
+public class UpdateChecker extends BaseDialog {
 
-    private int posX = 0, posY = 0;
     private final Driver driver;
     private File fileFromServer = null;
     private boolean updateStableAvailable;
@@ -238,26 +236,6 @@ public class UpdateChecker extends javax.swing.JDialog {
         } else {
             jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", message)));
         }
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private File getFileFromServer() {

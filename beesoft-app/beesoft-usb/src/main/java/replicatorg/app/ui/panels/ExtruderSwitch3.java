@@ -5,11 +5,8 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -33,10 +30,10 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderSwitch3 extends javax.swing.JDialog {
+public class ExtruderSwitch3 extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
+
     private final ExtruderSwitchDisposeFeedbackThread disposeThread;
     private String previousColor = "";
     private int temperatureGoal;
@@ -47,13 +44,12 @@ public class ExtruderSwitch3 extends javax.swing.JDialog {
         initComponents();
         setFont();
         evaluateInitialConditions();
+        enableDrag();
         setTextLanguage();
         centerOnScreen();
         Base.getMainWindow().setEnabled(false);
         
         moveToPosition();
-//        enableDrag();
-//        disableMessageDisplay();
         previousColor = machine.getModel().getCoilCode();
         disposeThread = new ExtruderSwitchDisposeFeedbackThread(this, machine);
         disposeThread.start();
@@ -193,25 +189,6 @@ public class ExtruderSwitch3 extends javax.swing.JDialog {
         Graphics g = getGraphics();
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
         return fm.stringWidth(s);
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private void doCancel() {

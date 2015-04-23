@@ -3,8 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.FilamentControler;
@@ -23,14 +21,13 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class About extends javax.swing.JDialog {
-
-    private int posX = 0, posY = 0;
+public class About extends BaseDialog {
 
     public About() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
+        enableDrag();
         centerOnScreen();
         setTextLanguage();
         Base.updateVersions();
@@ -105,24 +102,6 @@ public class About extends javax.swing.JDialog {
         // Move the window
         this.setLocation(x, y);
         this.setLocationRelativeTo(Base.getMainWindow());
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     @SuppressWarnings("unchecked")

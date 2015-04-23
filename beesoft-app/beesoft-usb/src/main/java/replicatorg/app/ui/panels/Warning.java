@@ -3,11 +3,8 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -24,9 +21,8 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Warning extends javax.swing.JDialog {
+public class Warning extends BaseDialog {
 
-    private int posX = 0, posY = 0;
     private boolean exitOnDispose;
 
     public Warning() {
@@ -40,6 +36,7 @@ public class Warning extends javax.swing.JDialog {
     }
 
     public Warning(String action) {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -113,23 +110,6 @@ public class Warning extends javax.swing.JDialog {
 
     public void setMessage(String message) {
         jLabel2.setText(splitString(Languager.getTagValue(1,"StatusMessages", message)));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private void doExit() {

@@ -7,8 +7,6 @@ import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintPanel extends javax.swing.JDialog {
+public class PrintPanel extends BaseDialog {
 
     private JLabel quality_prototype;
     private JLabel quality_normal;
@@ -53,7 +51,6 @@ public class PrintPanel extends javax.swing.JDialog {
     private JLabel quality_solid;
     private final ArrayList<String> prefs;
     private boolean raftPressed, supportPressed, autonomousPressed, gcodeSavePressed;
-    private int posX = 0, posY = 0;
     private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
     private boolean no_Filament = false;
     private static final String NOK = "NOK";
@@ -577,28 +574,6 @@ public class PrintPanel extends javax.swing.JDialog {
 
         return text;
 
-    }
-
-    /**
-     * Enable window drag on screen.
-     */
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     /**

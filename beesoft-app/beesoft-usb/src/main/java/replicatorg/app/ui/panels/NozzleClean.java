@@ -4,13 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
@@ -31,10 +26,10 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class NozzleClean extends javax.swing.JDialog {
+public class NozzleClean extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
+
     private boolean achievement;
     private final double heatTemperature = 120;
     private final DisposeFeedbackThread6 disposeThread;
@@ -49,7 +44,7 @@ public class NozzleClean extends javax.swing.JDialog {
         achievement = false;
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
-//        enableDrag();
+        enableDrag();
         initializeHeatNClean();
         disposeThread = new DisposeFeedbackThread6(this, machine);
         disposeThread.start();
@@ -191,27 +186,7 @@ public class NozzleClean extends javax.swing.JDialog {
             jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
     }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
-    }
-
+    
     public boolean getAchievement() {
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
         double temperature = machine.getDriver().getTemperature();

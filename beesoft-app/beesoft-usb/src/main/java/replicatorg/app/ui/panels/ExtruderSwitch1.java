@@ -1,12 +1,11 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
@@ -27,18 +26,19 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderSwitch1 extends javax.swing.JDialog {
+public class ExtruderSwitch1 extends BaseDialog {
 
     private final MachineInterface machine;
     private boolean quickGuide;
-    private int posX = 0, posY = 0;
     private double temperatureGoal;
 
     public ExtruderSwitch1() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         evaluateInitialConditions();
         setTextLanguage();
+        enableDrag();
         Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
@@ -173,25 +173,6 @@ public class ExtruderSwitch1 extends javax.swing.JDialog {
     private void finalizeHeat() {
         Base.writeLog("Cooling down...");
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void evaluateInitialConditions() {

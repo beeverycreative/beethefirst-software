@@ -28,11 +28,11 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance1 extends javax.swing.JDialog {
+public class ExtruderMaintenance1 extends BaseDialog {
 
     private final MachineInterface machine;
     private boolean quickGuide;
-    private int posX = 0, posY = 0;
+
     private double temperatureGoal;
 
     public ExtruderMaintenance1() {
@@ -41,6 +41,7 @@ public class ExtruderMaintenance1 extends javax.swing.JDialog {
         setFont();
         evaluateInitialConditions();
         setTextLanguage();
+        enableDrag();
         Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
@@ -49,7 +50,7 @@ public class ExtruderMaintenance1 extends javax.swing.JDialog {
 
         centerOnScreen();
         moveToPosition();
-         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -177,26 +178,7 @@ public class ExtruderMaintenance1 extends javax.swing.JDialog {
         Base.writeLog("Cooling down...");
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
-    }
-
+    
     private void evaluateInitialConditions() {
 
         temperatureGoal = 220;

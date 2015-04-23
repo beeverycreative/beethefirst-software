@@ -2,10 +2,7 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
 import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
@@ -28,10 +25,9 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance6 extends javax.swing.JDialog {
+public class ExtruderMaintenance6 extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
     private DefaultComboBoxModel comboModel;
     private String[] categories;
     private boolean itemChanged;
@@ -43,6 +39,7 @@ public class ExtruderMaintenance6 extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
+        enableDrag();
         previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
@@ -149,24 +146,6 @@ public class ExtruderMaintenance6 extends javax.swing.JDialog {
          * Color without BEECODE - KDI
          */
         return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void doCancel() {

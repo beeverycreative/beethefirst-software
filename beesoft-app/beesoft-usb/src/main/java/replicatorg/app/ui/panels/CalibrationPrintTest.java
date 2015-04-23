@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,15 +37,13 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationPrintTest extends javax.swing.JDialog {
+public class CalibrationPrintTest extends BaseDialog {
 
     private final MachineInterface machine;
     private boolean achievement;
-    private boolean quickGuide;
-    private int posX = 0, posY = 0;
+
     private double temperatureGoal;
     private final PrintThread updateThread;
-    private ArrayList<String> preferences;
     private BufferedReader reader = null;
     public boolean okEnabled;
 
@@ -56,7 +52,7 @@ public class CalibrationPrintTest extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
-//        enableDrag();
+        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
@@ -233,26 +229,6 @@ public class CalibrationPrintTest extends javax.swing.JDialog {
     private void finalizeHeat() {
         Base.writeLog("Cooling down...");
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private void evaluateInitialConditions() {

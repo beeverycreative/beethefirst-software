@@ -28,24 +28,22 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance3 extends javax.swing.JDialog {
+public class ExtruderMaintenance3 extends BaseDialog {
 
     private final MachineInterface machine;
-    private boolean quickGuide;
-    private int posX = 0, posY = 0;
     private double temperatureGoal;
 
     public ExtruderMaintenance3() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
+        enableDrag();
         evaluateInitialConditions();
         setTextLanguage();
         Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-
 
         centerOnScreen();
         //moveToPosition();
@@ -174,25 +172,6 @@ public class ExtruderMaintenance3 extends javax.swing.JDialog {
     private void finalizeHeat() {
         Base.writeLog("Cooling down...");
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void evaluateInitialConditions() {

@@ -37,13 +37,12 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintSplashSimple extends javax.swing.JDialog implements WindowListener {
+public class PrintSplashSimple extends BaseDialog implements WindowListener {
 
     private final Printer prt;
     private boolean printSoonPressed;
     private final ArrayList<String> preferences;
     private boolean gcodeEnded;
-    private int posX = 0, posY = 0;
     private long updateSleep;
     private MachineInterface machine;
     private double temperatureGoal = 220; //default
@@ -494,23 +493,6 @@ public class PrintSplashSimple extends javax.swing.JDialog implements WindowList
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         cancelProcess();
     }//GEN-LAST:event_jLabel15MousePressed
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
-    }
 
     @Override
     public void windowOpened(WindowEvent e) {

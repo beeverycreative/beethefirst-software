@@ -28,10 +28,9 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentCodeInsertion extends javax.swing.JDialog {
+public class FilamentCodeInsertion extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
     private DefaultComboBoxModel comboModel;
     private String[] categories;
     private boolean itemChanged;
@@ -43,6 +42,7 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
+        enableDrag();
         previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
@@ -148,25 +148,6 @@ public class FilamentCodeInsertion extends javax.swing.JDialog {
          * Color without BEECODE - KDI
          */
         return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void doCancel() {

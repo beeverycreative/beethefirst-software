@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -31,12 +28,11 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderMaintenance4 extends javax.swing.JDialog {
+public class ExtruderMaintenance4 extends BaseDialog {
 
     private final MachineInterface machine;
     private boolean achievement;
     private boolean quickGuide;
-    private int posX = 0, posY = 0;
     private double temperatureGoal;
     private final ExtruderMaintenanceUpdateThread updateThread;
 
@@ -50,6 +46,7 @@ public class ExtruderMaintenance4 extends javax.swing.JDialog {
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
+        enableDrag();
         centerOnScreen();
         setProgressBarColor();
         //moveToPosition();
@@ -225,25 +222,6 @@ public class ExtruderMaintenance4 extends javax.swing.JDialog {
     private void finalizeHeat() {
         Base.writeLog("Cooling down...");
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void evaluateInitialConditions() {

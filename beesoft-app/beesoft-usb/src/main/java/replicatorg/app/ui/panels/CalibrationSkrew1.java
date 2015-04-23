@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -43,7 +42,7 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
-//        enableDrag();
+        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
         Base.getMainWindow().setEnabled(false);
         jLabel23.setVisible(false);
@@ -140,7 +139,7 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         disableMessageDisplay();
     }
 
-    public void disableMessageDisplay() {
+    private void disableMessageDisplay() {
         jPanel2.setBackground(new Color(248, 248, 248));
         jLabel5.setForeground(new Color(248, 248, 248));
     }

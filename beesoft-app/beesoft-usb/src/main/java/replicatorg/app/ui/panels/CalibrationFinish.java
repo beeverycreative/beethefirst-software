@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,10 +32,10 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationFinish extends javax.swing.JDialog {
+public class CalibrationFinish extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
+
     private boolean jLabel5MouseClickedReady = true;
     private final boolean jLabel7MouseClickedReady = true;
     private final DisposeFeedbackThread5 disposeThread;
@@ -51,7 +49,7 @@ public class CalibrationFinish extends javax.swing.JDialog {
 
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
-//        enableDrag();        
+        enableDrag();        
         centerOnScreen();
         disposeThread = new DisposeFeedbackThread5(this, machine);
         disposeThread.start();
@@ -185,26 +183,6 @@ public class CalibrationFinish extends javax.swing.JDialog {
 
         disableMessageDisplay();
         moving = false;
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private File getPrintFile() {

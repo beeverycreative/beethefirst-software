@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -26,9 +24,8 @@ import replicatorg.machine.MachineInterface;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Maintenance extends javax.swing.JDialog {
+public class Maintenance extends BaseDialog {
 
-    private int posX = 0, posY = 0;
     private final int NUMBER_PRINTS_LIMIT = 10;
     private boolean moving;
     private final ControlStatus ctrlStatus;
@@ -161,26 +158,7 @@ public class Maintenance extends javax.swing.JDialog {
         this.setLocationRelativeTo(Base.getMainWindow());
     }
 
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
-    }
-
-    public void disableMessageDisplay() {
+    private void disableMessageDisplay() {
         l_machine_status_warn.setBackground(new Color(248, 248, 248));
         jLabel18.setForeground(new Color(248, 248, 248));
     }

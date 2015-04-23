@@ -33,10 +33,9 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentInsertion extends javax.swing.JDialog {
+public class FilamentInsertion extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
     private boolean jLabel5MouseClickedReady = true;
     private boolean jLabel6MouseClickedReady = true;
     private final boolean jLabel17GoBack = false;
@@ -54,8 +53,8 @@ public class FilamentInsertion extends javax.swing.JDialog {
         Base.getMainWindow().setEnabled(false);
         machine = Base.getMachineLoader().getMachineInterface();
         moveToPosition();
-//        enableDrag();
-//        disableMessageDisplay();
+        enableDrag();
+
         previousColor = machine.getModel().getCoilCode();
         disposeThread = new DisposeFeedbackThread(this, machine);
         disposeThread.start();
@@ -242,26 +241,6 @@ public class FilamentInsertion extends javax.swing.JDialog {
         Graphics g = getGraphics();
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
         return fm.stringWidth(s);
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private void doCancel() {
