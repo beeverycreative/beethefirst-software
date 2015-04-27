@@ -123,7 +123,6 @@ public class TourStep1 extends javax.swing.JFrame {
         jPanel3.setMinimumSize(new java.awt.Dimension(183, 26));
         jPanel3.setPreferredSize(new java.awt.Dimension(183, 26));
 
-        jLabel11.setForeground(new java.awt.Color(0, 0, 0));
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel11.setText("SEGUINTE");
         jLabel11.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -139,7 +138,6 @@ public class TourStep1 extends javax.swing.JFrame {
             }
         });
 
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel12.setText("ANTERIOR");
         jLabel12.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
