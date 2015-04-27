@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -31,10 +28,10 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationSkrew2 extends javax.swing.JDialog {
+public class CalibrationSkrew2 extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
+
     private final DisposeFeedbackThread4 disposeThread;
     private boolean jLabel24MouseClickedReady = true;
 
@@ -43,7 +40,7 @@ public class CalibrationSkrew2 extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
-//        enableDrag();
+        enableDrag();
         disableMessageDisplay();
         jLabel23.setVisible(false);
         centerOnScreen();
@@ -140,7 +137,7 @@ public class CalibrationSkrew2 extends javax.swing.JDialog {
         disableMessageDisplay();
     }
 
-    public void disableMessageDisplay() {
+    private void disableMessageDisplay() {
         jPanel2.setBackground(new Color(248, 248, 248));
         jLabel5.setForeground(new Color(248, 248, 248));
     }
@@ -173,26 +170,6 @@ public class CalibrationSkrew2 extends javax.swing.JDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + spMedium));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(c));
         machine.getDriver().setBusy(false);
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
     }
 
     private void doCancel() {
@@ -248,12 +225,12 @@ public class CalibrationSkrew2 extends javax.swing.JDialog {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
-        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel5.setBackground(new java.awt.Color(248, 248, 248));
         jPanel5.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel5.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel5.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);

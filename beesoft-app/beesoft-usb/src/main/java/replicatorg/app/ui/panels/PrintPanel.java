@@ -7,8 +7,6 @@ import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -43,7 +41,7 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintPanel extends javax.swing.JDialog {
+public class PrintPanel extends BaseDialog {
 
     private JLabel quality_prototype;
     private JLabel quality_normal;
@@ -53,7 +51,6 @@ public class PrintPanel extends javax.swing.JDialog {
     private JLabel quality_solid;
     private final ArrayList<String> prefs;
     private boolean raftPressed, supportPressed, autonomousPressed, gcodeSavePressed;
-    private int posX = 0, posY = 0;
     private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
     private boolean no_Filament = false;
     private static final String NOK = "NOK";
@@ -580,28 +577,6 @@ public class PrintPanel extends javax.swing.JDialog {
     }
 
     /**
-     * Enable window drag on screen.
-     */
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
-    }
-
-    /**
      * Select GCode file to open.
      *
      * @return path to file
@@ -897,12 +872,12 @@ public class PrintPanel extends javax.swing.JDialog {
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
         jPanel1.setPreferredSize(new java.awt.Dimension(374, 460));
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);

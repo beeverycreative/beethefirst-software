@@ -4,15 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -35,10 +28,10 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationValidation extends javax.swing.JDialog {
+public class CalibrationValidation extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
+
     private final DisposeFeedbackThread7 disposeThread;
     private boolean jLabel5MouseClickedReady = false;
     private boolean jLabel6MouseClickedReady = false;
@@ -51,7 +44,7 @@ public class CalibrationValidation extends javax.swing.JDialog {
         centerOnScreen();
         evaluateInitialConditions();
         machine = Base.getMachineLoader().getMachineInterface();
-//        enableDrag();
+        enableDrag();
         disposeThread = new DisposeFeedbackThread7(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
@@ -160,47 +153,6 @@ public class CalibrationValidation extends javax.swing.JDialog {
         Base.getMainWindow().setEnabled(false);
     }
 
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
-    }
-
-    private File getPrintFile() {
-        File gcode = null;
-        PrintWriter pw;
-
-        try {
-            gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + Base.GCODE_TEMP_FILENAME);
-            pw = new PrintWriter(new FileOutputStream(gcode));
-
-            String[] code = Base.getMachineLoader().getMachineInterface().getGCodePrintTest("calibration").split(",");
-
-            for (String code1 : code) {
-                pw.println(code1.trim());
-            }
-
-            pw.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CalibrationPrintTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return gcode;
-    }
-
     private void doCancel() {
         dispose();
         Base.bringAllWindowsToFront();
@@ -261,12 +213,12 @@ public class CalibrationValidation extends javax.swing.JDialog {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
-        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel5.setBackground(new java.awt.Color(248, 248, 248));
         jPanel5.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel5.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel5.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);

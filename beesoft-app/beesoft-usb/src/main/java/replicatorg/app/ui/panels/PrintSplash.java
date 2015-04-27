@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
@@ -23,10 +21,9 @@ import replicatorg.model.CAMPanel;
 * for more details. You should have received a copy of the GNU General
 * Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
 */
-public class PrintSplash extends javax.swing.JDialog {
+public class PrintSplash extends BaseDialog {
 
     private final double estimatedTime;
-    private int posX=0,posY=0;
     
     public PrintSplash(double estdTime) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -77,32 +74,7 @@ public class PrintSplash extends javax.swing.JDialog {
     private void setProgressBarColor()
     {
         jProgressBar1.setForeground(new Color(255, 203, 5));
-    }
-   
-    private void enableDrag()
-    {
-        this.addMouseListener(new MouseAdapter()
-        {
-           @Override
-           public void mousePressed(MouseEvent e)
-           {
-              posX=e.getX();
-              posY=e.getY();
-           }
-        });
-        
-        
-        this.addMouseMotionListener(new MouseAdapter()
-        {
-             @Override
-             public void mouseDragged(MouseEvent evt)
-             {
-                        //sets frame position when mouse dragged			
-                        setLocation (evt.getXOnScreen()-posX,evt.getYOnScreen()-posY);
-
-             }
-        });
-    }    
+    }   
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -126,11 +98,11 @@ public class PrintSplash extends javax.swing.JDialog {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);
@@ -142,9 +114,9 @@ public class PrintSplash extends javax.swing.JDialog {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
+                .addGap(43, 43, 43)
                 .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -240,6 +240,7 @@ public class TourWelcome extends javax.swing.JFrame {
             dispose();
             ProperDefault.put("firstTime", String.valueOf(false));
             Base.getMainWindow().setEnabled(true);
+            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.bringAllWindowsToFront();            
         }
     }//GEN-LAST:event_jLabel11MousePressed

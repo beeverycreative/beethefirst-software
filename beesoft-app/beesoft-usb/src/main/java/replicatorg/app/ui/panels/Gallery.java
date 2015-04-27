@@ -5,8 +5,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -45,7 +43,7 @@ import replicatorg.model.PrintBed;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Gallery extends javax.swing.JDialog {
+public class Gallery extends BaseDialog {
 
     private JLabel[] modelsPerCategoryList;
     private JLabel[] modelsPerCategoryNames;
@@ -53,7 +51,6 @@ public class Gallery extends javax.swing.JDialog {
     private DefaultListModel listModel;
     private DefaultComboBoxModel comboModel;
     private File[] listExistingModels;
-    private int posX = 0, posY = 0;
     private final String modelsDir = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
     private String extension;
     private final MainWindow mWindow;
@@ -347,25 +344,6 @@ public class Gallery extends javax.swing.JDialog {
         return files;
     }
 
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
-    }
-
     public void renameCategory(String newName) {
         int index = jList1.getSelectedIndex();
         String category = String.valueOf(listModel.get(index));
@@ -501,11 +479,11 @@ public class Gallery extends javax.swing.JDialog {
 
         jLabel1.setText("BIBLIOTECA");
 
-        jPanel6.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel6.setBackground(new java.awt.Color(248, 248, 248));
         jPanel6.setMinimumSize(new java.awt.Dimension(62, 30));
         jPanel6.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);

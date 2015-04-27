@@ -33,10 +33,9 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class FilamentInsertion extends javax.swing.JDialog {
+public class FilamentInsertion extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
     private boolean jLabel5MouseClickedReady = true;
     private boolean jLabel6MouseClickedReady = true;
     private final boolean jLabel17GoBack = false;
@@ -54,8 +53,8 @@ public class FilamentInsertion extends javax.swing.JDialog {
         Base.getMainWindow().setEnabled(false);
         machine = Base.getMachineLoader().getMachineInterface();
         moveToPosition();
-//        enableDrag();
-//        disableMessageDisplay();
+        enableDrag();
+
         previousColor = machine.getModel().getCoilCode();
         disposeThread = new DisposeFeedbackThread(this, machine);
         disposeThread.start();
@@ -244,26 +243,6 @@ public class FilamentInsertion extends javax.swing.JDialog {
         return fm.stringWidth(s);
     }
 
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-
-            }
-        });
-    }
-
     private void doCancel() {
 
         if (Base.printPaused) {
@@ -414,11 +393,11 @@ public class FilamentInsertion extends javax.swing.JDialog {
                 .addGap(19, 19, 19))
         );
 
-        jPanel4.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);
@@ -430,16 +409,16 @@ public class FilamentInsertion extends javax.swing.JDialog {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
+                .addGap(43, 43, 43)
                 .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
+                .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));

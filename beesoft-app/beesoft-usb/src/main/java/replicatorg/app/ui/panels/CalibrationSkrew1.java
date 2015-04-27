@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -43,7 +42,7 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
-//        enableDrag();
+        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
         Base.getMainWindow().setEnabled(false);
         jLabel23.setVisible(false);
@@ -140,7 +139,7 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         disableMessageDisplay();
     }
 
-    public void disableMessageDisplay() {
+    private void disableMessageDisplay() {
         jPanel2.setBackground(new Color(248, 248, 248));
         jLabel5.setForeground(new Color(248, 248, 248));
     }
@@ -258,12 +257,12 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
-        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel5.setBackground(new java.awt.Color(248, 248, 248));
         jPanel5.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel5.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel5.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_9.png"))); // NOI18N
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
         jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel15MousePressed(evt);
