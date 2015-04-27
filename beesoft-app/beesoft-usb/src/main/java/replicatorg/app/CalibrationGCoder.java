@@ -2,6 +2,8 @@ package replicatorg.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,7 +27,7 @@ import replicatorg.app.tools.XML;
  */
 public class CalibrationGCoder {
 
-    private static String fileName = "colorsGCode";
+    private static String fileName = "zuluv4";
 
     /**
      * Loads XML File Stores in DataSets also
@@ -41,13 +43,17 @@ public class CalibrationGCoder {
             // XML file
 
             File f = new File(Base.getApplicationDirectory() + "/machines/".concat(fileName).concat(".xml"));
+            System.out.println("file:" + f.toString());
             if (f.exists() && f.isFile() && f.canRead()) {
 
                 dom = db.parse(f);
                 Element doc = dom.getDocumentElement();
                 Node rootNode = doc.cloneNode(true);
-                //System.out.println(doc.getTagName());
 
+                NodeList nList = doc.getElementsByTagName("calibration_test");
+                System.out.println("nList: " + nList.toString());
+
+                //System.out.println(doc.getTagName());
                 if (XML.hasChildNode(rootNode, "tags")) {
                     Node startnode = XML.getChildNodeByName(rootNode, "tags");
                     org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
@@ -92,80 +98,42 @@ public class CalibrationGCoder {
      * @return Child Node value
      */
     private static String getCode() {
-        String rootTag = "colors";
+
         String beeCode = Base.getMainWindow().getMachineInterface().getModel().getCoilCode();
-        String subTag = FilamentControler.getColor(beeCode).toLowerCase();
+        fileName = "zuluv4";
+        String tag = "calibration_test";
 
-        /**
-         * Lets user do calibration test event without filament. Default color =
-         * Black
-         */
-        if (subTag.equalsIgnoreCase(FilamentControler.NO_FILAMENT)) {
-            subTag = Languager.getTagValue(3, "CoilColors", "BLACK");
-        }
-
-        String tag = "gcode";
-
-        Document dom;
-        // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            // use the factory to take an instance of the document builder
             DocumentBuilder db = dbf.newDocumentBuilder();
-            // parse using the builder to get the DOM mapping of the    
-            // XML file
 
             File f = new File(Base.getApplicationDirectory() + "/machines/".concat(fileName).concat(".xml"));
+
             if (f.exists() && f.isFile() && f.canRead()) {
 
-                dom = db.parse(f);
+                Document dom = db.parse(f);
                 Element doc = dom.getDocumentElement();
                 Node rootNode = doc.cloneNode(true);
+                System.out.println("rootNode: " + rootNode);
+                NodeList nList = doc.getElementsByTagName(tag);
+                Node nNode = nList.item(0);
+                Element eElement = (Element) nNode;
 
-                if (XML.hasChildNode(rootNode, tag)) {
-                    Node startnode = XML.getChildNodeByName(rootNode, tag);
-                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                    NodeList nodeList = element.getChildNodes(); // NodeList
-
-                    for (int i = 1; i < nodeList.getLength(); i++) {
-                        if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            {
-                                return nodeList.item(i).getAttributes().getNamedItem("value").getNodeValue();
-                            }
-                            //System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value")+"\n");    
-                        } else if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) //SubNode List
-                        {
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            {
-
-                                for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
-                                {
-                                    if (nodeList.item(i).getChildNodes().item(j).getNodeName().contains(subTag.toLowerCase())) // Found subTag
-                                    {
-                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue().toString();
-                                    }
-                                    //                           System.out.println(nodeList.item(i).getNodeName());
-                                    //                           System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " "+nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-            } else {
-                Base.writeLog("Permission denied over " + "machines/".concat(fileName).concat(".xml"));
-
+                
+                //add flowrate acording to color
+//                if(){
+//                    
+//                }
+                
+                return ("gcode: " + eElement.getAttribute("value"));
             }
-        } catch (ParserConfigurationException pce) {
-            System.out.println(pce.getMessage());
-        } catch (SAXException se) {
-            System.out.println(se.getMessage());
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
+        } catch (SAXException ex) {
+            Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
         return null;
     }
@@ -177,6 +145,7 @@ public class CalibrationGCoder {
      */
     public static String[] getColorGCode() {
         String code = getCode();
+        System.out.println("code:" + code);
 
         Base.writeLog("code: " + code);
 
