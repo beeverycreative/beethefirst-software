@@ -175,13 +175,14 @@ public class PrintPanel extends BaseDialog {
     private void getCoilCode() {
 
         String code;
+        
+        code = FilamentControler.NO_FILAMENT_CODE;
 
-        if (Base.getMachineLoader().isConnected() == false) {
-            code = Base.getMainWindow().getMachine().getModel().getCoilCode();
-        } else {
+        if (Base.getMachineLoader().isConnected()) {
             Base.getMachineLoader().getMachineInterface().getDriver().updateCoilCode();
             code = Base.getMainWindow().getMachine().getModel().getCoilCode();
-        }
+        } //no need for else
+        
         Base.writeLog("Print panel coil code: " + code);
 
         if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
