@@ -99,7 +99,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final int SEND_WAIT = 10; //2 did not work
     private int queue_size;
     private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
-    private long lastDispathTime;
+    private long lastDispatchTime;
     private Version bootloader_version = new Version();
     private Version firmware_version = new Version();
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
@@ -211,7 +211,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (type.contains("bootloader")) {
             updateBootloaderInfo();
             updateFirmware();
-            lastDispathTime = System.currentTimeMillis();
+            lastDispatchTime = System.currentTimeMillis();
             resendQueue.clear();
             Base.writeLog("Launching firmware!");
 
@@ -230,7 +230,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (type.contains("autonomous")) {
 
             serialNumberString = "0000000000";
-            lastDispathTime = System.currentTimeMillis();
+            lastDispatchTime = System.currentTimeMillis();
 
             super.isBootloader = false;
             this.isAutonomous = true;
@@ -259,7 +259,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (type.contains("shutdown")) {
 
             serialNumberString = "0000000000";
-            lastDispathTime = System.currentTimeMillis();
+            lastDispatchTime = System.currentTimeMillis();
 
             super.isBootloader = false;
             super.isONShutdown = true;
@@ -288,7 +288,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         if (type.contains("firmware")) {
             serialNumberString = "0000000000";
-            lastDispathTime = System.currentTimeMillis();
+            lastDispatchTime = System.currentTimeMillis();
             resendQueue.clear();
             super.isBootloader = false;
 
@@ -1767,7 +1767,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     protected int sendCommandWOTest(String next) {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispathTime)) {
+        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
             try {
                 Thread.sleep(1, 1);
             } catch (InterruptedException ex) {
@@ -1775,7 +1775,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
-        lastDispathTime = System.currentTimeMillis();
+        lastDispatchTime = System.currentTimeMillis();
 
         //next = clean(next);
         int cmdlen = 0;
@@ -1837,7 +1837,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     protected int sendCommand(String next) {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispathTime)) {
+        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
             try {
                 Thread.sleep(1, 1);
             } catch (InterruptedException ex) {
@@ -1845,7 +1845,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
-        lastDispathTime = System.currentTimeMillis();
+        lastDispatchTime = System.currentTimeMillis();
         //next = clean(next);
         int cmdlen = 0;
         int i = 0;
@@ -1901,7 +1901,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String readResponse() {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispathTime)) {
+        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
             try {
                 Thread.sleep(1, 1);
             } catch (InterruptedException ex) {
@@ -1909,7 +1909,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
-        lastDispathTime = System.currentTimeMillis();
+        lastDispatchTime = System.currentTimeMillis();
         result = "timeout";
         byte[] readBuffer = new byte[1024];
 
