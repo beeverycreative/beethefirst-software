@@ -23,7 +23,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class ButtonsPanel extends javax.swing.JPanel {
 
-    private boolean models_pressed, maintenance_pressed, quickGuide_pressed, print_pressed;
+    private boolean models_pressed, maintenance_pressed, print_pressed;
     private final replicatorg.app.ui.MainWindow editor;
     private boolean jLabel1Bool = false;
     private boolean jLabel5Bool = true;
@@ -40,7 +40,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
         evaluateMaintenanceStatus();
         models_pressed = false;
         maintenance_pressed = false;
-        quickGuide_pressed = false;
         print_pressed = false;
     }
 
@@ -76,7 +75,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public void resetVariables() {
         models_pressed = false;
         maintenance_pressed = false;
-        quickGuide_pressed = false;
         print_pressed = false;
     }
 
@@ -136,12 +134,11 @@ public class ButtonsPanel extends javax.swing.JPanel {
         if (button.equals("quick_guide")) {
             jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             jLabel5Bool = true;
-            quickGuide_pressed = false;
         }
 
         if (button.equals("print")) {
             jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_2.png")));
-            jLabel1Bool = true;
+            jLabel1Bool = false;
             print_pressed = false;
         }
 
@@ -171,7 +168,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             }
 
             jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_2.png")));
-            jLabel1Bool = true;
+            //jLabel1Bool = true;
             setMessage("is connected");
         }
     }
@@ -409,13 +406,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jLabel5MouseExited
 
     private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
-        if (jLabel1Bool) {
+        if (jLabel1Bool == false) {
             jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_2.png")));
         }
     }//GEN-LAST:event_jLabel1MouseEntered
 
     private void jLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseExited
-        if (jLabel1Bool) {
+        if (jLabel1Bool == false) {
             jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_2.png")));
         }
     }//GEN-LAST:event_jLabel1MouseExited
@@ -438,8 +435,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jLabel6MousePressed
 
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
-        boolean connected = Base.getMachineLoader().isConnected();
-
             if (Base.isPrinting == false) {
                 if (maintenance_pressed == false) {
                     if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
@@ -473,14 +468,12 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
-        boolean connected = Base.getMachineLoader().isConnected();
-
         MachineInterface machine = Base.getMainWindow().getMachineInterface();
 
         if (machine.getModel().getMachineBusy()) {
             editor.showFeedBackMessage("moving");
         } else {//&& Base.isPrinting == false 
-            if (!print_pressed && editor.validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
+            if (!print_pressed && editor.validatePrintConditions()
                     || Boolean.valueOf(ProperDefault.get("localPrint"))) {
                 jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
                 jLabel1Bool = false;

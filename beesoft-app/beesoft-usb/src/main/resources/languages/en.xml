@@ -673,7 +673,8 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
             <MeshError value="Imported model has errors. Try to fix them or import another model."/>
             <ReinstallError value="Re-install BEESOFT in order to install all proper files that are missing."/>
-        </StatusMessages>
+            <NoModelError value="There are no models on the work area. Please load at least a model."/>
+	</StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
         <Tour>
