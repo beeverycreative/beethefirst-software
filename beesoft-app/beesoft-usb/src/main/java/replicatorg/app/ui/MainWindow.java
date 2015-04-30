@@ -1042,18 +1042,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-
-        item = newJMenuItem("Support ", 'J');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Support"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                launchBrowser("https://beeverycreative.com/support/");
-            }
-        });
-        menu.add(item);
-
         item = newJMenuItem("Help", 'H');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help"));
