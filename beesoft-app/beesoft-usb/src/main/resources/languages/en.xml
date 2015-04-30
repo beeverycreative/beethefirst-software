@@ -177,7 +177,8 @@
             <Axis2 value="in axis"/>
             <Degrees value="degrees"/>
             <MM value="millimeters"/>
-            <Percentage value="percentage"/>
+            <Inches value="inches"/>
+	    <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
         </MainWindowButtons>
 
