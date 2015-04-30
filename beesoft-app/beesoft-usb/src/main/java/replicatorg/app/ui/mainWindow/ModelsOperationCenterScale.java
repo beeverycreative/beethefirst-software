@@ -76,11 +76,11 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }
 
     private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel2.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bMove.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bRotate.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel3.setFont(GraphicDesignComponents.getSSProLight("33"));
-        jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bScale.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bMirror.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel7.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel12.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel13.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -95,11 +95,11 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
+        bMove.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
+        bRotate.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
         jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        bScale.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
+        bMirror.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
         jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions")); 
         
         if (this.percentage) {
@@ -222,11 +222,11 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        bMove = new javax.swing.JLabel();
+        bRotate = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        bScale = new javax.swing.JLabel();
+        bMirror = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -254,39 +254,39 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(190, 375));
         setRequestFocusEnabled(false);
 
-        jLabel1.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_1.png"))); // NOI18N
-        jLabel1.setText("Move");
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel1.setName("moveButton"); // NOI18N
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel1MouseEntered(evt);
+        bMove.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bMove.setForeground(new java.awt.Color(35, 31, 32));
+        bMove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_1.png"))); // NOI18N
+        bMove.setText("Move");
+        bMove.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bMove.setName("moveButton"); // NOI18N
+        bMove.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bMoveMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel1MouseExited(evt);
+                bMoveMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel1MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bMoveMouseEntered(evt);
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_1.png"))); // NOI18N
-        jLabel2.setText("Rotate");
-        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel2.setName("rotateButton"); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+        bRotate.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bRotate.setForeground(new java.awt.Color(35, 31, 32));
+        bRotate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_1.png"))); // NOI18N
+        bRotate.setText("Rotate");
+        bRotate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bRotate.setName("rotateButton"); // NOI18N
+        bRotate.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel2MouseEntered(evt);
+                bRotateMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel2MouseExited(evt);
+                bRotateMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel2MousePressed(evt);
+                bRotateMousePressed(evt);
             }
         });
 
@@ -294,33 +294,33 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel3.setForeground(new java.awt.Color(35, 31, 32));
         jLabel3.setText("Model");
 
-        jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_pressed_1.png"))); // NOI18N
-        jLabel4.setText("Scale");
-        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel4.setName("scaleButton"); // NOI18N
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        bScale.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bScale.setForeground(new java.awt.Color(35, 31, 32));
+        bScale.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_pressed_1.png"))); // NOI18N
+        bScale.setText("Scale");
+        bScale.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bScale.setName("scaleButton"); // NOI18N
+        bScale.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel4MousePressed(evt);
+                bScaleMousePressed(evt);
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_1.png"))); // NOI18N
-        jLabel5.setText("Mirror");
-        jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel5.setName("mirrorButton"); // NOI18N
-        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+        bMirror.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bMirror.setForeground(new java.awt.Color(35, 31, 32));
+        bMirror.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_1.png"))); // NOI18N
+        bMirror.setText("Mirror");
+        bMirror.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bMirror.setName("mirrorButton"); // NOI18N
+        bMirror.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel5MousePressed(evt);
+                bMirrorMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel5MouseExited(evt);
+                bMirrorMouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel5MouseEntered(evt);
+                bMirrorMouseEntered(evt);
             }
         });
 
@@ -558,10 +558,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                             .addComponent(jLabel16))
                         .addGap(51, 51, 51)
                         .addComponent(jLabel7))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bMirror, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                    .addComponent(bScale, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bRotate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bMove, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
@@ -571,13 +571,13 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 .addGap(15, 15, 15)
                 .addComponent(jLabel3)
                 .addGap(24, 24, 24)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bMove, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bRotate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bScale, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bMirror, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addGap(0, 0, 0)
@@ -598,29 +598,29 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 //            percentage = true;
     }//GEN-LAST:event_jLabel26MouseClicked
 
-    private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
-        jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
-    }//GEN-LAST:event_jLabel1MouseEntered
+    private void bMoveMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMoveMouseEntered
+        bMove.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
+    }//GEN-LAST:event_bMoveMouseEntered
 
-    private void jLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseExited
-        jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
-    }//GEN-LAST:event_jLabel1MouseExited
+    private void bMoveMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMoveMouseExited
+        bMove.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
+    }//GEN-LAST:event_bMoveMouseExited
 
-    private void jLabel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseEntered
-        jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
-    }//GEN-LAST:event_jLabel2MouseEntered
+    private void bRotateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRotateMouseEntered
+        bRotate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
+    }//GEN-LAST:event_bRotateMouseEntered
 
-    private void jLabel2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseExited
-        jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
-    }//GEN-LAST:event_jLabel2MouseExited
+    private void bRotateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRotateMouseExited
+        bRotate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
+    }//GEN-LAST:event_bRotateMouseExited
 
-    private void jLabel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseEntered
-        jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
-    }//GEN-LAST:event_jLabel5MouseEntered
+    private void bMirrorMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMirrorMouseEntered
+        bMirror.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_1.png")));
+    }//GEN-LAST:event_bMirrorMouseEntered
 
-    private void jLabel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseExited
-        jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
-    }//GEN-LAST:event_jLabel5MouseExited
+    private void bMirrorMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMirrorMouseExited
+        bMirror.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_1.png")));
+    }//GEN-LAST:event_bMirrorMouseExited
 
     private void jTextField4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyReleased
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
@@ -766,40 +766,40 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jTextField6KeyReleased
 
-    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
+    private void bScaleMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleMousePressed
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenter());
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
-    }//GEN-LAST:event_jLabel4MousePressed
+    }//GEN-LAST:event_bScaleMousePressed
 
-    private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
+    private void bMoveMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMoveMousePressed
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMoveSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMove());
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
-    }//GEN-LAST:event_jLabel1MousePressed
+    }//GEN-LAST:event_bMoveMousePressed
 
-    private void jLabel2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MousePressed
+    private void bRotateMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRotateMousePressed
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotateSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotate());
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
-    }//GEN-LAST:event_jLabel2MousePressed
+    }//GEN-LAST:event_bRotateMousePressed
 
-    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
+    private void bMirrorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMirrorMousePressed
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirrorSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirror());
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
-    }//GEN-LAST:event_jLabel5MousePressed
+    }//GEN-LAST:event_bMirrorMousePressed
 
     private void jTextField4FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField4FocusGained
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
@@ -919,7 +919,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));        
         scale = UnitConverter.round(scale, 3);         
         
-        model.getEditer().centerAndToBed();
+        model.getEditer().center();
         model.getEditer().scale(scale, true, false);
         
         if (model.getEditer().modelOutBonds()) {
@@ -970,7 +970,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel bMirror;
+    private javax.swing.JLabel bMove;
+    private javax.swing.JLabel bRotate;
+    private javax.swing.JLabel bScale;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -979,13 +982,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
