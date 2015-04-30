@@ -1,2 +1,4 @@
 .DS_Store
 /beesoft-app/beesoft-usb/nbactions-platform-macosx.xml
+/beesoft-app/beesoft-usb/nbactions-platform-linux86_64.xml
+/beesoft-app/beesoft-usb/nbactions-platform-windows.xml
