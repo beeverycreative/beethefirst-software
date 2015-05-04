@@ -30,7 +30,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private final boolean mm, percentage;
     private boolean checkX = true, checkY = true, checkZ = true;
     private double oldX, oldY, oldZ;
-    DecimalFormat df = new DecimalFormat("#.0");
+    DecimalFormat df = new DecimalFormat("#0.00");
 
     public ModelsOperationCenterScale() {
         initComponents();
@@ -699,7 +699,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void iFieldZKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldZKeyReleased
 
-        double zVal = Double.parseDouble(iFieldZ.getText());
+        double zVal = 0.0;
+        try {
+             zVal = Double.parseDouble(iFieldZ.getText());
+            
+        } catch (Exception e) {
+            return;
+        }
+                
         double ratio = zVal / this.oldZ;
 
         //If i'm unselected do just this one
@@ -750,7 +757,17 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void iFieldYKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldYKeyReleased
 
-        double yVal = Double.parseDouble(iFieldY.getText());
+        double yVal = 0.0;
+        
+        try {
+             yVal = Double.parseDouble(iFieldY.getText());
+            
+        } catch (Exception e) {
+            return;
+        }
+       
+        
+        
         double ratio = yVal / this.oldY;
 
         DecimalFormat df = new DecimalFormat("#.0");
@@ -802,27 +819,47 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }//GEN-LAST:event_iFieldYFocusGained
 
     private void iFieldXKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldXKeyReleased
+        
+        double xVal;
+        try {
+            xVal = Double.parseDouble(iFieldX.getText());
 
-        double xVal = Double.parseDouble(iFieldX.getText());
-        double ratio = xVal / this.oldX;
-
-        //If i'm unselected do just this one
-        if (checkX == false) {
-            this.oldX = xVal;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return;
         }
+        double ratio = xVal / this.oldX;        
+        double newX = Math.max(xVal, 0.5);        
+        this.oldX = newX;
 
-        //Or else, scale or the selected ones
-        if (checkX == true) {
-            this.oldX = xVal;
-        }
+        //If i'm unselected do just this one
+        if (checkX == false) {            
+            return;
+        }//no need for else
+        
+        //Or else, scale or the selected ones                            
         if (checkY == true) {
-            double newY = ratio * Double.parseDouble(iFieldY.getText());
+            double yVal;
+            try {
+                yVal = Double.parseDouble(iFieldY.getText());
+            } catch (Exception e) {
+                yVal = this.oldY;
+                iFieldY.setText(df.format(yVal));
+            }                    
+            double newY = Math.max(ratio * yVal, 0.5);
             iFieldY.setText(df.format(newY));
             this.oldY = newY;
         }
         if (checkZ == true) {
-            double newZ = ratio * Double.parseDouble(iFieldZ.getText());
+            double zVal;
+            try {
+                zVal = Double.parseDouble(iFieldZ.getText());
+            } catch (Exception e) {
+                zVal = this.oldZ;
+                iFieldY.setText(df.format(zVal));
+
+            }                    
+            double newZ = Math.max(ratio * zVal, 0.5);
             iFieldZ.setText(df.format(newZ));
             this.oldZ = newZ;
         }
