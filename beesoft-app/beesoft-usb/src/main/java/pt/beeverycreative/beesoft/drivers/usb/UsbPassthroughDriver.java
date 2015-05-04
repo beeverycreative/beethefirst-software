@@ -205,6 +205,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String type = checkFirmwareType();
 
         super.isBootloader = true;
+      
 
         System.out.println("type: " + type);
 
@@ -287,6 +288,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (type.contains("firmware")) {
+            while(recoverEcho() == false);
             serialNumberString = "0000000000";
             lastDispatchTime = System.currentTimeMillis();
             resendQueue.clear();
@@ -417,7 +419,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             setBusy(false);
             closePipe(pipes);
 
-
         }
     }
 
@@ -490,8 +491,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Actually execute the GCode we just parsed.
+     *
      * @param code
-     */     
+     */
     @Override
     public void executeGCodeLine(String code) {
         dispatchCommand(code);
@@ -666,7 +668,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 answer = dispatchCommand(next);
                 break;
             case BLOCK:
-                //Checks clearence before sending
+
+                // checks if communication is synchronized
+                while(!recoverEcho()) {
+                    hiccup(QUEUE_WAIT, 0);
+                }
+                 //Checks if machine is ready before sending               
                 while (!dispatchCommand(GET_STATUS).contains(STATUS_OK)) {
                     hiccup(QUEUE_WAIT, 0);
 
@@ -682,21 +689,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 } else {
                     answer = dispatchCommand(next);
                 }
-
-                //Checks clearence before break
-                while (!dispatchCommand(GET_STATUS).contains(STATUS_OK)) {
+                
+                // checks if communication is synchronized
+                while (!recoverEcho()) {
                     hiccup(QUEUE_WAIT, 0);
-
-                    if (!isInitialized()) {
-                        setInitialized(false);
-                        return NOK;
-                    }
                 }
-
+                
                 break;
+                
+                
         }
 
-        if (!answer.contains(NOK)) {
+        if (answer.contains(NOK) == false) {
 
             return answer;
             // tests COMMS and resends all the missing commands
@@ -705,6 +709,26 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return recoverCOM();
         }
 
+    }
+    
+    // private for now, not sure if its going to be used outside
+    private boolean recoverEcho() {
+        int id = (int) (Math.random()*1000.0);
+        String message = ECHO + " E" + id;
+        String expected = "E" + id;
+        String response = _dispatchCommand(message);
+        System.out.print("recoverEcho(): expected == "+ expected +"\tresponse == "+ response);
+        if(comLog) {
+            Base.writecomLog(System.currentTimeMillis() - startTS, "Echo was sent. R: " + response + " E: " + message);
+        }//no need for else
+        if(response.contains(expected)) {
+            System.out.println("\tresponse is what is expected");
+            return true;
+        }
+        else {
+            System.out.println("\tresponse is not what is expected. next message discarded ("+ readResponse() +")");
+            return false;
+        }
     }
 
     private String recoverCOM() {
@@ -926,23 +950,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void updateCoilCode() {
-
+        machine.setCoilCode("A0");
         //EX : String txt="bcode:A301 ok Q:0";
         String response = dispatchCommand(COILCODE, COM.BLOCK);
 
         Base.writeLog("Coil code: " + response);
-        int ntries = 5;
-
-        while (!response.toLowerCase().contains("ok") && !response.toLowerCase().contains("bcode:A")) {
-            response += dispatchCommand(COILCODE, COM.BLOCK);
-            ntries--;
-
-            if (ntries == 0) {
-                machine.setCoilCode(NOK);
-                break;
-            }
-            hiccup(1, 0);
-        }
 
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "(bcode:A)";	// Any Single Word Character (Not Whitespace) 1
@@ -1145,7 +1157,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //                System.out.println("\tmessage: "+message);
 //                System.out.println("\tsrc: "+srcPos+"\tdst: "+destPos);
-
             }
             System.out.println("Block " + block + "/" + totalBlocks);
         }
@@ -1155,7 +1166,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         srcPos = destPos;
 
 //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
-
         //check if the transfer was canceled
         if (stopTranfer == true) {
             Base.writeLog("Transfer canceled.");
@@ -1319,7 +1329,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         srcPos = destPos;
 
 //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
-
         //check if the transfer was canceled
         if (stopTranfer == true) {
             Base.writeLog("Transfer canceled.");
@@ -1419,7 +1428,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //        elapsedTime - [1];
 //        nLines - [2];
 //        currentNumberLines - [3];
-
         hiccup(100, 0);
         String printSession = dispatchCommand(READ_VARIABLES);
 //        String printSession = readResponse();
@@ -1493,7 +1501,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //            variables[2] = "0";
 //            variables[3] = "0";
 //        }
-
         return variables;
     }
 
@@ -1661,7 +1668,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String command;
         String out = "";
         int tries = 10;
-        String response;        
+        String response;
 
         command = TRANSFER_BLOCK + "A" + srcPos + " D" + destPos;
         out += command + "\n";
@@ -1739,7 +1746,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * @param source
      * @param srcBegin The beginning index (inclusive)
      * @param srcEnd The ending index (exclusive)
-     * 
+     *
      * @return The new, populated byte array
      */
     public byte[] subbytes(byte[] source, int srcBegin, int srcEnd) {
@@ -1803,7 +1810,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     }
                     pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
                     cmdlen = next.length() + 1;
-    //                System.out.println("SENTWO: " + message.trim())
+                    //                System.out.println("SENTWO: " + message.trim())
                 }
             }
         } catch (UsbException ex) {
@@ -1832,8 +1839,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Actually sends command over USB.
+     *
      * @param next
-     * @return 
+     * @return
      */
     protected int sendCommand(String next) {
 
@@ -2077,7 +2085,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Is our buffer empty? If don't have a buffer, its always true.
-     * @return 
+     *
+     * @return
      */
     @Override
     public boolean isBufferEmpty() {
@@ -2096,7 +2105,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * commands for interfacing with the driver directly
      *
      * @param p
-     * 
+     *
      * @throws UsbDisconnectedException
      * @throws IllegalArgumentException
      * @throws UsbNotOpenException
@@ -2142,7 +2151,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     /**
      * *************************************************************************
      * Motor interface functions
-     * 
+     *
      * @param rpm
      */
     @Override
@@ -2320,10 +2329,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             old = position;
             position = readResponse();
             tries--;
-            if(old.contains(position)){
+            if (old.contains(position)) {
                 break;
             }
-            if(tries < 0){
+            if (tries < 0) {
                 return myCurrentPosition;
             }
         }
@@ -3067,4 +3076,5 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
     }
+    
 }
