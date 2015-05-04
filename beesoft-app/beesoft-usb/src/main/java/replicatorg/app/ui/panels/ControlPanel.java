@@ -37,7 +37,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ControlPanel extends javax.swing.JDialog {
+public class ControlPanel extends BaseDialog {
 
     private MachineInterface machine;
     private double temperatureGoal;
@@ -69,6 +69,7 @@ public class ControlPanel extends javax.swing.JDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
+        enableDrag();
         evaluateInitialConditions();
         disposeThread = new TemperatureThread(this, machine);
         disposeThread.start();
@@ -302,13 +303,12 @@ public class ControlPanel extends javax.swing.JDialog {
         File logsDir = new File(Base.getAppDataDirectory().getAbsolutePath());
         File[] logsList = logsDir.listFiles();
 
-        for (int i = 0; i < logsList.length; i++) {
+        for (File logsList1 : logsList) {
             if (force) {
-                if (logsList[i].getName().contains(REDMEC_TAG) && logsList[i].length() == 0) {
-                    logsList[i].delete();
+                if (logsList1.getName().contains(REDMEC_TAG) && logsList1.length() == 0) {
+                    logsList1.delete();
                 }
-            }// no need for else
-
+            } // no need for else
         }
     }
 

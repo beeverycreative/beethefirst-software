@@ -90,13 +90,13 @@ class MachineThread extends Thread {
                     sleep(500, 1);
 //                    Base.listAllJVMThreads();
                 } catch (InterruptedException e) {
-                    Base.status_thread_died = true;
+                    Base.statusThreadDied = true;
                     Base.writeLog("taking assess status thread down");
                     machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
 
 
                 } catch (VersionException E) {
-                    Base.status_thread_died = true;
+                    Base.statusThreadDied = true;
                     Base.writeLog("Initialize, probably failed.");
                     machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
 

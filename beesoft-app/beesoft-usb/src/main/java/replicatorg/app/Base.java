@@ -184,7 +184,7 @@ public class Base {
     }
     
     private static final ConfigProperties configProperties = new ConfigProperties();
-    public static boolean status_thread_died = false;
+    public static boolean statusThreadDied = false;
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
     public static boolean isPrinting = false;

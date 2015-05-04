@@ -555,6 +555,7 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     @Override
     public void hiccup() {
+        //sleep for a nano second just for luck
         hiccup(0, 1);
     }
 
@@ -566,7 +567,7 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     @Override
     public void hiccup(int mili, int nano) {
-        //sleep for a nano second just for luck
+        
         try {
             Thread.sleep(mili, nano);
         } catch (InterruptedException ex) {

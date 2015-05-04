@@ -116,13 +116,13 @@ public class FilamentControler {
      */
     public static double getColorRatio(String coilCode, String resolution) {
 
-        double result = 0.92; //Default
-        HashMap<String, String> tagValues = Languager.getTagValues(2, coilCode, resolution);
+        double result = 1.00; //Default
+        HashMap<String, String> tagValues = Languager.getTagValues(2, coilCode.toLowerCase(), resolution);
         
         if (tagValues != null && !tagValues.isEmpty()) {
             for (Map.Entry pair : tagValues.entrySet()) {
-                if (pair.getValue().equals("filament_flow")) {
-                    return ((Double)pair.getKey() / 100);
+                if (pair.getValue().equals("filament_flow")) {                    
+                    return Double.parseDouble((String)pair.getKey()) / 100.0 ;
                 }
             }
         }
@@ -150,3 +150,4 @@ public class FilamentControler {
         return "A302"; 
     }
 }
+
