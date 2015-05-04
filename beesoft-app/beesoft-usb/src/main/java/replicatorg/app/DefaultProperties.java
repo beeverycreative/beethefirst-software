@@ -89,6 +89,9 @@ public class DefaultProperties {
         defaultHash.put("transferSpeed", "42.0");
         defaultHash.put("autonomy", String.valueOf(true));
         defaultHash.put("measures", "mm");
+        defaultHash.put("editor.xmin", "0.8");
+        defaultHash.put("editor.ymin", "0.8");
+        defaultHash.put("editor.zmin", "0.3");
     }
 
     /**
