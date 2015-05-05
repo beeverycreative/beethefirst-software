@@ -25,6 +25,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 import replicatorg.app.Base;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.MainWindow;
 
 import replicatorg.machine.Machine;
@@ -42,9 +43,7 @@ import replicatorg.model.Model;
  */
 public class EditingModel implements Serializable {
 
-    private final double MINIMUM_SIZE_LIMIT = 1;
-    private final double MAXIMUM_SIZE_LIMIT = 0.9966;
-    private final DecimalFormat df = new DecimalFormat("#.00"); 
+    private final double MINIMUM_SIZE_LIMIT = Float.parseFloat(ProperDefault.get("editor.xmin"));
 
     public class ReferenceFrame {
 
@@ -408,14 +407,6 @@ public class EditingModel implements Serializable {
 
         }
         return false; 
-    }
-    
-    public double getMINIMUM_SIZE_LIMIT() {
-        return MINIMUM_SIZE_LIMIT;
-    }
-
-    public double getMAXIMUM_SIZE_LIMIT() {
-        return MAXIMUM_SIZE_LIMIT;
     }
 
     public double getBedMaxMeasure() {
@@ -828,11 +819,11 @@ public class EditingModel implements Serializable {
      * @return <li> true, if bigger
      * <li> false, if not
      */
-    public boolean validSizeConstraints() {
-//        System.out.println(getHeight());
-//        System.out.println(getWidth());
-//        System.out.println(getDepth());
-        return getWidth() > MINIMUM_SIZE_LIMIT && getDepth() > MINIMUM_SIZE_LIMIT;
+    private boolean validSizeConstraints(double newScale) {
+        float minX = Float.parseFloat(ProperDefault.get("editor.xmin"));
+        float minY = Float.parseFloat(ProperDefault.get("editor.ymin"));
+        float minZ = Float.parseFloat(ProperDefault.get("editor.zmin"));
+        return getWidth() * newScale >= minX && getDepth() * newScale >= minY && getHeight() * newScale >= minZ;
     }
 
     public boolean isOnPlatform() {
@@ -859,7 +850,8 @@ public class EditingModel implements Serializable {
     }
     
     public void scale(double scale, boolean isOnPlatform, boolean evaluateOutOfBounds) {
-        if (model != null && validSizeConstraints()) {
+
+        if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
             Transform3D t = new Transform3D();
             t.setScale(scale);
@@ -882,7 +874,7 @@ public class EditingModel implements Serializable {
             double newScale = scale2;
             double realScale = newScale / currentScale;
 
-            if (!(model.minDimension() < MINIMUM_SIZE_LIMIT && realScale < MINIMUM_SIZE_LIMIT)) {
+            if (model.minDimension() >= MINIMUM_SIZE_LIMIT || realScale >= MINIMUM_SIZE_LIMIT) {
 
                 this.scale = scale2;
 
@@ -918,11 +910,11 @@ public class EditingModel implements Serializable {
     }
     
         
-    public void scaleXY(double scale2, boolean isOnPlatform) {
-        if (model != null && validSizeConstraints()) {
+    public void scaleXY(double scale, boolean isOnPlatform) {
+        if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
             Transform3D t = new Transform3D();
-            t.setNonUniformScale(scale2, scale2, 1);
+            t.setNonUniformScale(scale, scale, 1);
             if (isOnPlatform) {
                 t = transformOnBottom(t);
             } else {
@@ -935,10 +927,10 @@ public class EditingModel implements Serializable {
         }
     }   
 
-    public void scaleY(double scale2, boolean isOnPlatform, boolean arrowsScale) {
+    public void scaleY(double scale, boolean isOnPlatform, boolean arrowsScale) {
         if (model != null) {
             double currentScale = model.getYscalePercentage();
-            double newScale = scale2;
+            double newScale = scale;
             double realScale = newScale / currentScale;
 
             if (!(model.minDimension() < MINIMUM_SIZE_LIMIT && realScale < MINIMUM_SIZE_LIMIT)) {
@@ -972,11 +964,11 @@ public class EditingModel implements Serializable {
         }
     }
 
-    public void scaleYZ(double scale2, boolean isOnPlatform) {
-        if (model != null && validSizeConstraints()) {
+    public void scaleYZ(double scale, boolean isOnPlatform) {
+        if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
             Transform3D t = new Transform3D();
-            t.setNonUniformScale(1, scale2, scale2);
+            t.setNonUniformScale(1, scale, scale);
             if (isOnPlatform) {
                 t = transformOnBottom(t);
             } else {
@@ -989,10 +981,10 @@ public class EditingModel implements Serializable {
         }
     }
     
-    public void scaleZ(double scale2, boolean isOnPlatform, boolean arrowsScale) {
+    public void scaleZ(double scale, boolean isOnPlatform, boolean arrowsScale) {
         if (model != null) {
             double currentScale = model.getZscalePercentage();
-            double newScale = scale2;
+            double newScale = scale;
             double realScale = newScale / currentScale;
 
             if (!(model.minDimension() < MINIMUM_SIZE_LIMIT && realScale < MINIMUM_SIZE_LIMIT)) {
@@ -1025,11 +1017,11 @@ public class EditingModel implements Serializable {
         }
     }
 
-    public void scaleXZ(double scale2, boolean isOnPlatform) {
-        if (model != null && validSizeConstraints()) {
+    public void scaleXZ(double scale, boolean isOnPlatform) {
+        if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
             Transform3D t = new Transform3D();
-            t.setNonUniformScale(scale2, 1, scale2);
+            t.setNonUniformScale(scale, 1, scale);
             if (isOnPlatform) {
                 t = transformOnBottom(t);
             } else {
@@ -1042,16 +1034,16 @@ public class EditingModel implements Serializable {
         }
     }
     
-    public void scaleAxisLock(double scale2, boolean isOnPlatform, String axis) {
-        if (model != null && validSizeConstraints()) {
+    public void scaleAxisLock(double scale, boolean isOnPlatform, String axis) {
+        if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
             Transform3D t = new Transform3D();
             if (axis.equals("x")) {
-                t.setNonUniformScale(scale2, 1, 1);
+                t.setNonUniformScale(scale, 1, 1);
             } else if (axis.equals("y")) {
-                t.setNonUniformScale(1, scale2, 1);
+                t.setNonUniformScale(1, scale, 1);
             } else if (axis.equals("z")) {
-                t.setNonUniformScale(1, 1, scale2);
+                t.setNonUniformScale(1, 1, scale);
             } else {
                 t.setNonUniformScale(1, 1, 1);
             }

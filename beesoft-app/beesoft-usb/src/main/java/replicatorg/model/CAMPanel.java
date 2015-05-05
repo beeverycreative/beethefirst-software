@@ -194,7 +194,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                     mOCS.setYValue(val);
                                     mOCS.setZValue(val);
                                 } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
+                                    DecimalFormat df = new DecimalFormat("#.00"); 
                                     
                                     double width = model.getEditer().getWidth();
                                     if (ProperDefault.get("measures").equals("inches")) {
@@ -252,7 +252,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                     mOCS.setYValue(val);
                                     mOCS.setZValue(val);
                                 } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
+                                    DecimalFormat df = new DecimalFormat("#.00"); 
                                     
                                     double width = model.getEditer().getWidth();
                                     if (ProperDefault.get("measures").equals("inches")) {
@@ -311,7 +311,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                     mOCS.setYValue(val);
                                     mOCS.setZValue(val);
                                 } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
+                                    DecimalFormat df = new DecimalFormat("#.00"); 
                                     
                                     double width = model.getEditer().getWidth();
                                     if (ProperDefault.get("measures").equals("inches")) {
@@ -370,7 +370,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                     mOCS.setYValue(val);
                                     mOCS.setZValue(val);
                                 } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
+                                    DecimalFormat df = new DecimalFormat("#.00"); 
                                     
                                     double width = model.getEditer().getWidth();
                                     if (ProperDefault.get("measures").equals("inches")) {

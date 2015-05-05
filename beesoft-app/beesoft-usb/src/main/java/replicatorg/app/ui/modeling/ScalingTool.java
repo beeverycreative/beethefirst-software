@@ -19,7 +19,7 @@ import replicatorg.util.UnitConverter;
  *  Copyright (c) 2013 BEEVC - Electronic Systems
  */
 public class ScalingTool extends Tool {
-   
+
     public ScalingTool(ToolPanel parent) {
         super(parent);
     }
@@ -66,9 +66,9 @@ public class ScalingTool extends Tool {
             // last update)
             scaleDragChange = parent.getModelEditing().model.getTransform().getScale();
             isOnPlatform = parent.getModelEditing().isOnPlatform();
-        }
-        else
+        } else {
             super.mousePressed(e);
+        }
 
     }
 
@@ -79,7 +79,7 @@ public class ScalingTool extends Tool {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (parent.getModelEditing().model != null ) {
+        if (parent.getModelEditing().model != null) {
             Base.getMainWindow().getBed().setGcodeOK(false);
             if (startPoint == null) {
                 return;
@@ -102,104 +102,66 @@ public class ScalingTool extends Tool {
                     super.mouseDragged(e);
                     break;
                 case SCALE_OBJECT:
-                    
-                    scaleDragChange += (0.005 * (xd+yd > 0 ? (Math.sqrt(xd*xd+yd*yd)) : -(Math.sqrt(xd*xd+yd*yd)))) ;
 
-                    if(scaleDragChange > 0.1){   
-                            
+                    scaleDragChange += (0.0001 * (xd + yd > 0 ? (Math.sqrt(xd * xd + yd * yd)) : -(Math.sqrt(xd * xd + yd * yd))));
+
+                    if (scaleDragChange > 0.1) {
+                        Model model = parent.getModelEditing().model;
                         double currentScale = parent.getModelEditing().model.getTransform().getScale();
                         double targetScale = scaleDragChange / currentScale;
+                        double width = model.getEditer().getWidth();
+                        double depth = model.getEditer().getDepth();
+                        double height = model.getEditer().getHeight();
+                        float minX = Float.parseFloat(ProperDefault.get("editor.xmin"));
+                        float minY = Float.parseFloat(ProperDefault.get("editor.ymin"));
+                        float minZ = Float.parseFloat(ProperDefault.get("editor.zmin"));
+                        float maxX = Float.parseFloat(ProperDefault.get("editor.xmax"));
+                        float maxY = Float.parseFloat(ProperDefault.get("editor.ymax"));
+                        float maxZ = Float.parseFloat(ProperDefault.get("editor.zmax"));
 
-                        Model model = parent.getModelEditing().model;
-                        double minimumSize = model.getEditer().getMINIMUM_SIZE_LIMIT();
-                        double maximumSize = model.getEditer().getMAXIMUM_SIZE_LIMIT();
-                        
-                        if (!(model.minDimension()< minimumSize && targetScale < minimumSize) ) {
-
-                          if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked()) {
-                                
-                                parent.getModelEditing().scale(targetScale, isOnPlatform, true);
-                                
-                                model.updateXscale(targetScale);
-                                model.updateYscale(targetScale);
-                                model.updateZscale(targetScale);                              
-                                
-                            } else if (mOCS.isXLocked() && mOCS.isYLocked() && mOCS.isZLocked() == false) { //X & Y
-                                
-                                parent.getModelEditing().scaleXY(targetScale, isOnPlatform);      
-                                
-                                model.updateXscale(targetScale);
-                                model.updateYscale(targetScale);                              
-                                
-                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() && mOCS.isZLocked() == false) { // Y
-
-                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "y");
-
-                                model.updateYscale(targetScale);
-                               
-                            } else if (mOCS.isXLocked() && mOCS.isYLocked() == false && mOCS.isZLocked() == false) { //X
-                                
-                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "x");
-                                
-                                model.updateXscale(targetScale);                             
-                                
-                            } else if (mOCS.isXLocked() && mOCS.isYLocked()== false && mOCS.isZLocked()) { //X & Z
-                                
-                                parent.getModelEditing().scaleXZ(targetScale, isOnPlatform);  
-                                
-                                model.updateXscale(targetScale);
-                                model.updateZscale(targetScale);                               
-                                
-                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() && mOCS.isZLocked()) { // Y & Z
-                                
-                                parent.getModelEditing().scaleYZ(targetScale, isOnPlatform);            
-                                
-                                model.updateYscale(targetScale);
-                                model.updateZscale(targetScale);                              
-                                
-                            } else if (mOCS.isXLocked() == false && mOCS.isYLocked() == false && mOCS.isZLocked()) { // Z
-
-                                parent.getModelEditing().scaleAxisLock(targetScale, isOnPlatform, "z");       
-                                
-                                model.updateZscale(targetScale);                               
-                            }                               
-                            
-                            Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
- 
-                            if (super.mOCS.isScalePercentage()) {
-                                super.mOCS.setXValue(model.getScaleXinPercentage());
-                                super.mOCS.setYValue(model.getScaleYinPercentage());
-                                super.mOCS.setZValue(model.getScaleZinPercentage());
-                            } else {
-                                DecimalFormat df = new DecimalFormat("#.0");
-                                                    
-                                double width = model.getEditer().getWidth();
-                                if (ProperDefault.get("measures").equals("inches")) {
-                                    width = UnitConverter.millimetersToInches(width);
-                                }
-                                double depth = model.getEditer().getDepth();
-                                if (ProperDefault.get("measures").equals("inches")) {
-                                    depth = UnitConverter.millimetersToInches(depth);
-                                }
-                                double height = model.getEditer().getHeight();
-                                if (ProperDefault.get("measures").equals("inches")) {
-                                    height = UnitConverter.millimetersToInches(height);
-                                } 
-                                super.mOCS.setXValue(df.format(width));
-                                super.mOCS.setYValue(df.format(depth));
-                                super.mOCS.setZValue(df.format(height));
-                            } 
+                        if (mOCS.isXLocked()) {
+                            width = Math.min(maxX, Math.max(width * targetScale, minX));
                         }
-                        
+
+                        if (mOCS.isYLocked()) {
+                            depth = Math.min(maxY, Math.max(depth * targetScale, minY));
+                        }
+
+                        if (mOCS.isZLocked()) {
+                            height = Math.min(maxZ, Math.max(height * targetScale, minZ));
+                        }
+
+                        // stops values from increasing (or decreasing) when the limit of a selected value is reached
+                        // aka maintains the aspect ratio
+                        if ((width >= maxX && mOCS.isXLocked()) || (depth >= maxY && mOCS.isYLocked()) || (height >= maxZ && mOCS.isZLocked())) {
+                            break;
+                        }
+                        parent.getModelEditing().updateDimensions(width, depth, height, isOnPlatform);
+
+                        DecimalFormat df = new DecimalFormat("#.00");
+
+                        if (ProperDefault.get("measures").equals("inches")) {
+                            width = UnitConverter.millimetersToInches(model.getEditer().getWidth());
+                            depth = UnitConverter.millimetersToInches(model.getEditer().getDepth());
+                            height = UnitConverter.millimetersToInches(model.getEditer().getHeight());
+                        } else { // although it seems unnecessary and equal to the values assigned above, these values changed with the resize
+                            width = model.getEditer().getWidth();
+                            depth = model.getEditer().getDepth();
+                            height = model.getEditer().getHeight();
+                        }
+
+                        super.mOCS.setXValue(df.format(width));
+                        super.mOCS.setYValue(df.format(depth));
+                        super.mOCS.setZValue(df.format(height));
+
                     }
 
                     break;
+
             }
             startPoint = p;
-        }
-        else
-        {
-             if (startPoint == null) {
+        } else {
+            if (startPoint == null) {
                 return;
             }
             Point p = e.getPoint();
