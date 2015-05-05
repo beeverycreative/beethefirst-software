@@ -89,9 +89,12 @@ public class DefaultProperties {
         defaultHash.put("transferSpeed", "42.0");
         defaultHash.put("autonomy", String.valueOf(true));
         defaultHash.put("measures", "mm");
-        defaultHash.put("editor.xmin", "0.8");
-        defaultHash.put("editor.ymin", "0.8");
-        defaultHash.put("editor.zmin", "0.3");
+        defaultHash.put("editor.xmin", String.valueOf("0.8"));
+        defaultHash.put("editor.ymin", String.valueOf("0.8"));
+        defaultHash.put("editor.zmin", String.valueOf("0.3"));
+        defaultHash.put("editor.xmax", String.valueOf("185"));
+        defaultHash.put("editor.ymax", String.valueOf("135"));
+        defaultHash.put("editor.zmax", String.valueOf("125"));
     }
 
     /**

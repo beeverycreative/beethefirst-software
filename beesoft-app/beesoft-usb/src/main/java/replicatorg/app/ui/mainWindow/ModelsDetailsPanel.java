@@ -137,7 +137,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
 
     public void updateDimensions() {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
-            DecimalFormat df = new DecimalFormat("#.0");
+            DecimalFormat df = new DecimalFormat("#0.00");
             EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
 
             if (ProperDefault.get("measures").equals("inches")) {
@@ -496,7 +496,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                     mOCS.setYValue(model.getScaleYinPercentage());
                     mOCS.setZValue(model.getScaleZinPercentage());
                 } else {
-                    DecimalFormat df = new DecimalFormat("#.0"); 
+                    DecimalFormat df = new DecimalFormat("#.00"); 
 
                     double width = model.getEditer().getWidth();
                     if (ProperDefault.get("measures").equals("inches")) {

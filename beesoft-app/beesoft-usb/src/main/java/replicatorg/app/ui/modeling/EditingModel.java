@@ -842,6 +842,22 @@ public class EditingModel implements Serializable {
         return lower.z < 0.001d && lower.z > -0.001d;
     }
 
+    
+    public void updateDimensions(double targetX, double targetY, double targetZ, boolean isOnPlatform){
+        Transform3D t = new Transform3D();
+
+        t.setScale(new Vector3d(targetX / getWidth(), targetY / getDepth(), targetZ / getHeight()));
+        if (isOnPlatform) {
+            t = transformOnBottom(t);
+        } else {
+            t = transformOnCentroid(t);
+        }
+        shapeTransform.setTransform(t);
+
+        Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
+        return;
+    }
+    
     public void scale(double scale, boolean isOnPlatform, boolean evaluateOutOfBounds) {
         if (model != null && validSizeConstraints()) {
             this.scale = scale / 100;
@@ -1050,7 +1066,8 @@ public class EditingModel implements Serializable {
             evaluateModelOutOfBounds();
             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
         }
-    }    
+    }
+
         
     private double calculateOverplus(char axis) {
         double diffDistance;
@@ -1131,6 +1148,8 @@ public class EditingModel implements Serializable {
         }
     }
 
+    
+    
     public Point3d getCentroid() {
         validateBounds();
         return centroid;

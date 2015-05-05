@@ -31,6 +31,12 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private boolean checkX = true, checkY = true, checkZ = true;
     private double oldX, oldY, oldZ;
     DecimalFormat df = new DecimalFormat("#0.00");
+    static Double X_MIN = Double.parseDouble(ProperDefault.get("editor.xmin"));
+    static Double Y_MIN = Double.parseDouble(ProperDefault.get("editor.ymin"));
+    static Double Z_MIN = Double.parseDouble(ProperDefault.get("editor.zmin"));
+    static Double X_MAX = Double.parseDouble(ProperDefault.get("editor.xmax"));
+    static Double Y_MAX = Double.parseDouble(ProperDefault.get("editor.ymax"));
+    static Double Z_MAX = Double.parseDouble(ProperDefault.get("editor.zmax"));
 
     public ModelsOperationCenterScale() {
         initComponents();
@@ -123,14 +129,17 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     public void setXValue(String val) {
         this.iFieldX.setText(val);
+        oldX = Double.parseDouble(val);                                
     }
 
     public void setYValue(String val) {
         this.iFieldY.setText(val);
+        oldY = Double.parseDouble(val);
     }
 
     public void setZValue(String val) {
         this.iFieldZ.setText(val);
+        oldZ = Double.parseDouble(val);
     }
 
     private void toggleX() {
@@ -532,7 +541,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -607,16 +616,13 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         System.out.println("cliicked");
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        double ratioX = Double.parseDouble(iFieldX.getText()) / oldX * 100.0;
-        System.out.println("ratioZ: "+ratioX);
-        double ratioY = Double.parseDouble(iFieldY.getText()) / oldY * 100.0;
-        System.out.println("ratioY: "+ratioY);
-        double ratioZ = Double.parseDouble(iFieldZ.getText()) / oldZ * 100.0;
-        System.out.println("ratioZ: "+ratioZ);
-
-        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleX(ratioX, modelOnPlatform, false);
-        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleY(ratioY, modelOnPlatform, false);
-        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().scaleZ(ratioZ, modelOnPlatform, false);
+        double valX = Double.parseDouble(iFieldX.getText());
+        double valY = Double.parseDouble(iFieldY.getText());
+        double valZ = Double.parseDouble(iFieldZ.getText());
+        
+        
+        
+        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);
     }//GEN-LAST:event_bApplyMousePressed
 
     private void bApplyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseExited
@@ -699,144 +705,24 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void iFieldZKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldZKeyReleased
 
-        double zVal = 0.0;
+        double zVal;
+
         try {
-             zVal = Double.parseDouble(iFieldZ.getText());
-            
-        } catch (Exception e) {
-            return;
-        }
-                
-        double ratio = zVal / this.oldZ;
-
-        //If i'm unselected do just this one
-        if (checkZ == false) {
-            this.oldZ = zVal;
-            return;
-        }
-
-        //Or else, scale or the selected ones
-        if (checkX == true) {
-            double newX = ratio * Double.parseDouble(iFieldX.getText());
-            iFieldX.setText(df.format(newX));
-            this.oldX = newX;
-        }
-        if (checkY == true) {
-            double newY = ratio * Double.parseDouble(iFieldY.getText());
-            iFieldY.setText(df.format(newY));
-            this.oldY = newY;
-        }
-        if (checkZ == true) {
-            this.oldZ = zVal;
-        }
-    }//GEN-LAST:event_iFieldZKeyReleased
-
-    private void iFieldZFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldZFocusGained
-//        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-//        if (this.percentage) {
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
-//        } else {
-//            DecimalFormat df = new DecimalFormat("#.0");
-//
-//            double width = model.getEditer().getWidth();
-//            if (ProperDefault.get("measures").equals("inches")) {
-//                width = UnitConverter.millimetersToInches(width);
-//            }
-//            double depth = model.getEditer().getDepth();
-//            if (ProperDefault.get("measures").equals("inches")) {
-//                depth = UnitConverter.millimetersToInches(depth);
-//            }
-//
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-//            setXValue(String.valueOf(df.format(width)));
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-//            setYValue(String.valueOf(df.format(depth)));
-//        }
-    }//GEN-LAST:event_iFieldZFocusGained
-
-    private void iFieldYKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldYKeyReleased
-
-        double yVal = 0.0;
-        
-        try {
-             yVal = Double.parseDouble(iFieldY.getText());
-            
-        } catch (Exception e) {
-            return;
-        }
-       
-        
-        
-        double ratio = yVal / this.oldY;
-
-        DecimalFormat df = new DecimalFormat("#.0");
-
-        //If i'm unselected do just this one
-        if (checkY == false) {
-            this.oldY = yVal;
-            return;
-        }
-
-        //Or else, scale or the selected ones
-        if (checkX == true) {
-            double newX = ratio * Double.parseDouble(iFieldX.getText());
-            iFieldX.setText(df.format(newX));
-            this.oldX = newX;
-        }
-        if (checkY == true) {
-            this.oldY = yVal;
-        }
-        if (checkZ == true) {
-            double newZ = ratio * Double.parseDouble(iFieldZ.getText());
-            iFieldZ.setText(df.format(newZ));
-            this.oldZ = newZ;
-        }
-    }//GEN-LAST:event_iFieldYKeyReleased
-
-    private void iFieldYFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldYFocusGained
-//        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-//        if (this.percentage) {
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setXValue(model.getScaleXinPercentage());
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
-//
-//        } else {
-//            DecimalFormat df = new DecimalFormat("#.0");
-//
-//            double width = model.getEditer().getWidth();
-//            if (ProperDefault.get("measures").equals("inches")) {
-//                width = UnitConverter.millimetersToInches(width);
-//            }
-//            double height = model.getEditer().getHeight();
-//            if (ProperDefault.get("measures").equals("inches")) {
-//                height = UnitConverter.millimetersToInches(height);
-//            }
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-//            setXValue(String.valueOf(df.format(width)));
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-//            setZValue(String.valueOf(df.format(height)));
-//        }
-    }//GEN-LAST:event_iFieldYFocusGained
-
-    private void iFieldXKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldXKeyReleased
-        
-        double xVal;
-        try {
-            xVal = Double.parseDouble(iFieldX.getText());
+            zVal = Double.parseDouble(iFieldZ.getText());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
         }
-        double ratio = xVal / this.oldX;        
-        double newX = Math.max(xVal, 0.5);        
-        this.oldX = newX;
+        double ratio = zVal / this.oldZ;
+        double newZ = Math.min(Z_MAX, Math.max(zVal, Z_MIN));
+        this.oldZ = newZ;
 
         //If i'm unselected do just this one
-        if (checkX == false) {            
+        if (checkZ == false) {
             return;
         }//no need for else
-        
+
         //Or else, scale or the selected ones                            
         if (checkY == true) {
             double yVal;
@@ -845,8 +731,114 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             } catch (Exception e) {
                 yVal = this.oldY;
                 iFieldY.setText(df.format(yVal));
-            }                    
-            double newY = Math.max(ratio * yVal, 0.5);
+            }
+            double newY = Math.min(Y_MAX, Math.max(ratio * yVal, Y_MIN));
+            iFieldY.setText(df.format(newY));
+            this.oldY = newY;
+        }
+        if (checkX == true) {
+            double xVal;
+            try {
+                xVal = Double.parseDouble(iFieldX.getText());
+            } catch (Exception e) {
+                xVal = this.oldX;
+                iFieldX.setText(df.format(xVal));
+
+            }
+            double newX = Math.min(X_MAX, Math.max(ratio * xVal, X_MIN));
+            iFieldX.setText(df.format(newX));
+            this.oldX = newX;
+        }
+    }//GEN-LAST:event_iFieldZKeyReleased
+
+    private void iFieldZFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldZFocusGained
+
+        
+        refresh_iFields();
+    }//GEN-LAST:event_iFieldZFocusGained
+
+    private void iFieldYKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldYKeyReleased
+
+        double yVal;
+        try {
+            yVal = Double.parseDouble(iFieldY.getText());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        double ratio = yVal / this.oldY;
+        double newY = Math.min(Y_MAX, Math.max(yVal, Y_MIN));
+        this.oldY = newY;
+
+        //If i'm unselected do just this one
+        if (checkY == false) {
+            return;
+        }//no need for else
+
+        //Or else, scale or the selected ones                            
+        if (checkX == true) {
+            double xVal;
+            try {
+                xVal = Double.parseDouble(iFieldX.getText());
+            } catch (Exception e) {
+                xVal = this.oldX;
+                iFieldX.setText(df.format(xVal));
+            }
+            double newX = Math.min(X_MAX, Math.max(ratio * xVal, X_MIN));
+            iFieldX.setText(df.format(newX));
+            this.oldX = newX;
+        }
+        if (checkZ == true) {
+            double zVal;
+            try {
+                zVal = Double.parseDouble(iFieldZ.getText());
+            } catch (Exception e) {
+                zVal = this.oldZ;
+                iFieldY.setText(df.format(zVal));
+
+            }
+            double newZ = Math.min(Z_MAX, Math.max(ratio * zVal, Z_MIN));
+            iFieldZ.setText(df.format(newZ));
+            this.oldZ = newZ;
+        }
+    }//GEN-LAST:event_iFieldYKeyReleased
+
+    private void iFieldYFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldYFocusGained
+
+        refresh_iFields();
+
+    }//GEN-LAST:event_iFieldYFocusGained
+
+    private void iFieldXKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldXKeyReleased
+
+        double xVal;
+        try {
+            xVal = Double.parseDouble(iFieldX.getText());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        double ratio = xVal / this.oldX;
+        double newX = Math.min(X_MAX, Math.max(xVal, X_MIN));
+        this.oldX = newX;
+
+        //If i'm unselected do just this one
+        if (checkX == false) {
+            return;
+        }//no need for else
+
+        //Or else, scale or the selected ones                            
+        if (checkY == true) {
+            double yVal;
+            try {
+                yVal = Double.parseDouble(iFieldY.getText());
+            } catch (Exception e) {
+                yVal = this.oldY;
+                iFieldY.setText(df.format(yVal));
+            }
+            double newY = Math.min(Y_MAX, Math.max(ratio * yVal, Y_MIN));
             iFieldY.setText(df.format(newY));
             this.oldY = newY;
         }
@@ -858,35 +850,16 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 zVal = this.oldZ;
                 iFieldY.setText(df.format(zVal));
 
-            }                    
-            double newZ = Math.max(ratio * zVal, 0.5);
+            }
+            double newZ = Math.min(Z_MAX, Math.max(ratio * zVal, Z_MIN));
             iFieldZ.setText(df.format(newZ));
             this.oldZ = newZ;
         }
     }//GEN-LAST:event_iFieldXKeyReleased
 
     private void iFieldXFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldXFocusGained
-//        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-//
-//        if (this.percentage) {
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setYValue(model.getScaleYinPercentage());
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().setZValue(model.getScaleZinPercentage());
-//        } else {
-//            DecimalFormat df = new DecimalFormat("#.0");
-//
-//            double depth = model.getEditer().getDepth();
-//            if (ProperDefault.get("measures").equals("inches")) {
-//                depth = UnitConverter.millimetersToInches(depth);
-//            }
-//            double height = model.getEditer().getHeight();
-//            if (ProperDefault.get("measures").equals("inches")) {
-//                height = UnitConverter.millimetersToInches(height);
-//            }
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-//            setYValue(String.valueOf(df.format(depth)));
-//            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationScale().
-//            setZValue(String.valueOf(df.format(height)));
-//        }
+
+        refresh_iFields();
     }//GEN-LAST:event_iFieldXFocusGained
 
     /**
@@ -925,4 +898,23 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
+
+    private void refresh_iFields() {
+        System.out.println("refresh started");
+        try {
+            
+            iFieldX.setText(df.format(this.oldX));
+        } catch (Exception e) {
+        }
+        try {
+            
+            iFieldY.setText(df.format(this.oldY));
+        } catch (Exception e) {
+        }
+        try {
+            
+             iFieldZ.setText(df.format(this.oldZ));
+        } catch (Exception e) {
+        }                       
+    }
 }
