@@ -616,7 +616,7 @@
                 <inset0_speed value="60"/>
                 <insetx_speed value="60"/>
                 <filament_flow value="107"/>
-                <cool_min_layer_time value="5"/>
+                <cool_min_layer_time value="20"/>
                 <retraction_speed value="125"/>
                 <retraction_amount value="0.75"/>
             </lowRes>
@@ -629,7 +629,7 @@
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="107"/>
-                <cool_min_layer_time value="30"/>
+                <cool_min_layer_time value="20"/>
                 <retraction_speed value="125"/>
                 <retraction_amount value="0.75"/>
             </mediumRes>
@@ -642,7 +642,7 @@
                 <inset0_speed value="40"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107"/>
-                <cool_min_layer_time value="5"/>
+                <cool_min_layer_time value="20"/>
                 <retraction_speed value="125"/>
                 <retraction_amount value="0.75"/>
             </highRes>
@@ -655,7 +655,7 @@
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107"/>
-                <cool_min_layer_time value="5"/>
+                <cool_min_layer_time value="20"/>
                 <retraction_speed value="125"/>
                 <retraction_amount value="0.75"/>
             </shighRes>
