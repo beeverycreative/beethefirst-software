@@ -68,13 +68,13 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel1.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
         jLabel15.setText(Languager.getTagValue(1, "ModelDetails", "Model_N"));
         jLabel5.setText(Languager.getTagValue(1, "ModelDetails", "Model_Selected"));
-             
+
         if (ProperDefault.get("measures").equals("inches")) {
             jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
-                +" ("+Languager.getTagValue(1, "MainWindowButtons", "Inches")+")");
+                    + " (" + Languager.getTagValue(1, "MainWindowButtons", "Inches") + ")");
         } else {
-             jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
-                 +" ("+Languager.getTagValue(1, "MainWindowButtons", "MM")+")");
+            jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
+                    + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
         }
         jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
         jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
@@ -96,7 +96,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
 //        evaluateBed();
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
 
-        DecimalFormat df = new DecimalFormat("#.0");
+        DecimalFormat df = new DecimalFormat("#.00");
         EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
 
         if (ProperDefault.get("measures").equals("inches")) {
@@ -481,41 +481,34 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
 
     private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
         if (!panelDisabled) {
-            Base.getMainWindow().getBed().resetTransformation();
-
-            Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPicked();
+            
             Model model = Base.getMainWindow().getBed().getFirstPickedModel();
             ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
-
+            
+            Base.getMainWindow().getBed().resetTransformation();
+            Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPicked();
+            
             if (mOCS != null) {
+                DecimalFormat df = new DecimalFormat("#.00");
+                double width, depth, height;
+
                 model.resetScale();
                 Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
 
-                if (mOCS.isScalePercentage()) {
-                    mOCS.setXValue(model.getScaleXinPercentage());
-                    mOCS.setYValue(model.getScaleYinPercentage());
-                    mOCS.setZValue(model.getScaleZinPercentage());
+                if (ProperDefault.get("measures").equals("inches")) {
+                    width = UnitConverter.millimetersToInches(model.getEditer().getWidth());
+                    depth = UnitConverter.millimetersToInches(model.getEditer().getDepth());
+                    height = UnitConverter.millimetersToInches(model.getEditer().getHeight());
                 } else {
-                    DecimalFormat df = new DecimalFormat("#.00"); 
-
-                    double width = model.getEditer().getWidth();
-                    if (ProperDefault.get("measures").equals("inches")) {
-                        width = UnitConverter.millimetersToInches(width);
-                    }
-                    double depth = model.getEditer().getDepth();
-                    if (ProperDefault.get("measures").equals("inches")) {
-                        depth = UnitConverter.millimetersToInches(depth);
-                    }
-                    double height = model.getEditer().getHeight();
-                    if (ProperDefault.get("measures").equals("inches")) {
-                        height = UnitConverter.millimetersToInches(height);
-                    }                                    
-
-                    mOCS.setXValue(df.format(width));
-                    mOCS.setYValue(df.format(depth));
-                    mOCS.setZValue(df.format(height));                                    
+                    width = model.getEditer().getWidth();
+                    depth = model.getEditer().getDepth();
+                    height = model.getEditer().getHeight();
                 }
-                
+
+                mOCS.setXValue(df.format(width));
+                mOCS.setYValue(df.format(depth));
+                mOCS.setZValue(df.format(height));
+
                 //Sets the initial sizing variables to the new max scale size
                 mOCS.resetInitialScaleVariables();
             }
@@ -549,7 +542,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextArea1KeyReleased
 
     private void deleteButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMousePressed
-        if (!panelDisabled) {            
+        if (!panelDisabled) {
             Base.getMainWindow().handleCAMDelete();
         }
     }//GEN-LAST:event_deleteButtonMousePressed
