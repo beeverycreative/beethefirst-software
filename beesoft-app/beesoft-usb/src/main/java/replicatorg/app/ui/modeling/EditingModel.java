@@ -25,6 +25,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 import replicatorg.app.Base;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.MainWindow;
 
 import replicatorg.machine.Machine;
@@ -33,6 +34,7 @@ import replicatorg.machine.model.BuildVolume;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
+import replicatorg.util.UnitConverter;
 
 /**
  * A wrapper for displaying and editing an underlying model object.
@@ -845,7 +847,12 @@ public class EditingModel implements Serializable {
     
     public void updateDimensions(double targetX, double targetY, double targetZ, boolean isOnPlatform){
         Transform3D t = new Transform3D();
-
+        
+        if(ProperDefault.get("measures").equals("inches")){
+            targetX = UnitConverter.inchesToMillimeters(targetX);
+            targetY = UnitConverter.inchesToMillimeters(targetY);
+            targetZ = UnitConverter.inchesToMillimeters(targetZ);            
+        }                               
         t.setScale(new Vector3d(targetX / getWidth(), targetY / getDepth(), targetZ / getHeight()));
         if (isOnPlatform) {
             t = transformOnBottom(t);
