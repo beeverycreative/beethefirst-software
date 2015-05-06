@@ -24,8 +24,7 @@ import replicatorg.util.UnitConverter;
  */
 public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
-    private boolean check_pressed, lockedRatio;
-    private boolean scaleLocked;
+    private boolean check_pressed;
     private double initialWidth, initialDepth, initialHeight;
     private final boolean mm, percentage;
     private boolean checkX = true, checkY = true, checkZ = true;
@@ -129,7 +128,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     public void setXValue(String val) {
         this.iFieldX.setText(val);
-        oldX = Double.parseDouble(val);                                
+        oldX = Double.parseDouble(val);
     }
 
     public void setYValue(String val) {
@@ -241,14 +240,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.setName("moveButton"); // NOI18N
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel1MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel1MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel1MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel1MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel1MouseEntered(evt);
             }
         });
 
@@ -259,14 +258,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel2.setName("rotateButton"); // NOI18N
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel2MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel2MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel2MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel2MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel2MouseEntered(evt);
             }
         });
 
@@ -619,9 +618,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double valX = Double.parseDouble(iFieldX.getText());
         double valY = Double.parseDouble(iFieldY.getText());
         double valZ = Double.parseDouble(iFieldZ.getText());
-        
-        
-        
+
         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);
     }//GEN-LAST:event_bApplyMousePressed
 
@@ -654,11 +651,13 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleX = machineVolume.getX() / model.getEditer().getWidth();
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
+        double width, depth, height;
 
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
         scale = UnitConverter.round(scale, 3);
 
-        model.getEditer().centerAndToBed();
+        //model.getEditer().centerAndToBed();
+        model.getEditer().center();
         model.getEditer().scale(scale, true, false);
 
         if (model.getEditer().modelOutBonds()) {
@@ -667,29 +666,21 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             model.getEditer().scale(scale, true, true);
         }
 
-        if (this.isScalePercentage()) {
-            setXValue(model.getScaleXinPercentage());
-            setYValue(model.getScaleYinPercentage());
-            setZValue(model.getScaleZinPercentage());
+        DecimalFormat df = new DecimalFormat("#.00");
+        
+        if(ProperDefault.get("measures").equals("inches")) {
+            width = UnitConverter.millimetersToInches(model.getEditer().getWidth());
+            depth = UnitConverter.millimetersToInches(model.getEditer().getDepth());
+            height = UnitConverter.millimetersToInches(model.getEditer().getHeight());
         } else {
-            DecimalFormat df = new DecimalFormat("#.00");
-
-            double width = model.getEditer().getWidth();
-            if (ProperDefault.get("measures").equals("inches")) {
-                width = UnitConverter.millimetersToInches(width);
-            }
-            double depth = model.getEditer().getDepth();
-            if (ProperDefault.get("measures").equals("inches")) {
-                depth = UnitConverter.millimetersToInches(depth);
-            }
-            double height = model.getEditer().getHeight();
-            if (ProperDefault.get("measures").equals("inches")) {
-                height = UnitConverter.millimetersToInches(height);
-            }
-            setXValue(df.format(width));
-            setYValue(df.format(depth));
-            setZValue(df.format(height));
+            width = model.getEditer().getWidth();
+            depth = model.getEditer().getDepth();
+            height = model.getEditer().getHeight();
         }
+
+        setXValue(df.format(width));
+        setYValue(df.format(depth));
+        setZValue(df.format(height));
 
         //Sets the initial sizing variables to the current values
         this.resetInitialScaleVariables();
@@ -753,7 +744,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void iFieldZFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_iFieldZFocusGained
 
-        
         refresh_iFields();
     }//GEN-LAST:event_iFieldZFocusGained
 
@@ -902,19 +892,19 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void refresh_iFields() {
         System.out.println("refresh started");
         try {
-            
+
             iFieldX.setText(df.format(this.oldX));
         } catch (Exception e) {
         }
         try {
-            
+
             iFieldY.setText(df.format(this.oldY));
         } catch (Exception e) {
         }
         try {
-            
-             iFieldZ.setText(df.format(this.oldZ));
+
+            iFieldZ.setText(df.format(this.oldZ));
         } catch (Exception e) {
-        }                       
+        }
     }
 }
