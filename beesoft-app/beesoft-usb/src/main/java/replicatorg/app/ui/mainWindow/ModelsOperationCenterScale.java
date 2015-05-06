@@ -26,7 +26,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private boolean check_pressed;
     private double initialWidth, initialDepth, initialHeight;
-    private final boolean mm, percentage;
+    private final boolean mm;
     private boolean checkX = true, checkY = true, checkZ = true;
     private double oldX, oldY, oldZ;
     DecimalFormat df = new DecimalFormat("#0.00");
@@ -41,7 +41,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         initComponents();
         this.check_pressed = false;
         this.mm = true;
-        this.percentage = false;
 
         Base.getMainWindow().getCanvas().setControlTool(3);
         Base.getMainWindow().getCanvas().getControlTool(3).setModelsOperationScale(this);
@@ -55,22 +54,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         this.initialHeight = model.getEditer().getHeight();
         this.initialDepth = model.getEditer().getDepth();
 
-        if (this.percentage) {
-            iFieldX.setText(model.getScaleXinPercentage());
-            iFieldY.setText(model.getScaleYinPercentage());
-            iFieldZ.setText(model.getScaleZinPercentage());
-
-        } else {
-
-            if (ProperDefault.get("measures").equals("inches")) {
-                iFieldX.setText(df.format(UnitConverter.millimetersToInches(this.initialWidth)));
-                iFieldY.setText(df.format(UnitConverter.millimetersToInches(this.initialDepth)));
-                iFieldZ.setText(df.format(UnitConverter.millimetersToInches(this.initialHeight)));
-            } else {
-                iFieldX.setText(df.format(this.initialWidth));
-                iFieldY.setText(df.format(this.initialDepth));
-                iFieldZ.setText(df.format(this.initialHeight));
-            }
+        if (ProperDefault.get("measures").equals("inches")) {
+            iFieldX.setText(df.format(UnitConverter.millimetersToInches(this.initialWidth)));
+            iFieldY.setText(df.format(UnitConverter.millimetersToInches(this.initialDepth)));
+            iFieldZ.setText(df.format(UnitConverter.millimetersToInches(this.initialHeight)));
+        } else if(ProperDefault.get("measures").equals("mm")) {
+            iFieldX.setText(df.format(this.initialWidth));
+            iFieldY.setText(df.format(this.initialDepth));
+            iFieldZ.setText(df.format(this.initialHeight));
         }
 
         oldX = Double.parseDouble(iFieldX.getText());
@@ -79,9 +70,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     }
 
-    public boolean isScalePercentage() {
-        return this.percentage;
-    }
 
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -109,17 +97,14 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
         jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
 
-        if (this.percentage) {
-            jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale_Extense"));
-        } else {
+
             if (ProperDefault.get("measures").equals("inches")) {
                 jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
                         + " (" + Languager.getTagValue(1, "MainWindowButtons", "Inches") + ")");
-            } else {
+            } else if (ProperDefault.get("measures").equals("mm")){
                 jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
                         + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
             }
-        }
 
         bScaleToMax.setText(Languager.getTagValue(1, "MainWindowButtons", "ScaleToMax"));
         bApply.setText(Languager.getTagValue(1, "MainWindowButtons", "Apply"));
@@ -613,13 +598,12 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void bApplyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMousePressed
 
-        System.out.println("cliicked");
+        refresh_iFields();        
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
         double valX = Double.parseDouble(iFieldX.getText());
         double valY = Double.parseDouble(iFieldY.getText());
         double valZ = Double.parseDouble(iFieldZ.getText());
-
-        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);
+        Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);        
     }//GEN-LAST:event_bApplyMousePressed
 
     private void bApplyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseExited
@@ -651,7 +635,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleX = machineVolume.getX() / model.getEditer().getWidth();
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
-        double width, depth, height;
+        double width = model.getEditer().getWidth();
+        double depth = model.getEditer().getDepth();
+        double height = model.getEditer().getHeight();
 
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
         scale = UnitConverter.round(scale, 3);
@@ -672,11 +658,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             width = UnitConverter.millimetersToInches(model.getEditer().getWidth());
             depth = UnitConverter.millimetersToInches(model.getEditer().getDepth());
             height = UnitConverter.millimetersToInches(model.getEditer().getHeight());
-        } else {
-            width = model.getEditer().getWidth();
-            depth = model.getEditer().getDepth();
-            height = model.getEditer().getHeight();
-        }
+            } // no need for else 
 
         setXValue(df.format(width));
         setYValue(df.format(depth));
