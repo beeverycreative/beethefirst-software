@@ -126,6 +126,7 @@ import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.About;
 import replicatorg.app.ui.panels.BuildStatus;
+import replicatorg.app.ui.panels.ControlPanel;
 
 import replicatorg.app.ui.panels.Gallery;
 import replicatorg.app.ui.panels.Help;
@@ -973,6 +974,24 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
+        
+        item = newJMenuItem("Control Panel", 'K');
+        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (machineLoader.isConnected()) {
+                    if (Base.isPrinting == false) {
+                        ControlPanel cp = new ControlPanel();
+                        cp.setVisible(true);
+                    }
+                } else {
+                    showFeedBackMessage("btfDisconnect");
+                }
+            }
+        });
+        menu.add(item);        
 
         menu.addSeparator();
 
