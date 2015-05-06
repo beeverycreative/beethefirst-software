@@ -619,10 +619,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double valX = Double.parseDouble(iFieldX.getText());
         double valY = Double.parseDouble(iFieldY.getText());
         double valZ = Double.parseDouble(iFieldZ.getText());
-        
-        
-        
+                      
         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);
+        
     }//GEN-LAST:event_bApplyMousePressed
 
     private void bApplyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseExited
@@ -672,7 +671,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             setYValue(model.getScaleYinPercentage());
             setZValue(model.getScaleZinPercentage());
         } else {
-            DecimalFormat df = new DecimalFormat("#.0");
+            DecimalFormat df = new DecimalFormat("#.00");
 
             double width = model.getEditer().getWidth();
             if (ProperDefault.get("measures").equals("inches")) {
