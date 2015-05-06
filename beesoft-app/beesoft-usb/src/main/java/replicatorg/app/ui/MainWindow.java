@@ -870,30 +870,25 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                     if (mOCS != null) {
                         model.resetScale();
-                        if (mOCS.isScalePercentage()) {
-                            mOCS.setXValue(model.getScaleXinPercentage());
-                            mOCS.setYValue(model.getScaleYinPercentage());
-                            mOCS.setZValue(model.getScaleZinPercentage());
-                        } else {
-                            DecimalFormat df = new DecimalFormat("#.0"); 
 
-                            double width = model.getEditer().getWidth();
-                            if (ProperDefault.get("measures").equals("inches")) {
-                                width = UnitConverter.millimetersToInches(width);
-                            }
-                            double depth = model.getEditer().getDepth();
-                            if (ProperDefault.get("measures").equals("inches")) {
-                                depth = UnitConverter.millimetersToInches(depth);
-                            }
-                            double height = model.getEditer().getHeight();
-                            if (ProperDefault.get("measures").equals("inches")) {
-                                height = UnitConverter.millimetersToInches(height);
-                            }                                    
+                        DecimalFormat df = new DecimalFormat("#.00");
 
-                            mOCS.setXValue(df.format(width));
-                            mOCS.setYValue(df.format(depth));
-                            mOCS.setZValue(df.format(height));                                    
-                        }  
+                        double width = model.getEditer().getWidth();
+                        if (ProperDefault.get("measures").equals("inches")) {
+                            width = UnitConverter.millimetersToInches(width);
+                        }
+                        double depth = model.getEditer().getDepth();
+                        if (ProperDefault.get("measures").equals("inches")) {
+                            depth = UnitConverter.millimetersToInches(depth);
+                        }
+                        double height = model.getEditer().getHeight();
+                        if (ProperDefault.get("measures").equals("inches")) {
+                            height = UnitConverter.millimetersToInches(height);
+                        }
+
+                        mOCS.setXValue(df.format(width));
+                        mOCS.setYValue(df.format(depth));
+                        mOCS.setZValue(df.format(height));
                     }
                     model.getEditer().updateModelPicked();
 
@@ -1038,18 +1033,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             @Override
             public void actionPerformed(ActionEvent e) {
                 launchBrowser("https://beeverycreative.com/troubleshooting/");
-            }
-        });
-        menu.add(item);
-
-
-        item = newJMenuItem("Support ", 'J');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Support"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                launchBrowser("https://beeverycreative.com/support/");
             }
         });
         menu.add(item);

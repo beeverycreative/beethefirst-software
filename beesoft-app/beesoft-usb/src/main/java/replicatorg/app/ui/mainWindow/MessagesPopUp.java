@@ -141,6 +141,9 @@ public class MessagesPopUp extends javax.swing.JDialog {
         if (message.equals("reinstallError")) {
             jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "ReinstallError"));
         }
+        if (message.equals("noModelError")) {
+            jLabel3.setText(Languager.getTagValue(WIDTH, "StatusMessages", "NoModelError"));
+        }
 
         autoHide();
         setLocation();

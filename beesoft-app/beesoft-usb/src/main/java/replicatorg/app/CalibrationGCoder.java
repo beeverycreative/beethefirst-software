@@ -119,13 +119,28 @@ public class CalibrationGCoder {
                 Node nNode = nList.item(0);
                 Element eElement = (Element) nNode;
 
-                
-                //add flowrate acording to color
-//                if(){
-//                    
-//                }
-                
-                return ("gcode: " + eElement.getAttribute("value"));
+                String code;
+
+                code = FilamentControler.NO_FILAMENT_CODE;
+
+                if (Base.getMachineLoader().isConnected()) {
+                    Base.getMachineLoader().getMachineInterface().getDriver().updateCoilCode();
+                    code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+                } //no need for else
+
+                Base.writeLog("Filament controler coil code: " + code);
+
+                if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
+                    //no_Filament = true;
+                    return ("gcode: " + eElement.getAttribute("value"));
+                } else {
+                    String w_val = Double.toString(
+                            FilamentControler.getColorRatio(
+                                    Base.getMainWindow().getMachine().getModel().getCoilCode(),
+                                    Base.getMainWindow().getMachine().getModel().getResolution()));
+                    return ("gcode: " + "M642 w"+w_val+", "+ eElement.getAttribute("value"));
+                    
+                }
             }
         } catch (SAXException ex) {
             Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
@@ -145,9 +160,6 @@ public class CalibrationGCoder {
      */
     public static String[] getColorGCode() {
         String code = getCode();
-        System.out.println("code:" + code);
-
-        Base.writeLog("code: " + code);
 
         return code.split(",");
     }

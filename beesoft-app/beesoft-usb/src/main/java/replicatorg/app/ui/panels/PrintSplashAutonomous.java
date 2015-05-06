@@ -1608,6 +1608,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                     
                     double colorRatio = FilamentControler.getColorRatio(
                             machine.getModel().getCoilCode(), machine.getModel().getResolution());
+                    
                     /**
                      * Signals FW about the color ratio between previous and
                      * actual color
@@ -2265,5 +2266,6 @@ class TransferControlThread extends Thread {
 
         Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),
                 Base.getMainWindow().getMachine().getModel().getResolution());
+        
     }
 }

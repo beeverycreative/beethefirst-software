@@ -187,32 +187,27 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 editModel.scaleY(value, modelOnPlatform, true);
                                 editModel.scaleZ(value, modelOnPlatform, true);
                                 String val = String.format("%3.1f", value);
-                                
+
                                 ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
-                                if (mOCS.isScalePercentage()) {
-                                    mOCS.setXValue(val);
-                                    mOCS.setYValue(val);
-                                    mOCS.setZValue(val);
-                                } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
-                                    
-                                    double width = model.getEditer().getWidth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        width = UnitConverter.millimetersToInches(width);
-                                    }
-                                    double depth = model.getEditer().getDepth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        depth = UnitConverter.millimetersToInches(depth);
-                                    }
-                                    double height = model.getEditer().getHeight();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        height = UnitConverter.millimetersToInches(height);
-                                    }                                    
-                                    
-                                    mOCS.setXValue(df.format(width));
-                                    mOCS.setYValue(df.format(depth));
-                                    mOCS.setZValue(df.format(height));                                    
+
+                                DecimalFormat df = new DecimalFormat("#.00");
+
+                                double width = 0, depth = 0, height = 0;
+
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    width = UnitConverter.millimetersToInches(width);
+                                    depth = UnitConverter.millimetersToInches(depth);
+                                    height = UnitConverter.millimetersToInches(height);
+                                } else if (ProperDefault.get("measures").equals("mm")) {
+                                    width = model.getEditer().getWidth();
+                                    depth = model.getEditer().getDepth();
+                                    height = model.getEditer().getHeight();
                                 }
+
+                                mOCS.setXValue(df.format(width));
+                                mOCS.setYValue(df.format(depth));
+                                mOCS.setZValue(df.format(height));
+
                             } else if (modelationType.equals("mirror")) {
                                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().mirrorZ();
                             }
@@ -236,41 +231,36 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                     Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(1d, 0d, 0d, 0.087));
                                 }
                             }
-                            if (modelationType.equals("scale")) {
+                                                        if (modelationType.equals("scale")) {
                                 boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
                                 Model model = Base.getMainWindow().getBed().getFirstPickedModel();
                                 EditingModel editModel = model.getEditer();
-                                double value = model.getXscalePercentage() - 5;
+                                double value = model.getXscalePercentage() + 5;
                                 editModel.scaleX(value, modelOnPlatform, true);
                                 editModel.scaleY(value, modelOnPlatform, true);
                                 editModel.scaleZ(value, modelOnPlatform, true);
                                 String val = String.format("%3.1f", value);
+
                                 ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
-                                                                
-                                if (mOCS.isScalePercentage()) {
-                                    mOCS.setXValue(val);
-                                    mOCS.setYValue(val);
-                                    mOCS.setZValue(val);
-                                } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
-                                    
-                                    double width = model.getEditer().getWidth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        width = UnitConverter.millimetersToInches(width);
-                                    }
-                                    double depth = model.getEditer().getDepth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        depth = UnitConverter.millimetersToInches(depth);
-                                    }
-                                    double height = model.getEditer().getHeight();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        height = UnitConverter.millimetersToInches(height);
-                                    }                                    
-                                    
-                                    mOCS.setXValue(df.format(width));
-                                    mOCS.setYValue(df.format(depth));
-                                    mOCS.setZValue(df.format(height));                                    
+
+                                DecimalFormat df = new DecimalFormat("#.00");
+
+                                double width = 0, depth = 0, height = 0;
+
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    width = UnitConverter.millimetersToInches(width);
+                                    depth = UnitConverter.millimetersToInches(depth);
+                                    height = UnitConverter.millimetersToInches(height);
+                                } else if (ProperDefault.get("measures").equals("mm")) {
+                                    width = model.getEditer().getWidth();
+                                    depth = model.getEditer().getDepth();
+                                    height = model.getEditer().getHeight();
                                 }
+
+                                mOCS.setXValue(df.format(width));
+                                mOCS.setYValue(df.format(depth));
+                                mOCS.setZValue(df.format(height));
+
                             }
                         }
                         break;
@@ -304,32 +294,27 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 editModel.scaleY(value, modelOnPlatform, true);
                                 editModel.scaleZ(value, modelOnPlatform, true);
                                 String val = String.format("%3.1f", value);
+
                                 ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
-                               
-                                if (mOCS.isScalePercentage()) {
-                                    mOCS.setXValue(val);
-                                    mOCS.setYValue(val);
-                                    mOCS.setZValue(val);
-                                } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
-                                    
-                                    double width = model.getEditer().getWidth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        width = UnitConverter.millimetersToInches(width);
-                                    }
-                                    double depth = model.getEditer().getDepth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        depth = UnitConverter.millimetersToInches(depth);
-                                    }
-                                    double height = model.getEditer().getHeight();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        height = UnitConverter.millimetersToInches(height);
-                                    }                                    
-                                    
-                                    mOCS.setXValue(df.format(width));
-                                    mOCS.setYValue(df.format(depth));
-                                    mOCS.setZValue(df.format(height));                                    
+
+                                DecimalFormat df = new DecimalFormat("#.00");
+
+                                double width = 0, depth = 0, height = 0;
+
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    width = UnitConverter.millimetersToInches(width);
+                                    depth = UnitConverter.millimetersToInches(depth);
+                                    height = UnitConverter.millimetersToInches(height);
+                                } else if (ProperDefault.get("measures").equals("mm")) {
+                                    width = model.getEditer().getWidth();
+                                    depth = model.getEditer().getDepth();
+                                    height = model.getEditer().getHeight();
                                 }
+
+                                mOCS.setXValue(df.format(width));
+                                mOCS.setYValue(df.format(depth));
+                                mOCS.setZValue(df.format(height));
+
                             }
                         }
                         break;
@@ -354,41 +339,36 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                             if (modelationType.equals("mirror")) {
                                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().mirrorX();
                             }
-                            if (modelationType.equals("scale")) {
+                                                        if (modelationType.equals("scale")) {
                                 boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
                                 Model model = Base.getMainWindow().getBed().getFirstPickedModel();
                                 EditingModel editModel = model.getEditer();
-                                double value = model.getXscalePercentage() - 5;
+                                double value = model.getXscalePercentage() + 5;
                                 editModel.scaleX(value, modelOnPlatform, true);
                                 editModel.scaleY(value, modelOnPlatform, true);
                                 editModel.scaleZ(value, modelOnPlatform, true);
                                 String val = String.format("%3.1f", value);
+
                                 ModelsOperationCenterScale mOCS = Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter();
 
-                                if (mOCS.isScalePercentage()) {
-                                    mOCS.setXValue(val);
-                                    mOCS.setYValue(val);
-                                    mOCS.setZValue(val);
-                                } else {
-                                    DecimalFormat df = new DecimalFormat("#.0"); 
-                                    
-                                    double width = model.getEditer().getWidth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        width = UnitConverter.millimetersToInches(width);
-                                    }
-                                    double depth = model.getEditer().getDepth();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        depth = UnitConverter.millimetersToInches(depth);
-                                    }
-                                    double height = model.getEditer().getHeight();
-                                    if (ProperDefault.get("measures").equals("inches")) {
-                                        height = UnitConverter.millimetersToInches(height);
-                                    }                                    
-                                    
-                                    mOCS.setXValue(df.format(width));
-                                    mOCS.setYValue(df.format(depth));
-                                    mOCS.setZValue(df.format(height));                                    
-                                }                                
+                                DecimalFormat df = new DecimalFormat("#.00");
+
+                                double width = 0, depth = 0, height = 0;
+
+                                if (ProperDefault.get("measures").equals("inches")) {
+                                    width = UnitConverter.millimetersToInches(width);
+                                    depth = UnitConverter.millimetersToInches(depth);
+                                    height = UnitConverter.millimetersToInches(height);
+                                } else if (ProperDefault.get("measures").equals("mm")) {
+                                    width = model.getEditer().getWidth();
+                                    depth = model.getEditer().getDepth();
+                                    height = model.getEditer().getHeight();
+                                }
+
+                                mOCS.setXValue(df.format(width));
+                                mOCS.setYValue(df.format(depth));
+                                mOCS.setZValue(df.format(height));
+
                             }
                         }
                         break;
