@@ -1,9 +1,11 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedWriter;
@@ -17,7 +19,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.border.TitledBorder;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickUnits;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.DatasetRenderingOrder;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeTableXYDataset;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -37,7 +53,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ControlPanel extends BaseDialog {
+public class ControlPanel extends JFrame {
 
     private MachineInterface machine;
     private double temperatureGoal;
@@ -62,18 +78,37 @@ public class ControlPanel extends BaseDialog {
     private static final String REDMEC_TAG = "[TemperatureLog]";
     private boolean jogButtonPressed = false;
 
+    private TimeTableXYDataset t0MeasuredDataset = new TimeTableXYDataset();
+	private TimeTableXYDataset t0TargetDataset = new TimeTableXYDataset();
+	private TimeTableXYDataset t1MeasuredDataset = new TimeTableXYDataset();
+	private TimeTableXYDataset t1TargetDataset = new TimeTableXYDataset();
+	private TimeTableXYDataset pMeasuredDataset = new TimeTableXYDataset();
+	private TimeTableXYDataset pTargetDataset = new TimeTableXYDataset();
+    
+    final private static Color t0TargetColor = Color.MAGENTA;
+	final private static Color t0MeasuredColor = Color.RED;
+	final private static Color t1TargetColor = Color.CYAN;
+	final private static Color t1MeasuredColor = Color.BLUE;
+	final private static Color pTargetColor = Color.YELLOW;
+	final private static Color pMeasuredColor = Color.GREEN;
+        
+    long startMillis = System.currentTimeMillis();
+    
     public ControlPanel() {
-        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        //super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         Base.writeLog("Advanced panel opened...");
         setFont();
         setTextLanguage();
         centerOnScreen();
-        enableDrag();
+        //enableDrag();
         evaluateInitialConditions();
         disposeThread = new TemperatureThread(this, machine);
         disposeThread.start();
-        Base.systemThreads.add(disposeThread);
+        Base.systemThreads.add(disposeThread);       
+        
+        this.tempPanel.setLayout(new GridBagLayout());
+        this.tempPanel.add(this.makeChart());
 
     }
 
@@ -168,6 +203,60 @@ public class ControlPanel extends BaseDialog {
         return dateFormat.format(date);
     }
 
+    private ChartPanel makeChart() {
+		JFreeChart chart = ChartFactory.createXYLineChart(null, null, null, 
+				t0MeasuredDataset, PlotOrientation.VERTICAL, 
+				false, false, false);
+		chart.setBorderVisible(false);
+		chart.setBackgroundPaint(null);
+
+		XYPlot plot = chart.getXYPlot();
+		ValueAxis axis = plot.getDomainAxis();
+		axis.setLowerMargin(0);
+		axis.setFixedAutoRange(3L*60L*1000L); // auto range to three minutes
+        
+		TickUnits unitSource = new TickUnits();
+		unitSource.add(new NumberTickUnit(60L*1000L)); // minutes
+		unitSource.add(new NumberTickUnit(1L*1000L)); // seconds
+        
+		axis.setStandardTickUnits(unitSource);
+		axis.setTickLabelsVisible(false); // We don't need to see the millisecond count
+		axis = plot.getRangeAxis();
+		axis.setRange(0,300); // set termperature range from 0 to 300 degrees C so you can see overshoots 
+        
+		// Tweak L&F of chart
+		//((XYAreaRenderer)plot.getRenderer()).setOutline(true);
+		XYStepRenderer renderer = new XYStepRenderer();
+		plot.setDataset(1, t0TargetDataset);
+		plot.setRenderer(1, renderer);
+		plot.getRenderer(1).setSeriesPaint(0, t0TargetColor);
+		plot.getRenderer(0).setSeriesPaint(0, t0MeasuredColor);
+
+//		if(machine.getModel().getTools().size() > 1)
+//		{
+//			plot.setDataset(4, t1MeasuredDataset);
+//			plot.setRenderer(4, new XYLineAndShapeRenderer(true,false)); 
+//			plot.getRenderer(4).setSeriesPaint(0, t1MeasuredColor);
+//			plot.setDataset(5, t1TargetDataset);
+//			plot.setRenderer(5, new XYStepRenderer()); 
+//			plot.getRenderer(5).setSeriesPaint(0, t1TargetColor);
+//
+//		}
+
+        plot.setDataset(2, pMeasuredDataset);
+        plot.setRenderer(2, new XYLineAndShapeRenderer(true, false));
+        plot.getRenderer(2).setSeriesPaint(0, pMeasuredColor);
+        plot.setDataset(3, pTargetDataset);
+        plot.setRenderer(3, new XYStepRenderer());
+        plot.getRenderer(3).setSeriesPaint(0, pTargetColor);
+		
+		plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(400,160));
+		chartPanel.setOpaque(false);
+		return chartPanel;
+	}
+    
     private String[] fullFillCombo() {
         String[] moves = {
             "0.05",
@@ -256,7 +345,7 @@ public class ControlPanel extends BaseDialog {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         double temperature = machine.getDriver().getTemperature();
@@ -271,6 +360,12 @@ public class ControlPanel extends BaseDialog {
                 Base.writeLog("Can't write temperature to file");
             }
         }
+        
+        //Graph variables
+        Second second = new Second(new Date(System.currentTimeMillis() - startMillis));
+        
+		t0MeasuredDataset.add(second, temperature,"a");
+		t0TargetDataset.add(second, this.temperatureGoal ,"a");		
 
     }
 
@@ -384,13 +479,13 @@ public class ControlPanel extends BaseDialog {
         cLogTemperature = new javax.swing.JCheckBox();
         saveLog = new javax.swing.JLabel();
         notes = new javax.swing.JLabel();
+        tempPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         bOK = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1029, 515));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
@@ -467,27 +562,27 @@ public class ControlPanel extends BaseDialog {
 
         zUP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/Z+.png"))); // NOI18N
         zUP.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                zUPMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                zUPMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 zUPMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                zUPMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                zUPMouseEntered(evt);
             }
         });
 
         zDOWN.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/Z-.png"))); // NOI18N
         zDOWN.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                zDOWNMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                zDOWNMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 zDOWNMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                zDOWNMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                zDOWNMouseEntered(evt);
             }
         });
 
@@ -616,40 +711,24 @@ public class ControlPanel extends BaseDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(yUP)
-                                    .addComponent(yDOWN))
-                                .addGap(72, 72, 72))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(xLEFT)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(panic)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(xRIGHT)
-                                .addGap(18, 18, 18)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(zDOWN)
-                            .addComponent(zUP)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(zFeedrate)
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(xyFeedrate, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(feedRate)))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(xyFeed, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
-                                    .addComponent(zFeed)))
-                            .addComponent(bCalibrateA, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(bSetCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(zFeedrate)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(xyFeedrate, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(feedRate)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(xyFeed, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                            .addComponent(zFeed)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(bCalibrateB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(bCalibrateA, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bSetCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(56, 56, 56)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -661,7 +740,7 @@ public class ControlPanel extends BaseDialog {
                             .addComponent(bHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(enableFreeJog, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -681,6 +760,27 @@ public class ControlPanel extends BaseDialog {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(xTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(87, 87, 87))))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(57, 57, 57)
+                        .addComponent(yUP))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(xLEFT)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(yDOWN)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(panic)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(xRIGHT)))))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(zDOWN)
+                    .addComponent(zUP))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -702,57 +802,56 @@ public class ControlPanel extends BaseDialog {
                                     .addComponent(zTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel4))
                                 .addGap(55, 55, 55))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(zUP)
-                                    .addGap(14, 14, 14)
-                                    .addComponent(zDOWN))
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(freeJog)
-                                        .addComponent(enableFreeJog))
-                                    .addGap(150, 150, 150)
-                                    .addComponent(bHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCenterX)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCenterY)
-                        .addGap(8, 8, 8))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(freeJog)
+                                    .addComponent(enableFreeJog))
+                                .addGap(150, 150, 150)
+                                .addComponent(bHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(12, 12, 12)
+                        .addComponent(bCenterX))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(yUP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(xLEFT)
-                                .addComponent(xRIGHT, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addComponent(panic))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(yDOWN)
-                        .addGap(15, 15, 15)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(yUP)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(xLEFT)
+                                    .addComponent(panic)
+                                    .addComponent(xRIGHT))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(yDOWN))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(40, 40, 40)
+                                .addComponent(zUP)
+                                .addGap(14, 14, 14)
+                                .addComponent(zDOWN)))
+                        .addGap(18, 18, 18)
                         .addComponent(bCalibrateA)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bCalibrateB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bSetCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bCenterZ))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(feedRate)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(feedRate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(xyFeedrate)
-                            .addComponent(xyFeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(bCenterY)
+                            .addComponent(bSetCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bCenterZ)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(xyFeedrate)
+                    .addComponent(xyFeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bCurrentPosition))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(zFeedrate)
                     .addComponent(zFeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
@@ -831,6 +930,19 @@ public class ControlPanel extends BaseDialog {
         notes.setText("All files saved under BEESOFT folder in user directory.");
         notes.setToolTipText("");
 
+        tempPanel.setMinimumSize(new java.awt.Dimension(340, 130));
+
+        javax.swing.GroupLayout tempPanelLayout = new javax.swing.GroupLayout(tempPanel);
+        tempPanel.setLayout(tempPanelLayout);
+        tempPanelLayout.setHorizontalGroup(
+            tempPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        tempPanelLayout.setVerticalGroup(
+            tempPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 160, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -842,26 +954,19 @@ public class ControlPanel extends BaseDialog {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSeparator1)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(targetTemperature, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(currentTemperature, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
-                                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(extrudeDuration, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                                        .addComponent(motorSpeed, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(targetTemperature, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(currentTemperature, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
                                 .addGap(12, 12, 12)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cTargetTemperature)
-                                    .addComponent(tTargetTemperature)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(mSpeed, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(extrudeCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(tTargetTemperature, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                                    .addComponent(cTargetTemperature))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(2, 2, 2))
                     .addComponent(notes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(motorControl, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(logTemperature, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
@@ -872,15 +977,32 @@ public class ControlPanel extends BaseDialog {
                                         .addComponent(cLogTemperature)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(saveLog))
-                                    .addComponent(cCoolFan)))
-                            .addComponent(motorControl, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cCoolFan))))
+                        .addGap(0, 221, Short.MAX_VALUE))))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(bReverse, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(bStop, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(bFoward, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 62, Short.MAX_VALUE))))
+                                .addComponent(bStop, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(extrudeDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bFoward, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(motorSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 28, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -894,33 +1016,34 @@ public class ControlPanel extends BaseDialog {
                     .addComponent(currentTemperature)
                     .addComponent(cTargetTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(coolFan)
-                    .addComponent(cCoolFan))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cCoolFan)
+                    .addComponent(coolFan))
                 .addGap(8, 8, 8)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(saveLog, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(logTemperature)
-                        .addComponent(cLogTemperature)))
-                .addGap(12, 12, 12)
+                    .addComponent(cLogTemperature)
+                    .addComponent(logTemperature))
+                .addGap(27, 27, 27)
+                .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(motorSpeed)
-                    .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(motorSpeed))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(extrudeDuration)
                     .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(20, 20, 20)
                 .addComponent(motorControl)
-                .addGap(12, 12, 12)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bReverse)
                     .addComponent(bStop)
                     .addComponent(bFoward))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(notes)
                 .addGap(26, 26, 26))
         );
@@ -990,16 +1113,16 @@ public class ControlPanel extends BaseDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 1044, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 1039, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 642, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -1203,7 +1326,7 @@ public class ControlPanel extends BaseDialog {
                 machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
             } catch (InterruptedException ex) {
-                Logger.getLogger(CalibrationWelcome.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -1451,6 +1574,7 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JLabel saveLog;
     private javax.swing.JTextField tTargetTemperature;
     private javax.swing.JLabel targetTemperature;
+    private javax.swing.JPanel tempPanel;
     private javax.swing.JLabel xLEFT;
     private javax.swing.JLabel xRIGHT;
     private javax.swing.JTextField xTextFieldValue;
@@ -1559,7 +1683,7 @@ class TemperatureThread extends Thread {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 controlPanel.updateTemperature();
