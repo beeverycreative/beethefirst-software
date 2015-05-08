@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,8 +19,8 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.border.TitledBorder;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -53,7 +54,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ControlPanel extends JFrame {
+public class ControlPanel extends BaseDialog {
 
     private MachineInterface machine;
     private double temperatureGoal;
@@ -95,13 +96,13 @@ public class ControlPanel extends JFrame {
     long startMillis = System.currentTimeMillis();
     
     public ControlPanel() {
-        //super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         Base.writeLog("Advanced panel opened...");
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         evaluateInitialConditions();
         disposeThread = new TemperatureThread(this, machine);
         disposeThread.start();
@@ -109,6 +110,26 @@ public class ControlPanel extends JFrame {
         
         this.tempPanel.setLayout(new GridBagLayout());
         this.tempPanel.add(this.makeChart());
+        
+        //Sets legend colors
+        BufferedImage image = new BufferedImage(10,10,BufferedImage.TYPE_INT_RGB);
+		Graphics g = image.getGraphics();
+		g.setColor(t0MeasuredColor);
+		g.fillRect(0,0,10,10);
+		//image.getGraphics().fillRect(0,0,10,10);
+		Icon icon1 = new ImageIcon(image);
+        
+        this.colorCurrentTemp.setIcon(icon1);
+        this.colorCurrentTemp.setText("");
+        
+        BufferedImage image2 = new BufferedImage(10,10,BufferedImage.TYPE_INT_RGB);
+		Graphics g2 = image2.getGraphics();
+        g2.setColor(t0TargetColor);
+		g2.fillRect(0,0,10,10);        
+        Icon icon2 = new ImageIcon(image2);
+        
+        this.colorTargetTemp.setIcon(icon2);
+        this.colorTargetTemp.setText("");
 
     }
 
@@ -292,8 +313,7 @@ public class ControlPanel extends JFrame {
         int y = (dim.height - h) / 2;
 
         // Move the window
-//        this.setLocation(x, y);
-        this.setLocationRelativeTo(null);
+        this.setLocation(x, y);
         this.setLocationRelativeTo(Base.getMainWindow());
         Base.setMainWindowNOK();
     }
@@ -480,6 +500,9 @@ public class ControlPanel extends JFrame {
         saveLog = new javax.swing.JLabel();
         notes = new javax.swing.JLabel();
         tempPanel = new javax.swing.JPanel();
+        tempLabel = new javax.swing.JLabel();
+        colorCurrentTemp = new javax.swing.JLabel();
+        colorTargetTemp = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         bOK = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
@@ -833,7 +856,7 @@ public class ControlPanel extends JFrame {
                         .addComponent(bCalibrateB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(feedRate)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -851,7 +874,7 @@ public class ControlPanel extends JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(zFeedrate)
                     .addComponent(zFeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(178, Short.MAX_VALUE))
+                .addContainerGap(194, Short.MAX_VALUE))
         );
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
@@ -943,6 +966,14 @@ public class ControlPanel extends JFrame {
             .addGap(0, 160, Short.MAX_VALUE)
         );
 
+        tempLabel.setText("Temperature Chart");
+
+        colorCurrentTemp.setBackground(new java.awt.Color(204, 204, 204));
+        colorCurrentTemp.setText("color1");
+
+        colorTargetTemp.setBackground(new java.awt.Color(204, 204, 204));
+        colorTargetTemp.setText("color1");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -961,6 +992,10 @@ public class ControlPanel extends JFrame {
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(tTargetTemperature, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
                                     .addComponent(cTargetTemperature))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(colorCurrentTemp)
+                                    .addComponent(colorTargetTemp))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(2, 2, 2))
                     .addComponent(notes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -982,17 +1017,19 @@ public class ControlPanel extends JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(bReverse, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(bStop, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(extrudeDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(bReverse, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                                .addComponent(bStop, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(10, 10, 10)))
+                        .addGap(17, 17, 17)
                         .addComponent(bFoward, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
@@ -1001,7 +1038,10 @@ public class ControlPanel extends JFrame {
                         .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tempLabel)))
                 .addGap(0, 28, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -1010,11 +1050,18 @@ public class ControlPanel extends JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(targetTemperature)
-                    .addComponent(tTargetTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(currentTemperature)
-                    .addComponent(cTargetTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tTargetTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(colorTargetTemp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(currentTemperature)
+                            .addComponent(cTargetTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(colorCurrentTemp)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cCoolFan)
@@ -1024,9 +1071,11 @@ public class ControlPanel extends JFrame {
                     .addComponent(saveLog, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cLogTemperature)
                     .addComponent(logTemperature))
-                .addGap(27, 27, 27)
+                .addGap(18, 18, 18)
+                .addComponent(tempLabel)
+                .addGap(1, 1, 1)
                 .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1113,7 +1162,7 @@ public class ControlPanel extends JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 1039, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 1034, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1550,6 +1599,8 @@ public class ControlPanel extends JFrame {
     private javax.swing.JCheckBox cCoolFan;
     private javax.swing.JCheckBox cLogTemperature;
     private javax.swing.JTextField cTargetTemperature;
+    private javax.swing.JLabel colorCurrentTemp;
+    private javax.swing.JLabel colorTargetTemp;
     private javax.swing.JLabel coolFan;
     private javax.swing.JLabel currentTemperature;
     private javax.swing.JLabel enableFreeJog;
@@ -1574,6 +1625,7 @@ public class ControlPanel extends JFrame {
     private javax.swing.JLabel saveLog;
     private javax.swing.JTextField tTargetTemperature;
     private javax.swing.JLabel targetTemperature;
+    private javax.swing.JLabel tempLabel;
     private javax.swing.JPanel tempPanel;
     private javax.swing.JLabel xLEFT;
     private javax.swing.JLabel xRIGHT;
