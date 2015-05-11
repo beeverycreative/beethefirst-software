@@ -81,7 +81,7 @@ public class MainButtonPanel extends BGPanel implements MachineListener, MouseLi
         buttons.setPreferredSize(new Dimension(d.width-220,50));  
         
         logo = GraphicDesignComponents.newButton("", "logo_beethefirst.png");
-        machine_info = new JLabel("is not connected");
+        machine_info = new JLabel(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
         models = GraphicDesignComponents.newButton("Models", "b_disabled_7.png");
         maintenance = GraphicDesignComponents.newButton("Maintenance", "b_disabled_7.png");
         quick_guide = GraphicDesignComponents.newButton("Quick Guide", "b_disabled_7.png");

@@ -53,10 +53,10 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public void setMessage(String message) {
 
         if (message.equals("is connected")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "BEETHEFIRST_STATUS3"));
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
         }
         if (message.equals("is disconnected")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "BEETHEFIRST_STATUS2"));
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
         } else {
             // REDSOFT: CONSIDER OTHER SITUATION ?
         }
@@ -212,7 +212,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/logo_beethefirst.png"))); // NOI18N
 
-        jLabel3.setText("is not connected");
+        jLabel3.setText("default: not connected");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -275,14 +275,14 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jLabel5.setText("Quick Guide");
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel5MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel5MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel5MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel5MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel5MouseEntered(evt);
             }
         });
 
