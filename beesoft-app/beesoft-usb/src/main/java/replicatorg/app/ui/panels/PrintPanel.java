@@ -32,7 +32,9 @@ import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.MainWindow;
 import replicatorg.app.util.ExtensionFilter;
+import replicatorg.model.PrintBed;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -58,6 +60,7 @@ public class PrintPanel extends BaseDialog {
     private static final String FORMAT = "%2d:%2d";
     private String colorCode = FilamentControler.NO_FILAMENT_CODE;
     private PrintEstimationThread estimationThread = null;
+    private GCodeExportThread exportThread = null;
     private boolean isRunning = true;
     private boolean lastUsedRaft;
     private String lastUsedDensity;
@@ -633,6 +636,20 @@ public class PrintPanel extends BaseDialog {
             estimatePressed = false;
         }
     }
+    
+    public void showLoadingIconExport(boolean show) {
+        loading.setVisible(show);
+
+        if (show) {
+            materialCost.setText("N/A");
+            printTime.setText("N/A");
+            exportPressed = true;
+            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_19.png")));
+        } else {
+            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
+            exportPressed = false;
+        }
+    }    
 
     /**
      * Updates all fields to stored setting, on form load.
@@ -1632,55 +1649,35 @@ public class PrintPanel extends BaseDialog {
     private void bExportMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMousePressed
 
         // if there are any loaded model, do the export
-        if (exportPressed == false && nModels > 0) {
-            exportPressed = true;
-        
-            this.showLoadingIcon(true);
-         
+        if (exportPressed == false && nModels > 0) {                  
+            
+            PrintBed bed = Base.getMainWindow().getBed();
             JFileChooser saveFile = new JFileChooser();
+            saveFile.setSelectedFile(new File(
+                    bed.getPrintBedFile().getName().split(".bee")[0] 
+                            + System.currentTimeMillis() + ".gcode"));
             int rVal = saveFile.showSaveDialog(null);
 
             if (rVal == JFileChooser.APPROVE_OPTION) {
-                //Generates the gcode
-                Printer prt = new Printer(this.getPreferences());
-                prt.generateGCode(this.getPreferences());
-                File gcode = prt.getGCode();  
+                exportThread = new GCodeExportThread(this, saveFile.getSelectedFile());
                 
-                File gout = saveFile.getSelectedFile();
-
-                InputStream input = null;
-                OutputStream output = null;
-
-                try {
-
-                    input = new FileInputStream(gcode);
-                    output = new FileOutputStream(gout);
-
-                    byte[] buf = new byte[1024];
-                    int bytesRead;
-
-                    while ((bytesRead = input.read(buf)) > 0) {
-                        output.write(buf, 0, bytesRead);
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        exportThread.start();
+                        Base.systemThreads.add(exportThread);
                     }
-
-                } catch(Exception ex) {
-
-                    Base.writeLog(ex.getMessage());
-                } finally {
-                    try {
-                        if (input != null)
-                            input.close();
-
-                        if (output != null)
-                            output.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                });
+            }             
+        }       
+        else if (nModels == 0) { // otherwise warn the user that there are no models loaded
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
                 }
-            } 
-            
-            exportPressed = false;
-            this.showLoadingIcon(false);
+            });
+            thread.start();
         }
     }//GEN-LAST:event_bExportMousePressed
 
@@ -1785,6 +1782,99 @@ class PrintEstimationThread extends Thread {
                 printPanel.updateOldSettings();
                 nTimes++;
                 printPanel.showLoadingIcon(false);
+                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+                this.stop();
+
+            } else {
+                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+            }
+
+        }
+    }
+}
+
+class GCodeExportThread extends Thread {
+
+    private final PrintPanel printPanel;
+    private final File saveFile;
+    private int nTimes;
+
+    public GCodeExportThread(PrintPanel panel, File saveFile) {
+        super("Print panel Export Thread");
+        this.printPanel = panel;
+        this.saveFile = saveFile;
+        this.nTimes = 0;
+    }
+
+    /**
+     * Runs GCode generator process. Updates window fields to display print
+     * model cost estimation.
+     */
+    public void runExport() {
+        ArrayList<String> preferences = printPanel.getPreferences();
+        Printer prt = new Printer(preferences);
+        prt.generateGCode(preferences);
+        File gcode = prt.getGCode();
+        //Estimate time and cost
+        PrintEstimator.estimateTime(gcode);
+        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+        
+        //Writes the file
+        InputStream input = null;
+        OutputStream output = null;
+
+        try {
+
+            input = new FileInputStream(gcode);
+            output = new FileOutputStream(this.saveFile);
+
+            byte[] buf = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = input.read(buf)) > 0) {
+                output.write(buf, 0, bytesRead);
+            }
+
+        } catch (Exception ex) {
+
+            Base.writeLog(ex.getMessage());
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+
+                if (output != null) {
+                    output.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }    
+    }
+
+    @Override
+    public void run() {
+
+        while (printPanel.isRunning()) {
+            try {
+                Thread.sleep(5, 0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(PrintEstimationThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            if (!printPanel.settingsChanged() || nTimes == 0) {
+                printPanel.showLoadingIconExport(true);
+
+                if (Base.getMainWindow().isOkToGoOnSave() == false) {
+                    Base.getMainWindow().handleSave(true);
+                }
+                
+                runExport();
+                printPanel.updateOldSettings();
+                nTimes++;
+                printPanel.showLoadingIconExport(false);
+                
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
                 this.stop();
 
