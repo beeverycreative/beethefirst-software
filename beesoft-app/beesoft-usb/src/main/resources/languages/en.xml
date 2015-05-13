@@ -349,9 +349,9 @@
             <Line23 value="Load work area"/>
             <Line24 value="Load model"/>
             <Line25 value="Please wait"/>
-            <BEETHEFIRST_STATUS1 value="is connected"/>
-            <BEETHEFIRST_STATUS2 value="is disconnected"/>
-            <BEETHEFIRST_STATUS3 value="is ready"/>
+            <PrinterStatusConnected value="is connected"/>
+            <PrinterStatusDisconnected value="is disconnected"/>
+            <PrinterStatusReady value="is ready"/>
             <MovingMessage value="Moving... Please wait."/> 
             <MovingMessage2 value="Please wait! Getting ready..."/>
             <HeatingMessage value="Heating... Please wait."/>
@@ -669,8 +669,8 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <MessageFirstTime value="Please view 'Quick Guide' all the way through before continuing."/>
             <MessageModelNotPicked value="Select a model."/>
             <GCodeGeneration value="GCode not generated. Check your execute permissions."/>
-            <BTF_Disconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
-            <BTF_Printing value="Your BEETHEFIRST is printing. Please make sure it is available for a new print. "/>
+            <PrinterDisconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
+            <PrinterPrinting value="Your BEETHEFIRST is printing. Please make sure it is available for a new print. "/>
             <ErrorUpdating value="Sorry about this! Please restart BEESOFT to continue."/>
             <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
             <FirmwareError value="An error has occured. Please click OK to restart your software and BEETHEFIRST." />
