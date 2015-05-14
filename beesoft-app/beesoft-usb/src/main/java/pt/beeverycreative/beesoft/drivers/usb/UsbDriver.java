@@ -20,6 +20,7 @@ import javax.usb.UsbNotActiveException;
 import javax.usb.UsbServices;
 import org.w3c.dom.Node;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.usb.UsbDeviceDescriptor;
@@ -47,13 +48,34 @@ import replicatorg.drivers.DriverBaseImplementation;
 public class UsbDriver extends DriverBaseImplementation {
 
     protected static UsbDevice m_usbDevice;
-    private String m_manufacturer = "BEEVERYCREATIVE";
-    private String m_productNew = "BEETHEFIRST";
-    protected String m_productOld = "BEETHEFIRST - ";
-    protected String oldCompatibleVersion = "BEETHEFIRST-3.";
+
+    private static String m_manufacturer = "BEEVERYCREATIVE";
+    private static String m_productNew = "BEETHEFIRST";
+    protected static String m_productOld = "BEETHEFIRST - ";
+    protected static String oldCompatibleVersion = "BEETHEFIRST-3.";
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
+
+    
+    protected final String BEETF_0        = (short)0xffff +":"+ (short) 0x014e;
+    protected final String BEETF_1        = (short)0x29c9 +":"+ (short) 0x0001;
+    protected final String BEE_PLUS       = (short)0x29c9 +":"+ (short) 0x0002;
+    protected final String BEE_ME         = (short)0x29c9 +":"+ (short) 0x0003;
+    protected final String BEE_IN_SCHOOL  = (short)0x29c9 +":"+ (short) 0x0004;
+    
+    private final String[] KNOWN_DEVICES_LIST = { BEETF_0,
+                                                  BEETF_1,
+                                                  BEE_ME,
+                                                  BEE_PLUS,
+                                                  BEE_IN_SCHOOL };
+    
+    
+    protected String deviceString;
+        
+    
+    //check this, maybe delete
     protected boolean isNewVendorID = false;
+    
     protected ArrayList<UsbDevice> m_usbDeviceList = new ArrayList<UsbDevice>();
     /**
      * Lock for multi-threaded access to this driver's serial port.
@@ -176,9 +198,13 @@ public class UsbDriver extends DriverBaseImplementation {
      * @param device USB device from descriptor.
      */
     public void InitUsbDevice(UsbDevice device) {
+        
+        UsbDeviceDescriptor descriptor;
+        descriptor = device.getUsbDeviceDescriptor();
 
         try {
-            UsbDeviceDescriptor descriptor;
+            Base.writeLog("Device found - " + descriptor.idVendor() + ":" + descriptor.idProduct());
+
             if (device.isUsbHub()) {
                 Base.writeLog("Found a USB hub");
                 UsbHub hub = (UsbHub) device;
@@ -187,52 +213,10 @@ public class UsbDriver extends DriverBaseImplementation {
                     InitUsbDevice(child);
                 }
             } else {
-                descriptor = device.getUsbDeviceDescriptor();
 
-                short idVendor = descriptor.idVendor();
-                short idProduct = descriptor.idProduct();
-
-                Base.writeLog("Device found - " + idVendor + ":" + idProduct);
-
-                if (idVendor == BEEVERYCREATIVE_VENDOR_ID) {
-
-                    String manufacturerString = device.getManufacturerString();
-                    String productString = device.getProductString();
-                    String SerialNumberString = device.getSerialNumberString().trim();
-
-                    if (manufacturerString.contains(m_manufacturer)
-                            || productString.contains(m_productOld)) {
-
-                        Base.writeLog("Adding to candidate list.");
-
-                        m_usbDeviceList.add(device);
-
-                        Base.writeLog("Device - " + idVendor + ":" + idProduct);
-                        Base.writeLog(manufacturerString);
-                        Base.writeLog(productString);
-                        Base.writeLog(SerialNumberString);
-
-                    }//else{System.out.println("No need for else.");}
-                }
-                if (idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID) {
-
-                    String manufacturerString = device.getManufacturerString();
-                    String productString = device.getProductString();
-                    String SerialNumberString = device.getSerialNumberString().trim();
-
-                    if (manufacturerString.contains(m_manufacturer)
-                            || productString.contains(m_productNew)) {
-
-                        Base.writeLog("Adding to candidate list.");
-
-                        m_usbDeviceList.add(device);
-                        isNewVendorID = true;
-                        Base.writeLog("Device - " + idVendor + ":" + idProduct);
-                        Base.writeLog(manufacturerString);
-                        Base.writeLog(productString);
-                        Base.writeLog(SerialNumberString);
-
-                    }//else{System.out.println("No need for else.");}
+                //Try to add using the new way, then using the old way.
+                if (addIfCompatible(device) == false) {
+                    addIfCompatible_Legacy(device);
                 }
             }
         } catch (UsbException ex) {
@@ -248,6 +232,92 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("Could not verify or add device:"
                     + ex.getMessage() + ":" + ex.toString());
         }
+    }
+
+    
+    public boolean addIfCompatible(UsbDevice device) throws UsbException, UnsupportedEncodingException {
+        
+        UsbDeviceDescriptor descriptor;
+
+        descriptor = device.getUsbDeviceDescriptor();
+
+        short idVendor = descriptor.idVendor();
+        short idProduct = descriptor.idProduct();
+        
+        
+        String sDevice = idVendor+":"+idProduct;
+        
+        for (String knownDevice : KNOWN_DEVICES_LIST){
+            if(knownDevice.equalsIgnoreCase(sDevice)){
+                
+                m_usbDeviceList.add(device);
+
+                Base.writeLog("Device - " + idVendor + ":" + idProduct);
+                Base.writeLog(device.getManufacturerString());
+                Base.writeLog(device.getProductString());
+                Base.writeLog(device.getSerialNumberString().trim());
+                
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    public boolean addIfCompatible_Legacy(UsbDevice device) throws UsbException, UnsupportedEncodingException {
+
+        UsbDeviceDescriptor descriptor;
+
+        descriptor = device.getUsbDeviceDescriptor();
+
+        short idVendor = descriptor.idVendor();
+        short idProduct = descriptor.idProduct();
+
+        
+
+        if (idVendor == BEEVERYCREATIVE_VENDOR_ID) {
+
+            String manufacturerString = device.getManufacturerString();
+            String productString = device.getProductString();
+            String SerialNumberString = device.getSerialNumberString().trim();
+
+            if (manufacturerString.contains(m_manufacturer)
+                    || productString.contains(m_productOld)) {
+
+                Base.writeLog("Adding to candidate list.");
+
+                m_usbDeviceList.add(device);
+
+                Base.writeLog("Device - " + idVendor + ":" + idProduct);
+                Base.writeLog(manufacturerString);
+                Base.writeLog(productString);
+                Base.writeLog(SerialNumberString);
+                return true;
+
+            }//else{System.out.println("No need for else.");}
+        }
+        if (idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID) {
+
+            String manufacturerString = device.getManufacturerString();
+            String productString = device.getProductString();
+            String SerialNumberString = device.getSerialNumberString().trim();
+
+            if (manufacturerString.contains(m_manufacturer)
+                    || productString.contains(m_productNew)) {
+
+                Base.writeLog("Adding to candidate list.");
+
+                m_usbDeviceList.add(device);
+                Base.writeLog("Device - " + idVendor + ":" + idProduct);
+                Base.writeLog(manufacturerString);
+                Base.writeLog(productString);
+                Base.writeLog(SerialNumberString);
+                return true;
+
+
+            }//else{System.out.println("No need for else.");}
+        }
+        return false;
     }
 
     /**
@@ -275,33 +345,36 @@ public class UsbDriver extends DriverBaseImplementation {
         } finally {
             setInitialized(false);
         }
-
-        int n = m_usbDeviceList.size();
-
-        Base.writeLog("Found " + n + " devices.");
-        //connect to the first device available
-        if (n > 1) {
-            m_usbDevice = m_usbDeviceList.get(0);
-            Base.writeLog("Multiple machines found connecting to the "
-                    + "most recently connected one");
-            if (Base.isMacOS()) {
-                ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
-            }
-        }
-        if (n == 1) {
-            m_usbDevice = m_usbDeviceList.get(0);
-            Base.writeLog("Found 1 device, connecting.");
-            if (Base.isMacOS()) {
-                ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
-            }
-//                Base.writeLog("Connecting to machine using usb device: "
-//                        + m_usbDevice.getProductString());
-        } else {
+        
+        if (m_usbDeviceList.isEmpty()) {
             m_usbDevice = null;
             Base.writeLog("Failed to find USB device.");
             setInitialized(false);
+        } else {
+            //Chose the device to Initialize
+            m_usbDevice = m_usbDeviceList.get(0);
+            if (Base.isMacOS()) {
+                ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
+            }
+            
+            if(m_usbDeviceList.size() == 1){
+                Base.writeLog("Found 1 device, connecting.");
+            } else {
+                Base.writeLog("Multiple machines found connecting to the "
+                    + "most recently connected one");
+            }
         }
-
+        
+        
+        UsbDeviceDescriptor descriptor;
+        descriptor = m_usbDevice.getUsbDeviceDescriptor();
+        if(descriptor.idVendor() == BEEVERYCREATIVE_NEW_VENDOR_ID){
+            isNewVendorID = true;
+        } //no need for else
+        
+        if(descriptor.idVendor() == BEEVERYCREATIVE_VENDOR_ID){
+            isNewVendorID = false;
+        } //no need for else
     }
 
     /**
@@ -398,8 +471,7 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Checks if printer is in bootloader.
      *
-     * @return true, if in bootloader.
-     *  false, if not.
+     * @return true, if in bootloader. false, if not.
      */
     @Override
     public boolean isBootloader() {
@@ -567,11 +639,13 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     @Override
     public void hiccup(int mili, int nano) {
-        
+
         try {
             Thread.sleep(mili, nano);
         } catch (InterruptedException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+
 }

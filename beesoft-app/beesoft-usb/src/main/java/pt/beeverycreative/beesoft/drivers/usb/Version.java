@@ -24,7 +24,7 @@ public class Version implements Comparable<Version> {
     private int bug = 0;
     private int minor = 0;
     private int major = 0;
-    private String verionString = "";
+    private String versionString = "";
 
     public void setVerionFromString(String verionString) {
 
@@ -46,7 +46,7 @@ public class Version implements Comparable<Version> {
             bug = Integer.valueOf(m.group(5));
         }
 
-        this.verionString = verionString;
+        this.versionString = verionString;
 
     }
 
@@ -54,12 +54,12 @@ public class Version implements Comparable<Version> {
         return bug;
     }
 
-    public String getVerionString() {
+    public String getVersionString() {
         return major + "." + minor + "." + bug;
     }
 
     public String getVerionStringComplete() {
-        return verionString;
+        return versionString;
     }
 
     public Version() {
@@ -68,7 +68,7 @@ public class Version implements Comparable<Version> {
     public Version fromFile(String verionString) {
 
         Version version = new Version();
-        version.verionString = verionString;
+        version.versionString = verionString;
         String re1 = "(BEETHEFIRST)";	// Word 1
         String re2 = ".*?";	// Non-greedy match on filler
         String re3 = "(\\d+)";	// Integer Number 1
@@ -80,7 +80,7 @@ public class Version implements Comparable<Version> {
         String re9 = "(bin)";	// Word 2
 
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(version.verionString);
+        Matcher m = p.matcher(version.versionString);
         if (m.find()) {
             version.major = Integer.parseInt(m.group(2));
             version.minor = Integer.parseInt(m.group(3));
@@ -97,7 +97,7 @@ public class Version implements Comparable<Version> {
     Version fromMachine3(String machineString) {
 
         Version version = new Version();
-        version.verionString = machineString;
+        version.versionString = machineString;
 
         String re1 = "(ok)";	// US State 1
         String re2 = ".*?";	// Non-greedy match on filler
@@ -119,13 +119,12 @@ public class Version implements Comparable<Version> {
             version.major = Integer.parseInt(m.group(4));
             version.minor = Integer.parseInt(m.group(5));
             version.bug = Integer.parseInt(m.group(6));
-
-
+            Base.writeLog("Version is: " + version.getVersionString());
         } else {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + verionString);
+            Base.writeLog("Version format invalid: " + machineString);
         }
         return version;
     }
@@ -133,7 +132,7 @@ public class Version implements Comparable<Version> {
     Version fromMachine4(String machineString) {
 
         Version version = new Version();
-        version.verionString = machineString;
+        version.versionString = machineString;
 
         String re1 = "(ok)";	// Variable Name 1
         String re2 = "(\\s+)";	// White Space 1
@@ -156,7 +155,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + verionString);
+            Base.writeLog("Version format invalid: " + versionString);
         }
         return version;
     }
@@ -164,7 +163,7 @@ public class Version implements Comparable<Version> {
     Version fromMachineAtFirmware(String machineString) {
 
         Version version = new Version();
-        version.verionString = machineString;
+        version.versionString = machineString;
 
         String re1 = "(\\d+)";	// Integer Number 1
         String re2 = "(.)";	// Any Single Character 1
@@ -191,7 +190,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + verionString);
+            Base.writeLog("Version format invalid: " + versionString);
         }
         return version;
     }
