@@ -127,10 +127,10 @@ public class MessagesPopUp extends javax.swing.JDialog {
             jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "GCodeGeneration"));
         }
         if (message.equals("btfDisconnect")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "BTF_Disconnected"));
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "PrinterDisconnected"));
         }
         if (message.equals("btfPrinting")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "BTF_Printing"));
+            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "PrinterPrinting"));
         }
         if (message.equals("moving")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage2"));
