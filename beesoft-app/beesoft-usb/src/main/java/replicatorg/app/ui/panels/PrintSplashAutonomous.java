@@ -5,8 +5,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -1750,17 +1748,17 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 }
 class UpdateThread4 extends Thread {
 
-    private PrintSplashAutonomous window;
-    private Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-    private TransferControlThread gcodeGenerater;
+    private final PrintSplashAutonomous window;
+    private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+    private final TransferControlThread gcodeGenerater;
     private static final String ERROR = "error";
-    private double temperatureGoal = 215; //default
+    private final double temperatureGoal = 215; //default
     private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
     private int nLines = 0;
     private double lines = 0.0;
     private boolean finished = false;
     private BufferedReader reader = null;
-    private long updateSleep = 500;
+    private final long updateSleep = 500;
     private String estimatedTime;
     private boolean isOnShutdownRecover;
     File gcode = null;
@@ -1772,22 +1770,22 @@ class UpdateThread4 extends Thread {
     }
 
     private void appendSpecialGCode() {
-        PrintWriter pw = null;
+        PrintWriter pw;
         File gcodeCura = window.getPrintFile();
         String gcodeName = gcodeCura.getName().substring(0, gcodeCura.getName().lastIndexOf(".")).concat("STEDCD");
         gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + gcodeName + ".gcode");
         String[] startCode = Languager.getGCodeArray(4, "operationCode", "startCode");
         String[] endCode = Languager.getGCodeArray(4, "operationCode", "endCode");
-        BufferedReader br = null;
-        String line = "";
+        BufferedReader br;
+        String line;
 
         try {
             pw = new PrintWriter(new FileOutputStream(gcode));
             br = new BufferedReader(new FileReader(gcodeCura));
 
             // Start GCode
-            for (int i = 0; i < startCode.length; i++) {
-                pw.println(startCode[i].trim());
+            for (String startCode1 : startCode) {
+                pw.println(startCode1.trim());
             }
 
             // GCode
@@ -1796,8 +1794,8 @@ class UpdateThread4 extends Thread {
             }
 
             // End GCode
-            for (int i = 0; i < endCode.length; i++) {
-                pw.println(endCode[i].trim());
+            for (String endCode1 : endCode) {
+                pw.println(endCode1.trim());
             }
 
             br.close();
@@ -2087,6 +2085,27 @@ class UpdateThread4 extends Thread {
 
             } else {
                 gcode = window.getPrintFile();
+                
+                /**
+                 * Estimates GCode printing time
+                 */
+                gcodeGenerater.start();
+                boolean gcodeDone = false;
+
+                while (gcodeDone == false) {
+                    try {
+                        Thread.sleep(250, 0);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    gcodeDone = gcodeGenerater.getGCodeDone();
+                    estimatedTime = String.valueOf((int) gcodeGenerater.getGenerationTime());
+                }
+
+                /**
+                 * Free JVM
+                 */
+                gcodeGenerater.stop();                
             }
             /**
              * GCode generated; set driver to autonomous and transfer it
@@ -2262,6 +2281,7 @@ class TransferControlThread extends Thread {
                 }
             }
             Base.writeLog("Gcode estimation successful...");
+            gCodeDone = true;
         }
 
         Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),

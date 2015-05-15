@@ -28,11 +28,12 @@
             <Edit_Reset value="איפוס מודל"/>
             <Model_Add value="להוסיף מודל מגלריה"/>
             <Model_Import value="מודל יבוא"/>
+            <GCode_Import value="קובץG-קוד הדפסה"/>
             <Model_Online value="מודלים באינטרנט"/>
             <Printer_Maintenance value="תחזוקה"/>
             <Printer_Print value="הדפס"/>
             <Help_Topics value="נושאי עזרה:"/>
-          <Help_Topics_Info value="האם אתה זקוק לעזרה נוספת, אנא פנה לשאלות הנפוצות שלנו, www.beeverycreative.com אתר האינטרנט שלנו, או יש להפנות לשירות הלקוחות."/>
+            <Help_Topics_Info value="האם אתה זקוק לעזרה נוספת, אנא פנה לשאלות הנפוצות שלנו, www.beeverycreative.com אתר האינטרנט שלנו, או יש להפנות לשירות הלקוחות."/>
             <Help value="לחץ כאן לקבלת עזרה"/>
             <Help_help value="עזרה"/>
             <Help_QuickGuide value="מדריך מהיר"/>
@@ -65,31 +66,31 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
             <Scene value="אזור עבודה"/>
-	        <Scene_Name value="שם"/>
-    	    <Scene_Description value="תיאור"/>
-	        <Scene_NModels value="מספר הדגמים"/>
-	        <Scene_LastPrintDate value="תאריך ההדפסה האחרונה"/>
-	        <Scene_LastPrintTime value="משך ההדפסה האחרונה"/>
+            <Scene_Name value="שם"/>
+            <Scene_Description value="תיאור"/>
+            <Scene_NModels value="מספר הדגמים"/>
+            <Scene_LastPrintDate value="תאריך ההדפסה האחרונה"/>
+            <Scene_LastPrintTime value="משך ההדפסה האחרונה"/>
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
         <ModelDetails>
-                <Model value="דגם"/>
-                <Model_Name value="שם"/>
-                <Model_Selected value="דגם שנבחר (ים)"/>
-	        <Model_N value="מספר הדגמים"/>
-	        <Model_Dimensions value="ממדים"/>
-                <Model_Description value="תיאור"/>
-	        <Model_Category value="קטגוריה"/>
+            <Model value="דגם"/>
+            <Model_Name value="שם"/>
+            <Model_Selected value="דגם שנבחר (ים)"/>
+            <Model_N value="מספר הדגמים"/>
+            <Model_Dimensions value="ממדים"/>
+            <Model_Description value="תיאור"/>
+            <Model_Category value="קטגוריה"/>
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
         <AboutSoftware>
-	        <About_SoftwareVersion value="גרסת תוכנה"/> 
-	        <About_FirmwareVersion value="גרסת הקושחה"/> 
-	        <About_BootloaderVersion value="/גרסת Bootloader"/> 
-	        <About_SerialNumber value="מספר סידורי BEETHEFIRST"/> 
-                <About_FilamentColor value="סוג חוט להט"/> 
+            <About_SoftwareVersion value="גרסת תוכנה"/> 
+            <About_FirmwareVersion value="גרסת הקושחה"/> 
+            <About_BootloaderVersion value="/גרסת Bootloader"/> 
+            <About_SerialNumber value="מספר סידורי BEETHEFIRST"/> 
+            <About_FilamentColor value="סוג חוט להט"/> 
         </AboutSoftware>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
@@ -137,15 +138,15 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões de controlo de janelas -->
         <OptionPaneButtons>
-          <Line1 value="להורדה..."/>
-          <Line2 value="לא"/>
-          <Line3 value="לבטל"/>
-          <Line4 value="בחזרה"/>
-          <Line5 value="לסכם"/>
-          <Line6 value="בסדר"/>
-          <Line7 value="הבא"/>
-          <Line8 value="ליישם"/>
-          <Line9 value="יבוא"/>
+            <Line1 value="להורדה..."/>
+            <Line2 value="לא"/>
+            <Line3 value="לבטל"/>
+            <Line4 value="בחזרה"/>
+            <Line5 value="לסכם"/>
+            <Line6 value="בסדר"/>
+            <Line7 value="הבא"/>
+            <Line8 value="ליישם"/>
+            <Line9 value="יבוא"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -177,7 +178,7 @@
             <Line7 value="שמור את הסצנה עכשיו?"/>
             <Line8 value= "להציל את הסצנה"/>
             <Line9 value="מודל זה הוא גדול יותר ממה BEETHEFIRST יכול לבנות"/>
-	    <Line10 value="האם אתה בטוח שאתה רוצה ליצור קוד לזה?"/>
+            <Line10 value="האם אתה בטוח שאתה רוצה ליצור קוד לזה?"/>
             <Line11 value="לייצר מודל גדול מדי?"/>
             <Line12 value="יצירת מהלכי כלי עבור"/>
             <Line13 value="תוסף השקה"/>
@@ -231,37 +232,37 @@
         
         <!-- A próxima secção XML contém o texto a ser apresentado no Processo de Impressão, incluindo SplashScreens --> 
         <Print>
-          <Print_Title value="הדפסה"/>
-          <Print_Splash_Gcode_Title value="עיבוד ... PLEASE WAIT"/>
-           <Print_Splash_Gcode_Info value="תהליך זה יכול להימשך מספר דקות"/>	
-           <Print_Calibration_Info value="תהליך זה עשוי לקחת כמה רגעים"/>
-	        <Print_Splash_Title value="BEETHEFIRST שלך מוכן להדפסה"/>
-	        <Print_Splash_Info value="לחץ על הכפתור."/>
-	        <Print_Splash_Info2 value="הדפסה ... אנא המתן."/>
-	        <Print_Splash_Info3 value="הדפסה במצב אוטונומי. עכשיו אתה יכול לנתק BEETHEFIRST שלך."/>
-	        <Print_Quality value="החלטה"/>	
-	        <Print_Quality_Low value="נמוך"/>	
-	        <Print_Quality_Normal value="נורמלי"/>	
-	        <Print_Quality_High value="גבוה"/>	
-	        <Print_Density value="צפיפות"/>
-	        <Print_Density_Low value="נמוך"/>
-	        <Print_Density_Medium value="בינוני"/>
-	        <Print_Density_High value="גבוה"/>	
-	        <Print_Raft value="רפסודה"/>	
-	        <Print_Support value="תמיכה"/>	
-	        <Print_Autonomy value="אוטונומיה"/>
-	        <Print_Raft_Info value="אפשרות זו יוצרת מבנה שעליו המודל יהיה מודפס. זה יאפשר לה לדבוק בשולחן ולעזור כדי למנוע עיוות."/>	
-	        <Print_Support_Info value="אפשרות זו יוצרת באופן אוטומטי להסרה מבנה מתחת לסככה או באזורים משופעים, באופן שיאפשר את המודל להדפסה."/>	
-	        <Print_Autonomy_Info value="אפשרות זו מאפשרת לך להדפיס ללא חיבור למחשב. תוכל לקבל מידע כאשר אתה יכול להתנתק מהמחשב שלך."/>
-	        <Print_ChangeFilament value="שינוי נימה עכשיו"/>
-	        <Print_TimeLeft value="שנותרו על x דקות"/>
-	        <Print_GCode value="הגדרות השתנו וצריך להיות מעודכן. תהליך זה יכול להימשך מספר דקות."/>
-	        <Print_Filament value="נימה שנותר לא יכולה להיות מספיק עבור הפעלת הדפסה זו."/>
-	        <Print_Autonomy value="מאפשר BEETHEFIRST להדפיס מבלי להיות מחובר למחשב. אתה תהיה מושכל, כאשר אתה יכול לנתק את הכבל."/>
-           <Print_Processing value="עיבוד ... אנא המתן"/>
-	        <Print_Info value="זה עשוי להימשך מספר דקות"/>
-        <Print_InfoLowStatus value="להתחיל להדפיס מפגש בהקדם האפשרי"/>
-	        <Print_Start value="לחץ על כפתור כדי להתחיל"/>
+            <Print_Title value="הדפסה"/>
+            <Print_Splash_Gcode_Title value="עיבוד ... PLEASE WAIT"/>
+            <Print_Splash_Gcode_Info value="תהליך זה יכול להימשך מספר דקות"/>	
+            <Print_Calibration_Info value="תהליך זה עשוי לקחת כמה רגעים"/>
+            <Print_Splash_Title value="BEETHEFIRST שלך מוכן להדפסה"/>
+            <Print_Splash_Info value="לחץ על הכפתור."/>
+            <Print_Splash_Info2 value="הדפסה ... אנא המתן."/>
+            <Print_Splash_Info3 value="הדפסה במצב אוטונומי. עכשיו אתה יכול לנתק BEETHEFIRST שלך."/>
+            <Print_Quality value="החלטה"/>	
+            <Print_Quality_Low value="נמוך"/>	
+            <Print_Quality_Normal value="נורמלי"/>	
+            <Print_Quality_High value="גבוה"/>	
+            <Print_Density value="צפיפות"/>
+            <Print_Density_Low value="נמוך"/>
+            <Print_Density_Medium value="בינוני"/>
+            <Print_Density_High value="גבוה"/>	
+            <Print_Raft value="רפסודה"/>	
+            <Print_Support value="תמיכה"/>	
+            <Print_Autonomy value="אוטונומיה"/>
+            <Print_Raft_Info value="אפשרות זו יוצרת מבנה שעליו המודל יהיה מודפס. זה יאפשר לה לדבוק בשולחן ולעזור כדי למנוע עיוות."/>	
+            <Print_Support_Info value="אפשרות זו יוצרת באופן אוטומטי להסרה מבנה מתחת לסככה או באזורים משופעים, באופן שיאפשר את המודל להדפסה."/>	
+            <Print_Autonomy_Info value="אפשרות זו מאפשרת לך להדפיס ללא חיבור למחשב. תוכל לקבל מידע כאשר אתה יכול להתנתק מהמחשב שלך."/>
+            <Print_ChangeFilament value="שינוי נימה עכשיו"/>
+            <Print_TimeLeft value="שנותרו על x דקות"/>
+            <Print_GCode value="הגדרות השתנו וצריך להיות מעודכן. תהליך זה יכול להימשך מספר דקות."/>
+            <Print_Filament value="נימה שנותר לא יכולה להיות מספיק עבור הפעלת הדפסה זו."/>
+            <Print_Autonomy value="מאפשר BEETHEFIRST להדפיס מבלי להיות מחובר למחשב. אתה תהיה מושכל, כאשר אתה יכול לנתק את הכבל."/>
+            <Print_Processing value="עיבוד ... אנא המתן"/>
+            <Print_Info value="זה עשוי להימשך מספר דקות"/>
+            <Print_InfoLowStatus value="להתחיל להדפיס מפגש בהקדם האפשרי"/>
+            <Print_Start value="לחץ על כפתור כדי להתחיל"/>
             <Print_BuildFinished value="תהליך הבנייה הסתיים."/>
             <Print_Completion value="הושלם ב"/>
             <Print_BuildAborted value="תהליך הבנייה בוטל."/>
@@ -280,93 +281,93 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento --> 
         <FilamentWizard>
-		    <Title1 value="ההכנה"/>
-		    <Heating_Info_Title value="טמפרטורת זרבובית מכבש"/>
-		    <Heating_Info value="זרבובית מכבש יש צורך לחמם בכל פעם שאתה משנה את נימה. כאשר הוא מגיע לטמפרטורה האידיאלית ייתכן לעבור לשלב הבא."/>
-                    <Info_Warning value = "אזהרה: לעולם אין לגעת בנחיר מכבש כאשר המדפסת דולקת."/> 
-		    <Title2 value="שנה FILAMENT"/>
-		    <LoadButton value="עומס"/>
-		    <UnloadButton value="לפרוק"/>
-		    <Exchange_Info_Title value="כיצד לטעון או לפרוק את חוט הלהט"/>
-		    <Exchange_Info value="כדי לפרוק את נימה, ללחוץ על הכפתור לפרוק ולמשוך את חוט הלהט בהתמדה.
+            <Title1 value="ההכנה"/>
+            <Heating_Info_Title value="טמפרטורת זרבובית מכבש"/>
+            <Heating_Info value="זרבובית מכבש יש צורך לחמם בכל פעם שאתה משנה את נימה. כאשר הוא מגיע לטמפרטורה האידיאלית ייתכן לעבור לשלב הבא."/>
+            <Info_Warning value = "אזהרה: לעולם אין לגעת בנחיר מכבש כאשר המדפסת דולקת."/> 
+            <Title2 value="שנה FILAMENT"/>
+            <LoadButton value="עומס"/>
+            <UnloadButton value="לפרוק"/>
+            <Exchange_Info_Title value="כיצד לטעון או לפרוק את חוט הלהט"/>
+            <Exchange_Info value="כדי לפרוק את נימה, ללחוץ על הכפתור לפרוק ולמשוך את חוט הלהט בהתמדה.
 כדי לטעון את נימה להכניס אותו לחור הכניסה ולדחוף אותו עד שהוא מגיע לסוף. לאחר מכן לחץ על כפתור העומס, ולדחוף את נימה קצת יותר עד BEETHEFIRST מושך אותו וextrudes קצת נימה."/>
-		    <Title3 value="סוג FILAMENT"/>
-		    <Title4 value="בחר את הסוג"/>
-		    <Title5 value="שלב סופי"/>
-		    <Title6 value="הכל נעשה"/>
-		    <Exchange_Info_Finish value="אתה יכול להמשיך בהדפסה."/>
-	    </FilamentWizard>
+            <Title3 value="סוג FILAMENT"/>
+            <Title4 value="בחר את הסוג"/>
+            <Title5 value="שלב סופי"/>
+            <Title6 value="הכל נעשה"/>
+            <Exchange_Info_Finish value="אתה יכול להמשיך בהדפסה."/>
+        </FilamentWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente Calibração --> 
         <CalibrationWizard>
             <Title1 value="כיול - גובה שולחן"/>
             <TitleAlt value="כיול"/>
-    	    <AjustUpFine_button value="כוונון עדין"/>
-    	    <AjustDownFine_button value="כוונון עדין"/>
-    	    <AjustUp_button value="למעלה"/>
-    	    <AjustDown_button value="למטה"/>
+            <AjustUpFine_button value="כוונון עדין"/>
+            <AjustDownFine_button value="כוונון עדין"/>
+            <AjustUp_button value="למעלה"/>
+            <AjustDown_button value="למטה"/>
             <Buttons_Info value="כוונון עדין TABLE"/>
             <CalibrationOldValue value="ערך כיול ישן:"/>
             <CalibrationCurrentValue value="ערך כיול הנוכחי:"/>
-          <Info value="ודא זרבובית מכבש היא נקייה לפני פעולה זו. שים פיסת נייר על השולחן מתחת לנחיר. לכוונן את השולחן למעלה או למטה. נכון יש לך מכויל השולחן פעם הנייר הוא לא תקוע ולא רופף לחלוטין."/>
-          <Info_Warning value = "אזהרה: אם יש לך עבר את הטבלה עד רחוק מדי נגד הנחיר, לחץ על 'ביטול' ולהפעיל מחדש את האשף זה."/> 
-          <AdvancedOptions_title value="אפשרויות מתקדמות"/>
+            <Info value="ודא זרבובית מכבש היא נקייה לפני פעולה זו. שים פיסת נייר על השולחן מתחת לנחיר. לכוונן את השולחן למעלה או למטה. נכון יש לך מכויל השולחן פעם הנייר הוא לא תקוע ולא רופף לחלוטין."/>
+            <Info_Warning value = "אזהרה: אם יש לך עבר את הטבלה עד רחוק מדי נגד הנחיר, לחץ על 'ביטול' ולהפעיל מחדש את האשף זה."/> 
+            <AdvancedOptions_title value="אפשרויות מתקדמות"/>
             <AdvancedOptions_info value="השתמש באפשרויות הבאות כדי לשלוט באופן ידני את המיקום בטבלה:"/>
-           <Slider_info value="תנועת טבלה (ממ)"/>
+            <Slider_info value="תנועת טבלה (ממ)"/>
             <Title2 value="כיול - רמת שולחן"/>
-           <Adjust_left value="להתאים"/>
-           <LeftScrew_title value="שלב 1"/>
+            <Adjust_left value="להתאים"/>
+            <LeftScrew_title value="שלב 1"/>
             <LeftScrew_Info value="שים פיסת נייר על השולחן מתחת לנחיר. לכוונן את השולחן למעלה או למטה על ידי סיבוב screw.You השאיר לי כראוי מכויל לשולחן ברגע שהנייר הוא לא תקוע ולא רופף לחלוטין."/>
-           <Title3 value="כיול - רמת שולחן"/>
-           <RightScrew_title value="שלב 2"/>
+            <Title3 value="כיול - רמת שולחן"/>
+            <RightScrew_title value="שלב 2"/>
             <RightScrew_Info value="שים פיסת נייר על השולחן מתחת לנחיר. לכוונן את השולחן למעלה או למטה על ידי סיבוב screw.You תקין יש בצורה נכונה מכויל לשולחן ברגע שהנייר הוא לא תקוע ולא רופף לחלוטין."/>
-           <Adjust_right value="להתאים"/>
+            <Adjust_right value="להתאים"/>
             <FinalStage_Title value="שלב סופי"/>
-          <Test_button value="בדיקת כיול"/>
+            <Test_button value="בדיקת כיול"/>
             <Test_Info value="לחץ על 'בדיקת כיול אם אתה רוצה לוודא השולחן כבר מכויל כראוי.זרבובית מכבש תעבור לאורך השולחן."/>
             <Test_Info_Warning value="הערה: ודא שאתה להסיר את פיסת נייר."/>
             <Validation_Title value="לתת תוקף לכיול"/>
             <Validation_Info value="הסר את השולחן ולאמת results.Compare דפוס שהתקבל על השולחן לתמונות שמוצגים לעיל. בחר את האפשרות המתאימה לאחד שנראה ביותר כמו התוצאה שלך. לפני שתמשיך עם כל אחד, עליך לנקות את השולחן וזרבובית מכבש הצבת בחזרה לשולחן בסוף."/>
             <Validation_Button1 value="כיול מוצלח"/>
             <Validation_Button2 value="כיול חוזר"/>
-	    </CalibrationWizard>
+        </CalibrationWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Limpeza do Bico -->       
         <ExtruderCleanWizard>
-		    <Title1 value="מכבש CLEAN"/>
-		    <Title2 value="מתחמם ... אנא המתן"/>
-		    <Info value="פעולה זו מאפשרת לך לנקות את מכבש. להשתמש בפינצטה כדי להסיר כל שרידים מנחיר מכבש."/>
-                    <Info_Warning value = "אזהרה: לעולם אין לגעת בנחיר מכבש כאשר המדפסת דולקת."/> 
+            <Title1 value="מכבש CLEAN"/>
+            <Title2 value="מתחמם ... אנא המתן"/>
+            <Info value="פעולה זו מאפשרת לך לנקות את מכבש. להשתמש בפינצטה כדי להסיר כל שרידים מנחיר מכבש."/>
+            <Info_Warning value = "אזהרה: לעולם אין לגעת בנחיר מכבש כאשר המדפסת דולקת."/> 
         </ExtruderCleanWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no 1º ecrã do Guia Rápido --> 
         <QuickGuideWizard>
-		    <Title1 value="ברוך הבא"/>
-		    <Info value="מדריך מהיר זה ייקח אותך דרך כל הצעדים הדרושים כדי לשמור על המדפסת שלך מוגדרת כראוי. אתה יכול לגשת לכל אחת מהפונקציות הבאות מהתפריט התחזוקה מאוחר יותר."/>
-		    <Jump value="BEETHEFIRST שלי כבר מוגדר. קח אותי למסך הראשי."/>
+            <Title1 value="ברוך הבא"/>
+            <Info value="מדריך מהיר זה ייקח אותך דרך כל הצעדים הדרושים כדי לשמור על המדפסת שלך מוגדרת כראוי. אתה יכול לגשת לכל אחת מהפונקציות הבאות מהתפריט התחזוקה מאוחר יותר."/>
+            <Jump value="BEETHEFIRST שלי כבר מוגדר. קח אותי למסך הראשי."/>
         </QuickGuideWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de Manutenção --> 
         <MaintenancePanel>
-		    <Title value="תחזוקה"/>
-		    <Filament_Title value="שינוי נימה"/>
-		    <Filament_Intro value="יש צורך בפעולה זו כאשר אתה רוצה להדפיס בצבע או שונים כאשר החוט זמין בסליל זה לא מספיק."/>
-    	    <FilamentChange_button value="שינוי נימה עכשיו"/>
-		    <Filament_Info value="יש לך גרם x של חוט להט (משוער)"/>
-		    <Calibration_Title value="לכייל"/>
-		    <Calibration_Intro value="יש צורך בפעולה זו כדי להבטיח את האיכות של הדפסי 3D שלך."/>
-    	    <CalibrationChange_button value="כייל עכשיו"/>
-		    <Calibration_Info value="x הדפסים נעשו מאז הכיול האחרון."/>
-		    <ExtruderClean_Title value="זרבובית מכבש נקייה"/>
-   	    <ExtruderClean_button value="נחיר נקי עכשיו"/>
-		    <ExtruderClean_Intro value="פעולה זו חשובה כדי להימנע מקבלת חתיכות של שאריות חוט על מה שאתה מדפיס."/>
-	    </MaintenancePanel>
+            <Title value="תחזוקה"/>
+            <Filament_Title value="שינוי נימה"/>
+            <Filament_Intro value="יש צורך בפעולה זו כאשר אתה רוצה להדפיס בצבע או שונים כאשר החוט זמין בסליל זה לא מספיק."/>
+            <FilamentChange_button value="שינוי נימה עכשיו"/>
+            <Filament_Info value="יש לך גרם x של חוט להט (משוער)"/>
+            <Calibration_Title value="לכייל"/>
+            <Calibration_Intro value="יש צורך בפעולה זו כדי להבטיח את האיכות של הדפסי 3D שלך."/>
+            <CalibrationChange_button value="כייל עכשיו"/>
+            <Calibration_Info value="x הדפסים נעשו מאז הכיול האחרון."/>
+            <ExtruderClean_Title value="זרבובית מכבש נקייה"/>
+            <ExtruderClean_button value="נחיר נקי עכשיו"/>
+            <ExtruderClean_Intro value="פעולה זו חשובה כדי להימנע מקבלת חתיכות של שאריות חוט על מה שאתה מדפיס."/>
+        </MaintenancePanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
-           <Models_tooltip value="MODELS"/>
-           <Maintenance_tooltip value="MAINTENANCE"/>
-           <QuickWizard_tooltip value="QUICK GUIDE"/>
+            <Models_tooltip value="MODELS"/>
+            <Maintenance_tooltip value="MAINTENANCE"/>
+            <QuickWizard_tooltip value="QUICK GUIDE"/>
             <Open_tooltip value="Open the model you want to print"/>
             <Print_tooltip value="Press here to print the model"/>
             <FilamentWizard_tooltip value="This will launch the Filament Wizard"/>
@@ -382,16 +383,16 @@
             <LayFlat_tooltip value="Lay flat"/>
             <RotateZ_tooltip value="Rotate around "/>
             <Mirror_tooltip value="Mirror"/>
-           <Scale_tooltip value="Scale"/>
+            <Scale_tooltip value="Scale"/>
         </ToolTips>
 
         <!-- A próxima secção XML contém o texto a ser apresentado na caixa de Mensagens de Estado -->        
         <StatusMessages>
             <!-- Os próximos textos irão aparecer após ser clicado o botão de Imprimir -->
-           <MessageCollision value="שים לב, בחלק מהדגמים הם חפפו."/>
+            <MessageCollision value="שים לב, בחלק מהדגמים הם חפפו."/>
             <MessageNotInBed value="שימו לב, בחלק מהדגמים הם לא על הרציף."/>
             <MessageMaxVolume value="שים לב, בחלק מהדגמים יעלו על נפח ההדפסה מקסימלית."/>
-           <MessageOutOfBounds value="שימו לב, בחלק מהדגמים נמצאים מחוץ לאזור ההדפסה."/>
+            <MessageOutOfBounds value="שימו לב, בחלק מהדגמים נמצאים מחוץ לאזור ההדפסה."/>
 
             <!-- Os próximos textos irão aparecer após algumas acções -->
             <MessageImportModel value="מודל יובא בהצלחה."/>
@@ -407,17 +408,17 @@
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
         <Tour>
-	        <Tour1_Title value="כמעט שם ..."/>
-	        <Tour1_Text value="כדי להתחיל בהדפסת המודלים שלך, בצע את השלבים הבאים."/>
-       	    <Tour1_Jump value="דלג על הדרכה."/>
-	        <Tour2 value="הוספת מודל למקום. ניתן לייבא מודל מתיקיית 3DModels בBEESOFT או שאתה יכול לייבא אחד הקבצים שלך."/>
-	        <Tour3 value="השתמש להזיז, לסובב, סולם או מירור כדי להגדיר את המודל למעלה בדיוק איך אתה רוצה שזה יהיה מודפס."/>
-	        <Tour4 value="ברגע שאתה מרוצה מהסצנה שלך, אתה יכול להתחיל בהדפסה."/>
-	        <Tour5 value="הודעות חשובות לגבי BEETHEFIRST יופיעו כאן."/>
-	        <Tour6 value="ניתן למצוא פעולות תחזוקת BEETHEFIRST כאן - הם חיוניים לאיכות הדפסה."/>
-                <DefaultMessage value="ברוכים הבאים!"/>
-                <EndMessage value="הכל נעשה"/>
-                <TourFinishMessage value="אתה מוכן להתחיל בהדפסה! הפוך את היצירתיות שלך אמיתית!"/>
+            <Tour1_Title value="כמעט שם ..."/>
+            <Tour1_Text value="כדי להתחיל בהדפסת המודלים שלך, בצע את השלבים הבאים."/>
+            <Tour1_Jump value="דלג על הדרכה."/>
+            <Tour2 value="הוספת מודל למקום. ניתן לייבא מודל מתיקיית 3DModels בBEESOFT או שאתה יכול לייבא אחד הקבצים שלך."/>
+            <Tour3 value="השתמש להזיז, לסובב, סולם או מירור כדי להגדיר את המודל למעלה בדיוק איך אתה רוצה שזה יהיה מודפס."/>
+            <Tour4 value="ברגע שאתה מרוצה מהסצנה שלך, אתה יכול להתחיל בהדפסה."/>
+            <Tour5 value="הודעות חשובות לגבי BEETHEFIRST יופיעו כאן."/>
+            <Tour6 value="ניתן למצוא פעולות תחזוקת BEETHEFIRST כאן - הם חיוניים לאיכות הדפסה."/>
+            <DefaultMessage value="ברוכים הבאים!"/>
+            <EndMessage value="הכל נעשה"/>
+            <TourFinishMessage value="אתה מוכן להתחיל בהדפסה! הפוך את היצירתיות שלך אמיתית!"/>
         </Tour>
 
         <!-- A próxima secção XML contém o texto para a janela das Preferências -->
@@ -442,7 +443,7 @@
             <Support_Link_EN value="https://www.beeverycreative.com/customerservice/"/>            
         </Help>
         
-         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
+        <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
         <Updates>
             <Available value="יש עדכוני תוכנה זמינים עבור BEETHEFIRST.To להתקין את הגרסה החדשה כמו שצריך, תצטרך לסגור BEESOFT."/>
             <NotAvailable value="אין עדכוני תוכנה זמינים."/>
@@ -451,14 +452,14 @@
 
         <!-- A próxima secção XML contém o texto a apresentar na Biblioteca de Modelos -->
         <Gallery>
-	        <SearchModels_text_bar value="לחפש את דגמים ..."/>
-	        <EraseScene value="מחיקת סצנה"/>
-                <EraseModel value="מחיקת מודל"/>
-	        <ModelsOnline value="מודלים באינטרנט"/>
-           <Model_Import value="מודל יבוא"/>
+            <SearchModels_text_bar value="לחפש את דגמים ..."/>
+            <EraseScene value="מחיקת סצנה"/>
+            <EraseModel value="מחיקת מודל"/>
+            <ModelsOnline value="מודלים באינטרנט"/>
+            <Model_Import value="מודל יבוא"/>
             <Model_Rename value="שינוי שם"/>
             <ModelProperties_title value="מאפיינים"/>
-           <Model_Name value="שם"/>
+            <Model_Name value="שם"/>
             <Model_Description value="תיאור"/>
             <ModelCategory_title value="קטגוריות"/>
             <Scene value="סצנה"/>
@@ -466,7 +467,7 @@
             <All value="כל"/>
         </Gallery>
         
-         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine -->
+        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine -->
         <CoilColors>
             <WHITE value="לבן"/>
             <BLACK value="שחור"/>
@@ -504,18 +505,18 @@
             <a107 value="A107 - Tomato Red"/>
             <a108 value="A108 - Light Pink"/>
             <a109 value="A109 - Traffic Purple/>
-            <a110 value="A110 - Violet"/>
-            <a111 value="A111 - Sky Blue"/>
-            <a112 value="A112 - Traffic Blue"/>
-            <a113 value="A113 - Ultramarine Blue"/>
-            <a114 value="A114 - Yellow Green"/>
-            <a115 value="A115 - Pure Green"/>
-            <a116 value="A116 - Chrome Green"/>
-            <a117 value="A117 - Chocolate Brown"/>
-            <a118 value="A118 - Telegrey"/>
-            <a119 value="A119 - Signal Black"/>
-            <a120 value="A120 - Pearl Gold"/>
-            <a121 value="A121 - Pearl Light Grey"/>
+                <a110 value="A110 - Violet"/>
+                <a111 value="A111 - Sky Blue"/>
+                <a112 value="A112 - Traffic Blue"/>
+                <a113 value="A113 - Ultramarine Blue"/>
+                <a114 value="A114 - Yellow Green"/>
+                <a115 value="A115 - Pure Green"/>
+                <a116 value="A116 - Chrome Green"/>
+                <a117 value="A117 - Chocolate Brown"/>
+                <a118 value="A118 - Telegrey"/>
+                <a119 value="A119 - Signal Black"/>
+                <a120 value="A120 - Pearl Gold"/>
+                <a121 value="A121 - Pearl Light Grey"/>
         </CoilColors>
         
     </tags>      
