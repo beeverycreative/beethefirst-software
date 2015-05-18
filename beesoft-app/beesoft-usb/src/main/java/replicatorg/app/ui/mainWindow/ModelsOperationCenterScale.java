@@ -437,7 +437,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(bScaleToMax, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                            .addComponent(bScaleToMax, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                             .addComponent(bApply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
@@ -485,7 +485,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -523,7 +523,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -664,7 +664,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         //Sets the initial sizing variables to the current values
         this.resetInitialScaleVariables();
-        model.resetScale();    }//GEN-LAST:event_bScaleToMaxMousePressed
+        model.resetScale();
+        
+        this.update_iFields();
+    }//GEN-LAST:event_bScaleToMaxMousePressed
 
     private void bScaleToMaxMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMouseExited
         bScaleToMax.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_12.png")));
@@ -887,4 +890,29 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         } catch (Exception e) {
         }
     }
+    
+    /**
+     * Updates the axis value fields with the current size values
+     */
+    private void update_iFields() {
+        Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+        try {
+
+            iFieldX.setText(df.format(model.getEditer().getWidth()));
+            this.oldX = model.getEditer().getWidth();
+        } catch (Exception e) {
+        }
+        try {
+
+            iFieldY.setText(df.format(model.getEditer().getDepth()));
+            this.oldY = model.getEditer().getDepth();
+        } catch (Exception e) {
+        }
+        try {
+
+            iFieldZ.setText(df.format(model.getEditer().getHeight()));
+            this.oldZ = model.getEditer().getHeight();
+        } catch (Exception e) {
+        }
+    }    
 }
