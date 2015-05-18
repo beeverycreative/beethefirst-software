@@ -972,24 +972,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
-        
-        item = newJMenuItem("Control Panel", 'K');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (machineLoader.isConnected()) {
-                    if (Base.isPrinting == false) {
-                        ControlPanel cp = new ControlPanel();
-                        cp.setVisible(true);
-                    }
-                } else {
-                    showFeedBackMessage("btfDisconnect");
-                }
-            }
-        });
-        menu.add(item);        
 
         // only add control panel to the menu if enabled in config.properties
         if (ProperDefault.get("controlpanel.enable").equals("1") == true) {
