@@ -57,6 +57,7 @@ public class DefaultProperties {
         defaultHash.put("temperature.acceptedLimit", String.valueOf(260));
         defaultHash.put("extruderpanel.extrudetime", String.valueOf("5"));
         defaultHash.put("controlpanel.jogmode", String.valueOf("1"));
+        defaultHash.put("controlpanel.enable", String.valueOf("0"));
         defaultHash.put("extruderpanel.extrudetime", String.valueOf("5"));
         defaultHash.put("build.runSafetyChecks", String.valueOf(true));
         defaultHash.put("build.runSafetyChecks", String.valueOf(true));
