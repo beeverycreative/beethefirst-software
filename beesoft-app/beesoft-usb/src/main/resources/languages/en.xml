@@ -179,7 +179,7 @@
             <Degrees value="degrees"/>
             <MM value="millimeters"/>
             <Inches value="inches"/>
-	    <Percentage value="percentage"/>
+            <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
         </MainWindowButtons>
 
@@ -526,7 +526,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         </ExtruderCleanWizard>
 
 
-<!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
+        <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
         <ExtruderMaintenance>
 
             <Title1 value="Extruder Maintenance"/>
@@ -564,7 +564,6 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Info6a value = " "/>
             <Info6b value = " "/>
             <Info_Warning6 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
-
 
         </ExtruderMaintenance>
 
@@ -677,7 +676,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <MeshError value="Imported model has errors. Try to fix them or import another model."/>
             <ReinstallError value="Re-install BEESOFT in order to install all proper files that are missing."/>
             <NoModelError value="There are no models on the work area. Please load at least one model."/>
-	</StatusMessages>
+        </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
         <Tour>
