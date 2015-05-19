@@ -930,12 +930,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     /**
-     * Gets the CoilCode from printer AXXX for code, A0 for none NOK for error
+     * Gets the CoilCode from printer AXXX for code, A000 for none NOK for error
      *
      */
     @Override
     public void updateCoilCode() {
-        machine.setCoilCode("A0");
+        machine.setCoilCode("A000");
         //EX : String txt="bcode:A301 ok Q:0";
         String response = dispatchCommand(COILCODE, COM.BLOCK);
 
@@ -957,8 +957,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             machine.setCoilCode(code);
 
         } else {
-            //Default A0 / None
-            machine.setCoilCode("A0");
+            //Default A000 / None
+            machine.setCoilCode("A000");
         }
     }
 

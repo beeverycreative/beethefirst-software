@@ -18,7 +18,7 @@ import java.util.Map;
 public class FilamentControler {
 
     public static String NO_FILAMENT = "NO_FILAMENT";
-    public static String NO_FILAMENT_CODE = "A0";
+    public static String NO_FILAMENT_CODE = "A000";
     
     /**
      * Get Color Copy from coil code.
@@ -142,11 +142,11 @@ public class FilamentControler {
         for (Map.Entry pair : colorsMap.entrySet()) {
             String colorName = (String) pair.getValue();
             
-            if (colorName.contains(color)) {
+            if (colorName.equalsIgnoreCase(color)) {
                 return ((String) pair.getKey()).toUpperCase();
             }
         }        
-        
+        // default value is black
         return "A302"; 
     }
 }

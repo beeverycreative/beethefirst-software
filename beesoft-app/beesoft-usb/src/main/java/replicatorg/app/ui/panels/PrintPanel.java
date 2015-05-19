@@ -191,6 +191,7 @@ public class PrintPanel extends BaseDialog {
 
         Base.writeLog("Print panel coil code: " + code);
 
+
         if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
             no_Filament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));

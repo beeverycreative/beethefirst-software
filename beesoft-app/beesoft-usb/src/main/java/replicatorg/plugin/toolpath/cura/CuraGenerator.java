@@ -118,8 +118,10 @@ public class CuraGenerator extends ToolpathGenerator {
         String resol = profile.split(":")[1];
         HashMap<String, String> overload_values = Languager.getTagValues(2, bee_code, resol);
         
+        System.out.println("bee_code = " + bee_code);
+        
         if(overload_values == null){
-            Base.getMainWindow().showFeedBackMessage("reinstallError");
+            Base.getMainWindow().showFeedBackMessage("unknownColor");
             return null;
         }        
         

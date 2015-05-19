@@ -679,6 +679,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <MeshError value="Imported model has errors. Try to fix them or import another model."/>
             <ReinstallError value="Re-install BEESOFT in order to install all proper files that are missing."/>
             <NoModelError value="There are no models on the work area. Please load at least one model."/>
+            <UnknownColor value="The filament's color is unknown! Are you sure a color is selected correctly?"/>
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -748,6 +749,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
+            <a000 value="A000 - No filament" />
             <!-- Filamentos da Filkemp -->
             <a001 value="A001 - Transparent"/>
             <a002 value="A002 - White"/>
