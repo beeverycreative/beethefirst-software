@@ -574,7 +574,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Title1 value="Extruder Switch"/>
             <HeatingMessage1 value="Heating..."/>
             <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
-            <Info1b value = " "/>
+            <Info1b value = ""/>
             <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
 
             <Title2 value="Extruder Switch"/>
