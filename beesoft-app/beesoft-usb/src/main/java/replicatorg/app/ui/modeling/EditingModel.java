@@ -850,9 +850,10 @@ public class EditingModel implements Serializable {
             t = transformOnCentroid(t);
         }
         shapeTransform.setTransform(t);
+        model.setTransform(t, "resize", isNewOp());
 
+        evaluateModelOutOfBounds();
         Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
-        return;
     }
     
     public void scale(double scale, boolean isOnPlatform, boolean evaluateOutOfBounds) {

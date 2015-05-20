@@ -523,7 +523,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -601,6 +601,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double valX = Double.parseDouble(iFieldX.getText());
         double valY = Double.parseDouble(iFieldY.getText());
         double valZ = Double.parseDouble(iFieldZ.getText());
+        
+        
         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);        
     }//GEN-LAST:event_bApplyMousePressed
 
@@ -689,7 +691,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             return;
         }
         double ratio = zVal / this.oldZ;
-        double newZ = Math.min(Z_MAX, Math.max(zVal, Z_MIN));
+        double newZ = zVal;
         this.oldZ = newZ;
 
         //If i'm unselected do just this one
@@ -706,7 +708,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 yVal = this.oldY;
                 iFieldY.setText(df.format(yVal));
             }
-            double newY = Math.min(Y_MAX, Math.max(ratio * yVal, Y_MIN));
+            double newY = ratio * yVal;
             iFieldY.setText(df.format(newY));
             this.oldY = newY;
         }
@@ -719,7 +721,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 iFieldX.setText(df.format(xVal));
 
             }
-            double newX = Math.min(X_MAX, Math.max(ratio * xVal, X_MIN));
+            double newX = ratio * xVal;
             iFieldX.setText(df.format(newX));
             this.oldX = newX;
         }
@@ -741,7 +743,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             return;
         }
         double ratio = yVal / this.oldY;
-        double newY = Math.min(Y_MAX, Math.max(yVal, Y_MIN));
+        double newY =yVal;
         this.oldY = newY;
 
         //If i'm unselected do just this one
@@ -758,7 +760,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 xVal = this.oldX;
                 iFieldX.setText(df.format(xVal));
             }
-            double newX = Math.min(X_MAX, Math.max(ratio * xVal, X_MIN));
+            double newX = ratio * xVal;
             iFieldX.setText(df.format(newX));
             this.oldX = newX;
         }
@@ -771,7 +773,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 iFieldY.setText(df.format(zVal));
 
             }
-            double newZ = Math.min(Z_MAX, Math.max(ratio * zVal, Z_MIN));
+            double newZ = ratio * zVal;
             iFieldZ.setText(df.format(newZ));
             this.oldZ = newZ;
         }
@@ -794,7 +796,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             return;
         }
         double ratio = xVal / this.oldX;
-        double newX = Math.min(X_MAX, Math.max(xVal, X_MIN));
+        double newX = xVal;
         this.oldX = newX;
 
         //If i'm unselected do just this one
@@ -811,7 +813,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 yVal = this.oldY;
                 iFieldY.setText(df.format(yVal));
             }
-            double newY = Math.min(Y_MAX, Math.max(ratio * yVal, Y_MIN));
+            double newY = ratio * yVal;
             iFieldY.setText(df.format(newY));
             this.oldY = newY;
         }
@@ -824,7 +826,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 iFieldY.setText(df.format(zVal));
 
             }
-            double newZ = Math.min(Z_MAX, Math.max(ratio * zVal, Z_MIN));
+            double newZ = ratio * zVal;
             iFieldZ.setText(df.format(newZ));
             this.oldZ = newZ;
         }
