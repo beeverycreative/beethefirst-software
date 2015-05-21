@@ -112,18 +112,18 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }
 
     public void setXValue(String val) {
-        this.iFieldX.setText(df.format(val));
-        oldX = Double.parseDouble(val);
+        this.iFieldX.setText(val);
+        oldX = Double.parseDouble(val.replaceAll(",","."));
     }
 
     public void setYValue(String val) {
-        this.iFieldY.setText(df.format(val));
-        oldY = Double.parseDouble(val);
+        this.iFieldY.setText(val);
+        oldY = Double.parseDouble(val.replaceAll(",","."));
     }
 
     public void setZValue(String val) {
-        this.iFieldZ.setText(df.format(val));
-        oldZ = Double.parseDouble(val);
+        this.iFieldZ.setText(val);
+        oldZ = Double.parseDouble(val.replaceAll(",","."));
     }
 
     private void toggleX() {
