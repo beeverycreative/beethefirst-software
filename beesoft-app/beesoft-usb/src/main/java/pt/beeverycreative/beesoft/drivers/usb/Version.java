@@ -55,8 +55,12 @@ public class Version implements Comparable<Version> {
         return bug;
     }
 
+    public Flavour getFlavour() {
+        return flavour;
+    }
+
     public String getVersionString() {
-        return flavour + "-" + major + "." + minor + "." + bug;
+        return major + "." + minor + "." + bug;
     }
 
     public String getVersionStringComplete() {
@@ -137,7 +141,7 @@ public class Version implements Comparable<Version> {
 
         String re1 = "(ok)";	// Word 1
         String re2 = "(\\s+)";	// White space 1
-        String re3 = "(BEEVC)";	// Variable Name 1
+        String re3 = "((?:[a-z][a-z]+))";	// Variable Name 1
         String re4 = "(-)";	// Any Single Character 1
         String re5 = "(\\d+)";	// Integer Number 1
         String re6 = "(\\.)";	// Any Single Character 2
@@ -151,13 +155,13 @@ public class Version implements Comparable<Version> {
             version.major = Integer.parseInt(m.group(5));
             version.minor = Integer.parseInt(m.group(7));
             version.bug = Integer.parseInt(m.group(9));
-            
+
             try {
                 version.flavour = Flavour.valueOf(m.group(3));
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
             }
-            
+
         } else {
             version.flavour = Flavour.UNKNOWN;
             version.major = 0;
@@ -169,32 +173,62 @@ public class Version implements Comparable<Version> {
         return version;
     }
 
+    public static Version bootloaderVersion(String machineString) {
+        Version version = new Version();
+        version.versionString = machineString;
+
+        String re1 = "(ok)";	// Word 1
+        String re2 = "(\\s+)";	// White Space 1
+        String re3 = "(\\d+)";	// Integer Number 1
+        String re4 = "(\\.)";	// Any Single Character 1
+        String re5 = "(\\d+)";	// Integer Number 2
+        String re6 = "(\\.)";	// Any Single Character 2
+        String re7 = "(\\d+)";	// Integer Number 3
+        
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(machineString);
+        if(m.find()) {
+            version.major = Integer.parseInt(m.group(3));
+            version.minor = Integer.parseInt(m.group(5));
+            version.bug = Integer.parseInt(m.group(7));
+        } else {
+            version.major = 0;
+            version.minor = 0;
+            version.bug = 0;
+            Base.writeLog("Couldn't determine bootloader version");
+        }
+
+        return version;
+    }
+
     Version fromMachineAtFirmware(String machineString) {
 
         Version version = new Version();
         version.versionString = machineString;
 
-        String re1 = "(\\d+)";	// Integer Number 1
-        String re2 = "(.)";	// Any Single Character 1
-        String re3 = "(\\d+)";	// Integer Number 2
-        String re4 = "(.)";	// Any Single Character 2
-        String re5 = "(\\d+)";	// Integer Number 3
-        String re6 = "(\\s+)";	// White Space 1
-        String re7 = "(ok)";	// Word 1
-        String re8 = "(\\s+)";	// White Space 2
-        String re9 = "(Q)";	// Any Single Word Character (Not Whitespace) 1
-        String re10 = "(:)";	// Any Single Character 3
-        String re11 = "(\\d+)";	// Integer Number 4
+        String re1 = "((?:[a-z][a-z]+))";	// Variable Name 1
+        String re2 = "(-)";	// Any Single Character 1
+        String re3 = "(\\d+)";	// Integer Number 1
+        String re4 = "(\\.)";	// Any Single Character 2
+        String re5 = "(\\d+)";	// Integer Number 2
+        String re6 = "(\\.)";	// Any Single Character 3
+        String re7 = "(\\d+)";	// Integer Number 3
 
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(machineString);
         if (m.find()) {
+            version.major = Integer.parseInt(m.group(3));
+            version.minor = Integer.parseInt(m.group(5));
+            version.bug = Integer.parseInt(m.group(7));
 
-            version.major = Integer.parseInt(m.group(1));
-            version.minor = Integer.parseInt(m.group(3));
-            version.bug = Integer.parseInt(m.group(5));
+            try {
+                version.flavour = Flavour.valueOf(m.group(1));
+            } catch (IllegalArgumentException e) {
+                version.flavour = Flavour.UNKNOWN;
+            }
 
         } else {
+            version.flavour = Flavour.UNKNOWN;
             version.major = 0;
             version.minor = 0;
             version.bug = 0;

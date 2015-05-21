@@ -56,7 +56,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
     
-    protected Printer connectedDevice;
+    protected PrinterInfo connectedDevice;
     
     //check this, maybe delete
     protected boolean isNewVendorID = false;
@@ -234,9 +234,9 @@ public class UsbDriver extends DriverBaseImplementation {
         String sDevice = idVendor+":"+idProduct;
         
         // candidate
-        connectedDevice = Printer.getDevice(sDevice);
+        connectedDevice = PrinterInfo.getDevice(sDevice);
         
-        if(connectedDevice == Printer.UNKNOWN) {
+        if(connectedDevice == PrinterInfo.UNKNOWN) {
             return false;
         } else {
             m_usbDeviceList.add(device);
@@ -303,7 +303,7 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Scans descriptor and inits usb device if match.
      */
-    public void InitUsbDevice() {
+    public void InitUsbDevice() throws UsbException, UnsupportedEncodingException {
         m_usbDeviceList.clear();
 
         try {
@@ -335,7 +335,7 @@ public class UsbDriver extends DriverBaseImplementation {
             m_usbDevice = m_usbDeviceList.get(0);
             short idProduct = m_usbDevice.getUsbDeviceDescriptor().idProduct();
             short idVendor = m_usbDevice.getUsbDeviceDescriptor().idVendor();
-            connectedDevice = Printer.getDevice(idVendor + ":" + idProduct);
+            connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
             if (Base.isMacOS()) {
                 ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
             }

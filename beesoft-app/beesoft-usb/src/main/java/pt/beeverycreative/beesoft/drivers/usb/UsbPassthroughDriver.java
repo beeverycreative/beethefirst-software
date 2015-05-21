@@ -327,19 +327,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             System.out.println("firmware_version.getVersionString(): " + firmware_version.getVersionString());
 
-            boolean firmwareOK = false;
+            // if firmware is not ok
+            if(firmware_version.getFlavour() != Flavour.BEEVC || firmware_version.getVersionString().equals(Base.VERSION_FIRMWARE_FINAL) == false) {
 
-            if (Base.VERSION_FIRMWARE_FINAL.contains(firmware_version.getVersionString())) {
-                firmwareOK = true;
-            } //else
-
-            if (Base.VERSION_FIRMWARE_FINAL_OLD.contains(firmware_version.getVersionString())) {
-                firmwareOK = true;
-            } //else
-
-            if (!firmwareOK) {
                 Base.writeLog("firmware not ok");
-//                System.out.println("firmware not ok");
 
                 // Warn user to restart BTF and restart BEESOFT.
                 hiccup(5000, 1);
@@ -2900,12 +2891,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         sendCommand(GET_BOOTLOADER_VERSION);
         hiccup(QUEUE_WAIT, 0);
         String bootloader = readResponse();
+        
+        bootloader_version = Version.bootloaderVersion(bootloader);
 
+        /*
         if (isNewVendorID) {
             bootloader_version = new Version().fromMachine(bootloader);
         } else {
             bootloader_version = new Version().fromMachineOld(bootloader);
         }
+        */
 
         System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + " : " + bootloader_version.toString());
 
@@ -3017,8 +3012,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeLog("Firmware should be: " + versionToCompare);
 
         //check if the firmware is the same
-        String test = firmware_version.getVersionString();
-        if (firmware_version.getVersionString().contains(versionToCompare) == true) {
+        String machineFirmware = firmware_version.getFlavour().toString() + "-" + firmware_version.getVersionString();
+        if (machineFirmware.equalsIgnoreCase(versionToCompare) == true) {
             Base.writeLog("Firmware is " + firmware_version.getVersionString());
             return 0; // NO UPDATE NECESSARY
         } // else carry on updating
