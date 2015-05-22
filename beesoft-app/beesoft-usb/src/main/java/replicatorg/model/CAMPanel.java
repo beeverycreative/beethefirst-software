@@ -30,7 +30,7 @@ import replicatorg.machine.Machine;
 import replicatorg.machine.MachineInterface;
 import replicatorg.machine.model.BuildVolume;
 import replicatorg.machine.model.MachineModel;
-import replicatorg.util.UnitConverter;
+import replicatorg.util.Units_and_Numbers;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -195,9 +195,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = UnitConverter.millimetersToInches(width);
-                                    depth = UnitConverter.millimetersToInches(depth);
-                                    height = UnitConverter.millimetersToInches(height);
+                                    width = Units_and_Numbers.millimetersToInches(width);
+                                    depth = Units_and_Numbers.millimetersToInches(depth);
+                                    height = Units_and_Numbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -248,9 +248,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = UnitConverter.millimetersToInches(width);
-                                    depth = UnitConverter.millimetersToInches(depth);
-                                    height = UnitConverter.millimetersToInches(height);
+                                    width = Units_and_Numbers.millimetersToInches(width);
+                                    depth = Units_and_Numbers.millimetersToInches(depth);
+                                    height = Units_and_Numbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -302,9 +302,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = UnitConverter.millimetersToInches(width);
-                                    depth = UnitConverter.millimetersToInches(depth);
-                                    height = UnitConverter.millimetersToInches(height);
+                                    width = Units_and_Numbers.millimetersToInches(width);
+                                    depth = Units_and_Numbers.millimetersToInches(depth);
+                                    height = Units_and_Numbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -356,9 +356,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = UnitConverter.millimetersToInches(width);
-                                    depth = UnitConverter.millimetersToInches(depth);
-                                    height = UnitConverter.millimetersToInches(height);
+                                    width = Units_and_Numbers.millimetersToInches(width);
+                                    depth = Units_and_Numbers.millimetersToInches(depth);
+                                    height = Units_and_Numbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();

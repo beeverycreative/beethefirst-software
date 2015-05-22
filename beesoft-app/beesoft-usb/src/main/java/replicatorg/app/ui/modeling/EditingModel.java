@@ -34,7 +34,7 @@ import replicatorg.machine.model.BuildVolume;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
-import replicatorg.util.UnitConverter;
+import replicatorg.util.Units_and_Numbers;
 
 /**
  * A wrapper for displaying and editing an underlying model object.
@@ -839,9 +839,9 @@ public class EditingModel implements Serializable {
         Transform3D t = new Transform3D();
         
         if(ProperDefault.get("measures").equals("inches")){
-            targetX = UnitConverter.inchesToMillimeters(targetX);
-            targetY = UnitConverter.inchesToMillimeters(targetY);
-            targetZ = UnitConverter.inchesToMillimeters(targetZ);            
+            targetX = Units_and_Numbers.inchesToMillimeters(targetX);
+            targetY = Units_and_Numbers.inchesToMillimeters(targetY);
+            targetZ = Units_and_Numbers.inchesToMillimeters(targetZ);            
         }                               
         t.setScale(new Vector3d(targetX / getWidth(), targetY / getDepth(), targetZ / getHeight()));
         if (isOnPlatform) {

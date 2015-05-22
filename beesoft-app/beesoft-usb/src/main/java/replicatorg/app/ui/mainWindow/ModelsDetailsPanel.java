@@ -9,7 +9,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.modeling.EditingModel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
-import replicatorg.util.UnitConverter;
+import replicatorg.util.Units_and_Numbers;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -100,9 +100,9 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
 
         if (ProperDefault.get("measures").equals("inches")) {
-            jTextField3.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getWidth()))));
-            jTextField4.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getDepth()))));
-            jTextField5.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getHeight()))));
+            jTextField3.setText(String.valueOf(df.format(Units_and_Numbers.millimetersToInches(modelEditer.getWidth()))));
+            jTextField4.setText(String.valueOf(df.format(Units_and_Numbers.millimetersToInches(modelEditer.getDepth()))));
+            jTextField5.setText(String.valueOf(df.format(Units_and_Numbers.millimetersToInches(modelEditer.getHeight()))));
         } else {
             jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
             jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
@@ -141,9 +141,9 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             EditingModel modelEditer = Base.getMainWindow().getBed().getFirstPickedModel().getEditer();
 
             if (ProperDefault.get("measures").equals("inches")) {
-                jTextField3.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getWidth()))));
-                jTextField4.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getDepth()))));
-                jTextField5.setText(String.valueOf(df.format(UnitConverter.millimetersToInches(modelEditer.getHeight()))));
+                jTextField3.setText(String.valueOf(df.format(Units_and_Numbers.millimetersToInches(modelEditer.getWidth()))));
+                jTextField4.setText(String.valueOf(df.format(Units_and_Numbers.millimetersToInches(modelEditer.getDepth()))));
+                jTextField5.setText(String.valueOf(df.format(Units_and_Numbers.millimetersToInches(modelEditer.getHeight()))));
             } else {
                 jTextField3.setText(String.valueOf(df.format(modelEditer.getWidth())));
                 jTextField4.setText(String.valueOf(df.format(modelEditer.getDepth())));
@@ -496,9 +496,9 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                 Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
 
                 if (ProperDefault.get("measures").equals("inches")) {
-                    width = UnitConverter.millimetersToInches(model.getEditer().getWidth());
-                    depth = UnitConverter.millimetersToInches(model.getEditer().getDepth());
-                    height = UnitConverter.millimetersToInches(model.getEditer().getHeight());
+                    width = Units_and_Numbers.millimetersToInches(model.getEditer().getWidth());
+                    depth = Units_and_Numbers.millimetersToInches(model.getEditer().getDepth());
+                    height = Units_and_Numbers.millimetersToInches(model.getEditer().getHeight());
                 } else {
                     width = model.getEditer().getWidth();
                     depth = model.getEditer().getDepth();

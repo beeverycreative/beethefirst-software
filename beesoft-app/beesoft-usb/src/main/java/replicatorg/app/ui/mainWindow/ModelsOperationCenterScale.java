@@ -9,7 +9,8 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.model.BuildVolume;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
-import replicatorg.util.UnitConverter;
+import replicatorg.util.Units_and_Numbers;
+import static replicatorg.util.Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -30,12 +31,12 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private boolean checkX = true, checkY = true, checkZ = true;
     private double oldX, oldY, oldZ;
     DecimalFormat df = new DecimalFormat("#0.00");
-    static Double X_MIN = Double.parseDouble(ProperDefault.get("editor.xmin"));
-    static Double Y_MIN = Double.parseDouble(ProperDefault.get("editor.ymin"));
-    static Double Z_MIN = Double.parseDouble(ProperDefault.get("editor.zmin"));
-    static Double X_MAX = Double.parseDouble(ProperDefault.get("editor.xmax"));
-    static Double Y_MAX = Double.parseDouble(ProperDefault.get("editor.ymax"));
-    static Double Z_MAX = Double.parseDouble(ProperDefault.get("editor.zmax"));
+    static Double X_MIN = sGetDecimalStringAnyLocaleAsDouble(ProperDefault.get("editor.xmin"));
+    static Double Y_MIN = sGetDecimalStringAnyLocaleAsDouble(ProperDefault.get("editor.ymin"));
+    static Double Z_MIN = sGetDecimalStringAnyLocaleAsDouble(ProperDefault.get("editor.zmin"));
+    static Double X_MAX = sGetDecimalStringAnyLocaleAsDouble(ProperDefault.get("editor.xmax"));
+    static Double Y_MAX = sGetDecimalStringAnyLocaleAsDouble(ProperDefault.get("editor.ymax"));
+    static Double Z_MAX = sGetDecimalStringAnyLocaleAsDouble(ProperDefault.get("editor.zmax"));
 
     public ModelsOperationCenterScale() {
         initComponents();
@@ -55,18 +56,18 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         this.initialDepth = model.getEditer().getDepth();
 
         if (ProperDefault.get("measures").equals("inches")) {
-            iFieldX.setText(df.format(UnitConverter.millimetersToInches(this.initialWidth)));
-            iFieldY.setText(df.format(UnitConverter.millimetersToInches(this.initialDepth)));
-            iFieldZ.setText(df.format(UnitConverter.millimetersToInches(this.initialHeight)));
+            iFieldX.setText(df.format(Units_and_Numbers.millimetersToInches(this.initialWidth)));
+            iFieldY.setText(df.format(Units_and_Numbers.millimetersToInches(this.initialDepth)));
+            iFieldZ.setText(df.format(Units_and_Numbers.millimetersToInches(this.initialHeight)));
         } else if(ProperDefault.get("measures").equals("mm")) {
             iFieldX.setText(df.format(this.initialWidth));
             iFieldY.setText(df.format(this.initialDepth));
             iFieldZ.setText(df.format(this.initialHeight));
         }
 
-        oldX = Double.parseDouble(iFieldX.getText().replaceAll(",","."));
-        oldY = Double.parseDouble(iFieldY.getText().replaceAll(",","."));
-        oldZ = Double.parseDouble(iFieldZ.getText().replaceAll(",","."));
+        oldX = sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
+        oldY = sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
+        oldZ = sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
 
     }
 
@@ -113,17 +114,17 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     public void setXValue(String val) {
         this.iFieldX.setText(val);
-        oldX = Double.parseDouble(val.replaceAll(",","."));
+        oldX = sGetDecimalStringAnyLocaleAsDouble(val);
     }
 
     public void setYValue(String val) {
         this.iFieldY.setText(val);
-        oldY = Double.parseDouble(val.replaceAll(",","."));
+        oldY = sGetDecimalStringAnyLocaleAsDouble(val);
     }
 
     public void setZValue(String val) {
         this.iFieldZ.setText(val);
-        oldZ = Double.parseDouble(val.replaceAll(",","."));
+        oldZ = sGetDecimalStringAnyLocaleAsDouble(val);
     }
 
     private void toggleX() {
@@ -599,11 +600,12 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         refresh_iFields();        
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        double valX = Double.parseDouble(iFieldX.getText());
-        double valY = Double.parseDouble(iFieldY.getText());
-        double valZ = Double.parseDouble(iFieldZ.getText());
+        double valX = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
+        double valY = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
+        double valZ = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
         
         
+                
         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);        
     }//GEN-LAST:event_bApplyMousePressed
 
@@ -641,7 +643,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double height = model.getEditer().getHeight();
 
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
-        scale = UnitConverter.round(scale, 3);
+        scale = Units_and_Numbers.round(scale, 3);
 
         //model.getEditer().centerAndToBed();
         model.getEditer().center();
@@ -656,9 +658,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         DecimalFormat df = new DecimalFormat("#.00");
         
         if(ProperDefault.get("measures").equals("inches")) {
-            width = UnitConverter.millimetersToInches(model.getEditer().getWidth());
-            depth = UnitConverter.millimetersToInches(model.getEditer().getDepth());
-            height = UnitConverter.millimetersToInches(model.getEditer().getHeight());
+            width = Units_and_Numbers.millimetersToInches(model.getEditer().getWidth());
+            depth = Units_and_Numbers.millimetersToInches(model.getEditer().getDepth());
+            height = Units_and_Numbers.millimetersToInches(model.getEditer().getHeight());
         } // no need for else 
 
         //Sets the initial sizing variables to the current values
@@ -681,7 +683,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double zVal;
 
         try {
-            zVal = Double.parseDouble(iFieldZ.getText());
+            zVal = sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -700,7 +702,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         if (checkY == true) {
             double yVal;
             try {
-                yVal = Double.parseDouble(iFieldY.getText());
+                yVal = sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
             } catch (Exception e) {
                 yVal = this.oldY;
                 iFieldY.setText(df.format(yVal));
@@ -712,7 +714,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         if (checkX == true) {
             double xVal;
             try {
-                xVal = Double.parseDouble(iFieldX.getText());
+                xVal = sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
             } catch (Exception e) {
                 xVal = this.oldX;
                 iFieldX.setText(df.format(xVal));
@@ -733,7 +735,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         double yVal;
         try {
-            yVal = Double.parseDouble(iFieldY.getText());
+            yVal = sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -752,7 +754,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         if (checkX == true) {
             double xVal;
             try {
-                xVal = Double.parseDouble(iFieldX.getText());
+                xVal = sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
             } catch (Exception e) {
                 xVal = this.oldX;
                 iFieldX.setText(df.format(xVal));
@@ -764,7 +766,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         if (checkZ == true) {
             double zVal;
             try {
-                zVal = Double.parseDouble(iFieldZ.getText());
+                zVal = sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
             } catch (Exception e) {
                 zVal = this.oldZ;
                 iFieldY.setText(df.format(zVal));
@@ -786,7 +788,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         double xVal;
         try {
-            xVal = Double.parseDouble(iFieldX.getText());
+            xVal = sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -805,7 +807,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         if (checkY == true) {
             double yVal;
             try {
-                yVal = Double.parseDouble(iFieldY.getText());
+                yVal = sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
             } catch (Exception e) {
                 yVal = this.oldY;
                 iFieldY.setText(df.format(yVal));
@@ -817,7 +819,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         if (checkZ == true) {
             double zVal;
             try {
-                zVal = Double.parseDouble(iFieldZ.getText());
+                zVal = sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
             } catch (Exception e) {
                 zVal = this.oldZ;
                 iFieldY.setText(df.format(zVal));

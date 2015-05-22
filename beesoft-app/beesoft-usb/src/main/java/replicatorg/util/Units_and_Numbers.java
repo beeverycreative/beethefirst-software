@@ -1,5 +1,10 @@
 package replicatorg.util;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
 /**
 * Copyright (c) 2013 BEEVC - Electronic Systems
 * This file is part of BEESOFT software: you can redistribute it and/or modify 
@@ -11,7 +16,7 @@ package replicatorg.util;
 * for more details. You should have received a copy of the GNU General
 * Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
 */
-public class UnitConverter {
+public class Units_and_Numbers {
  
     public static double millimetersToInches(double mm) {
         
@@ -31,4 +36,21 @@ public class UnitConverter {
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
+    
+    
+    public static double sGetDecimalStringAnyLocaleAsDouble (String value) {
+
+    Locale theLocale = Locale.getDefault();
+    NumberFormat numberFormat = DecimalFormat.getInstance(theLocale);
+    Number theNumber;
+    try {
+        theNumber = numberFormat.parse(value);
+        return theNumber.doubleValue();
+    } catch (ParseException e) {
+        //SKLogger.sAssert(SKCommon.class,  false);
+
+        String valueWithDot = value.replaceAll(",",".");
+        return Double.valueOf(valueWithDot);
+    }
+}
 }

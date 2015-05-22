@@ -142,7 +142,7 @@ import replicatorg.drivers.EstimationDriver;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
-import replicatorg.util.UnitConverter;
+import replicatorg.util.Units_and_Numbers;
 
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
@@ -875,15 +875,15 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                         double width = model.getEditer().getWidth();
                         if (ProperDefault.get("measures").equals("inches")) {
-                            width = UnitConverter.millimetersToInches(width);
+                            width = Units_and_Numbers.millimetersToInches(width);
                         }
                         double depth = model.getEditer().getDepth();
                         if (ProperDefault.get("measures").equals("inches")) {
-                            depth = UnitConverter.millimetersToInches(depth);
+                            depth = Units_and_Numbers.millimetersToInches(depth);
                         }
                         double height = model.getEditer().getHeight();
                         if (ProperDefault.get("measures").equals("inches")) {
-                            height = UnitConverter.millimetersToInches(height);
+                            height = Units_and_Numbers.millimetersToInches(height);
                         }
 
                         mOCS.setXValue(df.format(width));
