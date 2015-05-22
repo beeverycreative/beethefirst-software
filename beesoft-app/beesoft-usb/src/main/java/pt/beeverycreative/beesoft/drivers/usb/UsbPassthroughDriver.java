@@ -328,12 +328,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             System.out.println("firmware_version.getVersionString(): " + firmware_version.getVersionString());
 
             // if firmware is not ok
-            if(firmware_version.getFlavour() != Flavour.BEEVC || firmware_version.getVersionString().equals(Base.VERSION_FIRMWARE_FINAL) == false) {
-
+            if(firmware_version.getVersionString().equalsIgnoreCase(Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("firmware not ok");
 
                 // Warn user to restart BTF and restart BEESOFT.
-                hiccup(5000, 1);
                 Warning firmwareOutDate = new Warning("close");
                 firmwareOutDate.setMessage("FirmwareOutDateVersion");
                 firmwareOutDate.setVisible(true);
@@ -2896,7 +2894,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         /*
         if (isNewVendorID) {
-            bootloader_version = new Version().fromMachine(bootloader);
+            bootloader_version = bootloader_version.fromMachine(bootloader);
         } else {
             bootloader_version = new Version().fromMachineOld(bootloader);
         }
@@ -2930,9 +2928,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Bootloader version 4.x: " + isNewVendorID);
 
             if (isNewVendorID) {
-                firmware_version = new Version().fromMachine(firmware);
+                firmware_version = Version.fromMachine(firmware);
             } else {
-                firmware_version = new Version().fromMachineOld(firmware);
+                firmware_version = Version.fromMachineOld(firmware);
             }
 
             System.out.println("firmware_version: " + firmware_version);
@@ -2994,11 +2992,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             sendCommand(GET_FIRMWARE_VERSION);
             hiccup(10, 0);
             String firmware = readResponse();
-            firmware_version = new Version().fromMachineAtFirmware(firmware);
-//            System.out.println("firmware_version: " + firmware_version);
+            firmware_version = Version.fromMachineAtFirmware(firmware);
+            System.out.println("firmware_version: " + firmware_version);
 
         } else {
-            firmware_version = new Version().fromMachineAtFirmware("No firmware version available.");
+            // no firmware version available
+            firmware_version = new Version();
         }
     }
 
@@ -3008,11 +3007,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int updateFirmware() {
 
-        String versionToCompare = "BEEVC-" + Base.VERSION_FIRMWARE_FINAL;
+        String versionToCompare = Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
         Base.writeLog("Firmware should be: " + versionToCompare);
 
         //check if the firmware is the same
-        String machineFirmware = firmware_version.getFlavour().toString() + "-" + firmware_version.getVersionString();
+        String machineFirmware = firmware_version.getVersionString();
         if (machineFirmware.equalsIgnoreCase(versionToCompare) == true) {
             Base.writeLog("Firmware is " + firmware_version.getVersionString());
             return 0; // NO UPDATE NECESSARY
@@ -3060,7 +3059,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Starting Firmware update.");
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
                 Base.writeLog("Firmware successfully updated");
-                firmware_version = new Version().fromFile(firmwareFile.getName());
                 Base.writeLog("Setting firmare version to: " + versionToCompare);
                 sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
                 hiccup(QUEUE_WAIT, 0);
@@ -3073,8 +3071,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }//no need for else
 
                 if (_checkFirmwareIntegrity() == false) {
-                    //Integrity test failed
-                    firmware_version = new Version().fromMachineOld(INVALID_FIRMWARE_VERSION);
+                    //Integrity test failed. setting firmware_version as 0.0.0
+                    firmware_version = new Version();
                     return -1;
                 }
 

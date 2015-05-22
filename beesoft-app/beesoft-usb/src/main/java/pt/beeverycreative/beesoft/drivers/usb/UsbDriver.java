@@ -336,6 +336,7 @@ public class UsbDriver extends DriverBaseImplementation {
             short idProduct = m_usbDevice.getUsbDeviceDescriptor().idProduct();
             short idVendor = m_usbDevice.getUsbDeviceDescriptor().idVendor();
             connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
+            Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
             if (Base.isMacOS()) {
                 ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
             }

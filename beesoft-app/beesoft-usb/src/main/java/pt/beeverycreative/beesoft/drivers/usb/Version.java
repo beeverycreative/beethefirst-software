@@ -25,6 +25,7 @@ public class Version implements Comparable<Version> {
     private int minor = 0;
     private int major = 0;
     private Flavour flavour = Flavour.UNKNOWN;
+    private PrinterInfo printer = PrinterInfo.UNKNOWN;
     private String versionString = "";
 
     public void setVersionFromString(String versionString) {
@@ -60,46 +61,17 @@ public class Version implements Comparable<Version> {
     }
 
     public String getVersionString() {
-        return major + "." + minor + "." + bug;
+        return flavour + "-" + printer + "-" + major + "." + minor + "." + bug;
     }
 
-    public String getVersionStringComplete() {
+    public String getRawVersionString() {
         return versionString;
     }
 
     public Version() {
     }
 
-    public Version fromFile(String versionString) {
-
-        Version version = new Version();
-        version.versionString = versionString;
-        String re1 = "(BEETHEFIRST)";	// Word 1
-        String re2 = ".*?";	// Non-greedy match on filler
-        String re3 = "(\\d+)";	// Integer Number 1
-        String re4 = ".*?";	// Non-greedy match on filler
-        String re5 = "(\\d+)";	// Integer Number 2
-        String re6 = ".*?";	// Non-greedy match on filler
-        String re7 = "(\\d+)";	// Integer Number 3
-        String re8 = ".*?";	// Non-greedy match on filler
-        String re9 = "(bin)";	// Word 2
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(version.versionString);
-        if (m.find()) {
-            version.major = Integer.parseInt(m.group(2));
-            version.minor = Integer.parseInt(m.group(3));
-            version.bug = Integer.parseInt(m.group(4));
-        } else {
-            version.major = 0;
-            version.minor = 0;
-            version.bug = 0;
-            Base.writeLog("Version format invalid: " + versionString);
-        }
-        return version;
-    }
-
-    Version fromMachineOld(String machineString) {
+    public static Version fromMachineOld(String machineString) {
 
         Version version = new Version();
         version.versionString = machineString;
@@ -124,7 +96,7 @@ public class Version implements Comparable<Version> {
             version.major = Integer.parseInt(m.group(4));
             version.minor = Integer.parseInt(m.group(5));
             version.bug = Integer.parseInt(m.group(6));
-            Base.writeLog("Version is: " + version.getVersionString());
+            Base.writeLog("Version is: " + version.versionString);
         } else {
             version.major = 0;
             version.minor = 0;
@@ -134,7 +106,7 @@ public class Version implements Comparable<Version> {
         return version;
     }
 
-    Version fromMachine(String machineString) {
+    public static Version fromMachine(String machineString) {
 
         Version version = new Version();
         version.versionString = machineString;
@@ -143,23 +115,31 @@ public class Version implements Comparable<Version> {
         String re2 = "(\\s+)";	// White space 1
         String re3 = "((?:[a-z][a-z]+))";	// Variable Name 1
         String re4 = "(-)";	// Any Single Character 1
-        String re5 = "(\\d+)";	// Integer Number 1
-        String re6 = "(\\.)";	// Any Single Character 2
-        String re7 = "(\\d+)";	// Integer Number 2
-        String re8 = "(\\.)";	// Any Single Character 3
-        String re9 = "(\\d+)";	// Integer Number 3
+        String re5 = "((?:[a-z][a-z0-9_]*))";
+        String re6 = "(-)";	// Any Single Character 1
+        String re7 = "(\\d+)";	// Integer Number 1
+        String re8 = "(\\.)";	// Any Single Character 2
+        String re9 = "(\\d+)";	// Integer Number 2
+        String re10 = "(\\.)";	// Any Single Character 3
+        String re11 = "(\\d+)";	// Integer Number 3
 
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(machineString);
         if (m.find()) {
-            version.major = Integer.parseInt(m.group(5));
-            version.minor = Integer.parseInt(m.group(7));
-            version.bug = Integer.parseInt(m.group(9));
+            version.major = Integer.parseInt(m.group(7));
+            version.minor = Integer.parseInt(m.group(9));
+            version.bug = Integer.parseInt(m.group(11));
 
             try {
                 version.flavour = Flavour.valueOf(m.group(3));
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
+            }
+            
+            try {
+                version.printer = PrinterInfo.valueOf(m.group(5));
+            } catch (IllegalArgumentException e) {
+                version.printer = PrinterInfo.UNKNOWN;
             }
 
         } else {
@@ -167,7 +147,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + versionString);
+            Base.writeLog("Version format invalid: " + version.versionString);
         }
 
         return version;
@@ -201,30 +181,38 @@ public class Version implements Comparable<Version> {
         return version;
     }
 
-    Version fromMachineAtFirmware(String machineString) {
+    public static Version fromMachineAtFirmware(String machineString) {
 
         Version version = new Version();
         version.versionString = machineString;
 
         String re1 = "((?:[a-z][a-z]+))";	// Variable Name 1
         String re2 = "(-)";	// Any Single Character 1
-        String re3 = "(\\d+)";	// Integer Number 1
-        String re4 = "(\\.)";	// Any Single Character 2
-        String re5 = "(\\d+)";	// Integer Number 2
-        String re6 = "(\\.)";	// Any Single Character 3
-        String re7 = "(\\d+)";	// Integer Number 3
+        String re3 = "((?:[a-z][a-z0-9_]*))";
+        String re4 = "(-)";	// Any Single Character 1
+        String re5 = "(\\d+)";	// Integer Number 1
+        String re6 = "(\\.)";	// Any Single Character 2
+        String re7 = "(\\d+)";	// Integer Number 2
+        String re8 = "(\\.)";	// Any Single Character 3
+        String re9 = "(\\d+)";	// Integer Number 3
 
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(machineString);
         if (m.find()) {
-            version.major = Integer.parseInt(m.group(3));
-            version.minor = Integer.parseInt(m.group(5));
-            version.bug = Integer.parseInt(m.group(7));
+            version.major = Integer.parseInt(m.group(5));
+            version.minor = Integer.parseInt(m.group(7));
+            version.bug = Integer.parseInt(m.group(9));
 
             try {
                 version.flavour = Flavour.valueOf(m.group(1));
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
+            }
+            
+            try {
+                version.printer = PrinterInfo.valueOf(m.group(3));
+            } catch (IllegalArgumentException e) {
+                version.printer = PrinterInfo.UNKNOWN;
             }
 
         } else {
@@ -232,7 +220,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + versionString);
+            Base.writeLog("Version format invalid: " + version.versionString);
         }
         return version;
     }

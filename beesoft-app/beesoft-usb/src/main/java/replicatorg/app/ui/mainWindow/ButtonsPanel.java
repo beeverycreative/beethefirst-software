@@ -1,5 +1,6 @@
 package replicatorg.app.ui.mainWindow;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -50,6 +51,12 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
     }
 
+    public void setLogo(String iconPath) {
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/"+iconPath)));
+        String deleteme = jLabel2.getIcon().toString();
+        String test;
+    }
+    
     public void setMessage(String message) {
 
         if (message.equals("is connected")) {
