@@ -1215,7 +1215,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // WORKAROUND FOR FIRMWARE BUG
         dispatchCommand("G28 Z", COM.BLOCK);
         dispatchCommand("G28 X Y", COM.BLOCK);
-        dispatchCommand("M506", COM-BLOCK);
+        dispatchCommand("M506", COM.BLOCK);
 
         return RESPONSE_OK;
     }
