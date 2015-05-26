@@ -328,7 +328,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             System.out.println("firmware_version.getVersionString(): " + firmware_version.getVersionString());
 
             // if firmware is not ok
-            if(firmware_version.getVersionString().equalsIgnoreCase(Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
+            if (firmware_version.getVersionString().equalsIgnoreCase(Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("firmware not ok");
 
                 // Warn user to restart BTF and restart BEESOFT.
@@ -1211,6 +1211,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
 
         transferMode = false;
+
+        // WORKAROUND FOR FIRMWARE BUG
+        dispatchCommand("G28 Z", COM.BLOCK);
+        dispatchCommand("G28 X Y", COM.BLOCK);
 
         return RESPONSE_OK;
     }
@@ -2889,17 +2893,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         sendCommand(GET_BOOTLOADER_VERSION);
         hiccup(QUEUE_WAIT, 0);
         String bootloader = readResponse();
-        
+
         bootloader_version = Version.bootloaderVersion(bootloader);
 
         /*
-        if (isNewVendorID) {
-            bootloader_version = bootloader_version.fromMachine(bootloader);
-        } else {
-            bootloader_version = new Version().fromMachineOld(bootloader);
-        }
-        */
-
+         if (isNewVendorID) {
+         bootloader_version = bootloader_version.fromMachine(bootloader);
+         } else {
+         bootloader_version = new Version().fromMachineOld(bootloader);
+         }
+         */
         System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + " : " + bootloader_version.toString());
 
         //Default
