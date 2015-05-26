@@ -55,10 +55,11 @@ public class Units_and_Numbers {
                 filteredValue = value.replaceAll(",", ".");
             }
 
-            theNumber = numberFormat.parse(filteredValue);
-            return theNumber.doubleValue();
-            
-        } catch (ParseException ex) {
+            //theNumber = numberFormat.parse(filteredValue);
+            //return theNumber.doubleValue();
+            return Double.valueOf(filteredValue);
+                                    
+        } catch (Exception ex) {
             Logger.getLogger(Units_and_Numbers.class.getName()).log(Level.SEVERE, null, ex);
             
             return Double.valueOf(value);
