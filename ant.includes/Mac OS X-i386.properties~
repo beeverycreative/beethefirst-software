@@ -1,3 +1,0 @@
-native.lib.dir=build/macosx/dist
-native.tools.dir=build/macosx/dist/tools
-native.java.flags=-d32

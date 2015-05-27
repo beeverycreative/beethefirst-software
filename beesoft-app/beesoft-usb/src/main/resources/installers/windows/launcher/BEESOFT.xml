@@ -1,0 +1,29 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>.\lib\BEESOFT.jar</jar>
+  <outfile>BEESOFT.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>true</stayAlive>
+  <manifest></manifest>
+  <icon>application.ico</icon>
+  <classPath>
+    <mainClass>replicatorg.app.Base</mainClass>
+    <cp>./lib/*</cp>
+  </classPath>
+  <jre>
+    <path>java\</path>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>jdkOnly</jdkPreference>
+    <initialHeapSize>256</initialHeapSize>
+    <maxHeapSize>1024</maxHeapSize>
+    <opt>-D32</opt>
+  </jre>
+</launch4jConfig>
