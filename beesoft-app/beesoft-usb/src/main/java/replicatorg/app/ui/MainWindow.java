@@ -106,6 +106,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -114,6 +115,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import replicatorg.app.CategoriesList;
+import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
@@ -133,6 +135,7 @@ import replicatorg.app.ui.panels.Help;
 import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PreferencesPanel;
 import replicatorg.app.ui.panels.PrintPanel;
+import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.ui.panels.PrintSplashSimple;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
@@ -681,6 +684,17 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
+        
+        item = newJMenuItem("Print G-code file", 'G');
+        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "GCode_Import"));
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleGCodeImport();
+            }
+        });
+        menu.add(item);        
         
         menu.addSeparator();
 
@@ -1799,6 +1813,54 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
     }
+    
+    /**
+     * Prints a G-code file
+     */
+    public void handleGCodeImport() {
+        Base.writeLog("Importing G-code file ...");
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                String path = null;
+                if (path == null) { // "open..." selected from the menu
+                    path = selectFile(2);
+                    if (path == null) {
+                        return;
+                    }
+                }
+                Base.logger.log(Level.INFO, "Loading {0}", path);
+                Base.writeLog("Loading" + path + " ...");
+                
+                ArrayList<String> prefs = new ArrayList<String>();
+                
+                //Adds default print preferences
+                prefs.add("LOW"); //resolution
+                prefs.add(FilamentControler.getColor(FilamentControler.NO_FILAMENT_CODE));
+                prefs.add("20"); //density
+                prefs.add("false"); //raft
+                prefs.add("false"); //support 
+                prefs.add("true"); //autonomous pressed
+                prefs.add(path); //Path to g-code file
+                
+                Base.isPrintingFromGCode = true;
+                
+                final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
+                p.setVisible(true);
+
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (Base.getMainWindow().getBed().isSceneDifferent()) {
+                            Base.getMainWindow().handleSave(true);
+                        }
+                        p.startConditions();
+                    }
+                });                
+            }
+        });
+    }    
 
     /**
      * This is the implementation of the MRJ open document event, and the
@@ -1813,7 +1875,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     /**
      * Select File to open. It can have two types
      *
-     * @param opt 0 for STL files and 1 for BEE files
+     * @param opt 0 for STL files, 1 for BEE files and 2 for G-code files
      * @return path to file
      */
     private String selectFile(int opt) {
@@ -1834,7 +1896,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         if (opt == 0) {
             String[] extensions = {".stl"};
             fc.addChoosableFileFilter(defaultFilter = new ExtensionFilter(extensions, "STL files"));
-            fc.addChoosableFileFilter(new ExtensionFilter(".stl", "STL files"));
+
             fc.setAcceptAllFileFilterUsed(true);
             fc.setFileFilter(defaultFilter);
             fc.setDialogTitle("Open a model file...");
@@ -1856,7 +1918,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         } else if (opt == 1) {
             String[] extensions = {".bee"};
             fc.addChoosableFileFilter(defaultFilter = new ExtensionFilter(extensions, "BEE files"));
-            fc.addChoosableFileFilter(new ExtensionFilter(".bee", "BEE files"));
+
             fc.setAcceptAllFileFilterUsed(true);
             fc.setFileFilter(defaultFilter);
             fc.setCurrentDirectory(new File(loadDir));
@@ -1868,6 +1930,24 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 fc.getSelectedFile().getName();
                 ProperDefault.put("ui.open_dir", fc.getCurrentDirectory().getAbsolutePath());
                 Base.writeLog("File selected " + fc.getSelectedFile().getAbsolutePath());
+                return fc.getSelectedFile().getAbsolutePath();
+            } else {
+                return null;
+            }
+        } else if (opt == 2) {
+            String[] extensions = {".gcode"};
+            fc.addChoosableFileFilter(defaultFilter = new ExtensionFilter(extensions, "G-code files"));
+
+            fc.setAcceptAllFileFilterUsed(true);
+            fc.setFileFilter(defaultFilter);
+            fc.setCurrentDirectory(new File(loadDir));
+            fc.setDialogTitle("Open a G-code file...");
+            fc.setDialogType(JFileChooser.OPEN_DIALOG);
+            fc.setFileHidingEnabled(false);
+            
+            int rv = fc.showOpenDialog(this);
+            if (rv == JFileChooser.APPROVE_OPTION) {
+                fc.getSelectedFile().getName();
                 return fc.getSelectedFile().getAbsolutePath();
             } else {
                 return null;

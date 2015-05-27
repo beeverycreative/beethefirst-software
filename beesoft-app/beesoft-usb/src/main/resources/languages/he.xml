@@ -28,6 +28,7 @@
             <Edit_Reset value="איפוס מודל"/>
             <Model_Add value="להוסיף מודל מגלריה"/>
             <Model_Import value="מודל יבוא"/>
+            <GCode_Import value="קובץG-קוד הדפסה"/>
             <Model_Online value="מודלים באינטרנט"/>
             <Printer_Maintenance value="תחזוקה"/>
             <Printer_ControlPanel value="לוח בקרה"/>

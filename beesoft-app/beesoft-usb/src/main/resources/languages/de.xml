@@ -33,6 +33,7 @@
             <Edit_Reset value="Reset model"/>
             <Model_Add value="Add model from gallery"/>
             <Model_Import value="Import model"/>
+            <GCode_Import value="Print G-code file"/>
             <Model_Online value="Online models"/>
             <Printer_Maintenance value="Maintenance"/>
             <Printer_ControlPanel value="Control Panel"/>
