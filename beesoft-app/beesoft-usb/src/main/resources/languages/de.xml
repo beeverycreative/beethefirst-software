@@ -277,6 +277,7 @@
             <Line15 value="Estimate"/> 
             <Line17 value="Stop"/>  
             <Line16 value="Shutdown"/>
+            <Export value="Export G-code"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
