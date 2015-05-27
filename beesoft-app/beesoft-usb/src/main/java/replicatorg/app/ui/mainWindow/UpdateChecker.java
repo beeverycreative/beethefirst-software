@@ -178,9 +178,9 @@ public class UpdateChecker extends BaseDialog {
         Version currentSoftwareVersion = new Version();
         Version softwareFromServer = new Version();
         Version softwareBetaFromServer = new Version();
-        currentSoftwareVersion.setVerionFromString(softVersionString);
-        softwareFromServer.setVerionFromString(softServerVersionString);
-        softwareBetaFromServer.setVerionFromString(softServerVersionBetaString);
+        currentSoftwareVersion.setVersionFromString(softVersionString);
+        softwareFromServer.setVersionFromString(softServerVersionString);
+        softwareBetaFromServer.setVersionFromString(softServerVersionBetaString);
 
 //        Version currentFirmwareVersion = new Version();
 //        Version firmwareFromServer = new Version();

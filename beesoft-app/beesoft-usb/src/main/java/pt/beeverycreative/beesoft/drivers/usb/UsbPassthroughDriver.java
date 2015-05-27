@@ -325,29 +325,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
             System.out.println("Base.VERSION_FIRMWARE: " + Base.VERSION_FIRMWARE_FINAL);
             System.out.println("Base.VERSION_FIRMWARE_OldVID: " + Base.VERSION_FIRMWARE_FINAL_OLD);
 
-            System.out.println("firmware_version.getVerionString(): " + firmware_version.getVersionString());
+            System.out.println("firmware_version.getVersionString(): " + firmware_version.getVersionString());
 
-            boolean firmwareOK = false;
-
-            if (Base.VERSION_FIRMWARE_FINAL.contains(firmware_version.getVersionString())) {
-                firmwareOK = true;
-            } //else
-
-            if (Base.VERSION_FIRMWARE_FINAL_OLD.contains(firmware_version.getVersionString())) {
-                firmwareOK = true;
-            } //else
-
-            if (!firmwareOK) {
+            // if firmware is not ok
+            if (firmware_version.getVersionString().equalsIgnoreCase(Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("firmware not ok");
-//                System.out.println("firmware not ok");
 
                 // Warn user to restart BTF and restart BEESOFT.
-                hiccup(5000, 1);
                 Warning firmwareOutDate = new Warning("close");
                 firmwareOutDate.setMessage("FirmwareOutDateVersion");
                 firmwareOutDate.setVisible(true);
 
-                
                 // Sleep forever, until restart.
                 while (true) {
                     hiccup();
@@ -606,7 +594,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         String tResponse;
         String tExpected;
-        
+
         /**
          * Blocks non-transfer while in TRANSFER mode
          */
@@ -615,7 +603,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 return "NOK: Dispatch locked in transfer mode.";
             }
         }
-        
 
         COM COMTYPE = (COM) e;
         //check if the queue is getting full EX: ok Q:0
@@ -672,10 +659,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             case BLOCK:
 
                 // checks if communication is synchronized
-                while(!recoverEcho()) {
+                while (!recoverEcho()) {
                     hiccup(QUEUE_WAIT, 0);
                 }
-                 //Checks if machine is ready before sending               
+                //Checks if machine is ready before sending               
                 while (!dispatchCommand(GET_STATUS).contains(STATUS_OK)) {
                     hiccup(QUEUE_WAIT, 0);
 
@@ -691,15 +678,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 } else {
                     answer = dispatchCommand(next);
                 }
-                
+
                 // checks if communication is synchronized
                 while (!recoverEcho()) {
                     hiccup(QUEUE_WAIT, 0);
                 }
-                
+
                 break;
-                
-                
+
         }
 
         if (answer.contains(NOK) == false) {
@@ -712,16 +698,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
     }
-    
+
     // private for now, not sure if its going to be used outside
     private boolean recoverEcho() {
-        int id = (int) (Math.random()*1000.0);
+        int id = (int) (Math.random() * 1000.0);
         String message = ECHO + " E" + id;
         String expected = "E" + id;
         Base.writeLog("recoverEcho..");
-        String response = dispatchCommand(message, COM.DEFAULT);       
+        String response = dispatchCommand(message, COM.DEFAULT);
 
-        if(response.contains(expected)) {
+        if (response.contains(expected)) {
             Base.writeLog("...ok");
             return true;
         } else {
@@ -1225,6 +1211,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
 
         transferMode = false;
+
+        // WORKAROUND FOR FIRMWARE BUG
+        dispatchCommand("G28 Z", COM.BLOCK);
+        dispatchCommand("G28 X Y", COM.BLOCK);
+        dispatchCommand("M506", COM.BLOCK);
 
         return RESPONSE_OK;
     }
@@ -2042,9 +2033,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //        System.out.println("RECEIVE: " + result.trim()+ "\n");
         if (comLog) {
-           
-            Base.writecomLog((System.currentTimeMillis() - startTS), "RECEIVE ("+result.length()+"): " + result.trim() + "\n");
-         //   Base.writecomLog((System.currentTimeMillis() - startTS), "\n");
+
+            Base.writecomLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
+            //   Base.writecomLog((System.currentTimeMillis() - startTS), "\n");
         }
 
         return result;
@@ -2904,12 +2895,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         hiccup(QUEUE_WAIT, 0);
         String bootloader = readResponse();
 
-        if (isNewVendorID) {
-            bootloader_version = new Version().fromMachine4(bootloader);
-        } else {
-            bootloader_version = new Version().fromMachine3(bootloader);
-        }
+        bootloader_version = Version.bootloaderVersion(bootloader);
 
+        /*
+         if (isNewVendorID) {
+         bootloader_version = bootloader_version.fromMachine(bootloader);
+         } else {
+         bootloader_version = new Version().fromMachineOld(bootloader);
+         }
+         */
         System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + " : " + bootloader_version.toString());
 
         //Default
@@ -2936,11 +2930,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String firmware = readResponse();
 
             Base.writeLog("Bootloader version 4.x: " + isNewVendorID);
-            
+
             if (isNewVendorID) {
-                firmware_version = new Version().fromMachine4(firmware);
+                firmware_version = Version.fromMachine(firmware);
             } else {
-                firmware_version = new Version().fromMachine3(firmware);
+                firmware_version = Version.fromMachineOld(firmware);
             }
 
             System.out.println("firmware_version: " + firmware_version);
@@ -2949,13 +2943,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
             firmware_version = new Version();
             return;
         }
-        if(_checkFirmwareIntegrity() == false){
+        if (_checkFirmwareIntegrity() == false) {
             //Integrity test failed
             firmware_version = new Version();
         }
     }
-    
-    private boolean _checkFirmwareIntegrity(){
+
+    private boolean _checkFirmwareIntegrity() {
         //check if the firmware is properly installed
         sendCommand(GET_FIRMWARE_OK);
         hiccup(QUEUE_WAIT, 0);
@@ -2972,8 +2966,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Firmware integrity check: failed");
             return false;
         }
-       
+
     }
+
     private void updateMachineInfo() {
 
 //        //get bootloader version
@@ -3001,56 +2996,63 @@ public final class UsbPassthroughDriver extends UsbDriver {
             sendCommand(GET_FIRMWARE_VERSION);
             hiccup(10, 0);
             String firmware = readResponse();
-            firmware_version = new Version().fromMachineAtFirmware(firmware);
-//            System.out.println("firmware_version: " + firmware_version);
+            firmware_version = Version.fromMachineAtFirmware(firmware);
+            System.out.println("firmware_version: " + firmware_version);
 
         } else {
-            firmware_version = new Version().fromMachineAtFirmware("No firmware version available.");
+            // no firmware version available
+            firmware_version = new Version();
         }
     }
 
-    
     /*@return -1 - update failed 
-              0 - no update necessary
-              1 - update sucessful    
-    */
+     0 - no update necessary
+     1 - update sucessful    
+     */
     private int updateFirmware() {
 
-        String versionToCompare;
-        if (isNewVendorID) {
-            versionToCompare = Base.VERSION_FIRMWARE_FINAL;
-        } else {
-            versionToCompare = Base.VERSION_FIRMWARE_FINAL_OLD;
-        }
+        String versionToCompare = Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
         Base.writeLog("Firmware should be: " + versionToCompare);
 
         //check if the firmware is the same
-        if (firmware_version.getVersionString().contains(versionToCompare) == true) {
+        String machineFirmware = firmware_version.getVersionString();
+        if (machineFirmware.equalsIgnoreCase(versionToCompare) == true) {
             Base.writeLog("Firmware is " + firmware_version.getVersionString());
             return 0; // NO UPDATE NECESSARY
         } // else carry on updating
 
         File folder = new File(Base.getApplicationDirectory().toString() + "/firmware/");
-        File[] firmwarelist = folder.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".bin");
-            }
-        });
+        /*
+         File[] firmwarelist = folder.listFiles(new FilenameFilter() {
+         @Override
+         public boolean accept(File dir, String name) {
+         return name.toLowerCase().endsWith(".bin");
+         }
+         });
+         */
 
+        File[] firmwareList = folder.listFiles();
         File firmwareFile = null;
 
-        for (File firmwarelist1 : firmwarelist) {
-            System.out.println(firmwarelist1.getAbsoluteFile());
-            Base.writeLog("Version to compare: " + versionToCompare);
-            if (firmwarelist1.getName().contains(versionToCompare)) {
-                firmwareFile = firmwarelist1;
+        for (File firmwareFileTemp : firmwareList) {
+            System.out.println(firmwareFileTemp.getAbsoluteFile());
+
+            if (firmwareFileTemp.getName().equalsIgnoreCase(connectedDevice.firmwareFilename())) {
+                firmwareFile = firmwareFileTemp;
                 Base.writeLog("Candidate file found:" + firmwareFile);
                 break;
             }
+            /*
+             Base.writeLog("Version to compare: " + versionToCompare);
+             if (firmwarelist1.getName().contains(versionToCompare)) {
+             firmwareFile = firmwarelist1;
+             Base.writeLog("Candidate file found:" + firmwareFile);
+             break;
+             }
+             */
         }
 
-        if (firmwareFile == null){
+        if (firmwareFile == null) {
             Base.writeLog("No firmware file found;");
             return -1;
         } else {
@@ -3061,7 +3063,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Starting Firmware update.");
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
                 Base.writeLog("Firmware successfully updated");
-                firmware_version = new Version().fromFile(firmwareFile.getName());
                 Base.writeLog("Setting firmare version to: " + versionToCompare);
                 sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
                 hiccup(QUEUE_WAIT, 0);
@@ -3074,18 +3075,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }//no need for else
 
                 if (_checkFirmwareIntegrity() == false) {
-                    //Integrity test failed
-                    firmware_version = new Version().fromMachine3(INVALID_FIRMWARE_VERSION);
+                    //Integrity test failed. setting firmware_version as 0.0.0
+                    firmware_version = new Version();
                     return -1;
                 }
-                
+
             } else {
                 Base.writeLog("Firmware update failed");
                 Base.errorOccured = true;
                 return -1;
             }
         }
-       return 0; // correct thsi
+        return 0; // correct thsi
     }
 
     private void setSerial(String serial) {
@@ -3100,5 +3101,5 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
     }
-    
+
 }

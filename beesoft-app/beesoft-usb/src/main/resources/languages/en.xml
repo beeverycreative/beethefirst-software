@@ -211,7 +211,7 @@
             <About_SoftwareVersion value="Software version"/> 
             <About_FirmwareVersion value="Firmware version"/> 
             <About_BootloaderVersion value="Bootloader version"/> 
-            <About_SerialNumber value="BEETHEFIRST serial number"/> 
+            <About_SerialNumber value="3D printer serial number"/> 
             <About_FilamentColor value="Filament type"/> 
         </AboutSoftware>
 
@@ -302,14 +302,14 @@
         <!-- A próxima secção XML contém o texto que pode ser usado como informativo em atividades paralelas à impressão --> 
         <ToolPath>
             <Line1 value="The bottom of the model doesn't appear to be touching the building surface"/>
-            <Line2 value="and attempting to print it could damage your BEETHEFIRST."/>
+            <Line2 value="and attempting to print it could damage your 3D printer."/>
             <Line3 value="Ok to move it to the building platform?"/>
             <Line4 value="Place model on building surface?"/>
             <Line5 value="You have made changes to this model"/>
             <Line6 value="You will lose any unsaved changes."/>
             <Line7 value="Save the work area now?"/>
             <Line8 value="Save work area"/>
-            <Line9 value="This model is bigger than what BEETHEFIRST can build"/>
+            <Line9 value="This model is bigger than what your printer can build"/>
             <Line10 value="Are you sure you want to generate code for it?"/>
             <Line11 value="Generate oversized model?"/>
             <Line12 value="Generating toolpath for"/>
@@ -326,7 +326,7 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado nas caixas de feedback existentes nos Assistentes e no ecrã principal --> 
         <FeedbackLabel>
-            <Line1 value="Connecting to BEETHEFIRST"/>
+            <Line1 value="Connecting to your printer"/>
             <Line2 value="Connection error"/>
             <Line3 value="Attempted to access parent directory in "/>
             <Line4 value="Load file"/>
@@ -378,17 +378,17 @@
             <Print_Splash_Gcode_Title value="PROCESSING... PLEASE WAIT"/>
             <Print_Splash_Gcode_Info value="This process can take a few minutes"/>	
             <Print_Calibration_Info value="This process may take a few moments"/>
-            <Print_Splash_Title value="Your BEETHEFIRST is ready to print"/>
+            <Print_Splash_Title value="Your 3D printer is ready to print"/>
             <Print_Splash_Info value="Push the button."/>
             <Print_Splash_Info2 value="Printing... Please wait."/>
             <Print_Splash_Info3 value="Printing in autonomous mode. Please wait."/>
-            <Print_Splash_Info4 value="You can now disconnect your BEETHEFIRST."/>
+            <Print_Splash_Info4 value="You can now disconnect your 3D printer."/>
             <Print_Splash_Info5 value="Press New Print or otherwise Unload if you are done for today."/>
-            <Print_Splash_Info6 value="Do not leave your BEETHEFIRST with the filament loaded."/>
+            <Print_Splash_Info6 value="Do not leave your 3D printer with the filament loaded."/>
             <Print_Splash_Info7 value="This will help keep the filament in optimal condition."/>
             <Print_Splash_Info8 value="You may now remove your spool and store it in a cold dry place."/>
             <Print_Splash_Info9 value="No filament"/>
-            <Print_Splash_Info10 value="Your BEETHEFIRST is unloading. Please Wait until it finishes."/>
+            <Print_Splash_Info10 value="Your 3D printer is unloading. Please wait until it finishes."/>
             <Print_Splash_Info11 value="To print you have to change the filament now."/>
             <Print_Quality value="Resolution"/>	
             <Print_Quality_Low value="Low"/>	
@@ -420,7 +420,7 @@
             <Print_TimeLeft value="About x minutes remaining"/>
             <Print_GCode2 value="Settings will be updated. This process can take several moments."/>
             <Print_Filament value="Remaining filament may not be enough for this print session. Are you sure you have selected the correct filament color?"/>
-            <Print_Autonomy value="Allows the BEETHEFIRST to print without being connected to the computer.
+            <Print_Autonomy value="Allows the 3D printer to print without being connected to the computer.
 				       You'll be informed when you can unplug the cable."/>
             <Print_Transfering value="Transferring... Please wait"/>
             <Print_EstimatorError value="Unable to estimate the total print time"/>
@@ -431,8 +431,8 @@
             <Print_Waiting2 value="You may also shutdown to continue printing later."/>
             <Print_Waiting3 value="Resume if you want to continue printing."/>
             <Print_Waiting4 value="You may also shutdown to continue printing later."/>
-            <Print_Shutdown value="You may now shutdown BEETHEFIRST."/>
-            <Print_Unloading value="Your BEETHEFIRST is unloading. Please wait."/>
+            <Print_Shutdown value="You may now shutdown the printer."/>
+            <Print_Unloading value="Your 3D printer is unloading. Please wait."/>
             <Print_Unloaded1 value="You may now remove your spool."/>
             <Print_Unloaded2 value="Cut the tip and store the spool in a cold dry place."/>
             <Print_Unloaded3 value="If the filament is not loose, press the Unload button again."/>
@@ -449,15 +449,15 @@
             <Print_Completion value="Completed in"/>
             <Print_BuildAborted value="Building process aborted."/>
             <Print_BuildAborted2 value="Please restart the transfer and try again."/>
-            <Print_BuildAborted3 value="If the problem persists, switch your BEETHEFIRST off."/>
+            <Print_BuildAborted3 value="If the problem persists, switch your printer off."/>
             <Print_BuildAborted4 value="Then restart BEESOFT then switch the printer on."/>
             <Print_Stopped value="Stopped after"/>
             <Print_DoneBuilding value="Done building."/>
             <Print_PrintAborted value="You are currently printing from BEESOFT! The building process will be stopped."/>
             <Print_PrintAbortedContinue value="Continue and abort print?"/>
             <Print_PrintAbortQuestion value="Abort print?"/>
-            <Print_PrinterNotAvailable value="BEESOFT can't connect to your BEETHEFIRST. Try checking your settings and resetting"/>
-            <Print_PrinterNotAvailable2 value="Can't find BEETHEFIRST"/>
+            <Print_PrinterNotAvailable value="BEESOFT can't connect to your 3D printer. Try checking your settings and resetting"/>
+            <Print_PrinterNotAvailable2 value="Can't find the 3D printer"/>
             <PrintMinutes value="minutes"/>
             <PrintMinute value="minute"/>
             <PrintHours value="hours"/>
@@ -476,7 +476,7 @@
             <Exchange_Info_Title value="Make sure the filament is correctly unloaded before proceeding."/>
             <Exchange_Info_Title2 value="Unload filament"/>
             <Exchange_Info value="To unload the filament, push the Unload button and pull the filament steadily.
-To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>
+To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until the printer pulls it and extrudes a little filament."/>
             <Exchange_Info2 value="Push the Unload button and wait for instructions."/>                    
             <Exchange_Info3 value="Gently pull as filament unloads."/>         
             <Title3 value="FILAMENT TYPE"/>
@@ -540,25 +540,25 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
             <Title2 value="Extruder Maintenance"/>
             <HeatingMessage2 value="Heating..."/>
-            <Info2a value="Use the tool included in your maintenance kit to remove the screws on the top cover of your BEETHEFIRST. Remove the cover by gently pulling upwards."/>
+            <Info2a value="Use the tool included in your maintenance kit to remove the screws on the top cover of your 3D printer. Remove the cover by gently pulling upwards."/>
             <Info2b value = "Make sure to place screws in a secure location."/>
             <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
             <Title3 value="Extruder Maintenance"/>
             <HeatingMessage3 value="Heating..."/>
-            <Info3a value="Using the same tool as before, remove the screw that attachs the cover plate to your BEETHEFIRST. Afterwards slide the cover plate in the direction indicated OPEN."/>
+            <Info3a value="Using the same tool as before, remove the screw that attachs the cover plate to your 3D printer. Afterwards slide the cover plate in the direction indicated OPEN."/>
             <Info3b value = "Remember to place the screws in a save location."/>
             <Info_Warning3 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
             <Title4 value="Extruder Maintenance"/>
             <HeatingMessage4 value="Heating..."/>
-            <Info4a value="Your BEETHEFIRST must finish heating before continuing this operation."/>
+            <Info4a value="Your 3D printer must finish heating before continuing this operation."/>
             <Info4b value = " "/>
             <Info_Warning4 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
 
             <Title5 value="Extruder Maintenance"/>
             <HeatingMessage5 value="Heating..."/>
-            <Info5a value = "Make sure to unload any fillament still loaded in your BEETHEFIRST. Apply the cleaning tool to remove any leftover material that might have lodged inside the extruder."/>
+            <Info5a value = "Make sure to unload any fillament still loaded in your 3D printer. Apply the cleaning tool to remove any leftover material that might have lodged inside the extruder."/>
             <Info5b value = "After cleaning the extruder, press load and make sure the fillament is extruding normally."/>
             <Info_Warning5 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
@@ -581,7 +581,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
             <Title2 value="Extruder Switch"/>
             <HeatingMessage2 value="Heating..."/>
-            <Info2a value="Your BEETHEFIRST must finish heating before continuing this operation."/>
+            <Info2a value="Your 3D printer must finish heating before continuing this operation."/>
             <Info2b value ="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
             <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
             
@@ -599,7 +599,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         <QuickGuideWizard>
             <Title1 value="Welcome"/>
             <Info value="This Quick Guide will take you through all the steps necessary to keep your printer properly configured. You can access any one of the following functions from the 'Maintenance' menu later."/>
-            <Jump value="My BEETHEFIRST has been configured. Take me to the main screen."/>
+            <Jump value="My 3D printer has been configured. Take me to the main screen."/>
         </QuickGuideWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de Manutenção --> 
@@ -640,7 +640,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Print_tooltip value="Press here to print the model"/>
             <FilamentWizard_tooltip value="This will launch the Filament Wizard"/>
             <QuickWizard_tooltip value="This will launch the QuickStart Wizard"/>
-            <ControlWizard_tooltip value="BEETHEFIRST manual controls"/>
+            <ControlWizard_tooltip value="3D printer manual controls"/>
             <BVC_tooltip value="Press here to be redirected to our site"/>
             <DragRotate_tooltip value="Drag to rotate"/>
             <MouseWheel_tooltip value="Mouse wheel to zoom"/>
@@ -671,11 +671,11 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <MessageFirstTime value="Please view 'Quick Guide' all the way through before continuing."/>
             <MessageModelNotPicked value="Select a model."/>
             <GCodeGeneration value="GCode not generated. Check your execute permissions."/>
-            <PrinterDisconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
-            <PrinterPrinting value="Your BEETHEFIRST is printing. Please make sure it is available for a new print. "/>
+            <PrinterDisconnected value="Your printer is disconnected. Please make sure it is plugged in and switched on. "/>
+            <PrinterPrinting value="Your 3D printer is printing. Please make sure it is available for a new print. "/>
             <ErrorUpdating value="Sorry about this! Please restart BEESOFT to continue."/>
-            <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
-            <FirmwareError value="An error has occured. Please click OK to restart your software and BEETHEFIRST." />
+            <FirmwareOutDateVersion value="To complete the update, please switch your printer off. Restart BEESOFT then switch the printer on."/>
+            <FirmwareError value="An error has occured. Please click OK to restart your software and then switch the 3D printer off." />
             <MeshError value="Imported model has errors. Try to fix them or import another model."/>
             <ReinstallError value="Re-install BEESOFT in order to install all proper files that are missing."/>
             <NoModelError value="There are no models on the work area. Please load at least one model."/>
@@ -689,8 +689,8 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Tour2 value="Add a model to the work area. You can import a model from the '3DModels' folder in BEESOFT or you can import or drag one of your own files."/>
             <Tour3 value="Use 'Move', 'Rotate', 'Scale' or 'Mirror' to set the model up exactly how you want it to be printed."/>
             <Tour4 value="Once you are satisfied with your work area, you can start printing."/>
-            <Tour5 value="Important messages regarding BEETHEFIRST will appear here."/>
-            <Tour6 value="BEETHEFIRST maintenance operations can be found here - they are essential for printing quality."/>
+            <Tour5 value="Important messages regarding your 3D printer will appear here."/>
+            <Tour6 value="3D printer maintenance operations can be found here - they are essential for printing quality."/>
             <DefaultMessage value="Welcome!"/>
             <EndMessage value="All Done"/>
             <TourFinishMessage value="You are ready to start printing! Make your creativity real!"/>
@@ -704,7 +704,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <LockHeight value="Lock vertical axis"/>
             <LockHeight_info value="Models can only be moved parallel to the platform."/>
             <Autonomy value="Autonomy mode"/>
-            <Autonomy_info value="Allows BEETHEFIRST to print without being connected to the computer."/>
+            <Autonomy_info value="Allows printing without being connected to the computer."/>
         </Preferences>
         
         <!-- A próxima secção XML contém o texto para a janela de Help -->
@@ -722,8 +722,8 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         
         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
         <Updates>
-            <AvailableStable value="There are stable software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
-            <AvailableBeta value="There are beta software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
+            <AvailableStable value="There are stable software updates available for your 3D printer. To properly install the new version, you will need to close BEESOFT."/>
+            <AvailableBeta value="There are beta software updates available for your 3D printer. To properly install the new version, you will need to close BEESOFT."/>
             <NotAvailable value="There are no software updates available."/>
             <NoConnection value="No Internet access."/>
             <NoAccess value="Service Unavailable."/>
