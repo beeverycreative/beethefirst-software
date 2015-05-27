@@ -28,7 +28,6 @@ import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.util.ExtensionFilter;
-import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT

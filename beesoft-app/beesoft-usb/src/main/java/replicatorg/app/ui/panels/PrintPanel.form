@@ -163,7 +163,7 @@
                                   <Component id="tfDensity" min="-2" pref="50" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="68" max="32767" attributes="0"/>
+                          <EmptySpace pref="42" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -249,7 +249,7 @@
                   <Component id="jSeparator1" min="-2" pref="6" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   <Component id="bchangeFilament" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="33" max="32767" attributes="0"/>
+                  <EmptySpace pref="69" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -274,7 +274,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
-                      <Component id="jLabel15" max="32767" attributes="0"/>
+                      <Component id="jLabel15" pref="13" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

@@ -35,6 +35,7 @@
             <Model_Import value="Import model"/>
             <Model_Online value="Online models"/>
             <Printer_Maintenance value="Maintenance"/>
+            <Printer_ControlPanel value="Control Panel"/>
             <Printer_Print value="Print"/>
             <Printer_Print2D value="Print from 2D image"/>
             <Help_Topics value="Help topics:"/>
@@ -52,8 +53,8 @@
             <Temp_Title value="Temperature Controls"/>
             <Feedrate value="Feedrate"/>
             <Motor_Control value="Motor control"/>
-            <Console_History value="History"/>
-            <Console_Results value="Results"/>
+            <Console_Movement value="Movement"/>
+            <Console_Extrusion value="Extrusion"/>
             <Jog_Mode value="Jog Mode (mm)"/>
             <Jog_Mode value="Feedrate"/>
             <CenterX value="Home X"/>

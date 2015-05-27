@@ -30,6 +30,7 @@
             <Model_Import value="מודל יבוא"/>
             <Model_Online value="מודלים באינטרנט"/>
             <Printer_Maintenance value="תחזוקה"/>
+            <Printer_ControlPanel value="לוח בקרה"/>
             <Printer_Print value="הדפס"/>
             <Help_Topics value="נושאי עזרה:"/>
             <Help_Topics_Info value="האם אתה זקוק לעזרה נוספת, אנא פנה לשאלות הנפוצות שלנו, www.beeverycreative.com אתר האינטרנט שלנו, או יש להפנות לשירות הלקוחות."/>
