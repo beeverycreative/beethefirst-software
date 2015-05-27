@@ -9,7 +9,7 @@
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.10.3</version>
+    <version>3.11.0</version>
     <name>beesoft-usb</name>
     <properties>
         
