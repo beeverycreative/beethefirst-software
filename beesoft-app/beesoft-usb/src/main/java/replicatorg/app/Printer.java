@@ -256,7 +256,7 @@ public class Printer {
         if (curaFileForced.contains("none")) {
 
             if (machine.getCoilCode().equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE)) {
-                profile += FilamentControler.getBEECode("").toLowerCase(); //To allow base estimation without filament
+                profile += FilamentControler.getBEECode(FilamentControler.NO_FILAMENT_CODE).toLowerCase(); //To allow base estimation without filament
             } else {
                 profile += machine.getCoilCode().toLowerCase();
             }
