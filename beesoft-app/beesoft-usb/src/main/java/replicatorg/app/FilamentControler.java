@@ -142,12 +142,12 @@ public class FilamentControler {
         for (Map.Entry pair : colorsMap.entrySet()) {
             String colorName = (String) pair.getValue();
             
-            if (colorName.equalsIgnoreCase(color)) {
+            if (colorName.contains(color)) {
                 return ((String) pair.getKey()).toUpperCase();
             }
         }        
         // default value is black
-        return "A302"; 
+        return "A000"; 
     }
 }
 
