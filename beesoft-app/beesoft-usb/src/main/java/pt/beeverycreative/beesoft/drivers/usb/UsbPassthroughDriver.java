@@ -2135,48 +2135,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         super.setCurrentPosition(p);
     }
 
-    private String _getToolCode() {
-        return "T" + machine.currentTool().getIndex() + " ";
-    }
-
-    /**
-     * *************************************************************************
-     * Motor interface functions
-     *
-     * @param rpm
-     */
-    @Override
-    public void setMotorRPM(double rpm) {
-        sendCommand(_getToolCode() + "M108 R" + df.format(rpm));
-        try {
-            super.setMotorRPM(rpm);
-        } catch (RetryException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void setMotorSpeedPWM(int pwm) throws RetryException {
-        sendCommand(_getToolCode() + "M108 S" + df.format(pwm));
-
-        super.setMotorSpeedPWM(pwm);
-    }
-
-    @Override
-    public void enableMotor() throws RetryException {
-        String command = _getToolCode();
-
-        if (machine.currentTool().getMotorDirection() == ToolModel.MOTOR_CLOCKWISE) {
-            command += "M101";
-        } else {
-            command += "M102";
-        }
-
-        sendCommand(command);
-
-        super.enableMotor();
-    }
-
     /**
      * *************************************************************************
      * Temperature interface functions

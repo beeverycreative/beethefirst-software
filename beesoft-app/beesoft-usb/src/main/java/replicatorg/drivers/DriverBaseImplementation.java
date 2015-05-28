@@ -357,22 +357,6 @@ public class DriverBaseImplementation implements Driver {
         machine.disableDrives();
     }
 
-    public void setMotorDirection(int dir) {
-        machine.currentTool().setMotorDirection(dir);
-    }
-
-    public void setMotorRPM(double rpm) throws RetryException {
-        machine.currentTool().setMotorSpeedRPM(rpm);
-    }
-
-    public void setMotorSpeedPWM(int pwm) throws RetryException {
-        machine.currentTool().setMotorSpeedPWM(pwm);
-    }
-
-    public void enableMotor() throws RetryException {
-        machine.currentTool().enableMotor();
-    }
-
     public void setTemperature(double temperature) throws RetryException {
         machine.currentTool().setTargetTemperature(temperature);
     }

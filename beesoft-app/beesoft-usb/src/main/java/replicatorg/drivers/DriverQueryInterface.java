@@ -15,12 +15,6 @@ public interface DriverQueryInterface {
 	
 	public Point5d getMaximumFeedrates();
 
-	public double getSpindleRPM();
-	
-	public double getMotorRPM();
-	
-	public int getMotorSpeedPWM();
-	
 	public double getTemperature();
 	public double getTemperatureSetting();
 
