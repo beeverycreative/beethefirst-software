@@ -181,7 +181,7 @@
             <Degrees value="degrees"/>
             <MM value="millimeters"/>
             <Inches value="inches"/>
-	    <Percentage value="percentage"/>
+            <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
         </MainWindowButtons>
 
@@ -529,7 +529,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         </ExtruderCleanWizard>
 
 
-<!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
+        <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
         <ExtruderMaintenance>
 
             <Title1 value="Extruder Maintenance"/>
@@ -568,7 +568,6 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Info6b value = " "/>
             <Info_Warning6 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
-
         </ExtruderMaintenance>
 
         
@@ -577,7 +576,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Title1 value="Extruder Switch"/>
             <HeatingMessage1 value="Heating..."/>
             <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
-            <Info1b value = ""/>
+            <Info1b value = " "/>
             <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
 
             <Title2 value="Extruder Switch"/>
@@ -771,7 +770,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <a025 value="A025 - Yellow"/>
             <a026 value="A026 - Blue"/>
             <a027 value="A027 - Olive Green"/>
-            <a028 value="A028 - Fuschia"/>
+            <a028 value="A028 - Fuchsia"/>
             <a029 value="A029 - Silver"/>
             <a030 value="A030 - Turquoise"/>
             <a031 value="A031 - Neon Green"/>
