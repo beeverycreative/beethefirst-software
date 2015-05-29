@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>       
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
-        <libusb4java.version>1.2.0</libusb4java.version>
+        
     </properties>
     <build>
         <finalName>BEESOFT</finalName>
@@ -665,20 +665,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
-        </dependency>         
-        
-        <dependency>
-            <groupId>javax.usb</groupId>
-            <artifactId>usb-api</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>de.ailis.usb4java</groupId>
-            <artifactId>usb4java</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/external_libs/usb4java-1.0.0.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -686,6 +672,12 @@
             <artifactId>jarbundler</artifactId>
             <version>2.1.0</version>
             <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.usb4java</groupId>
+            <artifactId>usb4java-javax</artifactId>
+            <version>1.2.0</version>
         </dependency>
         
         <dependency>
@@ -701,6 +693,11 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.23</version>
+        </dependency>
     </dependencies>
 </project>
