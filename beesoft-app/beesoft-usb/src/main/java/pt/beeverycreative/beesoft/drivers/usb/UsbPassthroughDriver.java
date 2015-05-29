@@ -446,12 +446,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         openPipe(pipes);
                         Base.writeLog("Pipes open");
                     } catch (Exception e) {
-                        try {
-                            Thread.sleep(500); // sleep 500 ms
-                        } catch (InterruptedException ex) {
-                            Base.writeLog("Error while sleeping in open usb connection initialization: " + ex.getMessage());
-                        }
+                        Base.writeLog("Error while initializing device: "+e.getMessage());
                     }
+
+                    hiccup(500, 1);
 
                     // record our current time
                     date = new Date();
