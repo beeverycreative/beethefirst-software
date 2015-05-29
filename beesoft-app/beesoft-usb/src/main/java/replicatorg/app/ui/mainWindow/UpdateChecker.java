@@ -45,10 +45,9 @@ import replicatorg.app.ui.panels.BaseDialog;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class UpdateChecker extends BaseDialog {
-    
-    //private static final String serverURL = "https://www.beeverycreative.com/public/software/software/";
-    private static final String serverURL = "https://raw.githubusercontent.com/beeverycreative/beethefirst-software/develop/beesoft-app/beesoft-usb/src/main/resources/update/";
-    
+
+    private static final String serverURL = "https://www.beeverycreative.com/public/software/software/";
+
     private File fileFromServer = null;
     private boolean updateStableAvailable;
     private boolean updateBetaAvailable;
@@ -167,11 +166,7 @@ public class UpdateChecker extends BaseDialog {
         String softServerVersionBetaString = getTagValue("Software", "Version_beta");
         int betaServerVersion = Integer.valueOf(getTagValue("Software", "BetaVersion"));
         int betaSoftVersion;
-        String softServerDateString = getTagValue("Software", "Date");
-        String softServerDateBetaString = getTagValue("Software", "Date_beta");
 
-//        String firmVersionString = Base.firmware_version_in_use;
-//        String firmServerVersionString = getTagValue("Firmware", "Version");
         Version currentSoftwareVersion = new Version();
         Version softwareFromServer = new Version();
         Version softwareBetaFromServer = new Version();
@@ -179,31 +174,20 @@ public class UpdateChecker extends BaseDialog {
         softwareFromServer.setVersionFromString(softServerVersionString);
         softwareBetaFromServer.setVersionFromString(softServerVersionBetaString);
 
-//        Version currentFirmwareVersion = new Version();
-//        Version firmwareFromServer = new Version();
-//        currentFirmwareVersion = new Version().fromFile(firmVersionString);   
-//        firmwareFromServer = new Version().fromFile(firmServerVersionString);
-//        if(currentFirmwareVersion.compareTo(firmwareFromServer) < 0 )
-//            System.out.println("yes");
         /**
          * If is a beta versions, alert for updates of betas or stable
          */
         if (softVersionString.contains("beta")) {
             betaSoftVersion = Integer.valueOf(softVersionString.split("beta")[1]);
 
-            if (currentSoftwareVersion.compareTo(softwareBetaFromServer) < 0 //Base beta version may be different
-                    || (currentSoftwareVersion.compareTo(softwareBetaFromServer) == 0 && (betaServerVersion > betaSoftVersion)) //Same base beta version but different version number
-                    || currentSoftwareVersion.compareTo(softwareFromServer) < 0) {                                              //In case of none beta update may exist a stable update
+            if (currentSoftwareVersion.compareTo(softwareBetaFromServer) < 0                                                        //Base beta version may be different
+                    || (currentSoftwareVersion.compareTo(softwareBetaFromServer) == 0 && (betaServerVersion > betaSoftVersion))) {  //Same base beta version but different version number                                 
                 updateBetaAvailable = true;
-
-                if (Base.isWindows()) {
-                    filenameToDownload = getTagValue("Software", "FilenameWinBeta");
-                } else if (Base.isMacOS()) {
-                    filenameToDownload = getTagValue("Software", "FilenameMacBeta");
-                } else { // its linux, unless we start supporting another OS : >
-                    filenameToDownload = getTagValue("Software", "FilenameTuxBeta");
-                }
-
+                grabFilenames(true);
+                return true;
+            } else if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {                                                  //In case of none beta update may exist a stable update
+                updateStableAvailable = true;
+                grabFilenames(false);
                 return true;
             }
         } else {
@@ -212,20 +196,32 @@ public class UpdateChecker extends BaseDialog {
              */
             if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
                 updateStableAvailable = true;
-
-                if (Base.isWindows()) {
-                    filenameToDownload = getTagValue("Software", "FilenameWin");
-                } else if (Base.isMacOS()) {
-                    filenameToDownload = getTagValue("Software", "FilenameMac");
-                } else { // its linux, unless we start supporting another OS : >
-                    filenameToDownload = getTagValue("Software", "FilenameTux");
-                }
-
+                grabFilenames(false);
                 return true;
             }
         }
 
         return false;
+    }
+
+    private void grabFilenames(boolean isBeta) {
+        if (isBeta == true) {
+            if (Base.isWindows()) {
+                filenameToDownload = getTagValue("Software", "FilenameWinBeta");
+            } else if (Base.isMacOS()) {
+                filenameToDownload = getTagValue("Software", "FilenameMacBeta");
+            } else {
+                filenameToDownload = getTagValue("Software", "FilenameTuxBeta");
+            }
+        } else {
+            if (Base.isWindows()) {
+                filenameToDownload = getTagValue("Software", "FilenameWin");
+            } else if (Base.isMacOS()) {
+                filenameToDownload = getTagValue("Software", "FilenameMac");
+            } else {
+                filenameToDownload = getTagValue("Software", "FilenameTux");
+            }
+        }
     }
 
     public void setMessage(String message) {
