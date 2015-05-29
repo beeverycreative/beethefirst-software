@@ -32,7 +32,6 @@ import replicatorg.app.Languager;
 import replicatorg.app.tools.XML;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
-import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -46,12 +45,14 @@ import replicatorg.drivers.Driver;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class UpdateChecker extends BaseDialog {
-
-    private final Driver driver;
+    
+    //private static final String serverURL = "https://www.beeverycreative.com/public/software/software/";
+    private static final String serverURL = "https://raw.githubusercontent.com/beeverycreative/beethefirst-software/develop/beesoft-app/beesoft-usb/src/main/resources/update/";
+    
     private File fileFromServer = null;
     private boolean updateStableAvailable;
     private boolean updateBetaAvailable;
-    private String updateString;
+    private String filenameToDownload;
 
     public UpdateChecker() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -61,7 +62,6 @@ public class UpdateChecker extends BaseDialog {
         centerOnScreen();
         enableDrag();
         evaluateInitialConditions();
-        driver = Base.getMachineLoader().getMachineInterface().getDriver();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -97,7 +97,7 @@ public class UpdateChecker extends BaseDialog {
     private void evaluateInitialConditions() {
         updateBetaAvailable = false;
         updateStableAvailable = false;
-        updateString = null;
+        filenameToDownload = null;
         fileFromServer = getFileFromServer();
 
         if (fileFromServer != null) {
@@ -107,8 +107,6 @@ public class UpdateChecker extends BaseDialog {
                 } else {
                     setMessage("AvailableStable");
                 }
-                updateBetaAvailable = true;
-                updateStableAvailable = true;
                 fileFromServer.delete();
                 jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
             } else {
@@ -174,7 +172,6 @@ public class UpdateChecker extends BaseDialog {
 
 //        String firmVersionString = Base.firmware_version_in_use;
 //        String firmServerVersionString = getTagValue("Firmware", "Version");
-
         Version currentSoftwareVersion = new Version();
         Version softwareFromServer = new Version();
         Version softwareBetaFromServer = new Version();
@@ -186,30 +183,27 @@ public class UpdateChecker extends BaseDialog {
 //        Version firmwareFromServer = new Version();
 //        currentFirmwareVersion = new Version().fromFile(firmVersionString);   
 //        firmwareFromServer = new Version().fromFile(firmServerVersionString);
-
 //        if(currentFirmwareVersion.compareTo(firmwareFromServer) < 0 )
 //            System.out.println("yes");
-
         /**
          * If is a beta versions, alert for updates of betas or stable
          */
         if (softVersionString.contains("beta")) {
             betaSoftVersion = Integer.valueOf(softVersionString.split("beta")[1]);
 
-            //Base beta version may be different
-            if (currentSoftwareVersion.compareTo(softwareBetaFromServer) < 0) {
+            if (currentSoftwareVersion.compareTo(softwareBetaFromServer) < 0 //Base beta version may be different
+                    || (currentSoftwareVersion.compareTo(softwareBetaFromServer) == 0 && (betaServerVersion > betaSoftVersion)) //Same base beta version but different version number
+                    || currentSoftwareVersion.compareTo(softwareFromServer) < 0) {                                              //In case of none beta update may exist a stable update
                 updateBetaAvailable = true;
-                updateString = softServerVersionBetaString + "-" + softServerDateBetaString;
-                return true;
-            } else if (currentSoftwareVersion.compareTo(softwareBetaFromServer) == 0 && (betaServerVersion > betaSoftVersion)) {
-                //Same base beta version but different version number
-                updateBetaAvailable = true;
-                updateString = softServerVersionBetaString + "-" + softServerDateBetaString;
-                return true;
-            } else if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
-                //In case of none beta update may exist a stable update
-                updateStableAvailable = true;
-                updateString = softServerVersionString + "-" + softServerDateString;
+
+                if (Base.isWindows()) {
+                    filenameToDownload = getTagValue("Software", "FilenameWinBeta");
+                } else if (Base.isMacOS()) {
+                    filenameToDownload = getTagValue("Software", "FilenameMacBeta");
+                } else { // its linux, unless we start supporting another OS : >
+                    filenameToDownload = getTagValue("Software", "FilenameTuxBeta");
+                }
+
                 return true;
             }
         } else {
@@ -218,7 +212,15 @@ public class UpdateChecker extends BaseDialog {
              */
             if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
                 updateStableAvailable = true;
-                updateString = softServerVersionString + "-" + softServerDateString;
+
+                if (Base.isWindows()) {
+                    filenameToDownload = getTagValue("Software", "FilenameWin");
+                } else if (Base.isMacOS()) {
+                    filenameToDownload = getTagValue("Software", "FilenameMac");
+                } else { // its linux, unless we start supporting another OS : >
+                    filenameToDownload = getTagValue("Software", "FilenameTux");
+                }
+
                 return true;
             }
         }
@@ -243,7 +245,7 @@ public class UpdateChecker extends BaseDialog {
 
         try {
             // get URL content
-            url = new URL("https://www.beeverycreative.com/public/software/software/updates.xml");
+            url = new URL(serverURL + "updates.xml");
             URLConnection conn = url.openConnection();
 
             // open the stream and put it into BufferedReader
@@ -337,7 +339,6 @@ public class UpdateChecker extends BaseDialog {
         } catch (IOException ioe) {
             Base.writeLog(ioe.getMessage());
         }
-
 
         return null;
     }
@@ -537,11 +538,11 @@ public class UpdateChecker extends BaseDialog {
         if (updateBetaAvailable || updateStableAvailable) {
             try {
                 if (Base.isLinux()) {
-                    openURL(new URI("https://www.beeverycreative.com/public/software/software/BEESOFT-" + updateString + "-linux.zip"));
+                    openURL(new URI(serverURL + filenameToDownload));
                 } else if (Base.isMacOS()) {
-                    openURL(new URI("https://www.beeverycreative.com/public/software/software/BEESOFT-" + updateString + "-mac.zip"));
+                    openURL(new URI(serverURL + filenameToDownload));
                 } else {
-                    openURL(new URI("https://www.beeverycreative.com/public/software/software/BEESOFT-" + updateString + "-windows.zip"));
+                    openURL(new URI(serverURL + filenameToDownload));
                 }
             } catch (URISyntaxException ex) {
                 Base.writeLog("Searching for new software version. Cant connect to internet");
