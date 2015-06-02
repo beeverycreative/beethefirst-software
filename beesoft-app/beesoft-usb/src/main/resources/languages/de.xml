@@ -189,7 +189,7 @@
         <SceneDetails>
             <Scene value="Work Area"/>
             <Scene_Name value="Name"/>
-            <Scene_Description value="Description"/>
+            <Scene_Notes value="Notes"/>
             <Scene_NModels value="Number of models"/>
             <Scene_LastPrintDate value="Date of last print"/>
             <Scene_LastPrintTime value="Duration of last print"/>
@@ -202,7 +202,7 @@
             <Model_Selected value="Selected Model(s)"/>
             <Model_N value="Number of models"/>
             <Model_Dimensions value="Dimensions"/>
-            <Model_Description value="Description"/>
+            <Model_Notes value="Notes"/>
             <Model_Category value="Category"/>
         </ModelDetails>
 

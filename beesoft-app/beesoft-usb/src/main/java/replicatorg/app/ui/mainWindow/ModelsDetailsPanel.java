@@ -77,7 +77,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                     + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
         }
         jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
-        jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
+        jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes"));
 
         jLabel6.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
         jLabel7.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));

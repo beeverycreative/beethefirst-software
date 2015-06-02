@@ -52,7 +52,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel1.setText(Languager.getTagValue(1, "SceneDetails", "Scene"));
 //        jLabel2.setText(Languager.getTagValue(1,"", ""));
         jLabel3.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name"));
-        jLabel4.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Description"));
+        jLabel4.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes"));
         jLabel5.setText(Languager.getTagValue(1, "SceneDetails", "Scene_NModels"));
         jLabel6.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintDate"));
         jLabel7.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintTime"));

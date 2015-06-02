@@ -103,7 +103,7 @@ public class Gallery extends BaseDialog {
         jLabel5.setText(Languager.getTagValue(1, "Gallery", "ModelCategory_title"));
         jLabel6.setText(Languager.getTagValue(1, "Gallery", "ModelProperties_title").toUpperCase());
         jLabel7.setText(Languager.getTagValue(1, "Gallery", "Model_Name"));
-        jLabel8.setText(Languager.getTagValue(1, "Gallery", "Model_Description"));
+        jLabel8.setText(Languager.getTagValue(1, "Gallery", "Model_Notes"));
         jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseModel"));
         jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line9"));
         jLabel27.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
