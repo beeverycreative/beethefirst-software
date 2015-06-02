@@ -13,9 +13,9 @@ public class BuildVolume {
 	}
 	
 	public BuildVolume(int x,int y,int z){
-		this.setX(x);
-		this.setY(y);
-		this.setZ(z);
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 	
 	public int getAxis(AxisId a){
@@ -55,6 +55,4 @@ public class BuildVolume {
 	public int getZ(){
 		return this.z;
 	}
-
-
 }

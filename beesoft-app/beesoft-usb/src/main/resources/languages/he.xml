@@ -68,10 +68,11 @@
         <SceneDetails>
             <Scene value="אזור עבודה"/>
             <Scene_Name value="שם"/>
-            <Scene_Description value="תיאור"/>
+            <Scene_Notes value="הערות"/>
             <Scene_NModels value="מספר הדגמים"/>
             <Scene_LastPrintDate value="תאריך ההדפסה האחרונה"/>
             <Scene_LastPrintTime value="משך ההדפסה האחרונה"/>
+            <Scene_Notes_Placeholder value="לכתוב כאן את ההערות שלך על אזור עבודה זו" />
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
@@ -81,8 +82,9 @@
             <Model_Selected value="דגם שנבחר (ים)"/>
             <Model_N value="מספר הדגמים"/>
             <Model_Dimensions value="ממדים"/>
-            <Model_Description value="תיאור"/>
+            <Model_Notes value="הערות"/>
             <Model_Category value="קטגוריה"/>
+            <Model_Notes_Placeholder value="לכתוב כאן את ההערות שלך על אזור עבודה זו" />
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->

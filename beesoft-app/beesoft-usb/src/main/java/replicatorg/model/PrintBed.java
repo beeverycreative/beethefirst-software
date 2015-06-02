@@ -15,13 +15,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.j3d.Shape3D;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.vecmath.Tuple2d;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.modeling.EditingModel;
@@ -276,9 +274,9 @@ public class PrintBed implements Serializable {
     public ArrayList<Model> getUnPickedModelList() {
         ArrayList<Model> unPickedModels = new ArrayList<Model>();
 
-        for (int i = 0; i < printBed_Models.size(); i++) {
-            if (!pickedModels.contains(printBed_Models.get(i))) {
-                unPickedModels.add(printBed_Models.get(i));
+        for (Model printBed_Model : printBed_Models) {
+            if (!pickedModels.contains(printBed_Model)) {
+                unPickedModels.add(printBed_Model);
             }
         }
         return unPickedModels;
@@ -358,7 +356,7 @@ public class PrintBed implements Serializable {
 
         File stl = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/temp.stl");
         PrintWriter pw = null;
-        String code = null;
+        String code;
 
         // Create physical GCODE File
         try {
@@ -379,7 +377,7 @@ public class PrintBed implements Serializable {
     }
 
     public static byte[] StlToByteArray(File stl) {
-        InputStream is = null;
+        InputStream is;
         ByteArrayOutputStream buffer = null;
         int nRead;
         byte[] bytes = new byte[16384];
@@ -475,9 +473,9 @@ public class PrintBed implements Serializable {
     }
 
     public Model getModel(Shape3D shape) {
-        for (int i = 0; i < printBed_Models.size(); i++) {
-            if (printBed_Models.get(i).getShape().getUserData().equals(shape.getUserData())) {
-                return printBed_Models.get(i);
+        for (Model printBed_Model : printBed_Models) {
+            if (printBed_Model.getShape().getUserData().equals(shape.getUserData())) {
+                return printBed_Model;
             }
         }
         return null;
@@ -502,13 +500,13 @@ public class PrintBed implements Serializable {
 
     public boolean saveAs(boolean force) {
         final JFileChooser fileChooser = new JFileChooser();
-        File scene = null;
+        File scene;
         fileChooser.setDialogTitle("Save Current Scene");
         fileChooser.setCurrentDirectory(new File(ProperDefault.get("defaultSceneDir")));
         DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
         Date date = new Date();
-        String newName = "Untitled.bee";
-        String firstModelName = "";
+        String newName;
+        String firstModelName;
         boolean bedEmpty = printBed_Models.isEmpty();
         File selectedFilev1 = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + "UntitledScene " + dateFormat.format(date) + ".bee");
         File selectedFilev2 = null;
@@ -603,11 +601,7 @@ public class PrintBed implements Serializable {
             suffix = filePath.substring(lastIdx + 1);
         }
 
-        if ("stl".equalsIgnoreCase(suffix)) {
-            return true;
-        }
-
-        return false;
+        return "stl".equalsIgnoreCase(suffix);
     }
 
     public static boolean isScene(File fil) {
@@ -618,11 +612,7 @@ public class PrintBed implements Serializable {
             suffix = filePath.substring(lastIdx + 1);
         }
 
-        if ("bee".equalsIgnoreCase(suffix)) {
-            return true;
-        }
-
-        return false;
+        return "bee".equalsIgnoreCase(suffix);
     }
 
     private void writeObject(ObjectOutputStream aOutputStream) {
