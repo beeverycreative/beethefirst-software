@@ -3,7 +3,7 @@
     <machine experimental="0">
         <name>BEETHEFIRST</name>
         <geometry type="cartesian">
-            <axis id="x" length="185" maxfeedrate="3000" stepspermm="80" endstops="min"/>
+            <axis id="x" length="190" maxfeedrate="3000" stepspermm="80" endstops="min"/>
             <axis id="y" length="135" maxfeedrate="3000" stepspermm="80" endstops="min"/>
             <axis id="z" length="125" maxfeedrate="1000" stepspermm="80" endstops="min"/>
         </geometry>

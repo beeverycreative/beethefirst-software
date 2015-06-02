@@ -22,7 +22,6 @@ package replicatorg.machine;
 import org.w3c.dom.Node;
 
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.DriverQueryInterface;
 import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.machine.model.ToolModel;
@@ -134,6 +133,8 @@ public class Machine implements MachineInterface {
 
     /**
      * Creates the machine object.
+     * @param mNode
+     * @param callbackHandler
      */
     public Machine(Node mNode, MachineCallbackHandler callbackHandler) {
         this.callbackHandler = callbackHandler;
@@ -157,6 +158,8 @@ public class Machine implements MachineInterface {
 
     /**
      * Begin running a job.
+     * @param arg
+     * @return 
      */
     @Override
     public boolean buildDirect(String arg) {
@@ -170,6 +173,7 @@ public class Machine implements MachineInterface {
      *
      * @return Machine Node name
      */
+    @Override
     public Node getMachineNode() {
         return machineNode;
     }
@@ -196,6 +200,7 @@ public class Machine implements MachineInterface {
                 ""));
     }
 
+    @Override
     public void killSwitch() {
         machineThread.killSwitch();
         runCommand(new replicatorg.drivers.commands.SetBusy(false));
@@ -245,78 +250,97 @@ public class Machine implements MachineInterface {
                 RequestType.DISCONNECT, ""));
     }
 
+    @Override
     public double getJogRateLowerValue() {
         return machineThread.getJogRateLowerValue();
     }
 
+    @Override
     public double getJogRateMediumValue() {
         return machineThread.getJogRateMediumValue();
     }
 
+    @Override
     public double getJogRateHigherValue() {
         return machineThread.getJogRateHigherValue();
     }
 
+    @Override
     public int getStopwatch() {
         return machineThread.getStopwatch();
     }
 
+    @Override
     public void setStopwatch(int stopwatch) {
         machineThread.setStopwatch(stopwatch);
     }
 
+    @Override
     public void stopwatch() {
         machineThread.stopwatch();
     }
 
+    @Override
     public void resumewatch() {
         machineThread.resumeWatch();
     }
 
+    @Override
     public String getLastFeedrate() {
         return machineThread.getLastFeedrate();
     }
 
+    @Override
     public String getLastE() {
         return machineThread.getLastE();
     }
 
+    @Override
     public String getLastAcceleration() {
         return machineThread.getLastAcceleration();
     }
 
+    @Override
     public Point5d getLastPrintedPoint() {
         return machineThread.getLastPrintedPoint();
     }
 
+    @Override
     public void setLastPrintedPoint(Point5d point) {
         machineThread.setLastPrintedPoint(point);
     }
 
+    @Override
     public void setFilamentChanged(boolean isChanged) {
         machineThread.setFilamentChanged(isChanged);
     }
 
+    @Override
     public boolean hasFilamentChanged() {
         return machineThread.hasFilamentChanged();
     }
 
+    @Override
     public void setLastBEECode(String code) {
         machineThread.setLastBEECode(code);
     }
 
+    @Override
     public Point5d getTablePoints(String pointName) {
         return machineThread.getTablePoints(pointName);
     }
 
+    @Override
     public String getGCodePrintTest(String code) {
         return machineThread.getGCodePrintTest(code);
     }
 
+    @Override
     public double getAcceleration(String acceTag) {
         return machineThread.getAcceleration(acceTag);
     }
 
+    @Override
     public double getFeedrate(String speedTag) {
         return machineThread.getFeedrate(speedTag);
     }
