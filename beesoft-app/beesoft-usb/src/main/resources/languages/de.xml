@@ -193,6 +193,7 @@
             <Scene_NModels value="Number of models"/>
             <Scene_LastPrintDate value="Date of last print"/>
             <Scene_LastPrintTime value="Duration of last print"/>
+            <Scene_Notes_Placeholder value="Write here your notes about this work area" />
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
@@ -204,6 +205,7 @@
             <Model_Dimensions value="Dimensions"/>
             <Model_Notes value="Notes"/>
             <Model_Category value="Category"/>
+            <Model_Notes_Placeholder value="Write here your notes about this model" />
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
