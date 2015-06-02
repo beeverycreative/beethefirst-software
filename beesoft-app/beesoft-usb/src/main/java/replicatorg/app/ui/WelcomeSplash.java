@@ -1,6 +1,9 @@
 package replicatorg.app.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -54,6 +57,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
         Image img = image.getImage();
         // Loads Splash image for dimensios getter
         BufferedImage img2 = Base.getImage("images/welcomeSplash.png", this);
+
         // Gets Screen Dimension
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         // Calculates ratio for modular adjustement to every screen
@@ -63,8 +67,26 @@ public class WelcomeSplash extends javax.swing.JFrame {
         newHeight = (int) (img2.getHeight() * scale);
 
         // Scales original image to new size values with Smooth conversion
-        Image newimg = img.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
-        image = new ImageIcon(newimg);
+        Image newimg = img2.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(newimg.getWidth(null), newimg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(newimg, 0, 0, null);
+        bGr.dispose();
+
+        // epic hammering just to draw BEESOFT version, that's how much we like swing
+        // hammer time
+        Graphics g = bimage.getGraphics();
+        g.setFont(g.getFont().deriveFont(15f));
+        g.setColor(Color.BLACK);
+        int stringPixelSize = (img.getGraphics().getFontMetrics()).stringWidth(Base.VERSION_BEESOFT);
+        g.drawString(Base.VERSION_BEESOFT, bimage.getWidth() - 50 - stringPixelSize, bimage.getHeight() - 10);
+        g.dispose();
+
+        image = new ImageIcon(bimage);
         // Sets bar preferences and size.
         // Bar width is equal to image width. Height has value = 5
         jProgressBar1.setMaximum(newWidth - 5);
@@ -131,7 +153,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         // Checks for software and firmware updates
         if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
             UpdateChecker advise = new UpdateChecker();
-
 
             if (advise.isUpdateBetaAvailable()) {
                 advise.setMessage("AvailableBeta");
