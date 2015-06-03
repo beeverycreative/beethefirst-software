@@ -99,7 +99,6 @@ public class CalibrationGCoder {
      */
     private static String getCode(String configFile) {
 
-        String beeCode = Base.getMainWindow().getMachineInterface().getModel().getCoilCode();
         String tag = "calibration_test";
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -156,6 +155,7 @@ public class CalibrationGCoder {
      * Parses tag value from XML and removes string chars only.
      *
      * @param configFile
+     * 
      * @return plain text array without spaces
      */
     public static String[] getColorGCode(String configFile) {
