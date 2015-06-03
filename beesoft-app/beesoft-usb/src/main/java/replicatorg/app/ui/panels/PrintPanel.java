@@ -32,7 +32,6 @@ import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.app.ui.MainWindow;
 import replicatorg.app.util.ExtensionFilter;
 import replicatorg.model.PrintBed;
 
@@ -133,6 +132,11 @@ public class PrintPanel extends BaseDialog {
         bHighRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bHighPlusRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
+        lowHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        medHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        highHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        highPlusHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        
         //Density
         quality_low.setFont(GraphicDesignComponents.getSSProRegular("12"));
         quality_medium.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -889,6 +893,10 @@ public class PrintPanel extends BaseDialog {
         bHighPlusRes = new javax.swing.JRadioButton();
         bchangeFilament = new javax.swing.JLabel();
         bExport = new javax.swing.JLabel();
+        lowHeightLabel = new javax.swing.JLabel();
+        medHeightLabel = new javax.swing.JLabel();
+        highHeightLabel = new javax.swing.JLabel();
+        highPlusHeightLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         bPrint = new javax.swing.JLabel();
@@ -1113,6 +1121,14 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        lowHeightLabel.setText("0.3 mm");
+
+        medHeightLabel.setText("0.2 mm");
+
+        highHeightLabel.setText("0.1 mm");
+
+        highPlusHeightLabel.setText("0.05 mm");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1180,16 +1196,7 @@ public class PrintPanel extends BaseDialog {
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(bLowRes)
-                                .addGap(25, 25, 25)
-                                .addComponent(bMediumRes)
-                                .addGap(25, 25, 25)
-                                .addComponent(bHighRes)
-                                .addGap(25, 25, 25)
-                                .addComponent(bHighPlusRes))
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1197,7 +1204,28 @@ public class PrintPanel extends BaseDialog {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(lDensity)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(lowHeightLabel)
+                                            .addComponent(bLowRes))
+                                        .addGap(25, 25, 25)
+                                        .addComponent(bMediumRes)
+                                        .addGap(25, 25, 25)
+                                        .addComponent(bHighRes))
+                                    .addComponent(jLabel3))
+                                .addGap(25, 25, 25)
+                                .addComponent(bHighPlusRes))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(96, 96, 96)
+                                .addComponent(medHeightLabel)
+                                .addGap(51, 51, 51)
+                                .addComponent(highHeightLabel)
+                                .addGap(25, 25, 25)
+                                .addGap(25, 25, 25)
+                                .addComponent(highPlusHeightLabel)))
                         .addContainerGap(42, Short.MAX_VALUE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(137, 137, 137)
@@ -1212,13 +1240,19 @@ public class PrintPanel extends BaseDialog {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bLowRes)
                     .addComponent(bHighRes)
                     .addComponent(bMediumRes)
                     .addComponent(bHighPlusRes))
-                .addGap(8, 8, 8)
+                .addGap(7, 7, 7)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lowHeightLabel)
+                    .addComponent(medHeightLabel)
+                    .addComponent(highHeightLabel)
+                    .addComponent(highPlusHeightLabel))
+                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(densitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1272,7 +1306,7 @@ public class PrintPanel extends BaseDialog {
                         .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(12, 12, 12)
                 .addComponent(bchangeFilament)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -1283,14 +1317,14 @@ public class PrintPanel extends BaseDialog {
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bCancelMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
             }
         });
 
@@ -1711,6 +1745,8 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel estimatedMaterial;
     private javax.swing.JLabel estimatedPrintTime;
     private javax.swing.JLabel filamentType;
+    private javax.swing.JLabel highHeightLabel;
+    private javax.swing.JLabel highPlusHeightLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
@@ -1733,7 +1769,9 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lDensity;
     private javax.swing.JLabel loading;
+    private javax.swing.JLabel lowHeightLabel;
     private javax.swing.JLabel materialCost;
+    private javax.swing.JLabel medHeightLabel;
     private javax.swing.JLabel printTime;
     private javax.swing.JTextField tfDensity;
     // End of variables declaration//GEN-END:variables
