@@ -264,10 +264,10 @@ public class CalibrationPrintTest extends BaseDialog {
             gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + Base.GCODE_TEMP_FILENAME);
             pw = new PrintWriter(new FileOutputStream(gcode));
 
-            String[] code = CalibrationGCoder.getColorGCode();
+            String[] code = CalibrationGCoder.getColorGCode(CalibrationGCoder.BEETHEFIRST_CONFIG);
 
-            for (int i = 0; i < code.length; i++) {
-                pw.println(code[i].trim());
+            for (String code1 : code) {
+                pw.println(code1.trim());
             }
 
             pw.close();
