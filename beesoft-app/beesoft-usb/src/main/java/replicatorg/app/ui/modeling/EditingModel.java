@@ -275,20 +275,16 @@ public class EditingModel implements Serializable {
             xoff = centroid_prev.x + offset_curr_model + offset_prev_model + 5;
             yoff = (upper.y + lower.y) / 2.0d;
             
+            translateObjectWithoutValidation(xoff, yoff, zoff);
+            
         } else {
             xoff = (upper.x + lower.x) / 2.0d;
             yoff = (upper.y + lower.y) / 2.0d;
+            
+            //Uses negative x and y values to place the model correctly in the center
+            translateObjectWithoutValidation(-xoff, -yoff, zoff);
         }
-        
-        MachineInterface mc = Base.getMachineLoader().getMachineInterface();
-        BuildVolume buildVol = null;
-        if (mc instanceof Machine) {
-            MachineModel mm = mc.getModel();
-            buildVol = mm.getBuildVolume();
-        }
-
-        translateObjectWithoutValidation(xoff, yoff, zoff);
-
+             
         BoundingBox bb2 = getBoundingBox(shapeTransform);
         Point3d lower2 = new Point3d();
         bb2.getLower(lower2);
