@@ -302,13 +302,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="lCalibration_desc" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lCalibration" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="bCalibration" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                      <Component id="lCalibration_warn" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
+                                      <Component id="bCalibrationTest" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -328,7 +328,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="bCalibration" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lCalibration_warn" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bCalibrationTest" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
@@ -336,11 +336,6 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lCalibration_warn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Foram feitas 10 impressoes desde a ultima calibracao"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JLabel" name="bCalibration">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -364,6 +359,20 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Calibrar"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="bCalibrationTest">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_16.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Teste de Calibracao"/>
+                <Property name="horizontalTextPosition" type="int" value="0"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCalibrationTestMousePressed"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCalibrationTestMouseExited"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCalibrationTestMouseEntered"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -401,8 +410,11 @@
                               <EmptySpace min="-2" pref="575" max="-2" attributes="0"/>
                           </Group>
                           <Component id="lExtruderMaintenanceDesc" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="lExtruderMaintenance" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lExtruderMaintenance" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lCalibration_warn" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -412,7 +424,8 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lCalibration_warn" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                       <Component id="lExtruderMaintenance" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="lExtruderMaintenanceDesc" min="-2" pref="50" max="-2" attributes="0"/>
@@ -446,6 +459,11 @@
             <Component class="javax.swing.JLabel" name="lExtruderMaintenance">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Limpar bico de extrusao"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lCalibration_warn">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Foram feitas 10 impressoes desde a ultima calibracao"/>
               </Properties>
             </Component>
           </SubComponents>

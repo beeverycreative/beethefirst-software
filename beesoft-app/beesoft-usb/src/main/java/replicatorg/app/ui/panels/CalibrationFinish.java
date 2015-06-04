@@ -279,7 +279,7 @@ public class CalibrationFinish extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -307,14 +307,14 @@ public class CalibrationFinish extends BaseDialog {
         bCalibrationTest.setText("Teste de Calibracao");
         bCalibrationTest.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCalibrationTest.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCalibrationTestMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCalibrationTestMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bCalibrationTestMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCalibrationTestMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCalibrationTestMouseEntered(evt);
             }
         });
 
@@ -330,7 +330,7 @@ public class CalibrationFinish extends BaseDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
