@@ -1,33 +1,33 @@
 package pt.beeverycreative.beesoft.drivers.usb;
 
-import de.ailis.usb4java.AbstractDevice;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
+import org.w3c.dom.Node;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.usb.UsbClaimException;
 import javax.usb.UsbConfiguration;
 import javax.usb.UsbConst;
 import javax.usb.UsbDevice;
+import javax.usb.UsbDeviceDescriptor;
 import javax.usb.UsbDisconnectedException;
 import javax.usb.UsbEndpoint;
 import javax.usb.UsbException;
 import javax.usb.UsbHostManager;
 import javax.usb.UsbHub;
 import javax.usb.UsbInterface;
-import javax.usb.UsbNotActiveException;
-import javax.usb.UsbServices;
-import org.w3c.dom.Node;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.usb.UsbDeviceDescriptor;
 import javax.usb.UsbIrp;
+import javax.usb.UsbNotActiveException;
+import javax.usb.UsbNotClaimedException;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
-import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
+import javax.usb.UsbServices;
+
 import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
 
@@ -337,9 +337,9 @@ public class UsbDriver extends DriverBaseImplementation {
             short idVendor = m_usbDevice.getUsbDeviceDescriptor().idVendor();
             connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
             Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
-            if (Base.isMacOS()) {
-                ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
-            }
+//            if (Base.isMacOS()) {
+//                ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
+//            }
             
             if(m_usbDeviceList.size() == 1){
                 Base.writeLog("Found 1 device, connecting.");
@@ -541,7 +541,7 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("USB disconnected exception: " + ex.getMessage());
             setInitialized(false);
             return false;
-        } catch (Exception ex) {
+        } catch (UsbNotClaimedException ex) {
             Base.writeLog("Exception test pipes: " + ex.getMessage());
 //            setInitialized(false);
 //            return false;
@@ -629,6 +629,33 @@ public class UsbDriver extends DriverBaseImplementation {
         } catch (InterruptedException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    int send(String message) {
+
+    pipes = GetPipe(m_usbDevice);
+        try {
+            if (m_usbDevice != null) {
+                synchronized (m_usbDevice) {
+                    if (!pipes.isOpen()) {
+                        openPipe(pipes);
+                    }
+                    return pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
+
+                }
+            }
+        } catch (UsbException ex) {
+            Base.writeLog("Error while sending message: " + message + " : " + ex.getMessage());
+        } catch (UsbNotActiveException ex) {
+            Base.writeLog("Error while sending message: " + message + " : " + ex.getMessage());
+        } catch (UsbNotOpenException ex) {
+            Base.writeLog("Error while sending message: " + message + " : " + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            Base.writeLog("Error while sending message: " + message + " : " + ex.getMessage());
+        } catch (UsbDisconnectedException ex) {
+            Base.writeLog("Error while sending message: " + message + " : " + ex.getMessage());
+        }
+    return 0;
     }
 
 

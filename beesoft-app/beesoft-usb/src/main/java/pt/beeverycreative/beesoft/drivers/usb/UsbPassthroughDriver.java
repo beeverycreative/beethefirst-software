@@ -1,6 +1,5 @@
 package pt.beeverycreative.beesoft.drivers.usb;
 
-import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,7 +46,7 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public final class UsbPassthroughDriver extends UsbDriver {
+public class UsbPassthroughDriver extends UsbDriver {
 
     private static final int SERIAL_NUMBER_SIZE = 10;
     private static final String NO_SERIAL_NO_FIRMWARE = "0000000000";
@@ -97,7 +96,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String NOK = "NOK";
     private static final int QUEUE_LIMIT = 85;
     private static final int QUEUE_WAIT = 30;
-    private static final int SEND_WAIT = 10; //2 did not work
+    private static final int SEND_WAIT_INTERVAL = 10; //2 did not work
     private int queue_size;
     private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispatchTime;
@@ -446,12 +445,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         openPipe(pipes);
                         Base.writeLog("Pipes open");
                     } catch (Exception e) {
-                        try {
-                            Thread.sleep(500); // sleep 500 ms
-                        } catch (InterruptedException ex) {
-                            Base.writeLog("Error while sleeping in open usb connection initialization: " + ex.getMessage());
-                        }
+                        Base.writeLog("Error while initializing device: "+e.getMessage());
                     }
+
+                    hiccup(500, 1);
 
                     // record our current time
                     date = new Date();
@@ -582,11 +579,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private String blindDispatchCommand(String next) {
 
-        // blind tag - no tempresponse expected.
-        sendCommandWOTest(next);
-        queue_size += 1;
-
-        return "ok";
+        //Add blind tag - printer will generate no response.
+        next = " B N:" + (++ID) + "\n";
+        
+        int cmdlen = 0;
+        
+        //send to sendCommand
+        cmdlen = sendCommand(next);
+        //Check if sendCommand was good and adjust queue
+        if (cmdlen > 0) {
+            resendQueue.add(new QueueCommand(next, ID));
+            queue_size += 1;
+            return "ok";
+        } else {
+            return "NOK";
+        }
     }
 
     @Override
@@ -1762,70 +1769,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         System.arraycopy(source, srcBegin, destination, dstBegin, srcEnd - srcBegin);
     }
 
-    protected int sendCommandWOTest(String next) {
-
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
-            try {
-                Thread.sleep(1, 1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        lastDispatchTime = System.currentTimeMillis();
-
-        //next = clean(next);
-        int cmdlen = 0;
-        int i = 0;
-        // skip empty commands.
-        if (next.length() == 0) {
-            return 0;
-        }
-        pipes = GetPipe(m_usbDevice);
-
-        // do the actual send.
-        String message;
-
-        getEValue(next); // Process each command for extruded material calculation
-
-        message = next + " B N:" + (++ID) + "\n";
-
-        resendQueue.add(new QueueCommand(message, ID));
-
-        try {
-            if (m_usbDevice != null) {
-                synchronized (m_usbDevice) {
-                    if (!pipes.isOpen()) {
-                        openPipe(pipes);
-                    }
-                    pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
-                    cmdlen = next.length() + 1;
-                    //                System.out.println("SENTWO: " + message.trim())
-                }
-            }
-        } catch (UsbException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
-        } catch (UsbNotActiveException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
-        } catch (UsbNotOpenException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
-        } catch (IllegalArgumentException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
-        }
-
-        if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
-            Base.writeLog("SENT: " + message.trim());
-//            
-        }
-
-        if (comLog) {
-            Base.writecomLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
-        }
-
-        return cmdlen;
-    }
 
     /**
      * Actually sends command over USB.
@@ -1835,62 +1778,35 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     protected int sendCommand(String next) {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
+        int cmdlen = 0;
+
+        // skip empty commands.
+        if (next.length() == 0) {
+            return cmdlen;
+        }
+
+        getEValue(next); // Process each command for extruded material calculation
+
+        //wait until SEND_WAIT_INTERVAL as passed before using the usb-pipe        
+        while (SEND_WAIT_INTERVAL > (System.currentTimeMillis() - lastDispatchTime)) {
             try {
                 Thread.sleep(1, 1);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
         lastDispatchTime = System.currentTimeMillis();
-        //next = clean(next);
-        int cmdlen = 0;
-        int i = 0;
-        // skip empty commands.
-        if (next.length() == 0) {
-            return 0;
-        }
-        pipes = GetPipe(m_usbDevice);
 
-        // do the actual send.
-        String message = next + "\n";
-        getEValue(next); // Process each command for extruded material calculation
+        String message;
+
+        message = next + "\n";
+
+        //Send the message via the lower level driver.
+        //Recieve the number of chars sents
+        cmdlen = super.send(message);
 
         if (comLog) {
-            long time = (System.currentTimeMillis() - startTS);
-            //Base.writecomLog(time,"Error while sending command to BEETHEFIRST: " + ex.getMessage());
-        }
-
-        try {
-            if (m_usbDevice != null) {
-                synchronized (m_usbDevice) {
-                    if (!pipes.isOpen()) {
-                        openPipe(pipes);
-                    }
-                    pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
-                    cmdlen = next.length() + 1;
-
-                }
-            }
-        } catch (UsbException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
-        } catch (UsbNotActiveException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
-        } catch (UsbNotOpenException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
-        }
-
-        if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
-            Base.writeLog("SENT: " + message.trim());
-        }
-
-        if (comLog) {
-            Base.writecomLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
+            Base.writecomLog((System.currentTimeMillis() - startTS), "sendCommand: " + message.trim());
         }
 
         return cmdlen;
@@ -1899,7 +1815,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String readResponse() {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
+        while (SEND_WAIT_INTERVAL > (System.currentTimeMillis() - lastDispatchTime)) {
             try {
                 Thread.sleep(1, 1);
             } catch (InterruptedException ex) {
