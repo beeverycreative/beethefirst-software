@@ -4,10 +4,10 @@ import replicatorg.drivers.Driver;
 
 public class AssessState implements DriverCommand {
 
-	@Override
-	public void run(Driver driver) {
-		driver.assessState();
-	}
+    @Override
+    public void run(Driver driver) {
+        driver.assessState();
+    }
 
     @Override
     public String getCommand() {

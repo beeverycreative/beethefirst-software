@@ -33,7 +33,6 @@ import replicatorg.drivers.Driver;
 import replicatorg.machine.MachineInterface;
 import replicatorg.util.Point5d;
 
-
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
  * software: you can redistribute it and/or modify it under the terms of the GNU
@@ -120,15 +119,15 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     private void setTextLanguage() {
         int fileKey = 1;
-        tInfo2.setText(Languager.getTagValue(fileKey,"Print", "Print_Splash_Info2"));
-        tInfo3.setText(Languager.getTagValue(fileKey,"Print", "Print_Splash_Info4"));
-        tEstimation.setText(Languager.getTagValue(fileKey,"Print", "Print_Estimation"));
-        tRemaining.setText(Languager.getTagValue(fileKey,"Print", "Print_Remaining"));
-        bCancel.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line3"));
-        bOk.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line10"));
-        bPause.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line11"));
-        bUnload.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line14"));
-        bShutdown.setText(Languager.getTagValue(fileKey,"OptionPaneButtons", "Line16"));
+        tInfo2.setText(Languager.getTagValue(fileKey, "Print", "Print_Splash_Info2"));
+        tInfo3.setText(Languager.getTagValue(fileKey, "Print", "Print_Splash_Info4"));
+        tEstimation.setText(Languager.getTagValue(fileKey, "Print", "Print_Estimation"));
+        tRemaining.setText(Languager.getTagValue(fileKey, "Print", "Print_Remaining"));
+        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
+        bOk.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line10"));
+        bPause.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line11"));
+        bUnload.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line14"));
+        bShutdown.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line16"));
         setProcessingInfo();
     }
 
@@ -181,7 +180,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 //        Base.getMainWindow().getBed().setGcodeOK(false);
 
         // Restart Button
-        bOk.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line13"));
+        bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line13"));
         bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }
 
@@ -193,10 +192,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         return alreadyPrinting;
     }
 
-    public boolean isShutdown(){
+    public boolean isShutdown() {
         return isShutdown;
     }
-    
+
     public void setPrintState(boolean state) {
         alreadyPrinting = state;
     }
@@ -231,6 +230,41 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
      * Cancel ongoing operation and idles BEESOFT to a machine idle state
      */
     private void doCancel() {
+
+        //machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
+        if (machine.getDriver().isTransferMode()) {
+            // stopTransfer() blocks while the process isn't concluded
+            machine.getDriver().stopTransfer();
+        } else {
+            machine.killSwitch();
+            machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
+            machine.runCommand(new replicatorg.drivers.commands.ReloadConfig());
+            machine.runCommand(new replicatorg.drivers.commands.SendHome("Z"));
+            machine.runCommand(new replicatorg.drivers.commands.SendHome("XY"));
+            
+            Base.getMainWindow().doStop();
+
+            // I KNOW IT'S DEPRECATED
+            // .interrupt() doesn't work
+            gcodeGenerator.stop();
+            ut.stop();
+        }
+
+        userDecision = true;
+        shutdownFromDisconnect = false;
+        Base.resetPrintingFlags();
+        Base.getMainWindow().getButtons().updatePressedStateButton("print");
+        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/3DModels/");
+        dispose();
+        Base.bringAllWindowsToFront();
+        Base.getMainWindow().setEnabled(true);
+
+    }
+
+    /**
+     * Cancel ongoing operation and idles BEESOFT to a machine idle state
+     */
+    private void doCancel2() {
         setError(true);
         dispose();
         Base.bringAllWindowsToFront();
@@ -242,7 +276,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         userDecision = true;
         shutdownFromDisconnect = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
-        enableSleep();
+        enableSleep();          // what is this?
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
         machine.getModel().setMachineBusy(false);
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/3DModels/");
@@ -250,8 +284,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
         if (machine.getDriver().isTransferMode()) {
             machine.getDriver().stopTransfer();
-            while (machine.getDriver().isAutonomous()) { 
-               try {
+            while (machine.getDriver().isAutonomous()) {
+                try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
@@ -260,7 +294,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
         } else {
             Base.getMainWindow().handleStop();
-            
+
             Point5d b = machine.getTablePoints("safe");
             double acLow = machine.getAcceleration("acLow");
             double acHigh = machine.getAcceleration("acHigh");
@@ -273,13 +307,12 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28",COM.BLOCK));
-            
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
+
             gcodeGenerator.stop();
             ut.stop();
-            
-            
-            if(machine.getDriver().isAutonomous() == true) {
+
+            if (machine.getDriver().isAutonomous() == true) {
                 machine.getDriver().updateCoilCode();
             }
         }
@@ -288,6 +321,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     /**
      * Get file to print either from Printer or from selected gcode
+     *
      * @return file to be printed
      */
     public File getPrintFile() {
@@ -333,10 +367,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         vEstimation.setVisible(false);
         tInfo7.setVisible(false);
         tInfo3.setVisible(true);
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_BuildAborted"));
-        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_BuildAborted2"));
-        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_BuildAborted3"));
-        tRemaining.setText(Languager.getTagValue(1,"Print", "Print_BuildAborted4"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_BuildAborted"));
+        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_BuildAborted2"));
+        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_BuildAborted3"));
+        tRemaining.setText(Languager.getTagValue(1, "Print", "Print_BuildAborted4"));
         jProgressBar1.setVisible(false);
 
     }
@@ -351,8 +385,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public void setPrintElements() {
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info3"));
-        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info4"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
+        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
         tEstimation.setVisible(true);
         tRemaining.setVisible(true);
         vEstimation.setVisible(true);
@@ -388,35 +422,35 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 if (hours > 1) {
                     if (cutout) {
                         textE = hours
-                                + " " + Languager.getTagValue(1,"Print", "PrintHours")
+                                + " " + Languager.getTagValue(1, "Print", "PrintHours")
                                 + " " + minutes
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
                         textR = hours
-                                + " " + Languager.getTagValue(1,"Print", "PrintHours")
+                                + " " + Languager.getTagValue(1, "Print", "PrintHours")
                                 + " " + minutes
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
 
                         vEstimation.setText(textR);
                     } else {
                         textR = hours
-                                + " " + Languager.getTagValue(1,"Print", "PrintHours")
+                                + " " + Languager.getTagValue(1, "Print", "PrintHours")
                                 + " " + minutes
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
 
                     }
                 } else {
                     if (cutout) {
                         textE = hours
-                                + " " + Languager.getTagValue(1,"Print", "PrintHour")
+                                + " " + Languager.getTagValue(1, "Print", "PrintHour")
                                 + " " + minutes
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
 
                         vEstimation.setText(textE);
                     } else {
                         textR = hours
-                                + " " + Languager.getTagValue(1,"Print", "PrintHour")
+                                + " " + Languager.getTagValue(1, "Print", "PrintHour")
                                 + " " + minutes
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
 
                         vRemaining.setText(textR);
                     }
@@ -440,18 +474,18 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
                 if (cutout) {
                     textE = printEstimation
-                            + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                            + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
                     if (remainingTime > 60) {
                         if (hours == 1) {
                             textR = hours
-                                    + " " + Languager.getTagValue(1,"Print", "PrintHour")
+                                    + " " + Languager.getTagValue(1, "Print", "PrintHour")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
                         } else {
                             textR = hours
-                                    + " " + Languager.getTagValue(1,"Print", "PrintHours")
+                                    + " " + Languager.getTagValue(1, "Print", "PrintHours")
                                     + " " + minutes
-                                    + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                    + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
                         }
 
                     } else if (remainingTime == -100000) {
@@ -463,28 +497,28 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                         vRemaining.setText("");
                         tInfo6.setText("");
                         tInfo7.setText("");
-                        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_EstimatorError"));
+                        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_EstimatorError"));
                         return;
                     } else {
                         textR = remainingTime
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
                     }
                     vEstimation.setText(textR);
                 } else {
                     if (remainingTime > 60) {
                         textR = hours
-                                + " " + Languager.getTagValue(1,"Print", "PrintHours")
+                                + " " + Languager.getTagValue(1, "Print", "PrintHours")
                                 + " " + minutes
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
-                    }  
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
+                    }
                     if (remainingTime > 1 && remainingTime <= 60) {
                         textR = remainingTime
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinutes");
-                    } 
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
+                    }
                     if (remainingTime == 1) {
                         textR = remainingTime
-                                + " " + Languager.getTagValue(1,"Print", "PrintMinute");
-                    } 
+                                + " " + Languager.getTagValue(1, "Print", "PrintMinute");
+                    }
                     if (remainingTime == -100000) {
                         //In case PrintEstimator fails, dont appear 2min
                         textE = "";
@@ -492,16 +526,16 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                         tRemaining.setText("");
                         vEstimation.setText("");
                         vRemaining.setText("");
-                        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_EstimatorError"));
+                        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_EstimatorError"));
                         return;
                     }
-                    
+
                     if (remainingTime < 1) {
-                        tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Info2"));
+                        tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Info2"));
                         vRemaining.setText("");
                         return;
                     }
-                    
+
                     // no need for else. Parse is being made before calling thin method
                     vRemaining.setText(textR);
                 }
@@ -514,8 +548,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     public void setTransferInfo() {
         jProgressBar1.setIndeterminate(false);
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Transfering"));
-        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Estimation"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Transfering"));
+        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Estimation"));
         vEstimation.setText(estimateTransferTime());
         vEstimation.setVisible(true);
         tInfo6.setVisible(false);
@@ -523,9 +557,9 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public void setProcessingInfo() {
-        
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Processing"));
-        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Info"));
+
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Processing"));
+        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
         tRemaining.setVisible(false);
         vEstimation.setVisible(false);
         vRemaining.setVisible(false);
@@ -540,9 +574,9 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         tEstimation.setVisible(true);
         vRemaining.setVisible(false);
         vEstimation.setVisible(false);
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Processing"));
-        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Info"));
-        tRemaining.setText(Languager.getTagValue(1,"FeedbackLabel", "HeatingMessage2"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Processing"));
+        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
+        tRemaining.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage2"));
         jProgressBar1.setVisible(true);
         bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
     }
@@ -555,10 +589,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     public void setPrintInfo() {
         jProgressBar1.setVisible(true);
         updatePrintBar(0);
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info3"));
-        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info4"));
-        tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Estimation"));
-        tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Remaining"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
+        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
+        tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Estimation"));
+        tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Remaining"));
         tInfo3.setVisible(true);
         tRemaining.setVisible(true);
         tEstimation.setVisible(true);
@@ -569,7 +603,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     private void setPreparingNewFilamentInfo() {
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Pausing"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Pausing"));
 //        tInfo3.setText(Languager.getTagValue("Print", "Print_Info"));
         tInfo3.setVisible(false);
         tRemaining.setVisible(false);
@@ -580,7 +614,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     private void setPreparingShutdown() {
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Processing"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Processing"));
 //        tInfo3.setText(Languager.getTagValue("Print", "Print_Info"));
         tInfo3.setVisible(false);
         tRemaining.setVisible(false);
@@ -592,16 +626,16 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     private void disablePreparingNewFilamentInfo() {
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info3"));
-        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info4"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
+        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
         tInfo3.setVisible(true);
         tEstimation.setVisible(true);
         tRemaining.setVisible(true);
         vEstimation.setVisible(true);
         vRemaining.setVisible(true);
         jProgressBar1.setVisible(true);
-        bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line11"));
-        
+        bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line11"));
+
     }
 
     public String estimateTransferTime() {
@@ -614,6 +648,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     /**
      * Runs estimator for selected gcode file
+     *
      * @return estimation for given gcode
      */
     public String estimateGCodeFromFile() {
@@ -621,7 +656,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         return PrintEstimator.getEstimatedTime();
     }
 
-    
     private String minutesToHours(int t) {
         int hours = t / 60; //since both are ints, you get an int
         int minute = t % 60;
@@ -651,29 +685,28 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
             if (duration >= 120) {
                 if (min > 1) {
-                    text = (hours + " " + Languager.getTagValue(1,"Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
+                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
                 } else if (min == 1) {
-                    text = (hours + " " + Languager.getTagValue(1,"Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinute"));
+                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
                 } else {
-                    text = (hours + " " + Languager.getTagValue(1,"Print", "PrintHour"));
+                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
                 }
             } else if (duration >= 60 && duration < 120) {
                 if (min > 1) {
-                    text = (hours + " " + Languager.getTagValue(1,"Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
+                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
                 } else if (min == 1) {
-                    text = (hours + " " + Languager.getTagValue(1,"Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinute"));
+                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
                 } else {
-                    text = (hours + " " + Languager.getTagValue(1,"Print", "PrintHour"));
+                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
                 }
             } else if (duration == 1) {
-                text = (" " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinute"));
+                text = (" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
             } else {
-                text = (" " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
+                text = (" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
             }
         } else {
             text = (durT);
         }
-
 
         return text;
 
@@ -681,8 +714,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     public int updateTimeElapsed() {
         int nLines = -1;
-        boolean noEstimationAvailable = false; 
-        
+        boolean noEstimationAvailable = false;
+
         int elapsedTime = (int) (Math.ceil((System.currentTimeMillis() - startTimeMillis2) / 1000));
 
         // Case noEstimation from Estimator
@@ -691,15 +724,15 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         if (remainingTime == -100000) {
             updatePrintEstimation(String.valueOf(remainingTime), false);
             noEstimationAvailable = true;
-        } 
+        }
 
         nLines = pollCurrentLines();
-                    
+
         if (elapsedTime > 60) {
             // Not able to estimate print time
             // 00 - error code
             if (remainingTime == 00) {
-                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Info"));
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Info"));
                 vRemaining.setVisible(false);
             } else {
                 // Subtract one minute to remaining time
@@ -708,8 +741,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 if (remainingTime > 0) {
                     updatePrintEstimation(String.valueOf(remainingTime), false);
                 } else {
-                    if(noEstimationAvailable == false){
-                        tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Info2"));
+                    if (noEstimationAvailable == false) {
+                        tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Info2"));
                         vRemaining.setVisible(false);
                     }
                 }
@@ -810,32 +843,31 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             bPause.setVisible(false);
             bOk.setVisible(true);
             bUnload.setVisible(true);
-            bUnload.setText(Languager.getTagValue(1,"FilamentWizard", "UnloadButton"));
+            bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
 
             jProgressBar1.setValue(100);
             jProgressBar1.setVisible(false);
 
-
             if (duration >= 2 && duration > 60) {
 
-                tInfo2.setText(Languager.getTagValue(1,"Print", "Print_BuildFinished"));
+                tInfo2.setText(Languager.getTagValue(1, "Print", "Print_BuildFinished"));
                 if (duration >= 60 && duration < 120) {
-                    tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Completion") + " " + hours + " "
-                            + Languager.getTagValue(1,"Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
+                    tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Completion") + " " + hours + " "
+                            + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
                 } else {
-                    tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Completion") + " " + hours + " "
-                            + Languager.getTagValue(1,"Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
+                    tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Completion") + " " + hours + " "
+                            + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
                 }
                 bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info5"));
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info5"));
 
             } else {
-                tInfo2.setText(Languager.getTagValue(1,"Print", "Print_BuildFinished"));
-                tEstimation.setText(Languager.getTagValue(1,"Print", "Print_Completion") + " " + minutes + " " + Languager.getTagValue(1,"Print", "PrintMinutes"));
+                tInfo2.setText(Languager.getTagValue(1, "Print", "Print_BuildFinished"));
+                tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Completion") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
                 bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Splash_Info5"));
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info5"));
 
             }
             ProperDefault.put("durationLastPrint", String.valueOf(duration));
@@ -865,7 +897,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     public void startUnload() {
         jProgressBar1.setVisible(false);
         iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
-        tRemaining.setText(Languager.getTagValue(1,"FilamentWizard", "Exchange_Info3"));
+        tRemaining.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3"));
 
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -930,13 +962,13 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
                 machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
-                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloaded1"));
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;
-                bOk.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
+                bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
                 tInfo6.setText("");
-                tInfo2.setText(Languager.getTagValue(1,"Print", "Unload_BuildFinished"));
-                tInfo6.setText(Languager.getTagValue(1,"Print", "Print_Unloaded3"));
+                tInfo2.setText(Languager.getTagValue(1, "Print", "Unload_BuildFinished"));
+                tInfo6.setText(Languager.getTagValue(1, "Print", "Print_Unloaded3"));
                 unloadPressed = false;
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
@@ -948,11 +980,11 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     public void setShutdownStatus() {
         this.shutdownFromDisconnect = true;
     }
-    
+
     public void resumeFromShutdown() {
         final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
         final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-      
+
 //        if (shutdownFromDisconnect) {
         //UI update for machine movements
         jProgressBar1.setVisible(false);
@@ -982,13 +1014,13 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 //                disablePreparingNewFilamentInfo();
                 Base.printPaused = false;
                 machine.resumewatch();
-                bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line11"));
+                bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line11"));
 //                bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bPause.setVisible(false);
-                bShutdown.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line16"));
+                bShutdown.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line16"));
                 bShutdown.setVisible(false);
-                bCancel.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
+                bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
             }
         });
     }
@@ -1004,12 +1036,12 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         p.setVisible(true);
         bShutdown.setVisible(false);
         bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Waiting"));
+        bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Waiting"));
         tInfo3.setVisible(isPaused);
-        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_Waiting2"));
+        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Waiting2"));
     }
-    
+
     /**
      * Set pause elements to be used with Shutdown feature
      */
@@ -1019,19 +1051,18 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         vRemaining.setVisible(false);
         tEstimation.setVisible(false);
         vEstimation.setVisible(false);
-        jProgressBar1.setVisible(false); 
+        jProgressBar1.setVisible(false);
 //        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
         bPause.setVisible(true);
 
         bShutdown.setVisible(false);
-        bShutdown.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
+        bShutdown.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
         bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Waiting"));
+        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Waiting"));
         tInfo3.setVisible(true);
-        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_Waiting2"));
-        
-//        machine.getDriver().dispatchCommand(PAUSE_PRINT);
+        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Waiting2"));
 
+//        machine.getDriver().dispatchCommand(PAUSE_PRINT);
         isShutdown = true;
         Base.printPaused = true;
         machine.stopwatch();
@@ -1060,8 +1091,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     public boolean isPaused() {
         return isPaused;
     }
-    
-    public boolean waitForDecision(){
+
+    public boolean waitForDecision() {
         return userDecision;
     }
 
@@ -1447,10 +1478,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             if (firstUnloadStep) {
                 bOk.setVisible(false);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-07.png")));
-                bUnload.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
+                bUnload.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
                 lastPanel = true;
                 firstUnloadStep = false;
-                tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloaded2"));
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded2"));
                 tInfo6.setVisible(false);
 
             } else {
@@ -1502,8 +1533,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             bOk.setVisible(false);
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
             iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-02.png")));
-            tInfo2.setText(Languager.getTagValue(1,"Print", "Unloading_Title"));
-            tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloading"));
+            tInfo2.setText(Languager.getTagValue(1, "Print", "Unloading_Title"));
+            tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloading"));
 //            jPanel1.setVisible(false);
             jProgressBar1.setVisible(true);
             jProgressBar1.setValue(0);
@@ -1518,7 +1549,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             startUnload();
             return;
         } // no need for else
-
 
         if (printEnded == false) {
             doCancel();
@@ -1537,7 +1567,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     private void bPauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMousePressed
         final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
         final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-        
+
         if (!isPaused) {
             pausedTime = System.currentTimeMillis();
             setPreparingNewFilamentInfo();
@@ -1550,19 +1580,19 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             driver.dispatchCommand("M625", COM.BLOCK);
             //Disable power saving to avoid temperature lowering down
             Base.turnOnPowerSaving(false);
-            
+
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
 
                     pausePos = driver.getActualPosition();
-                    
+
                     //DEBUG
-                    System.out.println("pausePos: "+pausePos);
+                    System.out.println("pausePos: " + pausePos);
 
 //                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                     machine.getDriver().dispatchCommand("G28", COM.BLOCK);
-                    
+
                     String status = driver.dispatchCommand("M625");
 
                     while (!status.contains("S:3")) {
@@ -1577,7 +1607,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                     machine.getDriver().setBusy(false);
                     bShutdown.setVisible(false);
                     bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                    bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
+                    bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
                     setPauseElements();
                 }
             });
@@ -1587,8 +1617,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 //            pausePos = machine.getLastPrintedPoint();
 //            int lastLineNumber = driver.getLastLineNumber();
             bShutdown.setVisible(false);
-            bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
-            tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Resuming"));
+            bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
+            tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Resuming"));
             tInfo3.setVisible(false);
             bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
 
@@ -1600,19 +1630,17 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 //                    driver.dispatchCommand("G92 E", COM.NO_RESPONSE);
 //                    driver.dispatchCommand("G1 F400 E-5", COM.NO_RESPONSE);
 //                    driver.dispatchCommand("G92 E", COM.NO_RESPONSE);
-                    
 //                    driver.dispatchCommand("G1 F6000 E-0.5", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
-                    
                     double colorRatio = FilamentControler.getColorRatio(
                             machine.getModel().getCoilCode(), machine.getModel().getResolution());
-                    
+
                     /**
                      * Signals FW about the color ratio between previous and
                      * actual color
                      */
                     driver.dispatchCommand("M642 W" + colorRatio, COM.NO_RESPONSE);
-                    
+
                     /**
                      * Go to print position
                      */
@@ -1628,7 +1656,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                     String elapsedTime = variables.getElapsedTime().toString();
                     driver.setElapsedTime((Long.valueOf(elapsedTime) - pausedTime));
 
-                    Base.writeLog("Resume from pause: "+status);
+                    Base.writeLog("Resume from pause: " + status);
                     while (!status.contains("S:3")) {
                         try {
                             Thread.sleep(10, 0);
@@ -1636,7 +1664,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                             Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         status += driver.dispatchCommand("M625", COM.BLOCK);
-                        Base.writeLog("Waiting for status clear: "+status);
+                        Base.writeLog("Waiting for status clear: " + status);
                     }
 
                     //Resume printing
@@ -1655,19 +1683,19 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }//GEN-LAST:event_bPauseMousePressed
 
     private void bShutdownMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMouseEntered
-       if(ut.isOnShutdownRecover() == false){
+        if (ut.isOnShutdownRecover() == false) {
             bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-       }
+        }
     }//GEN-LAST:event_bShutdownMouseEntered
 
     private void bShutdownMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMouseExited
-        if(ut.isOnShutdownRecover() == false){
+        if (ut.isOnShutdownRecover() == false) {
             bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         }
     }//GEN-LAST:event_bShutdownMouseExited
 
     private void bShutdownMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMousePressed
-      
+
         if (ut.isOnShutdownRecover() == false) {
             final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
             final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
@@ -1683,7 +1711,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
                         // save
                         driver.dispatchCommand("M36");
-                        
+
                         // Paused Time in which user didn't shutdown machine
                         pausedTime = System.currentTimeMillis() - pausedTime;
                         AutonomousData variables = driver.getPrintSessionsVariables();
@@ -1691,14 +1719,14 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                         driver.setElapsedTime((Long.valueOf(elapsedTime) - pausedTime));
 
                         //feedback
-                        tInfo2.setText(Languager.getTagValue(1,"Print", "Print_Shutdown"));
+                        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Shutdown"));
                         tInfo3.setVisible(isPaused);
-                        tInfo3.setText(Languager.getTagValue(1,"Print", "Print_Waiting3"));
+                        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Waiting3"));
                         isShutdown = true;
                         userDecision = true;
-                        bShutdown.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line12"));
+                        bShutdown.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
                         bPause.setVisible(false);
-                        bCancel.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
+                        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
                     }
                 });
             } else {
@@ -1744,8 +1772,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     private javax.swing.JLabel vRemaining;
     // End of variables declaration//GEN-END:variables
 
-
 }
+
 class UpdateThread4 extends Thread {
 
     private final PrintSplashAutonomous window;
@@ -1785,6 +1813,7 @@ class UpdateThread4 extends Thread {
 
             // Start GCode
             for (String startCode1 : startCode) {
+                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
                 pw.println(startCode1.trim());
             }
 
@@ -1800,7 +1829,7 @@ class UpdateThread4 extends Thread {
 
             br.close();
             pw.close();
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CalibrationPrintTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -1847,14 +1876,14 @@ class UpdateThread4 extends Thread {
 
         //Clears initial gcode
         window.getPrintFile().delete();
-        
+
         //Updates elements while visible
         while (!window.isAtErrorState()) {
             // Enables test of pipes to handle cable disconnection
             driver.setAutonomous(true);
 
             if (!window.isPaused()) {
-                
+
                 // Updates estimation with 1 min periodicity
                 int numbLines = window.updateTimeElapsed();
 
@@ -1913,8 +1942,8 @@ class UpdateThread4 extends Thread {
         return false;
 
     }
-    
-    public boolean isOnShutdownRecover(){
+
+    public boolean isOnShutdownRecover() {
         return this.isOnShutdownRecover;
     }
 
@@ -1948,16 +1977,16 @@ class UpdateThread4 extends Thread {
 
             Base.writeLog("Autonomous print resumed");
             Base.isPrinting = true;
-            
+
             // Machine in shutdown mode
             if (driver.isONShutdown()) {
                 window.setShutdownStatus();
                 //set pause UI elements
                 window.restorePauseElements();
-                
+
                 //Listens for an user option
                 boolean goOn = false;
-                while(goOn == false){
+                while (goOn == false) {
                     try {
                         Thread.sleep(10);
                         goOn = window.waitForDecision();
@@ -1967,7 +1996,7 @@ class UpdateThread4 extends Thread {
                 }
                 //Control var to Shutdown button lock
                 this.isOnShutdownRecover = true;
-                
+
                 /**
                  * Controls temperature for proper print
                  */
@@ -1975,7 +2004,7 @@ class UpdateThread4 extends Thread {
                 Base.getMainWindow().getButtons().blockModelsButton(false);
                 window.setHeatingInfo();
                 window.resetProgressBar();
-                
+
                 while (temperatureAchieved == false) {
                     try {
                         Thread.sleep(10);
@@ -1984,19 +2013,18 @@ class UpdateThread4 extends Thread {
                         Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                
+
                 //resume from shutdown
                 window.resumeFromShutdown();
-                this.isOnShutdownRecover = false;                
-            } 
-            
-            
+                this.isOnShutdownRecover = false;
+            }
+
             try {
                 Thread.sleep(10);
             } catch (InterruptedException ex) {
                 Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             //Parse of the answer
             AutonomousData variables = driver.getPrintSessionsVariables();
             window.resetProgressBar();
@@ -2085,7 +2113,7 @@ class UpdateThread4 extends Thread {
 
             } else {
                 gcode = window.getPrintFile();
-                
+
                 /**
                  * Estimates GCode printing time
                  */
@@ -2105,7 +2133,7 @@ class UpdateThread4 extends Thread {
                 /**
                  * Free JVM
                  */
-                gcodeGenerater.stop();                
+                gcodeGenerater.stop();
             }
             /**
              * GCode generated; set driver to autonomous and transfer it
@@ -2139,18 +2167,17 @@ class UpdateThread4 extends Thread {
              * Start printing from SDCard
              */
             //machine.runCommand(new replicatorg.drivers.commands.StartPrintAutonomous());
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M33",COM.BLOCK));
-            
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M33", COM.BLOCK));
+
             /**
              * GCode transfered so start print
              */
             monitorPrintFromSDCard();
-            
+
             /**
              * Clean temp files created - gcode
              */
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-
 
             if (window.isAtErrorState()) {
                 //Inform user about that an error happened
@@ -2178,7 +2205,6 @@ class UpdateThread4 extends Thread {
                 }
             }
         }
-
 
         this.stop();
     }
@@ -2214,11 +2240,11 @@ class TransferControlThread extends Thread {
 
     @Override
     public void run() {
-        
+
         /**
          * If is not printing from existing gcode file
          */
-        if(Base.isPrintingFromGCode == false ) {
+        if (Base.isPrintingFromGCode == false) {
             Base.writeLog("GCode will be generated ...");
 
             String assumedTime = window.generateGCode();
@@ -2286,6 +2312,6 @@ class TransferControlThread extends Thread {
 
         Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),
                 Base.getMainWindow().getMachine().getModel().getResolution());
-        
+
     }
 }
