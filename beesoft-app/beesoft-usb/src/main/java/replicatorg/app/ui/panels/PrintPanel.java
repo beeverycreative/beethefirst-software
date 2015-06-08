@@ -136,7 +136,7 @@ public class PrintPanel extends BaseDialog {
         medHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         highHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         highPlusHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        
+
         //Density
         quality_low.setFont(GraphicDesignComponents.getSSProRegular("12"));
         quality_medium.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -194,7 +194,6 @@ public class PrintPanel extends BaseDialog {
         } //no need for else
 
         Base.writeLog("Print panel coil code: " + code);
-
 
         if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
             no_Filament = true;
@@ -641,7 +640,7 @@ public class PrintPanel extends BaseDialog {
             estimatePressed = false;
         }
     }
-    
+
     public void showLoadingIconExport(boolean show) {
         loading.setVisible(show);
 
@@ -654,7 +653,7 @@ public class PrintPanel extends BaseDialog {
             bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
             exportPressed = false;
         }
-    }    
+    }
 
     /**
      * Updates all fields to stored setting, on form load.
@@ -1665,7 +1664,7 @@ public class PrintPanel extends BaseDialog {
             ProperDefault.put("maintenance", "1");
             FilamentHeating p = new FilamentHeating();
             p.setVisible(true);
-        } else {    
+        } else {
             // otherwise display the appropriate status message
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -1683,19 +1682,17 @@ public class PrintPanel extends BaseDialog {
 
     private void bExportMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMousePressed
 
-        // if there are any loaded model, do the export
-        if (exportPressed == false && nModels > 0) {                  
-            
-            PrintBed bed = Base.getMainWindow().getBed();
+        // if there are any loaded models, export
+        if (exportPressed == false && nModels > 0) {
+
             JFileChooser saveFile = new JFileChooser();
-            saveFile.setSelectedFile(new File(
-                    bed.getPrintBedFile().getName().split(".bee")[0] 
-                            + System.currentTimeMillis() + ".gcode"));
+            saveFile.setSelectedFile(new File("export-" 
+                    + System.currentTimeMillis() + ".gcode"));
             int rVal = saveFile.showSaveDialog(null);
 
             if (rVal == JFileChooser.APPROVE_OPTION) {
                 exportThread = new GCodeExportThread(this, saveFile.getSelectedFile());
-                
+
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1703,9 +1700,8 @@ public class PrintPanel extends BaseDialog {
                         Base.systemThreads.add(exportThread);
                     }
                 });
-            }             
-        }       
-        else if (nModels == 0) { // otherwise warn the user that there are no models loaded
+            }
+        } else if (nModels == 0) { // otherwise warn the user that there are no models loaded
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -1724,7 +1720,7 @@ public class PrintPanel extends BaseDialog {
     }//GEN-LAST:event_bExportMouseExited
 
     private void bExportMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMouseEntered
-                // don't change the icon if button is disabled due to the absence of loaded models
+        // don't change the icon if button is disabled due to the absence of loaded models
         if (exportPressed == false && nModels > 0) {
             bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_19.png")));
         }
@@ -1857,7 +1853,7 @@ class GCodeExportThread extends Thread {
         //Estimate time and cost
         PrintEstimator.estimateTime(gcode);
         printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
-        
+
         //Writes the file
         InputStream input = null;
         OutputStream output = null;
@@ -1889,7 +1885,7 @@ class GCodeExportThread extends Thread {
             } catch (IOException ex) {
                 Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }    
+        }
     }
 
     @Override
@@ -1901,19 +1897,19 @@ class GCodeExportThread extends Thread {
             } catch (InterruptedException ex) {
                 Logger.getLogger(PrintEstimationThread.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             if (!printPanel.settingsChanged() || nTimes == 0) {
                 printPanel.showLoadingIconExport(true);
 
                 if (Base.getMainWindow().isOkToGoOnSave() == false) {
                     Base.getMainWindow().handleSave(true);
                 }
-                
+
                 runExport();
                 printPanel.updateOldSettings();
                 nTimes++;
                 printPanel.showLoadingIconExport(false);
-                
+
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
                 this.stop();
 
