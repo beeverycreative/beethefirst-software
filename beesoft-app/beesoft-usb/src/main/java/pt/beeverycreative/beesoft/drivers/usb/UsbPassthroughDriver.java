@@ -112,7 +112,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private double transferPercentage = 0;
     private boolean driverError = false;
     private String driverErrorDescription;
-    private boolean stopTranfer = false;
+    private boolean stopTransfer = false;
     private int lastLineNumber = 0;
 
     public enum COM {
@@ -979,7 +979,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void stopTransfer() {
-        stopTranfer = true;
+        stopTransfer = true;
+        while (stopTransfer == true) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     @Override
@@ -1092,13 +1099,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         for (int block = 1; block < totalBlocks; block++) {
 
             //check if the transfer was canceled
-            if (stopTranfer == true) {
+            if (stopTransfer == true) {
                 Base.writeLog("Transfer canceled.");
                 driverErrorDescription = ERROR + ":Transfer canceled.";
-                dispatchCommand("G28");
+                //dispatchCommand("G28");
                 transferMode = false;
                 isAutonomous = false;
-                stopTranfer = false;
+                stopTransfer = false;
                 return driverErrorDescription;
             }
 
@@ -1152,13 +1159,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
         //check if the transfer was canceled
-        if (stopTranfer == true) {
+        if (stopTransfer == true) {
             Base.writeLog("Transfer canceled.");
             driverErrorDescription = ERROR + ":Transfer canceled.";
-            dispatchCommand("G28");
+            //dispatchCommand("G28");
             transferMode = false;
             isAutonomous = false;
-            stopTranfer = false;
+            stopTransfer = false;
             return driverErrorDescription;
         }
 
@@ -1213,9 +1220,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
         transferMode = false;
 
         // WORKAROUND FOR FIRMWARE BUG
+        dispatchCommand("M506", COM.BLOCK);
         dispatchCommand("G28 Z", COM.BLOCK);
         dispatchCommand("G28 X Y", COM.BLOCK);
-        dispatchCommand("M506", COM.BLOCK);
 
         return RESPONSE_OK;
     }
@@ -1261,13 +1268,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         for (int block = 1; block < totalBlocks; block++) {
 
             //check if the transfer was canceled
-            if (stopTranfer == true) {
+            if (stopTransfer == true) {
                 Base.writeLog("Transfer canceled.");
                 driverErrorDescription = ERROR + ":Transfer canceled.";
-                dispatchCommand("G28");
+                //dispatchCommand("G28");
                 transferMode = false;
                 isAutonomous = false;
-                stopTranfer = false;
+                stopTransfer = false;
                 return driverErrorDescription;
             }
 
@@ -1320,13 +1327,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
         //check if the transfer was canceled
-        if (stopTranfer == true) {
+        if (stopTransfer == true) {
             Base.writeLog("Transfer canceled.");
             driverErrorDescription = ERROR + ":Transfer canceled.";
-            dispatchCommand("G28");
+            //dispatchCommand("G28");
             transferMode = false;
             isAutonomous = false;
-            stopTranfer = false;
+            stopTransfer = false;
             return driverErrorDescription;
         }
 
@@ -1512,7 +1519,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             try {
 
                 out += (response = readResponse()) + "\n";
-//                System.out.println("Transfer Response: " + out);
 
                 if (sent == iBlock.length && out.toLowerCase().contains(RESPONSE_TRANSFER_ON_GOING)) {
                     out += response + "\n";
