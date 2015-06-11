@@ -10,10 +10,8 @@ import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -258,64 +256,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         dispose();
         Base.bringAllWindowsToFront();
         Base.getMainWindow().setEnabled(true);
-
-    }
-
-    /**
-     * Cancel ongoing operation and idles BEESOFT to a machine idle state
-     */
-    private void doCancel2() {
-        setError(true);
-        dispose();
-        Base.bringAllWindowsToFront();
-        Base.getMainWindow().setEnabled(true);
-        Base.isPrinting = false;
-        Base.printPaused = false;
-        Base.isPrintingFromGCode = false;
-        Base.gcodeToSave = false;
-        userDecision = true;
-        shutdownFromDisconnect = false;
-        Base.getMainWindow().getButtons().updatePressedStateButton("print");
-        enableSleep();          // what is this?
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        machine.getModel().setMachineBusy(false);
-        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/3DModels/");
-        Base.turnOnPowerSaving(true);
-
-        if (machine.getDriver().isTransferMode()) {
-            machine.getDriver().stopTransfer();
-            while (machine.getDriver().isAutonomous()) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
-        } else {
-            Base.getMainWindow().handleStop();
-
-            Point5d b = machine.getTablePoints("safe");
-            double acLow = machine.getAcceleration("acLow");
-            double acHigh = machine.getAcceleration("acHigh");
-            double spHigh = machine.getFeedrate("spHigh");
-
-            // Sleep before home after M112
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-
-            gcodeGenerator.stop();
-            ut.stop();
-
-            if (machine.getDriver().isAutonomous() == true) {
-                machine.getDriver().updateCoilCode();
-            }
-        }
 
     }
 
@@ -1797,47 +1737,6 @@ class UpdateThread4 extends Thread {
         this.gcodeGenerater = gcodeGen;
     }
 
-    private void appendSpecialGCode() {
-        PrintWriter pw;
-        File gcodeCura = window.getPrintFile();
-        String gcodeName = gcodeCura.getName().substring(0, gcodeCura.getName().lastIndexOf(".")).concat("STEDCD");
-        gcode = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + gcodeName + ".gcode");
-        String[] startCode = Languager.getGCodeArray(4, "operationCode", "startCode");
-        String[] endCode = Languager.getGCodeArray(4, "operationCode", "endCode");
-        BufferedReader br;
-        String line;
-
-        try {
-            pw = new PrintWriter(new FileOutputStream(gcode));
-            br = new BufferedReader(new FileReader(gcodeCura));
-
-            // Start GCode
-            for (String startCode1 : startCode) {
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
-                pw.println(startCode1.trim());
-            }
-
-            // GCode
-            while ((line = br.readLine()) != null) {
-                pw.println(line);
-            }
-
-            // End GCode
-            for (String endCode1 : endCode) {
-                pw.println(endCode1.trim());
-            }
-
-            br.close();
-            pw.close();
-
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CalibrationPrintTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
     private void transferGCode() {
         try {
 
@@ -1873,9 +1772,6 @@ class UpdateThread4 extends Thread {
 
         window.updatePrintEstimation(estimatedTime, true);
         window.updatePrintEstimation(estimatedTime, false);
-
-        //Clears initial gcode
-        window.getPrintFile().delete();
 
         //Updates elements while visible
         while (!window.isAtErrorState()) {
@@ -2106,11 +2002,7 @@ class UpdateThread4 extends Thread {
                  */
                 gcodeGenerater.stop();
 
-                /**
-                 * Append start and end GCode generated one
-                 */
-                appendSpecialGCode();
-
+                gcode = window.getPrintFile();
             } else {
                 gcode = window.getPrintFile();
 

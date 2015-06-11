@@ -7,6 +7,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -72,7 +77,9 @@ public class Printer {
         generator.readINI();
         options = parseParameters(params);
 
+        appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
+        replaceLineInFile(gcode.getPath(), ";M31 here");
 
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
@@ -90,6 +97,55 @@ public class Printer {
             }
         }
         return PrintEstimator.getEstimatedTime();
+    }
+    
+    private void replaceLineInFile(String pathString, String textToReplace) {
+        Path path;
+        Charset charset;
+        String content, m31String;
+        
+        path = Paths.get(pathString);
+        charset = StandardCharsets.UTF_8;
+        m31String = "M31 A" + PrintEstimator.getEstimatedTime() + " L" + getGCodeNLines();
+        
+        try {
+            content = new String(Files.readAllBytes(path), charset);
+            content = content.replaceAll(textToReplace, m31String);
+            Files.write(path, content.getBytes(charset));
+        } catch (IOException ex) {
+            Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void appendStartAndEndGCode() {
+        String[] startCode, endCode;
+        StringBuilder codeStringBuilder;
+        
+        startCode = Languager.getGCodeArray(4, "operationCode", "startCode");
+        endCode = Languager.getGCodeArray(4, "operationCode", "endCode");
+        codeStringBuilder = new StringBuilder();
+        
+        codeStringBuilder.append(";startGCode");
+        codeStringBuilder.append(System.lineSeparator());
+        for(String code : startCode) {
+            codeStringBuilder.append(code.trim());
+            codeStringBuilder.append(System.lineSeparator());
+        }
+        codeStringBuilder.append(";M31 here");
+        codeStringBuilder.append(System.lineSeparator());
+        
+        options.add(new CuraGenerator.CuraEngineOption("startCode", codeStringBuilder.toString()));
+        
+        codeStringBuilder = new StringBuilder();
+        
+        codeStringBuilder.append(";endGCode");
+        codeStringBuilder.append(System.lineSeparator());
+        for(String code : endCode) {
+            codeStringBuilder.append(code.trim());
+            codeStringBuilder.append(System.lineSeparator());
+        }
+        
+        options.add(new CuraGenerator.CuraEngineOption("endCode", codeStringBuilder.toString()));
     }
 
     /**

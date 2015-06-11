@@ -222,7 +222,7 @@ public class CuraEngineConfigurator {
     public int readIni(File curaIniFile) {
         String line = null;
         int error = 0;
-
+        
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReader = new FileReader(curaIniFile);

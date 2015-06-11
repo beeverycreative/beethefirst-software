@@ -1,10 +1,8 @@
 package pt.beeverycreative.beesoft.drivers.usb;
 
-import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
@@ -33,7 +31,6 @@ import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.VersionException;
-import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -1077,17 +1074,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return driverErrorDescription;
         } else {
             Base.writeLog("SD Card file created with success");
-        }
-
-        //Set print sessions variables
-        if (setVariables(estimatedTime, nLines).contains(ERROR)) {
-            driverError = true;
-            driverErrorDescription = ERROR + ":setVariables failed";
-            transferMode = false;
-
-            return driverErrorDescription;
-        } else {
-            Base.writeLog("SD Card variables set with success");
         }
 
         //Stores file in byte array

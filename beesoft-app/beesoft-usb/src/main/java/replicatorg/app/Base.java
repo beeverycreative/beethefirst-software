@@ -786,9 +786,11 @@ public class Base {
      * @param dirPath Path to directory containing such files
      */
     static public void cleanDirectoryTempFiles(String dirPath) {
+        boolean isBeesoftAlpha = Base.VERSION_BEESOFT.contains("alpha");
+        
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl")) { //|| (file.getName().contains(".gcode") && gcodeToSave == false)
+            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && isBeesoftAlpha == false)) {
                 file.delete();
             }
         }

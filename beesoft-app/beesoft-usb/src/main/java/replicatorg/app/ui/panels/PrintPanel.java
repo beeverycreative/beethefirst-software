@@ -7,12 +7,12 @@ import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -33,7 +33,6 @@ import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.util.ExtensionFilter;
-import replicatorg.model.PrintBed;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -1855,13 +1854,13 @@ class GCodeExportThread extends Thread {
         printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
 
         //Writes the file
-        InputStream input = null;
-        OutputStream output = null;
+        BufferedInputStream input = null;
+        BufferedOutputStream output = null;
 
         try {
 
-            input = new FileInputStream(gcode);
-            output = new FileOutputStream(this.saveFile);
+            input = new BufferedInputStream(new FileInputStream(gcode));
+            output = new BufferedOutputStream(new FileOutputStream(this.saveFile));
 
             byte[] buf = new byte[1024];
             int bytesRead;
