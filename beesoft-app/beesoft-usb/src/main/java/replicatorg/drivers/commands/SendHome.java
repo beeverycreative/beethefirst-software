@@ -40,26 +40,20 @@ public class SendHome implements DriverCommand {
     @Override
     public void run(Driver driver) throws RetryException, StopException {
         // not sure if more orientations are possible, add as convenient
-        switch (orientation) {
-            case "X":
-                driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
-                break;
-                
-            case "Y":
-                driver.dispatchCommand("G28 Y", COM.NO_RESPONSE);
-                break;
-                
-            case "Z":
-                driver.dispatchCommand("G28 Z", COM.NO_RESPONSE);
-                break;
-                
-            case "XY":
-                driver.dispatchCommand("G28 XY", COM.NO_RESPONSE);
-                break;
-                
-            default:
-                driver.dispatchCommand("G28", COM.NO_RESPONSE);
-                break;
+        if (orientation.equals("X")) {            
+            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
+        }
+        else if (orientation.equals("Y")) {                               
+            driver.dispatchCommand("G28 Y", COM.NO_RESPONSE);                
+        }
+        else if (orientation.equals("Z")) {                               
+            driver.dispatchCommand("G28 Z", COM.NO_RESPONSE);                
+        }
+        else if (orientation.equals("XY")) {                               
+            driver.dispatchCommand("G28 XY", COM.NO_RESPONSE);                
+        }
+        else {
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);              
         }
     }
 

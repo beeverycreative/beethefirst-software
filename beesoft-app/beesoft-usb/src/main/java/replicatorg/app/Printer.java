@@ -1,17 +1,20 @@
 package replicatorg.app;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -100,20 +103,40 @@ public class Printer {
     }
     
     private void replaceLineInFile(String pathString, String textToReplace) {
-        Path path;
-        Charset charset;
-        String content, m31String;
-        
-        path = Paths.get(pathString);
-        charset = StandardCharsets.UTF_8;
+                
+        String m31String;        
+        File fileToRead = new File(pathString);
+        File fileToWrite = new File(pathString + "_temp");
+
         m31String = "M31 A" + PrintEstimator.getEstimatedTime() + " L" + getGCodeNLines();
         
         try {
-            content = new String(Files.readAllBytes(path), charset);
-            content = content.replaceAll(textToReplace, m31String);
-            Files.write(path, content.getBytes(charset));
-        } catch (IOException ex) {
-            Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, ex);
+            Reader reader = new InputStreamReader(
+                        new FileInputStream(fileToRead), "UTF-8");
+            BufferedReader fin = new BufferedReader(reader);
+            Writer writer = new OutputStreamWriter(
+                       new FileOutputStream(fileToWrite), "UTF-8");
+            BufferedWriter fout = new BufferedWriter(writer);
+            String s;
+            while ( (s=fin.readLine()) != null) {
+                String replaced = s.replaceAll(textToReplace, m31String);                
+                fout.write(replaced);
+                fout.newLine();
+            }
+            
+            //Remember to call close. 
+            //calling close on a BufferedReader/BufferedWriter 
+            // will automatically call close on its underlying stream 
+            fin.close();
+            fout.close();
+            
+            // Moves the new temp file to the original one
+            if (fileToRead.delete()) {
+                fileToWrite.renameTo(new File(pathString));
+            }
+
+        } catch (IOException e) {
+            Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -126,23 +149,23 @@ public class Printer {
         codeStringBuilder = new StringBuilder();
         
         codeStringBuilder.append(";startGCode");
-        codeStringBuilder.append(System.lineSeparator());
+        codeStringBuilder.append(System.getProperty("line.separator"));
         for(String code : startCode) {
             codeStringBuilder.append(code.trim());
-            codeStringBuilder.append(System.lineSeparator());
+            codeStringBuilder.append(System.getProperty("line.separator"));
         }
         codeStringBuilder.append(";M31 here");
-        codeStringBuilder.append(System.lineSeparator());
+        codeStringBuilder.append(System.getProperty("line.separator"));
         
         options.add(new CuraGenerator.CuraEngineOption("startCode", codeStringBuilder.toString()));
         
         codeStringBuilder = new StringBuilder();
         
         codeStringBuilder.append(";endGCode");
-        codeStringBuilder.append(System.lineSeparator());
+        codeStringBuilder.append(System.getProperty("line.separator"));
         for(String code : endCode) {
             codeStringBuilder.append(code.trim());
-            codeStringBuilder.append(System.lineSeparator());
+            codeStringBuilder.append(System.getProperty("line.separator"));
         }
         
         options.add(new CuraGenerator.CuraEngineOption("endCode", codeStringBuilder.toString()));

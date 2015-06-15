@@ -156,7 +156,10 @@ public class Base {
             if (System.getProperty("mrj.version") != null) { // running on a
                 // mac
                 platform = (platformName.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
+            } else {
+                platform =  Platform.MACOSX;
             }
+            
 
         } else {
             String osname = System.getProperty("os.name");
