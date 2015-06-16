@@ -210,7 +210,7 @@ public class Base {
                     ? configProperties.getBuildProperty("application.version") + "-alpha-" + configProperties.getBuildProperty("build.number")
                     : configProperties.getBuildProperty("release.type").equals("")
                             ? configProperties.getBuildProperty("application.version")
-                            : configProperties.getBuildProperty("application.version") + "-" + configProperties.getBuildProperty("release.type");
+                            : configProperties.getBuildProperty("application.version");
 
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v" + configProperties.getAppProperty("bootloader.version");

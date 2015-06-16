@@ -30,8 +30,6 @@ public class Maintenance extends BaseDialog {
     private boolean moving;
     private final ControlStatus ctrlStatus;
     private boolean isConnected = true;
-    private final MachineInterface machine;
-
 
     public Maintenance() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -43,9 +41,6 @@ public class Maintenance extends BaseDialog {
         enableDrag();
         disableMessageDisplay();
         evaluateInitialConditions();
-        
-        machine = Base.getMachineLoader().getMachineInterface();
-                
         Base.maintenanceOpened = true;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
@@ -65,7 +60,6 @@ public class Maintenance extends BaseDialog {
         lChangeFilament_warn.setFont(GraphicDesignComponents.getSSProRegular("10"));
         lCalibration_warn.setFont(GraphicDesignComponents.getSSProRegular("10"));
         bCalibration.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bCalibrationTest.setFont(GraphicDesignComponents.getSSProRegular("12"));
         lCalibration_desc.setFont(GraphicDesignComponents.getSSProLight("12"));
         lCalibration.setFont(GraphicDesignComponents.getSSProBold("14"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
@@ -114,7 +108,6 @@ public class Maintenance extends BaseDialog {
         bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
         jLabel18.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
 
-        bCalibrationTest.setText(Languager.getTagValue(1, "CalibrationWizard", "Test_button"));
     }
 
     private int gramsCalculator(double meters) {
@@ -224,16 +217,15 @@ public class Maintenance extends BaseDialog {
         jLabel10 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         pCalibration = new javax.swing.JPanel();
+        lCalibration_warn = new javax.swing.JLabel();
         bCalibration = new javax.swing.JLabel();
         lCalibration_desc = new javax.swing.JLabel();
         lCalibration = new javax.swing.JLabel();
-        bCalibrationTest = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         pExtruderMaintenance = new javax.swing.JPanel();
         bExtruderMaintenance = new javax.swing.JLabel();
         lExtruderMaintenanceDesc = new javax.swing.JLabel();
         lExtruderMaintenance = new javax.swing.JLabel();
-        lCalibration_warn = new javax.swing.JLabel();
         pNozzleSwitch = new javax.swing.JPanel();
         bNozzleSwitch = new javax.swing.JLabel();
         lNozzleSwitchDesc = new javax.swing.JLabel();
@@ -368,6 +360,8 @@ public class Maintenance extends BaseDialog {
 
         pCalibration.setBackground(new java.awt.Color(248, 248, 248));
 
+        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
+
         bCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bCalibration.setText("Calibrar agora");
         bCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -387,21 +381,6 @@ public class Maintenance extends BaseDialog {
 
         lCalibration.setText("Calibrar");
 
-        bCalibrationTest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
-        bCalibrationTest.setText("Teste de Calibracao");
-        bCalibrationTest.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bCalibrationTest.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCalibrationTestMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bCalibrationTestMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCalibrationTestMouseEntered(evt);
-            }
-        });
-
         javax.swing.GroupLayout pCalibrationLayout = new javax.swing.GroupLayout(pCalibration);
         pCalibration.setLayout(pCalibrationLayout);
         pCalibrationLayout.setHorizontalGroup(
@@ -415,8 +394,8 @@ public class Maintenance extends BaseDialog {
                             .addComponent(lCalibration)
                             .addGroup(pCalibrationLayout.createSequentialGroup()
                                 .addComponent(bCalibration)
-                                .addGap(74, 74, 74)
-                                .addComponent(bCalibrationTest)))
+                                .addGap(10, 10, 10)
+                                .addComponent(lCalibration_warn)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -430,7 +409,7 @@ public class Maintenance extends BaseDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bCalibration)
-                    .addComponent(bCalibrationTest))
+                    .addComponent(lCalibration_warn))
                 .addGap(0, 0, 0))
         );
 
@@ -460,8 +439,6 @@ public class Maintenance extends BaseDialog {
 
         lExtruderMaintenance.setText("Limpar bico de extrusao");
 
-        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
-
         javax.swing.GroupLayout pExtruderMaintenanceLayout = new javax.swing.GroupLayout(pExtruderMaintenance);
         pExtruderMaintenance.setLayout(pExtruderMaintenanceLayout);
         pExtruderMaintenanceLayout.setHorizontalGroup(
@@ -474,16 +451,13 @@ public class Maintenance extends BaseDialog {
                         .addGap(575, 575, 575))
                     .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
-                        .addGroup(pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lExtruderMaintenance)
-                            .addComponent(lCalibration_warn))
+                        .addComponent(lExtruderMaintenance)
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         pExtruderMaintenanceLayout.setVerticalGroup(
             pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
-                .addComponent(lCalibration_warn)
-                .addGap(22, 22, 22)
+                .addContainerGap()
                 .addComponent(lExtruderMaintenance)
                 .addGap(2, 2, 2)
                 .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -778,32 +752,8 @@ public class Maintenance extends BaseDialog {
         }
     }//GEN-LAST:event_bChangeFilamentMouseEntered
 
-    private void bCalibrationTestMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationTestMousePressed
-        //        if (!moving) {
-        bCalibrationTest.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_16.png")));
-        CalibrationPrintTest calPT = new CalibrationPrintTest();
-        dispose();              // moved here because setVisible blocks for some reason
-
-        calPT.setVisible(true);
-        //turn off blower before heating
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
-//        }
-    }//GEN-LAST:event_bCalibrationTestMousePressed
-
-    private void bCalibrationTestMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationTestMouseExited
-        bCalibrationTest.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-    }//GEN-LAST:event_bCalibrationTestMouseExited
-
-    private void bCalibrationTestMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationTestMouseEntered
-        bCalibrationTest.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
-    }//GEN-LAST:event_bCalibrationTestMouseEntered
-
-
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCalibration;
-    private javax.swing.JLabel bCalibrationTest;
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bChangeFilament;
     private javax.swing.JLabel bExtruderMaintenance;

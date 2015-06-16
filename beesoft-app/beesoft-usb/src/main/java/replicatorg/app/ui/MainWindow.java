@@ -695,6 +695,33 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
+        item = newJMenuItem("Export G-code file", 'E');
+        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        item.setText(Languager.getTagValue(
+                1, "ApplicationMenus", "GCode_Export"
+        ));
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MachineInterface machine;
+                MainWindow editor; 
+                
+                machine = Base.getMainWindow().getMachineInterface();
+                editor = Base.getMainWindow();
+
+                if (machine.getModel().getMachineBusy()) {
+                    editor.showFeedBackMessage("moving");
+                } else {//&& Base.isPrinting == false 
+                    if (editor.validatePrintConditions()
+                            || Boolean.valueOf(ProperDefault.get("localPrint")))
+                    {
+                        editor.handlePrintPanel();
+                    }
+                }
+            }
+        });
+        menu.add(item);
+
         menu.addSeparator();
 
         saveMenuItem = newJMenuItem("Save Scene", 'S');
@@ -1663,7 +1690,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         if (getMachineInterface().getDriver().isONShutdown() == true) {
             Base.getMachineLoader().getMachineInterface().stopwatch();
         }
-        
+
         doStop();
         Base.writeLog("Print stopped ...");
         setEditorBusy(false);
