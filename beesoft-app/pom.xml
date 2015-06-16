@@ -66,5 +66,5 @@
             <id>mednet-repo</id>
             <url>http://server.mednet.lt/maven2</url>
         </repository> 
-    </repositories>  
+    </repositories>
 </project>
