@@ -684,7 +684,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
         try {
             zVal = sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
-
+            //Protects against 0 scale
+            if (zVal <= 0.0) {
+                return;
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
@@ -736,7 +739,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double yVal;
         try {
             yVal = sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
-
+            //Protects against 0 scale
+            if (yVal <= 0.0) {
+                return;
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return;
@@ -786,9 +792,15 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void iFieldXKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_iFieldXKeyReleased
 
+        
         double xVal;
         try {
             xVal = sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
+            
+            //Protects against 0 scale
+            if (xVal <= 0.0) {
+                return;
+            }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
