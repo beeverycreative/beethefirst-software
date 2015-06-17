@@ -82,8 +82,8 @@ public class WelcomeSplash extends javax.swing.JFrame {
         Graphics g = bimage.getGraphics();
         g.setFont(GraphicDesignComponents.getSSProLight("18"));
         g.setColor(Color.BLACK);
-        int stringPixelSize = (img.getGraphics().getFontMetrics()).stringWidth(Base.VERSION_BEESOFT);
-        g.drawString(Base.VERSION_BEESOFT, bimage.getWidth() - 20 - stringPixelSize, bimage.getHeight() - 10);
+        int stringPixelSize = (img.getGraphics().getFontMetrics()).stringWidth("Version: " + Base.VERSION_BEESOFT);
+        g.drawString("Version: " + Base.VERSION_BEESOFT, bimage.getWidth() - 40 - stringPixelSize, bimage.getHeight() - 10);
         g.dispose();
         
         
