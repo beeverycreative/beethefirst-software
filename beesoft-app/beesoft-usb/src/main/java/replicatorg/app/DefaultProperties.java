@@ -95,6 +95,9 @@ public class DefaultProperties {
         defaultHash.put("editor.xmax", String.valueOf("185"));
         defaultHash.put("editor.ymax", String.valueOf("135"));
         defaultHash.put("editor.zmax", String.valueOf("125"));
+        
+        defaultHash.put("languagesCodes", "EN,PT,ES");
+        defaultHash.put("languagesList", "English,Português,Español");
     }
 
     /**

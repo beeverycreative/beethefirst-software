@@ -24,7 +24,9 @@ import replicatorg.app.ui.GraphicDesignComponents;
 public class PreferencesPanel extends BaseDialog {
 
     private boolean lockPressed, autonomyPressed;
-
+    private final String[] languagesLabels = ProperDefault.get("languagesList").split(",");
+    private final String[] languagesCodes = ProperDefault.get("languagesCodes").split(",");
+    
     public PreferencesPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
@@ -82,33 +84,21 @@ public class PreferencesPanel extends BaseDialog {
         jLabel11.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         jLabel12.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         jLabel4.setText(Languager.getTagValue(1, "Preferences", "Language"));
-        
-        String[] languages = {"English",
-            "German"
-        };
-        DefaultComboBoxModel model = new DefaultComboBoxModel( languages );
+                                        
+        DefaultComboBoxModel model = new DefaultComboBoxModel( languagesLabels );
         jComboBox1.setModel( model );
         jComboBox1.setSelectedIndex(parseLanguage());
 
     }
 
     private int parseLanguage() {
+        //Get selected language from configuration
         String lang = ProperDefault.get("language");
 
-        if (lang.equalsIgnoreCase("EN")) {
-            return 0;
-        }
-        if (lang.equalsIgnoreCase("FR")) {
-            return 1;
-        }
-        if (lang.equalsIgnoreCase("DE")) {
-            return 1;
-        }
-        if (lang.equalsIgnoreCase("PT")) {
-            return 1;
-        }
-        if (lang.equalsIgnoreCase("ES")) {
-            return 1;
+        for (int i = 0; i < languagesCodes.length; i++) {
+            if (lang.equalsIgnoreCase(languagesCodes[i].trim())) {
+                return i;
+            }
         }
 
         return 0;
@@ -117,17 +107,12 @@ public class PreferencesPanel extends BaseDialog {
     private String codifyLanguage() {
         String lang = String.valueOf(jComboBox1.getSelectedItem());
         
-        if(lang.equalsIgnoreCase("English"))
-            return "EN";
-        if(lang.equalsIgnoreCase("French"))
-            return "FR";
-        if(lang.equalsIgnoreCase("German"))
-            return "DE";
-        if(lang.equalsIgnoreCase("Portuguese"))
-            return "PT";
-        if(lang.equalsIgnoreCase("Spanish"))
-            return "ES";      
-        
+        for (int i = 0; i < languagesCodes.length; i++) {
+            if (lang.equalsIgnoreCase(languagesLabels[i].trim())) {
+                return languagesCodes[i];
+            }
+        }             
+        // default language
         return "EN";
     }
 
