@@ -636,11 +636,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-        
         //
         // File menu Work Area section
         //
-        
         item = newJMenuItem("Open Scene...", 'O', false);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Open"));
@@ -676,7 +674,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
 
         menu.add(item);
-        
+
         saveMenuItem = newJMenuItem("Save Scene", 'S');
         saveMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
         saveMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save"));
@@ -702,14 +700,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(saveAsMenuItem);
-      
+
         menu.addSeparator();
-        
-        
+
         //
         // File menu Import and Export section
         //
-        
         item = newJMenuItem("Import Model ", 'I');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
@@ -730,8 +726,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             @Override
             public void actionPerformed(ActionEvent e) {
                 MachineInterface machine;
-                MainWindow editor; 
-                
+                MainWindow editor;
+
                 machine = Base.getMainWindow().getMachineInterface();
                 editor = Base.getMainWindow();
 
@@ -739,15 +735,14 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     editor.showFeedBackMessage("moving");
                 } else {//&& Base.isPrinting == false 
                     if (editor.validatePrintConditions()
-                            || Boolean.valueOf(ProperDefault.get("localPrint")))
-                    {
+                            || Boolean.valueOf(ProperDefault.get("localPrint"))) {
                         editor.handlePrintPanel();
                     }
                 }
             }
         });
         menu.add(item);
-        
+
         item = newJMenuItem("Print G-code file", 'G');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "GCode_Import"));
@@ -759,11 +754,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-        
         //
         // File menu Preferences section
         //
-        
         menu.addSeparator();
 
         item = newJMenuItem("Settings...", 'P', true);
@@ -778,14 +771,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
-        
-        
+
 //
         // File menu Quit section
         //
-
         menu.addSeparator();
-        
+
         item = newJMenuItem("Quit", 'Q', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Quit"));
@@ -1010,11 +1001,13 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     }
 
     protected JMenu buildPrinterMenu() {
+        boolean enableCP;
         JMenuItem item;
         JMenu menu = new JMenu("Printer");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
         menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer"));
+        enableCP = Boolean.parseBoolean(Base.readConfig("controlpanel.enable"));
 
         item = newJMenuItem("Maintenance", 'M');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -1034,23 +1027,25 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-        item = newJMenuItem("Control Panel", 'K');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (machineLoader.isConnected()) {
-                    if (Base.isPrinting == false) {
-                        ControlPanel cp = new ControlPanel();
-                        cp.setVisible(true);
+        if (enableCP == true) {
+            item = newJMenuItem("Control Panel", 'K');
+            item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+            item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
+            item.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (machineLoader.isConnected()) {
+                        if (Base.isPrinting == false) {
+                            ControlPanel cp = new ControlPanel();
+                            cp.setVisible(true);
+                        }
+                    } else {
+                        showFeedBackMessage("btfDisconnect");
                     }
-                } else {
-                    showFeedBackMessage("btfDisconnect");
                 }
-            }
-        });
-        menu.add(item);
+            });
+            menu.add(item);
+        }
 
         menu.addSeparator();
 
