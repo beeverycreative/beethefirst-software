@@ -82,6 +82,8 @@ import com.apple.mrj.MRJApplicationUtils;
 import com.apple.mrj.MRJOpenDocumentHandler;
 import java.awt.Window;
 import java.io.FileNotFoundException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -628,7 +630,6 @@ public class Base {
     public static void writecomLog(long timeStamp, String message) {
 
         File f = new File(getAppDataDirectory() + "/comLog.txt");
-        boolean canCreateFile = f.canRead() && f.canWrite();
 
         FileWriter fw = null;
         try {
@@ -659,38 +660,33 @@ public class Base {
 
     private static Properties openFileProperties() {
 
-        File f = new File(getAppDataDirectory().toString().concat("/config.properties"));
-        Properties nw = new Properties();
+        String filePath = getAppDataDirectory().toString().concat("/config.properties");
+        File f = new File(filePath);
+        Properties props = new Properties();
+        BufferedReader fis = null;
+        if (f.exists()) {
 
-        if (!(f.exists())) {
             /**
-             * Does this to avoid FileNotFoundException Therefore, file exists
-             * and writes a empty string to validate existence
+             * FileInputStream for Properties usage
              */
-            PrintWriter w;
             try {
-                w = new PrintWriter(f.getAbsolutePath());
-                w.print("");
-                w.close();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            FileInputStream fileInput;
-            try {
-                fileInput = new FileInputStream(f);
-                nw.load(fileInput);
-                fileInput.close();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),"UTF-8"));
+                
+                props.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+                            
+            } finally {
+                try {
+                    if (fis != null)
+                        fis.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }           
         }
-        // no need for else. File already exists and loads its properties
 
-        return nw;
+        return props;
     }
 
     /**
@@ -698,29 +694,12 @@ public class Base {
      */
     public static void writeConfig() {
 
-        File f = new File(getAppDataDirectory().toString().concat("/config.properties"));
-
-        PrintWriter w = null;
-        try {
-            w = new PrintWriter(f.getAbsolutePath());
-            w.print("");
-            w.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        /**
-         * FileOutputStream for Properties usage
-         */
-        try {
-            writer = new FileOutputStream(f.getAbsolutePath());
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        String filePath = getAppDataDirectory().toString().concat("/config.properties");
 
         try {
-            propertiesFile.store(writer, null);
-            writer.flush();
+            propertiesFile.store(new OutputStreamWriter(
+                    new FileOutputStream(filePath), "UTF-8"), null);
+            
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -747,27 +726,34 @@ public class Base {
         }
 
         return propertiesFile.getProperty(param);
+
     }
 
     public static void loadProperties() {
 
-        File f = new File(getAppDataDirectory().toString().concat("/config.properties"));
-
+        String filePath = getAppDataDirectory().toString().concat("/config.properties");
+        File f = new File(filePath);
+        BufferedReader fis = null;
         if (f.exists()) {
 
             /**
              * FileInputStream for Properties usage
              */
             try {
-                read = new FileInputStream(f.getAbsolutePath());
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                propertiesFile.load(read);
+                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),"UTF-8"));
+                
+                propertiesFile.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                            
+            } finally {
+                try {
+                    if (fis != null)
+                        fis.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }           
         }
     }
 

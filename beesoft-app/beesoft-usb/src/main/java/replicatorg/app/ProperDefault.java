@@ -30,6 +30,8 @@ public class ProperDefault {
     
     /**
      * Gets property value 
+     * @param key
+     * 
      * @return value stored in properties or the default one in DefaultProperties
      */
     public static String get(String key)

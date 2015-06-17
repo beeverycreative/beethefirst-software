@@ -399,16 +399,16 @@ public class PrintPanel extends BaseDialog {
             if (button.isSelected()) {
                 String labelText = button.getText();
 
-                if (labelText.contains("LOW")) {
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
                     return "LOW";
                 }
-                if (labelText.contains("Medium")) {
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
                     return "MEDIUM";
                 }
-                if (labelText.contains("High+")) {
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
                     return "SHIGH";
                 }
-                if (labelText.contains("High")) {
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
                     return "HIGH";
                 }
             }
@@ -697,16 +697,16 @@ public class PrintPanel extends BaseDialog {
 
         densitySlider.setValue(density);
 
-        if (lastUsedResolution.contains("LOW")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
             bLowRes.setSelected(true);
         }
-        if (lastUsedResolution.contains("MEDIUM")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
             bMediumRes.setSelected(true);
         }
-        if (lastUsedResolution.contains("HIGH")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
             bHighRes.setSelected(true);
         }
-        if (lastUsedResolution.contains("SHIGH")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
             bHighPlusRes.setSelected(true);
         }
 
