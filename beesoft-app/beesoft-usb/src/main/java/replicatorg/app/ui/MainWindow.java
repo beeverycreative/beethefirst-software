@@ -636,6 +636,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
+        
+        //
+        // File menu Work Area section
+        //
+        
         item = newJMenuItem("Open Scene...", 'O', false);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Open"));
@@ -671,8 +676,40 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
 
         menu.add(item);
-        menu.addSeparator();
+        
+        saveMenuItem = newJMenuItem("Save Scene", 'S');
+        saveMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        saveMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save"));
+        saveMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    handleSave(false);
+                }
+            }
+        });
+        menu.add(saveMenuItem);
 
+        saveAsMenuItem = newJMenuItem("Save As...", 'S', true);
+        saveAsMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        saveAsMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save_as"));
+        saveAsMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
+                    handleSaveAs();
+                }
+            }
+        });
+        menu.add(saveAsMenuItem);
+      
+        menu.addSeparator();
+        
+        
+        //
+        // File menu Import and Export section
+        //
+        
         item = newJMenuItem("Import Model ", 'I');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
@@ -680,17 +717,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleNewModel();
-            }
-        });
-        menu.add(item);
-
-        item = newJMenuItem("Print G-code file", 'G');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "GCode_Import"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleGCodeImport();
             }
         });
         menu.add(item);
@@ -721,34 +747,23 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
-
-        menu.addSeparator();
-
-        saveMenuItem = newJMenuItem("Save Scene", 'S');
-        saveMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        saveMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save"));
-        saveMenuItem.addActionListener(new ActionListener() {
+        
+        item = newJMenuItem("Print G-code file", 'G');
+        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "GCode_Import"));
+        item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-                    handleSave(false);
-                }
+                handleGCodeImport();
             }
         });
-        menu.add(saveMenuItem);
+        menu.add(item);
 
-        saveAsMenuItem = newJMenuItem("Save As...", 'S', true);
-        saveAsMenuItem.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        saveAsMenuItem.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save_as"));
-        saveAsMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-                    handleSaveAs();
-                }
-            }
-        });
-        menu.add(saveAsMenuItem);
+        
+        //
+        // File menu Preferences section
+        //
+        
         menu.addSeparator();
 
         item = newJMenuItem("Settings...", 'P', true);
@@ -763,8 +778,14 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
+        
+        
+//
+        // File menu Quit section
+        //
 
         menu.addSeparator();
+        
         item = newJMenuItem("Quit", 'Q', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Quit"));
