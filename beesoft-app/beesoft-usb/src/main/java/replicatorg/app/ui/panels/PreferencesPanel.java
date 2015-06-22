@@ -26,7 +26,7 @@ public class PreferencesPanel extends BaseDialog {
     private boolean lockPressed, autonomyPressed;
     private final String[] languagesLabels = ProperDefault.get("languagesList").split(",");
     private final String[] languagesCodes = ProperDefault.get("languagesCodes").split(",");
-    
+
     public PreferencesPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
@@ -43,7 +43,7 @@ public class PreferencesPanel extends BaseDialog {
             autonomous.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
             autonomyPressed = true;
         }
-                
+
         if (ProperDefault.get("measures").equals("inches")) {
             radioInches.setSelected(true);
         } else {
@@ -52,7 +52,7 @@ public class PreferencesPanel extends BaseDialog {
 
         buttonGroup1.add(radioMM);
         buttonGroup1.add(radioInches);
-        
+
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -70,6 +70,7 @@ public class PreferencesPanel extends BaseDialog {
         jLabel12.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel4.setFont(GraphicDesignComponents.getSSProBold("11"));
         jComboBox1.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLanguageWarningLabel.setFont(GraphicDesignComponents.getSSProRegular("10"));
     }
 
     private void setTextLanguage() {
@@ -84,9 +85,10 @@ public class PreferencesPanel extends BaseDialog {
         jLabel11.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         jLabel12.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         jLabel4.setText(Languager.getTagValue(1, "Preferences", "Language"));
-                                        
-        DefaultComboBoxModel model = new DefaultComboBoxModel( languagesLabels );
-        jComboBox1.setModel( model );
+        jLanguageWarningLabel.setText(Languager.getTagValue(1, "Preferences", "LanguageWarning"));
+
+        DefaultComboBoxModel model = new DefaultComboBoxModel(languagesLabels);
+        jComboBox1.setModel(model);
         jComboBox1.setSelectedIndex(parseLanguage());
 
     }
@@ -106,12 +108,12 @@ public class PreferencesPanel extends BaseDialog {
 
     private String codifyLanguage() {
         String lang = String.valueOf(jComboBox1.getSelectedItem());
-        
+
         for (int i = 0; i < languagesCodes.length; i++) {
             if (lang.equalsIgnoreCase(languagesLabels[i].trim())) {
                 return languagesCodes[i];
             }
-        }             
+        }
         // default language
         return "EN";
     }
@@ -158,6 +160,7 @@ public class PreferencesPanel extends BaseDialog {
         jLabel6 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
+        jLanguageWarningLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
@@ -209,7 +212,7 @@ public class PreferencesPanel extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -241,6 +244,8 @@ public class PreferencesPanel extends BaseDialog {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jLanguageWarningLabel.setText("Language warning");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -258,7 +263,7 @@ public class PreferencesPanel extends BaseDialog {
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioInches)
-                        .addGap(0, 103, Short.MAX_VALUE))
+                        .addGap(0, 89, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
@@ -284,9 +289,12 @@ public class PreferencesPanel extends BaseDialog {
                         .addContainerGap())))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLanguageWarningLabel))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -307,11 +315,13 @@ public class PreferencesPanel extends BaseDialog {
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(radioInches, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel6)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(8, 8, 8)
+                .addComponent(jLanguageWarningLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
@@ -422,16 +432,16 @@ public class PreferencesPanel extends BaseDialog {
         dispose();
 
         String selectedMeasure = "mm";
-        
+
         if (this.radioInches.isSelected()) {
             selectedMeasure = "inches";
         }
-        
+
         ProperDefault.put("lockHeight", String.valueOf(lockPressed));
         ProperDefault.put("autonomy", String.valueOf(autonomyPressed));
         ProperDefault.put("measures", selectedMeasure);
         ProperDefault.put("language", codifyLanguage());
-        
+
         Base.writeConfig();
         Base.loadProperties();
         Base.getMainWindow().getCanvas().updateTool();
@@ -479,6 +489,7 @@ public class PreferencesPanel extends BaseDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLanguageWarningLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;

@@ -704,6 +704,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         <Preferences>
             <Preferences_title value="Preferences"/>
             <Language value="Language"/>
+            <LanguageWarning value="If the language is changed, the effect will only be noticed once BEESOFT is restarted." />
             <Measures value="Measures"/>
             <LockHeight value="Lock vertical axis"/>
             <LockHeight_info value="Models can only be moved parallel to the platform."/>
