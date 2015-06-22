@@ -22,7 +22,7 @@
         <build.number>${maven.build.timestamp}</build.number>
         <!-- #################################### -->
         
-        <project.release.name>BEESOFT-${project.release.version}${release.type}</project.release.name>                    
+        <project.release.name>BEESOFT-${project.release.version}-${release.type}</project.release.name>                    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>       
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
