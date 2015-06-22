@@ -159,9 +159,8 @@ public class Base {
                 // mac
                 platform = (platformName.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
             } else {
-                platform =  Platform.MACOSX;
+                platform = Platform.MACOSX;
             }
-            
 
         } else {
             String osname = System.getProperty("os.name");
@@ -207,12 +206,7 @@ public class Base {
 
     public static int ID = 0;
 
-    public static final String VERSION_BEESOFT
-            = configProperties.getBuildProperty("release.type").equals("alpha")
-                    ? configProperties.getBuildProperty("application.version") + "-alpha-" + configProperties.getBuildProperty("build.number")
-                    : configProperties.getBuildProperty("release.type").equals("")
-                            ? configProperties.getBuildProperty("application.version")
-                            : configProperties.getBuildProperty("application.version");
+    public static final String VERSION_BEESOFT = setVersionString();
 
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER = "Bootloader v" + configProperties.getAppProperty("bootloader.version");
@@ -670,20 +664,21 @@ public class Base {
              * FileInputStream for Properties usage
              */
             try {
-                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),"UTF-8"));
-                
+                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
+
                 props.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-                            
+
             } finally {
                 try {
-                    if (fis != null)
+                    if (fis != null) {
                         fis.close();
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }           
+            }
         }
 
         return props;
@@ -699,7 +694,7 @@ public class Base {
         try {
             propertiesFile.store(new OutputStreamWriter(
                     new FileOutputStream(filePath), "UTF-8"), null);
-            
+
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -740,20 +735,21 @@ public class Base {
              * FileInputStream for Properties usage
              */
             try {
-                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),"UTF-8"));
-                
+                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
+
                 propertiesFile.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-                            
+
             } finally {
                 try {
-                    if (fis != null)
+                    if (fis != null) {
                         fis.close();
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }           
+            }
         }
     }
 
@@ -776,7 +772,7 @@ public class Base {
      */
     static public void cleanDirectoryTempFiles(String dirPath) {
         boolean isBeesoftAlpha = Base.VERSION_BEESOFT.contains("alpha");
-        
+
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
             if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && isBeesoftAlpha == false)) {
@@ -1582,5 +1578,21 @@ public class Base {
         printPaused = false;
         isPrintingFromGCode = false;
         gcodeToSave = false;
+    }
+
+    private static String setVersionString() {
+        String releaseType, applicationVersion, buildNumber;
+
+        releaseType = configProperties.getBuildProperty("release.type");
+        applicationVersion = configProperties.getBuildProperty("application.version");
+        buildNumber = configProperties.getBuildProperty("build.number");
+
+        if (releaseType.equals("alpha")) {
+            return applicationVersion + "-" + releaseType + "-" + buildNumber;
+        } else if (releaseType.contains("beta")) {
+            return applicationVersion + "-" + releaseType;
+        } else {
+            return applicationVersion;
+        }
     }
 }
