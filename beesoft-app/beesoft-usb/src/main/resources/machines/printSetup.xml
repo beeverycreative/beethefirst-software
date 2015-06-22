@@ -16,7 +16,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -38,7 +38,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -62,7 +62,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -84,7 +84,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -130,7 +130,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -176,7 +176,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -222,7 +222,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -268,7 +268,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -314,7 +314,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -359,7 +359,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -405,7 +405,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -451,7 +451,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -497,7 +497,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -543,7 +543,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -567,7 +567,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -589,7 +589,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -615,7 +615,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -641,7 +641,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -669,7 +669,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -695,7 +695,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -723,7 +723,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -749,7 +749,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -777,7 +777,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -803,7 +803,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -831,7 +831,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -857,7 +857,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -885,7 +885,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -911,7 +911,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -939,7 +939,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -965,7 +965,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -993,7 +993,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -1019,7 +1019,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -1047,7 +1047,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -1073,7 +1073,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -1101,7 +1101,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -1127,7 +1127,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -1155,7 +1155,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -1181,7 +1181,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -1209,7 +1209,7 @@
             <mediumRes>
                 <layer_height value="0.2"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
@@ -1235,7 +1235,7 @@
             <shighRes>
                 <layer_height value="0.05"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
@@ -1258,18 +1258,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="104.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="104.5"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1282,18 +1288,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="104.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="104.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a101>
         <a102>
@@ -1308,18 +1320,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="104.2"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="104.2"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1332,18 +1350,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="104.2"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="104.2"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a102>
         <a103>
@@ -1358,18 +1382,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="107.4"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="107.4"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1382,18 +1412,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="107.4"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107.4"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a103>        
         <a104>
@@ -1408,22 +1444,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="105"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="105"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1436,22 +1474,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="105"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="105"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a104>
         <a105>
@@ -1466,18 +1506,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="108.6"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="108.6"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1490,18 +1536,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="108.6"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="108.6"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a105>
         <a106>
@@ -1516,18 +1568,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="105.9"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="105.9"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1540,18 +1598,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="105.9"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="105.9"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a106>
         <a107>
@@ -1566,22 +1630,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="104"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="105"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1594,22 +1660,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="106"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="106"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
                 <retraction_speed value="125"/>
-                <retraction_amount value="0.75"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a107>
         <a108>
@@ -1624,18 +1692,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="108.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="108.7"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1648,18 +1722,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="108.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="108.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a108>
         <a109>
@@ -1674,18 +1754,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="104.3"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="104.3"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1698,18 +1784,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="104.3"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="104.3"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a109>                                                        
         <a110>
@@ -1724,18 +1816,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="105.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="105.7"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1748,18 +1846,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="105.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="105.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a110>
         <a111>
@@ -1774,18 +1878,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="103.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="103.5"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1798,18 +1908,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="103.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="103.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a111>
         <a112>
@@ -1824,18 +1940,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="107.2"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="107.2"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1848,18 +1970,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="107.2"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107.2"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a112>
         <a113>
@@ -1874,18 +2002,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="105.6"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="105.6"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1898,18 +2032,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="105.6"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="105.6"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a113>
         <a114>
@@ -1924,18 +2064,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1948,18 +2094,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a114>
         <a115>
@@ -1974,18 +2126,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -1998,18 +2156,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a115>
         <a116>
@@ -2024,18 +2188,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="106.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="106.5"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -2048,18 +2218,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="106.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="106.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a116>
         <a117>
@@ -2074,18 +2250,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="108.0"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="108.0"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -2098,18 +2280,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="108.0"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="108.0"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a117>
         <a118>
@@ -2124,18 +2312,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -2148,18 +2342,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="107.5"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a118>
         <a119>
@@ -2174,18 +2374,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="104.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="104.7"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -2198,18 +2404,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="104.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="104.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a119>
         <a120>
@@ -2224,18 +2436,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="106.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="106.7"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -2248,18 +2466,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="106.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="106.7"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a120>
         <a121>
@@ -2274,18 +2498,24 @@
                 <insetx_speed value="60"/>
                 <filament_flow value="109.8"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </lowRes>
             <mediumRes>
                 <layer_height value="0.2"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="0.9"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="0"/>
                 <inset0_speed value="0"/>
                 <insetx_speed value="0"/>
                 <filament_flow value="109.8"/>
                 <cool_min_layer_time value="30"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </mediumRes>
             <highRes>
                 <layer_height value="0.1"/>
@@ -2298,18 +2528,24 @@
                 <insetx_speed value="40"/>
                 <filament_flow value="109.8"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </highRes>
             <shighRes>
                 <layer_height value="0.05"/>
                 <wall_thickness value="1.0"/>
                 <solid_layer_thickness value="1.1"/>
-                <nozzle_size value="0.5"/>
+                <nozzle_size value="0.4"/>
                 <print_speed value="40"/>
                 <infill_speed value="60"/>
                 <inset0_speed value="30"/>
                 <insetx_speed value="40"/>
                 <filament_flow value="109.8"/>
                 <cool_min_layer_time value="5"/>
+                <print_temperature value="210"/>
+                <retraction_speed value="125"/>
+                <retraction_amount value="1.5"/>
             </shighRes>
         </a121>                                                                    
     </colors>
