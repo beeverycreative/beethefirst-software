@@ -22,7 +22,7 @@
     <minVersion></minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>jdkOnly</jdkPreference>
-    <initialHeapSize>256</initialHeapSize>
+    <initialHeapSize>512</initialHeapSize>
     <maxHeapSize>1024</maxHeapSize>
     <opt>-D32</opt>
   </jre>
