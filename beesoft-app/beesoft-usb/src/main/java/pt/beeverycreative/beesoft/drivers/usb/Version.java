@@ -20,6 +20,10 @@ import replicatorg.app.Base;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Version implements Comparable<Version> {
+    
+    public enum Flavour {
+        BEEVC, MSFT, UNKNOWN;
+    }
 
     private int bug = 0;
     private int minor = 0;

@@ -325,7 +325,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             System.out.println("firmware_version.getVersionString(): " + firmware_version.getVersionString());
 
             // if firmware is not ok
-            if (firmware_version.getVersionString().equalsIgnoreCase(Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
+            if (firmware_version.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("firmware not ok");
 
                 // Warn user to restart BTF and restart BEESOFT.
@@ -1206,9 +1206,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
         transferMode = false;
 
         // WORKAROUND FOR FIRMWARE BUG
-        dispatchCommand("M506", COM.BLOCK);
-        dispatchCommand("G28 Z", COM.BLOCK);
-        dispatchCommand("G28 X Y", COM.BLOCK);
+        // dispatchCommand("M506", COM.BLOCK);
+        // dispatchCommand("G28 Z", COM.BLOCK);
+        // dispatchCommand("G28 X Y", COM.BLOCK);
 
         return RESPONSE_OK;
     }
@@ -2961,7 +2961,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int updateFirmware() {
 
-        String versionToCompare = Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
+        String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
         Base.writeLog("Firmware should be: " + versionToCompare);
 
         //check if the firmware is the same
