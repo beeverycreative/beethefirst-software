@@ -17,7 +17,7 @@
             <File_Open value="Abrir área de trabalho"/>
             <File_Save value="Gravar área de trabalho"/>
             <File_Save_as value="Guardar área de trabalho como..."/>
-            <File_Preferences value="Preferencias"/>
+            <File_Preferences value="Preferências"/>
             <File_Quit value="Sair"/>
             <Edit_Undo value="Voltar"/>
             <Edit_Redo value="Fazer novamente"/>
@@ -45,7 +45,7 @@
             <Help value="Clica aqui para obteres ajuda"/>
             <Help_help value="Ajuda"/>
             <Help_QuickGuide value="Guia rápido"/>
-            <Help_Update value="Verifica actualizações"/>
+            <Help_Update value="Verificar actualizações"/>
             <Help_Support value="Suporte"/>
             <Help_About value="Sobre"/>
         </ApplicationMenus>
