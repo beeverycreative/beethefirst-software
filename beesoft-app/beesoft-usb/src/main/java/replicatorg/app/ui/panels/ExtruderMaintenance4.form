@@ -62,7 +62,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="bQuit" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="365" max="32767" attributes="0"/>
+                  <EmptySpace pref="331" max="32767" attributes="0"/>
                   <Component id="bBack" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="bNext" min="-2" max="-2" attributes="0"/>
@@ -116,7 +116,7 @@
         <Component class="javax.swing.JLabel" name="bQuit">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_18.png"/>
+              <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="SAIR"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -272,7 +272,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
-                      <Component id="jLabel15" pref="13" max="32767" attributes="0"/>
+                      <Component id="jLabel15" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -315,7 +315,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="pWarning" pref="143" max="32767" attributes="0"/>
+                      <Component id="pWarning" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

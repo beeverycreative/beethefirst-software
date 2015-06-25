@@ -53,7 +53,7 @@
                   <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
-              <Component id="jPanel4" alignment="0" pref="1034" max="32767" attributes="0"/>
+              <Component id="jPanel4" alignment="0" pref="1039" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -61,7 +61,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel2" pref="642" max="32767" attributes="0"/>
+                      <Component id="jPanel2" pref="646" max="32767" attributes="0"/>
                       <Component id="jPanel3" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -126,7 +126,7 @@
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace pref="70" max="32767" attributes="0"/>
+                              <EmptySpace pref="63" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Component id="enableFreeJog" min="-2" pref="101" max="-2" attributes="0"/>
@@ -588,7 +588,6 @@
                                       <Component id="extrudeDuration" min="-2" pref="151" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="extrudeCombo" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="bReverse" min="-2" pref="118" max="-2" attributes="0"/>
@@ -615,7 +614,7 @@
                               <Component id="tempLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="28" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="33" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -630,12 +629,9 @@
                       </Group>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="currentTemperature" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="cTargetTemperature" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="currentTemperature" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cTargetTemperature" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
@@ -876,7 +872,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="bCancel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="903" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="880" max="-2" attributes="0"/>
                       <Component id="bOK" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   </Group>
@@ -913,7 +909,7 @@
             <Component class="javax.swing.JLabel" name="bCancel">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_18.png"/>
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Cancel"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>

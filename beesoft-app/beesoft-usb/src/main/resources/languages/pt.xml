@@ -538,7 +538,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Title1 value="Manutenção do extrusor"/>
             <HeatingMessage1 value="Em aquecimento..."/>
             <Info1a value="Esta operação irá auxiliar-te na limpeza do extrusor."/>
-            <Info1b value = "Por favor utiliza as ferramentas do 'kit de manutenção' e visualiza todo o material de apoio antes de continuar."/>
+            <Info1b value = "Por favor utiliza as ferramentas do 'kit de manutenção' e visualiza todo o material de apoio antes de   continuar."/>
             <Info_Warning1 value = "ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/> 
 
             <Title2 value="Manutenção do extrusor"/>

@@ -61,7 +61,7 @@ public class FilamentInsertion extends BaseDialog {
         Base.systemThreads.add(disposeThread);
         jLabel17.setVisible(false);
         if (Base.printPaused == true) {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
         }
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -75,7 +75,7 @@ public class FilamentInsertion extends BaseDialog {
             } else {
                 if (Base.printPaused == true) {
                     bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
                 } else {
                     bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 }
@@ -95,7 +95,7 @@ public class FilamentInsertion extends BaseDialog {
             } else {
                 if (Base.printPaused == true) {
                     bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
                 } else {
                     bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 }
@@ -110,7 +110,7 @@ public class FilamentInsertion extends BaseDialog {
             } else {
                 if (Base.printPaused == true) {
                     bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
                 } else {
                     bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 }
@@ -418,7 +418,7 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));
@@ -432,7 +432,7 @@ public class FilamentInsertion extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 137, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -511,7 +511,7 @@ public class FilamentInsertion extends BaseDialog {
             }
         });
 
-        bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bExit.setText("SAIR");
         bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bExit.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -533,7 +533,7 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 348, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -594,7 +594,7 @@ public class FilamentInsertion extends BaseDialog {
         if (Base.printPaused) {
             return;
         } else {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
         }
 
     }//GEN-LAST:event_bExitMouseEntered
@@ -603,7 +603,7 @@ public class FilamentInsertion extends BaseDialog {
         if (Base.printPaused) {
             return;
         } else {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         }
     }//GEN-LAST:event_bExitMouseExited
 
@@ -725,7 +725,7 @@ public class FilamentInsertion extends BaseDialog {
             });
 
             if (Base.printPaused == true) {
-                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
                 bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             }
 
@@ -781,7 +781,7 @@ public class FilamentInsertion extends BaseDialog {
             });
 
             if (Base.printPaused == true) {
-                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
                 bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             }
         }

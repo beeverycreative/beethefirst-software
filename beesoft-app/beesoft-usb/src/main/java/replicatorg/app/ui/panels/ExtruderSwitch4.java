@@ -94,12 +94,12 @@ public class ExtruderSwitch4 extends BaseDialog {
         jComboBox1.setSelectedIndex(getModelCategoryIndex());
 
         if (ProperDefault.get("maintenance").equals("1")) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
 
         if (Base.printPaused == true) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_18.png")));
+            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
         }
 
     }
@@ -241,7 +241,7 @@ public class ExtruderSwitch4 extends BaseDialog {
             }
         });
 
-        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bCancel.setText("SAIR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -263,7 +263,7 @@ public class ExtruderSwitch4 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 362, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -301,7 +301,7 @@ public class ExtruderSwitch4 extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -430,13 +430,13 @@ public class ExtruderSwitch4 extends BaseDialog {
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
         if (Base.printPaused == false) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
         }
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
         if (Base.printPaused == false) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         }
     }//GEN-LAST:event_bCancelMouseExited
 

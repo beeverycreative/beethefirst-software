@@ -418,7 +418,7 @@
             <Print_Support_Info value="Esta opción crea automáticamente una estructura de soporte para sostener la impresión y que puede ser retirado posteriormente."/>
             <Print_Autonomy_Info value="Esta opción permite imprimir sin una conexión al ordenador. Se informará cuando puedas desconectar tu ordenador."/>
             <Print_GCode_Info value="Esta opción permite guardar un GCode para imprimirlo más tarde."/>
-            <Print_ChangeFilament value="Cambia el filamento ahora"/>
+            <Print_ChangeFilament value="Cambia el filamento"/>
             <Print_SelectGCode value="Selecciona GCode para imprimir"/>
             <Print_TimeLeft value="Faltan aproximadamente x minutos"/>
             <Print_GCode2 value="Ajustes van a ser actualizados. Este processo puede tardar varios minutos"/>
