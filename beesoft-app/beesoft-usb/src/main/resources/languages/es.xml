@@ -556,7 +556,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Title4 value="Mantenimiento de la extrusora"/>
             <HeatingMessage4 value="Calentando..."/>
             <Info4a value="Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
-            <Info4b value = "Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
+            <Info4b value = " "/>
             <Info_Warning4 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
 
             <Title5 value="Mantenimiento de la extrusora"/>

@@ -556,7 +556,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Title4 value="Manutenção do extrusor"/>
             <HeatingMessage4 value="Em aquecimento..."/>
             <Info4a value="A tua impressora tem de acabar de aquecer antes de continuares esta operação."/>
-            <Info4b value = "A tua impressora tem de acabar de aquecer antes de continuares esta operação."/>
+            <Info4b value = " "/>
             <Info_Warning4 value = "ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/>
 
             <Title5 value="Manutenção do extrusor"/>
