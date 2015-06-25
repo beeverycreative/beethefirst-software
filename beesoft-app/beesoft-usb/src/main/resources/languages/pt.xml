@@ -33,11 +33,11 @@
             <Edit_Reset value="Recomeçar modelo"/>
             <Model_Add value="Adiocionar modelo da galeria"/>
             <Model_Import value="Importar modelo"/>
-            <GCode_Import value="Print G-code file"/>
-            <GCode_Export value="Export G-code file"/>
+            <GCode_Import value="Imprimir ficheiro G-code"/>
+            <GCode_Export value="Exportar ficheiro G-code"/>
             <Model_Online value="Modelos online"/>
             <Printer_Maintenance value="Manutenção"/>
-            <Printer_ControlPanel value="Painel de controlo" />
+            <Printer_ControlPanel value="Painel de Controle" />
             <Printer_Print value="Imprimir"/>
             <Printer_Print2D value="Imprimir de imagem 2D"/>
             <Help_Topics value="Tópicos de ajuda:"/>
@@ -55,8 +55,8 @@
             <Temp_Title value="Controle de temperatura"/>
             <Feedrate value="Rácio de alimentação"/>
             <Motor_Control value="Controle do motor"/>
-            <Console_History value="Histórico"/>
-            <Console_Results value="Resultados"/>
+            <Console_Movement value="Movimento"/>
+            <Console_Extrusion value="Extrusão"/>
             <Jog_Mode value="Jog Mode (mm)"/>
             <Jog_Mode value="Rácio de alimentação"/>
             <CenterX value="Home X"/>
@@ -194,7 +194,7 @@
             <Scene_NModels value="Número de modelos"/>
             <Scene_LastPrintDate value="Data da última impressão"/>
             <Scene_LastPrintTime value="Duração da última impressão"/>
-            <Scene_Notes_Placeholder value="Write here your notes about this work area" />
+            <Scene_Notes_Placeholder value="Escreve aqui as tuas notas acerca desta área de trabalho" />
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
@@ -206,7 +206,7 @@
             <Model_Dimensions value="Dimensões"/>
             <Model_Notes value="Descrição"/>
             <Model_Category value="Categoria"/>
-            <Model_Notes_Placeholder value="Write here your notes about this model" />
+            <Model_Notes_Placeholder value="Escreve aqui as tuas notas acerca deste modelo" />
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
@@ -280,7 +280,7 @@
             <Line15 value="Estimar"/> 
             <Line17 value="Parar"/>  
             <Line16 value="Desligar"/>
-            <Export value="Export G-code"/>
+            <Export value="Exportar G-code"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -682,7 +682,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <MeshError value="O modelo importado tem erros. Tenta corrigir os erros ou importar um novo modelo."/>
             <ReinstallError value="Instale novamente o BEESOFT para instalar os fiheiros que estão em falta."/>
             <NoModelError value="Não há modelos na área de trabalho. Por favor carrega pelo menos um modelo."/>
-            <UnknownColor value="The filament's color is unknown! Are you sure a color is selected correctly?"/>
+            <UnknownColor value="A cor do filamento é desconhecida! A cor seleccionada é a correcta?"/>
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -704,7 +704,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
         <Preferences>
             <Preferences_title value="Preferências"/>
             <Language value="Línguas"/>
-            <LanguageWarning value="If the language is changed, the effect will only be noticed once BEESOFT is restarted." />
+            <LanguageWarning value="Se a língua for alterada, isso só terá efeito depois de reiniciar o BEESOFT." />
             <Measures value="Medidas"/>
             <LockHeight value="Bloquear eixo vertical"/>
             <LockHeight_info value="Os modelos podem ser movidos de forma paralela à plataforma."/>

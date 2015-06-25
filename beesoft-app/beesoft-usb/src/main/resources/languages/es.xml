@@ -33,11 +33,11 @@
             <Edit_Reset value="Reiniciar modelo"/>
             <Model_Add value="Agregar modelo de la galería"/>
             <Model_Import value="Importar modelo"/>
-            <GCode_Import value="Print G-code file"/>
-            <GCode_Export value="Export G-code file"/>
+            <GCode_Import value="Imprimir ficheiro G-code"/>
+            <GCode_Export value="Exportar fichero G-code"/>
             <Model_Online value="Modelos online"/>
             <Printer_Maintenance value="Mantenimiento"/>
-            <Printer_ControlPanel value="Control Panel"/>
+            <Printer_ControlPanel value="Panel de Control"/>
             <Printer_Print value="Imprimir"/>
             <Printer_Print2D value="Impresión de una imagen 2D"/>
             <Help_Topics value="Temas de ayuda:"/>
@@ -55,8 +55,8 @@
             <Temp_Title value="Control de temperatura"/>
             <Feedrate value="Proporción de la fuente de alimentación"/>
             <Motor_Control value="Control del motor"/>
-            <Console_Movement value="Historial"/>
-            <Console_Extrusion value="Resultados"/>
+            <Console_Movement value="Movimiento"/>
+            <Console_Extrusion value="Extrusión"/>
             <Jog_Mode value="Jog Mode (mm)"/>
             <Jog_Mode value="Proporción de la fuente de alimentación"/>
             <CenterX value="Home X"/>
@@ -190,11 +190,11 @@
         <SceneDetails>
             <Scene value="Área de trabajo"/>
             <Scene_Name value="Nombre"/>
-            <Scene_Description value="Descripción"/>
+            <Scene_Notes value="Descripción"/>
             <Scene_NModels value="Número de modelos"/>
             <Scene_LastPrintDate value="Fecha de la última impresión"/>
             <Scene_LastPrintTime value="Duración da la última impresión"/>
-            <Scene_Notes_Placeholder value="Write here your notes about this work area" />
+            <Scene_Notes_Placeholder value="Escribe aqui tus notas sobre esta área de trabajo" />
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
@@ -206,7 +206,7 @@
             <Model_Dimensions value="Dimensiones"/>
             <Model_Notes value="Descripción"/>
             <Model_Category value="Categoría"/>
-            <Model_Notes_Placeholder value="Write here your notes about this model" />
+            <Model_Notes_Placeholder value="Escribi aqui tus notas sobre este modelo" />
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
@@ -280,7 +280,7 @@
             <Line15 value="Estimado"/> 
             <Line17 value="Parar"/>  
             <Line16 value="Desconectar"/>
-            <Export value="Export G-code"/>
+            <Export value="Exportar G-code"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -682,7 +682,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <MeshError value="El modelo importado tiene errores. Trata de arreglarlos o importar otro modelo."/>
             <ReinstallError value="Reinstalar el BEESOFT para instalar todos los archivos adecuados que faltan."/>
             <NoModelError value="No hay modelos en el área de trabajo. Por favor, cargar al menos un modelo."/>
-            <UnknownColor value="The filament's color is unknown! Are you sure a color is selected correctly?"/>
+            <UnknownColor value="El color del filamento no es reconocido! El color seleccionado es correcto?"/>
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -704,7 +704,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
         <Preferences>
             <Preferences_title value="Preferencias"/>
             <Language value="Idiomas"/>
-            <LanguageWarning value="If the language is changed, the effect will only be noticed once BEESOFT is restarted." />
+            <LanguageWarning value="Si el idioma es alterado, esto solo tendrá efectos despues de reiniciar el BEESOFT." />
             <Measures value="Medidas"/>
             <LockHeight value="Bloquear eje vertical"/>
             <LockHeight_info value="Los modelos sólo puede moverse en paralelo a la plataforma."/>
