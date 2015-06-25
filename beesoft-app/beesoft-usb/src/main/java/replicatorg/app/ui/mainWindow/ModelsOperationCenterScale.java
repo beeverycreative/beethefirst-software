@@ -24,8 +24,7 @@ import static replicatorg.util.Units_and_Numbers.sGetDecimalStringAnyLocaleAsDou
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class ModelsOperationCenterScale extends javax.swing.JPanel {
-
-    private boolean check_pressed;
+    
     private double initialWidth, initialDepth, initialHeight;
     private final boolean mm;
     private boolean checkX = true, checkY = true, checkZ = true;
@@ -40,7 +39,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     public ModelsOperationCenterScale() {
         initComponents();
-        this.check_pressed = false;
         this.mm = true;
 
         Base.getMainWindow().getCanvas().setControlTool(3);
@@ -78,7 +76,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel3.setFont(GraphicDesignComponents.getSSProLight("33"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel12.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel13.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel14.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -96,7 +93,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
         jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
         jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
 
 
             if (ProperDefault.get("measures").equals("inches")) {
@@ -169,18 +165,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         return this.checkZ;
     }
 
-    private void toggleOptions() {
-        if (check_pressed) {
-            jPanel2.setVisible(false);
-            check_pressed = false;
-            jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
-        } else {
-            jPanel2.setVisible(true);
-            check_pressed = true;
-            jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
-        }
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -196,7 +180,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -211,7 +194,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         jLabel20 = new javax.swing.JLabel();
         bApply = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(254, 254, 254));
         setMaximumSize(new java.awt.Dimension(185, 375));
@@ -290,16 +272,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         });
 
         jLabel6.setName("moreOptionsCheckbox"); // NOI18N
-
-        jLabel7.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel7.setText("More Options");
-        jLabel7.setName("moreOptionsTitle"); // NOI18N
-        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel7MousePressed(evt);
-            }
-        });
 
         jPanel2.setBackground(new java.awt.Color(240, 243, 244));
 
@@ -438,7 +410,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(bScaleToMax, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+                            .addComponent(bScaleToMax, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                             .addComponent(bApply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(6, 6, 6))
         );
@@ -474,13 +446,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 .addGap(17, 17, 17))
         );
 
-        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_checked.png"))); // NOI18N
-        jLabel16.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel16MousePressed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -488,13 +453,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel16))
-                        .addGap(51, 51, 51)
-                        .addComponent(jLabel7))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel6)
+                        .addComponent(jLabel8))
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -519,11 +480,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addGap(0, 0, 0)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel16))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -587,14 +545,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
     }//GEN-LAST:event_jLabel5MousePressed
-
-    private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
-        toggleOptions();
-    }//GEN-LAST:event_jLabel16MousePressed
-
-    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
-        toggleOptions();
-    }//GEN-LAST:event_jLabel7MousePressed
 
     private void bApplyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMousePressed
 
@@ -871,7 +821,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -880,7 +829,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
