@@ -115,6 +115,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jTextField1.setText(String.valueOf(model.getName()));
         
         if (model.getDescription() != null && !model.getDescription().trim().isEmpty()) {
+            jTextArea1.setForeground(Color.black);
             jTextArea1.setText(String.valueOf(model.getDescription()));
         }
     }

@@ -189,7 +189,7 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
             <Scene value="Arbeitsbereich"/>
-            <Scene_Name value="Name"/>
+            <Scene_Name_Hint value="Title of the work area"/>
             <Scene_Description value="Beschreibung"/>
             <Scene_NModels value="Anzahl der Modelle"/>
             <Scene_LastPrintDate value="Datum der letzten Druck"/>
