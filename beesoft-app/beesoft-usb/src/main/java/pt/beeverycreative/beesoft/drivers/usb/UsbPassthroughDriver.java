@@ -256,15 +256,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (type.contains("shutdown")) {
+            /*
             serialNumberString = "0000000000";
             lastDispatchTime = System.currentTimeMillis();
             super.isBootloader = false;
             super.isONShutdown = true;
             Base.getMainWindow().setEnabled(true);
             Base.bringAllWindowsToFront();
+            */
             /**
              * Does not show PSAutonomous until MainWindows is visible
              */
+            /*
             boolean mwVisible = Base.getMainWindow().isVisible();
             while (mwVisible == false) {
                 try {
@@ -278,6 +281,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             p.setVisible(true);
             p.startConditions();
             return;
+            */
+
+            // quick and dirty workaround, shutdown is not yet implemented
+            dispatchCommand("M505", COM.DEFAULT);
+            type = "firmware";
         }
 
         if (type.contains("firmware")) {
