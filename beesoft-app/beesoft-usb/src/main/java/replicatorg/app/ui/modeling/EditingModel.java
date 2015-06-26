@@ -825,12 +825,7 @@ public class EditingModel implements Serializable {
     
     public void updateDimensions(double targetX, double targetY, double targetZ, boolean isOnPlatform){
         Transform3D t = new Transform3D();
-        
-        if(ProperDefault.get("measures").equals("inches")){
-            targetX = Units_and_Numbers.inchesToMillimeters(targetX);
-            targetY = Units_and_Numbers.inchesToMillimeters(targetY);
-            targetZ = Units_and_Numbers.inchesToMillimeters(targetZ);            
-        }                               
+                                      
         t.setScale(new Vector3d(targetX / getWidth(), targetY / getDepth(), targetZ / getHeight()));
         if (isOnPlatform) {
             t = transformOnBottom(t);

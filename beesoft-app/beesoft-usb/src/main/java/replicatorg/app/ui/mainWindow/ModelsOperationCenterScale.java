@@ -547,15 +547,18 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }//GEN-LAST:event_jLabel5MousePressed
 
     private void bApplyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMousePressed
-
-        refresh_iFields();        
+    
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
         double valX = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
         double valY = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
-        double valZ = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());
+        double valZ = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());                
+           
+        if(ProperDefault.get("measures").equals("inches")){
+            valX = Units_and_Numbers.inchesToMillimeters(valX);
+            valY = Units_and_Numbers.inchesToMillimeters(valY);
+            valZ = Units_and_Numbers.inchesToMillimeters(valZ);            
+        }                               
         
-        
-                
         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);        
     }//GEN-LAST:event_bApplyMousePressed
 
@@ -588,9 +591,6 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleX = machineVolume.getX() / model.getEditer().getWidth();
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
-        double width = model.getEditer().getWidth();
-        double depth = model.getEditer().getDepth();
-        double height = model.getEditer().getHeight();
 
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
         scale = Units_and_Numbers.round(scale, 3);
@@ -603,15 +603,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
             //Small adjustment to avoid the model being out of bounds
             scale = 0.975;
             model.getEditer().scale(scale, true, true);
-        }
-
-        DecimalFormat df = new DecimalFormat("#.00");
-        
-        if(ProperDefault.get("measures").equals("inches")) {
-            width = Units_and_Numbers.millimetersToInches(model.getEditer().getWidth());
-            depth = Units_and_Numbers.millimetersToInches(model.getEditer().getDepth());
-            height = Units_and_Numbers.millimetersToInches(model.getEditer().getHeight());
-        } // no need for else 
+        }         
 
         //Sets the initial sizing variables to the current values
         this.resetInitialScaleVariables();
@@ -834,7 +826,18 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void refresh_iFields() {
-        System.out.println("refresh started");
+        
+//        double x, y, z;
+//        if(ProperDefault.get("measures").equals("inches")) {
+//            x = Units_and_Numbers.millimetersToInches(this.oldX);
+//            y = Units_and_Numbers.millimetersToInches(this.oldY);
+//            z = Units_and_Numbers.millimetersToInches(this.oldZ);
+//        } else {
+//            x = this.oldX;
+//            y = this.oldY;
+//            z = this.oldZ;
+//        }
+                
         try {
 
             iFieldX.setText(df.format(this.oldX));
@@ -856,22 +859,35 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
      * Updates the axis value fields with the current size values
      */
     private void update_iFields() {
+            
+        double width, depth, height;
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
+        
+        if(ProperDefault.get("measures").equals("inches")) {
+            width = Units_and_Numbers.millimetersToInches(model.getEditer().getWidth());
+            depth = Units_and_Numbers.millimetersToInches(model.getEditer().getDepth());
+            height = Units_and_Numbers.millimetersToInches(model.getEditer().getHeight());
+        } else {
+            width = model.getEditer().getWidth();
+            depth = model.getEditer().getDepth();
+            height = model.getEditer().getHeight();
+        }
+
         try {
 
-            iFieldX.setText(df.format(model.getEditer().getWidth()));
+            iFieldX.setText(df.format(width));
             this.oldX = model.getEditer().getWidth();
         } catch (Exception e) {
         }
         try {
 
-            iFieldY.setText(df.format(model.getEditer().getDepth()));
+            iFieldY.setText(df.format(depth));
             this.oldY = model.getEditer().getDepth();
         } catch (Exception e) {
         }
         try {
 
-            iFieldZ.setText(df.format(model.getEditer().getHeight()));
+            iFieldZ.setText(df.format(height));
             this.oldZ = model.getEditer().getHeight();
         } catch (Exception e) {
         }
