@@ -5,11 +5,8 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
-import static java.awt.Frame.ICONIFIED;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -37,7 +34,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
     private final MachineInterface machine;
     private final ExtruderMaintenanceDisposeFeedbackThread disposeThread;
-    private boolean unloadPressed;
+    private boolean bNextReady = false;
     private String previousColor = "";
 
     public ExtruderMaintenance5() {
@@ -63,12 +60,12 @@ public class ExtruderMaintenance5 extends BaseDialog {
     }
 
     public void resetFeedbackComponents() {
-
-        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-
-        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-
         disableMessageDisplay();
+        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
+        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
+        if (bNext.isEnabled() == false) {
+            bNext.setEnabled(true);
+        }
     }
 
     private void setFont() {
@@ -114,8 +111,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
     }
 
     public void showMessage() {
-        // Active during movement
-        // REDSOFT: Implement This timer
         enableMessageDisplay();
         pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
     }
@@ -444,8 +439,10 @@ public class ExtruderMaintenance5 extends BaseDialog {
             }
         });
 
-        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -551,13 +548,12 @@ public class ExtruderMaintenance5 extends BaseDialog {
     }//GEN-LAST:event_bBackMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (!machine.getDriver().isBusy()) {
-
-                dispose();
-                disposeThread.stop();
-                ExtruderMaintenance6 p = new ExtruderMaintenance6(previousColor);
-                p.setVisible(true);
-            }
+        if (bNext.isEnabled()) {
+            dispose();
+            disposeThread.stop();
+            ExtruderMaintenance6 p = new ExtruderMaintenance6(previousColor);
+            p.setVisible(true);
+        }
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
@@ -581,7 +577,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
             ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
             ProperDefault.put("coilCode", String.valueOf("N/A"));
-            unloadPressed = true;
 
             Base.writeLog("Unloading Filament");
 
@@ -616,7 +611,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
             if (Base.printPaused == true) {
                 bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             }
         }
     }//GEN-LAST:event_bUnloadMousePressed
@@ -637,9 +631,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
             //iInfographic.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
             //pText2.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
-            
-            unloadPressed = false;
-
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -716,24 +707,14 @@ class ExtruderMaintenanceDisposeFeedbackThread extends Thread {
     public void run() {
 
         while (true) {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (!machine.getDriver().getMachineStatus()) {
+            if (machine.getDriver().isBusy()) {
                 filamentPanel.showMessage();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-
-            if (machine.getDriver().getMachineStatus()
-                    && !machine.getDriver().isBusy()) {
+            } else {
                 filamentPanel.resetFeedbackComponents();
             }
 
