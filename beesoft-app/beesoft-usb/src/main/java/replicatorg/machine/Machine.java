@@ -204,7 +204,6 @@ public class Machine implements MachineInterface {
     public void killSwitch() {
         machineThread.killSwitch();
         runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
     }
 
     @Override
@@ -230,24 +229,18 @@ public class Machine implements MachineInterface {
                 ""));
     }
 
-    // TODO: make this more generic to handle non-serial connections.
+
     @Override
-    public void connect(String portName) {
+    public void connect(boolean force) {
         // recreate thread if stopped
         // TODO: Evaluate this!
-        if (!machineThread.isAlive()) {
+        if (!machineThread.isAlive() || force) {
             machineThread = new MachineThread(this, machineNode);
             machineThread.start();
         }
 
         machineThread.scheduleRequest(new MachineCommand(RequestType.CONNECT,
-                portName));
-    }
-
-    @Override
-    synchronized public void disconnect() {
-        machineThread.scheduleRequest(new MachineCommand(
-                RequestType.DISCONNECT, ""));
+                ""));
     }
 
     @Override

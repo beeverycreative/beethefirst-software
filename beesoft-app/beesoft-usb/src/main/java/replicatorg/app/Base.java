@@ -826,7 +826,7 @@ public class Base {
         VERSION_JAVA = out.trim();
     }
 
-    static public void diposeAllOpenWindows() {
+    static public void disposeAllOpenWindows() {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             if (!win1.getName().equals("mainWindow")) {
@@ -1261,6 +1261,27 @@ public class Base {
                 writeLog("Log file created");
             }
         });
+        ProperDefault.put("machine.name", MACHINE_NAME);
+        String machineName = ProperDefault.get("machine.name");
+        
+                    try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+                    
+        // quite ugly, but it works for now
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (Base.statusThreadDied) {                
+                editor.reloadMachine(machineName, false);
+            }
+        }
     }
 
     // .................................................................

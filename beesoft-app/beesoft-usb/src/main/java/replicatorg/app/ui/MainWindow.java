@@ -1359,48 +1359,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         this.setEnabled(true);
     }
 
-    /**
-     * Handles the functionality of 'disconnect' buttons
-     *
-     */
-    public void handleDisconnect() {
-        if (building) {
-            int choice = JOptionPane
-                    .showConfirmDialog(
-                            this,
-                            "You are attempting to disconnect the printer while it is printing \n are you sure?",
-                            "Disconnect Warning", JOptionPane.YES_NO_OPTION);
-            if (choice == 0) {
-                machineLoader.disconnect();
-            }
-            if (choice == 1) {
-                // Do Nothing
-            }
-        }
-        machineLoader.disconnect();
-    }
-
-    /**
-     * Function to connect to a bot. handleConnect means, 'if we aren't already
-     * connected to a machine, make a new one and connect to it'. This has the
-     * side effect of destroying any machine that might have been loaded but not
-     * connected TODO: eh?
-     */
-    public void handleConnect() {
-        // If we are already connected, don't try to connect again.
-        if (machineLoader.isConnected()) {
-            machineLoader.getMachineInterface().connect("");
-
-        } else {
-            String name = ProperDefault.get("machine.name");
-
-            if (name != null) {
-                loadMachine(name, true);
-            }
-        }
-        Base.writeLog("Starting connection to BEETHEFIRST ...");
-    }
-
     public void beginCompoundEdit() {
         compoundEdit = new CompoundEdit();
     }
@@ -1710,14 +1668,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         doStop();
         Base.writeLog("Print stopped ...");
         setEditorBusy(false);
-
-        Date started = buildStart;
-        Date finished = new Date();
-        if (started == null) {
-            started = new Date();
-        }
-        long elapsed = finished.getTime() - started.getTime();
-        String time_string = EstimationDriver.getBuildTimeString(elapsed);
     }
 
     class EstimationThread extends Thread {
@@ -2243,7 +2193,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         // cleanup our machine/driver.
         machineLoader.unload();
-        Base.diposeAllOpenWindows();
+        Base.disposeAllOpenWindows();
         System.exit(0);
     }
 
@@ -2346,7 +2296,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             return;
         }
 
-        machineLoader.connect(""); // Just performs a setState 
+        machineLoader.connect(false); // Just performs a setState 
 
         if (canvas != null) {
             getPreviewPanel().rebuildScene();
@@ -2355,6 +2305,22 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             getPreviewPanel();
         }
 
+    }
+    
+    /**
+     * TODO: documentation
+     * @param name
+     * @param doConnect 
+     */
+    public void reloadMachine(String name, boolean doConnect) {
+        MachineInterface mi = machineLoader.getMachineInterface(name);
+
+        if (mi == null) {
+            Base.logger.log(Level.SEVERE, "could not load machine ''{0}'' please check Driver", name);
+            return;
+        }
+
+        machineLoader.connect(true); // Just performs a setState 
     }
 
     @Override

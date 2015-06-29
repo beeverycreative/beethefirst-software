@@ -228,18 +228,17 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
      * Cancel ongoing operation and idles BEESOFT to a machine idle state
      */
     private void doCancel() {
-
         //machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
         if (machine.getDriver().isTransferMode()) {
             // stopTransfer() blocks while the process isn't concluded
             machine.getDriver().stopTransfer();
         } else {
-            machine.killSwitch();
+            machine.killSwitch(); 
             machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
             machine.runCommand(new replicatorg.drivers.commands.ReloadConfig());
             machine.runCommand(new replicatorg.drivers.commands.SendHome("Z"));
             machine.runCommand(new replicatorg.drivers.commands.SendHome("XY"));
-            
+
             Base.getMainWindow().doStop();
 
             // I KNOW IT'S DEPRECATED
@@ -592,6 +591,36 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
      * @return estimation for given gcode
      */
     public String estimateGCodeFromFile() {
+
+        String line;
+        int lines;
+        File gcodeFile;
+
+        lines = 0;
+        gcodeFile = new File(preferences.get(6));
+
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new FileReader(gcodeFile));
+
+            // read only the first 100 lines searching for M31, no point in
+            // searching further than that
+            while ((line = reader.readLine()) != null && lines < 100) {
+                lines++;
+                if (line.contains("M31")) {
+                    int indexAtA = line.indexOf('A');
+                    int indexAtL = line.indexOf('L');
+                    String result = line.substring(indexAtA + 1, indexAtL - 1);
+                    return line.substring(indexAtA + 1, indexAtL - 1);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Base.writeLog("Error estimating from GCode file: file not found");
+        } catch (IOException ex) {
+            Base.writeLog("Error estimating from GCode file: error while "
+                    + "reading GCode");
+        }
+
         PrintEstimator.estimateTime(new File(preferences.get(6)));
         return PrintEstimator.getEstimatedTime();
     }
@@ -2132,78 +2161,54 @@ class TransferControlThread extends Thread {
 
     @Override
     public void run() {
-
-        /**
-         * If is not printing from existing gcode file
-         */
-        if (Base.isPrintingFromGCode == false) {
-            Base.writeLog("GCode will be generated ...");
-
-            String assumedTime = window.generateGCode();
-            if (assumedTime.equals("-1")) {
-                // Error occurred - permissions maybe
-                // Cancel print and setting message
-                // 5000 ms delay to ensure user reads it
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GCodeGenerationThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GCodeGenerationThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                window.cancelProcess();
-            } else {
-                if (assumedTime.contains(":")) {
-                    String[] timeValues = assumedTime.split(":");
-                    estimatedTime = Integer.valueOf(timeValues[0]) * 60 + Integer.valueOf(timeValues[1]);
-                } else {
-                    estimatedTime = Integer.valueOf(assumedTime);
-                }
-            }
-            Base.writeLog("New GCode generated ...");
-            gCodeDone = true;
-        } else {
-            Base.writeLog("Estimating from selected gcode file");
-            String assumedTime = window.estimateGCodeFromFile();
-
-            if (assumedTime.equals("-1")) {
-                // Error occurred - permissions maybe
-                // Cancel print and setting message
-                // 5000 ms delay to ensure user reads it
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GCodeGenerationThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(GCodeGenerationThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                window.cancelProcess();
-            } else {
-                if (assumedTime.contains(":")) {
-                    String[] timeValues = assumedTime.split(":");
-                    estimatedTime = Integer.valueOf(timeValues[0]) * 60 + Integer.valueOf(timeValues[1]);
-                } else {
-                    estimatedTime = Integer.valueOf(assumedTime);
-                }
-            }
-            Base.writeLog("Gcode estimation successful...");
-            gCodeDone = true;
-        }
-
+        gCodeDone = estimate(Base.isPrintingFromGCode);
         Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),
                 Base.getMainWindow().getMachine().getModel().getResolution());
 
+    }
+
+    private boolean estimate(boolean printingFromGCode) {
+
+        String assumedTime;
+
+        Base.writeLog("Estimating printing time...");
+
+        if (printingFromGCode) {
+            assumedTime = window.estimateGCodeFromFile();
+        } else {
+            assumedTime = window.generateGCode();
+        }
+
+        if (assumedTime.equals("-1")) {
+            // Error occurred - permissions maybe
+            // Cancel print and setting message
+            // 5000 ms delay to ensure user reads it
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GCodeGenerationThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GCodeGenerationThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            window.cancelProcess();
+            Base.writeLog("Printing estimation failed...");
+            return false;
+        } else {
+            if (assumedTime.contains(":")) {
+                String[] timeValues = assumedTime.split(":");
+                estimatedTime = Integer.valueOf(timeValues[0]) * 60 + Integer.valueOf(timeValues[1]);
+            } else {
+                estimatedTime = Integer.valueOf(assumedTime);
+            }
+
+            Base.writeLog("Printing estimation successful...");
+            return true;
+        }
     }
 }

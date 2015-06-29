@@ -231,7 +231,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         if (type.contains("autonomous")) {
             lastDispatchTime = System.currentTimeMillis();
-
             super.isBootloader = false;
             this.isAutonomous = true;
 
@@ -249,6 +248,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
                 mwVisible = Base.getMainWindow().isVisible();//polls
             }
+            
             PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
             p.setVisible(true);
             p.startConditions();
@@ -463,7 +463,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     long now = date.getTime();
 
                     if (showMessage) {
-                        Base.getMachineLoader().getMachineInterface().connect("");
+                        Base.getMachineLoader().getMachineInterface().connect(false);
                         Base.writeLog("USB device non-responsive. Please plug in the USB device !");
                         //Stop showing the message 1 time is enough :) 
                         showMessage = false;
