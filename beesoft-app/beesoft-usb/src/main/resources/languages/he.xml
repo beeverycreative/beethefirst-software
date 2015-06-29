@@ -484,7 +484,7 @@
         
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
-            <!-- Filamentos da Filkemp -->
+            
             <a002 value="A002 - White"/>
             <a003 value="A003 - Black"/>
             <a005 value="A005 - Yellow"/>
@@ -498,7 +498,6 @@
             <a008 value="A008 - Pink"/>
             <a009 value="A009 - Silver"/>
             
-            <!-- Filamentos da FiberForce -->
             <a101 value="A101 - Transparent"/>
             <a102 value="A102 - Blanc Gris"/>
             <a103 value="A103 - Zinc Yellow"/>
@@ -508,18 +507,18 @@
             <a107 value="A107 - Tomato Red"/>
             <a108 value="A108 - Light Pink"/>
             <a109 value="A109 - Traffic Purple/>
-                <a110 value="A110 - Violet"/>
-                <a111 value="A111 - Sky Blue"/>
-                <a112 value="A112 - Traffic Blue"/>
-                <a113 value="A113 - Ultramarine Blue"/>
-                <a114 value="A114 - Yellow Green"/>
-                <a115 value="A115 - Pure Green"/>
-                <a116 value="A116 - Chrome Green"/>
-                <a117 value="A117 - Chocolate Brown"/>
-                <a118 value="A118 - Telegrey"/>
-                <a119 value="A119 - Signal Black"/>
-                <a120 value="A120 - Pearl Gold"/>
-                <a121 value="A121 - Pearl Light Grey"/>
+            <a110 value="A110 - Violet"/>
+            <a111 value="A111 - Sky Blue"/>
+            <a112 value="A112 - Traffic Blue"/>
+            <a113 value="A113 - Ultramarine Blue"/>
+            <a114 value="A114 - Yellow Green"/>
+            <a115 value="A115 - Pure Green"/>
+            <a116 value="A116 - Chrome Green"/>
+            <a117 value="A117 - Chocolate Brown"/>
+            <a118 value="A118 - Telegrey"/>
+            <a119 value="A119 - Signal Black"/>
+            <a120 value="A120 - Pearl Gold"/>
+            <a121 value="A121 - Pearl Light Grey"/>
         </CoilColors>
         
     </tags>      
