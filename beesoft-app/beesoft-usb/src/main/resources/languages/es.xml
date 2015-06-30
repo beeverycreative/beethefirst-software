@@ -33,7 +33,7 @@
             <Edit_Reset value="Reiniciar modelo"/>
             <Model_Add value="Agregar modelo de la galería"/>
             <Model_Import value="Importar modelo"/>
-            <GCode_Import value="Imprimir fichero G-code"/>
+            <GCode_Import value="Imprimir ficheiro G-code"/>
             <GCode_Export value="Exportar fichero G-code"/>
             <Model_Online value="Modelos online"/>
             <Printer_Maintenance value="Mantenimiento"/>
@@ -189,7 +189,7 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
             <Scene value="Área de trabajo"/>
-            <Scene_Name_Hint value="Nombre"/>
+            <Scene_Name value="Nombre"/>
             <Scene_Notes value="Descripción"/>
             <Scene_NModels value="Número de modelos"/>
             <Scene_LastPrintDate value="Fecha de la última impresión"/>
@@ -418,7 +418,7 @@
             <Print_Support_Info value="Esta opción crea automáticamente una estructura de soporte para sostener la impresión y que puede ser retirado posteriormente."/>
             <Print_Autonomy_Info value="Esta opción permite imprimir sin una conexión al ordenador. Se informará cuando puedas desconectar tu ordenador."/>
             <Print_GCode_Info value="Esta opción permite guardar un GCode para imprimirlo más tarde."/>
-            <Print_ChangeFilament value="Cambia el filamento"/>
+            <Print_ChangeFilament value="Cambia el filamento ahora"/>
             <Print_SelectGCode value="Selecciona GCode para imprimir"/>
             <Print_TimeLeft value="Faltan aproximadamente x minutos"/>
             <Print_GCode2 value="Ajustes van a ser actualizados. Este processo puede tardar varios minutos"/>
@@ -543,7 +543,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
 
             <Title2 value="Mantenimiento de la extrusora"/>
             <HeatingMessage2 value="Calentando..."/>
-            <Info2a value="Utiliza la herramienta incluida en el kit de mantenimiento para quitar los tornillos de la cubierta superior de tu impresora. Retire la tapa tirando suavemente hacia arriba."/>
+            <Info2a value="Utiliza la llave hexagonal para quitar los tornillos de la cubierta superior de tu impresora. Retire la tapa tirando suavemente hacia arriba."/>
             <Info2b value = "Asegúrate de colocar los tornillos en un lugar seguro."/>
             <Info_Warning2 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/> 
 
@@ -556,7 +556,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Title4 value="Mantenimiento de la extrusora"/>
             <HeatingMessage4 value="Calentando..."/>
             <Info4a value="Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
-            <Info4b value = " "/>
+            <Info4b value = "Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
             <Info_Warning4 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
 
             <Title5 value="Mantenimiento de la extrusora"/>
@@ -708,8 +708,6 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Measures value="Medidas"/>
             <LockHeight value="Bloquear eje vertical"/>
             <LockHeight_info value="Los modelos sólo puede moverse en paralelo a la plataforma."/>
-            <Autonomy value="Modo de Autónomía"/>
-            <Autonomy_info value="Permite que tu impresora imprima sin estar conectada al ordenador."/>
         </Preferences>
         
         <!-- A próxima secção XML contém o texto para a janela de Help -->

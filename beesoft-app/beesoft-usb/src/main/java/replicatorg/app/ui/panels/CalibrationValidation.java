@@ -138,7 +138,6 @@ public class CalibrationValidation extends BaseDialog {
             jLabel6MouseClickedReady = true;
         }
 
-
         disableMessageDisplay();
 //
     }
@@ -434,13 +433,13 @@ public class CalibrationValidation extends BaseDialog {
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
         if (jLabel5MouseClickedReady) {
-            CalibrationWelcome cal = new CalibrationWelcome(true);
-            cal.setVisible(true);
-            dispose();
             disposeThread.stop();
+            dispose();
             //turn off blower before heating
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
             machine.runCommand(new replicatorg.drivers.commands.SetTemperature(120));
+            CalibrationWelcome cal = new CalibrationWelcome(true);
+            cal.setVisible(true);
         }
 
     }//GEN-LAST:event_jLabel5MousePressed

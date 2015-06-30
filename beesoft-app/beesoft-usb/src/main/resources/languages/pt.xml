@@ -17,7 +17,7 @@
             <File_Open value="Abrir área de trabalho"/>
             <File_Save value="Gravar área de trabalho"/>
             <File_Save_as value="Guardar área de trabalho como..."/>
-            <File_Preferences value="Preferências"/>
+            <File_Preferences value="Preferencias"/>
             <File_Quit value="Sair"/>
             <Edit_Undo value="Voltar"/>
             <Edit_Redo value="Fazer novamente"/>
@@ -45,7 +45,7 @@
             <Help value="Clica aqui para obteres ajuda"/>
             <Help_help value="Ajuda"/>
             <Help_QuickGuide value="Guia rápido"/>
-            <Help_Update value="Verificar actualizações"/>
+            <Help_Update value="Verifica actualizações"/>
             <Help_Support value="Suporte"/>
             <Help_About value="Sobre"/>
         </ApplicationMenus>
@@ -189,7 +189,7 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
             <Scene value="Área de trabalho"/>
-            <Scene_Name_Hint value="Título da área de trabalho"/>
+            <Scene_Name value="Nome"/>
             <Scene_Notes value="Descrição"/>
             <Scene_NModels value="Número de modelos"/>
             <Scene_LastPrintDate value="Data da última impressão"/>
@@ -538,12 +538,12 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Title1 value="Manutenção do extrusor"/>
             <HeatingMessage1 value="Em aquecimento..."/>
             <Info1a value="Esta operação irá auxiliar-te na limpeza do extrusor."/>
-            <Info1b value = "Por favor utiliza as ferramentas do 'kit de manutenção' e visualiza todo o material de apoio antes de   continuar."/>
+            <Info1b value = "Por favor utiliza as ferramentas do 'kit de manutenção' e visualiza todo o material de apoio antes de continuar."/>
             <Info_Warning1 value = "ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/> 
 
             <Title2 value="Manutenção do extrusor"/>
             <HeatingMessage2 value="Em aquecimento..."/>
-            <Info2a value="Utiliza a ferramente incluída no 'kit de manutenção' para remover os parafusos da tampa superior da tua impressora. Remove a tampa puxando-a para cima com delicadeza."/>
+            <Info2a value="Utiliza uma chave sextavada para remover os parafusos da tampa superior da tua impressora. Remove a tampa puxando-a para cima com delicadeza."/>
             <Info2b value = "Lembra-te de guardares todos os parafusos num local seguro."/>
             <Info_Warning2 value = "ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/> 
 
@@ -556,7 +556,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Title4 value="Manutenção do extrusor"/>
             <HeatingMessage4 value="Em aquecimento..."/>
             <Info4a value="A tua impressora tem de acabar de aquecer antes de continuares esta operação."/>
-            <Info4b value = " "/>
+            <Info4b value = "A tua impressora tem de acabar de aquecer antes de continuares esta operação."/>
             <Info_Warning4 value = "ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/>
 
             <Title5 value="Manutenção do extrusor"/>
@@ -708,8 +708,6 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Measures value="Medidas"/>
             <LockHeight value="Bloquear eixo vertical"/>
             <LockHeight_info value="Os modelos podem ser movidos de forma paralela à plataforma."/>
-            <Autonomy value="Modo Autónomo"/>
-            <Autonomy_info value="Permite que a tua impressora imprima sem estar ligada ao computador."/>
         </Preferences>
         
         <!-- A próxima secção XML contém o texto para a janela de Help -->

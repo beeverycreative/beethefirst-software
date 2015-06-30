@@ -815,11 +815,11 @@ public class CalibrationWelcome extends BaseDialog {
     }//GEN-LAST:event_jLabel10MouseExited
 
     private void jLabel22MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel22MouseEntered
-        jLabel22.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_22.png")));
+        jLabel22.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_jLabel22MouseEntered
 
     private void jLabel22MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel22MouseExited
-        jLabel22.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_22.png")));
+        jLabel22.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_jLabel22MouseExited
 
     private void jLabel21MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MouseEntered

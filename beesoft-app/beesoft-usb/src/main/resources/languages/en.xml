@@ -543,7 +543,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
             <Title2 value="Extruder Maintenance"/>
             <HeatingMessage2 value="Heating..."/>
-            <Info2a value="Use the tool included in your maintenance kit to remove the screws on the top cover of your 3D printer. Remove the cover by gently pulling upwards."/>
+            <Info2a value="Use a hex key to remove the screws on the top cover of your 3d printer. Remove the cover by gently pulling upwards" />
             <Info2b value = "Make sure to place screws in a secure location."/>
             <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
@@ -704,12 +704,10 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         <Preferences>
             <Preferences_title value="Preferences"/>
             <Language value="Language"/>
-            <LanguageWarning value="If the language is changed, the effect will only be noticed once BEESOFT is restarted." />
+            <LanguageWarning value="If the options are changed, the effect will only be noticed once BEESOFT is restarted." />
             <Measures value="Measures"/>
             <LockHeight value="Lock vertical axis"/>
             <LockHeight_info value="Models can only be moved parallel to the platform."/>
-            <Autonomy value="Autonomy mode"/>
-            <Autonomy_info value="Allows printing without being connected to the computer."/>
         </Preferences>
         
         <!-- A próxima secção XML contém o texto para a janela de Help -->

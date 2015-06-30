@@ -749,7 +749,17 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleGCodeImport();
+                boolean noFilament;
+
+                noFilament = Base.getMainWindow().getMachine().getModel()
+                        .getCoilCode()
+                        .equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE);
+
+                if (Base.isPrinting == false && noFilament == false) {
+                    handleGCodeImport();
+                } else {
+                    Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+                }
             }
         });
         menu.add(item);
@@ -2306,11 +2316,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         }
 
     }
-    
+
     /**
      * TODO: documentation
+     *
      * @param name
-     * @param doConnect 
+     * @param doConnect
      */
     public void reloadMachine(String name, boolean doConnect) {
         MachineInterface mi = machineLoader.getMachineInterface(name);
