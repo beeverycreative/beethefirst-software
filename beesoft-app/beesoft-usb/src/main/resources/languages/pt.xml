@@ -752,7 +752,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
             <a000 value="A000 - No filament" />
-            <!-- Filamentos da Filkemp -->
+
             <a001 value="A001 - Transparent"/>
             <a002 value="A002 - White"/>
             <a003 value="A003 - Black"/>
@@ -778,7 +778,6 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <a031 value="A031 - Neon Green"/>
             <a032 value="A032 - Orange"/>
             
-            <!-- Filamentos da FiberForce -->
             <a101 value="A101 - Transparent"/>
             <a102 value="A102 - Blanc Gris"/>
             <a103 value="A103 - Zinc Yellow"/>
