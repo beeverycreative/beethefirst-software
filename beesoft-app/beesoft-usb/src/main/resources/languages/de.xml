@@ -704,7 +704,7 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
         <Preferences>
             <Preferences_title value="Einstellungen"/>
             <Language value="Sprache"/>
-            <LanguageWarning value="Wenn die Sprache geändert wird, wird der Effekt nur bemerkt wenn BEESOFT neu gestartet wird." />
+            <LanguageWarning value="Wenn die Optionen geändert werden, wird der Effekt nur bemerkt wenn BEESOFT neu gestartet wird." />
             <Measures value="Maßnahmen"/>
             <LockHeight value="Vertikale Achse sperren"/>
             <LockHeight_info value="Modelle können nur parallel zu der Plattform bewegt werden."/>

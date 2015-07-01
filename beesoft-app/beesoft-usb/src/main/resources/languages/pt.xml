@@ -704,7 +704,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
         <Preferences>
             <Preferences_title value="Preferências"/>
             <Language value="Línguas"/>
-            <LanguageWarning value="Se a língua for alterada, isso só terá efeito depois de reiniciar o BEESOFT." />
+            <LanguageWarning value="Se as opções forem alteradas, isso só terá efeito depois de reiniciares o BEESOFT." />
             <Measures value="Medidas"/>
             <LockHeight value="Bloquear eixo vertical"/>
             <LockHeight_info value="Os modelos podem ser movidos de forma paralela à plataforma."/>
