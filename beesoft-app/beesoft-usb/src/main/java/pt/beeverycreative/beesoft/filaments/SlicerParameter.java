@@ -12,13 +12,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 public class SlicerParameter {
     
     @XmlAttribute(name="value")
-    private Double value;    
+    private double value;
+    
 
-    public Double getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(double value) {
         this.value = value;
     }      
 }

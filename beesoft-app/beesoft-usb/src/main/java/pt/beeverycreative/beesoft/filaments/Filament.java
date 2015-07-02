@@ -25,6 +25,9 @@ public class Filament {
     
     @XmlElement(name="name")
     private String name;
+    
+    @XmlElement(name="code")
+    private String code;
 
     public Filament() {
         this.supportedPrinters = new ArrayList<SlicerConfig>();
@@ -52,9 +55,13 @@ public class Filament {
 
     public void setName(String name) {
         this.name = name;
-    } 
-    
+    }
+
     public String getCode() {
-        return name;
-    }    
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }            
 }
