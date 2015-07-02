@@ -92,7 +92,7 @@ public class PrintPanel extends BaseDialog {
         prefs = new ArrayList<String>();
         raftPressed = false;
         supportPressed = false;
-        autonomousPressed = (Boolean.valueOf(ProperDefault.get("autonomy")) == true);
+        autonomousPressed = true;
         evaluateConditions();
         matchChanges();
         enableDrag();

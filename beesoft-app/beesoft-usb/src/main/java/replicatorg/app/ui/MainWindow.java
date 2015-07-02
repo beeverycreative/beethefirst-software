@@ -750,16 +750,20 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean noFilament;
+                MachineInterface machine = getMachineInterface();
 
                 noFilament = Base.getMainWindow().getMachine().getModel()
                         .getCoilCode()
                         .equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE);
 
-                if (Base.isPrinting == false && noFilament == false) {
-                    handleGCodeImport();
-                } else {
+                if (Base.isPrinting == true) {
+                    Base.getMainWindow().showFeedBackMessage("btfPrinting");
+                } else if (machine.isConnected() == false) {
                     Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+                } else {
+                    handleGCodeImport();
                 }
+
             }
         });
         menu.add(item);

@@ -1601,58 +1601,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     }
 
-    private String setVariables(String estimatedTime, int nLines) {
-        String out;
-        String response = "";
-        int tries = 10;
-        String setVariables;
-
-        /**
-         * Considering that may occur an error and crash autonomous print.
-         */
-        if (estimatedTime != null && nLines != 0) {
-            setVariables = SET_VARIABLES + "A" + estimatedTime + " L" + nLines;
-        } else {
-            setVariables = SET_VARIABLES + "A1000" + " L1000";
-        }
-        out = dispatchCommand(setVariables, COM.TRANSFER);
-
-        while (tries > 0) {
-            try {
-
-                //test for ok in tempresponse
-                if (!out.contains(RESPONSE_OK)) {
-                } else {
-                    out += response + "\n";
-                    break;
-                }
-                tries--;
-
-                out += (response = readResponse()) + "\n";
-
-            } catch (Exception ex) {
-                if (!(tries > 0)) {
-                    out += "Timeout after " + tries + ".\n";
-                    Base.writeLog("Error setting variables " + out);
-                    return ERROR + out;
-                }
-                Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            try {
-                Thread.sleep(0, 1); //sleep for a nano second just for luck
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        if (!(tries > 0)) {
-            out += response + "\n";
-            Base.writeLog("M31 failed. Variables not set: " + out);
-            return ERROR + out + "M31 failed. Variables not set";
-        }
-        return RESPONSE_OK;
-    }
-
     private String setTransferSize(int srcPos, int destPos) {
 
         String command;
