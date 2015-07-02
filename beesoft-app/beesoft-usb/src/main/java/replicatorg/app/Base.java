@@ -88,9 +88,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
+import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.FilamentManager;
 import replicatorg.app.ui.WelcomeSplash;
 import replicatorg.util.ConfigProperties;
 
@@ -1280,6 +1283,9 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        FilamentManager fm = FilamentManager.getInstance();
+        List<Filament> filaments = fm.getFilaments();
+        
         // quite ugly, but it works for now
         while (true) {
             try {
