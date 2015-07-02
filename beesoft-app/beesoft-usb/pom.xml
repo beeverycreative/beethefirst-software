@@ -177,7 +177,10 @@
                                 </copy>    
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />
-                                </copy>  
+                                </copy>                                                                
+                                <copy todir="${target.dir}/filaments">
+                                    <fileset dir="${resources.dir}/filaments" />
+                                </copy>
                                 <copy todir="${target.dir}/config">
                                     <filelist dir="${resources.dir}/config" files="app.properties" />
                                 </copy> 
@@ -249,6 +252,9 @@
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />
                                 </copy>
+                                <copy todir="${target.dir}/filaments">
+                                    <fileset dir="${resources.dir}/filaments" />
+                                </copy>                                
                                 <copy todir="${target.dir}/config">
                                     <filelist dir="${resources.dir}/config" files="app.properties" />
                                 </copy>                                 
@@ -371,6 +377,9 @@
                                         <copy todir="${reso.dir}/languages">
                                             <fileset dir="${project.basedir}/src/main/resources/languages" />
                                         </copy>
+                                        <copy todir="${reso.dir}/filaments">
+                                            <fileset dir="${project.basedir}/src/main/resources/filaments" />
+                                        </copy>                                        
                                         <copy todir="${reso.dir}/config">
                                             <filelist dir="${project.basedir}/src/main/resources/config" files="app.properties" />
                                         </copy> 

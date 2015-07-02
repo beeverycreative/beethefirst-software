@@ -89,9 +89,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
+import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.FilamentManager;
 import replicatorg.app.ui.WelcomeSplash;
 import replicatorg.util.ConfigProperties;
 
@@ -1263,14 +1266,16 @@ public class Base {
         });
         ProperDefault.put("machine.name", MACHINE_NAME);
         String machineName = ProperDefault.get("machine.name");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        FilamentManager fm = FilamentManager.getInstance();
+        List<Filament> filaments = fm.getFilaments();
         
-                    try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
-                    
         // quite ugly, but it works for now
         while (true) {
             try {
@@ -1278,7 +1283,7 @@ public class Base {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (Base.statusThreadDied) {                
+            if (Base.statusThreadDied) {
                 editor.reloadMachine(machineName, false);
             }
         }
