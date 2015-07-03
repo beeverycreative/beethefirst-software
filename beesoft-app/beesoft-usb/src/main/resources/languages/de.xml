@@ -747,60 +747,7 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <Scene value="Arbeitsbereich"/>
             <Models value="Modelle"/>
             <All value="Alle"/>
-        </Gallery>
-        
-        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
-        <CoilColors>
-            <a000 value="A000 - No filament" />
-            <!-- Filamentos da Filkemp -->
-            <a001 value="A001 - Transparent"/>
-            <a002 value="A002 - White"/>
-            <a003 value="A003 - Black"/>
-            <a004 value="A004 - Red"/>
-            <a005 value="A005 - Yellow"/>
-            <a006 value="A006 - Blue"/>
-            <a007 value="A007 - Olive Green"/>
-            <a008 value="A008 - Pink"/>
-            <a009 value="A009 - Silver"/>
-            <a010 value="A010 - Turquoise"/>
-            <a011 value="A011 - Green"/>
-            <a012 value="A012 - Orange"/>
-            <a021 value="A021 - Transparent"/>
-            <a022 value="A022 - White"/>
-            <a023 value="A023 - Black"/>
-            <a024 value="A024 - Red"/>
-            <a025 value="A025 - Yellow"/>
-            <a026 value="A026 - Blue"/>
-            <a027 value="A027 - Olive Green"/>
-            <a028 value="A028 - Fuchsia"/>
-            <a029 value="A029 - Silver"/>
-            <a030 value="A030 - Turquoise"/>
-            <a031 value="A031 - Neon Green"/>
-            <a032 value="A032 - Orange"/>
-            
-            <!-- Filamentos da FiberForce -->
-            <a101 value="A101 - Transparent"/>
-            <a102 value="A102 - Blanc Gris"/>
-            <a103 value="A103 - Zinc Yellow"/>
-            <a104 value="A104 - Signal Yellow"/>
-            <a105 value="A105 - Bright Red Orange"/>
-            <a106 value="A106 - Traffic Red"/>
-            <a107 value="A107 - Tomato Red"/>
-            <a108 value="A108 - Light Pink"/>
-            <a109 value="A109 - Traffic Purple"/>
-            <a110 value="A110 - Violet"/>
-            <a111 value="A111 - Sky Blue"/>
-            <a112 value="A112 - Traffic Blue"/>
-            <a113 value="A113 - Ultramarine Blue"/>
-            <a114 value="A114 - Yellow Green"/>
-            <a115 value="A115 - Pure Green"/>
-            <a116 value="A116 - Chrome Green"/>
-            <a117 value="A117 - Chocolate Brown"/>
-            <a118 value="A118 - Telegrey"/>
-            <a119 value="A119 - Signal Black"/>
-            <a120 value="A120 - Pearl Gold"/>
-            <a121 value="A121 - Pearl Light Grey"/>
-        </CoilColors>
+        </Gallery>        
         
     </tags>      
 </languages>
