@@ -25,8 +25,6 @@ package replicatorg.drivers;
 
 import org.w3c.dom.Node;
 
-import replicatorg.app.tools.XML;
-
 
 //TODO: why do we have this?
 public class NullDriver extends DriverBaseImplementation {

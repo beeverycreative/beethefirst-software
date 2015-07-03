@@ -22,7 +22,7 @@ import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
 import replicatorg.app.DoNotSleep;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
@@ -1602,7 +1602,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 //                    driver.dispatchCommand("G1 F6000 E-0.5", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
                     double colorRatio = FilamentControler.getColorRatio(
-                            machine.getModel().getCoilCode(), machine.getModel().getResolution());
+                            machine.getModel().getCoilCode(), 
+                            machine.getModel().getResolution(),
+                            machine.getDriver().getConnectedDevice().toString()
+                    );
 
                     /**
                      * Signals FW about the color ratio between previous and
@@ -2163,7 +2166,8 @@ class TransferControlThread extends Thread {
     public void run() {
         gCodeDone = estimate(Base.isPrintingFromGCode);
         Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),
-                Base.getMainWindow().getMachine().getModel().getResolution());
+                Base.getMainWindow().getMachine().getModel().getResolution(), 
+                Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString());
 
     }
 

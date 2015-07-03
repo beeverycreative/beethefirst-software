@@ -24,16 +24,17 @@
 package replicatorg.drivers;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.vecmath.Point3d;
 
 import org.w3c.dom.Node;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 
 import replicatorg.app.Base;
 import replicatorg.app.exceptions.BuildFailureException;
@@ -44,7 +45,7 @@ import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
-public class DriverBaseImplementation implements Driver {
+public abstract class DriverBaseImplementation implements Driver {
 //	// our gcode parser
 //	private GCodeParser parser;
 
@@ -53,14 +54,14 @@ public class DriverBaseImplementation implements Driver {
     // Driver name
     protected String driverName;
     // our firmware version info
-    private String firmwareName = "Unknown";
+    private final String firmwareName = "Unknown";
     protected Version version = new Version(0, 0);
     protected Version preferredVersion = new Version(0, 0);
     protected Version minimumVersion = new Version(0, 0);
     // our point offsets
     private Point3d[] offsets;
     // are we initialized?
-    private AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     // our error variable.
     ConcurrentLinkedQueue<DriverError> errorList;
     // how fast are we moving in mm/minute
@@ -99,58 +100,77 @@ public class DriverBaseImplementation implements Driver {
         driverName = "virtualprinter";
     }
 
+    @Override
+    public PrinterInfo getConnectedDevice() {
+        return null;
+    }
+    
+    @Override
     public void loadXML(Node xml) {
     }
 
+    @Override
     public void updateManualControl() {
     }
 
+    @Override
     public boolean isPassthroughDriver() {
         return false;
     }
 
+    @Override
     public void executeGCodeLine(String code) {
-        Base.logger.severe("Ignoring executeGCode command: " + code);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
+    @Override
     public String dispatchCommand(String code) {
-        Base.logger.severe("Ignoring executeGCode command: " + code);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
         return "";
     }
 
+    @Override
     public int sendCommandBytes(byte[] next) {
-        Base.logger.severe("Ignoring sending bytes" + next);
+        Base.logger.log(Level.SEVERE, "Ignoring sending bytes{0}", Arrays.toString(next));
         return -1;
     }
 
+    @Override
     public String dispatchCommand(String code, Enum comtype) {
-        Base.logger.severe("Ignoring executeGCode command: " + code + ":" + comtype);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
         return "";
     }
 
+    @Override
     public double read() {
         return 30;
     }
 
+    @Override
     public String getFirmwareVersion() {
         return "";
     }
 
+    @Override
     public String getBootloaderVersion() {
         return "";
     }
 
+    @Override
     public String getSerialNumber() {
         return "";
     }
 
+    @Override
     public double getTotalExtrudedValue() {
         return 0.0;
     }
 
+    @Override
     public void resetExtrudeSession() {
     }
 
+    @Override
     public boolean isBootloader() {
         return true;
     }
@@ -160,20 +180,23 @@ public class DriverBaseImplementation implements Driver {
     }
 
     public void read(String code) {
-        Base.logger.severe("Ignoring executeGCode command: " + code);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
+    @Override
     public void dispose() {
         if (Base.logger.isLoggable(Level.FINE)) {
-            Base.logger.fine("Disposing of driver " + getDriverName());
+            Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
         }
 //		parser = null;
     }
 
+    @Override
     public void initialize() throws VersionException {
         setInitialized(true);
     }
 
+    @Override
     public void uninitialize() {
         setInitialized(false);
     }
@@ -189,16 +212,20 @@ public class DriverBaseImplementation implements Driver {
         }
     }
 
+    @Override
     public boolean isInitialized() {
         return isInitialized.get();
     }
 
+    @Override
     public void hiccup() {
     }
 
+    @Override
     public void hiccup(int mili, int nano) {
     }
 
+    @Override
     public void assessState() {
     }
 
@@ -210,51 +237,62 @@ public class DriverBaseImplementation implements Driver {
         setError(new DriverError(e, true));
     }
 
+    @Override
     public boolean hasError() {
         return (errorList.size() > 0);
     }
 
+    @Override
     public DriverError getError() {
         return errorList.remove();
     }
 
     @Deprecated
+    @Override
     public void checkErrors() throws BuildFailureException {
         if (errorList.size() > 0) {
             throw new BuildFailureException(getError().getMessage());
         }
     }
 
+    @Override
     public boolean isFinished() {
         return true;
     }
 
+    @Override
     public boolean isBufferEmpty() {
         return true;
     }
 
+    @Override
     public String getFirmwareInfo() {
         return firmwareName + " v" + getVersion();
     }
 
+    @Override
     public Version getVersion() {
         return version;
     }
 
+    @Override
     public Version getMinimumVersion() {
         return minimumVersion;
     }
 
+    @Override
     public Version getPreferredVersion() {
         return preferredVersion;
     }
     protected final AtomicReference<Point5d> currentPosition =
             new AtomicReference<Point5d>(null);
 
+    @Override
     public void setCurrentPosition(Point5d p) throws RetryException {
         currentPosition.set(p);
     }
 
+    @Override
     public void invalidatePosition() {
 //		System.err.println("invalidating position.");
         currentPosition.set(null);
@@ -284,10 +322,12 @@ public class DriverBaseImplementation implements Driver {
         throw new RuntimeException("Position reconcilliation requested, but not implemented for this driver");
     }
 
+    @Override
     public boolean positionLost() {
         return (currentPosition.get() == null);
     }
 
+    @Override
     public Point5d getCurrentPosition(boolean forceUpdate) {
         synchronized (currentPosition) {
             // If we are lost, or an explicit update has been requested, poll the machine for it's state. 
@@ -311,10 +351,12 @@ public class DriverBaseImplementation implements Driver {
         }
     }
 
+    @Override
     public Point5d getPosition() {
         return getCurrentPosition(false);
     }
 
+    @Override
     public void queuePoint(Point5d p) throws RetryException {
         setInternalPosition(p);
     }
@@ -323,10 +365,12 @@ public class DriverBaseImplementation implements Driver {
         currentPosition.set(position);
     }
 
+    @Override
     public void setFeedrate(double feed) {
         currentFeedrate = feed;
     }
 
+    @Override
     public double getCurrentFeedrate() {
         return currentFeedrate;
     }
@@ -341,10 +385,12 @@ public class DriverBaseImplementation implements Driver {
         return delta;
     }
 
+    @Override
     public MachineModel getMachine() {
         return machine;
     }
 
+    @Override
     public void setMachine(MachineModel m) {
         machine = m;
     }
@@ -357,6 +403,7 @@ public class DriverBaseImplementation implements Driver {
         machine.disableDrives();
     }
 
+    @Override
     public void setTemperature(double temperature) throws RetryException {
         machine.currentTool().setTargetTemperature(temperature);
     }
@@ -365,6 +412,7 @@ public class DriverBaseImplementation implements Driver {
         machine.currentTool().setTargetTemperature(0);
     }
 
+    @Override
     public void readTemperature() {
     }
 
@@ -377,18 +425,22 @@ public class DriverBaseImplementation implements Driver {
         return "";
     }
 
+    @Override
     public double getTemperature() {
         return machine.currentTool().getCurrentTemperature();
     }
 
+    @Override
     public void setDriverName(String name) {
         this.driverName = name;
     }
 
+    @Override
     public String getDriverName() {
         return driverName;
     }
 
+    @Override
     public boolean isReady(boolean forceCheck) {
         return false;
     }
@@ -398,7 +450,6 @@ public class DriverBaseImplementation implements Driver {
 
     @Override
     public void readStatus() {
-        return;
     }
 
     @Override

@@ -87,6 +87,15 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     protected UsbDriver() {
     }
+    
+    /**
+     * Gets the info object on the currently connected printer
+     * 
+     * @return 
+     */
+    public PrinterInfo getConnectedDevice() {
+        return this.connectedDevice;
+    }
 
     /**
      * Loads machine xml.

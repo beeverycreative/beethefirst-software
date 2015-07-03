@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
