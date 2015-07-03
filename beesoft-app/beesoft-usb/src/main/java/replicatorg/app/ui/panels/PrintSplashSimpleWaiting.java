@@ -22,7 +22,7 @@ import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
 import replicatorg.app.DoNotSleep;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Printer;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.ProperDefault;
@@ -1020,7 +1020,10 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
                     driver.dispatchCommand("G1 F6000 E-2", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
 
-                    double colorRatio = FilamentControler.getColorRatio(mchn.getModel().getCoilCode(), mchn.getModel().getResolution());
+                    double colorRatio = FilamentControler.getColorRatio(
+                            mchn.getModel().getCoilCode(), 
+                            mchn.getModel().getResolution(),
+                            mchn.getDriver().getConnectedDevice().toString());
                     /**
                      * Signals FW about the color ratio between previous and
                      * actual color

@@ -1,11 +1,13 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -62,6 +64,21 @@ public class FilamentCodeInsertion extends BaseDialog {
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
+    }
+
+    private void centerOnScreen() {
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        // Determine the new location of the window
+        int w = this.getSize().width;
+        int h = this.getSize().height;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
+
+        // Move the window
+//        this.setLocation(x, y);
+        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(Base.getMainWindow());
     }
 
     private void evaluateInitialConditions() {
