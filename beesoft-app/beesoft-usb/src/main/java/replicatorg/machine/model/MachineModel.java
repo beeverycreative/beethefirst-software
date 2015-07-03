@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.tools.XML;
 import replicatorg.util.Point5d;
 

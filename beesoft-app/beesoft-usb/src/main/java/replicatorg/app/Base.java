@@ -29,12 +29,17 @@
  */
 package replicatorg.app;
 
+import ch.randelshofer.quaqua.QuaquaManager;
+import com.apple.eawt.Application;
+import com.apple.mrj.MRJApplicationUtils;
+import com.apple.mrj.MRJOpenDocumentHandler;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -45,18 +50,27 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -64,14 +78,13 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
 import replicatorg.machine.MachineLoader;
@@ -95,6 +108,7 @@ import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import pt.beeverycreative.beesoft.filaments.FilamentManager;
 import replicatorg.app.ui.WelcomeSplash;
+import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
 
 /**
@@ -1282,9 +1296,6 @@ public class Base {
         } catch (InterruptedException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        FilamentManager fm = FilamentManager.getInstance();
-        List<Filament> filaments = fm.getFilaments();
         
         // quite ugly, but it works for now
         while (true) {

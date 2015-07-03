@@ -1,5 +1,6 @@
 package replicatorg.app;
 
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -135,7 +136,10 @@ public class CalibrationGCoder {
                     String w_val = Double.toString(
                             FilamentControler.getColorRatio(
                                     Base.getMainWindow().getMachine().getModel().getCoilCode(),
-                                    Base.getMainWindow().getMachine().getModel().getResolution()));
+                                    Base.getMainWindow().getMachine().getModel().getResolution(),
+                                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString()
+                                    
+                            ));
                     return ("gcode: " + "M642 w"+w_val+", "+ eElement.getAttribute("value"));
                     
                 }

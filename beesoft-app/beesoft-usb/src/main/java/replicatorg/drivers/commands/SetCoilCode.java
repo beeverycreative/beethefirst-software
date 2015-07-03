@@ -1,6 +1,6 @@
 package replicatorg.drivers.commands;
 
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.RetryException;
 

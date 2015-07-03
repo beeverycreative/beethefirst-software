@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;

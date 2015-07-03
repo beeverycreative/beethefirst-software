@@ -26,6 +26,7 @@ package replicatorg.drivers;
 import java.io.File;
 
 import org.w3c.dom.Node;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
@@ -64,7 +65,9 @@ public interface Driver {
     /**
      * Execute a line of GCode directly (ie, don't use the parser)
      *
-     * @param code The line of GCode that we should execute
+     * @param command
+     * 
+     * @return 
      */
     public String dispatchCommand(String command);
 
@@ -185,6 +188,7 @@ public interface Driver {
 
     /**
      * Get Total Extruded Value since filament change.
+     * @return 
      */
     public double getTotalExtrudedValue();
 
@@ -500,7 +504,6 @@ public interface Driver {
     /**
      * Gets last line number of the gcode processed in firmware (autonomy).
      *
-     * @return last executed command line number
      */
     public void readLastLineNumber();
 
@@ -545,6 +548,7 @@ public interface Driver {
     /**
      * Checks if machine is ready - firmware side.
      *
+     * @param forceCheck
      * @return <li> true, if so
      * <li> false if not
      */
@@ -569,4 +573,11 @@ public interface Driver {
      * @return string containing coil code: Axxxx
      */
     public String getCoilCode();
+    
+    /**
+     * Gets the info object on the currently connected printer
+     * 
+     * @return 
+     */
+    public PrinterInfo getConnectedDevice();
 }

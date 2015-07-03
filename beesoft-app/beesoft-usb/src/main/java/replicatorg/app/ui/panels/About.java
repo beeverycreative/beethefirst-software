@@ -3,7 +3,7 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
