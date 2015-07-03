@@ -17,7 +17,7 @@
             <File_Open value="Abrir área de trabalho"/>
             <File_Save value="Gravar área de trabalho"/>
             <File_Save_as value="Guardar área de trabalho como..."/>
-            <File_Preferences value="Preferencias"/>
+            <File_Preferences value="Preferências"/>
             <File_Quit value="Sair"/>
             <Edit_Undo value="Voltar"/>
             <Edit_Redo value="Fazer novamente"/>
