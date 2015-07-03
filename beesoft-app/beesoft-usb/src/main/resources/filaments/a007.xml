@@ -2,7 +2,6 @@
 <filament>
     <version>1.0.0</version>
     <name>A007 - Olive Green</name>
-    <code>a007</code>
     <printers>
         <printer type="BEETHEFIRST">
             <resolutions>
