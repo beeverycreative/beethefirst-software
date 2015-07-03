@@ -1,5 +1,6 @@
 package pt.beeverycreative.beesoft.filaments;
 
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -42,6 +43,23 @@ public class Resolution {
     @XmlElement(name="cool_min_layer_time")
     private SlicerParameter coolMinLayerTime;
 
+    public HashMap<String, String> getSlicerParameters() {
+        
+        HashMap<String, String> result = new HashMap<String, String>();
+        
+        result.put("layer_height", String.valueOf(this.getLayerHeightValue().getValue()));
+        result.put("solid_layer_thickness", String.valueOf(this.getSolidLayerThicknessValue().getValue()));
+        result.put("nozzle_size", String.valueOf(this.getNozzleSize().getValue()));
+        result.put("print_speed", String.valueOf(this.getPrintSpeed().getValue()));
+        result.put("infill_speed", String.valueOf(this.getInfillSpeed().getValue()));
+        result.put("inset0_speed", String.valueOf(this.getInset0Speed().getValue()));
+        result.put("insetx_speed", String.valueOf(this.getInsetXSpeed().getValue()));
+        result.put("filament_flow", String.valueOf(this.getFilamentFlow().getValue()));
+        result.put("cool_min_layer_time", String.valueOf(this.getCoolMinLayerTime().getValue()));
+                
+        return result;
+    }
+        
     public String getType() {
         return type;
     }

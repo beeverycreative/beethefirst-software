@@ -251,6 +251,44 @@ public class FilamentControler {
         return result;
     }
     
+    
+    /**
+     * Get the Hash map with the filament settings for a specific resolution and printer
+     * 
+     * @param coilCode coil code.
+     * @param resolution resolution
+     * @param printerId printer identification
+     * 
+     * @return ratio for each color. 
+     */
+    public static HashMap<String, String> getFilamentSettings(String coilCode, 
+            String resolution, String printerId) {
+               
+        if (filamentList == null) {
+            fetchFilaments();
+        }
+        
+        if (!filamentList.isEmpty()) {
+            for (Filament fil: filamentList) {
+                if (fil.getCode().equals(coilCode)) {
+                    
+                    for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                        if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
+                            
+                            for (Resolution res : sc.getResolutions()) {
+                                if (res.getType().equals(resolution)) {
+                                    return res.getSlicerParameters();
+                                }
+                            }
+                        }
+                    } 
+                }
+            }
+        }
+        // Defaults to an empty map
+        return new HashMap<String, String>();
+    }
+    
     /**
      * Get coil code from color name.
      * @param color color name.
