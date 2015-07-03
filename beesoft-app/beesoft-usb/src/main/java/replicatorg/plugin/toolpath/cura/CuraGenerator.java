@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -120,7 +121,10 @@ public class CuraGenerator extends ToolpathGenerator {
 
         String bee_code = profile.split(":")[0];
         String resol = profile.split(":")[1];
-        HashMap<String, String> overload_values = Languager.getTagValues(2, bee_code, resol);
+        String printer = Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString();
+        
+        HashMap<String, String> overload_values = 
+                FilamentControler.getFilamentSettings(bee_code, resol, printer);
         
         System.out.println("bee_code = " + bee_code);
         
