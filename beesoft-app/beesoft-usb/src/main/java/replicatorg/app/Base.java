@@ -87,27 +87,6 @@ import javax.swing.SwingUtilities;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
-import replicatorg.machine.MachineLoader;
-import ch.randelshofer.quaqua.QuaquaManager;
-import com.apple.eawt.Application;
-
-import com.apple.mrj.MRJApplicationUtils;
-import com.apple.mrj.MRJOpenDocumentHandler;
-import java.awt.Window;
-import java.io.FileNotFoundException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
-import pt.beeverycreative.beesoft.filaments.Filament;
-import pt.beeverycreative.beesoft.filaments.FilamentManager;
 import replicatorg.app.ui.WelcomeSplash;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
@@ -1286,9 +1265,6 @@ public class Base {
         } catch (InterruptedException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        FilamentManager fm = FilamentManager.getInstance();
-        List<Filament> filaments = fm.getFilaments();
         
         // quite ugly, but it works for now
         while (true) {

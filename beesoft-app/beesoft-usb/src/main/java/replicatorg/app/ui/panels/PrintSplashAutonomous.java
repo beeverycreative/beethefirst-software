@@ -2,7 +2,9 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -10,7 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,6 +133,21 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         ut.start();
     }
 
+    private void centerOnScreen() {
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        // Determine the new location of the window
+        int w = this.getSize().width;
+        int h = this.getSize().height;
+        int x = (dim.width - w) / 2;
+        int y = (dim.height - h) / 2;
+
+        // Move the window
+        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(Base.getMainWindow());
+        Base.setMainWindowNOK();
+    }
+
     public void setProgression(int prog) {
         progression = prog;
     }
@@ -217,7 +233,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             // stopTransfer() blocks while the process isn't concluded
             machine.getDriver().stopTransfer();
         } else {
-            machine.killSwitch();
+            machine.killSwitch(); 
             machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
             machine.runCommand(new replicatorg.drivers.commands.ReloadConfig());
             machine.runCommand(new replicatorg.drivers.commands.SendHome("Z"));
@@ -307,13 +323,13 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         startTimeMillis2 = System.currentTimeMillis();
     }
 
-    public void setPrintElements(boolean showProgress) {
+    public void setPrintElements() {
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
         tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
-        tEstimation.setVisible(showProgress);
-        tRemaining.setVisible(showProgress);
-        vEstimation.setVisible(showProgress);
-        vRemaining.setVisible(showProgress);
+        tEstimation.setVisible(true);
+        tRemaining.setVisible(true);
+        vEstimation.setVisible(true);
+        vRemaining.setVisible(true);
     }
 
     public String printTime(boolean autonomous, long startMillis) {
@@ -509,18 +525,18 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         jProgressBar1.setValue(0);
     }
 
-    public void setPrintInfo(boolean showProgress) {
+    public void setPrintInfo() {
+        jProgressBar1.setVisible(true);
         updatePrintBar(0);
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
         tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Estimation"));
         tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Remaining"));
         tInfo3.setVisible(true);
-        jProgressBar1.setVisible(showProgress);
-        tRemaining.setVisible(showProgress);
-        tEstimation.setVisible(showProgress);
-        vEstimation.setVisible(showProgress);
-        vRemaining.setVisible(showProgress);
+        tRemaining.setVisible(true);
+        tEstimation.setVisible(true);
+        vEstimation.setVisible(true);
+        vRemaining.setVisible(true);
         bPause.setVisible(false);
         bShutdown.setVisible(false);
     }
@@ -591,7 +607,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             // searching further than that
             while ((line = reader.readLine()) != null && lines < 100) {
                 lines++;
-                if (line.contains("M31") && !line.contains(";")) {
+                if (line.contains("M31")) {
                     int indexAtA = line.indexOf('A');
                     int indexAtL = line.indexOf('L');
                     String result = line.substring(indexAtA + 1, indexAtL - 1);
@@ -605,7 +621,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                     + "reading GCode");
         }
 
-        return "0";
+        PrintEstimator.estimateTime(new File(preferences.get(6)));
+        return PrintEstimator.getEstimatedTime();
     }
 
     private String minutesToHours(int t) {
@@ -956,8 +973,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 driver.dispatchCommand("G1 F1000 Z" + pausePos.z() + " E0", COM.NO_RESPONSE);
                 driver.dispatchCommand("G92 E" + pausePos.a(), COM.NO_RESPONSE);
 
-                // TODO: CHANGE THIS
-                setPrintInfo(true);
+                setPrintInfo();
                 machine.getDriver().startPrintAutonomous();
                 //feedback
                 isShutdown = false;
@@ -1734,7 +1750,7 @@ class UpdateThread4 extends Thread {
 
     private final PrintSplashAutonomous window;
     private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-    private final TransferControlThread gcodeGenerator;
+    private final TransferControlThread gcodeGenerater;
     private static final String ERROR = "error";
     private final double temperatureGoal = 215; //default
     private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
@@ -1745,13 +1761,12 @@ class UpdateThread4 extends Thread {
     private final long updateSleep = 500;
     private String estimatedTime;
     private boolean isOnShutdownRecover;
-    private boolean showProgress = false;
     File gcode = null;
 
     public UpdateThread4(PrintSplashAutonomous w, TransferControlThread gcodeGen) {
         super("Autonomous Thread");
         this.window = w;
-        this.gcodeGenerator = gcodeGen;
+        this.gcodeGenerater = gcodeGen;
     }
 
     private void transferGCode() {
@@ -1785,7 +1800,7 @@ class UpdateThread4 extends Thread {
     private void monitorPrintFromSDCard() {
 
         window.startPrintCounter();
-        window.setPrintElements(showProgress);
+        window.setPrintElements();
 
         window.updatePrintEstimation(estimatedTime, true);
         window.updatePrintEstimation(estimatedTime, false);
@@ -1882,6 +1897,7 @@ class UpdateThread4 extends Thread {
 
     @Override
     public void run() {
+
         /**
          * If already printing when BEESOFT opens
          */
@@ -1942,7 +1958,6 @@ class UpdateThread4 extends Thread {
             window.resetProgressBar();
 
             estimatedTime = variables.getEstimatedTime().toString();
-            showProgress = !estimatedTime.equals("0");
             String elapsedTime = variables.getElapsedTime().toString();
             nLines = Integer.valueOf(variables.getNLines().toString());
             int currentNumberLines = Integer.valueOf(variables.getCurrentNLines().toString());
@@ -1957,10 +1972,10 @@ class UpdateThread4 extends Thread {
             System.out.println("NLines: " + nLines);
             System.out.println("Current NLines: " + currentNumberLines);
             System.out.println("*****************");
-            window.setPrintInfo(showProgress);
+            window.setPrintInfo();
 
             //Update visual elements
-            window.setPrintElements(showProgress);
+            window.setPrintElements();
             window.updatePrintEstimation(estimatedTime, true);
             window.updatePrintEstimation(timeRemaining, false);
 
@@ -1969,7 +1984,7 @@ class UpdateThread4 extends Thread {
             //Updates elements while visible
             while (true) {
 
-                if (!window.isPaused() && showProgress == false) {
+                if (!window.isPaused()) {
                     // Updates estimation with 1 min periodicity
                     int numbLines = window.updateTimeElapsed();
 
@@ -2001,7 +2016,7 @@ class UpdateThread4 extends Thread {
                 /**
                  * Generate GCode
                  */
-                gcodeGenerator.start();
+                gcodeGenerater.start();
                 boolean gcodeDone = false;
 
                 while (gcodeDone == false) {
@@ -2010,14 +2025,14 @@ class UpdateThread4 extends Thread {
                     } catch (InterruptedException ex) {
                         Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    gcodeDone = gcodeGenerator.getGCodeDone();
-                    estimatedTime = String.valueOf((int) gcodeGenerator.getGenerationTime());
+                    gcodeDone = gcodeGenerater.getGCodeDone();
+                    estimatedTime = String.valueOf((int) gcodeGenerater.getGenerationTime());
                 }
 
                 /**
                  * Free JVM
                  */
-                gcodeGenerator.stop();
+                gcodeGenerater.stop();
 
                 gcode = window.getPrintFile();
             } else {
@@ -2026,7 +2041,7 @@ class UpdateThread4 extends Thread {
                 /**
                  * Estimates GCode printing time
                  */
-                gcodeGenerator.start();
+                gcodeGenerater.start();
                 boolean gcodeDone = false;
 
                 while (gcodeDone == false) {
@@ -2035,23 +2050,15 @@ class UpdateThread4 extends Thread {
                     } catch (InterruptedException ex) {
                         Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    gcodeDone = gcodeGenerator.getGCodeDone();
-                    estimatedTime = String.valueOf((int) gcodeGenerator.getGenerationTime());
+                    gcodeDone = gcodeGenerater.getGCodeDone();
+                    estimatedTime = String.valueOf((int) gcodeGenerater.getGenerationTime());
                 }
 
                 /**
                  * Free JVM
                  */
-                gcodeGenerator.stop();
+                gcodeGenerater.stop();
             }
-
-            showProgress = !estimatedTime.equals("0");
-
-            // make sure we send an M31
-            if (showProgress == false) {
-                machine.runCommand(new replicatorg.drivers.commands.SendStandaloneVariables(getNLines()));
-            }
-
             /**
              * GCode generated; set driver to autonomous and transfer it
              */
@@ -2073,7 +2080,7 @@ class UpdateThread4 extends Thread {
             /**
              * Set UI elements
              */
-            window.setPrintInfo(!estimatedTime.equals("0"));
+            window.setPrintInfo();
 
             /**
              * Reset elapsed time of Autonomous to 0
@@ -2124,22 +2131,6 @@ class UpdateThread4 extends Thread {
         }
 
         this.stop();
-    }
-
-    private int getNLines() {
-        LineNumberReader gcodeLineCounter = null;
-        try {
-            gcodeLineCounter = new LineNumberReader(new FileReader(gcode));
-            gcodeLineCounter.skip(Long.MAX_VALUE);
-        } catch (IOException ex) {
-            Base.writeLog("Can't count number of lines of file " + gcode.getName());
-        }
-        
-        if(gcodeLineCounter == null) {
-            return 0;
-        } else {
-            return gcodeLineCounter.getLineNumber();
-        }
     }
 }
 

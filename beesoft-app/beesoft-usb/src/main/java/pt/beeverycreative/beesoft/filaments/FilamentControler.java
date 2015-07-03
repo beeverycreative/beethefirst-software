@@ -81,12 +81,12 @@ public class FilamentControler {
                         fil = (Filament) unmarshaller.unmarshal(ff);                    
                         availableFilaments.add(fil);
                     } catch (JAXBException ex) {
-                        Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(FilamentManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 }            
             } catch (JAXBException ex) {
-                Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);                                            
+                Logger.getLogger(FilamentManager.class.getName()).log(Level.SEVERE, null, ex);                                            
             }
                        
             filamentList = availableFilaments;
@@ -249,45 +249,6 @@ public class FilamentControler {
         }
         
         return result;
-    }
-    
-    
-    /**
-     * Get the Hash map with the filament settings for a specific resolution and printer
-     * 
-     * @param coilCode coil code.
-     * @param resolution resolution
-     * @param printerId printer identification
-     * 
-     * @return ratio for each color. 
-     */
-    public static HashMap<String, String> getFilamentSettings(String coilCode, 
-            String resolution, String printerId) {
-               
-        if (filamentList == null) {
-            fetchFilaments();
-        }
-        
-        if (!filamentList.isEmpty()) {
-            for (Filament fil: filamentList) {
-                if (fil.getCode().toLowerCase().equals(coilCode.toLowerCase())) {
-                    
-                    for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                        if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-                            
-                            for (Resolution res : sc.getResolutions()) {
-                                if (res.getType().toLowerCase().equals(resolution.toLowerCase())) {
-                                    
-                                    return res.getSlicerParameters();
-                                }
-                            }
-                        }
-                    } 
-                }
-            }
-        }
-        // Defaults to an empty map
-        return new HashMap<String, String>();
     }
     
     /**
