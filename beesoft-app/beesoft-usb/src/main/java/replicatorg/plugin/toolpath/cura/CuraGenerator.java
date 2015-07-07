@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 
 import replicatorg.app.Base;
-import replicatorg.app.Languager;
 import replicatorg.app.Oracle;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.ProperDefault;
