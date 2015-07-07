@@ -81,12 +81,12 @@ public class FilamentControler {
                         fil = (Filament) unmarshaller.unmarshal(ff);                    
                         availableFilaments.add(fil);
                     } catch (JAXBException ex) {
-                        Logger.getLogger(FilamentManager.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                 }            
             } catch (JAXBException ex) {
-                Logger.getLogger(FilamentManager.class.getName()).log(Level.SEVERE, null, ex);                                            
+                Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);                                            
             }
                        
             filamentList = availableFilaments;
