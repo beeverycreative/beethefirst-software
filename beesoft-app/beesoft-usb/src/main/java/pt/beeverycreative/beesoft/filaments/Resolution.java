@@ -42,6 +42,12 @@ public class Resolution {
     
     @XmlElement(name="cool_min_layer_time")
     private SlicerParameter coolMinLayerTime;
+    
+    @XmlElement(name="retraction_speed")
+    private SlicerParameter retractionSpeed;
+    
+    @XmlElement(name="retraction_amount")
+    private SlicerParameter retractionAmount;
 
     public HashMap<String, String> getSlicerParameters() {
         
@@ -56,6 +62,8 @@ public class Resolution {
         result.put("insetx_speed", String.valueOf(this.getInsetXSpeed().getValue()));
         result.put("filament_flow", String.valueOf(this.getFilamentFlow().getValue()));
         result.put("cool_min_layer_time", String.valueOf(this.getCoolMinLayerTime().getValue()));
+        result.put("retraction_speed", String.valueOf(this.getRetractionSpeed().getValue()));
+        result.put("retraction_amount", String.valueOf(this.getRetractionAmount().getValue()));
                 
         return result;
     }
@@ -139,4 +147,20 @@ public class Resolution {
     public void setCoolMinLayerTime(SlicerParameter coolMinLayerTime) {
         this.coolMinLayerTime = coolMinLayerTime;
     }  
+
+    public SlicerParameter getRetractionSpeed() {
+        return retractionSpeed;
+    }
+
+    public void setRetractionSpeed(SlicerParameter retractionSpeed) {
+        this.retractionSpeed = retractionSpeed;
+    }
+
+    public SlicerParameter getRetractionAmount() {
+        return retractionAmount;
+    }
+
+    public void setRetractionAmount(SlicerParameter retractionAmount) {
+        this.retractionAmount = retractionAmount;
+    }        
 }
