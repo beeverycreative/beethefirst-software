@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <filament>
     <version>1.0.0</version>
-    <name>A007 - Olive Green</name>
+    <name>A009 - Silver</name>
     <printers>
         <printer type="BEETHEFIRST">
             <resolutions>
@@ -10,9 +10,10 @@
                     <solid_layer_thickness value="0.9"/>
                     <nozzle_size value="0.4"/>
                     <print_speed value="60"/>
+                    <infill_speed value="60"/>
                     <inset0_speed value="60"/>
                     <insetx_speed value="60"/>
-                    <filament_flow value="103.1"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="5"/>
                 </resolution>
                 <resolution type="medium">
@@ -22,8 +23,8 @@
                     <print_speed value="40"/>
                     <infill_speed value="0"/>
                     <inset0_speed value="0"/>
-                    <insetx_speed value="0"/>
-                    <filament_flow value="103.1"/>
+                    <insetx_speed value="0.3"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="30"/>
                 </resolution>
                 <resolution type="high">
@@ -34,7 +35,7 @@
                     <infill_speed value="60"/>
                     <inset0_speed value="40"/>
                     <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="5"/>
                 </resolution>
                 <resolution type="high+">
@@ -45,7 +46,7 @@
                     <infill_speed value="60"/>
                     <inset0_speed value="30"/>
                     <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="5"/>
                 </resolution>
             </resolutions>
@@ -57,9 +58,10 @@
                     <solid_layer_thickness value="0.9"/>
                     <nozzle_size value="0.4"/>
                     <print_speed value="60"/>
+                    <infill_speed value="60"/>
                     <inset0_speed value="60"/>
                     <insetx_speed value="60"/>
-                    <filament_flow value="103.1"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="5"/>
                 </resolution>
                 <resolution type="medium">
@@ -69,8 +71,8 @@
                     <print_speed value="40"/>
                     <infill_speed value="0"/>
                     <inset0_speed value="0"/>
-                    <insetx_speed value="0"/>
-                    <filament_flow value="103.1"/>
+                    <insetx_speed value="0.3"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="30"/>
                 </resolution>
                 <resolution type="high">
@@ -81,7 +83,7 @@
                     <infill_speed value="60"/>
                     <inset0_speed value="40"/>
                     <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="5"/>
                 </resolution>
                 <resolution type="high+">
@@ -92,7 +94,7 @@
                     <infill_speed value="60"/>
                     <inset0_speed value="30"/>
                     <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
+                    <filament_flow value="106.6"/>
                     <cool_min_layer_time value="5"/>
                 </resolution>
             </resolutions>
