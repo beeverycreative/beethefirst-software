@@ -49,21 +49,47 @@ public class Resolution {
     @XmlElement(name="retraction_amount")
     private SlicerParameter retractionAmount;
 
+    /**
+     * Returns an map with all the parameters and respective values ready for the slicer engine
+     * 
+     * @return 
+     */
     public HashMap<String, String> getSlicerParameters() {
         
         HashMap<String, String> result = new HashMap<String, String>();
+            
+        if (this.getLayerHeightValue() != null)
+            result.put("layer_height", String.valueOf(this.getLayerHeightValue().getValue()));
         
-        result.put("layer_height", String.valueOf(this.getLayerHeightValue().getValue()));
-        result.put("solid_layer_thickness", String.valueOf(this.getSolidLayerThicknessValue().getValue()));
-        result.put("nozzle_size", String.valueOf(this.getNozzleSize().getValue()));
-        result.put("print_speed", String.valueOf(this.getPrintSpeed().getValue()));
-        result.put("infill_speed", String.valueOf(this.getInfillSpeed().getValue()));
-        result.put("inset0_speed", String.valueOf(this.getInset0Speed().getValue()));
-        result.put("insetx_speed", String.valueOf(this.getInsetXSpeed().getValue()));
-        result.put("filament_flow", String.valueOf(this.getFilamentFlow().getValue()));
-        result.put("cool_min_layer_time", String.valueOf(this.getCoolMinLayerTime().getValue()));
-        result.put("retraction_speed", String.valueOf(this.getRetractionSpeed().getValue()));
-        result.put("retraction_amount", String.valueOf(this.getRetractionAmount().getValue()));
+        if (this.getSolidLayerThicknessValue() != null)
+            result.put("solid_layer_thickness", String.valueOf(this.getSolidLayerThicknessValue().getValue()));
+        
+        if (this.getNozzleSize() != null)
+            result.put("nozzle_size", String.valueOf(this.getNozzleSize().getValue()));
+        
+        if (this.getPrintSpeed() != null)
+            result.put("print_speed", String.valueOf(this.getPrintSpeed().getValue()));
+        
+        if (this.getInfillSpeed() != null)
+            result.put("infill_speed", String.valueOf(this.getInfillSpeed().getValue()));
+        
+        if (this.getInset0Speed() != null)
+            result.put("inset0_speed", String.valueOf(this.getInset0Speed().getValue()));
+        
+        if (this.getInsetXSpeed() != null)
+            result.put("insetx_speed", String.valueOf(this.getInsetXSpeed().getValue()));
+        
+        if (this.getFilamentFlow() != null)
+            result.put("filament_flow", String.valueOf(this.getFilamentFlow().getValue()));
+        
+        if (this.getCoolMinLayerTime() != null)
+            result.put("cool_min_layer_time", String.valueOf(this.getCoolMinLayerTime().getValue()));
+
+        if (this.getRetractionSpeed() != null)
+            result.put("retraction_speed", String.valueOf(this.getRetractionSpeed().getValue()));
+        
+        if (this.getRetractionAmount() != null)
+            result.put("retraction_amount", String.valueOf(this.getRetractionAmount().getValue()));
                 
         return result;
     }
