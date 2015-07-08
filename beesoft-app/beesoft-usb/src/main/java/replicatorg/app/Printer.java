@@ -14,6 +14,7 @@ import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.text.DecimalFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class Printer {
 
         appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
-        replaceLineInFile(gcode.getPath(), ";M31 here");
+        replaceLineInFile(gcode.getPath(), "M31 A0 L0");
 
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
@@ -104,13 +105,12 @@ public class Printer {
 
     private void replaceLineInFile(String pathString, String textToReplace) {
 
-        String m31String, minutes;
+        String m31String;
         File fileToRead = new File(pathString);
         File fileToWrite = new File(pathString + "_temp");
 
-        minutes = PrintEstimator.getEstimatedTime();
-        minutes = minutes.substring(minutes.indexOf(':') + 1);
-        m31String = "M31 A" + minutes + " L" + getGCodeNLines();
+        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes() 
+                + " L" + getGCodeNLines();
 
         try {
             Reader reader = new InputStreamReader(
@@ -154,13 +154,16 @@ public class Printer {
         codeStringBuilder.append(System.getProperty("line.separator"));
         for (String code : startCode) {
             
-            if (code.contains("M104")) {
-                code = "M104 S" + generator.getValue("print_temperature");
+            if (code.contains("M109")) {
+                code = "M109 S" + generator.getValue("print_temperature");
             }
             else if(code.contains("M642 W")) {
                 float filamentFlow = Float.parseFloat(
                         generator.getValue("filament_flow")
                 ) / 100;
+                filamentFlow = Float.parseFloat(
+                        String.format("%.3f", filamentFlow)
+                );
                 code = "M642 W" + filamentFlow;
             }
             
@@ -168,8 +171,6 @@ public class Printer {
             codeStringBuilder.append(System.getProperty("line.separator"));
 
         }
-        codeStringBuilder.append(";M31 here");
-        codeStringBuilder.append(System.getProperty("line.separator"));
 
         options.add(new CuraGenerator.CuraEngineOption("startCode", codeStringBuilder.toString()));
 
