@@ -220,7 +220,7 @@ public class CuraEngineConfigurator {
      * @return operation code.
      */
     public int readIni(File curaIniFile) {
-        String line = null;
+        String line;
         int error = 0;
         
         try {
@@ -268,11 +268,9 @@ public class CuraEngineConfigurator {
      * Maps INI attributes to a CFG file to be passed to CuraEngine.
      */
     public void mapIniToCFG() {
-        Iterator it = curaCfg.entrySet().iterator();
-
         // Reads CURA CFG Map to map parameter
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
+        
+        for (Map.Entry pairs : curaCfg.entrySet()) {
             String cfgKey = pairs.getKey().toString();
             //(pairs.getKey() + "=" + pairs.getValue());
 
@@ -297,15 +295,9 @@ public class CuraEngineConfigurator {
     }
 
     private void printCFG() {
-        Iterator it = curaCfg.entrySet().iterator();
-
-        // Reads CURA CFG Map to map parameter
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-
-            String cfgKey = pairs.getKey().toString();
+        // Reads CURA CFG Map to map parameter        
+        for (Map.Entry pairs : curaCfg.entrySet()) {
             System.out.println(pairs.getKey() + "=" + pairs.getValue());
-
         }
     }
 
