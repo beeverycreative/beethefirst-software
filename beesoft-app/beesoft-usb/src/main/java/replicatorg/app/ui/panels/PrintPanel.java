@@ -791,7 +791,7 @@ public class PrintPanel extends BaseDialog {
         ArrayList<String> prefs = new ArrayList<String>();
 
         prefs.add(parseSlider1());
-        prefs.add(FilamentControler.getColor(colorCode));
+        prefs.add(colorCode);
         prefs.add(parseSlider2());
         prefs.add(String.valueOf(raftPressed));
         prefs.add(String.valueOf(supportPressed));

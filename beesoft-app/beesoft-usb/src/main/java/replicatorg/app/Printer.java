@@ -101,35 +101,37 @@ public class Printer {
         }
         return PrintEstimator.getEstimatedTime();
     }
-    
+
     private void replaceLineInFile(String pathString, String textToReplace) {
-                
-        String m31String;        
+
+        String m31String, minutes;
         File fileToRead = new File(pathString);
         File fileToWrite = new File(pathString + "_temp");
 
-        m31String = "M31 A" + PrintEstimator.getEstimatedTime() + " L" + getGCodeNLines();
-        
+        minutes = PrintEstimator.getEstimatedTime();
+        minutes = minutes.substring(minutes.indexOf(':') + 1);
+        m31String = "M31 A" + minutes + " L" + getGCodeNLines();
+
         try {
             Reader reader = new InputStreamReader(
-                        new FileInputStream(fileToRead), "UTF-8");
+                    new FileInputStream(fileToRead), "UTF-8");
             BufferedReader fin = new BufferedReader(reader);
             Writer writer = new OutputStreamWriter(
-                       new FileOutputStream(fileToWrite), "UTF-8");
+                    new FileOutputStream(fileToWrite), "UTF-8");
             BufferedWriter fout = new BufferedWriter(writer);
             String s;
-            while ( (s=fin.readLine()) != null) {
-                String replaced = s.replaceAll(textToReplace, m31String);                
+            while ((s = fin.readLine()) != null) {
+                String replaced = s.replaceAll(textToReplace, m31String);
                 fout.write(replaced);
                 fout.newLine();
             }
-            
+
             //Remember to call close. 
             //calling close on a BufferedReader/BufferedWriter 
             // will automatically call close on its underlying stream 
             fin.close();
             fout.close();
-            
+
             // Moves the new temp file to the original one
             if (fileToRead.delete()) {
                 fileToWrite.renameTo(new File(pathString));
@@ -143,31 +145,43 @@ public class Printer {
     private void appendStartAndEndGCode() {
         String[] startCode, endCode;
         StringBuilder codeStringBuilder;
-        
+
         startCode = Languager.getGCodeArray(4, "operationCode", "startCode");
         endCode = Languager.getGCodeArray(4, "operationCode", "endCode");
         codeStringBuilder = new StringBuilder();
-        
+
         codeStringBuilder.append(";startGCode");
         codeStringBuilder.append(System.getProperty("line.separator"));
-        for(String code : startCode) {
+        for (String code : startCode) {
+            
+            if (code.contains("M104")) {
+                code = "M104 S" + generator.getValue("print_temperature");
+            }
+            else if(code.contains("M642 W")) {
+                float filamentFlow = Float.parseFloat(
+                        generator.getValue("filament_flow")
+                ) / 100;
+                code = "M642 W" + filamentFlow;
+            }
+            
             codeStringBuilder.append(code.trim());
             codeStringBuilder.append(System.getProperty("line.separator"));
+
         }
         codeStringBuilder.append(";M31 here");
         codeStringBuilder.append(System.getProperty("line.separator"));
-        
+
         options.add(new CuraGenerator.CuraEngineOption("startCode", codeStringBuilder.toString()));
-        
+
         codeStringBuilder = new StringBuilder();
-        
+
         codeStringBuilder.append(";endGCode");
         codeStringBuilder.append(System.getProperty("line.separator"));
-        for(String code : endCode) {
+        for (String code : endCode) {
             codeStringBuilder.append(code.trim());
             codeStringBuilder.append(System.getProperty("line.separator"));
         }
-        
+
         options.add(new CuraGenerator.CuraEngineOption("endCode", codeStringBuilder.toString()));
     }
 

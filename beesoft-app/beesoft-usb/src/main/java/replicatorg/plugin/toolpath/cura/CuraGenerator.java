@@ -104,6 +104,10 @@ public class CuraGenerator extends ToolpathGenerator {
     public void readINI() {
         curaGenerator.processINI(profile);
     }
+    
+    public String getValue(String key) {
+        return curaGenerator.getValue(key);
+    }
 
     /**
      * Pre gcode generation setup. Creates the INI file to be passed for the CFG

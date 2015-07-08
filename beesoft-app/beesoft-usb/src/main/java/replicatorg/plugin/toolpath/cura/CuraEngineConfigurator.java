@@ -212,6 +212,10 @@ public class CuraEngineConfigurator {
 
         return result;
     }
+    
+    public String getValue(String key) {
+        return curaIni.get(key);
+    }
 
     /**
      * Read a INI file to a MAP.
