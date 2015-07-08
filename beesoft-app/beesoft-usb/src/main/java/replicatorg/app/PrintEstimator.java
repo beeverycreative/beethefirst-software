@@ -41,11 +41,16 @@ public class PrintEstimator {
 
     public static int getEstimatedMinutes() {
         int hours, minutes;
-            
-        hours = Integer.parseInt(estimatedTime.substring(0,
-                estimatedTime.indexOf(':')));
-        minutes = Integer.parseInt(estimatedTime.substring(
-                estimatedTime.indexOf(':') + 1));
+
+        if (estimatedTime.contains(":")) {
+            hours = Integer.parseInt(estimatedTime.substring(0,
+                    estimatedTime.indexOf(':')));
+            minutes = Integer.parseInt(estimatedTime.substring(
+                    estimatedTime.indexOf(':') + 1));
+        } else {
+            hours = 0;
+            minutes = Integer.parseInt(estimatedTime);
+        }
 
         return minutes + hours * 60;
     }
