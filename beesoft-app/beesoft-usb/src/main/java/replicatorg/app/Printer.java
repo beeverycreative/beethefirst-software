@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import replicatorg.app.ui.MainWindow;
@@ -162,7 +163,7 @@ public class Printer {
                         generator.getValue("filament_flow")
                 ) / 100;
                 filamentFlow = Float.parseFloat(
-                        String.format("%.3f", filamentFlow)
+                        String.format(Locale.US, "%.3f", filamentFlow)
                 );
                 code = "M642 W" + filamentFlow;
             }
