@@ -206,7 +206,6 @@ public class CuraEngineConfigurator {
         result.put("fix_horrible_union_all_type_b", "False");
         result.put("fix_horrible_use_open_bits", "False");
         result.put("fix_horrible_extensive_stitching", "False");
-        result.put("plugin_config", "");
         result.put("object_center_x", "-1");
         result.put("object_center_y", "-1");
 
