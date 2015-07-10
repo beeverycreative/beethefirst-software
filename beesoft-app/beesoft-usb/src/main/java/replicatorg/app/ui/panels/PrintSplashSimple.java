@@ -65,7 +65,7 @@ public class PrintSplashSimple extends BaseDialog implements WindowListener {
         updateSleep = 700;
         progression = 0.0;
         disableSleep();
-        enableDrag();
+        //enableDrag();
         ut1 = new GCodeGenerationThread(this);
         ut = new UpdateThread2(this, ut1);
         evaluateInitialConditions();
@@ -94,17 +94,8 @@ public class PrintSplashSimple extends BaseDialog implements WindowListener {
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
+        Base.setMainWindowNOK();
     }
 
     private void setProgressBarColor() {

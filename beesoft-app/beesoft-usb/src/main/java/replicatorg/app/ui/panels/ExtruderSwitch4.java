@@ -43,7 +43,7 @@ public class ExtruderSwitch4 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
+        //enableDrag();
         previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
@@ -71,18 +71,8 @@ public class ExtruderSwitch4 extends BaseDialog {
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-//        this.setLocation(x, y);
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
+        Base.setMainWindowNOK();
     }
 
     private void evaluateInitialConditions() {

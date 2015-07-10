@@ -37,7 +37,7 @@ public class PrintSplash extends BaseDialog {
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(canvas.getPanel(),BorderLayout.CENTER);
         setProgressBarColor();
-        enableDrag();
+        //enableDrag();
     }
 
     private void setFont()

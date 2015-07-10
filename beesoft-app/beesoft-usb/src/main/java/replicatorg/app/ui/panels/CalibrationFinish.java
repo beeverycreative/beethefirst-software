@@ -45,7 +45,7 @@ public class CalibrationFinish extends BaseDialog {
 
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
-        enableDrag();
+        //enableDrag();
         centerOnScreen();
         disposeThread = new DisposeFeedbackThread5(this, machine);
         disposeThread.start();
@@ -77,18 +77,8 @@ public class CalibrationFinish extends BaseDialog {
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-//        this.setLocation(x,y);
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
+        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {
@@ -171,6 +161,14 @@ public class CalibrationFinish extends BaseDialog {
         disableMessageDisplay();
         if(bCalibrationTest.isEnabled() == false) {
             bCalibrationTest.setEnabled(true);
+        }
+        
+        if(jLabel24.isEnabled() == false) {
+            jLabel24.setEnabled(true);
+        }
+        
+        if(jLabel23.isEnabled() == false) {
+            jLabel23.setEnabled(true);
         }
     }
 
@@ -357,6 +355,8 @@ public class CalibrationFinish extends BaseDialog {
 
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel23.setText("ANTERIOR");
+        jLabel23.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        jLabel23.setEnabled(false);
         jLabel23.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel23.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -372,6 +372,8 @@ public class CalibrationFinish extends BaseDialog {
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel24.setText("SEGUINTE");
+        jLabel24.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        jLabel24.setEnabled(false);
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel24.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -571,12 +573,12 @@ class DisposeFeedbackThread5 extends Thread {
 
         boolean isBusy;
 
-        while (true) {
+        while (true) {            
             isBusy = machine.getDriver().isBusy();
             if (isBusy) {
                 calibrationPanel.showMessage();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }

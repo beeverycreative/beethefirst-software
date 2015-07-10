@@ -37,7 +37,7 @@ public class FilamentFinish extends BaseDialog {
         centerOnScreen();
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
-        enableDrag();
+        //enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 

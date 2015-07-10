@@ -31,7 +31,7 @@ public class Warning extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        enableDrag();
+        //enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -41,7 +41,7 @@ public class Warning extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        enableDrag();
+        //enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         if (action.contains("close")) {
@@ -95,17 +95,8 @@ public class Warning extends BaseDialog {
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
+        this.setLocationRelativeTo(null);
+        Base.setMainWindowNOK();
     }
 
     public void setMessage(String message) {

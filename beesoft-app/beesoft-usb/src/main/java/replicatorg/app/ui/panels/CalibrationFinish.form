@@ -292,6 +292,10 @@
               <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="ANTERIOR"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_21.png"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
           </Properties>
           <Events>
@@ -306,6 +310,10 @@
               <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="SEGUINTE"/>
+            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_21.png"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
           </Properties>
           <Events>

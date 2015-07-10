@@ -44,7 +44,7 @@ public class NozzleClean extends BaseDialog {
         achievement = false;
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
-        enableDrag();
+        //enableDrag();
         initializeHeatNClean();
         disposeThread = new DisposeFeedbackThread6(this, machine);
         disposeThread.start();
@@ -78,17 +78,7 @@ public class NozzleClean extends BaseDialog {
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
         Base.setMainWindowNOK();
     }
 

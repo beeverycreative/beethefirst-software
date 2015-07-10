@@ -46,7 +46,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
         Base.getMainWindow().setEnabled(false);
         machine = Base.getMachineLoader().getMachineInterface();
         moveToPosition();
-        enableDrag();
+        //enableDrag();
 //        disableMessageDisplay();
         previousColor = machine.getModel().getCoilCode();
         disposeThread = new ExtruderMaintenanceDisposeFeedbackThread(this, machine);
@@ -95,18 +95,8 @@ public class ExtruderMaintenance5 extends BaseDialog {
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-//        this.setLocation(x, y);
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
+        Base.setMainWindowNOK();
 
     }
 

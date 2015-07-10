@@ -84,7 +84,7 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
         bOk.setVisible(false);
         bCancel.setVisible(false);
         bUnload.setVisible(false);
-        enableDrag();
+        //enableDrag();
         addWindowListener(this);
         ut = new UpdateThread3(this);
         ut.start();
@@ -118,17 +118,7 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
         Base.setMainWindowNOK();
     }
 

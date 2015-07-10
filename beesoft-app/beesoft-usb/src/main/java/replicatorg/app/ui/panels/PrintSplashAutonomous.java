@@ -88,7 +88,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         bShutdown.setVisible(false);
         alreadyPrinting = printingState;
         jProgressBar1.setIndeterminate(true);
-        enableDrag();
+        //enableDrag();
         addWindowListener(this);
         gcodeGenerator = new TransferControlThread(this);
         ut = new UpdateThread4(this, gcodeGenerator);
@@ -134,17 +134,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
         this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
         Base.setMainWindowNOK();
     }
 
