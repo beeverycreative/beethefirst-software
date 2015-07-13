@@ -83,7 +83,6 @@ import com.apple.mrj.MRJOpenDocumentHandler;
 import java.awt.Window;
 import java.io.FileNotFoundException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,6 +100,17 @@ import replicatorg.util.ConfigProperties;
  * that comes from that.
  */
 public class Base {
+
+    /**
+     * Languages supported
+     */
+    public enum Language {
+
+        en,
+        pt,
+        es,
+        de
+    };
 
     /**
      * enum for fast/easy OS checking
@@ -217,7 +227,7 @@ public class Base {
     public static String firmware_version_in_use = "BEETHEFIRST-" + VERSION_FIRMWARE_FINAL + ".bin";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
-    public static String language = "en";
+    public static Language language = Language.en;
     public static String MACHINE_NAME = "BEETHEFIRST";
     public static String GCODE_DELIMITER = "--";
     public static String GCODE_TEMP_FILENAME = "temp.gcode";
@@ -1187,7 +1197,7 @@ public class Base {
         getJavaVersion();
 
         // Loads language
-        language = ProperDefault.get("language").toLowerCase();
+        language = getLanguage();
 
         systemThreads = new ArrayList<Thread>();
 
@@ -1263,14 +1273,13 @@ public class Base {
         });
         ProperDefault.put("machine.name", MACHINE_NAME);
         String machineName = ProperDefault.get("machine.name");
-        
-                    try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
-                    
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         // quite ugly, but it works for now
         while (true) {
             try {
@@ -1278,7 +1287,7 @@ public class Base {
             } catch (InterruptedException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (Base.statusThreadDied) {                
+            if (Base.statusThreadDied) {
                 editor.reloadMachine(machineName, false);
             }
         }
@@ -1614,6 +1623,14 @@ public class Base {
             return applicationVersion + "-" + releaseType;
         } else {
             return applicationVersion;
+        }
+    }
+
+    private Language getLanguage() {
+        try {
+            return Language.valueOf(ProperDefault.get("language").toLowerCase());
+        } catch (IllegalArgumentException e) {
+            return Language.en;
         }
     }
 }

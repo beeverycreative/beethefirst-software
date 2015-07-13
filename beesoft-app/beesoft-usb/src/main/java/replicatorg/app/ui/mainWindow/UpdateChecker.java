@@ -317,7 +317,7 @@ public class UpdateChecker extends BaseDialog {
                     }
                 }
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(Base.language).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             Base.writeLog(pce.getMessage());
@@ -393,7 +393,7 @@ public class UpdateChecker extends BaseDialog {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel2.setText("Update available");
