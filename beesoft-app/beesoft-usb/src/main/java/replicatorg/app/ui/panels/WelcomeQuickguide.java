@@ -1,10 +1,8 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -32,7 +30,7 @@ public class WelcomeQuickguide extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         evaluateInitialConditions();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -53,11 +51,6 @@ public class WelcomeQuickguide extends BaseDialog {
         
     }
     
-    private void centerOnScreen()
-    {
-        this.setLocationRelativeTo(null);  
-        Base.setMainWindowNOK();
-    }
     
     private String splitString(String s)
     {

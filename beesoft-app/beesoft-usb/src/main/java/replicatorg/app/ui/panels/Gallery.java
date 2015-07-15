@@ -2,8 +2,6 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileFilter;
@@ -63,7 +61,7 @@ public class Gallery extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         mWindow = Base.getMainWindow();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -110,11 +108,6 @@ public class Gallery extends BaseDialog {
         jLabel29.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line8"));
         jTextField1.setText(Languager.getTagValue(1, "Gallery", "SearchModels_text_bar"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private void setModelsNameFont() {

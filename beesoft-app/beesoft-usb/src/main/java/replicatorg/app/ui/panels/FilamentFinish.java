@@ -1,10 +1,8 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
@@ -37,7 +35,7 @@ public class FilamentFinish extends BaseDialog {
         centerOnScreen();
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -59,20 +57,7 @@ public class FilamentFinish extends BaseDialog {
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-    }
+    }   
 
     private String splitString(String s) {
         int width = 436;
@@ -273,7 +258,7 @@ public class FilamentFinish extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(

@@ -2,10 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,7 +49,7 @@ public class CalibrationPrintTest extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        //enableDrag();
+        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
@@ -82,11 +80,6 @@ public class CalibrationPrintTest extends BaseDialog {
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {

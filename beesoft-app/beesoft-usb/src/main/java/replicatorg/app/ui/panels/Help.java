@@ -3,8 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,7 +32,7 @@ public class Help extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -72,12 +70,7 @@ public class Help extends BaseDialog {
         }
 
     }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
-    }
-
+    
     private void openURL(URI uri) {
         if (Desktop.isDesktopSupported()) {
             try {

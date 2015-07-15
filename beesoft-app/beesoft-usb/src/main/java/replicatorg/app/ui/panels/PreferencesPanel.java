@@ -1,8 +1,6 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
@@ -33,7 +31,7 @@ public class PreferencesPanel extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         lockPressed = false;
         if (Boolean.valueOf(ProperDefault.get("lockHeight"))) {
             jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
@@ -48,7 +46,7 @@ public class PreferencesPanel extends BaseDialog {
         buttonGroup1.add(radioMM);
         buttonGroup1.add(radioInches);
 
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -107,11 +105,6 @@ public class PreferencesPanel extends BaseDialog {
         }
         // default language
         return "EN";
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private void doExit() {

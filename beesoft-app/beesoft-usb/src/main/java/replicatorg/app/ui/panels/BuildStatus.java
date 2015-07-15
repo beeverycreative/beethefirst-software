@@ -27,7 +27,7 @@ public class BuildStatus extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -41,11 +41,6 @@ public class BuildStatus extends BaseDialog {
     private void setTextLanguage() {
         jLabel2.setText(Languager.getTagValue(1, "Other", "NotSupported"));
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     public void setCompletionMessage(String message) {

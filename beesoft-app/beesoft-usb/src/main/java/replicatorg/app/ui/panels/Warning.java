@@ -1,10 +1,8 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -31,7 +29,7 @@ public class Warning extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -41,7 +39,7 @@ public class Warning extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         if (action.contains("close")) {
@@ -92,11 +90,6 @@ public class Warning extends BaseDialog {
     private void setTextLanguage() {
         jLabel2.setText(Languager.getTagValue(1,"Other", "NotSupported"));
         jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     public void setMessage(String message) {

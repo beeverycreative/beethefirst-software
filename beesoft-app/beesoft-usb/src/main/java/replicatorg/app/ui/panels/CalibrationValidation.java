@@ -2,10 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -44,7 +42,7 @@ public class CalibrationValidation extends BaseDialog {
         centerOnScreen();
         evaluateInitialConditions();
         machine = Base.getMachineLoader().getMachineInterface();
-        //enableDrag();
+        enableDrag();
         disposeThread = new DisposeFeedbackThread7(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
@@ -68,11 +66,6 @@ public class CalibrationValidation extends BaseDialog {
         jLabel6.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button1"));
         jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {

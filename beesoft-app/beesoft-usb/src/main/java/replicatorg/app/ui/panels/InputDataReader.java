@@ -1,8 +1,6 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
@@ -32,7 +30,7 @@ public class InputDataReader extends javax.swing.JDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         gallery = g;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }

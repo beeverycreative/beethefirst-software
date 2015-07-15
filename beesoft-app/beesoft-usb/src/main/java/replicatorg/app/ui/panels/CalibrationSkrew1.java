@@ -2,12 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -30,10 +26,9 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationSkrew1 extends javax.swing.JDialog {
+public class CalibrationSkrew1 extends BaseDialog {
 
     private final MachineInterface machine;
-    private int posX = 0, posY = 0;
     private final DisposeFeedbackThread3 disposeThread;
     private boolean jLabel24MouseClickedReady = true;
 
@@ -42,7 +37,7 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        //enableDrag();
+        enableDrag();
         machine = Base.getMachineLoader().getMachineInterface();
         Base.getMainWindow().setEnabled(false);
         jLabel23.setVisible(false);
@@ -75,11 +70,6 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {
@@ -173,25 +163,6 @@ public class CalibrationSkrew1 extends javax.swing.JDialog {
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
         machine.getDriver().setBusy(false);
 
-    }
-
-    private void enableDrag() {
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                posX = e.getX();
-                posY = e.getY();
-            }
-        });
-
-
-        this.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent evt) {
-                //sets frame position when mouse dragged			
-                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
-            }
-        });
     }
 
     private void doCancel() {

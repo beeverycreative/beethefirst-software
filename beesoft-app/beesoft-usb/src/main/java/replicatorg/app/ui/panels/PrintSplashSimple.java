@@ -2,11 +2,6 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import static java.awt.Frame.ICONIFIED;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -65,7 +60,7 @@ public class PrintSplashSimple extends BaseDialog implements WindowListener {
         updateSleep = 700;
         progression = 0.0;
         disableSleep();
-        //enableDrag();
+        enableDrag();
         ut1 = new GCodeGenerationThread(this);
         ut = new UpdateThread2(this, ut1);
         evaluateInitialConditions();
@@ -92,12 +87,7 @@ public class PrintSplashSimple extends BaseDialog implements WindowListener {
         jLabel5.setText("");
         jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
     }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
-    }
-
+    
     private void setProgressBarColor() {
         jProgressBar1.setForeground(new Color(255, 203, 5));
     }

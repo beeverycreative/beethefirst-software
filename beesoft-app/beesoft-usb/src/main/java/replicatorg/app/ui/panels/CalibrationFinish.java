@@ -45,7 +45,7 @@ public class CalibrationFinish extends BaseDialog {
 
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
-        //enableDrag();
+        enableDrag();
         centerOnScreen();
         disposeThread = new DisposeFeedbackThread5(this, machine);
         disposeThread.start();
@@ -74,11 +74,6 @@ public class CalibrationFinish extends BaseDialog {
         jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {
@@ -244,7 +239,7 @@ public class CalibrationFinish extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -297,7 +292,7 @@ public class CalibrationFinish extends BaseDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel6)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

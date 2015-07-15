@@ -2,10 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -40,7 +38,7 @@ public class CalibrationSkrew2 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        //enableDrag();
+        enableDrag();
         disableMessageDisplay();
         jLabel23.setVisible(false);
         centerOnScreen();
@@ -73,11 +71,6 @@ public class CalibrationSkrew2 extends BaseDialog {
         jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {

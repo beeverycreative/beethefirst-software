@@ -1,8 +1,6 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
@@ -39,7 +37,7 @@ public class ExtruderMaintenance6 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        //enableDrag();
+        enableDrag();
         previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
@@ -64,11 +62,6 @@ public class ExtruderMaintenance6 extends BaseDialog {
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private void evaluateInitialConditions() {

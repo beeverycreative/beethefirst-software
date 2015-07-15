@@ -2,12 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,7 +64,7 @@ public class CalibrationWelcome extends BaseDialog {
         safeDistance = 122;
         disposeThread = new DisposeFeedbackThread2(this, machine);
         disposeThread.start();
-        //enableDrag();
+        enableDrag();
         moveToA();
         Base.maintenanceWizardOpen = true;
         Base.systemThreads.add(disposeThread);
@@ -129,11 +125,6 @@ public class CalibrationWelcome extends BaseDialog {
         val_65 = new JLabel("5");
         val_100 = new JLabel("10");
 
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {

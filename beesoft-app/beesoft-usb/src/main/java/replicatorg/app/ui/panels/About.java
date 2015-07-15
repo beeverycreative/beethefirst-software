@@ -1,8 +1,6 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.FilamentControler;
@@ -27,12 +25,12 @@ public class About extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
-        //enableDrag();
+        enableDrag();
         centerOnScreen();
         setTextLanguage();
         Base.updateVersions();
         setValues();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -88,11 +86,6 @@ public class About extends BaseDialog {
 
     private String getFilamentType(String code) {
         return FilamentControler.getFilamentType(code);
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     @SuppressWarnings("unchecked")

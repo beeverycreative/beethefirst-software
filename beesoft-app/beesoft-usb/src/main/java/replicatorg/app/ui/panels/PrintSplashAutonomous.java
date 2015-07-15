@@ -2,9 +2,7 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -88,7 +86,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         bShutdown.setVisible(false);
         alreadyPrinting = printingState;
         jProgressBar1.setIndeterminate(true);
-        //enableDrag();
+        enableDrag();
         addWindowListener(this);
         gcodeGenerator = new TransferControlThread(this);
         ut = new UpdateThread4(this, gcodeGenerator);
@@ -131,11 +129,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     public void startConditions() {
         ut.start();
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     public void setProgression(int prog) {

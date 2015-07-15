@@ -2,10 +2,8 @@ package replicatorg.app.ui.mainWindow;
 
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,7 +57,7 @@ public class UpdateChecker extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         evaluateInitialConditions();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
@@ -77,11 +75,6 @@ public class UpdateChecker extends BaseDialog {
         jLabel2.setText(Languager.getTagValue(fileKey, "Other", "NotSupported"));
         jLabel18.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
         jLabel19.setText(Languager.getTagValue(fileKey, "Other", "Download"));
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     private void evaluateInitialConditions() {

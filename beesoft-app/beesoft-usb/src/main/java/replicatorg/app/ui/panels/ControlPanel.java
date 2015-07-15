@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -102,7 +101,7 @@ public class ControlPanel extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //enableDrag();
+        enableDrag();
         evaluateInitialConditions();
         disposeThread = new TemperatureThread(this, machine);
         disposeThread.start();
@@ -301,12 +300,7 @@ public class ControlPanel extends BaseDialog {
             "30",};
 
         return duration;
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
-    }
+    }  
 
     private String splitString(String s) {
         int width = 436;

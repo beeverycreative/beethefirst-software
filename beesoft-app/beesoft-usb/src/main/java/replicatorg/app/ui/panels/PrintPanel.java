@@ -2,11 +2,9 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -95,7 +93,7 @@ public class PrintPanel extends BaseDialog {
         autonomousPressed = true;
         evaluateConditions();
         matchChanges();
-        //enableDrag();
+        enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -223,14 +221,6 @@ public class PrintPanel extends BaseDialog {
             jLabel22.setText(" " + code);
         }
 
-    }
-
-    /**
-     * Center window on screen.
-     */
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
     }
 
     /**

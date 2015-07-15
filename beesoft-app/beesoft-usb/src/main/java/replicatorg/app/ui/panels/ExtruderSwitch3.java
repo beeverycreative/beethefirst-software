@@ -2,11 +2,9 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -44,7 +42,7 @@ public class ExtruderSwitch3 extends BaseDialog {
         initComponents();
         setFont();
         evaluateInitialConditions();
-        //enableDrag();
+        enableDrag();
         setTextLanguage();
         centerOnScreen();
         Base.getMainWindow().setEnabled(false);
@@ -102,12 +100,6 @@ public class ExtruderSwitch3 extends BaseDialog {
         bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7")); // next
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
-    }
-
-    private void centerOnScreen() {
-        this.setLocationRelativeTo(null);
-        Base.setMainWindowNOK();
 
     }
 
