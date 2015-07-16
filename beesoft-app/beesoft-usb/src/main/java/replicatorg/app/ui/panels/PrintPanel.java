@@ -434,7 +434,7 @@ public class PrintPanel extends BaseDialog {
         printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
 
         if (printerAvailable) {
-            if (no_Filament == false) {
+            if (no_Filament == false && nModels != 0) {
                 bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
             }
         } else {
@@ -1420,13 +1420,13 @@ public class PrintPanel extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bPrintMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseEntered
-        if (!no_Filament && printerAvailable) {
+        if (!no_Filament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseEntered
 
     private void bPrintMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseExited
-        if (!no_Filament && printerAvailable) {
+        if (!no_Filament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseExited
@@ -1446,7 +1446,7 @@ public class PrintPanel extends BaseDialog {
         }
         estimationThread.stop();
 
-        if (no_Filament == false && Base.isPrinting == false) {
+        if (nModels != 0 && no_Filament == false && Base.isPrinting == false) {
             /*
              * prefs[0] - profile (LOW,HIGH) 
              * prefs[1] - colorRation
@@ -1532,6 +1532,8 @@ public class PrintPanel extends BaseDialog {
                         Base.getMainWindow().showFeedBackMessage("btfDisconnect");
                     } else if (Base.isPrinting) {
                         Base.getMainWindow().showFeedBackMessage("btfPrinting");
+                    } else if (nModels == 0) {
+                        Base.getMainWindow().showFeedBackMessage("noModelError");
                     }
 
                     while (tries < 3) {
