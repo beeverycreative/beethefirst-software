@@ -690,7 +690,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Tour1_Title value="Está casi..."/>
             <Tour1_Text value="Para iniciar la impresión de sus modelos, siga los siguientes pasos."/>
             <Tour1_Jump value="Saltar el tutorial."/>
-            <Tour2 value="Añadir un modelo para el área de trabajo. Puedes importar un modelo de la carpeta ‘archivos 3D’ o puedes abrir uno de tus propios modelos." />
+            <Tour2 value="Añadir un modelo para el área de trabajo. Puede importar un modelo de la carpeta 'archivos 3D'en el BEESOFT, o se puede importar o arrastrar uno de sus propios archivos."/>
             <Tour3 value="Utiliza 'Mover', 'Girar', 'Escala' o 'espejo' para establecer el modelo exactamente cómo deseas que se imprima."/>
             <Tour4 value="Una vez que esté satisfecho con su área de trabajo, se puede iniciar la impresión"/>
             <Tour5 value="Los mensajes importantes con respecto a tu impresora aparecerán aquí."/>
