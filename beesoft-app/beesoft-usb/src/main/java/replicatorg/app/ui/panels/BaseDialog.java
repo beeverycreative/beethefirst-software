@@ -3,8 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import replicatorg.app.Base;
 
 /**
