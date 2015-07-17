@@ -305,13 +305,9 @@
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="lCalibration" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="bCalibration" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
-                                      <Component id="bCalibrationTest" min="-2" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="bCalibration" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="587" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -326,10 +322,7 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="lCalibration_desc" min="-2" pref="50" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="bCalibration" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="bCalibrationTest" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="bCalibration" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -359,20 +352,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Calibrar"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="bCalibrationTest">
-              <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_16.png"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Teste de Calibracao"/>
-                <Property name="horizontalTextPosition" type="int" value="0"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCalibrationTestMousePressed"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCalibrationTestMouseExited"/>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCalibrationTestMouseEntered"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -503,7 +482,7 @@
                       <Component id="lNozzleSwitchDesc" min="-2" pref="50" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="bNozzleSwitch" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
