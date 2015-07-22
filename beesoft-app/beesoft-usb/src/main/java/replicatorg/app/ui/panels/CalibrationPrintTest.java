@@ -2,10 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -82,21 +80,6 @@ public class CalibrationPrintTest extends BaseDialog {
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-//        this.setLocation(x, y);
-        this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
     }
 
     private String splitString(String s) {

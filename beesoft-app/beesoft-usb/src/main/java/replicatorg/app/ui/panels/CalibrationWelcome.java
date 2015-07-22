@@ -2,12 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,22 +125,6 @@ public class CalibrationWelcome extends BaseDialog {
         val_65 = new JLabel("5");
         val_100 = new JLabel("10");
 
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-//        this.setLocation(x,y);
-        this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
-        Base.setMainWindowNOK();
     }
 
     private String splitString(String s) {

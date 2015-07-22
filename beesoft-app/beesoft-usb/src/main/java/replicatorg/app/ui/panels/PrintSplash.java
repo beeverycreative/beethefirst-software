@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
@@ -54,22 +53,7 @@ public class PrintSplash extends BaseDialog {
         jLabel2.setText(Languager.getTagValue(1,"", ""));
         jLabel4.setText(Languager.getTagValue(1,"", "")); 
         jLabel11.setText(Languager.getTagValue(1,"", "")); 
-    }
-    
-    private void centerOnScreen()
-    {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
- 
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width-w)/2;
-        int y = (dim.height-h)/2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(null);           
-    }
+    }    
     
     private void setProgressBarColor()
     {

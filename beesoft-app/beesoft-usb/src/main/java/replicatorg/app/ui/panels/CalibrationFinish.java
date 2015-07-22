@@ -76,21 +76,6 @@ public class CalibrationFinish extends BaseDialog {
 
     }
 
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-//        this.setLocation(x,y);
-        this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
-    }
-
     private String splitString(String s) {
         int width = 436;
         return buildString(s.split("\\."), width);
@@ -172,6 +157,14 @@ public class CalibrationFinish extends BaseDialog {
         if(bCalibrationTest.isEnabled() == false) {
             bCalibrationTest.setEnabled(true);
         }
+        
+        if(jLabel24.isEnabled() == false) {
+            jLabel24.setEnabled(true);
+        }
+        
+        if(jLabel23.isEnabled() == false) {
+            jLabel23.setEnabled(true);
+        }
     }
 
     private void doCancel() {
@@ -246,7 +239,7 @@ public class CalibrationFinish extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -299,7 +292,7 @@ public class CalibrationFinish extends BaseDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel6)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -357,6 +350,8 @@ public class CalibrationFinish extends BaseDialog {
 
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel23.setText("ANTERIOR");
+        jLabel23.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        jLabel23.setEnabled(false);
         jLabel23.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel23.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -372,6 +367,8 @@ public class CalibrationFinish extends BaseDialog {
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         jLabel24.setText("SEGUINTE");
+        jLabel24.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        jLabel24.setEnabled(false);
         jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel24.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -571,12 +568,12 @@ class DisposeFeedbackThread5 extends Thread {
 
         boolean isBusy;
 
-        while (true) {
+        while (true) {            
             isBusy = machine.getDriver().isBusy();
             if (isBusy) {
                 calibrationPanel.showMessage();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }

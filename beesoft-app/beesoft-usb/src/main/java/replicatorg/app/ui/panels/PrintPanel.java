@@ -2,11 +2,9 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -226,24 +224,6 @@ public class PrintPanel extends BaseDialog {
     }
 
     /**
-     * Center window on screen.
-     */
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
-        Base.setMainWindowNOK();
-    }
-
-    /**
      * Splits string foreach dot.
      *
      * @param s stering to be splitted
@@ -454,7 +434,7 @@ public class PrintPanel extends BaseDialog {
         printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
 
         if (printerAvailable) {
-            if (no_Filament == false) {
+            if (no_Filament == false && nModels != 0) {
                 bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
             }
         } else {
@@ -1440,13 +1420,13 @@ public class PrintPanel extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bPrintMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseEntered
-        if (!no_Filament && printerAvailable) {
+        if (!no_Filament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseEntered
 
     private void bPrintMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseExited
-        if (!no_Filament && printerAvailable) {
+        if (!no_Filament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseExited
@@ -1466,7 +1446,7 @@ public class PrintPanel extends BaseDialog {
         }
         estimationThread.stop();
 
-        if (no_Filament == false && Base.isPrinting == false) {
+        if (nModels != 0 && no_Filament == false && Base.isPrinting == false) {
             /*
              * prefs[0] - profile (LOW,HIGH) 
              * prefs[1] - colorRation
@@ -1552,6 +1532,8 @@ public class PrintPanel extends BaseDialog {
                         Base.getMainWindow().showFeedBackMessage("btfDisconnect");
                     } else if (Base.isPrinting) {
                         Base.getMainWindow().showFeedBackMessage("btfPrinting");
+                    } else if (nModels == 0) {
+                        Base.getMainWindow().showFeedBackMessage("noModelError");
                     }
 
                     while (tries < 3) {

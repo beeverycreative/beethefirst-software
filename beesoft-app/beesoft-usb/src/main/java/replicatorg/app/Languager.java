@@ -29,22 +29,10 @@ import replicatorg.app.tools.XML;
  */
 public class Languager {
 
-    private static final String languager_file = Base.getApplicationDirectory() + "/languages/".concat(Base.language).concat(".xml");
+    private static final String languager_file = Base.getApplicationDirectory() + "/languages/".concat(Base.language.toString()).concat(".xml");
     private static final String printsetup_file = Base.getApplicationDirectory() + "/machines/printSetup.xml";
     private static final String colors_file = Base.getApplicationDirectory() + "/machines/colorsGCode.xml";
     private static final String startend_file = Base.getApplicationDirectory() + "/machines/startEndCode.xml";
-
-    /**
-     * Languages supported
-     */
-    public enum LanguagesSupported {
-
-        EN,
-        PT,
-        ES,
-        FR,
-        DE
-    };
 
     /**
      * Gets the file based on a code key
@@ -98,7 +86,7 @@ public class Languager {
             // parse using the builder to get the DOM mapping of the    
             // XML file
 
-            File f = new File(Base.getApplicationDirectory() + "/languages/".concat(Base.language).concat(".xml"));
+            File f = new File(Base.getApplicationDirectory() + "/languages/".concat(Base.language.toString()).concat(".xml"));
             if (f.exists() && f.isFile() && f.canRead()) {
 
                 dom = db.parse(f);
@@ -129,7 +117,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "languages/".concat(Base.language).concat(".xml"));
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "languages/".concat(Base.language.toString()).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -222,7 +210,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language).concat(".xml"));
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language.toString()).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
@@ -306,7 +294,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language).concat(".xml"));
+                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language.toString()).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());

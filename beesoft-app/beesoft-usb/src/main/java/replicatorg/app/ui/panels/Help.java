@@ -3,8 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -72,21 +70,7 @@ public class Help extends BaseDialog {
         }
 
     }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
-    }
-
+    
     private void openURL(URI uri) {
         if (Desktop.isDesktopSupported()) {
             try {

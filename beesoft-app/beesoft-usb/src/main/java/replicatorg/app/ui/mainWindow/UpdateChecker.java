@@ -2,10 +2,8 @@ package replicatorg.app.ui.mainWindow;
 
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -77,20 +75,6 @@ public class UpdateChecker extends BaseDialog {
         jLabel2.setText(Languager.getTagValue(fileKey, "Other", "NotSupported"));
         jLabel18.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
         jLabel19.setText(Languager.getTagValue(fileKey, "Other", "Download"));
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
     }
 
     private void evaluateInitialConditions() {
@@ -326,7 +310,7 @@ public class UpdateChecker extends BaseDialog {
                     }
                 }
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(Base.language).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"));
             }
         } catch (ParserConfigurationException pce) {
             Base.writeLog(pce.getMessage());
@@ -402,7 +386,7 @@ public class UpdateChecker extends BaseDialog {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel2.setText("Update available");
