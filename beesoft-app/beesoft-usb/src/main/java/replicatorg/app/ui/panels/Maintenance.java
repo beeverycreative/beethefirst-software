@@ -204,12 +204,12 @@ public class Maintenance extends BaseDialog {
         bCalibration = new javax.swing.JLabel();
         lCalibration_desc = new javax.swing.JLabel();
         lCalibration = new javax.swing.JLabel();
+        lCalibration_warn = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         pExtruderMaintenance = new javax.swing.JPanel();
         bExtruderMaintenance = new javax.swing.JLabel();
         lExtruderMaintenanceDesc = new javax.swing.JLabel();
         lExtruderMaintenance = new javax.swing.JLabel();
-        lCalibration_warn = new javax.swing.JLabel();
         pNozzleSwitch = new javax.swing.JPanel();
         bNozzleSwitch = new javax.swing.JLabel();
         lNozzleSwitchDesc = new javax.swing.JLabel();
@@ -221,7 +221,7 @@ public class Maintenance extends BaseDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(747, 565));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(747, 577));
+        setPreferredSize(new java.awt.Dimension(747, 558));
         setResizable(false);
 
         pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
@@ -363,6 +363,9 @@ public class Maintenance extends BaseDialog {
 
         lCalibration.setText("Calibrar");
 
+        lCalibration_warn.setFont(new java.awt.Font("DejaVu Sans", 0, 10)); // NOI18N
+        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
+
         javax.swing.GroupLayout pCalibrationLayout = new javax.swing.GroupLayout(pCalibration);
         pCalibration.setLayout(pCalibrationLayout);
         pCalibrationLayout.setHorizontalGroup(
@@ -374,8 +377,11 @@ public class Maintenance extends BaseDialog {
                     .addGroup(pCalibrationLayout.createSequentialGroup()
                         .addGroup(pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lCalibration)
-                            .addComponent(bCalibration))
-                        .addGap(0, 587, Short.MAX_VALUE)))
+                            .addGroup(pCalibrationLayout.createSequentialGroup()
+                                .addComponent(bCalibration)
+                                .addGap(18, 18, 18)
+                                .addComponent(lCalibration_warn)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pCalibrationLayout.setVerticalGroup(
@@ -386,7 +392,9 @@ public class Maintenance extends BaseDialog {
                 .addGap(2, 2, 2)
                 .addComponent(lCalibration_desc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bCalibration)
+                .addGroup(pCalibrationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bCalibration)
+                    .addComponent(lCalibration_warn))
                 .addGap(0, 0, 0))
         );
 
@@ -416,8 +424,6 @@ public class Maintenance extends BaseDialog {
 
         lExtruderMaintenance.setText("Limpar bico de extrusao");
 
-        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
-
         javax.swing.GroupLayout pExtruderMaintenanceLayout = new javax.swing.GroupLayout(pExtruderMaintenance);
         pExtruderMaintenance.setLayout(pExtruderMaintenanceLayout);
         pExtruderMaintenanceLayout.setHorizontalGroup(
@@ -430,16 +436,13 @@ public class Maintenance extends BaseDialog {
                         .addGap(575, 575, 575))
                     .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
-                        .addGroup(pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lExtruderMaintenance)
-                            .addComponent(lCalibration_warn))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addComponent(lExtruderMaintenance)
+                        .addGap(0, 582, Short.MAX_VALUE))))
         );
         pExtruderMaintenanceLayout.setVerticalGroup(
             pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
-                .addComponent(lCalibration_warn)
-                .addGap(22, 22, 22)
+                .addGap(12, 12, 12)
                 .addComponent(lExtruderMaintenance)
                 .addGap(2, 2, 2)
                 .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -579,8 +582,8 @@ public class Maintenance extends BaseDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
+            .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
