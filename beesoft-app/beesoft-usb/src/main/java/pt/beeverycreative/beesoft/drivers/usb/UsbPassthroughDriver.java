@@ -54,7 +54,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String GET_POSITION = "M121";
     private static final String GET_SHUTDOWN_POSITION = "M122";
     private static final String LAUNCH_FIRMWARE = "M630";
-    private static final String REBOOT_FIRMWARE_INTO_BOOTLOADER = "M609";
     private static final String SET_FIRMWARE_VERSION = "M114 A";
     private static final String INVALID_FIRMWARE_VERSION = "0.0.0";
     private static final String GET_FIRMWARE_VERSION = "M115";
@@ -72,16 +71,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String BEGIN_PRINT = "M33";
     private static final String fileName = "abcde";
     private static final String RESPONSE_OK = "ok";
-    private static final String RESPONSE_TRANSFER_COMPLETED = "transfer completed";
+    ;
     private static final String FILE_CREATED = "File created";
     private static final String SET_FILENAME = "M30 ";
-    private static final String OPEN_FILE = "M23 ";
-    private static final String SET_VARIABLES = "M31 ";
     private static final String READ_VARIABLES = "M32";
     private static final String TRANSFER_BLOCK = "M28 ";
     private static final String INIT_SDCARD = "M21 ";
-    private static final String CLOSE_SDCARD = "M22 ";
-    private static final String GET_MD5 = "M34 ";
     private static final int MESSAGE_SIZE = 512;
     private static final int MESSAGES_IN_BLOCK = 512;
     //BLOCK_SIZE is: how many bytes in each M28 block transfers
@@ -89,6 +84,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     //private static final String GET_SERIAL = "M117";
     private static final String SET_SERIAL = "M118 T";
     private static final String COILCODE = "M400 ";
+    private static final String SETCOILTEXT = "M1000 ";
+    private static final String GETCOILTEXT = "M1001";
     private static final String SAVE_CONFIG = "M601 ";
     private static final String RESET_AXIS = "G92";
     private static final String NOK = "NOK";
@@ -102,7 +99,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private Version firmware_version = new Version();
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
     private boolean machineReady;
-    private boolean machineIsBeingUsed;
     private long startTS;
     private int ID = 0;
     private boolean isAutonomous;
@@ -110,7 +106,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean driverError = false;
     private String driverErrorDescription;
     private boolean stopTransfer = false;
-    private int lastLineNumber = 0;
 
     public enum COM {
 
@@ -248,7 +243,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
                 mwVisible = Base.getMainWindow().isVisible();//polls
             }
-            
+
             PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
             p.setVisible(true);
             p.startConditions();
@@ -257,31 +252,31 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         if (type.contains("shutdown")) {
             /*
-            serialNumberString = "0000000000";
-            lastDispatchTime = System.currentTimeMillis();
-            super.isBootloader = false;
-            super.isONShutdown = true;
-            Base.getMainWindow().setEnabled(true);
-            Base.bringAllWindowsToFront();
-            */
+             serialNumberString = "0000000000";
+             lastDispatchTime = System.currentTimeMillis();
+             super.isBootloader = false;
+             super.isONShutdown = true;
+             Base.getMainWindow().setEnabled(true);
+             Base.bringAllWindowsToFront();
+             */
             /**
              * Does not show PSAutonomous until MainWindows is visible
              */
             /*
-            boolean mwVisible = Base.getMainWindow().isVisible();
-            while (mwVisible == false) {
-                try {
-                    Thread.sleep(1, 0);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                mwVisible = Base.getMainWindow().isVisible();//polls
-            }
-            PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
-            p.setVisible(true);
-            p.startConditions();
-            return;
-            */
+             boolean mwVisible = Base.getMainWindow().isVisible();
+             while (mwVisible == false) {
+             try {
+             Thread.sleep(1, 0);
+             } catch (InterruptedException ex) {
+             Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+             }
+             mwVisible = Base.getMainWindow().isVisible();//polls
+             }
+             PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
+             p.setVisible(true);
+             p.startConditions();
+             return;
+             */
 
             // quick and dirty workaround, shutdown is not yet implemented
             dispatchCommand("M505", COM.DEFAULT);
@@ -919,13 +914,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public void setCoilCode(String coilCode) {
+    public void setCoilCode(String coilCode, String coilText) {
         String response = dispatchCommand(COILCODE + coilCode, COM.BLOCK);
+        String response2 = dispatchCommand(SETCOILTEXT + coilText, COM.BLOCK);
 
-        if (response.toLowerCase().contains("ok")) {
-            machine.setCoilCode(coilCode);
+        if (response.toLowerCase().contains("ok") &&
+                response2.toLowerCase().contains("ok")) {
+            machine.setCoilCode(coilCode, coilText);
         } else {
-            machine.setCoilCode("NOK");
+            machine.setCoilCode("NOK", "");
         }
 
         /**
@@ -940,30 +937,33 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void updateCoilCode() {
-        machine.setCoilCode("A000");
-        //EX : String txt="bcode:A301 ok Q:0";
-        String response = dispatchCommand(COILCODE, COM.BLOCK);
 
-        Base.writeLog("Coil code: " + response);
+        String coilCode, coilText;
+
+        //EX : String txt="bcode:A301 ok Q:0";
+        coilCode = dispatchCommand(COILCODE, COM.BLOCK);
+        coilText = dispatchCommand(GETCOILTEXT, COM.BLOCK);
+        machine.setCoilCode("A000", "");
+
+        Base.writeLog("Coil code: " + coilCode);
+        Base.writeLog("Coil text: " + coilText);
 
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "(bcode:A)";	// Any Single Word Character (Not Whitespace) 1
         String re3 = "(\\d+)";	// Integer Number 1
         Pattern p = Pattern.compile(re1 + re2 + re3, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(response);
+        Matcher m = p.matcher(coilCode);
         if (m.find()) {
-            String w1 = m.group(1);
             String int1 = m.group(2);
 
             //hack to set coil codes to 3 digits
             String zeros = "000";
             String code = "A" + zeros.substring(0, 3 - int1.length()) + int1;
 
-            machine.setCoilCode(code);
-
+            machine.setCoilCode(code, coilText);
         } else {
             //Default A000 / None
-            machine.setCoilCode("A000");
+            machine.setCoilCode("A000", "");
         }
     }
 
@@ -1217,7 +1217,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // dispatchCommand("M506", COM.BLOCK);
         // dispatchCommand("G28 Z", COM.BLOCK);
         // dispatchCommand("G28 X Y", COM.BLOCK);
-
         return RESPONSE_OK;
     }
 
@@ -2126,7 +2125,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String word1 = m.group(1);
             String c1 = m.group(2);
             String int1 = m.group(3);
-            lastLineNumber = Integer.valueOf(int1);
         }
 
     }

@@ -171,7 +171,7 @@ public interface Driver {
      *
      * @param coilCode code to be set on the printer
      */
-    public void setCoilCode(String coilCode);
+    public void setCoilCode(String coilCode, String coilText);
 
     /**
      * Return the BEECODE/COILCODE/Filament Code in the printer. coilCode is

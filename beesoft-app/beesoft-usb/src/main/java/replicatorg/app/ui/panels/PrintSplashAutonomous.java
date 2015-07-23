@@ -915,7 +915,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
+                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE, ""));
                 tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;

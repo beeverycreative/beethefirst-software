@@ -104,13 +104,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         return FilamentControler.getColors();
     }
 
-    private void initializeHeat() {
-        Base.writeLog("Initializing");
-        //turn off blower before heating
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
-    }
-
     private void finalizeHeat() {
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
@@ -244,7 +237,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 334, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
@@ -282,7 +275,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -445,7 +438,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         }//no need for else
 
         //set the coil code: M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
+        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code, "test"));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 

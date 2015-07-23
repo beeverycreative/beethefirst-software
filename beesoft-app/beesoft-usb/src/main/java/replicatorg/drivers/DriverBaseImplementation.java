@@ -484,8 +484,8 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public void setCoilCode(String coilCode) {
-        machine.setCoilCode(coilCode);
+    public void setCoilCode(String coilCode, String coilText) {
+        machine.setCoilCode(coilCode, coilText);
     }
 
     @Override

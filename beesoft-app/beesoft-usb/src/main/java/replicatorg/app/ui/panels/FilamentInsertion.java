@@ -735,7 +735,7 @@ public class FilamentInsertion extends BaseDialog {
                 public void run() {
 
                     //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
+                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE, ""));
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));

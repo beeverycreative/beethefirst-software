@@ -82,6 +82,7 @@ public class MachineModel {
 
     // Filament code currently on the printer
     private String CoilCode = FilamentControler.NO_FILAMENT_CODE;
+    private String coilText = "";
     private String resolution = "lowRes";
 
     /**
@@ -557,8 +558,9 @@ public class MachineModel {
         return CoilCode;
     }
 
-    public void setCoilCode(String CoilCode) {
+    public void setCoilCode(String CoilCode, String coilText) {
         this.CoilCode = CoilCode;
+        this.coilText = coilText;
     }
 
     /* Get and Setter Resolution/BEECODE */

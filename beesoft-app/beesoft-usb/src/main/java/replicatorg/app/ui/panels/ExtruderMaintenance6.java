@@ -425,7 +425,7 @@ public class ExtruderMaintenance6 extends BaseDialog {
         String code = parseComboCode();
 
         //set the coil code: M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
+        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code, ""));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 
