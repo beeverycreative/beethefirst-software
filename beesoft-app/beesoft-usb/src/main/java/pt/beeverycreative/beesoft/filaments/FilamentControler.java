@@ -28,158 +28,167 @@ import replicatorg.app.Base;
 public class FilamentControler {
 
     private static Set<Filament> filamentList;
-    
+
     public static String NO_FILAMENT = "none";
     public static String NO_FILAMENT_CODE = "A000";
-    
+
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
-    
+
     /**
      * Returns the current list of Filament objects
-     * 
-     * @return 
+     *
+     * @return
      */
     public static Set<Filament> getFilamentList() {
-        
+
         if (filamentList == null) {
             fetchFilaments();
         }
-        
+
         return filamentList;
     }
-    
+
     /**
-     * Gets the current list of Filament objects present in the filaments directory
-     * parsing the available xml files    
+     * Gets the current list of Filament objects present in the filaments
+     * directory parsing the available xml files
      */
     private static void fetchFilaments() {
-        
+
         // get all the files from a directory
         File directory = new File(filamentsDir);
         File[] fList = directory.listFiles();
-        
-        if (fList != null ) {
+
+        if (fList != null) {
             List<File> filamentFiles = new ArrayList<File>();
 
             for (File file : fList) {
                 if (file.isFile() && file.getName().endsWith(".xml")) {
                     filamentFiles.add(file);
-                } 
+                }
             }
 
             Set<Filament> availableFilaments = new TreeSet<Filament>();
-            
+
             JAXBContext jc;
             Unmarshaller unmarshaller;
             try {
                 jc = JAXBContext.newInstance(Filament.class);
-                unmarshaller = jc.createUnmarshaller();   
+                unmarshaller = jc.createUnmarshaller();
 
                 //Parses all the files
-                for (File ff : filamentFiles) {                               
+                for (File ff : filamentFiles) {
 
                     Filament fil;
                     try {
-                        fil = (Filament) unmarshaller.unmarshal(ff);                    
-                        availableFilaments.add(fil);
+                        fil = (Filament) unmarshaller.unmarshal(ff);
+
+                        // only add to available filaments if it is supported by the printer
+                        for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                            if (Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString().equals(sc.getPrinterName())) {
+                                availableFilaments.add(fil);
+                                break;
+                            }
+                        }
+
                     } catch (JAXBException ex) {
                         Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                }            
+                }
             } catch (JAXBException ex) {
-                Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);                                            
+                Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
             }
-                       
+
             filamentList = availableFilaments;
-        }                
-    } 
-    
+        }
+    }
+
     /**
      * Finds a color name in the filaments List using a passed color code
-     * 
+     *
      * @param colorCode
-     * @return 
+     * @return
      */
     private static String findColor(String colorCode) {
-        
+
         if (filamentList == null) {
             fetchFilaments();
         }
-        
+
         for (Filament filament : filamentList) {
-            
+
             if (filament.getName().equals(colorCode)) {
                 return filament.getName();
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Get Color Copy from coil code.
-     * 
+     *
      * @param coilCode spool code.
-     * 
+     *
      * @return color copy.
      */
     public static String getColor(String coilCode) {
 
         String color = findColor(coilCode);
-        
+
         if (color == null) {
             color = NO_FILAMENT;
         }
-        
+
         return color;
     }
 
     /**
      * Gets an array of the available colors copy.
-     * 
+     *
      * @return array of colors.
      */
     public static String[] getColors() {
-                
+
         if (filamentList == null) {
             fetchFilaments();
         }
-        
-        String[]colors = new String[filamentList.size()];
-        
+
+        String[] colors = new String[filamentList.size()];
+
         if (!filamentList.isEmpty()) {
-            int i=0;
+            int i = 0;
             for (Filament fil : filamentList) {
                 colors[i] = fil.getName();
                 i++;
-            }                             
+            }
         }
 
         return colors;
     }
-    
+
     /**
      * Gets an HashMap of available color codes and their copy.
+     *
      * @return array of colors.
      */
-    public static Map<String,String> getColorsMap() {
-                
+    public static Map<String, String> getColorsMap() {
+
         if (filamentList == null) {
             fetchFilaments();
         }
-        
+
         HashMap<String, String> colorsMap = new HashMap<String, String>();
         for (Filament fil : filamentList) {
             colorsMap.put(fil.getName(), fil.getName());
-        }                                
+        }
 
         return colorsMap;
-    }     
+    }
 
     /**
      * Get color name and copy based on coil code.
-     * 
+     *
      * @param code coil code.
      * @return color copy and code.
      */
@@ -194,103 +203,103 @@ public class FilamentControler {
 
     /**
      * Get color ratio from coil code.
-     * 
+     *
      * @param coilCode coil code.
      * @param resolution resolution
      * @param printerId printer identification
-     * 
-     * @return ratio for each color. 
+     *
+     * @return ratio for each color.
      */
     public static double getColorRatio(String coilCode, String resolution, String printerId) {
 
         double result = 1.00; //Default
-               
+
         if (filamentList == null) {
             fetchFilaments();
         }
-        
+
         if (!filamentList.isEmpty()) {
-            for (Filament fil: filamentList) {
+            for (Filament fil : filamentList) {
                 if (fil.getName().equals(coilCode)) {
-                    
+
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
                         if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-                            
+
                             for (Resolution res : sc.getResolutions()) {
                                 if (res.getType().equals(resolution)) {
-                                    for(SlicerParameter parameter : res.getParameters()) {
-                                        if(parameter.getName().equals("filament_flow")) {
+                                    for (SlicerParameter parameter : res.getParameters()) {
+                                        if (parameter.getName().equals("filament_flow")) {
                                             return Double.parseDouble(parameter.getValue()) / 100.0;
                                         }
                                     }
                                 }
                             }
                         }
-                    } 
+                    }
                 }
             }
         }
-        
+
         return result;
     }
-    
-    
+
     /**
-     * Get the Hash map with the filament settings for a specific resolution and printer
-     * 
+     * Get the Hash map with the filament settings for a specific resolution and
+     * printer
+     *
      * @param coilCode coil code.
      * @param resolution resolution
      * @param printerId printer identification
-     * 
-     * @return ratio for each color. 
+     *
+     * @return ratio for each color.
      */
-    public static HashMap<String, String> getFilamentSettings(String coilCode, 
+    public static HashMap<String, String> getFilamentSettings(String coilCode,
             String resolution, String printerId) {
-               
+
         if (filamentList == null) {
             fetchFilaments();
         }
-        
+
         if (!filamentList.isEmpty()) {
-            for (Filament fil: filamentList) {
+            for (Filament fil : filamentList) {
                 if (fil.getName().toLowerCase().equals(coilCode.toLowerCase())) {
-                    
+
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
                         if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-                            
+
                             for (Resolution res : sc.getResolutions()) {
                                 if (res.getType().toLowerCase().equals(resolution.toLowerCase())) {
-                                    
+
                                     return res.getSlicerParameters();
                                 }
                             }
                         }
-                    } 
+                    }
                 }
             }
         }
         // Defaults to an empty map
         return new HashMap<String, String>();
     }
-    
+
     /**
      * Get coil code from color name.
+     *
      * @param color color name.
      * @return coil code.
      */
     public static String getBEECode(String color) {
 
         Map<String, String> colorsMap = getColorsMap();
-        
+
         for (Map.Entry pair : colorsMap.entrySet()) {
             String colorName = (String) pair.getValue();
-            
+
             if (colorName.contains(color)) {
                 return ((String) pair.getKey()).toUpperCase();
             }
-        }        
+        }
         // default value is black
-        return "A000"; 
+        return "A000";
     }
 }
-
