@@ -33,7 +33,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import replicatorg.app.Base;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.tools.XML;
 import replicatorg.util.Point5d;
 
@@ -81,7 +80,6 @@ public class MachineModel {
     private double zValue;
 
     // Filament code currently on the printer
-    private String CoilCode = FilamentControler.NO_FILAMENT_CODE;
     private String coilText = "";
     private String resolution = "lowRes";
 
@@ -554,12 +552,11 @@ public class MachineModel {
     }
 
     /* Get and Setter CoilCode/BEECODE */
-    public String getCoilCode() {
-        return CoilCode;
+    public String getCoilText() {
+        return coilText;
     }
 
-    public void setCoilCode(String CoilCode, String coilText) {
-        this.CoilCode = CoilCode;
+    public void setCoilText(String coilText) {
         this.coilText = coilText;
     }
 
@@ -571,4 +568,5 @@ public class MachineModel {
     public void setResolution(String res) {
         this.resolution = res;
     }
+    
 }

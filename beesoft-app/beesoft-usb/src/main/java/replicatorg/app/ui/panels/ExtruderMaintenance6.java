@@ -84,7 +84,7 @@ public class ExtruderMaintenance6 extends BaseDialog {
     }
 
     private int getModelCategoryIndex() {
-        String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+        String code = Base.getMainWindow().getMachine().getModel().getCoilText();
 
         for (int i = 0; i < categories.length; i++) {
             /**
@@ -115,7 +115,7 @@ public class ExtruderMaintenance6 extends BaseDialog {
     }
 
     private String parseComboCode() {
-        String[] filamentCodes = FilamentControler.getFilamentCodes();
+        String[] filamentCodes = FilamentControler.getColors();
 
         for (String enumCode : filamentCodes) {
             /**
@@ -425,7 +425,7 @@ public class ExtruderMaintenance6 extends BaseDialog {
         String code = parseComboCode();
 
         //set the coil code: M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code, ""));
+        machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 

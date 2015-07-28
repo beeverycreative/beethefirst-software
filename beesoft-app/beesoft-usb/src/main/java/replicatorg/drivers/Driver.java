@@ -167,17 +167,16 @@ public interface Driver {
     /**
      * Stores the BEECODE/COIL CODE/Fillament Code in the printer.
      *
-     * coilCode is AXXX printer stores return AXXX
      *
-     * @param coilCode code to be set on the printer
+     * @param coilText code to be set on the printer
      */
-    public void setCoilCode(String coilCode, String coilText);
+    public void setCoilText(String coilText);
 
     /**
      * Return the BEECODE/COILCODE/Filament Code in the printer. coilCode is
      * AXXX printer stores return AXXX.
      */
-    public void updateCoilCode();
+    public void updateCoilText();
 
     /**
      * Read data from the read endpoint.
@@ -570,9 +569,9 @@ public interface Driver {
     /**
      * Returns coil code.
      *
-     * @return string containing coil code: Axxxx
+     * @return string containing coil text
      */
-    public String getCoilCode();
+    public String getCoilText();
     
     /**
      * Gets the info object on the currently connected printer

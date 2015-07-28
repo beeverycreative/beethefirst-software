@@ -753,7 +753,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 MachineInterface machine = getMachineInterface();
 
                 noFilament = Base.getMainWindow().getMachine().getModel()
-                        .getCoilCode()
+                        .getCoilText()
                         .equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE);
 
                 if (Base.isPrinting == true) {

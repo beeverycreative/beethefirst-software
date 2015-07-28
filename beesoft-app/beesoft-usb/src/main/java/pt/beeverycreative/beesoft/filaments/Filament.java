@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */    
 @XmlRootElement(name="filament")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Filament {
+public class Filament implements Comparable {
     
     @XmlElement(name="version")
     private String version;
@@ -54,7 +54,9 @@ public class Filament {
         this.name = name;
     } 
     
-    public String getCode() {
-        return name;
-    }    
+    @Override
+    public int compareTo(Object o) {
+        Filament f = (Filament) o;
+        return this.name.compareTo(f.name);
+    }
 }

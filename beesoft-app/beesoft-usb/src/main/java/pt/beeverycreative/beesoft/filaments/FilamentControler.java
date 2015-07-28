@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -25,9 +27,9 @@ import replicatorg.app.Base;
  */
 public class FilamentControler {
 
-    private static List<Filament> filamentList;
+    private static Set<Filament> filamentList;
     
-    public static String NO_FILAMENT = "NO_FILAMENT";
+    public static String NO_FILAMENT = "none";
     public static String NO_FILAMENT_CODE = "A000";
     
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
@@ -37,7 +39,7 @@ public class FilamentControler {
      * 
      * @return 
      */
-    public static List<Filament> getFilamentList() {
+    public static Set<Filament> getFilamentList() {
         
         if (filamentList == null) {
             fetchFilaments();
@@ -65,7 +67,7 @@ public class FilamentControler {
                 } 
             }
 
-            List<Filament> availableFilaments = new ArrayList<Filament>();
+            Set<Filament> availableFilaments = new TreeSet<Filament>();
             
             JAXBContext jc;
             Unmarshaller unmarshaller;
@@ -107,7 +109,7 @@ public class FilamentControler {
         
         for (Filament filament : filamentList) {
             
-            if (filament.getCode().equals(colorCode)) {
+            if (filament.getName().equals(colorCode)) {
                 return filament.getName();
             }
         }
@@ -169,32 +171,11 @@ public class FilamentControler {
         
         HashMap<String, String> colorsMap = new HashMap<String, String>();
         for (Filament fil : filamentList) {
-            colorsMap.put(fil.getCode(), fil.getName());
+            colorsMap.put(fil.getName(), fil.getName());
         }                                
 
         return colorsMap;
-    }    
-    
-    /**
-     * Get array of available filament codes
-     * 
-     * @return array of codes.
-     */
-    public static String[] getFilamentCodes() {
-                
-                
-        if (filamentList == null) {
-            fetchFilaments();
-        }
-        
-        String[] colorCodes = new String[filamentList.size()];
-        int i = 0;
-        for (Filament fil : filamentList) {
-            colorCodes[i] = fil.getCode().toUpperCase();
-            i++;
-        }                                
-        return colorCodes;
-    }    
+    }     
 
     /**
      * Get color name and copy based on coil code.
@@ -230,16 +211,18 @@ public class FilamentControler {
         
         if (!filamentList.isEmpty()) {
             for (Filament fil: filamentList) {
-                if (fil.getCode().equals(coilCode)) {
+                if (fil.getName().equals(coilCode)) {
                     
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
                         if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
                             
                             for (Resolution res : sc.getResolutions()) {
                                 if (res.getType().equals(resolution)) {
-                                    double colorRatio = res.getFilamentFlow().getValue() / 100.0;
-                                    
-                                    return colorRatio;
+                                    for(SlicerParameter parameter : res.getParameters()) {
+                                        if(parameter.getName().equals("filament_flow")) {
+                                            return Double.parseDouble(parameter.getValue()) / 100.0;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -270,7 +253,7 @@ public class FilamentControler {
         
         if (!filamentList.isEmpty()) {
             for (Filament fil: filamentList) {
-                if (fil.getCode().toLowerCase().equals(coilCode.toLowerCase())) {
+                if (fil.getName().toLowerCase().equals(coilCode.toLowerCase())) {
                     
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
                         if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {

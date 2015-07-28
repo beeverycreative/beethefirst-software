@@ -123,8 +123,8 @@ public class CalibrationGCoder {
                 code = FilamentControler.NO_FILAMENT_CODE;
 
                 if (Base.getMachineLoader().isConnected()) {
-                    Base.getMachineLoader().getMachineInterface().getDriver().updateCoilCode();
-                    code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+                    Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
+                    code = Base.getMainWindow().getMachine().getModel().getCoilText();
                 } //no need for else
 
                 Base.writeLog("Filament controler coil code: " + code);
@@ -135,7 +135,7 @@ public class CalibrationGCoder {
                 } else {
                     String w_val = Double.toString(
                             FilamentControler.getColorRatio(
-                                    Base.getMainWindow().getMachine().getModel().getCoilCode(),
+                                    Base.getMainWindow().getMachine().getModel().getCoilText(),
                                     Base.getMainWindow().getMachine().getModel().getResolution(),
                                     Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString()
                                     

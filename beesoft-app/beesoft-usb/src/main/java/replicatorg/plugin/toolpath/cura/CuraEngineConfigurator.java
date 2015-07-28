@@ -297,13 +297,6 @@ public class CuraEngineConfigurator {
         System.out.println("*****************************************");
     }
 
-    private void printCFG() {
-        // Reads CURA CFG Map to map parameter        
-        for (Map.Entry pairs : curaCfg.entrySet()) {
-            System.out.println(pairs.getKey() + "=" + pairs.getValue());
-        }
-    }
-
     /**
      * Overrides internal INI with the values from the XML and creates new INI
      * file.
@@ -323,8 +316,7 @@ public class CuraEngineConfigurator {
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
             //Replace existing pairs by the new ones.
-            // overload_values is a mirrored map with keys and values switched
-            ini.put(pairs.getValue().toString(), pairs.getKey().toString());
+            ini.put(pairs.getKey().toString(), pairs.getValue().toString());
             it.remove(); // avoids a ConcurrentModificationException
         }
 

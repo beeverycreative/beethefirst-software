@@ -484,17 +484,17 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public void setCoilCode(String coilCode, String coilText) {
-        machine.setCoilCode(coilCode, coilText);
+    public void setCoilText(String coilText) {
+        machine.setCoilText(coilText);
     }
 
     @Override
-    public String getCoilCode() {
-        return machine.getCoilCode();
+    public String getCoilText() {
+        return machine.getCoilText();
     }
 
     @Override
-    public void updateCoilCode() {
+    public void updateCoilText() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

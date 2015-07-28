@@ -258,7 +258,7 @@ public class FilamentFinish extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -383,7 +383,7 @@ public class FilamentFinish extends BaseDialog {
 
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
         dispose();
-        FilamentCodeInsertion p = new FilamentCodeInsertion(machine.getModel().getCoilCode());
+        FilamentCodeInsertion p = new FilamentCodeInsertion(machine.getModel().getCoilText());
         p.setVisible(true);
     }//GEN-LAST:event_jLabel17MousePressed
 

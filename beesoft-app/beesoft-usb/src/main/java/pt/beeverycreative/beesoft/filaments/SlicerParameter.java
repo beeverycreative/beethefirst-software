@@ -11,14 +11,25 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SlicerParameter {
     
+    @XmlAttribute(name="name")
+    private String name;
+    
     @XmlAttribute(name="value")
-    private Double value;    
-
-    public Double getValue() {
-        return value;
+    private String value;    
+    
+    public String getName() {
+        return name;
     }
 
-    public void setValue(Double value) {
+    public String getValue() {
+        return value;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setValue(String value) {
         this.value = value;
     }      
 }

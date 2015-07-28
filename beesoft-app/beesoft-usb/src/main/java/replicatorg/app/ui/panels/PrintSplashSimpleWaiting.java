@@ -1021,7 +1021,7 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
 
                     double colorRatio = FilamentControler.getColorRatio(
-                            mchn.getModel().getCoilCode(), 
+                            mchn.getModel().getCoilText(), 
                             mchn.getModel().getResolution(),
                             mchn.getDriver().getConnectedDevice().toString());
                     /**
@@ -1231,7 +1231,7 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
 
                 bUnload.setVisible(false);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE, ""));
+                machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
                 tRemaining.setText(Languager.getTagValue(1,"Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;

@@ -1,15 +1,18 @@
 package replicatorg.drivers.commands;
 
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.RetryException;
 
-public class UpdateCoilCode implements DriverCommand {
+public class SetCoilText implements DriverCommand {
+
+    String coilText = "";
+
+    public SetCoilText(String coilText) {
+        this.coilText = coilText;
+    }
 
     @Override
     public void run(Driver driver) {
-
-        driver.updateCoilCode();
-
+        driver.setCoilText(coilText);
     }
 
     @Override

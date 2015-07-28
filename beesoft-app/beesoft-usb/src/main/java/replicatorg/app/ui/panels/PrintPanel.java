@@ -54,7 +54,7 @@ public class PrintPanel extends BaseDialog {
     private static final String NOK = "NOK";
     private Thread t = null;
     private static final String FORMAT = "%2d:%2d";
-    private String colorCode = FilamentControler.NO_FILAMENT_CODE;
+    private String coilText = FilamentControler.NO_FILAMENT;
     private PrintEstimationThread estimationThread = null;
     private GCodeExportThread exportThread = null;
     private boolean isRunning = true;
@@ -86,7 +86,7 @@ public class PrintPanel extends BaseDialog {
         initSliderConfigs();
         centerOnScreen();
         estimationThread = new PrintEstimationThread(this);
-        getCoilCode();
+        coilText = getCoilCode();
         prefs = new ArrayList<String>();
         raftPressed = false;
         supportPressed = false;
@@ -179,20 +179,20 @@ public class PrintPanel extends BaseDialog {
      * Get coil code from machine and system. Also prepares label with coil code
      * info.
      */
-    private void getCoilCode() {
+    private String getCoilCode() {
 
         String code;
 
-        code = FilamentControler.NO_FILAMENT_CODE;
+        code = FilamentControler.NO_FILAMENT;
 
         if (Base.getMachineLoader().isConnected()) {
-            Base.getMachineLoader().getMachineInterface().getDriver().updateCoilCode();
-            code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+            Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
+            code = Base.getMainWindow().getMachine().getModel().getCoilText();
         } //no need for else
 
         Base.writeLog("Print panel coil code: " + code);
 
-        if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
+        if (code.equals(FilamentControler.NO_FILAMENT)) {
             no_Filament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             code = Languager.getTagValue(1, "Print", "Print_Splash_Info9").toUpperCase();
@@ -201,26 +201,10 @@ public class PrintPanel extends BaseDialog {
             jLabel23.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
 
         } else {
-
-            code = FilamentControler.getColor(Base.getMainWindow().getMachine().getModel().getCoilCode());
-
-            //Checks if user besides having a BEECode, it is one up-to-date.
-            //BEECodes may have been changed
-            if (code.equals(FilamentControler.NO_FILAMENT) == false) {
-                colorCode = code;
-            } else {
-                no_Filament = true;
-            }
             jLabel22.setText(" " + code);
         }
 
-        if (no_Filament == true) {
-            jLabel22.setText(" " + code);
-            jLabel23.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
-        } else {
-            jLabel22.setText(" " + code);
-        }
-
+        return code;
     }
 
     /**
@@ -380,21 +364,21 @@ public class PrintPanel extends BaseDialog {
                 String labelText = button.getText();
 
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
-                    return "LOW";
+                    return "low";
                 }
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
-                    return "MEDIUM";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
-                    return "SHIGH";
+                    return "medium";
                 }
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
-                    return "HIGH";
+                    return "high";
+                }
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
+                    return "high+";
                 }
             }
         }
 
-        return "LOW";
+        return "low";
     }
 
     /**
@@ -771,7 +755,7 @@ public class PrintPanel extends BaseDialog {
         ArrayList<String> prefs = new ArrayList<String>();
 
         prefs.add(parseSlider1());
-        prefs.add(colorCode);
+        prefs.add(coilText);
         prefs.add(parseSlider2());
         prefs.add(String.valueOf(raftPressed));
         prefs.add(String.valueOf(supportPressed));
@@ -1461,7 +1445,7 @@ public class PrintPanel extends BaseDialog {
 
             prefs.add(parseSlider1());
 //            prefs.add(parseCoilCode());
-            prefs.add(FilamentControler.getColor(colorCode));
+            prefs.add(FilamentControler.getColor(coilText));
             prefs.add(parseSlider2());
             prefs.add(String.valueOf(raftPressed));
             prefs.add(String.valueOf(supportPressed));
@@ -1574,7 +1558,7 @@ public class PrintPanel extends BaseDialog {
         if (exportPressed == false && nModels > 0) {
 
             JFileChooser saveFile = new JFileChooser();
-            saveFile.setSelectedFile(new File("export-" 
+            saveFile.setSelectedFile(new File("export-"
                     + System.currentTimeMillis() + ".gcode"));
             int rVal = saveFile.showSaveDialog(null);
 

@@ -74,7 +74,7 @@ public class About extends BaseDialog {
         String code = "N/A";
 
         if (Base.getMachineLoader().isConnected()) {
-            code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+            code = Base.getMainWindow().getMachine().getModel().getCoilText();
         } else {
             code = ProperDefault.get("coilCode");
         }

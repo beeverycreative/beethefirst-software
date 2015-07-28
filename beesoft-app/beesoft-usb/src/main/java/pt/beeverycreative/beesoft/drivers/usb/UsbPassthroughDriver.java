@@ -346,7 +346,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             //dispatchCommand("M29"); // Shuts down current USB-print
             setBusy(true);
-            updateCoilCode();
+            updateCoilText();
             Base.isPrinting = false;
 
             dispatchCommand("M107", COM.DEFAULT); // Shut downs Blower 
@@ -914,15 +914,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public void setCoilCode(String coilCode, String coilText) {
-        String response = dispatchCommand(COILCODE + coilCode, COM.BLOCK);
-        String response2 = dispatchCommand(SETCOILTEXT + coilText, COM.BLOCK);
+    public void setCoilText(String coilText) {
+        String response = dispatchCommand(SETCOILTEXT + coilText, COM.BLOCK);
 
-        if (response.toLowerCase().contains("ok") &&
-                response2.toLowerCase().contains("ok")) {
-            machine.setCoilCode(coilCode, coilText);
+        if (response.toLowerCase().contains("ok")) {
+            machine.setCoilText(coilText);
         } else {
-            machine.setCoilCode("NOK", "");
+            machine.setCoilText("");
         }
 
         /**
@@ -936,35 +934,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
      *
      */
     @Override
-    public void updateCoilCode() {
+    public void updateCoilText() {
+        String coilText;
 
-        String coilCode, coilText;
-
-        //EX : String txt="bcode:A301 ok Q:0";
-        coilCode = dispatchCommand(COILCODE, COM.BLOCK);
         coilText = dispatchCommand(GETCOILTEXT, COM.BLOCK);
-        machine.setCoilCode("A000", "");
-
-        Base.writeLog("Coil code: " + coilCode);
-        Base.writeLog("Coil text: " + coilText);
-
-        String re1 = ".*?";	// Non-greedy match on filler
-        String re2 = "(bcode:A)";	// Any Single Word Character (Not Whitespace) 1
-        String re3 = "(\\d+)";	// Integer Number 1
-        Pattern p = Pattern.compile(re1 + re2 + re3, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(coilCode);
-        if (m.find()) {
-            String int1 = m.group(2);
-
-            //hack to set coil codes to 3 digits
-            String zeros = "000";
-            String code = "A" + zeros.substring(0, 3 - int1.length()) + int1;
-
-            machine.setCoilCode(code, coilText);
+        
+        if(coilText.contains("ok")) {
+            coilText = coilText.substring(
+                    coilText.indexOf('\'') + 1, coilText.lastIndexOf('\'')
+            );
         } else {
-            //Default A000 / None
-            machine.setCoilCode("A000", "");
+            coilText = "none";
         }
+        
+        Base.writeLog("Coil text: " + coilText);
+        machine.setCoilText(coilText);
     }
 
     @Override

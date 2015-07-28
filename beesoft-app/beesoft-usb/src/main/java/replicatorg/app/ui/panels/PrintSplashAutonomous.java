@@ -2,9 +2,7 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -915,7 +913,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE, ""));
+                machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
                 tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;
@@ -1587,7 +1585,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 //                    driver.dispatchCommand("G1 F6000 E-0.5", COM.BLOCK);
 //                    driver.dispatchCommand("G1 F6000 E0", COM.BLOCK);
                     double colorRatio = FilamentControler.getColorRatio(
-                            machine.getModel().getCoilCode(), 
+                            machine.getModel().getCoilText(), 
                             machine.getModel().getResolution(),
                             machine.getDriver().getConnectedDevice().toString()
                     );
@@ -2150,7 +2148,7 @@ class TransferControlThread extends Thread {
     @Override
     public void run() {
         gCodeDone = estimate(Base.isPrintingFromGCode);
-        Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilCode(),
+        Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilText(),
                 Base.getMainWindow().getMachine().getModel().getResolution(), 
                 Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString());
 

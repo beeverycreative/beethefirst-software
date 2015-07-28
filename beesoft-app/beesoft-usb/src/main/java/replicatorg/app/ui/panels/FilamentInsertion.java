@@ -50,7 +50,7 @@ public class FilamentInsertion extends BaseDialog {
         moveToPosition();
         enableDrag();
 
-        previousColor = machine.getModel().getCoilCode();
+        previousColor = machine.getModel().getCoilText();
         disposeThread = new DisposeFeedbackThread(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
@@ -411,7 +411,7 @@ public class FilamentInsertion extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -512,7 +512,7 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 343, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -735,7 +735,7 @@ public class FilamentInsertion extends BaseDialog {
                 public void run() {
 
                     //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE, ""));
+                    machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));

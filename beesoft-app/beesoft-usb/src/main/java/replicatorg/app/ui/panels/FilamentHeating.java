@@ -196,7 +196,7 @@ public class FilamentHeating extends BaseDialog {
 
     private void evaluateInitialConditions() {
         achievement = false;
-        temperatureGoal = 30;
+        temperatureGoal = 220;
         Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
 

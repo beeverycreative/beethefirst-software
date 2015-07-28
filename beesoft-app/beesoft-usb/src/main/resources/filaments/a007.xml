@@ -1,101 +1,195 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <filament>
-    <version>1.0.0</version>
-    <name>A007 - Olive Green</name>
-    <printers>
-        <printer type="BEETHEFIRST">
-            <resolutions>
-                <resolution type="low">
-                    <layer_height value="0.3"/>
-                    <solid_layer_thickness value="0.9"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="60"/>
-                    <inset0_speed value="60"/>
-                    <insetx_speed value="60"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="5"/>
-                </resolution>
-                <resolution type="medium">
-                    <layer_height value="0.2"/>
-                    <solid_layer_thickness value="0.9"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="40"/>
-                    <infill_speed value="0"/>
-                    <inset0_speed value="0"/>
-                    <insetx_speed value="0"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="30"/>
-                </resolution>
-                <resolution type="high">
-                    <layer_height value="0.1"/>
-                    <solid_layer_thickness value="0.9"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="40"/>
-                    <infill_speed value="60"/>
-                    <inset0_speed value="40"/>
-                    <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="5"/>
-                </resolution>
-                <resolution type="high+">
-                    <layer_height value="0.05"/>
-                    <solid_layer_thickness value="1.1"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="40"/>
-                    <infill_speed value="60"/>
-                    <inset0_speed value="30"/>
-                    <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="5"/>
-                </resolution>
-            </resolutions>
-        </printer>
-        <printer type="BEETHEFIRSTPLUS">
-            <resolutions>
-                <resolution type="low">
-                    <layer_height value="0.3"/>
-                    <solid_layer_thickness value="0.9"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="60"/>
-                    <inset0_speed value="60"/>
-                    <insetx_speed value="60"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="5"/>
-                </resolution>
-                <resolution type="medium">
-                    <layer_height value="0.2"/>
-                    <solid_layer_thickness value="0.9"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="40"/>
-                    <infill_speed value="0"/>
-                    <inset0_speed value="0"/>
-                    <insetx_speed value="0"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="30"/>
-                </resolution>
-                <resolution type="high">
-                    <layer_height value="0.1"/>
-                    <solid_layer_thickness value="0.9"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="40"/>
-                    <infill_speed value="60"/>
-                    <inset0_speed value="40"/>
-                    <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="5"/>
-                </resolution>
-                <resolution type="high+">
-                    <layer_height value="0.05"/>
-                    <solid_layer_thickness value="1.1"/>
-                    <nozzle_size value="0.4"/>
-                    <print_speed value="40"/>
-                    <infill_speed value="60"/>
-                    <inset0_speed value="30"/>
-                    <insetx_speed value="40"/>
-                    <filament_flow value="103.1"/>
-                    <cool_min_layer_time value="5"/>
-                </resolution>
-            </resolutions>
-        </printer>
-    </printers>
+  <version>1.0.0</version>
+  <name>A007 - Olive Green</name>
+  <printers>
+    <printer type="BEETHEFIRST">
+      <resolutions>
+        <resolution type="low">
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="60"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="60"/>
+          <parameter name="layer_height" value="0.3"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="60"/>
+        </resolution>
+        <resolution type="medium">
+          <parameter name="infill_speed" value="0"/>
+          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="0"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="0"/>
+          <parameter name="layer_height" value="0.2"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="40"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.1"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high+">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="1.1"/>
+          <parameter name="inset0_speed" value="30"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.05"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+      </resolutions>
+    </printer>
+    <printer type="BEETHEFIRSTPLUS">
+      <resolutions>
+        <resolution type="low">
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="60"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="60"/>
+          <parameter name="layer_height" value="0.3"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="60"/>
+        </resolution>
+        <resolution type="medium">
+          <parameter name="infill_speed" value="0"/>
+          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="0"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="0"/>
+          <parameter name="layer_height" value="0.2"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="40"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.1"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high+">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="1.1"/>
+          <parameter name="inset0_speed" value="30"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.05"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+      </resolutions>
+    </printer>
+    <printer type="BEEME">
+      <resolutions>
+        <resolution type="low">
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="60"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="60"/>
+          <parameter name="layer_height" value="0.3"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="60"/>
+        </resolution>
+        <resolution type="medium">
+          <parameter name="infill_speed" value="0"/>
+          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="0"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="0"/>
+          <parameter name="layer_height" value="0.2"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="40"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.1"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high+">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="1.1"/>
+          <parameter name="inset0_speed" value="30"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.05"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+      </resolutions>
+    </printer>
+    <printer type="BEEINSCHOOL">
+      <resolutions>
+        <resolution type="low">
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="60"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="60"/>
+          <parameter name="layer_height" value="0.3"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="60"/>
+        </resolution>
+        <resolution type="medium">
+          <parameter name="infill_speed" value="0"/>
+          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="0"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="0"/>
+          <parameter name="layer_height" value="0.2"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="0.9"/>
+          <parameter name="inset0_speed" value="40"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.1"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+        <resolution type="high+">
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
+          <parameter name="solid_layer_thickness" value="1.1"/>
+          <parameter name="inset0_speed" value="30"/>
+          <parameter name="filament_flow" value="103.1"/>
+          <parameter name="insetx_speed" value="40"/>
+          <parameter name="layer_height" value="0.05"/>
+          <parameter name="nozzle_size" value="0.4"/>
+          <parameter name="print_speed" value="40"/>
+        </resolution>
+      </resolutions>
+    </printer>
+  </printers>
 </filament>

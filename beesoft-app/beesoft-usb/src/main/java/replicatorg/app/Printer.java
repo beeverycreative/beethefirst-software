@@ -1,6 +1,5 @@
 package replicatorg.app;
 
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,8 +14,6 @@ import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -343,19 +340,14 @@ public class Printer {
      * @return profile type
      */
     private String parseProfile(ArrayList<String> params) {
-        String profile = "";
-        MachineModel machine = Base.getMainWindow().getMachine().getModel();
+        String profile;
         String color = params.get(1);
         String resolution = params.get(0);
         String curaFileForced = ProperDefault.get("curaFile");
 
         if (curaFileForced.contains("none")) {
 
-            if (machine.getCoilCode().equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE)) {
-                profile += FilamentControler.getBEECode(FilamentControler.NO_FILAMENT_CODE).toLowerCase(); //To allow base estimation without filament
-            } else {
-                profile += machine.getCoilCode().toLowerCase();
-            }
+            profile = color;
 
             //Delimiter
             profile += ":";
@@ -363,15 +355,7 @@ public class Printer {
             /**
              * Resolution
              */
-            if (resolution.equalsIgnoreCase("low")) {
-                profile += "lowRes";
-            } else if (resolution.equalsIgnoreCase("medium")) {
-                profile += "mediumRes";
-            } else if (resolution.equalsIgnoreCase("high")) {
-                profile += "highRes";
-            } else if (resolution.equalsIgnoreCase("shigh")) {
-                profile += "shighRes";
-            }
+            profile += resolution;
 
         } else {
             profile = curaFileForced;

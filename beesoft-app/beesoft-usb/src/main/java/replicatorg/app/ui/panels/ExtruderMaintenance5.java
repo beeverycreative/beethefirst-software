@@ -46,7 +46,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
         moveToPosition();
         enableDrag();
 //        disableMessageDisplay();
-        previousColor = machine.getModel().getCoilCode();
+        previousColor = machine.getModel().getCoilText();
         disposeThread = new ExtruderMaintenanceDisposeFeedbackThread(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
@@ -354,7 +354,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -399,7 +399,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
                 .addComponent(pText1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 21, Short.MAX_VALUE))
+                .addGap(0, 8, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -460,7 +460,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 343, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -565,9 +565,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-
-                    //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE, ""));
+                    machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
@@ -586,8 +584,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                    //                    unloadPressed = true;
-
                 }
             });
 

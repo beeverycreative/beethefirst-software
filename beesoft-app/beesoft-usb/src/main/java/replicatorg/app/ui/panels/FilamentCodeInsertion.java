@@ -85,7 +85,7 @@ public class FilamentCodeInsertion extends BaseDialog {
     }
 
     private int getModelCategoryIndex() {
-        String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+        String code = Base.getMainWindow().getMachine().getModel().getCoilText();
 
         for (int i = 0; i < categories.length; i++) {
             /**
@@ -106,23 +106,6 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void finalizeHeat() {
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private String parseComboCode() {
-        String[] filamentCodes = FilamentControler.getFilamentCodes();
-
-        for (String enumCode : filamentCodes) {
-            /**
-             * Color with BEECODE - Filkemp new
-             */
-            if (String.valueOf(comboModel.getSelectedItem()).contains(enumCode)) {
-                return enumCode;
-            }
-        }
-        /**
-         * Color without BEECODE - KDI
-         */
-        return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
     }
 
     private void doCancel() {
@@ -417,16 +400,16 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
 //        if (validateCode()) {
 
-        String code = parseComboCode();
+        String coilText = comboModel.getSelectedItem().toString();
 
         /**
          * Checks if color switch was between this combinations
          */
-        boolean blackTurquoise = previousColor.equals("A335") && code.equals("A332")
-                || previousColor.equals("A332") && code.equals("A335");
+        boolean blackTurquoise = previousColor.equals("A335") && coilText.equals("A332")
+                || previousColor.equals("A332") && coilText.equals("A335");
 
-        boolean yellowRed = previousColor.equals("A333") && code.equals("A334")
-                || previousColor.equals("A334") && code.equals("A333");
+        boolean yellowRed = previousColor.equals("A333") && coilText.equals("A334")
+                || previousColor.equals("A334") && coilText.equals("A333");
 
         /**
          * If this is made on print paused and color is not the same then flag
@@ -438,11 +421,11 @@ public class FilamentCodeInsertion extends BaseDialog {
         }//no need for else
 
         //set the coil code: M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code, "test"));
+        machine.runCommand(new replicatorg.drivers.commands.SetCoilText(coilText));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 
-        ProperDefault.put("coilCode", String.valueOf(code));
+        ProperDefault.put("coilCode", String.valueOf(coilText));
         ProperDefault.put("filamentCoilRemaining", String.valueOf("105000"));
         Base.writeConfig();
         Base.loadProperties();
