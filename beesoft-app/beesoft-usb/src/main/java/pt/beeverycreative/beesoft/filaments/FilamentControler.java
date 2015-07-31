@@ -29,7 +29,7 @@ public class FilamentControler {
 
     private static Set<Filament> filamentList;
 
-    public static String NO_FILAMENT = "none";
+    public static String NO_FILAMENT = "_no_file";
     public static String NO_FILAMENT_CODE = "A000";
 
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
@@ -302,4 +302,19 @@ public class FilamentControler {
         // default value is black
         return "A000";
     }
+    
+    public static boolean colorExistsLocally(String name) {
+        if(filamentList == null) {
+            fetchFilaments();
+        }
+        
+        for(Filament fil : filamentList) {
+            if(fil.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
 }

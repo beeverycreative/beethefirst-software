@@ -210,7 +210,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     /**
      * Cancel ongoing operation and idles BEESOFT to a machine idle state
      */
-    private void doCancel() {
+    public void doCancel() {
         //machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
         if (machine.getDriver().isTransferMode()) {
             // stopTransfer() blocks while the process isn't concluded
@@ -1420,7 +1420,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        doCancel();
+        CancelPrint cancelPanel = new CancelPrint(this);
+        cancelPanel.setVisible(true);
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed

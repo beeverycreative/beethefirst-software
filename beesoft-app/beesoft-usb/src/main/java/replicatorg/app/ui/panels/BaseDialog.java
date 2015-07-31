@@ -1,8 +1,10 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import javax.swing.BorderFactory;
 import replicatorg.app.Base;
 
 /**
@@ -12,11 +14,12 @@ import replicatorg.app.Base;
 public abstract class BaseDialog extends javax.swing.JDialog {
 
     protected int posX = 0, posY = 0;
-        
+
     public BaseDialog(Window window, ModalityType mt) {
         super(window, mt);
+        this.getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
     }
-    
+
     /**
      * At the moment this method is disabled due to a bug in Windows
      */
@@ -37,8 +40,8 @@ public abstract class BaseDialog extends javax.swing.JDialog {
 //
 //            }
 //        });
-    }    
-        
+    }
+
     protected void centerOnScreen() {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 

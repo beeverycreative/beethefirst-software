@@ -50,7 +50,7 @@ public class PrintPanel extends BaseDialog {
     private JLabel quality_solid;
     private final ArrayList<String> prefs;
     private boolean raftPressed, supportPressed, autonomousPressed, gcodeSavePressed;
-    private boolean no_Filament = false;
+    private boolean noFilament = false;
     private static final String NOK = "NOK";
     private Thread t = null;
     private static final String FORMAT = "%2d:%2d";
@@ -193,13 +193,18 @@ public class PrintPanel extends BaseDialog {
         Base.writeLog("Print panel coil code: " + code);
 
         if (code.equals(FilamentControler.NO_FILAMENT)) {
-            no_Filament = true;
+            noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             code = Languager.getTagValue(1, "Print", "Print_Splash_Info9").toUpperCase();
-
             jLabel22.setText(" " + code);
-            jLabel23.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
-
+            jLabel23.setText(" " + Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
+        } else if (FilamentControler.colorExistsLocally(code) == false) {
+            noFilament = true;
+            jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
+            jLabel22.setText(" " + code);
+            
+            UnknownFilament unkFilPanel = new UnknownFilament();
+            unkFilPanel.setVisible(true);
         } else {
             jLabel22.setText(" " + code);
         }
@@ -408,7 +413,7 @@ public class PrintPanel extends BaseDialog {
         updateOldSettings();
 
         //|| gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100
-        if (no_Filament) // Less than a meter(100 grams)
+        if (noFilament) // Less than a meter(100 grams)
         {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_15.png")));
             jLabel22.setForeground(Color.red);
@@ -418,7 +423,7 @@ public class PrintPanel extends BaseDialog {
         printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
 
         if (printerAvailable) {
-            if (no_Filament == false && nModels != 0) {
+            if (noFilament == false && nModels != 0) {
                 bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
             }
         } else {
@@ -1404,13 +1409,13 @@ public class PrintPanel extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bPrintMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseEntered
-        if (!no_Filament && printerAvailable && nModels != 0) {
+        if (!noFilament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseEntered
 
     private void bPrintMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseExited
-        if (!no_Filament && printerAvailable && nModels != 0) {
+        if (!noFilament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseExited
@@ -1430,7 +1435,7 @@ public class PrintPanel extends BaseDialog {
         }
         estimationThread.stop();
 
-        if (nModels != 0 && no_Filament == false && Base.isPrinting == false) {
+        if (nModels != 0 && noFilament == false && Base.isPrinting == false) {
             /*
              * prefs[0] - profile (LOW,HIGH) 
              * prefs[1] - colorRation

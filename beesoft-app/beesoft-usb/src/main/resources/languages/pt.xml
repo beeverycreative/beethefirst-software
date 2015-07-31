@@ -218,6 +218,15 @@
             <About_FilamentColor value="Tipo de filamento"/> 
         </AboutSoftware>
 
+        <CancelPrint>
+            <CancelPrintText value="Are you sure you want to cancel your print?" />
+        </CancelPrint>
+
+        <UnknownFilament>
+            <UnknownFilamentTitle value="Unknown filament loaded in your printer" />
+            <UnknownFilamentText value="There are no existing settings in BEESOFT for the filament loaded on the printer. Please change the filament." />
+        </UnknownFilament>
+
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
         <Other>
             <AdvancedOptions value="Opções avançadas"/>
