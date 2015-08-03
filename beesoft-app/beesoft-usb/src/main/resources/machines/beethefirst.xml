@@ -64,18 +64,18 @@
                 G1 F6000.0,
                 G1 E40.49117,
                 G1 F1080.0,
-                M206 x500,
+                M206 X500,
                 G1 X0 Y0 Z117 F10000 "/>
               
             <calibration value =
                 "M300,
-                M206 x500,
-                G1 x88 y-65 Z0 F8000,
-                M206 x1000,
-                G1 x88 y65 Z0 F1000,
-                G1 x-88 y65 Z0 F1000,
-                G1 x-88 y-65 Z0 F1000,
-                G1 x88 y-65 Z0 F1000"/>
+                M206 X500,
+                G1 X88 Y-65 Z0 F8000,
+                M206 X1000,
+                G1 X88 Y65 Z0 F1000,
+                G1 X-88 Y65 Z0 F1000,
+                G1 X-88 Y-65 Z0 F1000,
+                G1 X88 Y-65 Z0 F1000"/>
             
             <calibration_test value =
                 "M29,

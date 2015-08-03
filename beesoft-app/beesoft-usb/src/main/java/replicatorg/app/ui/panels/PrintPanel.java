@@ -202,7 +202,7 @@ public class PrintPanel extends BaseDialog {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             jLabel22.setText(" " + code);
-            
+
             UnknownFilament unkFilPanel = new UnknownFilament();
             unkFilPanel.setVisible(true);
         } else {
@@ -374,11 +374,11 @@ public class PrintPanel extends BaseDialog {
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
                     return "medium";
                 }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
-                    return "high";
-                }
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
                     return "high+";
+                }
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
+                    return "high";
                 }
             }
         }

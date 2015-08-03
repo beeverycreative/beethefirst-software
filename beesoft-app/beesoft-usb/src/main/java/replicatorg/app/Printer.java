@@ -346,6 +346,10 @@ public class Printer {
         String curaFileForced = ProperDefault.get("curaFile");
 
         if (curaFileForced.contains("none")) {
+            
+            if(color.equals("NO FILAMENT")) {
+                color = "A000 - Generic";
+            }
 
             profile = color;
 

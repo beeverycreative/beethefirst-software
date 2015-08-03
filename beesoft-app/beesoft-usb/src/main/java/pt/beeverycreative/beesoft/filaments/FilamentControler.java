@@ -54,6 +54,9 @@ public class FilamentControler {
      */
     private static void fetchFilaments() {
 
+        String connectedPrinter = Base.getMainWindow().getMachine()
+                .getDriver().getConnectedDevice().toString();
+
         // get all the files from a directory
         File directory = new File(filamentsDir);
         File[] fList = directory.listFiles();
@@ -84,7 +87,8 @@ public class FilamentControler {
 
                         // only add to available filaments if it is supported by the printer
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                            if (Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString().equals(sc.getPrinterName())) {
+                            if (connectedPrinter.equals(sc.getPrinterName())
+                                    || connectedPrinter.equals("UNKNOWN")) {
                                 availableFilaments.add(fil);
                                 break;
                             }
@@ -256,6 +260,11 @@ public class FilamentControler {
     public static HashMap<String, String> getFilamentSettings(String coilCode,
             String resolution, String printerId) {
 
+        // if no printer is connected, assume BEETHEFIRST as the default
+        if (printerId.equalsIgnoreCase("unknown")) {
+            printerId = "BEETHEFIRST";
+        }
+
         if (filamentList == null) {
             fetchFilaments();
         }
@@ -302,19 +311,19 @@ public class FilamentControler {
         // default value is black
         return "A000";
     }
-    
+
     public static boolean colorExistsLocally(String name) {
-        if(filamentList == null) {
+        if (filamentList == null) {
             fetchFilaments();
         }
-        
-        for(Filament fil : filamentList) {
-            if(fil.getName().equalsIgnoreCase(name)) {
+
+        for (Filament fil : filamentList) {
+            if (fil.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
 }
