@@ -6,6 +6,8 @@
     <printer type="BEETHEFIRST">
       <resolutions>
         <resolution type="low">
+          <parameter name="layer_height" value="0.3" />
+		  <parameter name="layer_height" value="0.3" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -21,6 +23,8 @@
           <parameter name="print_speed" value="60"/>
         </resolution>
         <resolution type="medium">
+          <parameter name="layer_height" value="0.2" />
+		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="0"/>
@@ -36,6 +40,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high">
+          <parameter name="layer_height" value="0.1" />
+		  <parameter name="layer_height" value="0.1" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -51,6 +57,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high+">
+          <parameter name="layer_height" value="0.05" />
+		  <parameter name="layer_height" value="0.05" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -70,6 +78,8 @@
     <printer type="BEETHEFIRSTPLUS">
       <resolutions>
         <resolution type="low">
+          <parameter name="layer_height" value="0.3" />
+		  <parameter name="layer_height" value="0.3" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -85,6 +95,8 @@
           <parameter name="print_speed" value="60"/>
         </resolution>
         <resolution type="medium">
+          <parameter name="layer_height" value="0.2" />
+		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="0"/>
@@ -100,6 +112,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high">
+          <parameter name="layer_height" value="0.1" />
+		  <parameter name="layer_height" value="0.1" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -115,6 +129,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high+">
+          <parameter name="layer_height" value="0.05" />
+		  <parameter name="layer_height" value="0.05" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -134,6 +150,8 @@
     <printer type="BEEME">
       <resolutions>
         <resolution type="low">
+          <parameter name="layer_height" value="0.3" />
+		  <parameter name="layer_height" value="0.3" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -149,6 +167,8 @@
           <parameter name="print_speed" value="60"/>
         </resolution>
         <resolution type="medium">
+          <parameter name="layer_height" value="0.2" />
+		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="0"/>
@@ -164,6 +184,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high">
+          <parameter name="layer_height" value="0.1" />
+		  <parameter name="layer_height" value="0.1" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -179,6 +201,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high+">
+          <parameter name="layer_height" value="0.05" />
+		  <parameter name="layer_height" value="0.05" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -198,6 +222,8 @@
     <printer type="BEEINSCHOOL">
       <resolutions>
         <resolution type="low">
+          <parameter name="layer_height" value="0.3" />
+		  <parameter name="layer_height" value="0.3" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -213,6 +239,8 @@
           <parameter name="print_speed" value="60"/>
         </resolution>
         <resolution type="medium">
+          <parameter name="layer_height" value="0.2" />
+		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="0"/>
@@ -228,6 +256,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high">
+          <parameter name="layer_height" value="0.1" />
+		  <parameter name="layer_height" value="0.1" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
@@ -243,6 +273,8 @@
           <parameter name="print_speed" value="40"/>
         </resolution>
         <resolution type="high+">
+          <parameter name="layer_height" value="0.05" />
+		  <parameter name="layer_height" value="0.05" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
           <parameter name="infill_speed" value="60"/>
