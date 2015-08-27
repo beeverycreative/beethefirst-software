@@ -2,18 +2,18 @@
 <filament>
   <version>1.0.0</version>
   <name>A029 - Silver</name>
-  <printers>
+   <printers>
     <printer type="BEETHEFIRST">
       <resolutions>
         <resolution type="low">
             <parameter name="layer_height" value="0.3" />
-			<parameter name="print_temperature" value="195"/>
+            <parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="60"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="60"/>
+			<parameter name="inset0_speed" value="60"/>
+			<parameter name="insetx_speed" value="60"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -47,7 +47,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -82,13 +82,13 @@
         </resolution>
         <resolution type="medium">
             <parameter name="layer_height" value="0.2" />
-			<parameter name="print_temperature" value="195"/>
+			<parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -122,7 +122,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -157,13 +157,13 @@
         </resolution>
         <resolution type="high">
             <parameter name="layer_height" value="0.1" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -197,7 +197,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -232,13 +232,13 @@
         </resolution>
         <resolution type="high+">
             <parameter name="layer_height" value="0.05" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="30"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -272,7 +272,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -311,13 +311,13 @@
       <resolutions>
         <resolution type="low">
             <parameter name="layer_height" value="0.3" />
-			<parameter name="print_temperature" value="195"/>
+            <parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="60"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="60"/>
+			<parameter name="inset0_speed" value="60"/>
+			<parameter name="insetx_speed" value="60"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -351,7 +351,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -386,13 +386,13 @@
         </resolution>
         <resolution type="medium">
             <parameter name="layer_height" value="0.2" />
-			<parameter name="print_temperature" value="195"/>
+			<parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -426,7 +426,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -461,13 +461,13 @@
         </resolution>
         <resolution type="high">
             <parameter name="layer_height" value="0.1" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -501,7 +501,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -536,13 +536,13 @@
         </resolution>
         <resolution type="high+">
             <parameter name="layer_height" value="0.05" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="30"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -576,7 +576,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -615,13 +615,13 @@
       <resolutions>
         <resolution type="low">
             <parameter name="layer_height" value="0.3" />
-			<parameter name="print_temperature" value="195"/>
+            <parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="60"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="60"/>
+			<parameter name="inset0_speed" value="60"/>
+			<parameter name="insetx_speed" value="60"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -655,7 +655,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -690,13 +690,13 @@
         </resolution>
         <resolution type="medium">
             <parameter name="layer_height" value="0.2" />
-			<parameter name="print_temperature" value="195"/>
+			<parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -730,7 +730,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -765,13 +765,13 @@
         </resolution>
         <resolution type="high">
             <parameter name="layer_height" value="0.1" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -805,7 +805,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -840,13 +840,13 @@
         </resolution>
         <resolution type="high+">
             <parameter name="layer_height" value="0.05" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="30"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -880,7 +880,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -919,13 +919,13 @@
       <resolutions>
         <resolution type="low">
             <parameter name="layer_height" value="0.3" />
-			<parameter name="print_temperature" value="195"/>
+            <parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="60"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="60"/>
+			<parameter name="inset0_speed" value="60"/>
+			<parameter name="insetx_speed" value="60"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -959,7 +959,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -994,13 +994,13 @@
         </resolution>
         <resolution type="medium">
             <parameter name="layer_height" value="0.2" />
-			<parameter name="print_temperature" value="195"/>
+			<parameter name="print_temperature" value="190"/>
 			<parameter name="filament_flow" value="100"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -1034,7 +1034,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -1069,13 +1069,13 @@
         </resolution>
         <resolution type="high">
             <parameter name="layer_height" value="0.1" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="40"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -1109,7 +1109,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
@@ -1144,13 +1144,13 @@
         </resolution>
         <resolution type="high+">
             <parameter name="layer_height" value="0.05" />
-			<parameter name="print_temperature" value="195"/>
-			<parameter name="filament_flow" value="90"/>
-			<parameter name="print_speed" value="20"/>
-			<parameter name="infill_speed" value="40"/>
-			<parameter name="solidarea_speed" value="20"/>
-			<parameter name="inset0_speed" value="20"/>
-			<parameter name="insetx_speed" value="20"/>
+			<parameter name="print_temperature" value="190"/>
+			<parameter name="filament_flow" value="104"/>
+			<parameter name="print_speed" value="40"/>
+			<parameter name="infill_speed" value="60"/>
+			<parameter name="solidarea_speed" value="40"/>
+			<parameter name="inset0_speed" value="30"/>
+			<parameter name="insetx_speed" value="40"/>
 			
 			<parameter name="travel_speed" value="100"/>
 			<parameter name="wall_thickness" value="0.8"/>	
@@ -1184,7 +1184,7 @@
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="15"/>
+			<parameter name="cool_min_layer_time" value="25"/>
 			<parameter name="cool_min_feedrate" value="10"/>
 			<parameter name="cool_head_lift" value="False"/>
 			<!-- Suport -->
