@@ -97,25 +97,17 @@ import replicatorg.drivers.Driver;
 		
 		// Tell the machine to start a connection
 		// TODO: This should be pushed into a separate class for managing connections.
-		public void connect(String port) {
-			if (!isLoaded()) {
+		public void connect(boolean force) {
+			if (!isLoaded() || !force) {
 				return;
 			}
-			singletonMI.connect(port);
+			singletonMI.connect(force);
 		}
                 
                 public void buildDirect(String arg)
                 {
                     singletonMI.buildDirect(arg);
                 }
-		
-		// tell the machine to drop its connection
-		public void disconnect() {
-			if (isLoaded()) {
-				singletonMI.disconnect();
-			}
-			
-		}
 		
 		// Pass these on to our handler
 		public void addMachineListener(MachineListener listener) {
@@ -134,4 +126,6 @@ import replicatorg.drivers.Driver;
 			}
 
 		}
+
+
 	}

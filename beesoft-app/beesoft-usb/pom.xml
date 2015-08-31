@@ -9,15 +9,15 @@
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.10.3</version>
+    <version>3.11.6</version>
     <name>beesoft-usb</name>
     <properties>
         
         <!-- BEESOFT software / firmware versions -->
         <!-- if release.type = 'alpha' the app internally will append the 
         current Date to the version -->
-        <release.type></release.type>
-        <project.release.version>3.10.3</project.release.version>
+        <release.type>stable</release.type>
+        <project.release.version>3.11.6</project.release.version>
         <maven.build.timestamp.format>yyyy.MM.dd_HH'h'mm</maven.build.timestamp.format>
         <build.number>${maven.build.timestamp}</build.number>
         <!-- #################################### -->
@@ -618,7 +618,7 @@
                     </plugin>                  
                 </plugins>
             </build>
-        </profile>                               
+        </profile>
     </profiles>  
     <dependencies>
         <dependency>
@@ -688,6 +688,13 @@
             <scope>compile</scope>
         </dependency>
         
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+            <scope>compile</scope>
+        </dependency>
+                                        
         <!-- Tests dependencies -->
         <dependency>
             <groupId>junit</groupId>

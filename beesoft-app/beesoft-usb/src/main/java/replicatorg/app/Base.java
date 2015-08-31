@@ -82,6 +82,7 @@ import com.apple.mrj.MRJApplicationUtils;
 import com.apple.mrj.MRJOpenDocumentHandler;
 import java.awt.Window;
 import java.io.FileNotFoundException;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,7 +100,18 @@ import replicatorg.util.ConfigProperties;
  * that comes from that.
  */
 public class Base {
-    
+
+    /**
+     * Languages supported
+     */
+    public enum Language {
+
+        en,
+        pt,
+        es,
+        de
+    };
+
     /**
      * enum for fast/easy OS checking
      */
@@ -156,6 +168,8 @@ public class Base {
             if (System.getProperty("mrj.version") != null) { // running on a
                 // mac
                 platform = (platformName.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
+            } else {
+                platform = Platform.MACOSX;
             }
 
         } else {
@@ -182,7 +196,7 @@ public class Base {
             }
         }
     }
-    
+
     private static final ConfigProperties configProperties = new ConfigProperties();
     public static boolean statusThreadDied = false;
     public static boolean errorOccured = false;
@@ -191,32 +205,29 @@ public class Base {
     public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
-    public static boolean isPrintingFromGCode = false;    
-    
+    public static boolean isPrintingFromGCode = false;
+
     public enum InitialOpenBehavior {
+
         OPEN_LAST,
         OPEN_NEW,
         OPEN_SPECIFIC_FILE
     };
-    
+
     public static int ID = 0;
 
-    public static final String VERSION_BEESOFT = 
-            configProperties.getBuildProperty("release.type").equals("alpha") ? 
-            configProperties.getBuildProperty("application.version") + "-alpha-" + configProperties.getBuildProperty("build.number") :
-                configProperties.getBuildProperty("release.type").equals("") ?
-                configProperties.getBuildProperty("application.version") :
-                configProperties.getBuildProperty("application.version") + "-" + configProperties.getBuildProperty("release.type");    
-    
+    public static final String VERSION_BEESOFT = setVersionString();
+
     public static final String PROGRAM = "BEESOFT";
-    public static String VERSION_BOOTLOADER = "Bootloader v"+configProperties.getAppProperty("bootloader.version");;
+    public static String VERSION_BOOTLOADER = "Bootloader v" + configProperties.getAppProperty("bootloader.version");
+    ;
     
     public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
     public static final String VERSION_FIRMWARE_FINAL_OLD = configProperties.getAppProperty("firmware.old.version");
-    public static String firmware_version_in_use = "BEETHEFIRST-"+ VERSION_FIRMWARE_FINAL +".bin";
+    public static String firmware_version_in_use = "BEETHEFIRST-" + VERSION_FIRMWARE_FINAL + ".bin";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
-    public static String language = "en";
+    public static Language language = Language.en;
     public static String MACHINE_NAME = "BEETHEFIRST";
     public static String GCODE_DELIMITER = "--";
     public static String GCODE_TEMP_FILENAME = "temp.gcode";
@@ -273,7 +284,6 @@ public class Base {
      */
     public static void setLogFile(String path) {
 
-
         if (logFileHandler != null) {
             logger.removeHandler(logFileHandler);
             logFileHandler = null;
@@ -321,7 +331,8 @@ public class Base {
      * Get the the user preferences and profiles directory. By default this is
      * ~/.replicatorg; if an alternate preferences set is selected, it will
      * instead be ~/.replicatorg/alternatePrefs/<i>alternate_prefs_name</i>.
-     * @return 
+     *
+     * @return
      */
     static public File getUserDirectory() {
         String path = System.getProperty("user.home") + File.separator + ".replicatorg";
@@ -357,7 +368,7 @@ public class Base {
             System.out.println("Thread " + (i + 1) + " > " + threadArray[i]);
         }
         System.out.println("\n");
-        System.out.println("Total Threads > "+threadArray.length);
+        System.out.println("Total Threads > " + threadArray.length);
         System.out.println("*****************");
     }
 
@@ -503,7 +514,7 @@ public class Base {
                     inStream.close();
                     outStream.close();
                 }
-            }catch (IOException e) {
+            } catch (IOException e) {
                 Base.writeLog(e.getMessage());
             }
         }
@@ -577,8 +588,9 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            if (fw != null)
+            if (fw != null) {
                 fw.close();
+            }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -611,8 +623,9 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            if (fw != null)
+            if (fw != null) {
                 fw.close();
+            }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -621,7 +634,6 @@ public class Base {
     public static void writecomLog(long timeStamp, String message) {
 
         File f = new File(getAppDataDirectory() + "/comLog.txt");
-        boolean canCreateFile = f.canRead() && f.canWrite();
 
         FileWriter fw = null;
         try {
@@ -642,8 +654,9 @@ public class Base {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            if (fw != null)
+            if (fw != null) {
                 fw.close();
+            }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -651,38 +664,34 @@ public class Base {
 
     private static Properties openFileProperties() {
 
-        File f = new File(getAppDataDirectory().toString().concat("/config.properties"));
-        Properties nw = new Properties();
+        String filePath = getAppDataDirectory().toString().concat("/config.properties");
+        File f = new File(filePath);
+        Properties props = new Properties();
+        BufferedReader fis = null;
+        if (f.exists()) {
 
-        if (!(f.exists())) {
             /**
-             * Does this to avoid FileNotFoundException Therefore, file exists
-             * and writes a empty string to validate existence
+             * FileInputStream for Properties usage
              */
-            PrintWriter w;
             try {
-                w = new PrintWriter(f.getAbsolutePath());
-                w.print("");
-                w.close();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
 
-            FileInputStream fileInput;
-            try {
-                fileInput = new FileInputStream(f);
-                nw.load(fileInput);
-                fileInput.close();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);            
+                props.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+
+            } finally {
+                try {
+                    if (fis != null) {
+                        fis.close();
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-
         }
-        // no need for else. File already exists and loads its properties
 
-        return nw;
+        return props;
     }
 
     /**
@@ -690,29 +699,12 @@ public class Base {
      */
     public static void writeConfig() {
 
-        File f = new File(getAppDataDirectory().toString().concat("/config.properties"));
-
-        PrintWriter w = null;
-        try {
-            w = new PrintWriter(f.getAbsolutePath());
-            w.print("");
-            w.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        /**
-         * FileOutputStream for Properties usage
-         */
-        try {
-            writer = new FileOutputStream(f.getAbsolutePath());
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        String filePath = getAppDataDirectory().toString().concat("/config.properties");
 
         try {
-            propertiesFile.store(writer, null);
-            writer.flush();
+            propertiesFile.store(new OutputStreamWriter(
+                    new FileOutputStream(filePath), "UTF-8"), null);
+
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -730,7 +722,7 @@ public class Base {
      * Reads a property from the config file
      *
      * @param param atribute to be loaded from configs
-     * @return 
+     * @return
      */
     public static String readConfig(String param) {
 
@@ -739,26 +731,34 @@ public class Base {
         }
 
         return propertiesFile.getProperty(param);
+
     }
 
     public static void loadProperties() {
 
-        File f = new File(getAppDataDirectory().toString().concat("/config.properties"));
-
+        String filePath = getAppDataDirectory().toString().concat("/config.properties");
+        File f = new File(filePath);
+        BufferedReader fis = null;
         if (f.exists()) {
 
             /**
              * FileInputStream for Properties usage
              */
             try {
-                read = new FileInputStream(f.getAbsolutePath());
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            try {
-                propertiesFile.load(read);
+                fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
+
+                propertiesFile.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+
+            } finally {
+                try {
+                    if (fis != null) {
+                        fis.close();
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
@@ -781,23 +781,23 @@ public class Base {
      * @param dirPath Path to directory containing such files
      */
     static public void cleanDirectoryTempFiles(String dirPath) {
+        boolean isBeesoftAlpha = Base.VERSION_BEESOFT.contains("alpha");
+
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl") ) { //|| (file.getName().contains(".gcode") && gcodeToSave == false)
+            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && isBeesoftAlpha == false)) {
                 file.delete();
             }
         }
     }
-    
+
     public static void turnOnPowerSaving(boolean turnOn) {
-        if(turnOn) {
+        if (turnOn) {
 //            editor.getMachine().getDriver().dispatchCommand("M641 A1");
-            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1",UsbPassthroughDriver.COM.NO_RESPONSE));
-        }
-        else
-        {
+            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
+        } else {
 //            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
-            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0",UsbPassthroughDriver.COM.NO_RESPONSE));
+            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
         }
     }
 
@@ -823,11 +823,12 @@ public class Base {
         } catch (IOException ex) {
             Base.writeLog(ex.getMessage());
         }
-        
+
         //Wait to get exit value
         try {
-            if (process != null)
+            if (process != null) {
                 process.waitFor();
+            }
         } catch (InterruptedException e) {
             Base.writeLog(e.getMessage());
         }
@@ -835,7 +836,7 @@ public class Base {
         VERSION_JAVA = out.trim();
     }
 
-    static public void diposeAllOpenWindows() {
+    static public void disposeAllOpenWindows() {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             if (!win1.getName().equals("mainWindow")) {
@@ -852,7 +853,7 @@ public class Base {
         }
 
     }
-    
+
     static public void enableAllOpenWindows() {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
@@ -1001,7 +1002,7 @@ public class Base {
         return new Font(fontname,
                 ((fontstyle.contains("bold")) ? Font.BOLD : 1)
                 | ((fontstyle.contains("italic")) ? Font.ITALIC
-                : 0), Integer.parseInt(st.nextToken()));
+                        : 0), Integer.parseInt(st.nextToken()));
     }
 
     static public Color getColorPref(String name, String defaultValue) {
@@ -1052,7 +1053,6 @@ public class Base {
     }
 
     static public void main(String args[]) {
-
 
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
@@ -1107,7 +1107,6 @@ public class Base {
                 Base.openedAtStartup = args[i];
             }
         }
-
 
         // Use the default system proxy settings
         System.setProperty("java.net.useSystemProxies", "true");
@@ -1198,7 +1197,7 @@ public class Base {
         getJavaVersion();
 
         // Loads language
-        language = ProperDefault.get("language").toLowerCase();
+        language = getLanguage();
 
         systemThreads = new ArrayList<Thread>();
 
@@ -1226,7 +1225,6 @@ public class Base {
 
                 // need to enable the preferences option manually
 //                macApplication.setEnabledPreferencesMenu(true);
-
                 writeLog("Operating System: Mac OS");
 
             } else if (Base.isLinux()) {
@@ -1237,7 +1235,7 @@ public class Base {
         } catch (Exception e) {
             writeLog(e.getMessage());
         }
-        
+
         // use native popups so they don't look so crappy on osx
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
@@ -1273,13 +1271,34 @@ public class Base {
                 writeLog("Log file created");
             }
         });
+        ProperDefault.put("machine.name", MACHINE_NAME);
+        String machineName = ProperDefault.get("machine.name");
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // quite ugly, but it works for now
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (Base.statusThreadDied) {
+                editor.reloadMachine(machineName, false);
+            }
+        }
     }
 
     // .................................................................
     /**
      * returns true if the ReplicatorG is running on a Mac OS machine,
      * specifically a Mac OS X machine because it doesn't run on OS 9 anymore.
-     * @return 
+     *
+     * @return
      */
     static public boolean isMacOS() {
         return platform == Platform.MACOSX;
@@ -1287,7 +1306,8 @@ public class Base {
 
     /**
      * returns true if running on windows.
-     * @return 
+     *
+     * @return
      */
     static public boolean isWindows() {
         return platform == Platform.WINDOWS;
@@ -1295,7 +1315,8 @@ public class Base {
 
     /**
      * true if running on linux.
-     * @return 
+     *
+     * @return
      */
     static public boolean isLinux() {
         return platform == Platform.LINUX;
@@ -1312,6 +1333,7 @@ public class Base {
     /**
      * Registers key events for a Ctrl-W and ESC with an ActionListener that
      * will take care of disposing the window.
+     *
      * @param root
      * @param disposer
      */
@@ -1333,6 +1355,7 @@ public class Base {
      * Show an error message that's actually fatal to the program. This is an
      * error that can't be recovered. Use showWarning() for errors that allow
      * ReplicatorG to continue running.
+     *
      * @param title
      * @param message
      * @param e
@@ -1439,8 +1462,9 @@ public class Base {
 
     /**
      * Grab the contents of a file as a string.
+     *
      * @param file
-     * @return 
+     * @return
      * @throws java.io.IOException
      */
     static public String loadFile(File file) throws IOException {
@@ -1465,6 +1489,7 @@ public class Base {
 
     /**
      * Spew the contents of a String object out to a fil
+     *
      * @param str
      * @param file
      * @throws java.io.IOException
@@ -1510,9 +1535,10 @@ public class Base {
     /**
      * Gets a list of all files within the specified folder, and returns a list
      * of their relative paths. Ignores any files/folders prefixed with a dot.
+     *
      * @param path
      * @param relative
-     * @return 
+     * @return
      */
     static public String[] listFiles(String path, boolean relative) {
         return listFiles(new File(path), relative);
@@ -1552,8 +1578,10 @@ public class Base {
     }
 
     /**
-     * Get a reference to the currently selected machine *
-     * @return 
+     * Get a reference to the currently selected machine
+     *
+     *
+     * @return
      */
     static public MachineLoader getMachineLoader() {
         if (machineLoader == null) {
@@ -1573,5 +1601,36 @@ public class Base {
 
     static public boolean getPrintEnded() {
         return printEnded;
+    }
+
+    public static void resetPrintingFlags() {
+        isPrinting = false;
+        printPaused = false;
+        isPrintingFromGCode = false;
+        gcodeToSave = false;
+    }
+
+    private static String setVersionString() {
+        String releaseType, applicationVersion, buildNumber;
+
+        releaseType = configProperties.getBuildProperty("release.type");
+        applicationVersion = configProperties.getBuildProperty("application.version");
+        buildNumber = configProperties.getBuildProperty("build.number");
+
+        if (releaseType.equals("alpha")) {
+            return applicationVersion + "-" + releaseType + "-" + buildNumber;
+        } else if (releaseType.contains("beta")) {
+            return applicationVersion + "-" + releaseType;
+        } else {
+            return applicationVersion;
+        }
+    }
+
+    private Language getLanguage() {
+        try {
+            return Language.valueOf(ProperDefault.get("language").toLowerCase());
+        } catch (IllegalArgumentException e) {
+            return Language.en;
+        }
     }
 }

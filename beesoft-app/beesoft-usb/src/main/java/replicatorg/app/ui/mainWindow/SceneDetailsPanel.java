@@ -1,5 +1,6 @@
 package replicatorg.app.ui.mainWindow;
 
+import java.awt.Color;
 import javax.swing.DefaultComboBoxModel;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -52,10 +53,16 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel1.setText(Languager.getTagValue(1, "SceneDetails", "Scene"));
 //        jLabel2.setText(Languager.getTagValue(1,"", ""));
         jLabel3.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name"));
-        jLabel4.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Description"));
+        jLabel4.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes"));
         jLabel5.setText(Languager.getTagValue(1, "SceneDetails", "Scene_NModels"));
         jLabel6.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintDate"));
         jLabel7.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintTime"));
+
+        jTextField1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name_Hint"));
+        jTextField1.setForeground(Color.gray);
+
+        jTextArea1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"));
+        jTextArea1.setForeground(Color.gray);
     }
 
     private String[] fullFillCombo() {
@@ -86,13 +93,27 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     }
 
     public void updateBedInfo() {
-        jTextField1.setText(bed.getName());
-        jTextArea1.setText(bed.getDescription());
+        String bedName, bedDescription;
+
+        bedName = bed.getName();
+        bedDescription = bed.getDescription();
+
+        if (!bedName.equals("Untitled")) {
+            jTextField1.setForeground(Color.black);
+            jTextField1.setText(bed.getName());
+        }
+
+        if (bedDescription != null && !bedDescription.trim().isEmpty()
+                && !bedDescription.equals("NA")) {
+            jTextArea1.setForeground(Color.black);
+            jTextArea1.setText(bed.getDescription());
+        }
+
         jLabel8.setText(String.valueOf(bed.getNumberModels()));
         jLabel9.setText(ProperDefault.get("dateLastPrint"));
 
         String durT = ProperDefault.get("durationLastPrint");
-        int duration = 0;
+        int duration;
 
         if (!durT.equals("NA")) {
             duration = Integer.valueOf(durT);
@@ -159,6 +180,19 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jTextField1.setText("Untitled");
         jTextField1.setName("nameTextField"); // NOI18N
         jTextField1.setPreferredSize(new java.awt.Dimension(40, 27));
+        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField1FocusLost(evt);
+            }
+        });
+        jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTextField1MousePressed(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextField1MouseClicked(evt);
+            }
+        });
         jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField1KeyReleased(evt);
@@ -205,6 +239,16 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setWrapStyleWord(true);
+        jTextArea1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextArea1MouseClicked(evt);
+            }
+        });
+        jTextArea1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextArea1FocusLost(evt);
+            }
+        });
         jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextArea1KeyReleased(evt);
@@ -287,6 +331,40 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     private void jTextArea1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyReleased
         bed.setDescription(jTextArea1.getText());
     }//GEN-LAST:event_jTextArea1KeyReleased
+
+    private void jTextArea1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea1MouseClicked
+        if (jTextArea1.getText().equals(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"))) {
+            jTextArea1.setText("");
+            jTextArea1.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jTextArea1MouseClicked
+
+    private void jTextArea1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextArea1FocusLost
+
+        if (jTextArea1.getText().equals("")) {
+            jTextArea1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"));
+            jTextArea1.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_jTextArea1FocusLost
+
+    private void jTextField1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MousePressed
+
+    }//GEN-LAST:event_jTextField1MousePressed
+
+    private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
+        if (jTextField1.getText().equals(Languager.getTagValue(1, "SceneDetails", "Scene_Name_Hint"))) {
+            jTextField1.setText("");
+            jTextField1.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jTextField1MouseClicked
+
+    private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
+        if (jTextField1.getText().equals("")) {
+            jTextField1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name_Hint"));
+            jTextField1.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_jTextField1FocusLost
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

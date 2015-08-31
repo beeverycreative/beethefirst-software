@@ -2,12 +2,7 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import static java.awt.Frame.ICONIFIED;
-import java.awt.Toolkit;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -115,21 +110,6 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
         bOk.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line10"));
         bPause.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line11"));
         bUnload.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line3"));
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocationRelativeTo(null);
-        this.setLocationRelativeTo(Base.getMainWindow());
-        Base.setMainWindowNOK();
     }
 
     public void setProgression(int prog) {

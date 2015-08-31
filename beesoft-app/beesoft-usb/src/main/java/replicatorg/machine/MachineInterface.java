@@ -49,14 +49,7 @@ public interface MachineInterface {
      * channel *
      */
     // TODO: generic interface for non-serial machines.
-    public void connect(String portName);
-
-    /**
-     * Disconnect the machine from the separately configured communication
-     * channel *
-     */
-    public void disconnect();
-
+    public void connect(boolean b);
     /**
      * Get information about the machine configuration, which also happens to be
      * a control interface to the machine.

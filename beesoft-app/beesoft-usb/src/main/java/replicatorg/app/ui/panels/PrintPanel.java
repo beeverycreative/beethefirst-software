@@ -2,12 +2,15 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Toolkit;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -28,7 +31,6 @@ import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.util.ExtensionFilter;
-import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -54,6 +56,7 @@ public class PrintPanel extends BaseDialog {
     private static final String FORMAT = "%2d:%2d";
     private String colorCode = FilamentControler.NO_FILAMENT_CODE;
     private PrintEstimationThread estimationThread = null;
+    private GCodeExportThread exportThread = null;
     private boolean isRunning = true;
     private boolean lastUsedRaft;
     private String lastUsedDensity;
@@ -68,6 +71,7 @@ public class PrintPanel extends BaseDialog {
     boolean lastSelectedAutonomous;
     boolean gcodeOK;
     private boolean estimatePressed;
+    private boolean exportPressed;
     private Hashtable<Integer, JLabel> labelTable2;
     private boolean printerAvailable;
     private String gcodeToPrint = null;
@@ -86,7 +90,7 @@ public class PrintPanel extends BaseDialog {
         prefs = new ArrayList<String>();
         raftPressed = false;
         supportPressed = false;
-        autonomousPressed = (Boolean.valueOf(ProperDefault.get("autonomy")) == true);
+        autonomousPressed = true;
         evaluateConditions();
         matchChanges();
         enableDrag();
@@ -109,6 +113,7 @@ public class PrintPanel extends BaseDialog {
         bPrint.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bchangeFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bEstimate.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bExport.setFont(GraphicDesignComponents.getSSProRegular("12"));
         lDensity.setFont(GraphicDesignComponents.getSSProRegular("12"));
         filamentType.setFont(GraphicDesignComponents.getSSProRegular("10"));
         estimatedPrintTime.setFont(GraphicDesignComponents.getSSProRegular("10"));
@@ -123,6 +128,11 @@ public class PrintPanel extends BaseDialog {
         bMediumRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bHighRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bHighPlusRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
+
+        lowHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        medHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        highHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        highPlusHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
         //Density
         quality_low.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -144,6 +154,7 @@ public class PrintPanel extends BaseDialog {
         jLabel10.setText(splitString(Languager.getTagValue(1, "Print", "Print_Support_Info")));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         bEstimate.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line15"));
+        bExport.setText(Languager.getTagValue(1, "OptionPaneButtons", "Export"));
         bPrint.setText(Languager.getTagValue(1, "ToolPath", "Line21"));
         bchangeFilament.setText(Languager.getTagValue(1, "Print", "Print_ChangeFilament"));
         filamentType.setText(Languager.getTagValue(1, "MaintenancePanel", "Filament_Type"));
@@ -151,7 +162,6 @@ public class PrintPanel extends BaseDialog {
         estimatedMaterial.setText(Languager.getTagValue(1, "Print", "Print_EstimationMaterial"));
         lDensity.setText(Languager.getTagValue(1, "Print", "Print_Density_Insertion"));
         jLabel23.setText("");
-
 
         bLowRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Low"));
         bMediumRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Medium"));
@@ -172,14 +182,14 @@ public class PrintPanel extends BaseDialog {
     private void getCoilCode() {
 
         String code;
-        
+
         code = FilamentControler.NO_FILAMENT_CODE;
 
         if (Base.getMachineLoader().isConnected()) {
             Base.getMachineLoader().getMachineInterface().getDriver().updateCoilCode();
             code = Base.getMainWindow().getMachine().getModel().getCoilCode();
         } //no need for else
-        
+
         Base.writeLog("Print panel coil code: " + code);
 
         if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
@@ -211,24 +221,6 @@ public class PrintPanel extends BaseDialog {
             jLabel22.setText(" " + code);
         }
 
-    }
-
-    /**
-     * Center window on screen.
-     */
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
-        Base.setMainWindowNOK();
     }
 
     /**
@@ -387,20 +379,20 @@ public class PrintPanel extends BaseDialog {
             if (button.isSelected()) {
                 String labelText = button.getText();
 
-                    if (labelText.contains("LOW")) {
-                        return "LOW";
-                    }
-                    if (labelText.contains("Medium")) {
-                        return "MEDIUM";
-                    }
-                    if (labelText.contains("High+")) {
-                        return "SHIGH";
-                    }
-                    if (labelText.contains("High")) {
-                        return "HIGH";
-                    }
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
+                    return "LOW";
+                }
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
+                    return "MEDIUM";
+                }
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
+                    return "SHIGH";
+                }
+                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
+                    return "HIGH";
                 }
             }
+        }
 
         return "LOW";
     }
@@ -442,15 +434,15 @@ public class PrintPanel extends BaseDialog {
         printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
 
         if (printerAvailable) {
-            if(no_Filament == false) {
+            if (no_Filament == false && nModels != 0) {
                 bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
             }
         } else {
             bchangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_16.png")));
         }
-        
+
         // if there are no models loaded, load disabled estimate button
-        if(nModels == 0) {
+        if (nModels == 0) {
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_15.png")));
         }
 
@@ -576,7 +568,6 @@ public class PrintPanel extends BaseDialog {
             text = (durT);
         }
 
-
         return text;
 
     }
@@ -595,7 +586,6 @@ public class PrintPanel extends BaseDialog {
         }
         JFileChooser fc = new JFileChooser(directory);
         FileFilter defaultFilter;
-
 
         String[] extensions = {".gcode"};
         fc.addChoosableFileFilter(defaultFilter = new ExtensionFilter(extensions, "GCode files"));
@@ -627,6 +617,20 @@ public class PrintPanel extends BaseDialog {
         } else {
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
             estimatePressed = false;
+        }
+    }
+
+    public void showLoadingIconExport(boolean show) {
+        loading.setVisible(show);
+
+        if (show) {
+            materialCost.setText("N/A");
+            printTime.setText("N/A");
+            exportPressed = true;
+            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_19.png")));
+        } else {
+            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
+            exportPressed = false;
         }
     }
 
@@ -664,8 +668,6 @@ public class PrintPanel extends BaseDialog {
 //            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
 //            autonomousPressed = false;
 //        }
-
-
         int density;
         try {
             density = Integer.parseInt(lastUsedDensity);
@@ -675,16 +677,16 @@ public class PrintPanel extends BaseDialog {
 
         densitySlider.setValue(density);
 
-        if (lastUsedResolution.contains("LOW")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
             bLowRes.setSelected(true);
         }
-        if (lastUsedResolution.contains("MEDIUM")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
             bMediumRes.setSelected(true);
         }
-        if (lastUsedResolution.contains("HIGH")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
             bHighRes.setSelected(true);
         }
-        if (lastUsedResolution.contains("SHIGH")) {
+        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
             bHighPlusRes.setSelected(true);
         }
 
@@ -693,7 +695,8 @@ public class PrintPanel extends BaseDialog {
 
     /**
      * Checks if current settings match old ones.
-     * @return 
+     *
+     * @return
      */
     public boolean checkChanges() {
         boolean equal = false;
@@ -721,7 +724,8 @@ public class PrintPanel extends BaseDialog {
 
     /**
      * Checks if settings that affect gcode were changed.
-     * @return 
+     *
+     * @return
      */
     public boolean settingsChanged() {
 
@@ -767,7 +771,7 @@ public class PrintPanel extends BaseDialog {
         ArrayList<String> prefs = new ArrayList<String>();
 
         prefs.add(parseSlider1());
-        prefs.add(FilamentControler.getColor(colorCode));
+        prefs.add(colorCode);
         prefs.add(parseSlider2());
         prefs.add(String.valueOf(raftPressed));
         prefs.add(String.valueOf(supportPressed));
@@ -839,12 +843,6 @@ public class PrintPanel extends BaseDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         densitySlider = new javax.swing.JSlider();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         filamentType = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
@@ -865,17 +863,32 @@ public class PrintPanel extends BaseDialog {
         bMediumRes = new javax.swing.JRadioButton();
         bHighRes = new javax.swing.JRadioButton();
         bHighPlusRes = new javax.swing.JRadioButton();
+        lowHeightLabel = new javax.swing.JLabel();
+        medHeightLabel = new javax.swing.JLabel();
+        highHeightLabel = new javax.swing.JLabel();
+        highPlusHeightLabel = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
         bchangeFilament = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         bPrint = new javax.swing.JLabel();
+        bExport = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setPreferredSize(new java.awt.Dimension(374, 460));
+        jPanel1.setMaximumSize(new java.awt.Dimension(374, 450));
+        jPanel1.setMinimumSize(new java.awt.Dimension(374, 460));
+        jPanel1.setPreferredSize(new java.awt.Dimension(374, 450));
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -919,14 +932,158 @@ public class PrintPanel extends BaseDialog {
         densitySlider.setSnapToTicks(true);
         densitySlider.setValue(0);
         densitySlider.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        densitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                densitySliderStateChanged(evt);
+            }
+        });
         densitySlider.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 densitySliderMouseReleased(evt);
             }
         });
-        densitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                densitySliderStateChanged(evt);
+
+        filamentType.setText("Filament Type");
+
+        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
+
+        jLabel22.setText("NO_FILAMENT");
+
+        jLabel23.setText("change filament");
+
+        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
+
+        estimatedPrintTime.setText("Print time:");
+
+        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
+
+        estimatedMaterial.setText("Material cost:");
+
+        printTime.setText("N/A");
+
+        materialCost.setText("N/A");
+
+        loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
+
+        bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
+        bEstimate.setText("Estimate");
+        bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bEstimateMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bEstimateMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bEstimateMouseEntered(evt);
+            }
+        });
+
+        tfDensity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        tfDensity.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tfDensityKeyReleased(evt);
+            }
+        });
+
+        lDensity.setText("Density value (%) :");
+
+        bLowRes.setBackground(new java.awt.Color(248, 248, 248));
+        bLowRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bLowRes.setText("LOW");
+        bLowRes.setPreferredSize(new java.awt.Dimension(100, 23));
+        bLowRes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bLowResActionPerformed(evt);
+            }
+        });
+
+        bMediumRes.setBackground(new java.awt.Color(248, 248, 248));
+        bMediumRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bMediumRes.setSelected(true);
+        bMediumRes.setText("MEDIUM");
+        bMediumRes.setPreferredSize(new java.awt.Dimension(100, 23));
+        bMediumRes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bMediumResActionPerformed(evt);
+            }
+        });
+
+        bHighRes.setBackground(new java.awt.Color(248, 248, 248));
+        bHighRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bHighRes.setText("HIGH");
+        bHighRes.setPreferredSize(new java.awt.Dimension(100, 23));
+        bHighRes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bHighResActionPerformed(evt);
+            }
+        });
+
+        bHighPlusRes.setBackground(new java.awt.Color(248, 248, 248));
+        bHighPlusRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bHighPlusRes.setText("HIGH+");
+        bHighPlusRes.setPreferredSize(new java.awt.Dimension(100, 23));
+        bHighPlusRes.setRequestFocusEnabled(false);
+        bHighPlusRes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bHighPlusResActionPerformed(evt);
+            }
+        });
+
+        lowHeightLabel.setText("0.3 mm");
+
+        medHeightLabel.setText("0.2 mm");
+
+        highHeightLabel.setText("0.1 mm");
+
+        highPlusHeightLabel.setText("0.05 mm");
+
+        jPanel3.setMaximumSize(new java.awt.Dimension(136, 22));
+        jPanel3.setMinimumSize(new java.awt.Dimension(136, 22));
+
+        bchangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
+        bchangeFilament.setText("Change filament");
+        bchangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bchangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bchangeFilamentMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bchangeFilamentMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bchangeFilamentMouseEntered(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(bchangeFilament, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(bchangeFilament)
+                .addGap(0, 0, 0))
+        );
+
+        jPanel6.setMaximumSize(new java.awt.Dimension(176, 150));
+        jPanel6.setMinimumSize(new java.awt.Dimension(176, 150));
+        jPanel6.setOpaque(false);
+        jPanel6.setPreferredSize(new java.awt.Dimension(176, 150));
+
+        jLabel10.setText("Suspendisse potenti.");
+        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel10MousePressed(evt);
             }
         });
 
@@ -934,13 +1091,6 @@ public class PrintPanel extends BaseDialog {
         jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jLabel4MousePressed(evt);
-            }
-        });
-
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
-        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel5MousePressed(evt);
             }
         });
 
@@ -965,118 +1115,57 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
-        jLabel10.setText("Suspendisse potenti.");
-        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel10MousePressed(evt);
+                jLabel5MousePressed(evt);
             }
         });
 
-        filamentType.setText("Filament Type");
-
-        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
-
-        jLabel22.setText("NO_FILAMENT");
-
-        jLabel23.setText("a");
-
-        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
-
-        estimatedPrintTime.setText("Print time:");
-
-        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
-
-        estimatedMaterial.setText("Material cost:");
-
-        printTime.setText("N/A");
-
-        materialCost.setText("N/A");
-
-        loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
-
-        bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
-        bEstimate.setText("Estimate");
-        bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bEstimateMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bEstimateMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bEstimateMousePressed(evt);
-            }
-        });
-
-        tfDensity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        tfDensity.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tfDensityKeyReleased(evt);
-            }
-        });
-
-        lDensity.setText("Density value (%) :");
-
-        bLowRes.setBackground(new java.awt.Color(248, 248, 248));
-        bLowRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        bLowRes.setText("LOW");
-        bLowRes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bLowResActionPerformed(evt);
-            }
-        });
-
-        bMediumRes.setBackground(new java.awt.Color(248, 248, 248));
-        bMediumRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        bMediumRes.setSelected(true);
-        bMediumRes.setText("MEDIUM");
-        bMediumRes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bMediumResActionPerformed(evt);
-            }
-        });
-
-        bHighRes.setBackground(new java.awt.Color(248, 248, 248));
-        bHighRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        bHighRes.setText("HIGH");
-        bHighRes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bHighResActionPerformed(evt);
-            }
-        });
-
-        bHighPlusRes.setBackground(new java.awt.Color(248, 248, 248));
-        bHighPlusRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        bHighPlusRes.setText("HIGH + (beta)");
-        bHighPlusRes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bHighPlusResActionPerformed(evt);
-            }
-        });
-
-        bchangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
-        bchangeFilament.setText("Mudar filamento agora");
-        bchangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bchangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bchangeFilamentMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bchangeFilamentMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bchangeFilamentMousePressed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel7)))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addGap(6, 6, 6)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel9))
+                .addGap(6, 6, 6)
+                .addComponent(jLabel10)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1085,30 +1174,19 @@ public class PrintPanel extends BaseDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(4, 4, 4)
-                                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(4, 4, 4)
+                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(filamentType)
+                                .addGap(17, 17, 17)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(filamentType)
-                                        .addGap(17, 17, 17)
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jLabel23)
-                                                .addGap(0, 0, Short.MAX_VALUE))
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jLabel22)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(loading))))
+                                        .addComponent(jLabel23)
+                                        .addGap(0, 0, Short.MAX_VALUE))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel8)
-                                            .addComponent(jLabel9)
-                                            .addComponent(jLabel10))
-                                        .addGap(0, 0, Short.MAX_VALUE))))
+                                        .addComponent(jLabel22)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(loading))))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                 .addGap(4, 4, 4)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1124,11 +1202,10 @@ public class PrintPanel extends BaseDialog {
                                                 .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
                                         .addGap(15, 15, 15)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(printTime)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(bEstimate))
-                                            .addComponent(materialCost)))
+                                            .addComponent(printTime)
+                                            .addComponent(materialCost))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(bEstimate))
                                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jSeparator2))))
                         .addGap(19, 19, 19))
@@ -1137,29 +1214,50 @@ public class PrintPanel extends BaseDialog {
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(bLowRes)
-                                .addGap(25, 25, 25)
-                                .addComponent(bMediumRes)
-                                .addGap(25, 25, 25)
-                                .addComponent(bHighRes)
-                                .addGap(25, 25, 25)
-                                .addComponent(bHighPlusRes))
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel7))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(lDensity)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(68, Short.MAX_VALUE))))
+                        .addGap(34, 34, 34))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bLowRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(21, 21, 21)
+                                        .addComponent(lowHeightLabel)))
+                                .addGap(8, 8, 8)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(21, 21, 21)
+                                        .addComponent(medHeightLabel))
+                                    .addComponent(bMediumRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(8, 8, 8)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bHighRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(21, 21, 21)
+                                        .addComponent(highHeightLabel)))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(25, 25, 25)
+                                .addComponent(highPlusHeightLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(7, 7, 7)
+                                .addComponent(bHighPlusRes, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(154, 154, 154)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(149, 149, 149))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(137, 137, 137)
-                .addComponent(bchangeFilament)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1169,13 +1267,19 @@ public class PrintPanel extends BaseDialog {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bLowRes)
-                    .addComponent(bHighRes)
-                    .addComponent(bMediumRes)
-                    .addComponent(bHighPlusRes))
-                .addGap(8, 8, 8)
+                    .addComponent(bLowRes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bHighRes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bMediumRes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bHighPlusRes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lowHeightLabel)
+                    .addComponent(medHeightLabel)
+                    .addComponent(highHeightLabel)
+                    .addComponent(highPlusHeightLabel))
+                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(densitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1184,50 +1288,44 @@ public class PrintPanel extends BaseDialog {
                     .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lDensity))
                 .addGap(16, 16, 16)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel8)
-                .addGap(6, 6, 6)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel10)
-                .addGap(12, 12, 12)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(loading, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel21, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(filamentType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel23)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(estimatedPrintTime)
-                        .addComponent(printTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bEstimate)))
-                .addGap(4, 4, 4)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(estimatedMaterial)
-                        .addComponent(materialCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel23)
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(estimatedPrintTime)
+                                .addComponent(printTime))
+                            .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(estimatedMaterial)
+                                .addComponent(materialCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(12, 12, 12)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bEstimate, javax.swing.GroupLayout.Alignment.LEADING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(bchangeFilament)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel2.setMaximumSize(new java.awt.Dimension(20, 26));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 26));
         jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
 
@@ -1235,14 +1333,14 @@ public class PrintPanel extends BaseDialog {
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bCancelMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
             }
         });
 
@@ -1261,37 +1359,59 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        bExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_19.png"))); // NOI18N
+        bExport.setText("Export G-code");
+        bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        bExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExport.setMaximumSize(new java.awt.Dimension(120, 23));
+        bExport.setMinimumSize(new java.awt.Dimension(115, 23));
+        bExport.setPreferredSize(new java.awt.Dimension(115, 23));
+        bExport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExportMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bExportMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bExportMouseEntered(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(158, 158, 158)
+                .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bPrint)
                 .addGap(12, 12, 12))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(3, 3, 3)
+                .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bCancel)
-                    .addComponent(bPrint)))
+                    .addComponent(bPrint)
+                    .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 549, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1299,23 +1419,14 @@ public class PrintPanel extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void densitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_densitySliderStateChanged
-
-        int val = densitySlider.getValue();
-        tfDensity.setText(String.valueOf(val));
-
-        checkDensitySliderValue(val);
-        checkChanges();
-    }//GEN-LAST:event_densitySliderStateChanged
-
     private void bPrintMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseEntered
-        if (!no_Filament && printerAvailable) {
+        if (!no_Filament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseEntered
 
     private void bPrintMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseExited
-        if (!no_Filament && printerAvailable) {
+        if (!no_Filament && printerAvailable && nModels != 0) {
             bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
         }
     }//GEN-LAST:event_bPrintMouseExited
@@ -1335,7 +1446,7 @@ public class PrintPanel extends BaseDialog {
         }
         estimationThread.stop();
 
-        if (no_Filament == false && Base.isPrinting == false) {
+        if (nModels != 0 && no_Filament == false && Base.isPrinting == false) {
             /*
              * prefs[0] - profile (LOW,HIGH) 
              * prefs[1] - colorRation
@@ -1421,6 +1532,8 @@ public class PrintPanel extends BaseDialog {
                         Base.getMainWindow().showFeedBackMessage("btfDisconnect");
                     } else if (Base.isPrinting) {
                         Base.getMainWindow().showFeedBackMessage("btfPrinting");
+                    } else if (nModels == 0) {
+                        Base.getMainWindow().showFeedBackMessage("noModelError");
                     }
 
                     while (tries < 3) {
@@ -1455,37 +1568,123 @@ public class PrintPanel extends BaseDialog {
         doCancel();
     }//GEN-LAST:event_bCancelMousePressed
 
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doCancel();
-    }//GEN-LAST:event_jLabel15MousePressed
+    private void bExportMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMousePressed
 
-    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
-        triggerRaft();
-    }//GEN-LAST:event_jLabel4MousePressed
+        // if there are any loaded models, export
+        if (exportPressed == false && nModels > 0) {
 
-    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        triggerSupport();
-    }//GEN-LAST:event_jLabel5MousePressed
+            JFileChooser saveFile = new JFileChooser();
+            saveFile.setSelectedFile(new File("export-" 
+                    + System.currentTimeMillis() + ".gcode"));
+            int rVal = saveFile.showSaveDialog(null);
 
-    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
-        triggerRaft();
-    }//GEN-LAST:event_jLabel7MousePressed
+            if (rVal == JFileChooser.APPROVE_OPTION) {
+                exportThread = new GCodeExportThread(this, saveFile.getSelectedFile());
 
-    private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
-        triggerRaft();
-    }//GEN-LAST:event_jLabel8MousePressed
+                EventQueue.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        exportThread.start();
+                        Base.systemThreads.add(exportThread);
+                    }
+                });
+            }
+        } else if (nModels == 0) { // otherwise warn the user that there are no models loaded
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
+                }
+            });
+            thread.start();
+        }
+    }//GEN-LAST:event_bExportMousePressed
 
-    private void jLabel9MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MousePressed
-        triggerSupport();
-    }//GEN-LAST:event_jLabel9MousePressed
+    private void bExportMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMouseExited
+        // don't change the icon if button is disabled due to the absence of loaded models
+        if (exportPressed == false && nModels > 0) {
+            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
+        }
+    }//GEN-LAST:event_bExportMouseExited
 
-    private void jLabel10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MousePressed
-        triggerSupport();
-    }//GEN-LAST:event_jLabel10MousePressed
+    private void bExportMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMouseEntered
+        // don't change the icon if button is disabled due to the absence of loaded models
+        if (exportPressed == false && nModels > 0) {
+            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_19.png")));
+        }
+    }//GEN-LAST:event_bExportMouseEntered
 
-    private void densitySliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_densitySliderMouseReleased
-        lastSelectedDensity = parseSlider2();
-    }//GEN-LAST:event_densitySliderMouseReleased
+    private void bchangeFilamentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bchangeFilamentMouseEntered
+        if (printerAvailable) {
+            bchangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
+        }
+    }//GEN-LAST:event_bchangeFilamentMouseEntered
+
+    private void bchangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bchangeFilamentMouseExited
+        if (printerAvailable) {
+            bchangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
+        }
+    }//GEN-LAST:event_bchangeFilamentMouseExited
+
+    private void bchangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bchangeFilamentMousePressed
+        // if the printer is available, display the filament change screen
+        if (printerAvailable) {
+            dispose();
+            Base.getMainWindow().getButtons().updatePressedStateButton("print");
+            Base.getMainWindow().getButtons().goFilamentChange();
+            ProperDefault.put("maintenance", "1");
+            FilamentHeating p = new FilamentHeating();
+            p.setVisible(true);
+        } else {
+            // otherwise display the appropriate status message
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (Base.getMachineLoader().isConnected() == false) {
+                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+                    } else if (Base.isPrinting) {
+                        Base.getMainWindow().showFeedBackMessage("btfPrinting");
+                    }
+                }
+            });
+            thread.start();
+        }
+    }//GEN-LAST:event_bchangeFilamentMousePressed
+
+    private void bHighPlusResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bHighPlusResActionPerformed
+        bHighPlusRes.setSelected(true);
+    }//GEN-LAST:event_bHighPlusResActionPerformed
+
+    private void bHighResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bHighResActionPerformed
+        bHighRes.setSelected(true);
+    }//GEN-LAST:event_bHighResActionPerformed
+
+    private void bMediumResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMediumResActionPerformed
+        bMediumRes.setSelected(true);
+    }//GEN-LAST:event_bMediumResActionPerformed
+
+    private void bLowResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLowResActionPerformed
+        bLowRes.setSelected(true);
+    }//GEN-LAST:event_bLowResActionPerformed
+
+    private void tfDensityKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfDensityKeyReleased
+        String tfDesty_value = tfDensity.getText();
+        boolean isNumber = true;
+        try {
+            double d = Double.parseDouble(tfDesty_value);
+        } catch (NumberFormatException nfe) {
+            isNumber = false;
+        }
+
+        if (tfDesty_value.equals("") == false && isNumber) {
+            int densityValue = Integer.valueOf(tfDensity.getText());
+            if (densityValue < 0 || densityValue > 100) {
+                densityValue = 5;
+            }
+            densitySlider.setValue(densityValue);
+            checkDensitySliderValue(densityValue);
+        }
+    }//GEN-LAST:event_tfDensityKeyReleased
 
     private void bEstimateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseEntered
         // don't change the icon if button is disabled due to the absence of loaded models
@@ -1516,11 +1715,10 @@ public class PrintPanel extends BaseDialog {
                     Base.systemThreads.add(estimationThread);
                 }
             });
-        }
-        else if(nModels == 0) { // otherwise warn the user that there are no models loaded
+        } else if (nModels == 0) { // otherwise warn the user that there are no models loaded
             Thread thread = new Thread(new Runnable() {
                 @Override
-                public void run() {                   
+                public void run() {
                     Base.getMainWindow().showFeedBackMessage("noModelError");
                 }
             });
@@ -1528,80 +1726,51 @@ public class PrintPanel extends BaseDialog {
         }
     }//GEN-LAST:event_bEstimateMousePressed
 
-    private void tfDensityKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfDensityKeyReleased
-        String tfDesty_value = tfDensity.getText();
-        boolean isNumber = true;
-        try {
-            double d = Double.parseDouble(tfDesty_value);
-        } catch (NumberFormatException nfe) {
-            isNumber = false;
-        }
+    private void jLabel10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MousePressed
+        triggerSupport();
+    }//GEN-LAST:event_jLabel10MousePressed
 
-        if (tfDesty_value.equals("") == false && isNumber) {
-            int densityValue = Integer.valueOf(tfDensity.getText());
-            if (densityValue < 0 || densityValue > 100) {
-                densityValue = 5;
-            }
-            densitySlider.setValue(densityValue);
-            checkDensitySliderValue(densityValue);
-        }
-    }//GEN-LAST:event_tfDensityKeyReleased
+    private void jLabel9MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MousePressed
+        triggerSupport();
+    }//GEN-LAST:event_jLabel9MousePressed
 
-    private void bMediumResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMediumResActionPerformed
-        bMediumRes.setSelected(true);
-    }//GEN-LAST:event_bMediumResActionPerformed
+    private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
+        triggerRaft();
+    }//GEN-LAST:event_jLabel8MousePressed
 
-    private void bHighPlusResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bHighPlusResActionPerformed
-        bHighPlusRes.setSelected(true);
-    }//GEN-LAST:event_bHighPlusResActionPerformed
+    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
+        triggerRaft();
+    }//GEN-LAST:event_jLabel7MousePressed
 
-    private void bLowResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLowResActionPerformed
-        bLowRes.setSelected(true);
-    }//GEN-LAST:event_bLowResActionPerformed
+    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
+        triggerSupport();
+    }//GEN-LAST:event_jLabel5MousePressed
 
-    private void bHighResActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bHighResActionPerformed
-        bHighRes.setSelected(true);
-    }//GEN-LAST:event_bHighResActionPerformed
+    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
+        triggerRaft();
+    }//GEN-LAST:event_jLabel4MousePressed
 
-    private void bchangeFilamentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bchangeFilamentMouseEntered
-        if(printerAvailable) {
-            bchangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
-        }
-    }//GEN-LAST:event_bchangeFilamentMouseEntered
+    private void densitySliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_densitySliderMouseReleased
+        lastSelectedDensity = parseSlider2();
+    }//GEN-LAST:event_densitySliderMouseReleased
 
-    private void bchangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bchangeFilamentMouseExited
-        if(printerAvailable) {
-            bchangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-        }
-    }//GEN-LAST:event_bchangeFilamentMouseExited
+    private void densitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_densitySliderStateChanged
 
-    private void bchangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bchangeFilamentMousePressed
-        // if the printer is available, display the filament change screen
-        if(printerAvailable) {
-            dispose();
-            Base.getMainWindow().getButtons().updatePressedStateButton("print");
-            Base.getMainWindow().getButtons().goFilamentChange();
-            ProperDefault.put("maintenance", "1");
-            FilamentHeating p = new FilamentHeating();
-            p.setVisible(true);
-        } else {    // otherwise display the appropriate status message
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {         
-                    if (Base.getMachineLoader().isConnected() == false) {
-                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-                    } else if (Base.isPrinting) {
-                        Base.getMainWindow().showFeedBackMessage("btfPrinting");
-                    }
-                }
-            });
-            thread.start();
-        }
-    }//GEN-LAST:event_bchangeFilamentMousePressed
+        int val = densitySlider.getValue();
+        tfDensity.setText(String.valueOf(val));
+
+        checkDensitySliderValue(val);
+        checkChanges();
+    }//GEN-LAST:event_densitySliderStateChanged
+
+    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+        doCancel();
+    }//GEN-LAST:event_jLabel15MousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bEstimate;
+    private javax.swing.JLabel bExport;
     private javax.swing.JRadioButton bHighPlusRes;
     private javax.swing.JRadioButton bHighRes;
     private javax.swing.JRadioButton bLowRes;
@@ -1613,6 +1782,8 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel estimatedMaterial;
     private javax.swing.JLabel estimatedPrintTime;
     private javax.swing.JLabel filamentType;
+    private javax.swing.JLabel highHeightLabel;
+    private javax.swing.JLabel highPlusHeightLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
@@ -1630,12 +1801,16 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lDensity;
     private javax.swing.JLabel loading;
+    private javax.swing.JLabel lowHeightLabel;
     private javax.swing.JLabel materialCost;
+    private javax.swing.JLabel medHeightLabel;
     private javax.swing.JLabel printTime;
     private javax.swing.JTextField tfDensity;
     // End of variables declaration//GEN-END:variables
@@ -1692,6 +1867,98 @@ class PrintEstimationThread extends Thread {
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
             }
 
+        }
+    }
+}
+
+class GCodeExportThread extends Thread {
+
+    private final PrintPanel printPanel;
+    private final File saveFile;
+    private int nTimes;
+
+    public GCodeExportThread(PrintPanel panel, File saveFile) {
+        super("Print panel Export Thread");
+        this.printPanel = panel;
+        this.saveFile = saveFile;
+        this.nTimes = 0;
+    }
+
+    /**
+     * Runs GCode generator process. Updates window fields to display print
+     * model cost estimation.
+     */
+    public void runExport() {
+        ArrayList<String> preferences = printPanel.getPreferences();
+        Printer prt = new Printer(preferences);
+        prt.generateGCode(preferences);
+        File gcode = prt.getGCode();
+        //Estimate time and cost
+        PrintEstimator.estimateTime(gcode);
+        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+
+        //Writes the file
+        BufferedInputStream input = null;
+        BufferedOutputStream output = null;
+
+        try {
+
+            input = new BufferedInputStream(new FileInputStream(gcode));
+            output = new BufferedOutputStream(new FileOutputStream(this.saveFile));
+
+            byte[] buf = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = input.read(buf)) > 0) {
+                output.write(buf, 0, bytesRead);
+            }
+
+        } catch (Exception ex) {
+
+            Base.writeLog(ex.getMessage());
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+
+                if (output != null) {
+                    output.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+
+        while (printPanel.isRunning()) {
+            try {
+                Thread.sleep(5, 0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(PrintEstimationThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            if (!printPanel.settingsChanged() || nTimes == 0) {
+                printPanel.showLoadingIconExport(true);
+
+                if (Base.getMainWindow().isOkToGoOnSave() == false) {
+                    Base.getMainWindow().handleSave(true);
+                }
+
+                runExport();
+                printPanel.updateOldSettings();
+                nTimes++;
+                printPanel.showLoadingIconExport(false);
+
+                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+                this.stop();
+
+            } else {
+                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+            }
 
         }
     }

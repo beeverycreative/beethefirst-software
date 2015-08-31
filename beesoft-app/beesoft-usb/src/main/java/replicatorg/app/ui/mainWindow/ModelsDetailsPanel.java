@@ -1,5 +1,6 @@
 package replicatorg.app.ui.mainWindow;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
@@ -77,12 +78,14 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
                     + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
         }
         jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
-        jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Description"));
+        jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes"));
 
         jLabel6.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
         jLabel7.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
         jLabel8.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
         deleteButton.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Delete"));
+        
+        jTextArea1.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes_Placeholder"));        
 
     }
 
@@ -110,7 +113,11 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         }
 
         jTextField1.setText(String.valueOf(model.getName()));
-        jTextArea1.setText(String.valueOf(model.getDescription()));
+        
+        if (model.getDescription() != null && !model.getDescription().trim().isEmpty()) {
+            jTextArea1.setForeground(Color.black);
+            jTextArea1.setText(String.valueOf(model.getDescription()));
+        }
     }
 
     private void evaluateBed() {
@@ -314,9 +321,21 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         jLabel9.setName("nameTitle"); // NOI18N
 
         jTextArea1.setColumns(20);
+        jTextArea1.setForeground(new java.awt.Color(153, 153, 153));
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
+        jTextArea1.setToolTipText("");
         jTextArea1.setWrapStyleWord(true);
+        jTextArea1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextArea1MouseClicked(evt);
+            }
+        });
+        jTextArea1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextArea1FocusLost(evt);
+            }
+        });
         jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextArea1KeyReleased(evt);
@@ -558,6 +577,21 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             deleteButton.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_8.png")));
         }
     }//GEN-LAST:event_deleteButtonMouseEntered
+
+    private void jTextArea1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea1MouseClicked
+        if (jTextArea1.getText().equals(Languager.getTagValue(1, "ModelDetails", "Model_Notes_Placeholder"))) {
+            jTextArea1.setText("");
+            jTextArea1.setForeground(Color.black);
+        }
+    }//GEN-LAST:event_jTextArea1MouseClicked
+
+    private void jTextArea1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextArea1FocusLost
+                
+        if (jTextArea1.getText().equals("")) {
+            jTextArea1.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes_Placeholder"));
+            jTextArea1.setForeground(Color.gray);
+        }
+    }//GEN-LAST:event_jTextArea1FocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel deleteButton;

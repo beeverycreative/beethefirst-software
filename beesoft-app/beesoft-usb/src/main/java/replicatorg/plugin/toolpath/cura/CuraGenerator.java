@@ -104,6 +104,10 @@ public class CuraGenerator extends ToolpathGenerator {
     public void readINI() {
         curaGenerator.processINI(profile);
     }
+    
+    public String getValue(String key) {
+        return curaGenerator.getValue(key);
+    }
 
     /**
      * Pre gcode generation setup. Creates the INI file to be passed for the CFG
@@ -118,8 +122,10 @@ public class CuraGenerator extends ToolpathGenerator {
         String resol = profile.split(":")[1];
         HashMap<String, String> overload_values = Languager.getTagValues(2, bee_code, resol);
         
+        System.out.println("bee_code = " + bee_code);
+        
         if(overload_values == null){
-            Base.getMainWindow().showFeedBackMessage("reinstallError");
+            Base.getMainWindow().showFeedBackMessage("unknownColor");
             return null;
         }        
         

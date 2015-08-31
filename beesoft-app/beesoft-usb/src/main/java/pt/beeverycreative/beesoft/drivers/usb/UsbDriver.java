@@ -55,23 +55,8 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static String oldCompatibleVersion = "BEETHEFIRST-3.";
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
-
     
-    protected final String BEETF_0        = (short)0xffff +":"+ (short) 0x014e;
-    protected final String BEETF_1        = (short)0x29c9 +":"+ (short) 0x0001;
-    protected final String BEE_PLUS       = (short)0x29c9 +":"+ (short) 0x0002;
-    protected final String BEE_ME         = (short)0x29c9 +":"+ (short) 0x0003;
-    protected final String BEE_IN_SCHOOL  = (short)0x29c9 +":"+ (short) 0x0004;
-    
-    private final String[] KNOWN_DEVICES_LIST = { BEETF_0,
-                                                  BEETF_1,
-                                                  BEE_ME,
-                                                  BEE_PLUS,
-                                                  BEE_IN_SCHOOL };
-    
-    
-    protected String deviceString;
-        
+    protected PrinterInfo connectedDevice;
     
     //check this, maybe delete
     protected boolean isNewVendorID = false;
@@ -212,6 +197,8 @@ public class UsbDriver extends DriverBaseImplementation {
                 for (UsbDevice child : (List<UsbDevice>) hub.getAttachedUsbDevices()) {
                     InitUsbDevice(child);
                 }
+                
+                
             } else {
 
                 //Try to add using the new way, then using the old way.
@@ -244,24 +231,17 @@ public class UsbDriver extends DriverBaseImplementation {
         short idVendor = descriptor.idVendor();
         short idProduct = descriptor.idProduct();
         
-        
         String sDevice = idVendor+":"+idProduct;
         
-        for (String knownDevice : KNOWN_DEVICES_LIST){
-            if(knownDevice.equalsIgnoreCase(sDevice)){
-                
-                m_usbDeviceList.add(device);
-
-                Base.writeLog("Device - " + idVendor + ":" + idProduct);
-                Base.writeLog(device.getManufacturerString());
-                Base.writeLog(device.getProductString());
-                Base.writeLog(device.getSerialNumberString().trim());
-                
-                return true;
-            }
+        // candidate
+        connectedDevice = PrinterInfo.getDevice(sDevice);
+        
+        if(connectedDevice == PrinterInfo.UNKNOWN) {
+            return false;
+        } else {
+            m_usbDeviceList.add(device);
+            return true;
         }
-
-        return false;
     }
     
     public boolean addIfCompatible_Legacy(UsbDevice device) throws UsbException, UnsupportedEncodingException {
@@ -323,7 +303,7 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Scans descriptor and inits usb device if match.
      */
-    public void InitUsbDevice() {
+    public void InitUsbDevice() throws UsbException, UnsupportedEncodingException {
         m_usbDeviceList.clear();
 
         try {
@@ -353,6 +333,10 @@ public class UsbDriver extends DriverBaseImplementation {
         } else {
             //Chose the device to Initialize
             m_usbDevice = m_usbDeviceList.get(0);
+            short idProduct = m_usbDevice.getUsbDeviceDescriptor().idProduct();
+            short idVendor = m_usbDevice.getUsbDeviceDescriptor().idVendor();
+            connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
+            Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
             if (Base.isMacOS()) {
                 ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
             }

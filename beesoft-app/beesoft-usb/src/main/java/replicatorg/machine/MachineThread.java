@@ -64,42 +64,43 @@ class MachineThread extends Thread {
 
         @Override
         public void run() {
-            boolean flag;
-            boolean isBuilding;
+            // Send out a request, then sleep for a bit, then start over.
+            DriverCommand assessCommand = new AssessState();
+
+            machineThread.notConnectedMessage();
+            Base.disposeAllOpenWindows();
+            machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
+            Base.statusThreadDied = false;
+            driver.initialize();
+            machineThread.scheduleRequest(new MachineCommand(
+                    RequestType.CONNECT, assessCommand));
 
             while (true) {
                 try {
-
-                    // Send out a request, then sleep for a bit, then start over.
-                    DriverCommand assessCommand = new AssessState();
-                    flag = machineThread.isConnected();
-//                    Base.listAllJVMThreads();
-                    if (!flag) {
-                        machineThread.notConnectedMessage();
-                        Base.diposeAllOpenWindows();
-                        machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
-
-                        driver.initialize();
-
-                        machineThread.scheduleRequest(new MachineCommand(
-                                RequestType.CONNECT, assessCommand));
+                    if (machineThread.isConnected() == false) {
+                        throw new UsbException("Machine disconnected during operation");
                     }
                     machineThread.scheduleRequest(new MachineCommand(
                             RequestType.RUN_COMMAND, assessCommand));
 
                     sleep(500, 1);
-//                    Base.listAllJVMThreads();
+                    
+                    // these catches are VERY important
                 } catch (InterruptedException e) {
                     Base.statusThreadDied = true;
                     Base.writeLog("taking assess status thread down");
-                    machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
-
-
+                    machineThread.interrupt();
+                    break;
                 } catch (VersionException E) {
                     Base.statusThreadDied = true;
                     Base.writeLog("Initialize, probably failed.");
-                    machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
-
+                    machineThread.interrupt();
+                    break;
+                } catch (UsbException ex) {
+                    Base.statusThreadDied = true;
+                    Base.writeLog("Machine disconnected during operation");
+                    machineThread.interrupt();
+                    break;
                 }
 
             }
@@ -352,7 +353,6 @@ class MachineThread extends Thread {
                     Base.writeLog("New State: " + state.getState().toString());
 
 //                    System.out.println("2");
-
                 }
 
                 if (state.getState() != MachineState.State.BUILDING) {
@@ -372,14 +372,6 @@ class MachineThread extends Thread {
 
                 }
 
-                break;
-            case DISCONNECT:
-                // TODO: This seems wrong
-                if (state.isConnected()) {
-                    //driver.uninitialize();
-                    setState(new MachineState(MachineState.State.ERROR), cableRemovedMessage());
-
-                }
                 break;
             case RESET:
                 if (state.isConnected()) {
@@ -454,7 +446,6 @@ class MachineThread extends Thread {
                     startTimeMillis = System.currentTimeMillis();
 
                     pollingTimer.start(1000);
-
 
                     // TODO: is this what we wanted?
                     driver.invalidatePosition();

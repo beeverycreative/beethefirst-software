@@ -27,12 +27,13 @@ import replicatorg.app.tools.XML;
  */
 public class CalibrationGCoder {
 
-    private static String fileName = "zuluv4";
+    public static final String BEETHEFIRST_CONFIG = "beethefirst";
 
     /**
      * Loads XML File Stores in DataSets also
+     * @param configFile
      */
-    public static void printXML() {
+    public static void printXML(String configFile) {
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -42,7 +43,7 @@ public class CalibrationGCoder {
             // parse using the builder to get the DOM mapping of the    
             // XML file
 
-            File f = new File(Base.getApplicationDirectory() + "/machines/".concat(fileName).concat(".xml"));
+            File f = new File(Base.getApplicationDirectory() + "/machines/".concat(configFile).concat(".xml"));
             System.out.println("file:" + f.toString());
             if (f.exists() && f.isFile() && f.canRead()) {
 
@@ -77,7 +78,7 @@ public class CalibrationGCoder {
                 }
 
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(fileName).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(configFile).concat(".xml"));
 
             }
         } catch (ParserConfigurationException pce) {
@@ -93,21 +94,18 @@ public class CalibrationGCoder {
     /**
      * Retrieves Tag value from XML
      *
-     * @param rootTag Parent Node to search
-     * @param subTag Child Node to get value
+     * @param configFile file name with printer configuration
      * @return Child Node value
      */
-    private static String getCode() {
+    private static String getCode(String configFile) {
 
-        String beeCode = Base.getMainWindow().getMachineInterface().getModel().getCoilCode();
-        fileName = "zuluv4";
         String tag = "calibration_test";
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
 
-            File f = new File(Base.getApplicationDirectory() + "/machines/".concat(fileName).concat(".xml"));
+            File f = new File(Base.getApplicationDirectory() + "/machines/".concat(configFile).concat(".xml"));
 
             if (f.exists() && f.isFile() && f.canRead()) {
 
@@ -156,10 +154,12 @@ public class CalibrationGCoder {
     /**
      * Parses tag value from XML and removes string chars only.
      *
+     * @param configFile
+     * 
      * @return plain text array without spaces
      */
-    public static String[] getColorGCode() {
-        String code = getCode();
+    public static String[] getColorGCode(String configFile) {
+        String code = getCode(configFile);
 
         return code.split(",");
     }

@@ -1,6 +1,9 @@
 package replicatorg.app.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -54,6 +57,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
         Image img = image.getImage();
         // Loads Splash image for dimensios getter
         BufferedImage img2 = Base.getImage("images/welcomeSplash.png", this);
+
         // Gets Screen Dimension
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         // Calculates ratio for modular adjustement to every screen
@@ -63,8 +67,27 @@ public class WelcomeSplash extends javax.swing.JFrame {
         newHeight = (int) (img2.getHeight() * scale);
 
         // Scales original image to new size values with Smooth conversion
-        Image newimg = img.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
-        image = new ImageIcon(newimg);
+        Image newimg = img2.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(newimg.getWidth(null), newimg.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(newimg, 0, 0, null);
+        bGr.dispose();
+
+        // epic hammering just to draw BEESOFT version, that's how much we like swing
+        // hammer time
+        Graphics g = bimage.getGraphics();
+        g.setFont(GraphicDesignComponents.getSSProLight("18"));
+        g.setColor(Color.BLACK);
+        int stringPixelSize = (img.getGraphics().getFontMetrics()).stringWidth("Version: " + Base.VERSION_BEESOFT);
+        g.drawString("Version: " + Base.VERSION_BEESOFT, bimage.getWidth() - 40 - stringPixelSize, bimage.getHeight() - 10);
+        g.dispose();
+        
+        
+        image = new ImageIcon(bimage);
         // Sets bar preferences and size.
         // Bar width is equal to image width. Height has value = 5
         jProgressBar1.setMaximum(newWidth - 5);
@@ -132,7 +155,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
             UpdateChecker advise = new UpdateChecker();
 
-
             if (advise.isUpdateBetaAvailable()) {
                 advise.setMessage("AvailableBeta");
                 advise.setVisible(true);
@@ -190,6 +212,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
         jProgressBar1 = new javax.swing.JProgressBar();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -200,19 +223,30 @@ public class WelcomeSplash extends javax.swing.JFrame {
 
         jLabel1.setBackground(new java.awt.Color(255, 128, 0));
 
+        jTextField1.setText("jTextField1");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                .addGap(0, 199, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -232,9 +266,15 @@ public class WelcomeSplash extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

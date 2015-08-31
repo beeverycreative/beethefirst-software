@@ -2,7 +2,6 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -130,7 +129,7 @@ public class EditingModel implements Serializable {
 
             Geometry g = (Geometry) e.nextElement();
 
-            g.setCapability(g.ALLOW_INTERSECT);
+            g.setCapability(Geometry.ALLOW_INTERSECT);
 
         }
         objectMaterial = new Material();
@@ -172,16 +171,16 @@ public class EditingModel implements Serializable {
 
     public boolean modelTooBig() {
 
-        EditingModel model = this;
+        EditingModel mdl = this;
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
 
-        if (model.getWidth() > machineVolume.getX()) {
+        if (mdl.getWidth() > machineVolume.getX()) {
             return true;
         }
-        if (model.getDepth() > machineVolume.getY()) {
+        if (mdl.getDepth() > machineVolume.getY()) {
             return true;
         }
-        if (model.getHeight() > machineVolume.getZ()) {
+        if (mdl.getHeight() > machineVolume.getZ()) {
             return true;
         }
 
@@ -190,23 +189,21 @@ public class EditingModel implements Serializable {
 
     public boolean modelOutBonds() {
 
-        EditingModel model = this;
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
-//        System.out.println(machineVolume.getX() + " " + machineVolume.getY());
-//        System.out.println("Lx = " + lower.x + " Ly= "+ lower.y + " Lz= "+ lower.z);
-//        System.out.println("Ux = " + upper.x + " Uy= "+ upper.y+ " Uz= "+ upper.z);
 
-        if (lower.x < -(machineVolume.getX() / 2) || upper.x > (machineVolume.getX() / 2)) {
+        if ((Math.abs(lower.x) + Math.abs(upper.x)) > machineVolume.getX()) {
             return true;
         }
-        if (lower.y < -(machineVolume.getY() / 2) || upper.y > (machineVolume.getY() / 2)) {
+
+        if ((Math.abs(lower.y) + Math.abs(upper.y)) > machineVolume.getY()) {
             return true;
         }
-        if (upper.z > (machineVolume.getZ())) { //|| !isOnPlatform()
+
+        if (Math.round(upper.z) > (machineVolume.getZ())) { //|| !isOnPlatform()
             return true;
         }
 
@@ -215,28 +212,24 @@ public class EditingModel implements Serializable {
 
     public boolean modelOutBonds(char axis) {
 
-        EditingModel model = this;
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
 
-        if(axis == 'X')
-        {
-            if (lower.x < -(machineVolume.getX() / 2) || upper.x > (machineVolume.getX() / 2)) {
+        if(axis == 'X'){
+            if ((Math.abs(lower.x) + Math.abs(upper.x)) > machineVolume.getX()) {
                 return true;
             }
         }
-        if(axis == 'Y')
-        {
-            if (lower.y < -(machineVolume.getY() / 2) || upper.y > (machineVolume.getY() / 2)) {
+        if(axis == 'Y') {
+            if ((Math.abs(lower.y) + Math.abs(upper.y)) > machineVolume.getY()) {
                 return true;
             }
         }
-        if(axis == 'Z')
-        {
-            if (upper.z > (machineVolume.getZ())) { //|| !isOnPlatform()
+        if(axis == 'Z') {
+            if (Math.round(upper.z) > (machineVolume.getZ())) { //|| !isOnPlatform()
                 return true;
             }
         }
@@ -246,7 +239,6 @@ public class EditingModel implements Serializable {
     
     public boolean modelInBed() {
 
-        EditingModel model = this;
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
@@ -283,20 +275,16 @@ public class EditingModel implements Serializable {
             xoff = centroid_prev.x + offset_curr_model + offset_prev_model + 5;
             yoff = (upper.y + lower.y) / 2.0d;
             
+            translateObjectWithoutValidation(xoff, yoff, zoff);
+            
         } else {
             xoff = (upper.x + lower.x) / 2.0d;
             yoff = (upper.y + lower.y) / 2.0d;
+            
+            //Uses negative x and y values to place the model correctly in the center
+            translateObjectWithoutValidation(-xoff, -yoff, zoff);
         }
-        
-        MachineInterface mc = Base.getMachineLoader().getMachineInterface();
-        BuildVolume buildVol = null;
-        if (mc instanceof Machine) {
-            MachineModel mm = mc.getModel();
-            buildVol = mm.getBuildVolume();
-        }
-
-        translateObjectWithoutValidation(xoff, yoff, zoff);
-
+             
         BoundingBox bb2 = getBoundingBox(shapeTransform);
         Point3d lower2 = new Point3d();
         bb2.getLower(lower2);
@@ -837,12 +825,7 @@ public class EditingModel implements Serializable {
     
     public void updateDimensions(double targetX, double targetY, double targetZ, boolean isOnPlatform){
         Transform3D t = new Transform3D();
-        
-        if(ProperDefault.get("measures").equals("inches")){
-            targetX = Units_and_Numbers.inchesToMillimeters(targetX);
-            targetY = Units_and_Numbers.inchesToMillimeters(targetY);
-            targetZ = Units_and_Numbers.inchesToMillimeters(targetZ);            
-        }                               
+                                      
         t.setScale(new Vector3d(targetX / getWidth(), targetY / getDepth(), targetZ / getHeight()));
         if (isOnPlatform) {
             t = transformOnBottom(t);

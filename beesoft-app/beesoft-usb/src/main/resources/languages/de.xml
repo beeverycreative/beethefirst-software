@@ -1,61 +1,64 @@
-<?xml version="1.1" encoding="utf-8"?>
+﻿<?xml version="1.1" encoding="utf-8"?>
 <languages>
     <tags>
         <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
         <ApplicationMenus>
-            <File value="File"/>
-            <Edit value="Edit"/>
-            <Gallery value="Gallery"/>
-            <Printer value="Printer"/>
-            <Help value="Help"/>
+            <File value="Datei"/>
+            <Edit value="Bearbeiten"/>
+            <Gallery value="Galerie"/>
+            <Printer value="Drucker"/>
+            <Help value="Hilfe"/>
             <REDMEC value="REDMEC"/>
-            <REDMEC_ControlPanel value="Advanced users control panel"/>
-            <REDMEC_Console value="Console"/>
-            <REDMEC_GCode value="GCode panel"/>
+            <REDMEC_ControlPanel value="Fortgeschrittene Systemsteuerung"/>
+            <REDMEC_Console value="Konsole"/>
+            <REDMEC_GCode value="GCode Tafel"/>
             <REDMEC_Bootloader value="Bootloader updater"/>
-            <File_New value="New work area"/>
-            <File_Open value="Open work area"/>
-            <File_Save value="Save work area"/>
-            <File_Save_as value="Save work area as"/>
-            <File_Preferences value="Preferences"/>
-            <File_Quit value="Quit"/>
-            <Edit_Undo value="Undo"/>
-            <Edit_Redo value="Redo"/>
-            <Edit_Cut value="Cut"/>
-            <Edit_Copy value="Copy"/>
-            <Edit_Paste value="Paste"/>
-            <Edit_Duplicate value="Duplicate"/>
-            <Edit_Delete value="Delete"/>
-            <Edit_SelectAll value="Select all"/>
-            <Edit_Unselect value="Unselect"/>
-            <Edit_Center value="Center on platform"/>
-            <Edit_PutPlatform value="Place on platform"/>
-            <Edit_Reset value="Reset model"/>
-            <Model_Add value="Add model from gallery"/>
-            <Model_Import value="Import model"/>
-            <Model_Online value="Online models"/>
-            <Printer_Maintenance value="Maintenance"/>
-            <Printer_Print value="Print"/>
-            <Printer_Print2D value="Print from 2D image"/>
-            <Help_Topics value="Help topics:"/>
-            <Help_Topics_Info value="Should you need more help, please consult our FAQs, our website www.beeverycreative.com, or please contact the customer service."/>
-            <Help value="Press here for help"/>
-            <Help_help value="Help"/>
-            <Help_QuickGuide value="Quick Guide"/>
-            <Help_Update value="Check for updates"/>
+            <File_New value="Neue Arbeitsbereich"/>
+            <File_Open value="Öffnen Arbeitsbereich"/>
+            <File_Save value="Speichern Arbeitsbereich"/>
+            <File_Save_as value="Speichern Arbeitsbereich unter"/>
+            <File_Preferences value="Voreinstellungen"/>
+            <File_Quit value="Beenden"/>
+            <Edit_Undo value="Rückgängig machen"/>
+            <Edit_Redo value="Wiederherstellen"/>
+            <Edit_Cut value="Schnitt"/>
+            <Edit_Copy value="Kopieren"/>
+            <Edit_Paste value="Einfügen"/>
+            <Edit_Duplicate value="Duplizieren"/>
+            <Edit_Delete value="Löschen"/>
+            <Edit_SelectAll value="Alle auswählen"/>
+            <Edit_Unselect value="Auswahl aufheben"/>
+            <Edit_Center value="Auf der Plattform zentrieren"/>
+            <Edit_PutPlatform value="Auf der Plattform platzieren"/>
+            <Edit_Reset value="Rücksetzen"/>
+            <Model_Add value="Modell aus Galerie importieren"/>
+            <Model_Import value="Modell Importieren"/>
+            <GCode_Import value="G-code Datei drucken"/>
+            <GCode_Export value="G-code Datei exportieren"/>
+            <Model_Online value="Online Modelle"/>
+            <Printer_Maintenance value="Wartung"/>
+            <Printer_ControlPanel value="Control Panel"/>
+            <Printer_Print value="Drucken"/>
+            <Printer_Print2D value="Drucken von 2D Bild"/>
+            <Help_Topics value="Hilfethemen:"/>
+            <Help_Topics_Info value="Wenn Sie weitere Hilfe benötigen, konsultieren Sie bitte unsere FAQs, unsere Website www.beeverycreative.com oder kontaktieren Sie bitte den Kundendienst."/>
+            <Help value="Drücken Sie hier für Hilfe"/>
+            <Help_help value="Hilfe"/>
+            <Help_QuickGuide value="Kurzanleitung"/>
+            <Help_Update value="Nach Updates suchen"/>
             <Help_Support value="Support"/>
-            <Help_About value="About"/>
+            <Help_About value="Über"/>
         </ApplicationMenus>
 
         <ControlPanel>
-            <Jog_Title value="Jog Controls"/>
-            <Temp_Title value="Temperature Controls"/>
-            <Feedrate value="Feedrate"/>
-            <Motor_Control value="Motor control"/>
-            <Console_History value="History"/>
-            <Console_Results value="Results"/>
+            <Jog_Title value="Bewegungssteuer Knöpfe"/>
+            <Temp_Title value="Temperaturkontrollen"/>
+            <Feedrate value="Vorschub"/>
+            <Motor_Control value="Motoransteuerung"/>
+            <Console_Movement value="Verlauf"/>
+            <Console_Extrusion value="Ergebnisse"/>
             <Jog_Mode value="Jog Mode (mm)"/>
-            <Jog_Mode value="Feedrate"/>
+            <Jog_Mode value="Vorschub"/>
             <CenterX value="Home X"/>
             <CenterY value="Home Y"/>
             <CenterZ value="Home Z"/>
@@ -63,567 +66,569 @@
             <SetY value="Set Y"/>
             <SetZ value="Set Z"/>
             <FreeJog value="Free jog"/>
-            <CurrentPosition value="Set position as Zero"/>
-            <CalibrateA value="Calibrate A"/>
-            <CalibrateB value="Calibrate B"/>
-            <CalibrateC value="Calibrate C"/>
-            <Current_Temperature value="Current temperature (ºC)"/>
-            <Target_Temperature value="Target temperature (max 250ºC)"/>
-            <Motor_Speed value="Motor speed (mm/60s)"/>
-            <Extrude_Duration value="Extrude duration (s)"/>
-            <Reverse value="Reverse"/>
-            <SpecialReverse value="Special reverse"/>
-            <Stop value="Stop"/>
-            <Foward value="Foward"/>
-            <Cooling_Fan value="Cooling fan (blower)"/>
-            <Log_Temperature value="Log temperature"/>
+            <CurrentPosition value="Stellen Sie Position auf Null"/>
+            <CalibrateA value="kalibrieren A"/>
+            <CalibrateB value="kalibrieren B"/>
+            <CalibrateC value="kalibrieren C"/>
+            <Current_Temperature value="Aktuelle Temperatur (ºC)"/>
+            <Target_Temperature value="Solltemperatur (max 250ºC)"/>
+            <Motor_Speed value="Motordrehzahl (mm/60s)"/>
+            <Extrude_Duration value="Extrude Dauer (s)"/>
+            <Reverse value="Umkehren"/>
+            <SpecialReverse value="Sonder-umkehren"/>
+            <Stop value="Stopp"/>
+            <Foward value="Vorwärts"/>
+            <Cooling_Fan value="Kühlventilator (Gebläse)"/>
+            <Log_Temperature value="Log Temperatur"/>
             <XY_Feedrate value="XY (mm/s)"/>
             <Z_Feedrate value="Z (mm/s)"/>
         </ControlPanel>
         
         <GCodePanel>
-            <LoadFile value="Load from file"/>
-            <GenerateFile value="Generate f/ STL"/>
-            <RunGCode value="Run Gcode"/>
-            <TransferGCode value="Transfer Gcode"/>
-            <ClearGCode value="Clear Gcode"/>
-            <SaveGCode value="Save Gcode"/>
-            <LoadGCode value="Load Gcode"/>
-            <RefreshGCodeList value="Refresh list"/>
-            <Info value="Notes:"/>
+            <LoadFile value="Datei laden"/>
+            <GenerateFile value="Erzeugen f/ STL"/>
+            <RunGCode value="Ausführen Gcode"/>
+            <TransferGCode value="Versenden Gcode"/>
+            <ClearGCode value="Löschen Gcode"/>
+            <SaveGCode value="Speichern Gcode"/>
+            <LoadGCode value="Überspielen Gcode"/>
+            <RefreshGCodeList value="Liste aktualisieren"/>
+            <Info value="Notizen:"/>
         </GCodePanel>
         
         <BootloaderPanel>
-            <Update value="Update bootloader"/>
-            <Refresh value="Refresh list"/>
-            <LoadBootloaderFile value="Load bootloader file"/>
-            <Prepare value="Prepare"/>
+            <Update value="Bootloader aktualisieren"/>
+            <Refresh value="Liste aktualisieren"/>
+            <LoadBootloaderFile value="Überspielen bootloader Datei"/>
+            <Prepare value="Vorbereiten"/>
         </BootloaderPanel>     
         
         <AdvancedPrintPanel>
-            <SetUP value="Set up your print"/>
-            <PrintSectionTitle value="Print"/>
-            <LayerHeight value="Layer Height"/>
-            <WallThickness value="Wall thickness"/>
-            <SLayerThickness value="Solid layer thickness"/>
-            <BottomThickness value="Bottom thickness"/>
-            <FillDensity value="Fill density"/>
-            <FilamentDiameter value="Filament diameter"/>
-            <FilamentFlow value="Filament flow"/>
-            <NozzleSize value="Nozzle size"/>
-            <RetractionEnable value="Retraction enable"/>
-            <RaftEnable value="Raft enable"/>
-            <SupportEnable value="Support enable"/>
-            <AutonomousEnable value="Autonomous enable"/>
-            <FanEnable value="Fan enable"/>
-            <SolidTop value="Solid top"/>
-            <SolidBottom value="Solid bottom"/>
+            <SetUP value="Richten Sie Ihre Druck"/>
+            <PrintSectionTitle value="Drucken"/>
+            <LayerHeight value="Schichthöhe"/>
+            <WallThickness value="Wandstärke"/>
+            <SLayerThickness value="Solid Schichtstärke"/>
+            <BottomThickness value="Boden Schichtstärke"/>
+            <FillDensity value="Füllgrad ausfüllen"/>
+            <FilamentDiameter value="Filament durchmesser"/>
+            <FilamentFlow value="Filament fließen"/>
+            <NozzleSize value="Düsengröße"/>
+            <RetractionEnable value="Retraktion ermöglichen"/>
+            <RaftEnable value="Raft ermöglichen"/>
+            <SupportEnable value="Support ermöglichen"/>
+            <AutonomousEnable value="Selbständig ermöglichen"/>
+            <FanEnable value="Kühlventilator ermöglichen"/>
+            <SolidTop value="Solid Spitze"/>
+            <SolidBottom value="Solid Boden"/>
             <Spiralize value="Spiralize"/>
-            <OozeShield value="Ooze shield"/>
-            <WipeTower value="Wipe tower"/>
-            <WipeTowerVolume value="Wipe tower volume"/>
+            <OozeShield value="Ooze Shiels"/>
+            <WipeTower value="Turm wischen"/>
+            <WipeTowerVolume value="Turmvolumen wischen"/>
             <RaftSectionTitle value="Raft"/>
-            <Margin value="Margin"/>
-            <LineSpacing value="Line spacing"/>
-            <BaseThickness value="Base thickness"/>
-            <BaseLinewidth value="Base linewidth"/>
-            <InterfaceThickness value="Interface thickness"/>
-            <InterfaceLinewidth value="Interface linewidth"/>
-            <SpeedSectionTitle value="Speed"/>
-            <PrintSpeed value="Print speed"/>
-            <InnerSpeed value="Inner speed"/>
-            <OuterSpeed value="Outer speed"/>
-            <InfillSpeed value="Infill speed"/>
-            <BottomLayerSpeed value="Bottom layer Speed"/>
-            <FanSpeed value="Fan speed"/>
-            <FanSpeedMax value="Fan speed max"/>
-            <TravelSpeed value="Travel speed"/>
-            <CoolSectionTitle value="Cool"/>
-            <CoolMinFeedrate value="Cool min feedrate"/>
-            <CoolHeadLift value="Cool head lift"/>
-            <CoolMinLayerTime value="Cool min layer time"/>
+            <Margin value="Spanne"/>
+            <LineSpacing value="Linienabstand"/>
+            <BaseThickness value="Basis Schichtstärke"/>
+            <BaseLinewidth value="Basislinienbreite"/>
+            <InterfaceThickness value="Schnittstelle Schichtstärke"/>
+            <InterfaceLinewidth value="Schnittstelle linienbreite"/>
+            <SpeedSectionTitle value="Geschwindigkeit"/>
+            <PrintSpeed value="Druckgeschwindigkeit"/>
+            <InnerSpeed value="Innere Geschwindigkeit"/>
+            <OuterSpeed value="Äußere Geschwindigkeit"/>
+            <InfillSpeed value="Füllung Geschwindigkeit"/>
+            <BottomLayerSpeed value="Erste Schicht Geschwindigkeit"/>
+            <FanSpeed value="Kühlventilator Geschwindigkeit"/>
+            <FanSpeedMax value="Kühlventilator Maximale Geschwindigkeit"/>
+            <TravelSpeed value="Verfahrgeschwindigkeit"/>
+            <CoolSectionTitle value="Kühlung"/>
+            <CoolMinFeedrate value="Kühlmindestsatz"/>
+            <CoolHeadLift value="KopfKühlung erhöhen"/>
+            <CoolMinLayerTime value=" Zeitkühlung Layer"/>
             <SupportSectionTitle value="Support"/>
-            <SupportType value="Type"/>
-            <SupportFillrate value="Fill rate"/>
-            <SupportAngle value="Overhang angle"/>
-            <SupportXYDistance value="XY distance"/>
-            <SupportZDistance value="Z distance"/>
-            <SupportZHop value="Z hop"/>
-            <RetractionSectionTitle value="Retraction"/>
-            <RetractionSpeed value="Speed"/>
-            <RetractionAmount value="Amount"/>
-            <RetractionDualAmount value="Dual amount"/>
-            <RetractionMinTravel value="Min travel"/>
+            <SupportType value="Typ"/>
+            <SupportFillrate value="Füllrate"/>
+            <SupportAngle value="Überhangwinkel"/>
+            <SupportXYDistance value="XY Abstand"/>
+            <SupportZDistance value="Z Abstand"/>
+            <SupportZHop value="Z hüpfen"/>
+            <RetractionSectionTitle value="Retraktion"/>
+            <RetractionSpeed value="Geschwindigkeit"/>
+            <RetractionAmount value="Betrag"/>
+            <RetractionDualAmount value="Dual Betrag"/>
+            <RetractionMinTravel value="Mindest Reise"/>
             <RetractionCombing value="Combing"/>
-            <RetractionMinimalExtrusion value="Minimal extrusion"/>
-            <InfillSectionTitle value="Infill"/>
-            <InfillOverlap value="Infill overlap"/>
+            <RetractionMinimalExtrusion value="Minimal Extrusions"/>
+            <InfillSectionTitle value="Füllung"/>
+            <InfillOverlap value="Füllung Überlappung"/>
         </AdvancedPrintPanel>      
     
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões do ecrã principal --> 
         <MainWindowButtons>
-            <Models value="IMPORT MODEL"/>
-            <Maintenance value="MAINTENANCE"/>
-            <QuickWizard value="QUICK GUIDE"/>
-            <Print value="PRINT"/>
-            <Mirror value="Mirror"/>
-            <Scale value="Scale"/>  
-            <ScaleToMax value="Scale to Max"/>  
-            <Apply value="Apply Scale"/>  
-            <Scale_Extense value="Scale in percentage"/>
-            <Move value="Move"/>
-            <Rotate value="Rotate"/>
-            <MoreOptions value="More options"/>
-            <Axis value="Axis"/>
-            <Axis2 value="in axis"/>
-            <Degrees value="degrees"/>
-            <MM value="millimeters"/>
-            <Inches value="inches"/>
-	    <Percentage value="percentage"/>
-            <LockRatio value="Lock aspect ratio"/>
+            <Models value="MODELL IMPORTIEREN"/>
+            <Maintenance value="WARTUNG"/>
+            <QuickWizard value="KURZANLEITUNG"/>
+            <Print value="DRUCKEN"/>
+            <Mirror value="Spiegel"/>
+            <Scale value="Skalieren"/>  
+            <ScaleToMax value="Skalieren zu maximal"/>  
+            <Apply value="Skalieren anwenden"/>  
+            <Scale_Extense value="Skalieren im Prozent"/>
+            <Move value="Verschieben"/>
+            <Rotate value="Drehen"/>
+            <MoreOptions value="Mehr Optionen"/>
+            <Axis value="Achse"/>
+            <Axis2 value="im Achse"/>
+            <Degrees value="Grad"/>
+            <MM value="Millimeter"/>
+            <Inches value="Zoll"/>
+            <Percentage value="Prozent"/>
+            <LockRatio value="Seitenverhältnis beibehalten"/>
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
-            <Scene value="Work Area"/>
-            <Scene_Name value="Name"/>
-            <Scene_Description value="Description"/>
-            <Scene_NModels value="Number of models"/>
-            <Scene_LastPrintDate value="Date of last print"/>
-            <Scene_LastPrintTime value="Duration of last print"/>
+            <Scene value="Arbeitsbereich"/>
+            <Scene_Name_Hint value="Titel"/>
+            <Scene_Notes value="Beschreibung"/>
+            <Scene_NModels value="Anzahl der Modelle"/>
+            <Scene_LastPrintDate value="Datum des letzten Drucks"/>
+            <Scene_LastPrintTime value="Dauer des letzten Drucks"/>
+            <Scene_Notes_Placeholder value="Notizen über diesen Arbeitsbereich" />
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
         <ModelDetails>
-            <Model value="Model"/>
+            <Model value="Modell"/>
             <Model_Name value="Name"/>
-            <Model_Selected value="Selected Model(s)"/>
-            <Model_N value="Number of models"/>
-            <Model_Dimensions value="Dimensions"/>
-            <Model_Description value="Description"/>
-            <Model_Category value="Category"/>
+            <Model_Selected value="Modell(e) ausgewählt(en)"/>
+            <Model_N value="Anzahl der Modelle"/>
+            <Model_Dimensions value="Maße"/>
+            <Model_Notes value="Beschreibung"/>
+            <Model_Category value="Kategorie"/>
+            <Model_Notes_Placeholder value="Notizen über dieses Modell" />
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
         <AboutSoftware>
-            <About_SoftwareVersion value="Software version"/> 
-            <About_FirmwareVersion value="Firmware version"/> 
-            <About_BootloaderVersion value="Bootloader version"/> 
-            <About_SerialNumber value="BEETHEFIRST serial number"/> 
-            <About_FilamentColor value="Filament type"/> 
+            <About_SoftwareVersion value="Software Version"/> 
+            <About_FirmwareVersion value="Firmware Version"/> 
+            <About_BootloaderVersion value="Bootloader Version"/> 
+            <About_SerialNumber value="Seriennummer des Druckers"/> 
+            <About_FilamentColor value="Filament-Typ"/> 
         </AboutSoftware>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
         <Other>
-            <AdvancedOptions value="Advanced options"/>
-            <View value="View"/>
-            <Properties value="Properties"/>
-            <Select value="Select"/>
-            <Search value="Search"/>
-            <QuickSearch value="Quick search"/>	
-            <Topics value="Topics"/>	
-            <Recent value="Recent"/>
-            <Examples value="Examples"/> 
+            <AdvancedOptions value="Erweiterte Optionen"/>
+            <View value="Ansicht"/>
+            <Properties value="Eigenschaften"/>
+            <Select value="Wählen"/>
+            <Search value="Suche"/>
+            <QuickSearch value="Schnellsuche"/>	
+            <Topics value="Themen"/>	
+            <Recent value="Letzte"/>
+            <Examples value="Beispiele"/> 
             <Informations value="Information"/>
             <Name value="Name"/>
             <Version value="Version"/>
             <Link value="Link"/>
             <Gcode value="GCode"/>
-            <Model value="MODEL"/>
-            <NewFolder value="New folder"/>
-            <RenameFile value="Rename file"/>
-            <Folders value="Folders"/>
-            <Files value="Files"/>
-            <Selection value="Selection"/>
+            <Model value="MODELL"/>
+            <NewFolder value="Neu Ordner"/>
+            <RenameFile value="Datei umbenennen"/>
+            <Folders value="Ordner"/>
+            <Files value="Dateien"/>
+            <Selection value="Auswahl"/>
             <Filter value="Filter"/>
-            <View value="View"/>
+            <View value="Ansicht"/>
             <Default value="Default"/>
-            <LayFlat value="Lay flat"/>
-            <RotateZ value="Rotate around"/>
-            <MachineJam value="Communication problem. Please unplug it"/>
-            <Wizard value="Setup wizard"/>
-            <NotSupported value="This functionality is not yet supported."/>
-            <InsertValue value="New category name:"/>
-            <Warning value="WARNING"/>
+            <LayFlat value="Layflat"/>
+            <RotateZ value="Drehen"/>
+            <MachineJam value="Kommunikationsproblem. Bitte ziehen Sie den Stecker"/>
+            <Wizard value="Konfigurationsassistent"/>
+            <NotSupported value="Diese Funktionalität ist noch nicht verfügbar."/>
+            <InsertValue value="Neuen Kategorienamen:"/>
+            <Warning value="WARNUNG"/>
             <Download value="Download"/>
         </Other>
 
         <!-- A próxima secção XML contém o texto a ser apresentado caso seja preciso disponibilizar informação sobre o JAVA -->
         <Java>
-            <Line1 value="Installation of Java 1.6 required"/>
-            <Line2 value="This version requires"/>
-            <Line3 value="Java 1.6 or later version required to run properly"/>
-            <Line4 value="Please visit java.com to upgrade"/>
+            <Line1 value="Installation von Java 1.6 ist erforderlich"/>
+            <Line2 value="Diese Version benötigt"/>
+            <Line3 value="Java 1.6 oder eine neuere Version ist benötigt um ordnungsgemäß ausgeführt."/>
+            <Line4 value="Bitte aktualisieren Sie das Java im java.com"/>
         </Java>
 
         <!-- A próxima secção XML contém o texto a ser apresentado nos botões de controlo de janelas -->
         <OptionPaneButtons>
-            <Line1 value="Yes"/>
-            <Line2 value="No"/>
-            <Line3 value="Cancel"/>
-            <Line4 value="Back"/>
-            <Line5 value="Finalize"/>
+            <Line1 value="Ja"/>
+            <Line2 value="Nein"/>
+            <Line3 value="Abbrechen"/>
+            <Line4 value="Zurück"/>
+            <Line5 value="Beenden"/>
             <Line6 value="Ok"/>
-            <Line7 value="Next"/>
-            <Line8 value="Apply"/>
-            <Line9 value="Import"/>
-            <Line10 value="New Print"/>
-            <Line11 value="Pause"/>
-            <Line12 value="Resume"/>
-            <Line13 value="Restart"/>            
-            <Line14 value="Unload"/> 
-            <Line15 value="Estimate"/> 
-            <Line17 value="Stop"/>  
-            <Line16 value="Shutdown"/>
+            <Line7 value="Weiter"/>
+            <Line8 value="Anwenden"/>
+            <Line9 value="Importieren"/>
+            <Line10 value="Neu Druck"/>
+            <Line11 value="Stopp"/>
+            <Line12 value="Fortsetzen"/>
+            <Line13 value="Neustarten"/>            
+            <Line14 value="Entladen"/> 
+            <Line15 value="Schätzung"/> 
+            <Line17 value="Stopp"/>  
+            <Line16 value="Herunterfahren"/>
+            <Export value="G-code exportieren"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
         <FileOpen>
-            <Line1 value="The file could not be found"/>
-            <Line2 value="File not found"/>
+            <Line1 value="Datei konnte nicht gefunden werden"/>
+            <Line2 value="Datei wurde nicht gefunden"/>
         </FileOpen>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de manipulação de ficheiros em directórios -->
         <BaseDirectories>
-            <Line1 value="Cannot write to the directory"/>
-            <Line2 value="Some functions like toolpath generation"/>
-            <Line3 value="require writting data to this directory. You should end this"/>
-            <Line4 value="session, change the permissions on this directory, and start again"/>
-            <Line5 value="Home application directory is read-only"/>
-            <Line6 value="Cannot write to the directory"/>
-            <Line7 value="You may be running this software from an archive or other read-only directory"/>
-            <Line8 value="Please quit the application and extract it to a writeable location, then start again"/>
-            <Line9 value="All files are stored in BEESOFT folder in user directory."/>
+            <Line1 value="Kann nicht in das Verzeichnis schreiben"/>
+            <Line2 value="Einige Funktionen wie Werkzeugwege"/>
+            <Line3 value="Erfordern das Schreiben von Daten in dieses Verzeichnis. Sie sollten diesem beenden"/>
+            <Line4 value="Sitzung, ändern Sie die Berechtigungen auf dieses Verzeichnis und starten neu"/>
+            <Line5 value="Das Home Anwendungsverzeichnis ist schreibgeschützt"/>
+            <Line6 value="Kann nicht in das Verzeichnis schreiben"/>
+            <Line7 value="Vielleicht führen Sie diese Software aus einem Archiv oder anderen schreibgeschützten Verzeichnis aus"/>
+            <Line8 value="Bitte beenden Sie die Anwendung und entpacken Sie es auf eine beschreibbaren Speicherort, dann wieder zu starten"/>
+            <Line9 value="Alle Dateien werden in BEESOFT Ordner in Benutzerverzeichnis gespeichert"/>
         </BaseDirectories>
         
         <!-- A próxima secção XML contém o texto que pode ser usado como informativo em atividades paralelas à impressão --> 
         <ToolPath>
-            <Line1 value="The bottom of the model doesn't appear to be touching the building surface"/>
-            <Line2 value="and attempting to print it could damage your BEETHEFIRST."/>
-            <Line3 value="Ok to move it to the building platform?"/>
-            <Line4 value="Place model on building surface?"/>
-            <Line5 value="You have made changes to this model"/>
-            <Line6 value="You will lose any unsaved changes."/>
-            <Line7 value="Save the work area now?"/>
-            <Line8 value="Save work area"/>
-            <Line9 value="This model is bigger than what BEETHEFIRST can build"/>
-            <Line10 value="Are you sure you want to generate code for it?"/>
-            <Line11 value="Generate oversized model?"/>
-            <Line12 value="Generating toolpath for"/>
-            <Line13 value="Launching plugin"/>
-            <Line14 value="Total progress"/>
-            <Line15 value="Removing unprintable perimeter at layer"/>
-            <Line16 value="Processing facet"/>
-            <Line17 value="A toolpath generator"/>
-            <Line18 value="Base profile"/>
-            <Line19 value="Print model"/>
-            <Line20 value="Generating GCode"/>
-            <Line21 value="Print"/>
+            <Line1 value="Es scheint dass das Modell nicht an der plattform gestellt ist."/>
+            <Line2 value="Wenn Sie den Druck fortsetzen, können Sie Ihren Drucker beschädigen."/>
+            <Line3 value="Ok, verschieben es auf die Druckﬂäche?"/>
+            <Line4 value="Platzieren Sie das Modell auf der Druckﬂäche?"/>
+            <Line5 value="Sie haben Änderungen an diesem Modell gemacht"/>
+            <Line6 value="Sie werden noch nicht gespeicherte Änderungen verloren."/>
+            <Line7 value="Speichern Sie den Arbeitsbereich?"/>
+            <Line8 value="Speichern Arbeitsbereich"/>
+            <Line9 value="Dieses Modell ist größer als die Druckfläche"/>
+            <Line10 value="Sind Sie sicher, dass Sie das Code erzeugen wollen?"/>
+            <Line11 value="Erzeugen überdimensionalen Modell?"/>
+            <Line12 value="Erzeugen Werkzeugwegen nach"/>
+            <Line13 value="Starten plugin"/>
+            <Line14 value="Gesamtfortschritt"/>
+            <Line15 value="Perimeter auf Schicht entfernen, das kann nicht drucken sein"/>
+            <Line16 value="Aspektverarbeitung"/>
+            <Line17 value="Werkzeugpfad-Generator"/>
+            <Line18 value="Grundprofil"/>
+            <Line19 value="Druck Modell"/>
+            <Line20 value="GCode erzeugend"/>
+            <Line21 value="Drucken"/>
         </ToolPath>
 
         <!-- A próxima secção XML contém o texto a ser apresentado nas caixas de feedback existentes nos Assistentes e no ecrã principal --> 
         <FeedbackLabel>
-            <Line1 value="Connecting to BEETHEFIRST"/>
-            <Line2 value="Connection error"/>
-            <Line3 value="Attempted to access parent directory in "/>
-            <Line4 value="Load file"/>
-            <Line5 value="Saving as"/>
-            <Line6 value="Selected path is"/>
-            <Line7 value="Loading..."/>
-            <Line8 value="Saving..."/>
-            <Line9 value="Saving operation complete"/>
-            <Line10 value="Saving operation aborted"/>
-            <Line11 value="Loading Driver"/>
-            <Line12 value="Estimating building time and scanning code for errors..."/>
-            <Line13 value="Beginning to build"/>
-            <Line14 value="Estimating building time..."/>
-            <Line15 value="Loading simulator"/>
-            <Line15 value="Beginning toolpath generation"/>
-            <Line16 value="The profile can be found in this directory"/>
-            <Line17 value="NOT_ATTACHED"/>
-            <Line18 value="READY"/>
-            <Line19 value="BUILDING"/>
-            <Line20 value="BUILDING_OFFLINE"/>
-            <Line21 value="CONNECTING"/>
-            <Line22 value="CONNECTED"/>
-            <Line23 value="Load work area"/>
-            <Line24 value="Load model"/>
-            <Line25 value="Please wait"/>
-            <PrinterStatusConnected value="is connected"/>
-            <PrinterStatusDisconnected value="is disconnected"/>
-            <PrinterStatusReady value="is ready"/>
-            <MovingMessage value="Moving... Please wait."/> 
-            <MovingMessage2 value="Please wait! Getting ready..."/>
-            <HeatingMessage value="Heating... Please wait."/>
-            <HeatingMessage2 value="Heating..."/>
-            <HeatingNozzleMessage value="Heating... Please wait before cleaning."/>            
-            <Configurations_Save value="Current settings are being saved..."/>
-            <StatusMessage value="Status Message"/>
-            <GCodeGeneration value="Preparing your print..."/>
+            <Line1 value="Verbindung mit drucker herstellen"/>
+            <Line2 value="Verbindungsfehler"/>
+            <Line3 value="Versucht in übergeordnete Verzeichnis zugreifen"/>
+            <Line4 value="Datei laden"/>
+            <Line5 value="Speichern unter..."/>
+            <Line6 value="Ausgewählte Pfad ist"/>
+            <Line7 value="Laden..."/>
+            <Line8 value="Speichern..."/>
+            <Line9 value="Speichern abgeschlossen"/>
+            <Line10 value="Speichern abgebrochen"/>
+            <Line11 value="Treiber laden"/>
+            <Line12 value="Druckzeit schätzend und Fehler im Code suchen..."/>
+            <Line13 value="Beginnen zu drucken"/>
+            <Line14 value="Druckzeit schätzend..."/>
+            <Line15 value="Laden Simulator"/>
+            <Line15 value="Beginnend Werkzeugwege erzeugen"/>
+            <Line16 value="Das Profil kann in diesem Verzeichnis gefunden werden"/>
+            <Line17 value="NiCHT_ANGELAGEN"/>
+            <Line18 value="FERTIG"/>
+            <Line19 value="DRUCKEND"/>
+            <Line20 value="DRUCKEND_OFFLINE"/>
+            <Line21 value="VERBINDUNG"/>
+            <Line22 value="VERBUNDEN"/>
+            <Line23 value="Arbeitsbereich laden"/>
+            <Line24 value="Modell laden"/>
+            <Line25 value="Bitte warten"/>
+            <PrinterStatusConnected value="ist verbunden"/>
+            <PrinterStatusDisconnected value="ist nicht verbunden"/>
+            <PrinterStatusReady value="ist fertig"/>
+            <MovingMessage value="Verschiebend..Bitte warten"/> 
+            <MovingMessage2 value="Bitte warten!Gleich fertig.."/>
+            <HeatingMessage value="Erhitzen..Bitte warten."/>
+            <HeatingMessage2 value="Erhitzen.."/>
+            <HeatingNozzleMessage value="Erhitzen..Bitte warten Sie bevor es saubermachen."/>            
+            <Configurations_Save value="Die aktuellen Einstellungen werden gespeichert..."/>
+            <StatusMessage value="Zustandsmeldung"/>
+            <GCodeGeneration value="Vorbereitung der Druck..."/>
         </FeedbackLabel>
         
         <!-- A próxima secção XML contém o texto a ser apresentado no Processo de Impressão, incluindo SplashScreens --> 
         <Print>
-            <Print2D_Title value="Please select a PNG image you want to print"/>
-            <Print2D_Type_Image value="Choose type of image: "/>
-            <Print2D_GenerateSTL value="Generate STL "/>
-            <Print_SelectImage value="Select image to print"/>
-            <Print_TypeImage value="Choose type of image"/>
+            <Print2D_Title value="Bitte wählen Sie ein PNG-Bild, das Sie drucken möchten"/>
+            <Print2D_Type_Image value="Wählen Art des Bildes: "/>
+            <Print2D_GenerateSTL value="STL erzeugen"/>
+            <Print_SelectImage value="Wählen ein Bild, um es auszudrucken"/>
+            <Print_TypeImage value="Wählen Art des Bildes"/>
             <Print_LogoType value="Logo"/>
-            <Print_PortraitType value="Portrait"/>
-            <Print_Title value="PRINTING"/>
-            <Print_Splash_Gcode_Title value="PROCESSING... PLEASE WAIT"/>
-            <Print_Splash_Gcode_Info value="This process can take a few minutes"/>	
-            <Print_Calibration_Info value="This process may take a few moments"/>
-            <Print_Splash_Title value="Your BEETHEFIRST is ready to print"/>
-            <Print_Splash_Info value="Push the button."/>
-            <Print_Splash_Info2 value="Printing... Please wait."/>
-            <Print_Splash_Info3 value="Printing in autonomous mode. Please wait."/>
-            <Print_Splash_Info4 value="You can now disconnect your BEETHEFIRST."/>
-            <Print_Splash_Info5 value="Press New Print or otherwise Unload if you are done for today."/>
-            <Print_Splash_Info6 value="Do not leave your BEETHEFIRST with the filament loaded."/>
-            <Print_Splash_Info7 value="This will help keep the filament in optimal condition."/>
-            <Print_Splash_Info8 value="You may now remove your spool and store it in a cold dry place."/>
-            <Print_Splash_Info9 value="No filament"/>
-            <Print_Splash_Info10 value="Your BEETHEFIRST is unloading. Please Wait until it finishes."/>
-            <Print_Splash_Info11 value="To print you have to change the filament now."/>
-            <Print_Quality value="Resolution"/>	
-            <Print_Quality_Low value="Low"/>	
-            <Print_Quality_Medium value="Medium"/>	
+            <Print_PortraitType value="Porträt"/>
+            <Print_Title value="DRUCKEN"/>
+            <Print_Splash_Gcode_Title value="VERARBEITEND...BITTE WARTEN"/>
+            <Print_Splash_Gcode_Info value="Dieser Vorgang kann einige Minuten dauern"/>	
+            <Print_Calibration_Info value="Dieser Vorgang kann einige Momente dauern"/>
+            <Print_Splash_Title value="Der Drucker ist druckbereit"/>
+            <Print_Splash_Info value="Drück den Knopf."/>
+            <Print_Splash_Info2 value="DRUCKEN...BITTE WARTEN"/>
+            <Print_Splash_Info3 value="Drucken in selbständig mode. Bitte warten Sie."/>
+            <Print_Splash_Info4 value="Jetzt können Sie der Drucker trennen."/>
+            <Print_Splash_Info5 value="Drücken Sie Neu Druck oder Entladen, wenn Sie heute nicht drucken wollen."/>
+            <Print_Splash_Info6 value="Lassen Sie nicht den Drucker mit dem Filament geladen."/>
+            <Print_Splash_Info7 value="Dies wird helfen, den Filament in einem optimalen Zustand behalten."/>
+            <Print_Splash_Info8 value="Jetzt können Sie die Spule entfernen und es in einem kalten, trockenen Ort speichern."/>
+            <Print_Splash_Info9 value="Kein Filament"/>
+            <Print_Splash_Info10 value="Der Drucker ist ausladend. Warten Sie bitte, bis es fertig ist.."/>
+            <Print_Splash_Info11 value="Zum Drucken müssen Sie jetzt das Filament ändern."/>
+            <Print_Quality value="Auflösung"/>	
+            <Print_Quality_Low value="Niedrig"/>	
+            <Print_Quality_Medium value="Mittel"/>	
             <Print_Quality_Normal value="Normal"/>	
-            <Print_Quality_High value="High"/>	
-            <Print_Quality_SHigh value="High+"/>
-            <Print_Density value="Density"/>
-            <Print_Density_Low value="Low"/>
+            <Print_Quality_High value="Hoch"/>	
+            <Print_Quality_SHigh value="Sehr Hoch"/>
+            <Print_Density value="Füllgrad"/>
+            <Print_Density_Low value="Gering"/>
             <Print_Density_Medium value="Medium"/>
-            <Print_Density_High value="High"/>	
-            <Print_Density_Insertion value="Density value (%) :"/>	
-            <Print_GCode_Selected value="File selected: "/>
-            <Print_GCode_Clear value="Clear"/>
+            <Print_Density_High value="Hohe"/>	
+            <Print_Density_Insertion value="Füllgrad (%) :"/>	
+            <Print_GCode_Selected value="Ausgewählte Datei: "/>
+            <Print_GCode_Clear value="Löschen"/>
             <Print_Raft value="Raft"/>	
             <Print_Support value="Support"/>	
-            <Print_Autonomy value="Autonomy"/>
-            <Print_GCode value="Save GCode"/>
-            <Print_GramsTag value="gram(s)"/>
-            <Print_ChooseGCodeFile value="Please choose a file to print"/>
-            <Print_EstimationPrintTime value="Print time:"/>
-            <Print_EstimationMaterial value="Filament weight:"/>
-            <Print_Raft_Info value="This option creates a base that will allow the model to adhere to the table and help avoid warping. The raft may be hard to remove from the model, so only use when needed."/>	
-            <Print_Support_Info value="This option automatically creates a detachable structure beneath an overhang or highly inclined areas, so as to allow the model to be printed."/>	
-            <Print_Autonomy_Info value="This option allows you to print without a computer connection. You will be informed when you can disconnect from your computer."/>
-            <Print_GCode_Info value="This option allows you to save the GCode and print it later."/>
-            <Print_ChangeFilament value="Change filament now"/>
-            <Print_SelectGCode value="Select GCode to print"/>
-            <Print_TimeLeft value="About x minutes remaining"/>
-            <Print_GCode2 value="Settings will be updated. This process can take several moments."/>
-            <Print_Filament value="Remaining filament may not be enough for this print session. Are you sure you have selected the correct filament color?"/>
-            <Print_Autonomy value="Allows the BEETHEFIRST to print without being connected to the computer.
-				       You'll be informed when you can unplug the cable."/>
-            <Print_Transfering value="Transferring... Please wait"/>
-            <Print_EstimatorError value="Unable to estimate the total print time"/>
-            <Print_Processing value="Processing... Please wait."/>
-            <Print_Pausing value="Pausing... Please wait."/>
-            <Print_Resuming value="Resuming... Please wait."/> 
-            <Print_Waiting value="Waiting... Resume when you are ready."/>
-            <Print_Waiting2 value="You may also shutdown to continue printing later."/>
-            <Print_Waiting3 value="Resume if you want to continue printing."/>
-            <Print_Waiting4 value="You may also shutdown to continue printing later."/>
-            <Print_Shutdown value="You may now shutdown BEETHEFIRST."/>
-            <Print_Unloading value="Your BEETHEFIRST is unloading. Please wait."/>
-            <Print_Unloaded1 value="You may now remove your spool."/>
-            <Print_Unloaded2 value="Cut the tip and store the spool in a cold dry place."/>
-            <Print_Unloaded3 value="If the filament is not loose, press the Unload button again."/>
-            <Print_Info value="This may take several minutes"/>
-            <Print_Info2 value="This will take a little longer than expected"/>
-            <Print_Estimation value="This may take approximately:"/>
-            <Print_Remaining value="Estimated time remaining:"/>
-            <Print_PercentageCompleted value="Completed: "/>
-            <Print_InfoLowStatus value="Start printing session as soon as possible"/>
-            <Print_Start value="Press button to start"/>
-            <Print_BuildFinished value="Building process finished."/>
-            <Unloading_Title value="Unloading..."/>
-            <Unload_BuildFinished value="Unload process finished."/>
-            <Print_Completion value="Completed in"/>
-            <Print_BuildAborted value="Building process aborted."/>
-            <Print_BuildAborted2 value="Please restart the transfer and try again."/>
-            <Print_BuildAborted3 value="If the problem persists, switch your BEETHEFIRST off."/>
-            <Print_BuildAborted4 value="Then restart BEESOFT then switch the printer on."/>
-            <Print_Stopped value="Stopped after"/>
-            <Print_DoneBuilding value="Done building."/>
-            <Print_PrintAborted value="You are currently printing from BEESOFT! The building process will be stopped."/>
-            <Print_PrintAbortedContinue value="Continue and abort print?"/>
-            <Print_PrintAbortQuestion value="Abort print?"/>
-            <Print_PrinterNotAvailable value="BEESOFT can't connect to your BEETHEFIRST. Try checking your settings and resetting"/>
-            <Print_PrinterNotAvailable2 value="Can't find BEETHEFIRST"/>
-            <PrintMinutes value="minutes"/>
-            <PrintMinute value="minute"/>
-            <PrintHours value="hours"/>
-            <PrintHour value="hour"/>            
+            <Print_Autonomy value="Selbständigkeit"/>
+            <Print_GCode value="GCode speichern"/>
+            <Print_GramsTag value="Gramme"/>
+            <Print_ChooseGCodeFile value="Bitte wählen Sie eine Datei zu Drucken"/>
+            <Print_EstimationPrintTime value="Druckzeit:"/>
+            <Print_EstimationMaterial value="Filamentgewicht:"/>
+            <Print_Raft_Info value="Diese Option erstellt eine Basis, mit denen das Modell auf den Drucktisch zu halten ist. Es hilft Verzug der Form zu verhindern. Es kann schwierig sein das Raft aus der Form zu entfernen, daher verwenden Sie es nur wenn nötig."/>	
+            <Print_Support_Info value="Diese Option wird eine automatische abnehmbare Struktur unter einem Überhang oder stark geneigten Flächen erstellen. Es erlaubt, dass das Modell gedruckt werden kann."/>	
+            <Print_Autonomy_Info value="Diese Option ermöglich, ohne Verbindung zu einem Computer auszudrucken. Sie werden darüber informiert, wenn den Computer trennen können."/>
+            <Print_GCode_Info value="Mit dieser Option können Sie die Gcode speichern und drucken es später."/>
+            <Print_ChangeFilament value="Filament jetzt wechseln"/>
+            <Print_SelectGCode value="GCode auswählen zum drucken"/>
+            <Print_TimeLeft value="Circa x Minuten verbleibende"/>
+            <Print_GCode2 value="Die Einstellungen werden aktualisiert. Dieser Vorgang kann einige Minuten dauern."/>
+            <Print_Filament value="Verbleibende Filament kann nicht genug für dieser Druck sein. Sind Sie sicher, dass Sie den richtigen Filament Farbe ausgewählt haben?"/>
+            <Print_Autonomy value="Ermöglicht dem Drucker, druckt ohne dem Computer verbunden.
+				       Sie werden informiert, wenn Sie das Kabel trennen können."/>
+            <Print_Transfering value="Übertragen..Bitte warten."/>
+            <Print_EstimatorError value="Es ist nicht möglich, die Gesamtdruckzeit zu schätzen"/>
+            <Print_Processing value="Verarbeitung..Bitte warten"/>
+            <Print_Pausing value="Pausierend..Bitte warten"/>
+            <Print_Resuming value="Wiederaufnahme..Bitte warten"/> 
+            <Print_Waiting value="Warten...Wieder aufzunehmen, wenn es bereit ist."/>
+            <Print_Waiting2 value="Sie können auch Herunterfahren und weiterhin Druck später."/>
+            <Print_Waiting3 value="Aufzunehmen, wenn Sie wieder druck möchten."/>
+            <Print_Waiting4 value="Sie können auch Herunterfahren und weiterhin Druck später."/>
+            <Print_Shutdown value="Jetzt können Sie der Drucker herunterfahren."/>
+            <Print_Unloading value="Der Drucker entlädt das Filament. Bitte warten Sie."/>
+            <Print_Unloaded1 value="Jetzt können die Spule entfernen."/>
+            <Print_Unloaded2 value="Schneiden Sie die Spitze und speichern die Spule in einem kalten, trockenen Ort."/>
+            <Print_Unloaded3 value="Wenn das Filament nicht locker ist, drücken Sie wieder die Entfernen knopf."/>
+            <Print_Info value="Es kann einige Minuten dauern"/>
+            <Print_Info2 value="Es wird ein wenig länger als erwartet dauern"/>
+            <Print_Estimation value="Es kann etwa zu nehmen:"/>
+            <Print_Remaining value="Geschätzte verbleibende Zeit:"/>
+            <Print_PercentageCompleted value="Fertiggestellt:"/>
+            <Print_InfoLowStatus value="Starten Sie den Druck sobald wie möglich"/>
+            <Print_Start value="Drücken Sie der Knopf zum Starten"/>
+            <Print_BuildFinished value="Druckprozess fertig."/>
+            <Unloading_Title value="Entladen..."/>
+            <Unload_BuildFinished value="Entladeprozess fertig."/>
+            <Print_Completion value="Fertig in"/>
+            <Print_BuildAborted value="Druckprozess abgebrochen."/>
+            <Print_BuildAborted2 value="Bitte starten Sie wieder die Übertragung und versuchen es nochmal."/>
+            <Print_BuildAborted3 value="Wenn das Problem weiterhin, schalten Sie den Drucker aus."/>
+            <Print_BuildAborted4 value="Dann starten BEESOFT und schalten Sie den Drucker ein."/>
+            <Print_Stopped value="Gestoppt nach"/>
+            <Print_DoneBuilding value="Fertig."/>
+            <Print_PrintAborted value="Jetzt drucken Sie von BEESOFT! Der Druckprozess fertig wird."/>
+            <Print_PrintAbortedContinue value="Weiter drucken oder abbrechen?"/>
+            <Print_PrintAbortQuestion value="Druck abbrechen?"/>
+            <Print_PrinterNotAvailable value="BEESOFT kann nicht mit dem Drucker verbinden. Versuchen Sie bitte die Überprüfung der Einstellungen und starten wieder."/>
+            <Print_PrinterNotAvailable2 value="Drucker nicht gefunden"/>
+            <PrintMinutes value="Minuten"/>
+            <PrintMinute value="Minuten"/>
+            <PrintHours value="Stunde"/>
+            <PrintHour value="Stunde"/>            
         </Print>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento --> 
         <FilamentWizard>
-            <Title1 value="PREPARING"/>
-            <Heating_Info_Title value="Extruder nozzle temperature"/>
-            <Heating_Info value="Extruder nozzle has to be heated whenever you change the filament. When it reaches the ideal temperature you may move to the next stage. "/>
-            <Info_Warning value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
-            <Title2 value="Filament Unload"/>
-            <LoadButton value="Load"/>
-            <UnloadButton value="Unload"/>
-            <Exchange_Info_Title value="Make sure the filament is correctly unloaded before proceeding."/>
-            <Exchange_Info_Title2 value="Unload filament"/>
-            <Exchange_Info value="To unload the filament, push the Unload button and pull the filament steadily.
-To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until BEETHEFIRST pulls it and extrudes a little filament."/>
-            <Exchange_Info2 value="Push the Unload button and wait for instructions."/>                    
-            <Exchange_Info3 value="Gently pull as filament unloads."/>         
-            <Title3 value="FILAMENT TYPE"/>
-            <Title4 value="Select type"/>
-            <Title5 value="FINAL STAGE"/>
-            <Title6 value="All done"/>
-            <Exchange_Info_Finish value="You can continue printing."/>
+            <Title1 value="VORBEREITUNG"/>
+            <Heating_Info_Title value="Extruderdüse Temperatur"/>
+            <Heating_Info value="Die Extruderdüse erwärmt, immer wann Sie das Filament zu wechseln möchten. Wenn es die ideale Temperatur erreicht, können Sie in die nächste Phase zu bewegen."/>
+            <Info_Warning value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Title2 value="Das Filament entladen"/>
+            <LoadButton value="Laden"/>
+            <UnloadButton value="Entladen"/>
+            <Exchange_Info_Title value="Sicherstellen, dass das Filament richtig entladen ist, bevor Sie fortfahren."/>
+            <Exchange_Info_Title2 value="Das Filament entladen"/>
+            <Exchange_Info value="Um das Filament zu entladen, drücken Sie der Entladen knopf und schieben Sie den Filament.
+Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Sie es bis die Ende erreicht. Klicken Sie dann auf der laden knopf, und drücken Sie den Filament ein wenig mehr, bis der Drucker ein wenig Filament extrudiert."/>
+            <Exchange_Info2 value="Drücken Sie der Entladen knopf, und warten Sie Anweisung."/>                    
+            <Exchange_Info3 value="Wann das Filament entladen ist, ziehen Sie es vorsichtig."/>         
+            <Title3 value="Filamenttyp"/>
+            <Title4 value="Typ auswählen"/>
+            <Title5 value="LETZTE PHASE"/>
+            <Title6 value="Fertig"/>
+            <Exchange_Info_Finish value="Sie können den Druckprozess fortzusetzen."/>
         </FilamentWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente Calibração --> 
         <CalibrationWizard>
-            <Title1 value="CALIBRATION - TABLE HEIGHT"/>
-            <TitleAlt value="CALIBRATION"/>
-            <AjustUpFine_button value="Fine tuning"/>
-            <AjustDownFine_button value="Fine tuning"/>
-            <AjustUp_button value="Up"/>
-            <AjustDown_button value="Down"/>
-            <Buttons_Info value="TABLE FINE TUNING"/>
-            <CalibrationOldValue value="Old calibration value:"/>
-            <CalibrationCurrentValue value="Current calibration value:"/>
-            <Info value="Make sure the extruder nozzle is clean before this operation. Put a piece of paper on the table beneath the nozzle. Fine tune the table up or down. You have correctly calibrated the table once the paper is neither stuck nor completely loose."/>
-            <Info_Warning value = "WARNING: If you have moved the table up too far against the nozzle, click 'Cancel' and restart this wizard."/> 
-            <AdvancedOptions_title value="ADVANCED OPTIONS"/>
-            <AdvancedOptions_info value="Use the following options to manually control the table position:"/>
-            <Slider_info value="Table movement (mm)"/>
-            <Title2 value="CALIBRATION - TABLE LEVEL"/>
-            <Adjust_left value="Adjust"/>
-            <LeftScrew_title value="Step 1"/>
-            <LeftScrew_Info value="Put a piece of paper on the table beneath the nozzle. Fine tune the table up or down by rotating the left screw.You have correctly calibrated the table once the paper is neither stuck nor completely loose."/>
-            <Title3 value="CALIBRATION - TABLE LEVEL"/>
-            <RightScrew_title value="Step 2"/>
-            <RightScrew_Info value="Put a piece of paper on the table beneath the nozzle. Fine tune the table up or down by rotating the right screw.You have correctly calibrated the table once the paper is neither stuck nor completely loose."/>
-            <Adjust_right value="Adjust"/>
-            <FinalStage_Title value="FINAL STAGE"/>
-            <Test_button value="Calibration test"/>
-            <Test_Info value="Click 'Calibration test' if you want to make sure the table has been correctly calibrated. The extruder nozzle will move along the table."/>
-            <Test_Info_Warning value="NOTE: Make sure you remove the piece of paper."/>
-            <Validation_Title value="VALIDATE CALIBRATION"/>
-            <Validation_Info value="Remove the table and validate your results.Compare the resulting pattern on the table to the pictures shown above. Choose the option corresponding to the one that looks most like your result. Before proceeding with either one, you must clean both the table and the extruder nozzle placing back the table at the end."/>
-            <Validation_Button1 value="Calibration successful"/>
-            <Validation_Button2 value="Repeat calibration"/>
+            <Title1 value="KALIBRIERUNG - TISCHHÖHE"/>
+            <TitleAlt value="KALIBRIERUNG"/>
+            <AjustUpFine_button value="Feinsteuerung"/>
+            <AjustDownFine_button value="Feinsteuerung"/>
+            <AjustUp_button value="Nach oben"/>
+            <AjustDown_button value="Nach unten"/>
+            <Buttons_Info value="TISCHFEISTEUERUNG"/>
+            <CalibrationOldValue value="Alte Kalibrierungswert:"/>
+            <CalibrationCurrentValue value="Aktuelle Kalibrierungswert"/>
+            <Info value="Sicherstellen, dass die Extruderdüse vor dieser Vorgang sauber ist. Setzen Sie ein Blatt Papier auf den Drucktisch unter die Düse. Feinsteuerung der Drucktisch nach oben oder unten. Sie haben den Drucktisch richtig  kalibriert, sobald das Papier weder stecken noch ganz locker ist."/>
+            <Info_Warning value = "WARNUNG: Wenn der Drucktisch weit von der Düse ist, klicken Sie auf 'Abbrechen' um den Assistent zu starten."/> 
+            <AdvancedOptions_title value="ERWEITERTE OPTIONEN"/>
+            <AdvancedOptions_info value="Benutzen Sie die folgenden Optionen, um die Tischposition manuell zu steuern:"/>
+            <Slider_info value="Tischbewegung (mm)"/>
+            <Title2 value="KALIBRIERUNG - Tischebene"/>
+            <Adjust_left value="Einstellen"/>
+            <LeftScrew_title value="Schritt 1"/>
+            <LeftScrew_Info value="Setzen Sie ein Blatt Papier auf den Drucktisch unter die Düse.Durch die Drehung des linken Schraube, können  Sie den Tisch nach oben oder nach feinsteurn. Sie haben den Drucktisch richtig  kalibriert, sobald das Papier weder stecken noch ganz locker ist."/>
+            <Title3 value="KALIBRIERUNG - Tischebene"/>
+            <RightScrew_title value="Schritt 2"/>
+            <RightScrew_Info value="Setzen Sie ein Blatt Papier auf den Drucktisch unter die Düse.Durch die Drehung des rechten Schraube, können  Sie den Tisch nach oben oder nach feinsteurn. Sie haben den Drucktisch richtig  kalibriert, sobald das Papier weder stecken noch ganz locker ist."/>
+            <Adjust_right value="Einstellen"/>
+            <FinalStage_Title value="LETZTE PHASE"/>
+            <Test_button value="Kalibrierungstest"/>
+            <Test_Info value="Klicken Sie auf 'Kalibrierungstest', wenn Sie sicherstellen wollen, dass der Tisch korrekt kalibriert ist. Die Extruderdüse wird eine vordefinierte Strecke herum den Tisch machen."/>
+            <Test_Info_Warning value="HINWEIS: Achten Sie darauf, das Papier zu entfernen."/>
+            <Validation_Title value="KALIBRIERUNG ÜBERPRÜFEN"/>
+            <Validation_Info value="Entfernen Sie der Drucktisch und validieren Sie die Ergebnisse. Vergleichen Sie das Ergebnis mit der bildern oberen gezeigte. Wählen Sie die Option, die am meisten wie Ihr Ergebnis aussieht. Bevor weitergehen, müssen Sie überprüfen ob der Drucktisch und die Extruderdüse sauber sind. "/>
+            <Validation_Button1 value="Kalibrierung erfolgreich"/>
+            <Validation_Button2 value="Kalibrierung wiederholen"/>
         </CalibrationWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Limpeza do Bico -->       
         <ExtruderCleanWizard>
-            <Title1 value="CLEAN EXTRUDER"/>
-            <Title2 value="Warming up... Please wait"/>
-            <Info value="This operation allows you to clean the extruder. Use tweezers to remove any remains from the extruder nozzle."/>
-            <Info_Warning value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+            <Title1 value="EXTRUDER SAUBER"/>
+            <Title2 value="Erhitzen..Bitte warten"/>
+            <Info value="Dieser Vorgang ermöglicht, den Extruder sauber. Verwenden einer Pinzette, um alle Filament Überreste aus der Extruderdüse zu entfernen."/>
+            <Info_Warning value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
         </ExtruderCleanWizard>
 
 
-<!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
+        <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de manutenção de Nozzle -->       
         <ExtruderMaintenance>
 
-            <Title1 value="Extruder Maintenance"/>
-            <HeatingMessage1 value="Heating up.."/>
-            <Info1a value="This operation allows you to clean the extruder."/>
-            <Info1b value = "Please use the tools available in your maintenance kit and make sure you have watched the instructional material before continuing."/>
-            <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+            <Title1 value="Extruder Wartung"/>
+            <HeatingMessage1 value="Erhitzen..."/>
+            <Info1a value="Dieser Vorgang ermöglicht, den Extruder sauber machen."/>
+            <Info1b value = "Bitte nutzen Sie die Werkzeuge verfügbar im Wartungs-Kit und stellen Sie sicher, das der Lehrmaterial beobachtet haben, bevor Sie fortfahren."/>
+            <Info_Warning1 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
 
-            <Title2 value="Extruder Maintenance"/>
-            <HeatingMessage2 value="Heating..."/>
-            <Info2a value="Use the tool included in your maintenance kit to remove the screws on the top cover of your BEETHEFIRST. Remove the cover by gently pulling upwards."/>
-            <Info2b value = "Make sure to place screws in a secure location."/>
-            <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+            <Title2 value="Extruder Wartung"/>
+            <HeatingMessage2 value="Erhitzen..."/>
+            <Info2a value="Benutzen Sie das Sechskantschüssel, um die Schrauben an der oberen Abdeckung des Druckers zu entfernen. Entfernen Sie die Abdeckung nach oben vorsichtig."/>
+            <Info2b value = "Achten Sie darauf, die Schrauben an einem sicheren Ort legen."/>
+            <Info_Warning2 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
 
-            <Title3 value="Extruder Maintenance"/>
-            <HeatingMessage3 value="Heating..."/>
-            <Info3a value="Using the same tool as before, remove the screw that attachs the cover plate to your BEETHEFIRST. Afterwards slide the cover plate in the direction indicated OPEN."/>
-            <Info3b value = "Remember to place the screws in a save location."/>
-            <Info_Warning3 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+            <Title3 value="Extruder Wartung"/>
+            <HeatingMessage3 value="Erhitzen..."/>
+            <Info3a value="Benutzen Sie das gleiche Werkzeug von dem letzten Schritt, um die Schrauben von die Griffstruktur zu entfernen. Dann bewegen Sie die Griffstruktur in Richtung'OPEN'."/>
+            <Info3b value = "Achten Sie darauf, die Schrauben an einem sicheren Ort legen."/>
+            <Info_Warning3 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
 
-            <Title4 value="Extruder Maintenance"/>
-            <HeatingMessage4 value="Heating..."/>
-            <Info4a value="Your BEETHEFIRST must finish heating before continuing this operation."/>
+            <Title4 value="Extruder Wartung"/>
+            <HeatingMessage4 value="Erhitzen..."/>
+            <Info4a value="Bevor diesen Vorgang weiterhin, muss der Drucker Erhitzen."/>
             <Info4b value = " "/>
-            <Info_Warning4 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
+            <Info_Warning4 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
 
-            <Title5 value="Extruder Maintenance"/>
-            <HeatingMessage5 value="Heating..."/>
-            <Info5a value = "Make sure to unload any fillament still loaded in your BEETHEFIRST. Apply the cleaning tool to remove any leftover material that might have lodged inside the extruder."/>
-            <Info5b value = "After cleaning the extruder, press load and make sure the fillament is extruding normally."/>
-            <Info_Warning5 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
+            <Title5 value="Extruder Wartung"/>
+            <HeatingMessage5 value="Erhitzen..."/>
+            <Info5a value = "Wenn das Filament noch in der Drucker ist, entladen Sie es. Bitte benutzen Sie das Werkzeug an der Bild gezeigt, um der Extruder sauber zu machen."/>
+            <Info5b value = "Nach der Säuberung des Extruders, drücken Sie die Option Laden und sicherzustellen, dass das Filament normalerweise extrudiert ist."/>
+            <Info_Warning5 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
 
-            <Title6 value="Extruder Maintenance"/>
-            <HeatingMessage6 value="Heating..."/>
+            <Title6 value="Extruder Wartung"/>
+            <HeatingMessage6 value="Erhitzen..."/>
             <Info6a value = " "/>
             <Info6b value = " "/>
-            <Info_Warning6 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
-
+            <Info_Warning6 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
 
         </ExtruderMaintenance>
 
         
         <ExtruderSwitch>
 
-            <Title1 value="Extruder Switch"/>
-            <HeatingMessage1 value="Heating..."/>
-            <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
-            <Info1b value = ""/>
-            <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
+            <Title1 value="Extruderdüse wechseln"/>
+            <HeatingMessage1 value="Erhitzen..."/>
+            <Info1a value="Benutzen Sie diesen Vorgang, wenn Sie die Extruderdüse ersetzen möchten. Dies beinhaltet die Handhabung eines heißen Extruder, benötigen Sie: eine hitzebeständige Schale oder Oberfläche, eine Ersatzdüse und das Werkzeug von Ihrem Wartungs-Kit."/>
+            <Info1b value = " "/>
+            <Info_Warning1 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
 
-            <Title2 value="Extruder Switch"/>
-            <HeatingMessage2 value="Heating..."/>
-            <Info2a value="Your BEETHEFIRST must finish heating before continuing this operation."/>
-            <Info2b value ="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
-            <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
+            <Title2 value="Extruderdüse wechseln"/>
+            <HeatingMessage2 value="Erhitzen..."/>
+            <Info2a value="Bevor diese Operation weiterhin, muss der Drucker erhitzen."/>
+            <Info2b value ="Der Extruder ist heiß, wenn diese Statusleiste voll ist. Lassen Sie den Drucker für eine kurze Zeit, um PLA innen zu schmelzen."/>
+            <Info_Warning2 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
             
-            <Title3 value="Extruder Switch"/>
-            <HeatingMessage3 value="Heating..."/>
-            <Info3a value="Use the nozzle tool to unscrew the nozzle and place it on a heat-resistant surface until it has cooled down."/>
-            <Info3b value="Screw in the new nozzle, stop tightening as soon as you feel hard resistance. You can now load some fresh filament and see the result of the new extruder. The filament will be thick and even."/>
-            <Info_Warning3 value = "WARNING: BE CAREFULL NOT TO TOUCH THE HOT EXTRUDER."/>
+            <Title3 value="Extruderdüse wechseln"/>
+            <HeatingMessage3 value="Erhitzen..."/>
+            <Info3a value="Benutzen Sie das Düsenwerkzeug, um die Düse abszuchrauben und stellen es auf einer hitzebeständigen Oberfläche bis er abgekühlt ist."/>
+            <Info3b value="Schrauben Sie in die neue Düse und stoppen sobald Sie harte Widerstand spüren. Jetzt können Sie das Filament laden und das Ergebnis sehen. Das Filament wird dick und eben sein."/>
+            <Info_Warning3 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
  
-            <Title4 value="Extruder Switch"/>
+            <Title4 value="Extruderdüse wechseln"/>
         </ExtruderSwitch>
 
 
         <!-- A próxima secção XML contém o texto a ser apresentado no 1º ecrã do Guia Rápido --> 
         <QuickGuideWizard>
-            <Title1 value="Welcome"/>
-            <Info value="This Quick Guide will take you through all the steps necessary to keep your printer properly configured. You can access any one of the following functions from the 'Maintenance' menu later."/>
-            <Jump value="My BEETHEFIRST has been configured. Take me to the main screen."/>
+            <Title1 value="Willkommen"/>
+            <Info value="Diese Kurzanleitung führt Sie durch alle notwendigen Schritte, um den Drucker richtig zu konfigurieren. Später können Sie eine der folgenden Funktionen aus dem 'Wartungsmenü' einsteigen."/>
+            <Jump value="Der Drucker ist konfiguriert. Zurück zum Hauptbildschirm."/>
         </QuickGuideWizard>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de Manutenção --> 
         <MaintenancePanel>
-            <Title value="Maintenance"/>
-            <Filament_Title value="Filament change"/>
-            <Filament_Type value="Filament type: "/>
-            <Filament_Intro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
-            <FilamentChange_button value="Change filament now"/>
-            <Filament_Info value="You have x grams of filament (estimated)"/>  
-            <Filament_Info_None value="Remaining filament may not be enough for the next print session."/>
-            <Calibration_Title value="Calibrate"/>
-            <Calibration_Intro value="This operation is needed to ensure the quality of your 3D prints."/>
-            <CalibrationChange_button value="Calibrate now"/>
-            <Calibration_Info value="x prints have been made since the last calibration."/>
-            <ExtruderClean_Title value="Clean extruder nozzle"/>
-            <ExtruderClean_button value="Clean nozzle now"/>
-            <ExtruderClean_Intro value="This operation is important to avoid getting pieces of filament leftovers on what you are printing."/>
+            <Title value="Wartung"/>
+            <Filament_Title value="Filament wechseln"/>
+            <Filament_Type value="Filamenttyp: "/>
+            <Filament_Intro value="Dieser Vorgang ist erforderlich, wenn mit einer anderen Farbe gedruckt werden soll oder wenn das Filament in der Spule nicht ausreicht."/>
+            <FilamentChange_button value="Filament jetzt wechseln"/>
+            <Filament_Info value="Sie haben x Gramm Filament (geschätzt)"/>  
+            <Filament_Info_None value="Verbleibende Filament kann nicht genug für den nächsten Druck sein."/>
+            <Calibration_Title value="Kalibrierung"/>
+            <Calibration_Intro value="Dieser Vorgang ist nötig, um die Qualität der 3D-Drucke zu gewährleisten."/>
+            <CalibrationChange_button value="Jetzt kalibrieren"/>
+            <Calibration_Info value="x Drucke seit der letzten Kalibrierung."/>
+            <ExtruderClean_Title value="Sauber Extruderdüse"/>
+            <ExtruderClean_button value="Extruderdüse jetzt sauber"/>
+            <ExtruderClean_Intro value="Dieser Vorgang ist wichtig um Teile der Filaments auf die drücken zu vermeiden."/>
 
-            <ExtruderMaintenance_Title value="Extruder Maintenance"/>
-            <ExtruderMaintenance_button value="Start extruder maintenance"/>
-            <ExtruderMaintenance_Intro value="This operation enables you to unclog the nozzle  using the Maintenance Kit."/>
+            <ExtruderMaintenance_Title value="Extruder Wartung"/>
+            <ExtruderMaintenance_button value="Extruder Wartung beginnen"/>
+            <ExtruderMaintenance_Intro value="Dieser Vorgang ist nötig, um die Extruderdüse zu reinigen. Für diesem Vorgang müssen Sie das Wartungs-Kit benutzen."/>
 
-            <NozzleSwitch_Title value="Replace nozzle "/>
-            <NozzleSwitch_button value="Replace nozzle  now"/>
-            <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
+            <NozzleSwitch_Title value="Extruderdüse wechseln"/>
+            <NozzleSwitch_button value="Extruderdüse jetzt wechseln"/>
+            <NozzleSwitch_Intro value="Dieser Vorgang ist nötig, um die Extruderdüse zu wechseln. Für diesem Vorgang müssen Sie das Wartungs-Kit benutzen."/>
 
 
 
@@ -631,84 +636,84 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
-            <Models_tooltip value="MODELS"/>
-            <Maintenance_tooltip value="MAINTENANCE"/>
-            <QuickWizard_tooltip value="QUICK GUIDE"/>
-            <Open_tooltip value="Open the model you want to print"/>
-            <Print_tooltip value="Press here to print the model"/>
-            <FilamentWizard_tooltip value="This will launch the Filament Wizard"/>
-            <QuickWizard_tooltip value="This will launch the QuickStart Wizard"/>
-            <ControlWizard_tooltip value="BEETHEFIRST manual controls"/>
-            <BVC_tooltip value="Press here to be redirected to our site"/>
-            <DragRotate_tooltip value="Drag to rotate"/>
-            <MouseWheel_tooltip value="Mouse wheel to zoom"/>
-            <LeftDrag_tooltip value="Left drag to move object"/>
-            <RightDrag_tooltip value="Right drag to rotate view"/>
-            <Move_tooltip value="Move"/>
-            <Rotate_tooltip value="Rotate"/>
+            <Models_tooltip value="MODELLE"/>
+            <Maintenance_tooltip value="WARTUNG"/>
+            <QuickWizard_tooltip value="KURZANLEITUNG"/>
+            <Open_tooltip value="Öffnen Sie das Modell, dass Sie drucken möchten"/>
+            <Print_tooltip value="Drücken Sie hier, um das Modell zu drucken"/>
+            <FilamentWizard_tooltip value="Dies wird das Filament-Assistent starten"/>
+            <QuickWizard_tooltip value="Dies wird die KURZANLEITUNG starten"/>
+            <ControlWizard_tooltip value="Manuellen Kontrollen des Drucker"/>
+            <BVC_tooltip value="Klicken Sie hier um unserer Seite zu besuchen"/>
+            <DragRotate_tooltip value="Ziehen Sie es zu drehen"/>
+            <MouseWheel_tooltip value="Mausrad zu zoomen"/>
+            <LeftDrag_tooltip value="Links ziehen, um Objekt zu bewegen"/>
+            <RightDrag_tooltip value="Rechts ziehen, um Ansicht zu drehen"/>
+            <Move_tooltip value="Verschieben"/>
+            <Rotate_tooltip value="Drehen"/>
             <LayFlat_tooltip value="Lay flat"/>
-            <RotateZ_tooltip value="Rotate around "/>
-            <Mirror_tooltip value="Mirror"/>
-            <Scale_tooltip value="Scale"/>
+            <RotateZ_tooltip value="Drehen"/>
+            <Mirror_tooltip value="Spiegel"/>
+            <Scale_tooltip value="Skalieren"/>
         </ToolTips>
 
         <!-- A próxima secção XML contém o texto a ser apresentado na caixa de Mensagens de Estado -->        
         <StatusMessages>
             <!-- Os próximos textos irão aparecer após ser clicado o botão de Imprimir -->
-            <MessageCollision value="Attention, some models are overlapped."/>
-            <MessageNotInBed value="Attention, some models are not on the platform."/>
-            <MessageMaxVolume value="Attention, some models exceed the maximum printing volume."/>
-            <MessageOutOfBounds value="Attention, some models are out of the printing area."/>
+            <MessageCollision value="Bitte beachten Sie, dass einige Modelle überlappen sind."/>
+            <MessageNotInBed value="Bitte beachten Sie, dass einige Modelle nicht auf der Plattform sind."/>
+            <MessageMaxVolume value="Bitte beachten Sie, einige Modelle übertreffen die maximale Druckfläche."/>
+            <MessageOutOfBounds value="Bitte beachten Sie, dass einige Modelle hinaus der Druckfläche sind."/>
 
             <!-- Os próximos textos irão aparecer após algumas acções -->
-            <MessageImportModel value="Model successfully imported."/>
-            <MessageSaveScene value="Scene successfully saved."/>
-            <MessageNotSaveScene value="Scene not saved. If you didn't cancel please check your user write permissions."/>
-            <MessageLocadScene value="Scene successfully opened."/>
-            <MessageNotLocadScene value="Unable to open work area. Check read permissions or if file exists."/>
-            <MessageFirstTime value="Please view 'Quick Guide' all the way through before continuing."/>
-            <MessageModelNotPicked value="Select a model."/>
-            <GCodeGeneration value="GCode not generated. Check your execute permissions."/>
-            <PrinterDisconnected value="Your BEETHEFIRST is disconnected. Please make sure it is plugged in and switched on. "/>
-            <PrinterPrinting value="Your BEETHEFIRST is printing. Please make sure it is available for a new print. "/>
-            <ErrorUpdating value="Sorry about this! Please restart BEESOFT to continue."/>
-            <FirmwareOutDateVersion value="To complete the update, please switch your BEETHEFIRST off. Restart BEESOFT then switch the printer on."/>
-            <FirmwareError value="An error has occured. Please click OK to restart your software and BEETHEFIRST." />
-            <MeshError value="Imported model has errors. Try to fix them or import another model."/>
-            <ReinstallError value="Re-install BEESOFT in order to install all proper files that are missing."/>
-            <NoModelError value="There are no models on the work area. Please load at least one model."/>
-	</StatusMessages>
+            <MessageImportModel value="Modell erfolgreich importiert."/>
+            <MessageSaveScene value="Arbeitsbereich erfolgreich gespeichert."/>
+            <MessageNotSaveScene value="Arbeitsbereich ist nicht gespeichert. Bitte prüfen Sie Ihre Benutzerberechtigungen."/>
+            <MessageLocadScene value="Arbeitsbereich öffnen."/>
+            <MessageNotLocadScene value="Es ist nicht möglich das Arbeitsbereich öffnen. Überprüfen Sie Ihre Berechtigungen und/oder ob Datei existiert..."/>
+            <MessageFirstTime value="Bitte lesen Sie der Kurzanleitung sorgfältig bevor Sie fortfahren."/>
+            <MessageModelNotPicked value="Modell auswählen."/>
+            <GCodeGeneration value="GCode wurde nicht erzeugt. Überprüfen Sie Ihre Berechtigungen."/>
+            <PrinterDisconnected value="Der Drucker ist nicht angeschlossen. Bitte stellen Sie sicher, dass es eingesteckt und eingeschaltet ist. "/>
+            <PrinterPrinting value="Der Drucker druckt schon."/>
+            <ErrorUpdating value="Wir bedauern, dass das passiert ist! Bitte neu starten Sie BEESOFT zu forfahren."/>
+            <FirmwareOutDateVersion value="Um das Update abzuschließen, schalten Sie den Drucker aus. Neu starten BEESOFT und dann den Drucker einzuschalten."/>
+            <FirmwareError value="Ein Fehler ist aufgetreten. Bitte klicken Sie OK, um Ihre Software und der Drucker neu zu starten." />
+            <MeshError value="Die importierte Modell hat Fehler. Versuchen die Fehler zu korrigieren oder importieren Sie ein neues Modell."/>
+            <ReinstallError value="Installieren Sie nochmal BEESOFT, um die fehlen Dateien zu installieren."/>
+            <NoModelError value="Es gibt keine Modelle auf dem Arbeitsbereich. Bitte importieren Sie am mindestens einen Modell."/>
+            <UnknownColor value="Die Farbe des Filaments ist unbekannt! Sind Sie sicher, dass eine Farbe richtig gewählt haben?"/>
+        </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
         <Tour>
-            <Tour1_Title value="Almost there..."/>
-            <Tour1_Text value="To start printing your models, follow the next steps."/>
-            <Tour1_Jump value="Skip Tutorial."/>
-            <Tour2 value="Add a model to the work area. You can import a model from the '3DModels' folder in BEESOFT or you can import or drag one of your own files."/>
-            <Tour3 value="Use 'Move', 'Rotate', 'Scale' or 'Mirror' to set the model up exactly how you want it to be printed."/>
-            <Tour4 value="Once you are satisfied with your work area, you can start printing."/>
-            <Tour5 value="Important messages regarding BEETHEFIRST will appear here."/>
-            <Tour6 value="BEETHEFIRST maintenance operations can be found here - they are essential for printing quality."/>
-            <DefaultMessage value="Welcome!"/>
-            <EndMessage value="All Done"/>
-            <TourFinishMessage value="You are ready to start printing! Make your creativity real!"/>
+            <Tour1_Title value="Fast..."/>
+            <Tour1_Text value="Um Modelle zu drucken, folgen Sie die nächste Schritte."/>
+            <Tour1_Jump value="Tutorial überspringen."/>
+            <Tour2 value="Fügen Sie ein Modell um den Arbeitsbereich. Sie können ein Modell aus Ordner '3D-Modelle' in BEESOFT importieren, importieren oder ziehen Sie ein Modell zum Hauptbildschirm von BEESOFT."/>
+            <Tour3 value="Benutzen Sie 'Verschieben','Drehen','Skalieren' oder 'Spiegel', um das Modell exakt zu platzieren, wie es gedruckt werden soll."/>
+            <Tour4 value="Wenn Sie mit Ihren Arbeitsbereich zufrieden sind, können Sie Drucken beginnen."/>
+            <Tour5 value="Wichtige Meldungen an den Drucker bezogen, werden hier angezeigt."/>
+            <Tour6 value="Druckerwartung Operationen finden Sie hier - dies ist wichtig und wird mit Druckqualität zugeordnet."/>
+            <DefaultMessage value="Willkommen!"/>
+            <EndMessage value="Alles fertig"/>
+            <TourFinishMessage value="Sie sind  bereit, das Drucken zu starten! Lassen Sie Ihrer Kreativität freien Laufen!"/>
         </Tour>
 
         <!-- A próxima secção XML contém o texto para a janela das Preferências -->
         <Preferences>
-            <Preferences_title value="Preferences"/>
-            <Language value="Language"/>
-            <Measures value="Measures"/>
-            <LockHeight value="Lock vertical axis"/>
-            <LockHeight_info value="Models can only be moved parallel to the platform."/>
-            <Autonomy value="Autonomy mode"/>
-            <Autonomy_info value="Allows BEETHEFIRST to print without being connected to the computer."/>
+            <Preferences_title value="Einstellungen"/>
+            <Language value="Sprache"/>
+            <LanguageWarning value="Wenn die Optionen geändert werden, wird der Effekt nur bemerkt wenn BEESOFT neu gestartet wird." />
+            <Measures value="Maßnahmen"/>
+            <LockHeight value="Vertikale Achse sperren"/>
+            <LockHeight_info value="Modelle können nur parallel zu der Plattform bewegt werden."/>
         </Preferences>
         
         <!-- A próxima secção XML contém o texto para a janela de Help -->
         <Help>
             <FAQ value="FAQ"/>
-            <Troubleshooting value="Troubleshooting"/>
+            <Troubleshooting value="Fehlerbehebung"/>
             <Support value="Support"/>
             <FAQ_Link_PT value="https://www.beeverycreative.com/pt/PF/"/>
             <Troubleshooting_Link_PT value="https://www.beeverycreative.com/pt/resolucao-de-problemas/"/>
@@ -720,32 +725,33 @@ To load the filament insert it in the inlet hole and push it until it reaches th
         
         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
         <Updates>
-            <AvailableStable value="There are stable software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
-            <AvailableBeta value="There are beta software updates available for your BEETHEFIRST. To properly install the new version, you will need to close BEESOFT."/>
-            <NotAvailable value="There are no software updates available."/>
-            <NoConnection value="No Internet access."/>
-            <NoAccess value="Service Unavailable."/>
+            <AvailableStable value="Es gibt Software-Updates für Ihren Drucker zur Verfügung. Um richtig die neue Version zu installieren, müssen Sie die BEESOFT beenden."/>
+            <AvailableBeta value="Es gibt Software-Updates (BETA) für Ihren Drucker zur Verfügung. Um richtig die neue Version zu installieren, müssen Sie die BEESOFT beenden."/>
+            <NotAvailable value="Keine Software-Updates zur Verfügung."/>
+            <NoConnection value="Es gibt keine Internetverbindung."/>
+            <NoAccess value="Service ist nicht verfügbar."/>
         </Updates>
 
         <!-- A próxima secção XML contém o texto a apresentar na Biblioteca de Modelos -->
         <Gallery>
-            <SearchModels_text_bar value="Search for models..."/>
-            <EraseScene value="Delete work area"/>
-            <EraseModel value="Delete model"/>
-            <ModelsOnline value="Online models"/>
-            <Model_Import value="Import model"/>
-            <Model_Rename value="Rename"/>
-            <ModelProperties_title value="Properties"/>
+            <SearchModels_text_bar value="Suche nach Modellen..."/>
+            <EraseScene value="Arbeitsbereich löschen"/>
+            <EraseModel value="Modell löschen"/>
+            <ModelsOnline value="Online Modell"/>
+            <Model_Import value="Modelle importieren"/>
+            <Model_Rename value="Umbenennen"/>
+            <ModelProperties_title value="Eigenschaften"/>
             <Model_Name value="Name"/>
-            <Model_Description value="Description"/>
-            <ModelCategory_title value="Categories"/>
-            <Scene value="Scene"/>
-            <Models value="Models"/>
-            <All value="All"/>
+            <Model_Description value="Beschreibung"/>
+            <ModelCategory_title value="Kategorien"/>
+            <Scene value="Arbeitsbereich"/>
+            <Models value="Modelle"/>
+            <All value="Alle"/>
         </Gallery>
         
         <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
         <CoilColors>
+            <a000 value="A000 - No filament" />
             <!-- Filamentos da Filkemp -->
             <a001 value="A001 - Transparent"/>
             <a002 value="A002 - White"/>
@@ -766,7 +772,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <a025 value="A025 - Yellow"/>
             <a026 value="A026 - Blue"/>
             <a027 value="A027 - Olive Green"/>
-            <a028 value="A028 - Fuschia"/>
+            <a028 value="A028 - Fuchsia"/>
             <a029 value="A029 - Silver"/>
             <a030 value="A030 - Turquoise"/>
             <a031 value="A031 - Neon Green"/>

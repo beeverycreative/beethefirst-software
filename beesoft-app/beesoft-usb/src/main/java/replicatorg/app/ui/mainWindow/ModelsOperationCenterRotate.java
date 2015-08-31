@@ -20,12 +20,11 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class ModelsOperationCenterRotate extends javax.swing.JPanel {
 
-    private boolean check_pressed, fiveDegrees_pressed;
+    private boolean fiveDegrees_pressed;
     private double cambioFactor = 0.0174532925;
 
     public ModelsOperationCenterRotate() {
         initComponents();
-        this.check_pressed = false;
         this.fiveDegrees_pressed = Base.getMainWindow().getCanvas().getControlTool(2).getAdvOption();
         if (fiveDegrees_pressed) {
             fiveDegrees_pressed = false; //trigger value for handler to work
@@ -44,7 +43,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jLabel3.setFont(GraphicDesignComponents.getSSProLight("33"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel10.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel11.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -67,7 +65,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
         jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
         jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
-        jLabel7.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
         jLabel9.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " 90 " + Languager.getTagValue(1, "MainWindowButtons", "Degrees"));
         jLabel10.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " -90 " + Languager.getTagValue(1, "MainWindowButtons", "Degrees"));
         jLabel11.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " 90 " + " " + Languager.getTagValue(1, "MainWindowButtons", "Axis2"));
@@ -142,9 +139,7 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(254, 254, 254));
         setMaximumSize(new java.awt.Dimension(190, 375));
@@ -444,7 +439,7 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE))
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(4, 4, 4)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -459,23 +454,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                     .addComponent(jLabel23))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jLabel7.setFont(new java.awt.Font("Ubuntu", 0, 13)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(35, 31, 32));
-        jLabel7.setText("More Options");
-        jLabel7.setName("moreOptionsTitle"); // NOI18N
-        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel7MousePressed(evt);
-            }
-        });
-
-        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/c_checked.png"))); // NOI18N
-        jLabel21.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel21MousePressed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -494,16 +472,10 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel3)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel6)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel18)
-                                            .addGap(0, 0, 0)
-                                            .addComponent(jLabel21)))
-                                    .addGap(51, 51, 51)
-                                    .addComponent(jLabel7)))
-                            .addGap(17, 17, 17))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel18)))
+                            .addGap(68, 68, 68))))
                 .addContainerGap(15, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -526,25 +498,18 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(jLabel6)
-                        .addGap(0, 0, 0)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel18)
-                            .addComponent(jLabel21)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel7)))
                 .addGap(12, 12, 12)
+                .addComponent(jLabel6)
+                .addGap(0, 0, 0)
+                .addComponent(jLabel18)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(240, 240, 240)
                     .addComponent(jLabel17)
-                    .addContainerGap(295, Short.MAX_VALUE)))
+                    .addContainerGap(264, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -705,10 +670,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jLabel2MousePressed
 
-    private void jLabel21MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MousePressed
-        toggleOptions();
-    }//GEN-LAST:event_jLabel21MousePressed
-
     private void jLabel22MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel22MousePressed
         handleAdvancedOption();
     }//GEN-LAST:event_jLabel22MousePressed
@@ -725,9 +686,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         rotateLeft();
     }//GEN-LAST:event_jLabel10MousePressed
 
-    private void jLabel7MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MousePressed
-        toggleOptions();
-    }//GEN-LAST:event_jLabel7MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -742,14 +700,12 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -775,18 +731,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             }
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
-        }
-    }
-
-    private void toggleOptions() {
-        if (check_pressed) {
-            jPanel2.setVisible(false);
-            check_pressed = false;
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_unchecked.png")));
-        } else {
-            jPanel2.setVisible(true);
-            check_pressed = true;
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "c_checked.png")));
         }
     }
 }

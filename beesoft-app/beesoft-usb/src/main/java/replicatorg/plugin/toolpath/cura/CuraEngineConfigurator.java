@@ -206,11 +206,14 @@ public class CuraEngineConfigurator {
         result.put("fix_horrible_union_all_type_b", "False");
         result.put("fix_horrible_use_open_bits", "False");
         result.put("fix_horrible_extensive_stitching", "False");
-        result.put("plugin_config", "");
         result.put("object_center_x", "-1");
         result.put("object_center_y", "-1");
 
         return result;
+    }
+    
+    public String getValue(String key) {
+        return curaIni.get(key);
     }
 
     /**
@@ -222,7 +225,7 @@ public class CuraEngineConfigurator {
     public int readIni(File curaIniFile) {
         String line = null;
         int error = 0;
-
+        
         try {
             // FileReader reads text files in the default encoding.
             FileReader fileReader = new FileReader(curaIniFile);

@@ -2,8 +2,6 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -38,7 +36,7 @@ public class Maintenance extends BaseDialog {
         setTextLanguage();
         centerOnScreen();
         ProperDefault.put("maintenance", "1");
-        enableDrag();
+        //enableDrag();
         disableMessageDisplay();
         evaluateInitialConditions();
         Base.maintenanceOpened = true;
@@ -142,20 +140,6 @@ public class Maintenance extends BaseDialog {
             bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
             bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
         }
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
     }
 
     private void disableMessageDisplay() {

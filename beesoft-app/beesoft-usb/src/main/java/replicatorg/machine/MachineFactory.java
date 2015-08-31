@@ -57,12 +57,13 @@ public class MachineFactory {
 	/**
 	 * If possible, create a machine controller for the specified device.
 	 * @param name The name of the machine descriptor in one of the machine XML files.
+     * @param callbackHandler
 	 * @return the machine controller, or null if no descriptor with the given name could be found.
 	 */
 	public static Machine load(String name, MachineCallbackHandler callbackHandler) {
 		Node machineNode = getMachineNode(name);
 		if (machineNode == null) { 
-			Base.logger.log(Level.SEVERE, "Could not load machine '" + name + "' no machineNode found");
+			Base.logger.log(Level.SEVERE, "Could not load machine ''{0}'' no machineNode found", name);
 			return null; 
 		}
 		return new Machine(machineNode, callbackHandler);
@@ -124,7 +125,7 @@ public class MachineFactory {
 			NodeList names = e.getElementsByTagName("name");
 			if (names != null && names.getLength() > 0) {
 				String mname = names.item(0).getTextContent().trim();
-				Base.logger.log(Level.FINE,"Adding machine "+mname+" for node "+e.toString());
+				Base.logger.log(Level.FINE, "Adding machine {0} for node {1}", new Object[]{mname, e.toString()});
 				map.put(mname,e);
 			}
 		}
@@ -156,7 +157,7 @@ public class MachineFactory {
 			}
 			File f = new File(dir,filename);
 			if (f.exists() && f.isFile()) {
-				Base.logger.log(Level.FINE,"Scanning file "+filename);
+				Base.logger.log(Level.FINE, "Scanning file {0}", filename);
 				try {
 					Document d = db.parse(f);
 					addMachinesForDocument(d,machineMap);
@@ -181,22 +182,22 @@ public class MachineFactory {
 	 */
 	private static MachineMap loadMachinesConfig() {
 		// Create the machine configuration map
-		MachineMap machineMap = new MachineMap();
+		MachineMap mchnMap = new MachineMap();
 		try { // Catch unlikely parser configuration exception.
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			File f = Base.getApplicationFile("machines");
 			if (f.exists() && f.isDirectory()) {
-				addMachinesForDirectory(f, machineMap, db);
+				addMachinesForDirectory(f, mchnMap, db);
 			}
 			f = Base.getUserFile("machines", false);
 			if (f.exists() && f.isDirectory()) {
-				addMachinesForDirectory(f, machineMap, db);
+				addMachinesForDirectory(f, mchnMap, db);
 			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-		return machineMap;
+		return mchnMap;
 	}
 
 }

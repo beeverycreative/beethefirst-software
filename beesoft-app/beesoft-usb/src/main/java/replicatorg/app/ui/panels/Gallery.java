@@ -2,8 +2,6 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileFilter;
@@ -103,27 +101,13 @@ public class Gallery extends BaseDialog {
         jLabel5.setText(Languager.getTagValue(1, "Gallery", "ModelCategory_title"));
         jLabel6.setText(Languager.getTagValue(1, "Gallery", "ModelProperties_title").toUpperCase());
         jLabel7.setText(Languager.getTagValue(1, "Gallery", "Model_Name"));
-        jLabel8.setText(Languager.getTagValue(1, "Gallery", "Model_Description"));
+        jLabel8.setText(Languager.getTagValue(1, "Gallery", "Model_Notes"));
         jLabel9.setText(Languager.getTagValue(1, "Gallery", "EraseModel"));
         jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line9"));
         jLabel27.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         jLabel29.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line8"));
         jTextField1.setText(Languager.getTagValue(1, "Gallery", "SearchModels_text_bar"));
 
-    }
-
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
     }
 
     private void setModelsNameFont() {

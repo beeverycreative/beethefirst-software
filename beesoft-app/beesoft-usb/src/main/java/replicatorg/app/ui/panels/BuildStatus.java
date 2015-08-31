@@ -43,20 +43,6 @@ public class BuildStatus extends BaseDialog {
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
     }
 
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
-    }
-
     public void setCompletionMessage(String message) {
         String msgFormatted = "<html>" + Languager.getTagValue(1, "Print", "Print_BuildFinished<br>")
                 + Languager.getTagValue(1, "Print", "Print_Completion<html> ") + message;

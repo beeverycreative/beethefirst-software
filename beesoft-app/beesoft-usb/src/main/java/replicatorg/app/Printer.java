@@ -3,15 +3,22 @@ package replicatorg.app;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import replicatorg.app.ui.MainWindow;
@@ -33,13 +40,13 @@ import replicatorg.util.Tuple;
  */
 public class Printer {
 
-    private MainWindow mainWindow;
-    private PrintBed bed;
+    private final MainWindow mainWindow;
+    private final PrintBed bed;
     private File gcode;
     private ArrayList<String> params;
     private ArrayList<CuraGenerator.CuraEngineOption> options;
     private File stl;
-    private CuraGenerator generator;
+    private final CuraGenerator generator;
     private boolean isAutonomous;
 
     public Printer(ArrayList<String> printParams) {
@@ -67,7 +74,7 @@ public class Printer {
         // params.get(3) - Raft:T/F
         // params.get(4) - Support:T/F
 
-        String profile = "";
+        String profile;
 
         profile = parseProfile(params);
         String ini_file = generator.preparePrint(profile);
@@ -75,11 +82,12 @@ public class Printer {
         generator.readINI();
         options = parseParameters(params);
 
+        appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
+        replaceLineInFile(gcode.getPath(), "M31 A0 L0");
 
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
-
         if (gcode != null && gcode.canRead() && gcode.length() != 0) {
             Base.writeLog("GCode generated");
 //            parseGCodeToSave();
@@ -96,6 +104,89 @@ public class Printer {
         return PrintEstimator.getEstimatedTime();
     }
 
+    private void replaceLineInFile(String pathString, String textToReplace) {
+
+        String m31String;
+        File fileToRead = new File(pathString);
+        File fileToWrite = new File(pathString + "_temp");
+
+        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes() 
+                + " L" + getGCodeNLines();
+
+        try {
+            Reader reader = new InputStreamReader(
+                    new FileInputStream(fileToRead), "UTF-8");
+            BufferedReader fin = new BufferedReader(reader);
+            Writer writer = new OutputStreamWriter(
+                    new FileOutputStream(fileToWrite), "UTF-8");
+            BufferedWriter fout = new BufferedWriter(writer);
+            String s;
+            while ((s = fin.readLine()) != null) {
+                String replaced = s.replaceAll(textToReplace, m31String);
+                fout.write(replaced);
+                fout.newLine();
+            }
+
+            //Remember to call close. 
+            //calling close on a BufferedReader/BufferedWriter 
+            // will automatically call close on its underlying stream 
+            fin.close();
+            fout.close();
+
+            // Moves the new temp file to the original one
+            if (fileToRead.delete()) {
+                fileToWrite.renameTo(new File(pathString));
+            }
+
+        } catch (IOException e) {
+            Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void appendStartAndEndGCode() {
+        String[] startCode, endCode;
+        StringBuilder codeStringBuilder;
+
+        startCode = Languager.getGCodeArray(4, "operationCode", "startCode");
+        endCode = Languager.getGCodeArray(4, "operationCode", "endCode");
+        codeStringBuilder = new StringBuilder();
+
+        codeStringBuilder.append(";startGCode");
+        codeStringBuilder.append(System.getProperty("line.separator"));
+        for (String code : startCode) {
+            
+            if (code.contains("M109")) {
+                code = "M109 S" + generator.getValue("print_temperature");
+            }
+            else if(code.contains("M642 W")) {
+                float filamentFlow = Float.parseFloat(
+                        generator.getValue("filament_flow")
+                ) / 100;
+                filamentFlow = Float.parseFloat(
+                        String.format(Locale.US, "%.3f", filamentFlow)
+                );
+                code = "M642 W" + filamentFlow;
+            }
+            
+            codeStringBuilder.append(code.trim());
+            codeStringBuilder.append(System.getProperty("line.separator"));
+
+        }
+
+        options.add(new CuraGenerator.CuraEngineOption("startCode", codeStringBuilder.toString()));
+
+        codeStringBuilder = new StringBuilder();
+
+        codeStringBuilder.append(";endGCode");
+        codeStringBuilder.append(System.getProperty("line.separator"));
+        for (String code : endCode) {
+            codeStringBuilder.append(code.trim());
+            codeStringBuilder.append(System.getProperty("line.separator"));
+        }
+
+        options.add(new CuraGenerator.CuraEngineOption("endCode", codeStringBuilder.toString()));
+    }
+
     /**
      * Destroy gcode generation
      */
@@ -107,6 +198,7 @@ public class Printer {
 
     /**
      * Set gcode file if already generated.
+     *
      * @param gFile gcode file.
      */
     public void setGCodeFile(File gFile) {
@@ -115,6 +207,7 @@ public class Printer {
 
     /**
      * Set print parameters.
+     *
      * @param prefs print parameters.
      */
     public void setPreferences(ArrayList<String> prefs) {
@@ -128,7 +221,7 @@ public class Printer {
      */
     private File generateSTL() {
 
-        File stl = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + bed.getPrintBedFile().getName().split(".bee")[0]
+        File stlFile = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + bed.getPrintBedFile().getName().split(".bee")[0]
                 + System.currentTimeMillis() + ".stl");
         HashMap<Integer, File> stlFiles = new HashMap<Integer, File>();
 
@@ -140,7 +233,7 @@ public class Printer {
 
         FileWriter output = null;
         try {
-            output = new FileWriter(stl);
+            output = new FileWriter(stlFile);
         } catch (IOException ex) {
             Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -188,7 +281,7 @@ public class Printer {
             Base.writeLog("Error while generating STL");
         }
 
-        return stl;
+        return stlFile;
     }
 
     /**
@@ -258,7 +351,7 @@ public class Printer {
         if (curaFileForced.contains("none")) {
 
             if (machine.getCoilCode().equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE)) {
-                profile += FilamentControler.getBEECode("").toLowerCase(); //To allow base estimation without filament
+                profile += FilamentControler.getBEECode(FilamentControler.NO_FILAMENT_CODE).toLowerCase(); //To allow base estimation without filament
             } else {
                 profile += machine.getCoilCode().toLowerCase();
             }
@@ -293,7 +386,7 @@ public class Printer {
      */
     private ArrayList<CuraGenerator.CuraEngineOption> parseParameters(ArrayList<String> params) {
 
-        ArrayList<CuraGenerator.CuraEngineOption> options = new ArrayList<CuraGenerator.CuraEngineOption>();
+        ArrayList<CuraGenerator.CuraEngineOption> opts = new ArrayList<CuraGenerator.CuraEngineOption>();
         String colorRatio = params.get(1);
         String infill = params.get(2);
         String raft = params.get(3);
@@ -301,42 +394,42 @@ public class Printer {
         isAutonomous = params.get(5).equalsIgnoreCase("true");
 
         /**
-         * Density 
-        */
-        options.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(Integer.valueOf(infill))));
+         * Density
+         */
+        opts.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(Integer.valueOf(infill))));
 
         /**
          * Raft and Support
          */
         if (raft.equalsIgnoreCase("true")) {
-            options.add(new CuraGenerator.CuraEngineOption("raftMargin", "1500"));
-            options.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "1000"));
-            options.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
-            options.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "700"));
-            options.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "200"));
-            options.add(new CuraGenerator.CuraEngineOption("raftInterfaceLinewidth", "400"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "1500"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "1000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "700"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "200"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLinewidth", "400"));
         } else {
-            options.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "0"));
-            options.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "0"));
         }
 
         if (support.equalsIgnoreCase("true")) {
-            options.add(new CuraGenerator.CuraEngineOption("supportAngle", "20"));
-            options.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "20"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
         } else {
-            options.add(new CuraGenerator.CuraEngineOption("supportAngle", "-1"));
-            options.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "-1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "0"));
         }
 
         //Find bed center                   
-        PrintBed bed = Base.getMainWindow().getBed();
-        Tuple center = bed.getBedCenter();
-        options.add(new CuraGenerator.CuraEngineOption("posx", center.x.toString()));
-        options.add(new CuraGenerator.CuraEngineOption("posY", center.y.toString()));
+        PrintBed ptrBed = Base.getMainWindow().getBed();
+        Tuple center = ptrBed.getBedCenter();
+        opts.add(new CuraGenerator.CuraEngineOption("posx", center.x.toString()));
+        opts.add(new CuraGenerator.CuraEngineOption("posY", center.y.toString()));
 
         //Sets polygons resolution for type of print: Autonomy or via USB
-        String polygonL1Resolution = "";
-        String polygonL2Resolution = "";
+        String polygonL1Resolution;
+        String polygonL2Resolution;
 
         if (isAutonomous) {
             polygonL1Resolution = "125";
@@ -345,13 +438,12 @@ public class Printer {
             polygonL1Resolution = "500";
             polygonL2Resolution = "2500";
         }
-        options.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", polygonL1Resolution));
-        options.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", polygonL2Resolution));
+        opts.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", polygonL1Resolution));
+        opts.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", polygonL2Resolution));
 
-        return options;
+        return opts;
     }
 }
-
 
 //    private void parseGCodeToSave() {
 //        StringBuffer code = new StringBuffer();

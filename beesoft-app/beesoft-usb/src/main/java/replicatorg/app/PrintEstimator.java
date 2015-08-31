@@ -39,6 +39,22 @@ public class PrintEstimator {
         return estimatedTime;
     }
 
+    public static int getEstimatedMinutes() {
+        int hours, minutes;
+
+        if (estimatedTime.contains(":")) {
+            hours = Integer.parseInt(estimatedTime.substring(0,
+                    estimatedTime.indexOf(':')));
+            minutes = Integer.parseInt(estimatedTime.substring(
+                    estimatedTime.indexOf(':') + 1));
+        } else {
+            hours = 0;
+            minutes = Integer.parseInt(estimatedTime);
+        }
+
+        return minutes + hours * 60;
+    }
+
     /**
      * Get Estimated cost from estimator process.
      *
@@ -74,7 +90,6 @@ public class PrintEstimator {
 
             //You can set up your work directory
             //        probuilder.directory(new File("c:\\xyzwsdemo"));
-
             Process process = null;
             try {
                 process = probuilder.start();
@@ -116,7 +131,6 @@ public class PrintEstimator {
         }
 
 //        System.out.println("Estimated time: "+estimatedTime);
-
         return estimatedTime;
     }
 
@@ -215,7 +229,6 @@ public class PrintEstimator {
                 timeParsed = noDays(out);
             }
 
-
             return filterTime(timeParsed);
         }
         return "ND";
@@ -254,7 +267,6 @@ public class PrintEstimator {
         int[] timeTuned = tuneEstimation(hours, minutes);
         hours = timeTuned[0];
         minutes = timeTuned[1];
-
 
         if (hours > 0) {
             return String.valueOf(hours).concat(":").concat(String.valueOf(minutes));
