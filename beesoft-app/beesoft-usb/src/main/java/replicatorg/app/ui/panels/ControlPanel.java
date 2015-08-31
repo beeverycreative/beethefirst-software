@@ -416,10 +416,10 @@ public class ControlPanel extends BaseDialog {
 //        double spHigh = machine.getFeedrate("spHigh");
 //
 //        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-//        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+//        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
 //        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
 //        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-//        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+//        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
 //        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
 //        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 //
@@ -1302,11 +1302,11 @@ public class ControlPanel extends BaseDialog {
         double spMedium = machine.getFeedrate("spMedium");
 
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(raise));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(cRaise));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + spMedium));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + spMedium));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(c));
     }//GEN-LAST:event_bCalibrateCActionPerformed
 
@@ -1325,11 +1325,11 @@ public class ControlPanel extends BaseDialog {
         double spMedium = machine.getFeedrate("spMedium");
 
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(raise));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(bRaise));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
     }//GEN-LAST:event_bCalibrateBActionPerformed
 
@@ -1376,9 +1376,9 @@ public class ControlPanel extends BaseDialog {
         double acHigh = machine.getAcceleration("acHigh");
         double spHigh = machine.getFeedrate("spHigh");
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
     }//GEN-LAST:event_bCalibrateAActionPerformed
 
     private void bHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bHomeActionPerformed

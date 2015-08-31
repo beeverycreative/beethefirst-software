@@ -983,7 +983,7 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
 
                     driver.dispatchCommand("G28", COM.BLOCK);
                     driver.dispatchCommand("G1 F1000");
-                    driver.dispatchCommand("M206 x400");
+                    driver.dispatchCommand("M206 X400");
                     driver.dispatchCommand("M300");
 
                     String status = "";
@@ -1190,9 +1190,9 @@ public class PrintSplashSimpleWaiting extends BaseDialog implements WindowListen
                     double spHigh = machine.getFeedrate("spHigh");
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + spHigh + " X" + rest.a() + " Y" + rest.b()));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
 
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));

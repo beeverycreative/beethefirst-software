@@ -171,16 +171,16 @@ public class FilamentInsertion extends BaseDialog {
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
         } else {
 
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + spHigh + " X-85 Y-65"));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
         }
     }
@@ -242,19 +242,19 @@ public class FilamentInsertion extends BaseDialog {
 
             if (Base.printPaused == false) {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                 machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
                 finalizeHeat();
             } else {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 X-85 Y-60"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             }
         }
@@ -639,10 +639,10 @@ public class FilamentInsertion extends BaseDialog {
                     double spHigh = machine.getFeedrate("spHigh");
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                     machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                     machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
                 }

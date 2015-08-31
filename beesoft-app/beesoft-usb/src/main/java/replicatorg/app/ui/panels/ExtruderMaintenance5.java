@@ -116,9 +116,9 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(nozzle));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
     }
@@ -180,19 +180,19 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
             if (Base.printPaused == false) {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                 machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
                 finalizeHeat();
             } else {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 X-85 Y-60"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             }
         }

@@ -200,10 +200,10 @@ public class CalibrationPrintTest extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
 
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acMedium));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
     }

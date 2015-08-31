@@ -119,10 +119,10 @@ public class FilamentFinish extends BaseDialog {
         double spHigh = machine.getFeedrate("spHigh");
 
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
     }
@@ -371,10 +371,10 @@ public class FilamentFinish extends BaseDialog {
             double spHigh = machine.getFeedrate("spHigh");
 
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             ProperDefault.remove("maintenance");
