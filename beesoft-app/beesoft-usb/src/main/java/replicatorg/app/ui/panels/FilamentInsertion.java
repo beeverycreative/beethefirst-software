@@ -734,7 +734,7 @@ public class FilamentInsertion extends BaseDialog {
                 @Override
                 public void run() {
 
-                    //Set fillament as NONE
+                    //Set filament as NONE
                     machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
