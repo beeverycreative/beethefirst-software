@@ -275,8 +275,7 @@ public class FilamentControler {
                 if (fil.getName().toLowerCase().equals(coilCode.toLowerCase())) {
 
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                        if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-
+                        if (printerId.equals(sc.getPrinterName())) {
                             for (Resolution res : sc.getResolutions()) {
                                 if (res.getType().toLowerCase().equals(resolution.toLowerCase())) {
 
