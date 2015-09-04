@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.Window;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -21,10 +22,11 @@ public class InformationTooltip extends BaseDialog {
 
     private final String textToDisplay;
 
-    public InformationTooltip(String textToDisplay) {
-        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
+    public InformationTooltip(Window window, String textToDisplay) {
+        super(window, Dialog.ModalityType.MODELESS);
         this.textToDisplay = textToDisplay;
 
+        setAlwaysOnTop(true);
         initComponents();
         enableDrag();
         centerOnScreen();

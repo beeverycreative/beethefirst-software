@@ -216,10 +216,14 @@ public class About extends BaseDialog {
 
         jLabel9.setText("000000000014");
 
-        jBootloaderTooltip.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/warning.png"))); // NOI18N
+        jBootloaderTooltip.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/alerta.png"))); // NOI18N
+        jBootloaderTooltip.setLabelFor(jLabel8);
         jBootloaderTooltip.setToolTipText("");
         jBootloaderTooltip.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jBootloaderTooltip.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jBootloaderTooltipMouseClicked(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jBootloaderTooltipMouseExited(evt);
             }
@@ -267,8 +271,8 @@ public class About extends BaseDialog {
                         .addComponent(jLabel7)
                         .addGap(20, 20, 20)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jBootloaderTooltip)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel8)
+                            .addComponent(jBootloaderTooltip))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel9)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -349,16 +353,23 @@ public class About extends BaseDialog {
     private void jBootloaderTooltipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseEntered
         Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
         cursorLocation.setLocation(cursorLocation.getX() + 20, cursorLocation.getY() - 2);
-        info = new InformationTooltip(Languager.getTagValue(1,
+        info = new InformationTooltip(this, Languager.getTagValue(1,
                 "AboutSoftware", "About_BootloaderVersionNotAvailableText"));
         info.setLocation(cursorLocation);
-        info.setAlwaysOnTop(true);
         info.setVisible(true);
     }//GEN-LAST:event_jBootloaderTooltipMouseEntered
 
     private void jBootloaderTooltipMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseExited
         info.dispose();
     }//GEN-LAST:event_jBootloaderTooltipMouseExited
+
+    private void jBootloaderTooltipMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseClicked
+        // not working
+        this.setFocusable(false);
+        info.requestFocusInWindow();
+        info.toFront();
+        this.toBack();
+    }//GEN-LAST:event_jBootloaderTooltipMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jBootloaderTooltip;
