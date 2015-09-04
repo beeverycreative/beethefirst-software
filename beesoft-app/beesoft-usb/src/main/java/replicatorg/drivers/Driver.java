@@ -579,4 +579,6 @@ public interface Driver {
      * @return 
      */
     public PrinterInfo getConnectedDevice();
+    
+    public void resetBootloaderVersion();
 }

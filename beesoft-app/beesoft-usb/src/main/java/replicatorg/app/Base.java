@@ -205,12 +205,12 @@ public class Base {
     public static final String VERSION_BEESOFT = setVersionString();
 
     public static final String PROGRAM = "BEESOFT";
-    public static String VERSION_BOOTLOADER = "Bootloader v" + configProperties.getAppProperty("bootloader.version");
+    public static String VERSION_BOOTLOADER;
     ;
     
     public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
     public static final String VERSION_FIRMWARE_FINAL_OLD = configProperties.getAppProperty("firmware.old.version");
-    public static String firmware_version_in_use = "BEETHEFIRST-" + VERSION_FIRMWARE_FINAL + ".bin";
+    public static String FIRMWARE_IN_USE = "BEETHEFIRST-" + VERSION_FIRMWARE_FINAL + ".bin";
     private static String VERSION_JAVA = "";//System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
@@ -509,7 +509,7 @@ public class Base {
 
     public static void updateVersions() {
         VERSION_BOOTLOADER = editor.getMachineInterface().getDriver().getBootloaderVersion();
-        firmware_version_in_use = editor.getMachineInterface().getDriver().getFirmwareVersion();
+        FIRMWARE_IN_USE = editor.getMachineInterface().getDriver().getFirmwareVersion();
         VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
 
         buildLogFile(true);
@@ -518,7 +518,7 @@ public class Base {
     private static void writeLogHeader() {
 
         VERSION_BOOTLOADER = editor.getMachineInterface().getDriver().getBootloaderVersion();
-        firmware_version_in_use = editor.getMachineInterface().getDriver().getFirmwareVersion();
+        FIRMWARE_IN_USE = editor.getMachineInterface().getDriver().getFirmwareVersion();
         VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
 
         FileWriter fw = null;
@@ -533,7 +533,7 @@ public class Base {
             bw.write("**************************************************\n");
             bw.write(PROGRAM + " " + VERSION_BEESOFT + "\n");
             bw.write("Bootloader version: " + VERSION_BOOTLOADER + "\n");
-            bw.write("Firmware version: " + firmware_version_in_use + "\n");
+            bw.write("Firmware version: " + FIRMWARE_IN_USE + "\n");
             bw.write("Java version: " + VERSION_JAVA + "\n");
             bw.write("Architecture: " + COMPUTER_ARCHITECTURE + "\n");
 //            bw.write("Serial Number:" + " " + VERSION_MACHINE+ "\n");

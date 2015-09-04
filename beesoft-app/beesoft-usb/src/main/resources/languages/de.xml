@@ -214,6 +214,8 @@
             <About_SoftwareVersion value="Software Version"/> 
             <About_FirmwareVersion value="Firmware Version"/> 
             <About_BootloaderVersion value="Bootloader Version"/> 
+            <About_NotAvailable value="Not available" />
+            <About_BootloaderVersionNotAvailableText value="The bootloader version is not accessible at this moment. Please restart your printer to obtain this information." />
             <About_SerialNumber value="Seriennummer des Druckers"/> 
             <About_FilamentColor value="Filament-Typ"/> 
         </AboutSoftware>

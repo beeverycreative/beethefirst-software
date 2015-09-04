@@ -577,4 +577,9 @@ public abstract class DriverBaseImplementation implements Driver {
     public Point5d getShutdownPosition() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public void resetBootloaderVersion() {
+        
+    }
 }

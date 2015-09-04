@@ -95,7 +95,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private int queue_size;
     private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispatchTime;
-    private Version bootloader_version = new Version();
+    private static Version bootloaderVersion = new Version();
     private Version firmware_version = new Version();
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
     private boolean machineReady;
@@ -106,6 +106,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean driverError = false;
     private String driverErrorDescription;
     private boolean stopTransfer = false;
+    private static boolean bootedFromBootloader = false;
 
     public enum COM {
 
@@ -185,6 +186,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void loadXML(Node xml) {
         super.loadXML(xml);
     }
+    
+    @Override
+    public void resetBootloaderVersion() {
+        if(bootedFromBootloader == false) {
+            bootloaderVersion = new Version();
+        }
+    }
 
     /**
      * Send any gcode needed to synchronize the driver type and the firmware
@@ -203,13 +211,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
         System.out.println("type: " + type);
 
         if (type.contains("bootloader")) {
+            bootedFromBootloader = true;
             updateBootloaderInfo();
             if (updateFirmware() >= 0) {
                 lastDispatchTime = System.currentTimeMillis();
                 resendQueue.clear();
                 Base.writeLog("Launching firmware!");
 
-                System.out.println("bootloader_version: " + bootloader_version);
+                System.out.println("bootloader_version: " + bootloaderVersion);
                 System.out.println("firmware_version: " + firmware_version);
                 System.out.println("serialNumberString: " + serialNumberString);
 
@@ -284,6 +293,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (type.contains("firmware")) {
+            
+            // this is made just to be sure that the bootloader version
+            // isn't inconsistent
+            if(bootedFromBootloader == false) {
+                bootloaderVersion = new Version();
+            } else {
+                bootedFromBootloader = false;
+            }
+            
             int tries = 100;
             while (recoverEcho() == false) {
                 hiccup(QUEUE_WAIT, 0);
@@ -318,7 +336,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             updateMachineInfo();
 
-            System.out.println("bootloader_version: " + bootloader_version);
+            System.out.println("bootloader_version: " + bootloaderVersion);
             System.out.println("firmware_version: " + firmware_version);
             System.out.println("serialNumberString: " + serialNumberString);
 
@@ -415,7 +433,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     /**
      * Initialize USB Device and performs some Initialization GCode
      *
-     * @throws java.lang.Exception
+     * @throws java.lang.VersionException
      */
     @Override
     public void initialize() throws VersionException {
@@ -874,7 +892,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public String getBootloaderVersion() {
-        return bootloader_version.toString();
+        return bootloaderVersion.toString();
     }
 
     @Override
@@ -2783,7 +2801,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         hiccup(QUEUE_WAIT, 0);
         String bootloader = readResponse();
 
-        bootloader_version = Version.bootloaderVersion(bootloader);
+        bootloaderVersion = Version.bootloaderVersion(bootloader);
 
         /*
          if (isNewVendorID) {
@@ -2792,7 +2810,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
          bootloader_version = new Version().fromMachineOld(bootloader);
          }
          */
-        System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + " : " + bootloader_version.toString());
+        System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + " : " + bootloaderVersion.toString());
 
         //Default
         firmware_version = new Version();

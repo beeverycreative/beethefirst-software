@@ -1,6 +1,8 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
@@ -20,6 +22,8 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class About extends BaseDialog {
+
+    private InformationTooltip info;
 
     public About() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -54,29 +58,49 @@ public class About extends BaseDialog {
         jLabel2.setText(Languager.getTagValue(1, "AboutSoftware", "About_SoftwareVersion"));
         jLabel3.setText(Languager.getTagValue(1, "AboutSoftware", "About_FirmwareVersion"));
         jLabel4.setText(Languager.getTagValue(1, "AboutSoftware", "About_BootloaderVersion"));
-//        jLabel5.setText(Languager.getTagValue(1,"AboutSoftware", "About_SerialNumber"));
         jLabel5.setText(Languager.getTagValue(1, "AboutSoftware", "About_FilamentColor"));
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
     }
 
     private void setValues() {
         Base.updateVersions();
-        jLabel6.setText(Base.VERSION_BEESOFT);
-        jLabel7.setText(Base.firmware_version_in_use);
-        jLabel8.setText(Base.VERSION_BOOTLOADER);
-//        jLabel9.setText(Base.VERSION_MACHINE);
-        jLabel9.setText(parseCoilCode());
 
+        String beesoft = Base.VERSION_BEESOFT;
+        String bootloader = Base.VERSION_BOOTLOADER;
+        String firmware = Base.FIRMWARE_IN_USE;
+        String coilCode = parseCoilCode();
+
+        if (bootloader.equals("0.0.0")) {
+            bootloader = Languager.getTagValue(1, "AboutSoftware",
+                    "About_NotAvailable");
+
+            if (Base.getMachineLoader().isConnected()) {
+                jBootloaderTooltip.setVisible(true);
+            }
+        }
+
+        if (firmware.contains("UNKNOWN")) {
+            firmware = Languager.getTagValue(1, "AboutSoftware",
+                    "About_NotAvailable");
+        }
+
+        if (coilCode.equals("N/A")) {
+            coilCode = Languager.getTagValue(1, "AboutSoftware",
+                    "About_NotAvailable");
+        }
+
+        jLabel6.setText(beesoft);
+        jLabel7.setText(firmware);
+        jLabel8.setText(bootloader);
+        jLabel9.setText(coilCode);
     }
 
     private String parseCoilCode() {
-        String color = "N/A";
-        String code = "N/A";
+        String color;
+        String code = null;
 
         if (Base.getMachineLoader().isConnected()) {
             code = Base.getMainWindow().getMachine().getModel().getCoilText();
-        } else {
-            code = ProperDefault.get("coilCode");
         }
 
         color = getFilamentType(code);
@@ -105,6 +129,8 @@ public class About extends BaseDialog {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jBootloaderTooltip = new javax.swing.JLabel();
+        jBootloaderTooltip.setVisible(false);
         jPanel2 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
 
@@ -135,7 +161,7 @@ public class About extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -178,16 +204,29 @@ public class About extends BaseDialog {
                 .addComponent(jLabel4)
                 .addGap(20, 20, 20)
                 .addComponent(jLabel5)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 30, Short.MAX_VALUE))
         );
 
         jLabel6.setText("2.0.0");
 
         jLabel7.setText("2.0.0");
 
+        jLabel8.setLabelFor(jLabel8);
         jLabel8.setText("3.0.0");
 
         jLabel9.setText("000000000014");
+
+        jBootloaderTooltip.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/warning.png"))); // NOI18N
+        jBootloaderTooltip.setToolTipText("");
+        jBootloaderTooltip.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jBootloaderTooltip.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jBootloaderTooltipMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jBootloaderTooltipMouseEntered(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -202,9 +241,12 @@ public class About extends BaseDialog {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
                             .addComponent(jLabel7)
-                            .addComponent(jLabel8)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBootloaderTooltip))
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 126, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -224,10 +266,12 @@ public class About extends BaseDialog {
                         .addGap(20, 20, 20)
                         .addComponent(jLabel7)
                         .addGap(20, 20, 20)
-                        .addComponent(jLabel8)
-                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jBootloaderTooltip)
+                            .addComponent(jLabel8))
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel9)
-                        .addGap(0, 28, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(0, 0, 0))
         );
 
@@ -238,14 +282,14 @@ public class About extends BaseDialog {
         jLabel18.setText("OK");
         jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel18MouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel18MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 jLabel18MouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel18MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel18MouseEntered(evt);
             }
         });
 
@@ -302,7 +346,22 @@ public class About extends BaseDialog {
         Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel15MousePressed
 
+    private void jBootloaderTooltipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseEntered
+        Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
+        cursorLocation.setLocation(cursorLocation.getX() + 20, cursorLocation.getY() - 2);
+        info = new InformationTooltip(Languager.getTagValue(1,
+                "AboutSoftware", "About_BootloaderVersionNotAvailableText"));
+        info.setLocation(cursorLocation);
+        info.setAlwaysOnTop(true);
+        info.setVisible(true);
+    }//GEN-LAST:event_jBootloaderTooltipMouseEntered
+
+    private void jBootloaderTooltipMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseExited
+        info.dispose();
+    }//GEN-LAST:event_jBootloaderTooltipMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jBootloaderTooltip;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel18;

@@ -98,6 +98,8 @@ class MachineThread extends Thread {
                     break;
                 } catch (UsbException ex) {
                     Base.statusThreadDied = true;
+                    Base.getMachineLoader().getMachineInterface().getDriver()
+                            .resetBootloaderVersion();
                     Base.writeLog("Machine disconnected during operation");
                     machineThread.interrupt();
                     break;

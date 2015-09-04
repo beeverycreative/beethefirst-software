@@ -214,6 +214,8 @@
             <About_SoftwareVersion value="Software version"/> 
             <About_FirmwareVersion value="Firmware version"/> 
             <About_BootloaderVersion value="Bootloader version"/> 
+            <About_NotAvailable value="Not available" />
+            <About_BootloaderVersionNotAvailableText value="The bootloader version is not accessible at this moment. Please restart your printer to obtain this information." />
             <About_SerialNumber value="3D printer serial number"/> 
             <About_FilamentColor value="Filament type"/> 
         </AboutSoftware>
