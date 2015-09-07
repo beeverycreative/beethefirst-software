@@ -325,5 +325,19 @@ public class FilamentControler {
 
         return false;
     }
+    
+    public static Filament getMatchingFilament(String filamentText) {
+        if (filamentList == null) {
+            fetchFilaments();
+        }
+        
+        for(Filament fil: filamentList) {
+            if(fil.getName().equalsIgnoreCase(filamentText)) {
+                return fil;
+            }
+        }
+        
+        return null;
+    }
 
 }

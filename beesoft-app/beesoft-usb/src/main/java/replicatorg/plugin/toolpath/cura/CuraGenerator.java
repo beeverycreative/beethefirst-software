@@ -104,7 +104,7 @@ public class CuraGenerator extends ToolpathGenerator {
     public void readINI() {
         curaGenerator.processINI(profile);
     }
-    
+
     public String getValue(String key) {
         return curaGenerator.getValue(key);
     }
@@ -121,17 +121,43 @@ public class CuraGenerator extends ToolpathGenerator {
         String bee_code = profile.split(":")[0];
         String resol = profile.split(":")[1];
         String printer = Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString();
-        
-        HashMap<String, String> overload_values = 
-                FilamentControler.getFilamentSettings(bee_code, resol, printer);
-        
+
+        HashMap<String, String> overload_values
+                = FilamentControler.getFilamentSettings(bee_code, resol, printer);
+
         System.out.println("bee_code = " + bee_code);
-        
-        if(overload_values == null){
+
+        if (overload_values == null) {
             Base.getMainWindow().showFeedBackMessage("unknownColor");
             return null;
-        }        
-        
+        }
+
+        return curaGenerator.setupINI(overload_values, bee_code, resol);
+    }
+
+    /**
+     * Pre gcode generation setup. Creates the INI file to be passed for the CFG
+     * creator.
+     *
+     * @param profile profile type.
+     * @param printer
+     * @return path for the INI file created
+     */
+    public String preparePrint(String profile, String printer) {
+
+        String bee_code = profile.split(":")[0];
+        String resol = profile.split(":")[1];
+
+        HashMap<String, String> overload_values
+                = FilamentControler.getFilamentSettings(bee_code, resol, printer);
+
+        System.out.println("bee_code = " + bee_code);
+
+        if (overload_values == null) {
+            Base.getMainWindow().showFeedBackMessage("unknownColor");
+            return null;
+        }
+
         return curaGenerator.setupINI(overload_values, bee_code, resol);
     }
 
@@ -209,13 +235,13 @@ public class CuraGenerator extends ToolpathGenerator {
             Base.writeLog("Starting ProcessBuilder");
             ist = new StreamLoggerThread(
                     process.getInputStream()) {
-                @Override
-                protected void logMessage(String line) {
-                    emitUpdate(line);
-                    Base.writeLog(line);
-                    super.logMessage(line);
-                }
-            };
+                        @Override
+                        protected void logMessage(String line) {
+                            emitUpdate(line);
+                            Base.writeLog(line);
+                            super.logMessage(line);
+                        }
+                    };
             est = new StreamLoggerThread(
                     process.getErrorStream());
             est.setDefaultLevel(Level.SEVERE);
@@ -257,7 +283,6 @@ public class CuraGenerator extends ToolpathGenerator {
 
         ist.stop();
         est.stop();
-
 
         // Estimates print time
         PrintEstimator.estimateTime(gcode);

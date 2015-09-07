@@ -23,6 +23,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
@@ -76,6 +77,7 @@ public class PrintPanel extends BaseDialog {
     private boolean printerAvailable;
     private String gcodeToPrint = null;
     private int nModels = 0;
+    private PrinterInfo selectedPrinter;
 
     public PrintPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -95,6 +97,7 @@ public class PrintPanel extends BaseDialog {
         matchChanges();
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        selectedPrinter = PrinterInfo.BEETHEFIRST;
     }
 
     /**
@@ -192,7 +195,7 @@ public class PrintPanel extends BaseDialog {
 
         Base.writeLog("Print panel coil code: " + code);
 
-        if (code.equals(FilamentControler.NO_FILAMENT) 
+        if (code.equals(FilamentControler.NO_FILAMENT)
                 || code.equals(FilamentControler.NO_FILAMENT_2)) {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
@@ -421,12 +424,9 @@ public class PrintPanel extends BaseDialog {
         printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
 
         if (printerAvailable) {
-            if (nModels != 0 && noFilament == false) {
-                bEstimate.setEnabled(true);
-                bExport.setEnabled(true);
-                if (Base.isPrinting == false) {
-                    bPrint.setEnabled(true);
-                }
+            if (nModels != 0 && noFilament == false
+                    && Base.isPrinting == false) {
+                bPrint.setEnabled(true);
             }
             bChangeFilament.setEnabled(true);
         }
@@ -762,6 +762,10 @@ public class PrintPanel extends BaseDialog {
         prefs.add(String.valueOf(supportPressed));
         prefs.add(String.valueOf(autonomousPressed));
 
+        if (printerAvailable == false) {
+            prefs.add(selectedPrinter.toString());
+        }
+
         return prefs;
     }
 
@@ -980,7 +984,6 @@ public class PrintPanel extends BaseDialog {
         bEstimate.setText("Estimate");
         bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         bEstimate.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
-        bEstimate.setEnabled(false);
         bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1377,7 +1380,6 @@ public class PrintPanel extends BaseDialog {
         bExport.setText("Export G-code");
         bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         bExport.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_19.png"))); // NOI18N
-        bExport.setEnabled(false);
         bExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bExport.setMaximumSize(new java.awt.Dimension(120, 23));
         bExport.setMinimumSize(new java.awt.Dimension(115, 23));
@@ -1565,6 +1567,24 @@ public class PrintPanel extends BaseDialog {
 
         // if there are any loaded models, export
         if (exportPressed == false && bExport.isEnabled()) {
+
+            if (printerAvailable == false) {
+                ProfileAndPrinter selection
+                        = new ProfileAndPrinter(this);
+                selection.setVisible(true);
+                coilText = selection.getCoilText();
+                selectedPrinter = selection.getSelectedPrinter();
+            }
+
+            // if the ProfileAndPrinter panel was closed on X button,
+            // cancel the estimation process
+            if (coilText.equals(FilamentControler.NO_FILAMENT)
+                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(coilText) == false
+                    || selectedPrinter == PrinterInfo.UNKNOWN) {
+                return;
+            }
+
             JFileChooser saveFile = new JFileChooser();
             saveFile.setSelectedFile(new File("export-"
                     + System.currentTimeMillis() + ".gcode"));
@@ -1703,6 +1723,23 @@ public class PrintPanel extends BaseDialog {
         // if there are any loaded model, do the estimation
         if (estimatePressed == false && bEstimate.isEnabled()) {
 
+            if (printerAvailable == false) {
+                ProfileAndPrinter selection
+                        = new ProfileAndPrinter(this);
+                selection.setVisible(true);
+                coilText = selection.getCoilText();
+                selectedPrinter = selection.getSelectedPrinter();
+            }
+
+            // if the ProfileAndPrinter panel was closed on X button,
+            // cancel the estimation process
+            if (coilText.equals(FilamentControler.NO_FILAMENT)
+                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(coilText) == false
+                    || selectedPrinter == PrinterInfo.UNKNOWN) {
+                return;
+            }
+
             estimationThread = new PrintEstimationThread(this);
             bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
             estimatePressed = true;
@@ -1818,6 +1855,7 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel printTime;
     private javax.swing.JTextField tfDensity;
     // End of variables declaration//GEN-END:variables
+
 }
 
 class PrintEstimationThread extends Thread {
@@ -1836,8 +1874,11 @@ class PrintEstimationThread extends Thread {
      * model cost estimation.
      */
     public void runEstimator() {
+        Printer prt;
+
         ArrayList<String> preferences = printPanel.getPreferences();
-        Printer prt = new Printer(preferences);
+
+        prt = new Printer(preferences);
         prt.generateGCode(preferences);
         File gcode = prt.getGCode();
         //Estimate time and cost

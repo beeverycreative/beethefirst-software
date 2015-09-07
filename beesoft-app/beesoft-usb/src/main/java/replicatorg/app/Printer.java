@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.ui.MainWindow;
-import replicatorg.machine.model.MachineModel;
 import replicatorg.model.PrintBed;
 import replicatorg.plugin.toolpath.cura.CuraGenerator;
 import replicatorg.util.Tuple;
@@ -71,11 +71,19 @@ public class Printer {
         // params.get(2) - infillRatio
         // params.get(3) - Raft:T/F
         // params.get(4) - Support:T/F
+        // params.get(5) - autonomous
+        // params.get(6) - Printer (optional)
 
-        String profile;
+        String profile, ini_file;
 
         profile = parseProfile(params);
-        String ini_file = generator.preparePrint(profile);
+        
+        if(params.size() == 7) {
+            ini_file = generator.preparePrint(profile, params.get(6));
+        } else {
+            ini_file = generator.preparePrint(profile);
+        }
+        
         generator.setProfile(ini_file);
         generator.readINI();
         options = parseParameters(params);

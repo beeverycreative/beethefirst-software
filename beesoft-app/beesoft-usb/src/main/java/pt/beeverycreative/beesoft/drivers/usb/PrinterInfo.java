@@ -55,4 +55,13 @@ public enum PrinterInfo {
         return UNKNOWN;
     }  
     
+    public static PrinterInfo getDeviceByName(String printerName) {
+        for(PrinterInfo printer : PrinterInfo.values()) {
+            if(printer.toString().equals(printerName)) {
+                return printer;
+            }
+        }
+        
+        return UNKNOWN;
+    }
 }
