@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.model.PrintBed;
 import replicatorg.plugin.toolpath.cura.CuraGenerator;
@@ -41,53 +41,32 @@ public class Printer {
     private final MainWindow mainWindow;
     private final PrintBed bed;
     private File gcode;
-    private ArrayList<String> params;
+    private final PrintPreferences params;
     private ArrayList<CuraGenerator.CuraEngineOption> options;
     private File stl;
     private final CuraGenerator generator;
-    private boolean isAutonomous;
 
-    public Printer(ArrayList<String> printParams) {
+    public Printer(PrintPreferences printParams) {
         this.mainWindow = Base.getMainWindow();
         this.bed = mainWindow.getBed();
         this.gcode = null;
         this.params = printParams;
         this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
-        generator = new CuraGenerator();
+        generator = new CuraGenerator(params);
+        generator.preparePrint();
     }
 
     /**
      * Generates GCode based on the print parameters choosen.
      *
-     * @param params parameters list
      * @return estimated time for gcode generated or error code
      */
-    public String generateGCode(ArrayList<String> params) {
+    public String generateGCode() {
 
         stl = generateSTL();
         Base.writeLog("STL generated with success");
-        // params.get(0) - Profile name
-        // params.get(1) - Color ratio
-        // params.get(2) - infillRatio
-        // params.get(3) - Raft:T/F
-        // params.get(4) - Support:T/F
-        // params.get(5) - autonomous
-        // params.get(6) - Printer (optional)
-
-        String profile, ini_file;
-
-        profile = parseProfile(params);
-        
-        if(params.size() == 7) {
-            ini_file = generator.preparePrint(profile, params.get(6));
-        } else {
-            ini_file = generator.preparePrint(profile);
-        }
-        
-        generator.setProfile(ini_file);
-        generator.readINI();
-        options = parseParameters(params);
-
+       
+        options = parseParameters();
         appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
         replaceLineInFile(gcode.getPath(), "M31 A0 L0");
@@ -162,7 +141,7 @@ public class Printer {
         for (String code : startCode) {
             
             if (code.contains("M109")) {
-                code = "M109 S" + generator.getValue("print_temperature");
+                code = "M109 S" + getFilamentTemperature();
             }
             else if(code.contains("M642 W")) {
                 float filamentFlow = Float.parseFloat(
@@ -209,15 +188,6 @@ public class Printer {
      */
     public void setGCodeFile(File gFile) {
         this.gcode = gFile;
-    }
-
-    /**
-     * Set print parameters.
-     *
-     * @param prefs print parameters.
-     */
-    public void setPreferences(ArrayList<String> prefs) {
-        this.params = prefs;
     }
 
     /**
@@ -342,63 +312,25 @@ public class Printer {
     }
 
     /**
-     * Parses profile from parameters to determine the profile type.
-     *
-     * @param params print parameters.
-     * @return profile type
-     */
-    private String parseProfile(ArrayList<String> params) {
-        String profile;
-        String color = params.get(1);
-        String resolution = params.get(0);
-        String curaFileForced = ProperDefault.get("curaFile");
-
-        if (curaFileForced.contains("none")) {
-            
-            if(color.equals("NO FILAMENT")) {
-                color = "A000 - Generic";
-            }
-
-            profile = color;
-
-            //Delimiter
-            profile += ":";
-
-            /**
-             * Resolution
-             */
-            profile += resolution;
-
-        } else {
-            profile = curaFileForced;
-        }
-        return profile;
-    }
-
-    /**
      * Parses parameters based on print parameters.
      *
-     * @param params print parameters.
      * @return list of CuraEngine options to be passed to CuraEngine bin.
      */
-    private ArrayList<CuraGenerator.CuraEngineOption> parseParameters(ArrayList<String> params) {
+    private ArrayList<CuraGenerator.CuraEngineOption> parseParameters() {
 
-        ArrayList<CuraGenerator.CuraEngineOption> opts = new ArrayList<CuraGenerator.CuraEngineOption>();
-        String colorRatio = params.get(1);
-        String infill = params.get(2);
-        String raft = params.get(3);
-        String support = params.get(4);
-        isAutonomous = params.get(5).equalsIgnoreCase("true");
+        ArrayList<CuraGenerator.CuraEngineOption> opts;        
+        opts = new ArrayList<CuraGenerator.CuraEngineOption>();
 
         /**
          * Density
          */
-        opts.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", generator.getSparseLineDistance(Integer.valueOf(infill))));
+        opts.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", 
+                generator.getSparseLineDistance(params.getDensity())));
 
         /**
          * Raft and Support
          */
-        if (raft.equalsIgnoreCase("true")) {
+        if (params.isRaftPressed()) {
             opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "1500"));
             opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "1000"));
             opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
@@ -410,7 +342,7 @@ public class Printer {
             opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "0"));
         }
 
-        if (support.equalsIgnoreCase("true")) {
+        if (params.isSupportPressed()) {
             opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "20"));
             opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
         } else {
@@ -424,53 +356,13 @@ public class Printer {
         opts.add(new CuraGenerator.CuraEngineOption("posx", center.x.toString()));
         opts.add(new CuraGenerator.CuraEngineOption("posY", center.y.toString()));
 
-        //Sets polygons resolution for type of print: Autonomy or via USB
-        String polygonL1Resolution;
-        String polygonL2Resolution;
-
-        if (isAutonomous) {
-            polygonL1Resolution = "125";
-            polygonL2Resolution = "2500";
-        } else {
-            polygonL1Resolution = "500";
-            polygonL2Resolution = "2500";
-        }
-        opts.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", polygonL1Resolution));
-        opts.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", polygonL2Resolution));
+        opts.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", "125"));
+        opts.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", "2500"));
 
         return opts;
     }
-}
 
-//    private void parseGCodeToSave() {
-//        StringBuffer code = new StringBuffer();
-//        try {
-//
-//            BufferedReader br = new BufferedReader(new FileReader(gcode));
-//            String line = "";
-//            while ((line = br.readLine()) != null) {
-//                code.append(line);
-//                code.append(Base.GCODE_DELIMITER);
-//            }
-//            Base.getMainWindow().getBed().setGcode(code);
-//            br.close();
-//        } catch (Exception e) {
-//            Base.writeLog("Error saving GCode to scene " + bed.getPrintBedFile() + " . Exception: " + e.getMessage());
-//        }
-//
-//        saveGCode();
-//    }
-//
-//    private void saveGCode() {
-//        ObjectOutputStream oos;
-//
-//        try {
-//            oos = new ObjectOutputStream(new FileOutputStream(bed.getPrintBedFile()));
-//            oos.writeObject(bed);
-//            oos.close();
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    public String getFilamentTemperature() {
+        return generator.getValue("print_temperature");
+    }
+}

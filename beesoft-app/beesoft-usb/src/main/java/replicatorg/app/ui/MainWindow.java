@@ -116,6 +116,7 @@ import javax.swing.event.MenuListener;
 
 import replicatorg.app.CategoriesList;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
@@ -136,7 +137,6 @@ import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PreferencesPanel;
 import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.ui.panels.PrintSplashSimple;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.ui.panels.WelcomeQuickguide;
@@ -1317,26 +1317,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         boolean localPrint = Boolean.valueOf(ProperDefault.get("localPrint"));
         handleGenBuild();
 
-        if (!localPrint) {
-            PrintPanel p = new PrintPanel();
-            p.setVisible(true);
-        } else {
-            final PrintSplashSimple p = new PrintSplashSimple(null);
-            p.setVisible(true);
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (bed.isSceneDifferent()) {
-                        Base.getMainWindow().handleSave(false);
-                    } else {
-                        sceneDP = new SceneDetailsPanel();
-                        sceneDP.updateBed(bed);
-                        updateDetailsCenter(sceneDP);
-                    }
-                    p.startConditions();
-                }
-            });
-        }
+        PrintPanel p = new PrintPanel();
+        p.setVisible(true);
     }
 
     public void handleMaintenance() {
@@ -1839,19 +1821,13 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 Base.logger.log(Level.INFO, "Loading {0}", path);
                 Base.writeLog("Loading" + path + " ...");
 
-                ArrayList<String> prefs = new ArrayList<String>();
-
-                //Adds default print preferences
-                prefs.add("LOW"); //resolution
-                prefs.add(FilamentControler.getColor(FilamentControler.NO_FILAMENT_CODE));
-                prefs.add("20"); //density
-                prefs.add("false"); //raft
-                prefs.add("false"); //support 
-                prefs.add("true"); //autonomous pressed
-                prefs.add(path); //Path to g-code file
+                //Adds default print preferences, they aren't going to be used
+                //since we're printing from a GCode file
+                PrintPreferences prefs = 
+                        new PrintPreferences("", FilamentControler.NO_FILAMENT, 
+                                20, false, false, path);
 
                 Base.isPrintingFromGCode = true;
-
                 final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
                 p.setVisible(true);
 

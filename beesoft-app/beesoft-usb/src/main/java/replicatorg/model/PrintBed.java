@@ -41,7 +41,8 @@ public class PrintBed implements Serializable {
 
     private static final long serialVersionUID = 7526471155622776147L;
     private String name, description;
-    private String lastResolution, lastDensity;
+    private String lastResolution;
+    private int lastDensity;
     private boolean lastRaft, lastSupport;
     private StringBuffer gcode;
     private File printBedFile;
@@ -65,7 +66,7 @@ public class PrintBed implements Serializable {
             estimatedTime = NOT_AVAILABLE;
             description = NOT_AVAILABLE;
             lastResolution = "MEDIUM";
-            lastDensity = "LOW";
+            lastDensity = 5;
             lastRaft = false;
             lastSupport = false;
             lastAutonomous = false;
@@ -113,11 +114,11 @@ public class PrintBed implements Serializable {
         this.lastResolution = lastResolution;
     }
 
-    public String getLastDensity() {
+    public int getLastDensity() {
         return lastDensity;
     }
 
-    public void setLastDensity(String lastDensity) {
+    public void setLastDensity(int lastDensity) {
         this.lastDensity = lastDensity;
     }
 

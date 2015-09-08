@@ -227,7 +227,6 @@ public class CalibrationPrintTest extends BaseDialog {
 //        preferences.add(String.valueOf(false));
 //        preferences.add(String.valueOf(false));
 //        preferences.add(String.valueOf(false));
-
         try {
             reader = new BufferedReader(new FileReader(getPrintFile()));
         } catch (FileNotFoundException ex) {
@@ -283,7 +282,6 @@ public class CalibrationPrintTest extends BaseDialog {
             }
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
 
-
         } catch (FileNotFoundException ex) {
         } catch (IOException ex) {
         }
@@ -299,7 +297,6 @@ public class CalibrationPrintTest extends BaseDialog {
             machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
             reader.close();
-
 
         } catch (IOException ex) {
             return n_lines;
@@ -320,12 +317,13 @@ public class CalibrationPrintTest extends BaseDialog {
         double acHigh = machine.getAcceleration("acHigh");
         double spHigh = machine.getFeedrate("spHigh");
 
-        // Sleep befpore home after M112
         try {
+            // Sleep before home after M112
             Thread.sleep(500);
         } catch (InterruptedException ex) {
-            Logger.getLogger(PrintSplashSimpleWaiting.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CalibrationPrintTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
@@ -601,7 +599,6 @@ class PrintThread extends Thread {
         }
         Base.writeLog("Temperature achieved...");
         window.sinalizeHeatSuccess();
-
 
         int n_lines = window.printTest();
 

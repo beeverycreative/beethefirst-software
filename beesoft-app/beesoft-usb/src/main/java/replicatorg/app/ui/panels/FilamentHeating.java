@@ -76,7 +76,7 @@ public class FilamentHeating extends BaseDialog {
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }  
+    }
 
     private String splitString(String s) {
         int width = 436;
@@ -133,7 +133,7 @@ public class FilamentHeating extends BaseDialog {
         try {
             Thread.sleep(500);
         } catch (InterruptedException ex) {
-            Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FilamentHeating.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         double temperature = machine.getDriver().getTemperature();
@@ -236,7 +236,6 @@ public class FilamentHeating extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");

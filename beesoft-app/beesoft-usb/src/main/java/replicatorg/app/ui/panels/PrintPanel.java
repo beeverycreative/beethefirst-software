@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileFilter;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
@@ -49,10 +50,8 @@ public class PrintPanel extends BaseDialog {
     private JLabel quality_low;
     private JLabel quality_medium;
     private JLabel quality_solid;
-    private final ArrayList<String> prefs;
-    private boolean raftPressed, supportPressed, autonomousPressed, gcodeSavePressed;
+    private boolean raftPressed, supportPressed, gcodeSavePressed;
     private boolean noFilament = false;
-    private static final String NOK = "NOK";
     private Thread t = null;
     private static final String FORMAT = "%2d:%2d";
     private String coilText = FilamentControler.NO_FILAMENT;
@@ -60,12 +59,10 @@ public class PrintPanel extends BaseDialog {
     private GCodeExportThread exportThread = null;
     private boolean isRunning = true;
     private boolean lastUsedRaft;
-    private String lastUsedDensity;
+    private int lastUsedDensity;
     private String lastUsedResolution;
     private boolean lastUsedSupport;
-    private boolean lastUsedAutonomous;
     private boolean lastSelectedRaft;
-    private String lastSelectedDensity;
     private String lastSelectedResolution;
     private boolean lastUsedGCodeSave;
     boolean lastSelectedSupport;
@@ -89,10 +86,8 @@ public class PrintPanel extends BaseDialog {
         centerOnScreen();
         estimationThread = new PrintEstimationThread(this);
         coilText = getCoilCode();
-        prefs = new ArrayList<String>();
         raftPressed = false;
         supportPressed = false;
-        autonomousPressed = true;
         evaluateConditions();
         matchChanges();
         enableDrag();
@@ -169,7 +164,6 @@ public class PrintPanel extends BaseDialog {
         bLowRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Low"));
         bMediumRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Medium"));
         bHighRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_High"));
-//        String artwork = "<html>"+Languager.getTagValue(1,"Print", "Print_Quality_SHigh").split(" ")[0]+"<br>"+Languager.getTagValue(1,"Print", "Print_Quality_SHigh").split(" ")[1]+"</html>";
         bHighPlusRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"));
 
         quality_low.setText(Languager.getTagValue(1, "Print", "Print_Density_Low"));
@@ -395,8 +389,8 @@ public class PrintPanel extends BaseDialog {
      *
      * @return density slider value
      */
-    private String parseSlider2() {
-        return String.valueOf(densitySlider.getValue());
+    private int parseSlider2() {
+        return densitySlider.getValue();
     }
 
     /**
@@ -408,7 +402,6 @@ public class PrintPanel extends BaseDialog {
         lastUsedDensity = Base.getMainWindow().getBed().getLastDensity();
         lastUsedResolution = Base.getMainWindow().getBed().getLastResolution();
         lastUsedSupport = Base.getMainWindow().getBed().isLastSupport();
-        lastUsedAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
         gcodeOK = Base.getMainWindow().getBed().isGcodeOK();
         nModels = Base.getMainWindow().getBed().getNumberModels();
 
@@ -628,7 +621,6 @@ public class PrintPanel extends BaseDialog {
         lastUsedDensity = Base.getMainWindow().getBed().getLastDensity();
         lastUsedResolution = Base.getMainWindow().getBed().getLastResolution();
         lastUsedSupport = Base.getMainWindow().getBed().isLastSupport();
-        lastUsedAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
 
         if (lastUsedRaft) {
             jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
@@ -646,21 +638,7 @@ public class PrintPanel extends BaseDialog {
             supportPressed = false;
         }
 
-//        if (lastUsedAutonomous) {
-//            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
-//            autonomousPressed = true;
-//        } else {
-//            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_unchecked.png")));
-//            autonomousPressed = false;
-//        }
-        int density;
-        try {
-            density = Integer.parseInt(lastUsedDensity);
-        } catch (NumberFormatException e) {
-            density = 5;
-        }
-
-        densitySlider.setValue(density);
+        densitySlider.setValue(lastUsedDensity);
 
         if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
             bLowRes.setSelected(true);
@@ -690,15 +668,13 @@ public class PrintPanel extends BaseDialog {
         lastUsedDensity = Base.getMainWindow().getBed().getLastDensity();
         lastUsedResolution = Base.getMainWindow().getBed().getLastResolution();
         lastUsedSupport = Base.getMainWindow().getBed().isLastSupport();
-        lastUsedAutonomous = Base.getMainWindow().getBed().isLastAutonomous();
         gcodeOK = Base.getMainWindow().getBed().isGcodeOK();
         lastUsedGCodeSave = Base.getMainWindow().getBed().isGCodeSave();
 
         if (parseSlider1().equals(lastUsedResolution)
-                && parseSlider2().equals(lastUsedDensity)
+                && parseSlider2() == lastUsedDensity
                 && raftPressed == lastUsedRaft
                 && supportPressed == lastUsedSupport
-                && autonomousPressed == lastUsedAutonomous
                 && gcodeSavePressed == lastUsedGCodeSave
                 && gcodeOK) {
             equal = true;
@@ -715,7 +691,7 @@ public class PrintPanel extends BaseDialog {
     public boolean settingsChanged() {
 
         return parseSlider1().equals(lastSelectedResolution)
-                && parseSlider2().equals(lastSelectedDensity)
+                && parseSlider2() == lastUsedDensity
                 && raftPressed == lastSelectedRaft
                 && supportPressed == lastSelectedSupport;
     }
@@ -725,10 +701,9 @@ public class PrintPanel extends BaseDialog {
      */
     public void updateOldSettings() {
         lastSelectedRaft = raftPressed;
-        lastSelectedDensity = parseSlider2();
+        lastUsedDensity = parseSlider2();
         lastSelectedResolution = parseSlider1();
         lastSelectedSupport = supportPressed;
-        lastSelectedAutonomous = autonomousPressed;
     }
 
     /**
@@ -752,21 +727,25 @@ public class PrintPanel extends BaseDialog {
      *
      * @return print parameters.
      */
-    public ArrayList<String> getPreferences() {
-        ArrayList<String> prefs = new ArrayList<String>();
+    public PrintPreferences getPreferences() {
+        PrintPreferences preferences;
+        String resolution;
+        int density;
 
-        prefs.add(parseSlider1());
-        prefs.add(coilText);
-        prefs.add(parseSlider2());
-        prefs.add(String.valueOf(raftPressed));
-        prefs.add(String.valueOf(supportPressed));
-        prefs.add(String.valueOf(autonomousPressed));
+        resolution = parseSlider1();
+        density = parseSlider2();
 
-        if (printerAvailable == false) {
-            prefs.add(selectedPrinter.toString());
+        if (gcodeToPrint != null && printerAvailable == false) {
+            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
+        } else if (gcodeToPrint != null) {
+            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, gcodeToPrint);
+        } else if (printerAvailable == false) {
+            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, selectedPrinter);
+        } else {
+            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed);
         }
 
-        return prefs;
+        return preferences;
     }
 
     /**
@@ -1465,32 +1444,25 @@ public class PrintPanel extends BaseDialog {
         estimationThread.stop();
 
         if (bPrint.isEnabled()) {
-            /*
-             * prefs[0] - profile (LOW,HIGH) 
-             * prefs[1] - colorRation
-             * prefs[2] - infill LOW,MEDIUM,HIGH) 
-             * prefs[3] - RAFT (T/F)
-             * prefs[4] - SUPPORT (T/F)
-             */
-
             if (!checkChanges()) {
                 Base.getMainWindow().getBed().setGcodeOK(false);
             }
 
-            prefs.add(parseSlider1());
-//            prefs.add(parseCoilCode());
-            prefs.add(FilamentControler.getColor(coilText));
-            prefs.add(parseSlider2());
-            prefs.add(String.valueOf(raftPressed));
-            prefs.add(String.valueOf(supportPressed));
-            prefs.add(String.valueOf(autonomousPressed));
-            prefs.add(String.valueOf(gcodeToPrint));
+            PrintPreferences prefs = getPreferences();
 
+            /*
+             prefs.add(parseSlider1());
+             //            prefs.add(parseCoilCode());
+             prefs.add(FilamentControler.getColor(coilText));
+             prefs.add(parseSlider2());
+             prefs.add(String.valueOf(raftPressed));
+             prefs.add(String.valueOf(supportPressed));
+             prefs.add(String.valueOf(gcodeToPrint));
+             */
             Base.getMainWindow().getBed().setLastRaft(raftPressed);
             Base.getMainWindow().getBed().setLastDensity(parseSlider2());
             Base.getMainWindow().getBed().setLastResolution(parseSlider1());
             Base.getMainWindow().getBed().setLastSupport(supportPressed);
-            Base.getMainWindow().getBed().setLastAutonomous(autonomousPressed);
 
             Base.isPrinting = true;
             Base.getMainWindow().getButtons().blockModelsButton(true);
@@ -1501,35 +1473,19 @@ public class PrintPanel extends BaseDialog {
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
             Base.turnOnPowerSaving(false);
 
-            if (autonomousPressed == false) {
-                final PrintSplashSimple p = new PrintSplashSimple(prefs);
-                p.setVisible(true);
+            final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
+            p.setVisible(true);
 
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
+            EventQueue.invokeLater(new Runnable() {
+                @Override
+                public void run() {
 
-                        if (Base.getMainWindow().getBed().isSceneDifferent()) {
-                            Base.getMainWindow().handleSave(true);
-                        }
-                        p.startConditions();
+                    if (Base.getMainWindow().getBed().isSceneDifferent()) {
+                        Base.getMainWindow().handleSave(true);
                     }
-                });
-            } else {
-                final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
-                p.setVisible(true);
-
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (Base.getMainWindow().getBed().isSceneDifferent()) {
-                            Base.getMainWindow().handleSave(true);
-                        }
-                        p.startConditions();
-                    }
-                });
-            }
+                    p.startConditions();
+                }
+            });
 
         } else {
             t = new Thread(new Runnable() {
@@ -1792,7 +1748,7 @@ public class PrintPanel extends BaseDialog {
     }//GEN-LAST:event_jLabel4MousePressed
 
     private void densitySliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_densitySliderMouseReleased
-        lastSelectedDensity = parseSlider2();
+        lastUsedDensity = parseSlider2();
     }//GEN-LAST:event_densitySliderMouseReleased
 
     private void densitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_densitySliderStateChanged
@@ -1875,11 +1831,8 @@ class PrintEstimationThread extends Thread {
      */
     public void runEstimator() {
         Printer prt;
-
-        ArrayList<String> preferences = printPanel.getPreferences();
-
-        prt = new Printer(preferences);
-        prt.generateGCode(preferences);
+        prt = new Printer(printPanel.getPreferences());
+        prt.generateGCode();
         File gcode = prt.getGCode();
         //Estimate time and cost
         PrintEstimator.estimateTime(gcode);
@@ -1934,13 +1887,13 @@ class GCodeExportThread extends Thread {
      * model cost estimation.
      */
     public void runExport() {
-        ArrayList<String> preferences = printPanel.getPreferences();
-        Printer prt = new Printer(preferences);
-        prt.generateGCode(preferences);
+        Printer prt = new Printer(printPanel.getPreferences());
+        prt.generateGCode();
         File gcode = prt.getGCode();
         //Estimate time and cost
         PrintEstimator.estimateTime(gcode);
-        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(),
+                PrintEstimator.getEstimatedCost());
 
         //Writes the file
         BufferedInputStream input = null;

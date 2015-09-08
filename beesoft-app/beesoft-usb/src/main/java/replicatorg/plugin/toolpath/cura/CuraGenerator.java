@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 
 import replicatorg.app.Base;
 import replicatorg.app.Oracle;
@@ -24,23 +25,19 @@ public class CuraGenerator extends ToolpathGenerator {
     private static String CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
     private static String CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "/configs/";
     private static String ERROR_MESSAGE = "Can't run Cura!";
-    private static String BIN_PATH_UNIX = "python";
-    private static String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
     private static final String gallery = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
     private CuraEngineConfigurator curaGenerator = new CuraEngineConfigurator();
-    boolean configSuccess = false;
-    String profile = null;
-    List<String> preferences;
-    Process process;
-    StreamLoggerThread ist;
-    StreamLoggerThread est;
+    private String profile = null;
+    private Process process;
+    private StreamLoggerThread ist;
+    private StreamLoggerThread est;
+    private final PrintPreferences prefs;
 
     /**
      * Sets Cura generator paths for bin and gcode export.
+     * @param prefs printing preferences
      */
-    public CuraGenerator() {
-        preferences = getPreferences();
-
+    public CuraGenerator(PrintPreferences prefs) {
         if (Base.isLinux() || Base.isMacOS()) {
             CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
             CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "/configs/";
@@ -56,15 +53,8 @@ public class CuraGenerator extends ToolpathGenerator {
             }
             CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "\\configs\\";
         }
-    }
-
-    /**
-     * Gets print parameters.
-     *
-     * @return print parameters
-     */
-    public List<String> getPreferences() {
-        return preferences;
+        
+        this.prefs = prefs;
     }
 
     /**
@@ -89,22 +79,6 @@ public class CuraGenerator extends ToolpathGenerator {
         return curaGenerator.getDensity(densityPercentage);
     }
 
-    /**
-     * Sets profile type for the Cura generator.
-     *
-     * @param profile2 profile type.
-     */
-    public void setProfile(String profile2) {
-        this.profile = CURA_CONFIGURATION_FILE_PATH + profile2;
-    }
-
-    /**
-     * Process INI file from profile type.
-     */
-    public void readINI() {
-        curaGenerator.processINI(profile);
-    }
-
     public String getValue(String key) {
         return curaGenerator.getValue(key);
     }
@@ -113,52 +87,22 @@ public class CuraGenerator extends ToolpathGenerator {
      * Pre gcode generation setup. Creates the INI file to be passed for the CFG
      * creator.
      *
-     * @param profile profile type.
-     * @return path for the INI file created
      */
-    public String preparePrint(String profile) {
-
-        String bee_code = profile.split(":")[0];
-        String resol = profile.split(":")[1];
-        String printer = Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString();
+    public void preparePrint() {
 
         HashMap<String, String> overload_values
-                = FilamentControler.getFilamentSettings(bee_code, resol, printer);
-
-        System.out.println("bee_code = " + bee_code);
+                = FilamentControler.getFilamentSettings(prefs.getCoilText(), 
+                        prefs.getResolution(), prefs.getPrinter().toString());
 
         if (overload_values == null) {
             Base.getMainWindow().showFeedBackMessage("unknownColor");
-            return null;
+            return;
         }
 
-        return curaGenerator.setupINI(overload_values, bee_code, resol);
-    }
-
-    /**
-     * Pre gcode generation setup. Creates the INI file to be passed for the CFG
-     * creator.
-     *
-     * @param profile profile type.
-     * @param printer
-     * @return path for the INI file created
-     */
-    public String preparePrint(String profile, String printer) {
-
-        String bee_code = profile.split(":")[0];
-        String resol = profile.split(":")[1];
-
-        HashMap<String, String> overload_values
-                = FilamentControler.getFilamentSettings(bee_code, resol, printer);
-
-        System.out.println("bee_code = " + bee_code);
-
-        if (overload_values == null) {
-            Base.getMainWindow().showFeedBackMessage("unknownColor");
-            return null;
-        }
-
-        return curaGenerator.setupINI(overload_values, bee_code, resol);
+        this.profile = CURA_CONFIGURATION_FILE_PATH 
+                + curaGenerator.setupINI(overload_values, prefs.getCoilText(), 
+                        prefs.getResolution());
+        curaGenerator.processINI(profile);
     }
 
     /**
