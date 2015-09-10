@@ -133,7 +133,7 @@ import replicatorg.app.ui.panels.ControlPanel;
 
 import replicatorg.app.ui.panels.Gallery;
 import replicatorg.app.ui.panels.Help;
-import replicatorg.app.ui.panels.PauseMenu;
+import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PreferencesPanel;
 import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
@@ -1031,7 +1031,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             public void actionPerformed(ActionEvent e) {
                 if (machineLoader.isConnected()) {
                     if (Base.isPrinting == false) {
-                        PauseMenu p = new PauseMenu();
+                        Maintenance p = new Maintenance();
                         p.setVisible(true);
                     }
                 } else {
@@ -1323,7 +1323,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public void handleMaintenance() {
         this.setEnabled(false);
-        PauseMenu p = new PauseMenu();
+        Maintenance p = new Maintenance();
         p.setVisible(true);
     }
 
