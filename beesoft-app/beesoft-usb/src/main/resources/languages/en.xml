@@ -646,10 +646,17 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <NozzleSwitch_Title value="Replace nozzle "/>
             <NozzleSwitch_button value="Replace nozzle  now"/>
             <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
-
-
-
         </MaintenancePanel>
+
+        <PausePanel>
+            <Title value="Pause"/>
+            <FilamentTitle value="Filament change"/>
+            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <bFilamentChange value="Change filament now"/>
+            <bShutdown value="Shutdown now"/>
+            <ShutdownIntro value="Insert information about the shutdown operation here."/>
+            <ShutdownTitle value="Shutdown"/>
+        </PausePanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>

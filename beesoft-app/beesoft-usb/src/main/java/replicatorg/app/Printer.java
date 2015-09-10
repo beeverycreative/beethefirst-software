@@ -45,6 +45,7 @@ public class Printer {
     private ArrayList<CuraGenerator.CuraEngineOption> options;
     private File stl;
     private final CuraGenerator generator;
+    private final boolean printPrepared;
 
     public Printer(PrintPreferences printParams) {
         this.mainWindow = Base.getMainWindow();
@@ -53,7 +54,12 @@ public class Printer {
         this.params = printParams;
         this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
         generator = new CuraGenerator(params);
-        generator.preparePrint();
+
+        if (params != null) {
+            printPrepared = generator.preparePrint();
+        } else {
+            printPrepared = false;
+        }
     }
 
     /**
@@ -65,7 +71,7 @@ public class Printer {
 
         stl = generateSTL();
         Base.writeLog("STL generated with success");
-       
+
         options = parseParameters();
         appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
@@ -95,7 +101,7 @@ public class Printer {
         File fileToRead = new File(pathString);
         File fileToWrite = new File(pathString + "_temp");
 
-        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes() 
+        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes()
                 + " L" + getGCodeNLines();
 
         try {
@@ -139,11 +145,10 @@ public class Printer {
         codeStringBuilder.append(";startGCode");
         codeStringBuilder.append(System.getProperty("line.separator"));
         for (String code : startCode) {
-            
+
             if (code.contains("M109")) {
                 code = "M109 S" + getFilamentTemperature();
-            }
-            else if(code.contains("M642 W")) {
+            } else if (code.contains("M642 W")) {
                 float filamentFlow = Float.parseFloat(
                         generator.getValue("filament_flow")
                 ) / 100;
@@ -152,7 +157,7 @@ public class Printer {
                 );
                 code = "M642 W" + filamentFlow;
             }
-            
+
             codeStringBuilder.append(code.trim());
             codeStringBuilder.append(System.getProperty("line.separator"));
 
@@ -318,13 +323,13 @@ public class Printer {
      */
     private ArrayList<CuraGenerator.CuraEngineOption> parseParameters() {
 
-        ArrayList<CuraGenerator.CuraEngineOption> opts;        
+        ArrayList<CuraGenerator.CuraEngineOption> opts;
         opts = new ArrayList<CuraGenerator.CuraEngineOption>();
 
         /**
          * Density
          */
-        opts.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance", 
+        opts.add(new CuraGenerator.CuraEngineOption("sparseInfillLineDistance",
                 generator.getSparseLineDistance(params.getDensity())));
 
         /**
@@ -362,7 +367,11 @@ public class Printer {
         return opts;
     }
 
-    public String getFilamentTemperature() {
-        return generator.getValue("print_temperature");
+    public double getFilamentTemperature() {
+        if (printPrepared) {
+            return Double.parseDouble(generator.getValue("print_temperature"));
+        } else {
+            return -1;
+        }
     }
 }

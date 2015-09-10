@@ -186,10 +186,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void loadXML(Node xml) {
         super.loadXML(xml);
     }
-    
+
     @Override
     public void resetBootloaderVersion() {
-        if(bootedFromBootloader == false) {
+        if (bootedFromBootloader == false) {
             bootloaderVersion = new Version();
         }
     }
@@ -246,14 +246,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
             boolean mwVisible = Base.getMainWindow().isVisible();
             while (mwVisible == false) {
                 try {
-                    Thread.sleep(1, 0);
+                    Thread.sleep(100, 0);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 mwVisible = Base.getMainWindow().isVisible();//polls
             }
 
-            PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
+            PrintSplashAutonomous p = new PrintSplashAutonomous(
+                    true, Base.printPaused, null
+            );
             p.setVisible(true);
             p.startConditions();
             return;
@@ -293,15 +295,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (type.contains("firmware")) {
-            
+
             // this is made just to be sure that the bootloader version
             // isn't inconsistent
-            if(bootedFromBootloader == false) {
+            if (bootedFromBootloader == false) {
                 bootloaderVersion = new Version();
             } else {
                 bootedFromBootloader = false;
             }
-            
+
             int tries = 100;
             while (recoverEcho() == false) {
                 hiccup(QUEUE_WAIT, 0);
@@ -955,16 +957,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void updateCoilText() {
         String coilText;
 
-        coilText = dispatchCommand(GETCOILTEXT, COM.BLOCK);
-        
-        if(coilText.contains("ok")) {
+        coilText = dispatchCommand(GETCOILTEXT, COM.DEFAULT);
+
+        if (coilText.contains("ok")) {
             coilText = coilText.substring(
                     coilText.indexOf('\'') + 1, coilText.lastIndexOf('\'')
             );
         } else {
             coilText = "none";
         }
-        
+
         Base.writeLog("Coil text: " + coilText);
         machine.setCoilText(coilText);
     }
@@ -2562,7 +2564,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         sendCommand(GET_STATUS);
         hiccup(30, 0);
         String res = readResponse();
-        if (res.toLowerCase().contains(STATUS_SDCARD)) {
+        if (res.contains("Pause")) {
+            Base.printPaused = true;
+            return "autonomous";
+        } else if (res.toLowerCase().contains(STATUS_SDCARD)) {
             Base.writeLog("Is not bootloader - autonomous: " + STATUS_SDCARD);
 //            System.out.println("autonomous");
             return "autonomous";
@@ -2603,23 +2608,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return "firmware";
         }
         return "error";
-    }
-
-    private void setFirmware(String firmwareName) {
-        String file_name;
-        if (firmwareName.contains("LT")) {
-            Base.writeLog("Flashing..");
-
-            file_name = Base.getApplicationDirectory() + "/firmware/firmware_usb_lt.bin";
-            int res = flashAndCheck(file_name, -1);
-//            System.out.println(res);
-        } else if (firmwareName.contains("V1")) {
-            file_name = Base.getApplicationDirectory() + "/firmware/firmware2.0.1.bin";
-            Base.writeLog("Flashing..");
-
-            int res = flashAndCheck(file_name, -1);
-//            System.out.println(res);
-        }
     }
 
     private int flashAndCheck(String filename, int nBytes) {
