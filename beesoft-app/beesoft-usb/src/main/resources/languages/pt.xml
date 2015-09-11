@@ -646,10 +646,17 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <NozzleSwitch_Title value="Mudança de nozzle"/>
             <NozzleSwitch_button value="Trocar nozzle agora"/>
             <NozzleSwitch_Intro value="Esta operação irá auxiliar-te na mudança do nozzle fornecido no Kit de Manutenção."/>
-
-
-
         </MaintenancePanel>
+
+        <PausePanel>
+            <Title value="Pause"/>
+            <FilamentTitle value="Filament change"/>
+            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <bFilamentChange value="Change filament now"/>
+            <bShutdown value="Shutdown now"/>
+            <ShutdownIntro value="Coming soon!"/>
+            <ShutdownTitle value="Shutdown"/>
+        </PausePanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>

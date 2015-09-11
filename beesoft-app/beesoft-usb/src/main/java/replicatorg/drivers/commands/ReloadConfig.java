@@ -13,7 +13,7 @@ public class ReloadConfig implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M506";
     }
 
     @Override

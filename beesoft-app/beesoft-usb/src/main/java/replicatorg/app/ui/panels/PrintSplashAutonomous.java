@@ -58,14 +58,12 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     private boolean unloadPressed;
     private boolean firstUnloadStep = false;
     private boolean lastPanel;
-    private boolean isPaused;
+    private boolean isPaused = false;
     private Point5d pausePos;
     private long pausedTime = 0;
     private boolean isShutdown;
     private boolean userDecision;
     private boolean shutdownFromDisconnect;
-    protected boolean bResumePressed = false;
-    protected boolean bCancelPressed = false;
 
     public PrintSplashAutonomous(boolean printingState, PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
@@ -237,7 +235,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     /**
      * Cancel ongoing operation and idles BEESOFT to a machine idle state
      */
-    public void doCancel() {
+    protected void doCancel() {
         //machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
         if (machine.getDriver().isTransferMode()) {
             // stopTransfer() blocks while the process isn't concluded
@@ -259,6 +257,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
         userDecision = true;
         shutdownFromDisconnect = false;
+        machine.resumewatch();
         Base.resetPrintingFlags();
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/3DModels/");
@@ -268,30 +267,29 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     }
 
-    public void doResume() {
+    protected void doResume() {
+        final PrintSplashAutonomous parent = this;
+        this.setEnabled(false);
         bShutdown.setVisible(false);
         bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Resuming"));
         tInfo3.setVisible(false);
         bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
 
+        final double colorRatio = FilamentControler.getColorRatio(
+                machine.getModel().getCoilText(),
+                machine.getModel().getResolution(),
+                machine.getDriver().getConnectedDevice().toString()
+        );
+        final double filamentTemperature = getFilamentTemperature();
+
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                double colorRatio = FilamentControler.getColorRatio(
-                        machine.getModel().getCoilText(),
-                        machine.getModel().getResolution(),
-                        machine.getDriver().getConnectedDevice().toString()
-                );
-                double filamentTemperature = getFilamentTemperature();
-
-                /**
-                 * Go to print position
-                 */
                 do {
                     machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                     try {
-                        Thread.sleep(100, 0);
+                        Thread.sleep(500, 0);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -304,14 +302,25 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                         )
                 );
 
-                isPaused = false;
+                do {
+                    machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+                    try {
+                        Thread.sleep(500, 0);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } while (machine.getDriver().getMachinePaused());
+
+                parent.setEnabled(true);
                 disablePreparingNewFilamentInfo();
+                isPaused = false;
                 Base.printPaused = false;
                 machine.resumewatch();
                 bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-
             }
-        });
+        }
+        );
+
     }
 
     /**
@@ -372,6 +381,17 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     public int getNGCodeLines() {
         return prt.getGCodeNLines();
+    }
+
+    protected AutonomousData getAutonomousData() {
+        try {
+            machine.runCommand(new replicatorg.drivers.commands.GetStandaloneVariables());
+            return machine.getAutonomousData();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 
     protected double getFilamentTemperature() {
@@ -842,15 +862,17 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public int pollCurrentLines() {
-        AutonomousData variables = machine.getDriver().getPrintSessionsVariables();
-        String nLines = variables.getCurrentNLines().toString();
+        String nLines;
+        AutonomousData variables;
+
+        variables = getAutonomousData();
+        nLines = variables.getCurrentNLines().toString();
 
         if (nLines.equals("") == false) {
             return Integer.valueOf(nLines);
         }
 
         return -1;
-
     }
 
     public void setPrintEnded(boolean status) {
@@ -1555,8 +1577,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     private void bPauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMousePressed
         final PrintSplashAutonomous parent = this;
-        setPreparingNewFilamentInfo();
         this.setEnabled(false);
+        setPreparingNewFilamentInfo();
         Base.printPaused = true;
         machine.stopwatch();
         isPaused = true;
@@ -1572,27 +1594,20 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 do {
                     machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                     try {
-                        Thread.sleep(100, 0);
+                        Thread.sleep(500, 0);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } while (machine.getDriver().getMachineStatus() == false);
 
+                parent.setEnabled(true);
                 machine.getDriver().setBusy(false);
                 bShutdown.setVisible(false);
                 bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
 
                 PauseMenu pause = new PauseMenu(parent);
-                parent.setVisible(false);
                 pause.setVisible(true);
-
-                if (parent.bCancelPressed) {
-                    doCancel();
-                } else if (parent.bResumePressed) {
-                    parent.setVisible(true);
-                    doResume();
-                }
 
                 //setPauseElements();
                 //bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
@@ -1620,7 +1635,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
                         // Paused Time in which user didn't shutdown machine
                         pausedTime = System.currentTimeMillis() - pausedTime;
-                        AutonomousData variables = driver.getPrintSessionsVariables();
+                        AutonomousData variables = getAutonomousData();
                         String elapsedTime = variables.getElapsedTime().toString();
                         driver.setElapsedTime((Long.valueOf(elapsedTime) - pausedTime));
 
@@ -1847,6 +1862,10 @@ class UpdateThread4 extends Thread {
          */
         if (window.isPrinting()) {
 
+            if (window.isPaused()) {
+                machine.stopwatch();
+            }
+
             Base.writeLog("Autonomous print resumed");
             Base.isPrinting = true;
 
@@ -1898,7 +1917,7 @@ class UpdateThread4 extends Thread {
             }
 
             //Parse of the answer
-            AutonomousData variables = driver.getPrintSessionsVariables();
+            AutonomousData variables = window.getAutonomousData();
             window.resetProgressBar();
 
             estimatedTime = variables.getEstimatedTime().toString();
@@ -1924,17 +1943,8 @@ class UpdateThread4 extends Thread {
             window.startPrintCounter();
 
             if (window.isPaused()) {
-                machine.stopwatch();
                 PauseMenu pause = new PauseMenu(window);
-                window.setVisible(false);
                 pause.setVisible(true);
-
-                if (window.bCancelPressed) {
-                    window.doCancel();
-                } else if (window.bResumePressed) {
-                    window.setVisible(true);
-                    window.doResume();
-                }
             }
 
             //Updates elements while visible
@@ -1950,6 +1960,12 @@ class UpdateThread4 extends Thread {
 
                     window.updatePrintBar((currentNumberLines / (double) nLines) * 100);
                     window.setProgression((int) ((currentNumberLines / (double) nLines) * 100));
+
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 if (currentNumberLines >= nLines) {
                     finished = true;

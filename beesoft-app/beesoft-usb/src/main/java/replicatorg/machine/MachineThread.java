@@ -23,10 +23,7 @@ import replicatorg.drivers.OnboardParameters;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.StopException;
 import replicatorg.drivers.VersionException;
-import replicatorg.drivers.commands.AssessState;
-import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.Machine.JobTarget;
-import replicatorg.machine.Machine.RequestType;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
@@ -49,9 +46,6 @@ class MachineThread extends Thread {
     private final Point5d lastPoint = new Point5d();
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
-    private String lastBEECode = "";
-    private double previousEParsed = 0;
-    private final double absoluteDistance = 0;
 
     class AssessStatusThread extends Thread {
 
@@ -65,26 +59,26 @@ class MachineThread extends Thread {
         @Override
         public void run() {
             // Send out a request, then sleep for a bit, then start over.
-            DriverCommand assessCommand = new AssessState();
+            //DriverCommand assessCommand = new AssessState();
 
             machineThread.notConnectedMessage();
             Base.disposeAllOpenWindows();
             machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
             Base.statusThreadDied = false;
             driver.initialize();
-            machineThread.scheduleRequest(new MachineCommand(
-                    RequestType.CONNECT, assessCommand));
+            //machineThread.scheduleRequest(new MachineCommand(
+            //        RequestType.CONNECT, assessCommand));
 
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-                    machineThread.scheduleRequest(new MachineCommand(
-                            RequestType.RUN_COMMAND, assessCommand));
+                    //machineThread.scheduleRequest(new MachineCommand(
+                    //        RequestType.RUN_COMMAND, assessCommand));
 
                     sleep(500, 1);
-                    
+
                     // these catches are VERY important
                 } catch (InterruptedException e) {
                     Base.statusThreadDied = true;
@@ -98,6 +92,8 @@ class MachineThread extends Thread {
                     break;
                 } catch (UsbException ex) {
                     Base.statusThreadDied = true;
+                    Base.isPrinting = false;
+                    Base.printPaused = false;
                     Base.getMachineLoader().getMachineInterface().getDriver()
                             .resetBootloaderVersion();
                     Base.writeLog("Machine disconnected during operation");
@@ -623,7 +619,6 @@ class MachineThread extends Thread {
                                 }
 
                                 actualPoint.setA(actualEValue);
-                                previousEParsed = actualEValue;
 
                             }
                             if (cmdValue.contains(COMMAND_ACCELERATION)) {
@@ -751,10 +746,6 @@ class MachineThread extends Thread {
 
     public String getLastFeedrate() {
         return lastFeedrate;
-    }
-
-    public void setLastBEECode(String code) {
-        lastBEECode = code;
     }
 
     public String getLastE() {

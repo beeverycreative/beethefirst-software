@@ -12,7 +12,7 @@ public class GetCoilText implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M1001";
     }
 
     @Override

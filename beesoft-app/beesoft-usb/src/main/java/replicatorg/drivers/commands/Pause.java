@@ -13,7 +13,7 @@ public class Pause implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M640";
     }
 
     @Override

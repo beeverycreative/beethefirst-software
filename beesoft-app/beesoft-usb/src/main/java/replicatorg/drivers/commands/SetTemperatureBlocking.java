@@ -3,16 +3,22 @@ package replicatorg.drivers.commands;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.RetryException;
 
-public class GetLastLineNumber implements DriverCommand {
+public class SetTemperatureBlocking implements DriverCommand {
+
+    double temperature;
+
+    public SetTemperatureBlocking(double temperature) {
+        this.temperature = temperature;
+    }
 
     @Override
     public void run(Driver driver) throws RetryException {
-        driver.readLastLineNumber();
+        driver.setTemperature(temperature);
     }
 
     @Override
     public String getCommand() {
-        return "";
+        return "M109 S" + temperature;
     }
 
     @Override

@@ -40,7 +40,6 @@ import replicatorg.app.Base;
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.util.AutonomousData;
 import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
@@ -104,7 +103,7 @@ public abstract class DriverBaseImplementation implements Driver {
     public PrinterInfo getConnectedDevice() {
         return null;
     }
-    
+
     @Override
     public void loadXML(Node xml) {
     }
@@ -284,8 +283,8 @@ public abstract class DriverBaseImplementation implements Driver {
     public Version getPreferredVersion() {
         return preferredVersion;
     }
-    protected final AtomicReference<Point5d> currentPosition =
-            new AtomicReference<Point5d>(null);
+    protected final AtomicReference<Point5d> currentPosition
+            = new AtomicReference<Point5d>(null);
 
     @Override
     public void setCurrentPosition(Point5d p) throws RetryException {
@@ -297,7 +296,6 @@ public abstract class DriverBaseImplementation implements Driver {
 //		System.err.println("invalidating position.");
         currentPosition.set(null);
 
-
     }
 
     public void invalidateAxes(EnumSet<AxisId> home, boolean positive) throws RetryException {
@@ -308,7 +306,6 @@ public abstract class DriverBaseImplementation implements Driver {
         }
 
         Point5d temp = new Point5d(currentPosition.get());
-
 
         for (AxisId axis : home) {
             temp.setAxis(axis, 0.0);
@@ -408,6 +405,11 @@ public abstract class DriverBaseImplementation implements Driver {
         machine.currentTool().setTargetTemperature(temperature);
     }
 
+    @Override
+    public void setTemperatureBlocking(double temperature) throws RetryException {
+        machine.currentTool().setTargetTemperature(temperature);
+    }
+
     public void resetTemperature() throws RetryException {
         machine.currentTool().setTargetTemperature(0);
     }
@@ -460,6 +462,16 @@ public abstract class DriverBaseImplementation implements Driver {
     @Override
     public boolean getMachineStatus() {
         return machine.getMachineReady();
+    }
+
+    @Override
+    public boolean getMachinePaused() {
+        return machine.getMachinePaused();
+    }
+
+    @Override
+    public void setMachinePaused(boolean machinePaused) {
+        machine.setMachinePaused(machinePaused);
     }
 
     @Override
@@ -524,7 +536,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public AutonomousData getPrintSessionsVariables() {
+    public void getPrintSessionsVariables() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -577,9 +589,9 @@ public abstract class DriverBaseImplementation implements Driver {
     public Point5d getShutdownPosition() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public void resetBootloaderVersion() {
-        
+
     }
 }

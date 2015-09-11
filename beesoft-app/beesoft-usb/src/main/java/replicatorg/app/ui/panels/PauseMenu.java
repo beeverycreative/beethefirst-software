@@ -23,8 +23,9 @@ public class PauseMenu extends BaseDialog {
     PrintSplashAutonomous printSplash;
 
     public PauseMenu(Window printSplash) {
-        super(printSplash, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(printSplash, Dialog.ModalityType.MODELESS);
         this.printSplash = (PrintSplashAutonomous) printSplash;
+        this.printSplash.setVisible(false);
         initComponents();
         setFont();
         setTextLanguage();
@@ -74,7 +75,6 @@ public class PauseMenu extends BaseDialog {
         bShutdown = new javax.swing.JLabel();
         lShutdownDesc = new javax.swing.JLabel();
         lShutdown = new javax.swing.JLabel();
-        jSeparator2 = new javax.swing.JSeparator();
         pBottom = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         bResume = new javax.swing.JLabel();
@@ -166,6 +166,8 @@ public class PauseMenu extends BaseDialog {
 
         bShutdown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bShutdown.setText("Shutdown");
+        bShutdown.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bShutdown.setEnabled(false);
         bShutdown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bShutdown.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -210,11 +212,6 @@ public class PauseMenu extends BaseDialog {
                 .addGap(0, 0, 0))
         );
 
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(1, 1));
-
         javax.swing.GroupLayout pMaintenanceLayout = new javax.swing.GroupLayout(pMaintenance);
         pMaintenance.setLayout(pMaintenanceLayout);
         pMaintenanceLayout.setHorizontalGroup(
@@ -225,8 +222,7 @@ public class PauseMenu extends BaseDialog {
                     .addComponent(pShutdown, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pMaintenanceLayout.setVerticalGroup(
@@ -239,9 +235,7 @@ public class PauseMenu extends BaseDialog {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pShutdown, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(22, 22, 22))
         );
 
         pBottom.setBackground(new java.awt.Color(255, 203, 5));
@@ -325,8 +319,9 @@ public class PauseMenu extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        printSplash.bCancelPressed = true;
-        dispose();
+        CancelPrint cancel = new CancelPrint(printSplash);
+        cancel.setVisible(true);
+        //dispose();
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
@@ -373,8 +368,10 @@ public class PauseMenu extends BaseDialog {
     }//GEN-LAST:event_bResumeMouseExited
 
     private void bResumeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bResumeMousePressed
-        printSplash.bResumePressed = true;
         dispose();
+        printSplash.setVisible(true);
+        printSplash.doResume();
+        Base.bringAllWindowsToFront();
     }//GEN-LAST:event_bResumeMousePressed
 
 
@@ -384,7 +381,6 @@ public class PauseMenu extends BaseDialog {
     private javax.swing.JLabel bResume;
     private javax.swing.JLabel bShutdown;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lChangeFilament;
     private javax.swing.JLabel lChangeFilamentDesc;
     private javax.swing.JLabel lShutdown;

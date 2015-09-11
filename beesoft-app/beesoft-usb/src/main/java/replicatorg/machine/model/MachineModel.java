@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 
 import replicatorg.app.Base;
 import replicatorg.app.tools.XML;
+import replicatorg.app.util.AutonomousData;
 import replicatorg.util.Point5d;
 
 public class MachineModel {
@@ -77,11 +78,16 @@ public class MachineModel {
     protected BuildVolume buildVolume;
     private boolean machineReady = false;
     private boolean machineBusy = false;
+    private boolean machinePaused = false;
     private double zValue;
 
     // Filament code currently on the printer
     private String coilText = "";
     private String resolution = "lowRes";
+    
+    private AutonomousData autonomousData;
+    private boolean autonomousDataReady = false;
+    
 
     /**
      * ***********************************
@@ -550,6 +556,14 @@ public class MachineModel {
     public boolean getMachineBusy() {
         return machineBusy;
     }
+    
+    public void setMachinePaused(boolean machinePaused) {
+        this.machinePaused = machinePaused;
+    }
+
+    public boolean getMachinePaused() {
+        return machinePaused;
+    }
 
     /* Get and Setter CoilCode/BEECODE */
     public String getCoilText() {
@@ -567,6 +581,21 @@ public class MachineModel {
 
     public void setResolution(String res) {
         this.resolution = res;
+    }
+
+    public synchronized void setAutonomousData(AutonomousData data) {
+        this.autonomousData = data;
+        autonomousDataReady = true;
+        notifyAll();
+    }
+    
+    public synchronized AutonomousData getAutonomousData() throws InterruptedException {
+        if(autonomousDataReady == false) {
+            wait(1000);
+        }
+        
+        autonomousDataReady = false;
+        return autonomousData;
     }
     
 }

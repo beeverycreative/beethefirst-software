@@ -417,7 +417,6 @@ public class FilamentCodeInsertion extends BaseDialog {
          */
         if (Base.printPaused && !blackTurquoise && !yellowRed) {
             machine.setFilamentChanged(true);
-            machine.setLastBEECode(previousColor);
         }//no need for else
 
         //set the coil code: M400 <COILCODE>

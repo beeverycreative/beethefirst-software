@@ -193,14 +193,14 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     public void InitUsbDevice(UsbDevice device) {
         
-        UsbDeviceDescriptor descriptor;
-        descriptor = device.getUsbDeviceDescriptor();
+        //UsbDeviceDescriptor descriptor;
+        //descriptor = device.getUsbDeviceDescriptor();
 
         try {
-            Base.writeLog("Device found - " + descriptor.idVendor() + ":" + descriptor.idProduct());
+            //Base.writeLog("Device found - " + descriptor.idVendor() + ":" + descriptor.idProduct());
 
             if (device.isUsbHub()) {
-                Base.writeLog("Found a USB hub");
+                //Base.writeLog("Found a USB hub");
                 UsbHub hub = (UsbHub) device;
 
                 for (UsbDevice child : (List<UsbDevice>) hub.getAttachedUsbDevices()) {
@@ -316,14 +316,14 @@ public class UsbDriver extends DriverBaseImplementation {
         m_usbDeviceList.clear();
 
         try {
-            Base.writeLog("Getting device list.");
+            //Base.writeLog("Getting device list.");
 
             UsbServices services = UsbHostManager.getUsbServices();
-            Base.writeLog("USB Serviced obtained ");
+            //Base.writeLog("USB Serviced obtained ");
             UsbHub rootHub = services.getRootUsbHub();
-            Base.writeLog("rootUSB obtained ");
+            //Base.writeLog("rootUSB obtained ");
             InitUsbDevice(rootHub);
-            Base.writeLog("RootUSB device inited");
+            //Base.writeLog("RootUSB device inited");
 
         } catch (UsbException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
@@ -337,7 +337,7 @@ public class UsbDriver extends DriverBaseImplementation {
         
         if (m_usbDeviceList.isEmpty()) {
             m_usbDevice = null;
-            Base.writeLog("Failed to find USB device.");
+            //Base.writeLog("Failed to find USB device.");
             setInitialized(false);
         } else {
             //Chose the device to Initialize

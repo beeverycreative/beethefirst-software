@@ -20,6 +20,7 @@
 package replicatorg.machine;
 
 import org.w3c.dom.Node;
+import replicatorg.app.util.AutonomousData;
 
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.commands.DriverCommand;
@@ -314,11 +315,6 @@ public class Machine implements MachineInterface {
     }
 
     @Override
-    public void setLastBEECode(String code) {
-        machineThread.setLastBEECode(code);
-    }
-
-    @Override
     public Point5d getTablePoints(String pointName) {
         return machineThread.getTablePoints(pointName);
     }
@@ -415,5 +411,10 @@ public class Machine implements MachineInterface {
     @Override
     public JobTarget getTarget() {
         return machineThread.getTarget();
+    }
+    
+    @Override
+    public synchronized AutonomousData getAutonomousData() throws InterruptedException {
+        return getModel().getAutonomousData();
     }
 }

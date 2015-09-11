@@ -14,7 +14,7 @@ public class EmergencyStop implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M112";
     }
 
     @Override

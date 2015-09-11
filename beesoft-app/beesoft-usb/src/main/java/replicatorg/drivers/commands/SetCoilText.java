@@ -17,7 +17,7 @@ public class SetCoilText implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M1000 " + coilText;
     }
 
     @Override

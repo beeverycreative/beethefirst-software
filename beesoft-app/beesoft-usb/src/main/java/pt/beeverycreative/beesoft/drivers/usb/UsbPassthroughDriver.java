@@ -64,6 +64,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String ECHO = "M639";
     private static final String STATUS_OK = "S:3";
     private static final String STATUS_X = "S:";
+    private static final String STATUS_PAUSED = "Pause";
     private static final String STATUS_SDCARD = "s:5";
     private static final String RESPONSE_TRANSFER_ON_GOING = "tog";
     private static final String STATUS_SHUTDOWN = "s:9";
@@ -99,6 +100,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private Version firmware_version = new Version();
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
     private boolean machineReady;
+    private boolean machinePaused;
     private long startTS;
     private int ID = 0;
     private boolean isAutonomous;
@@ -256,7 +258,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             PrintSplashAutonomous p = new PrintSplashAutonomous(
                     true, Base.printPaused, null
             );
-            p.setVisible(true);
+
+            if (Base.printPaused == false) {
+                p.setVisible(true);
+            }
+
             p.startConditions();
             return;
         }
@@ -1414,21 +1420,20 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public AutonomousData getPrintSessionsVariables() {
-
+    public void getPrintSessionsVariables() {
 //        Data:
 //        
 //        estimatedTime - [0];
 //        elapsedTime - [1];
 //        nLines - [2];
 //        currentNumberLines - [3];
-        hiccup(100, 0);
-        String printSession = dispatchCommand(READ_VARIABLES);
-//        String printSession = readResponse();
-//        System.out.println("printSession " + printSession);
-        String[] data = parseData(printSession);
-
-        return new AutonomousData(data[0], data[1], data[2], data[3], 0);
+        String printSession;
+        String[] data;
+        
+        printSession = dispatchCommand(READ_VARIABLES);
+        data = parseData(printSession);
+        
+        machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
     }
 
     private String[] parseData(String printSession) {
@@ -2100,15 +2105,30 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommand("M104 S" + df.format(temperature));
         super.setTemperature(temperature);
     }
+    
+    @Override
+    public void setTemperatureBlocking(double temperature) throws RetryException {
+        dispatchCommand("M109 S" + df.format(temperature));
+        super.setTemperature(temperature);
+    }
 
     @Override
     public void readStatus() {
+        String status;
 
-        machineReady = dispatchCommand(GET_STATUS).contains(STATUS_OK);
+        status = dispatchCommand(GET_STATUS);
+        machineReady = status.contains(STATUS_OK);
+
+        if (machinePaused == false) {
+            machinePaused = status.contains(STATUS_PAUSED);
+        } else {
+            machinePaused = status.contains(STATUS_PAUSED) || status.contains("NOK");
+        }
 
 //        System.out.println("machineReady: "+machineReady);
         //machine.currentTool().setCurrentTemperature(temperature);        
         machine.setMachineReady(machineReady);
+        machine.setMachinePaused(machinePaused);
     }
 
     @Override

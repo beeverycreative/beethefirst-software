@@ -31,7 +31,6 @@ import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.util.AutonomousData;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
@@ -119,9 +118,8 @@ public interface Driver {
     /**
      * Get print session variables during autonomous print.
      *
-     * @return AutonomousData structure with all variables.
      */
-    public AutonomousData getPrintSessionsVariables();
+    public void getPrintSessionsVariables();
 
     /**
      * Getter for current transfer percentage during a transfer.
@@ -438,6 +436,7 @@ public interface Driver {
      * @throws RetryException
      */
     public void setTemperature(double temperature) throws RetryException;
+    public void setTemperatureBlocking(double temperature) throws RetryException;
 
     /**
      * Read temperature from machine and updates internal variable.
@@ -581,4 +580,6 @@ public interface Driver {
     public PrinterInfo getConnectedDevice();
     
     public void resetBootloaderVersion();
+    public boolean getMachinePaused();
+    public void setMachinePaused(boolean machinePaused);
 }

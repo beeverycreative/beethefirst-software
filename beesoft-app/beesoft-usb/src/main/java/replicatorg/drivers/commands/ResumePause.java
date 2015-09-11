@@ -26,7 +26,15 @@ public class ResumePause implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        if (temperature > 0 && coefficient > 0) {
+            return "M643 W" + coefficient + " S" + temperature;
+        } else if (coefficient > 0) {
+            return "M643 W" + coefficient;
+        } else if (temperature > 0) {
+            return "M643 S" + temperature;
+        } else {
+            return "M643";
+        }
     }
 
     @Override

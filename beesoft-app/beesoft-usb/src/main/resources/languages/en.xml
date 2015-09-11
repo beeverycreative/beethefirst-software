@@ -654,7 +654,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
             <bFilamentChange value="Change filament now"/>
             <bShutdown value="Shutdown now"/>
-            <ShutdownIntro value="Insert information about the shutdown operation here."/>
+            <ShutdownIntro value="Coming soon!"/>
             <ShutdownTitle value="Shutdown"/>
         </PausePanel>
 

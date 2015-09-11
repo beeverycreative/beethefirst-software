@@ -19,7 +19,7 @@ public class QueuePoint implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "G1";
     }
 
     @Override

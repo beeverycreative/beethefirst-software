@@ -12,7 +12,7 @@ public class GetPosition implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M121";
     }
 
     @Override

@@ -646,10 +646,17 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <NozzleSwitch_Title value="Extruderdüse wechseln"/>
             <NozzleSwitch_button value="Extruderdüse jetzt wechseln"/>
             <NozzleSwitch_Intro value="Dieser Vorgang ist nötig um die Extruderdüse zu wechseln. Für diesem Vorgang sollen Sie die Wartungs-Kit benutzen."/>
-
-
-
         </MaintenancePanel>
+
+        <PausePanel>
+            <Title value="Pause"/>
+            <FilamentTitle value="Filament change"/>
+            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <bFilamentChange value="Change filament now"/>
+            <bShutdown value="Shutdown now"/>
+            <ShutdownIntro value="Coming soon!"/>
+            <ShutdownTitle value="Shutdown"/>
+        </PausePanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
