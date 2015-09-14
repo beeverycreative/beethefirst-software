@@ -316,6 +316,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 isPaused = false;
                 Base.printPaused = false;
                 machine.resumewatch();
+                machine.unpause();
                 bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             }
         }
@@ -810,9 +811,9 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         return unloadPressed;
     }
 
-    public void updateTemperatureOnProgressBar(double temperature) {
+    public void updateTemperatureOnProgressBar(double temperature, double goal) {
         int val = jProgressBar1.getValue();
-        int temp_val = (int) (temperature / 2.3);
+        int temp_val = (int) (temperature / goal);
 
         if ((temperature > (int) (jProgressBar1.getValue() * 2)) && (temp_val > (int) (jProgressBar1.getValue()))) {
             val = temp_val;
@@ -1605,6 +1606,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 bShutdown.setVisible(false);
                 bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
+                machine.pause();
 
                 PauseMenu pause = new PauseMenu(parent);
                 pause.setVisible(true);
@@ -1767,7 +1769,7 @@ class UpdateThread4 extends Thread {
         //Updates elements while visible
         while (!window.isAtErrorState()) {
             // Enables test of pipes to handle cable disconnection
-            driver.setAutonomous(true);
+            //driver.setAutonomous(true);
 
             if (!window.isPaused()) {
 
@@ -1786,6 +1788,12 @@ class UpdateThread4 extends Thread {
                 finished = true;
                 break;
             }
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         //what to do at error?
     }
@@ -1802,8 +1810,6 @@ class UpdateThread4 extends Thread {
 
     public boolean evaluateTemperature() {
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-        boolean temperatureAchieved = false;
-//        window.setHeatingInfo();
 
         try {
             Thread.sleep(updateSleep);
@@ -1812,18 +1818,12 @@ class UpdateThread4 extends Thread {
         }
 
         double temperature = machine.getDriver().getTemperature();
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M104 S" + temperatureGoal));
-        window.updateTemperatureOnProgressBar(temperature);
+        window.updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
 
-        if (temperature >= temperatureGoal) {
-            window.updateTemperatureOnProgressBar(100);
-            temperatureAchieved = true;
+        if (temperature >= (temperatureGoal - 1)) {
+            window.updateTemperatureOnProgressBar(100, temperatureGoal / 100);
             Base.writeLog("Temperature achieved");
             return true;
-        }
-
-        if (!temperatureAchieved) {
-            return false;
         }
 
         return false;
@@ -1898,8 +1898,8 @@ class UpdateThread4 extends Thread {
 
                 while (temperatureAchieved == false) {
                     try {
-                        Thread.sleep(10);
                         temperatureAchieved = evaluateTemperature();
+                        Thread.sleep(3000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -1960,18 +1960,18 @@ class UpdateThread4 extends Thread {
 
                     window.updatePrintBar((currentNumberLines / (double) nLines) * 100);
                     window.setProgression((int) ((currentNumberLines / (double) nLines) * 100));
-
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
                 if (currentNumberLines >= nLines) {
                     finished = true;
                     break;
                 }
                 //no need for else
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         } else { // First run in Autonomous mode
@@ -1979,7 +1979,7 @@ class UpdateThread4 extends Thread {
             /**
              * Heat
              */
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M104 S" + temperatureGoal));
+            machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
 
             /**
              * If not printing directly from gcode, generates it.
@@ -2047,6 +2047,11 @@ class UpdateThread4 extends Thread {
             window.resetProgressBar();
             while (temperatureAchieved == false) {
                 temperatureAchieved = evaluateTemperature();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             /**
@@ -2057,13 +2062,12 @@ class UpdateThread4 extends Thread {
             /**
              * Reset elapsed time of Autonomous to 0
              */
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M32 " + FilamentControler.NO_FILAMENT_CODE));
+            //machine.runCommand(new replicatorg.drivers.commands.SendStandaloneVariables());
 
             /**
              * Start printing from SDCard
              */
-            //machine.runCommand(new replicatorg.drivers.commands.StartPrintAutonomous());
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M33", COM.BLOCK));
+            machine.runCommand(new replicatorg.drivers.commands.StartPrint());
 
             /**
              * GCode transfered so start print
@@ -2076,7 +2080,7 @@ class UpdateThread4 extends Thread {
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
 
             if (window.isAtErrorState()) {
-                //Inform user about that an error happened
+                //Inform user that an error happened
                 // USB Disconnect is handled by the driver
                 window.updateInformationsByError();
             }

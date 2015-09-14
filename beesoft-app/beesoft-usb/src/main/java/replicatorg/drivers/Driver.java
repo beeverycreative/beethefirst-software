@@ -113,7 +113,7 @@ public interface Driver {
      *
      * @return
      */
-    public String startPrintAutonomous();
+    public void startPrintAutonomous();
 
     /**
      * Get print session variables during autonomous print.

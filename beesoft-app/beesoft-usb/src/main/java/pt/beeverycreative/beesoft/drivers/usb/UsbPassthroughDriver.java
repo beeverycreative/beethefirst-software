@@ -1394,29 +1394,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public String startPrintAutonomous() {
-        //Begin print from SDCard
-        String answer = "";
-//        while (!answer.contains(RESPONSE_OK)) {
-
-        sendCommand(BEGIN_PRINT);
-        try {
-            Thread.sleep(5, 0);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        answer += readResponse();
-
-//            if (answer.contains(ERROR)) {
-//                driverError = true;
-//                driverErrorDescription = ERROR + ":BEGIN_PRINT failed";
-//                transferMode = false;
-//
-//                return driverErrorDescription;
-//            } // no need for else
-//        }
-//        Base.writeLog("Print begun with success");
-        return RESPONSE_OK;
+    public void startPrintAutonomous() {
+        dispatchCommand(BEGIN_PRINT, COM.DEFAULT);
     }
 
     @Override
@@ -1430,7 +1409,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String printSession;
         String[] data;
         
-        printSession = dispatchCommand(READ_VARIABLES);
+        printSession = dispatchCommand(READ_VARIABLES, COM.DEFAULT);
         data = parseData(printSession);
         
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));

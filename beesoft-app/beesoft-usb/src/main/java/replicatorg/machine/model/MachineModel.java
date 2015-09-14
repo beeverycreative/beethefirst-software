@@ -591,7 +591,7 @@ public class MachineModel {
     
     public synchronized AutonomousData getAutonomousData() throws InterruptedException {
         if(autonomousDataReady == false) {
-            wait(1000);
+            wait();
         }
         
         autonomousDataReady = false;

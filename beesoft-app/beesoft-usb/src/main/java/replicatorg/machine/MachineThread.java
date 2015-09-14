@@ -42,7 +42,7 @@ class MachineThread extends Thread {
     private final HashMap<String, Point5d> tablePoints;
     private static final String COMMAND_ACCELERATION = "M206";
     private int stopwatch;
-    private boolean isPaused;
+    private boolean isPaused = false;
     private final Point5d lastPoint = new Point5d();
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
@@ -66,9 +66,11 @@ class MachineThread extends Thread {
             machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
             Base.statusThreadDied = false;
             driver.initialize();
+            machineThread.readyMessage();
+            setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+
             //machineThread.scheduleRequest(new MachineCommand(
             //        RequestType.CONNECT, assessCommand));
-
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
@@ -317,12 +319,6 @@ class MachineThread extends Thread {
 
     private String notConnectedMessage() {
         String message = "is disconnected";
-        Base.getMainWindow().setMessage(message);
-        return message;
-    }
-
-    private String cableRemovedMessage() {
-        String message = "has the USB cable unplugged";
         Base.getMainWindow().setMessage(message);
         return message;
     }
