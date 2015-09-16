@@ -325,7 +325,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     protected void doShutdown() {
-        machine.runCommand(new replicatorg.drivers.commands.Shutdown());
+        //machine.runCommand(new replicatorg.drivers.commands.Shutdown());
         /*else {
          // resume from shutdown
          machine.getDriver().dispatchCommand("M21", COM.DEFAULT);

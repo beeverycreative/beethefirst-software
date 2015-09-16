@@ -323,8 +323,8 @@ public class PauseMenu extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bShutdownMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMousePressed
-        machine.runCommand(new replicatorg.drivers.commands.Shutdown());
-        lTitle.setText("Shutdown");
+        //machine.runCommand(new replicatorg.drivers.commands.Shutdown());
+        //lTitle.setText("Shutdown");
     }//GEN-LAST:event_bShutdownMousePressed
 
     private void bShutdownMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMouseExited
