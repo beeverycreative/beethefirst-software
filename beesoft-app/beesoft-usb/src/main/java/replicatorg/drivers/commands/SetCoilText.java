@@ -4,7 +4,11 @@ import replicatorg.drivers.Driver;
 
 public class SetCoilText implements DriverCommand {
 
-    String coilText = "";
+    private final String coilText;
+    
+    public SetCoilText() {
+        this.coilText = "none";
+    }
 
     public SetCoilText(String coilText) {
         this.coilText = coilText;

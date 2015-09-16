@@ -727,6 +727,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     // private for now, not sure if its going to be used outside
     private boolean recoverEcho() {
+        return true;
+        /*
         int id = (int) (Math.random() * 1000.0);
         String message = ECHO + " E" + id;
         String expected = "E" + id;
@@ -740,10 +742,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("..nok");
             return false;
         }
+        */
     }
 
     private String recoverCOM() {
-        boolean comLost = true;
+        boolean comLost = false;
 
         while (comLost) {
 
@@ -830,7 +833,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
-        queue_size = QUEUE_LIMIT;
+        //queue_size = QUEUE_LIMIT;
 
         return "ok";
 
@@ -1408,10 +1411,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //        currentNumberLines - [3];
         String printSession;
         String[] data;
-        
+
         printSession = dispatchCommand(READ_VARIABLES, COM.DEFAULT);
         data = parseData(printSession);
-        
+
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
     }
 
@@ -1800,8 +1803,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
         try {
             if (m_usbDevice != null) {
                 synchronized (m_usbDevice) {
-                    if (!pipes.isOpen()) {
-                        openPipe(pipes);
+                    try {
+                        if (!pipes.isOpen()) {
+                            openPipe(pipes);
+                        }
+                    } catch (NullPointerException ex) {
+                        return -1;
                     }
                     pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
                     cmdlen = next.length() + 1;
@@ -2084,7 +2091,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommand("M104 S" + df.format(temperature));
         super.setTemperature(temperature);
     }
-    
+
     @Override
     public void setTemperatureBlocking(double temperature) throws RetryException {
         dispatchCommand("M109 S" + df.format(temperature));

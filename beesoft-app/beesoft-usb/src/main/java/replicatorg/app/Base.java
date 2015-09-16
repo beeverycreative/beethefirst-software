@@ -551,7 +551,6 @@ public class Base {
     }
 
     public static void writeLog(String message) {
-
         /**
          * *** Date and Time procedure ****
          */
@@ -568,6 +567,43 @@ public class Base {
         try {
             bw.newLine();
             bw.write("[" + date + "]" + " " + message);
+            bw.flush();
+            bw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            if (fw != null) {
+                fw.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void writeLog(String message, Class logClass) {
+        
+        if(logClass == null) {
+            writeLog(message);
+            return;
+        }
+        
+        /**
+         * *** Date and Time procedure ****
+         */
+        Calendar cal = Calendar.getInstance();
+        String date = dateFormat.format(cal.getTime());
+
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(log.getAbsoluteFile(), true);
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        BufferedWriter bw = new BufferedWriter(fw);
+        try {
+            bw.newLine();
+            bw.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
             bw.flush();
             bw.close();
         } catch (IOException ex) {
@@ -1265,7 +1301,7 @@ public class Base {
         } catch (InterruptedException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         // quite ugly, but it works for now
         while (true) {
             try {

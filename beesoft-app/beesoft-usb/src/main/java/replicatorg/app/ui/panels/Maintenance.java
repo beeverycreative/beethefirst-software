@@ -31,6 +31,7 @@ public class Maintenance extends BaseDialog {
 
     public Maintenance() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        Base.writeLog("Maintenance panel opened", this.getClass());
         initComponents();
         setFont();
         setTextLanguage();
@@ -668,7 +669,7 @@ public class Maintenance extends BaseDialog {
             } else if (Base.isPrinting) {
                 Base.getMainWindow().showFeedBackMessage("btfPrinting");
             }
-        }   
+        }
     }//GEN-LAST:event_bNozzleSwitchMousePressed
 
     private void bCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMousePressed
@@ -704,17 +705,13 @@ public class Maintenance extends BaseDialog {
     }//GEN-LAST:event_bCalibrationMouseEntered
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
-
         if (!moving && isConnected) {
             dispose();
             ctrlStatus.stop();
-            if (Base.printPaused) {
-                FilamentInsertion p = new FilamentInsertion();
-                p.setVisible(true);
-            } else {
-                FilamentHeating p = new FilamentHeating();
-                p.setVisible(true);
-            }
+
+            FilamentHeating p = new FilamentHeating();
+            p.setVisible(true);
+
             Base.getMainWindow().getCanvas().unPickAll();
         } else {
             if (Base.getMachineLoader().isConnected() == false) {
