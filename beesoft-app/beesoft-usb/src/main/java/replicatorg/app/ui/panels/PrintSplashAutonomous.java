@@ -324,6 +324,25 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     }
 
+    protected void doShutdown() {
+        machine.runCommand(new replicatorg.drivers.commands.Shutdown());
+        /*else {
+         // resume from shutdown
+         machine.getDriver().dispatchCommand("M21", COM.DEFAULT);
+         machine.getDriver().dispatchCommand("M35", COM.DEFAULT);
+         pausePos = machine.getDriver().getShutdownPosition();
+         userDecision = true;
+         if (shutdownFromDisconnect == false) {
+         //                    resetProgressBar();
+         //                    setHeatingInfo();
+         bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
+         jProgressBar1.setVisible(false);
+         resumeFromShutdown();
+         }
+         }
+         }*/
+    }
+
     /**
      * Get file to print either from Printer or from selected gcode
      *
@@ -1619,54 +1638,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     private void bShutdownMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMousePressed
 
-        if (ut.isOnShutdownRecover() == false) {
-            final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-            final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-            bPause.setVisible(false);
-            setProcessingInfo();
-            bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
-
-            if (isShutdown == false) {
-                setPreparingShutdown();
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        // save
-                        driver.dispatchCommand("M36");
-
-                        // Paused Time in which user didn't shutdown machine
-                        pausedTime = System.currentTimeMillis() - pausedTime;
-                        AutonomousData variables = getAutonomousData();
-                        String elapsedTime = variables.getElapsedTime().toString();
-                        driver.setElapsedTime((Long.valueOf(elapsedTime) - pausedTime));
-
-                        //feedback
-                        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Shutdown"));
-                        tInfo3.setVisible(isPaused);
-                        tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Waiting3"));
-                        isShutdown = true;
-                        userDecision = true;
-                        bShutdown.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
-                        bPause.setVisible(false);
-                        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-                    }
-                });
-            } else {
-                // resume from shutdown
-                machine.getDriver().dispatchCommand("M21", COM.DEFAULT);
-                machine.getDriver().dispatchCommand("M35", COM.DEFAULT);
-                pausePos = machine.getDriver().getShutdownPosition();
-                userDecision = true;
-                if (shutdownFromDisconnect == false) {
-                    //                    resetProgressBar();
-                    //                    setHeatingInfo();
-                    bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
-                    jProgressBar1.setVisible(false);
-                    resumeFromShutdown();
-                }
-            }
-        }
     }//GEN-LAST:event_bShutdownMousePressed
 
     private void bShutdownMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMouseExited
@@ -2063,7 +2034,6 @@ class UpdateThread4 extends Thread {
              * Reset elapsed time of Autonomous to 0
              */
             //machine.runCommand(new replicatorg.drivers.commands.SendStandaloneVariables());
-
             /**
              * Start printing from SDCard
              */
