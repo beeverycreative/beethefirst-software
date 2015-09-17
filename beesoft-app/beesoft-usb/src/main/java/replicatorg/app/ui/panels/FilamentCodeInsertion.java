@@ -28,6 +28,7 @@ public class FilamentCodeInsertion extends BaseDialog {
     private DefaultComboBoxModel comboModel;
     private String[] categories;
     private static final String WRITE_CONFIG = "M601";
+    private boolean noFilamentsFound = false;
 
     public FilamentCodeInsertion() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -66,7 +67,10 @@ public class FilamentCodeInsertion extends BaseDialog {
         categories = fullFillCombo();
         comboModel = new DefaultComboBoxModel(categories);
         jComboBox1.setModel(comboModel);
-        jComboBox1.setSelectedIndex(getModelCategoryIndex());
+
+        if (categories.length > 0) {
+            jComboBox1.setSelectedIndex(getModelCategoryIndex());
+        }
 
         if (ProperDefault.get("maintenance").equals("1")) {
             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
@@ -100,8 +104,17 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         result = FilamentControler.getColors();
 
-        Base.writeLog("Obtained a list of " + result.length + " filaments", this.getClass());
+        if (result.length > 0) {
+            Base.writeLog("Obtained a list of " + result.length + " filaments", this.getClass());
+        } else {
+            Base.writeLog("No filaments found for this printer!", this.getClass());
+            noFilamentsFound = true;
+            result = new String[1];
+            result[0] = "No filaments found";
+        }
+
         return result;
+
     }
 
     private void finalizeHeat() {
@@ -375,9 +388,14 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
 
-        String coilText = comboModel.getSelectedItem().toString();
+        String coilText;
+        
+        if(noFilamentsFound) {
+            coilText = FilamentControler.NO_FILAMENT;
+        } else {
+            coilText = comboModel.getSelectedItem().toString();
+        }
 
-        //set the coil code: M400 <COILCODE>
         machine.runCommand(new replicatorg.drivers.commands.SetCoilText(coilText));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));

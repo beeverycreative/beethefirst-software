@@ -98,6 +98,8 @@ import replicatorg.util.ConfigProperties;
  */
 public class Base {
 
+    private static final String newLine = System.getProperty("line.separator");
+    
     /**
      * enum for fast/easy OS checking
      */
@@ -530,15 +532,15 @@ public class Base {
         BufferedWriter bw = new BufferedWriter(fw);
         try {
             bw.newLine();
-            bw.write("**************************************************\n");
-            bw.write(PROGRAM + " " + VERSION_BEESOFT + "\n");
-            bw.write("Bootloader version: " + VERSION_BOOTLOADER + "\n");
-            bw.write("Firmware version: " + FIRMWARE_IN_USE + "\n");
-            bw.write("Java version: " + VERSION_JAVA + "\n");
-            bw.write("Architecture: " + COMPUTER_ARCHITECTURE + "\n");
+            bw.write("**************************************************" + newLine);
+            bw.write(PROGRAM + " " + VERSION_BEESOFT + newLine);
+            bw.write("Bootloader version: " + VERSION_BOOTLOADER + newLine);
+            bw.write("Firmware version: " + FIRMWARE_IN_USE + newLine);
+            bw.write("Java version: " + VERSION_JAVA + newLine);
+            bw.write("Architecture: " + COMPUTER_ARCHITECTURE + newLine);
 //            bw.write("Serial Number:" + " " + VERSION_MACHINE+ "\n");
-            bw.write("Machine name: BEETHEFIRST\n");
-            bw.write("Company name: BEEVERYCREATIVE\n");
+            bw.write("Machine name: BEETHEFIRST" + newLine);
+            bw.write("Company name: BEEVERYCREATIVE" + newLine);
             bw.write("**************************************************\n");
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
@@ -666,7 +668,7 @@ public class Base {
         BufferedWriter bw = new BufferedWriter(fw);
         try {
             if (!message.equals("\n")) {
-                bw.write("Timestamp: " + timeStamp + " | " + message + "\n");
+                bw.write("Timestamp: " + timeStamp + " | " + message + newLine);
                 bw.flush();
                 bw.close();
             } else {

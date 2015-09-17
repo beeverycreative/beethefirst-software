@@ -57,6 +57,12 @@ public class FilamentControler {
 
         String connectedPrinter = Base.getMainWindow().getMachine()
                 .getDriver().getConnectedDevice().toString();
+        
+        // Do not distinguish between the BEETHEFIRST's with the old and new 
+        // bootloader
+        if(connectedPrinter.equals("BEETHEFIRST0")) {
+            connectedPrinter = "BEETHEFIRST";
+        }
 
         // get all the files from a directory
         File directory = new File(filamentsDir);
@@ -88,8 +94,7 @@ public class FilamentControler {
 
                         // only add to available filaments if it is supported by the printer
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                            if (connectedPrinter.equals(sc.getPrinterName())
-                                    || connectedPrinter.equals("UNKNOWN")) {
+                            if (connectedPrinter.equals(sc.getPrinterName())) {
                                 availableFilaments.add(fil);
                                 break;
                             }
