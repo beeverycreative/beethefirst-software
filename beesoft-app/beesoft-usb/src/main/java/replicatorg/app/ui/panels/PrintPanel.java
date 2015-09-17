@@ -12,7 +12,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -416,12 +415,14 @@ public class PrintPanel extends BaseDialog {
 
         printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
 
-        if (printerAvailable) {
-            if (nModels != 0 && noFilament == false
-                    && Base.isPrinting == false) {
-                bPrint.setEnabled(true);
+        if (nModels > 0) {
+            if (printerAvailable) {
+                if (noFilament == false && Base.isPrinting == false) {
+                    bPrint.setEnabled(true);
+                }
+                bChangeFilament.setEnabled(true);
             }
-            bChangeFilament.setEnabled(true);
+            bEstimate.setEnabled(true);
         }
 
         bResButtonGroup.add(bLowRes);
@@ -963,6 +964,7 @@ public class PrintPanel extends BaseDialog {
         bEstimate.setText("Estimate");
         bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         bEstimate.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
+        bEstimate.setEnabled(false);
         bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1710,12 +1712,8 @@ public class PrintPanel extends BaseDialog {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (printerAvailable == false) {
-                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-                    } else if (nModels == 0) {
+                    if (nModels == 0) {
                         Base.getMainWindow().showFeedBackMessage("noModelError");
-                    } else if (noFilament) {
-                        flashNoFilamentMessage();
                     }
                 }
             });
