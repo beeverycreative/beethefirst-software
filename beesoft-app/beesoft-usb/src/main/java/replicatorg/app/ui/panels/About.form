@@ -64,9 +64,9 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jBootloaderTooltip" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jLabel9" alignment="0" min="-2" pref="132" max="-2" attributes="0"/>
+                              <Component id="jLabel9" alignment="0" min="-2" pref="190" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="126" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="68" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>

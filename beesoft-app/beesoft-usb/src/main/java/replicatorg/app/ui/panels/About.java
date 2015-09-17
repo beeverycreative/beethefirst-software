@@ -96,16 +96,18 @@ public class About extends BaseDialog {
     }
 
     private String parseCoilCode() {
-        String color;
-        String code = null;
+        String code = "";
 
         if (Base.getMachineLoader().isConnected()) {
             code = Base.getMainWindow().getMachine().getModel().getCoilText();
         }
 
-        color = getFilamentType(code);
-
-        return color;
+        if(code.equals(FilamentControler.NO_FILAMENT)
+                || code.equals(FilamentControler.NO_FILAMENT_2)) {
+            return "No filament currently loaded";
+        }
+        
+        return code;
     }
 
     private String getFilamentType(String code) {
@@ -249,8 +251,8 @@ public class About extends BaseDialog {
                                 .addComponent(jLabel8)
                                 .addGap(18, 18, 18)
                                 .addComponent(jBootloaderTooltip))
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 126, Short.MAX_VALUE))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 68, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
