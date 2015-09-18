@@ -20,8 +20,9 @@ import replicatorg.app.Base;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class Version implements Comparable<Version> {
-    
+
     public enum Flavour {
+
         BEEVC, MSFT, UNKNOWN;
     }
 
@@ -139,7 +140,7 @@ public class Version implements Comparable<Version> {
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
             }
-            
+
             try {
                 version.printer = PrinterInfo.valueOf(m.group(5));
             } catch (IllegalArgumentException e) {
@@ -168,20 +169,52 @@ public class Version implements Comparable<Version> {
         String re5 = "(\\d+)";	// Integer Number 2
         String re6 = "(\\.)";	// Any Single Character 2
         String re7 = "(\\d+)";	// Integer Number 3
-        
+
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(machineString);
-        if(m.find()) {
+        if (m.find()) {
             version.major = Integer.parseInt(m.group(3));
             version.minor = Integer.parseInt(m.group(5));
             version.bug = Integer.parseInt(m.group(7));
+        } else {
+            // if bootloader detection failed, try with the legacy method, it's
+            // probably an old bootloader
+            return bootloaderVersionLegacy(machineString);
+        }
+
+        return version;
+    }
+
+    private static Version bootloaderVersionLegacy(String machineString) {
+        Version version = new Version();
+        version.versionString = machineString;
+
+        String re1 = "(ok)";	// Word 1
+        String re2 = "(\\s+)";	// White Space 1
+        String re3 = "([a-z])";	// Any Single Word Character (Not Whitespace) 1
+        String re4 = "(:)";	// Any Single Character 1
+        String re5 = "(\\d+)";	// Integer Number 1
+        String re6 = "(\\s+)";	// White Space 2
+        String re7 = "(\\d+)";	// Integer Number 2
+        String re8 = "(\\.)";	// Any Single Character 2
+        String re9 = "(\\d+)";	// Integer Number 3
+        String re10 = "(\\.)";	// Any Single Character 3
+        String re11 = "(\\d+)";	// Integer Number 4
+
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(machineString);
+        if (m.find()) {
+            version.major = Integer.parseInt(m.group(7));
+            version.minor = Integer.parseInt(m.group(9));
+            version.bug = Integer.parseInt(m.group(11));
         } else {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
             Base.writeLog("Couldn't determine bootloader version");
+            Base.writeLog("Bootloader string: " + machineString, Version.class);
         }
-
+        
         return version;
     }
 
@@ -212,7 +245,7 @@ public class Version implements Comparable<Version> {
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
             }
-            
+
             try {
                 version.printer = PrinterInfo.valueOf(m.group(3));
             } catch (IllegalArgumentException e) {

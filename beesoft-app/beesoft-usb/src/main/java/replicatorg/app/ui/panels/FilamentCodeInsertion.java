@@ -389,8 +389,8 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
 
         String coilText;
-        
-        if(noFilamentsFound) {
+
+        if (noFilamentsFound) {
             coilText = FilamentControler.NO_FILAMENT;
         } else {
             coilText = comboModel.getSelectedItem().toString();
@@ -424,9 +424,8 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
         FilamentInsertion p = new FilamentInsertion();
-        p.setVisible(true);
         dispose();
-
+        p.setVisible(true);
     }//GEN-LAST:event_bPrevMousePressed
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
