@@ -340,7 +340,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             // if firmware is not ok
             if (firmwareVersion.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("Firmware is not OK", this.getClass());
-                Base.writeLog("Firmware version string: " 
+                Base.writeLog("Firmware version string: "
                         + firmwareVersion.getVersionString(), this.getClass());
                 Base.writeLog("Soliting user to restart BEESOFT and the printer", this.getClass());
                 // Warn user to restart BTF and restart BEESOFT.
@@ -550,36 +550,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String var1 = m.group(1);
             String c1 = m.group(2);
             String int1 = m.group(3);
-
-            return Integer.parseInt(int1);
-        }
-        return QUEUE_LIMIT;
-    }
-
-    private int getQfromSpecial(String txt) {
-
-        String re1 = "(ok)";	// Variable Name 1
-        String re2 = "(\\s+)";	// White Space 1
-        String re3 = "(Q)";	// Variable Name 2
-        String re4 = "(:)";	// Any Single Character 1
-        String re5 = "(\\d+)";	// Integer Number 1
-        String re6 = "(\\s+)";	// White Space 2
-        String re7 = "(N)";	// Variable Name 3
-        String re8 = "(:)";	// Any Single Character 2
-        String re9 = "(\\d+)$";	// Integer Number 2
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(txt);
-        if (m.find()) {
-            String var1 = m.group(1);
-            String ws1 = m.group(2);
-            String var2 = m.group(3);
-            String c1 = m.group(4);
-            String int1 = m.group(5);
-            String ws2 = m.group(6);
-            String var3 = m.group(7);
-            String c2 = m.group(8);
-            String int2 = m.group(9);
 
             return Integer.parseInt(int1);
         }
@@ -2876,24 +2846,20 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private int updateFirmware() {
 
         String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
-        Base.writeLog("Firmware should be: " + versionToCompare);
+        Base.writeLog("Firmware should be: " + versionToCompare, this.getClass());
 
         //check if the firmware is the same
         String machineFirmware = firmwareVersion.getVersionString();
+        Base.writeLog("Firmware is: " + firmwareVersion.getVersionString(), this.getClass());
+
         if (machineFirmware.equalsIgnoreCase(versionToCompare) == true) {
-            Base.writeLog("Firmware is " + firmwareVersion.getVersionString());
+            Base.writeLog("No update necessary, firmware is as it should be", this.getClass());
             return 0; // NO UPDATE NECESSARY
         } // else carry on updating
 
+        Base.writeLog("Update was necessary, firmware version string is not what was expected", this.getClass());
+
         File folder = new File(Base.getApplicationDirectory().toString() + "/firmware/");
-        /*
-         File[] firmwarelist = folder.listFiles(new FilenameFilter() {
-         @Override
-         public boolean accept(File dir, String name) {
-         return name.toLowerCase().endsWith(".bin");
-         }
-         });
-         */
 
         File[] firmwareList = folder.listFiles();
         File firmwareFile = null;
@@ -2906,28 +2872,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Candidate file found:" + firmwareFile);
                 break;
             }
-            /*
-             Base.writeLog("Version to compare: " + versionToCompare);
-             if (firmwarelist1.getName().contains(versionToCompare)) {
-             firmwareFile = firmwarelist1;
-             Base.writeLog("Candidate file found:" + firmwareFile);
-             break;
-             }
-             */
         }
 
         if (firmwareFile == null) {
-            Base.writeLog("No firmware file found;");
+            Base.writeLog("No firmware file found.");
             return -1;
         } else {
-            Base.writeLog("Setting firmare version to: " + INVALID_FIRMWARE_VERSION);
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
             hiccup(QUEUE_WAIT, 0);
             readResponse();
             Base.writeLog("Starting Firmware update.");
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
                 Base.writeLog("Firmware successfully updated");
-                Base.writeLog("Setting firmare version to: " + versionToCompare);
+                Base.writeLog("Setting firmware version to: " + versionToCompare);
                 sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
                 hiccup(QUEUE_WAIT, 0);
                 readResponse();

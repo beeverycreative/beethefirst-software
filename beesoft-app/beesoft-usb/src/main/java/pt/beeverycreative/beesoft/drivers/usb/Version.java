@@ -22,7 +22,6 @@ import replicatorg.app.Base;
 public class Version implements Comparable<Version> {
 
     public enum Flavour {
-
         BEEVC, MSFT, UNKNOWN;
     }
 
@@ -77,42 +76,55 @@ public class Version implements Comparable<Version> {
     }
 
     public static Version fromMachineOld(String machineString) {
-
         Version version = new Version();
         version.versionString = machineString;
 
-        String re1 = "(ok)";	// US State 1
-        String re2 = ".*?";	// Non-greedy match on filler
-        String re3 = "(N)";	// Variable Name 1
+        String re1 = "(ok)";	// Word 1
+        String re2 = "(\\s+)";	// White Space 1
+        String re3 = "([a-z])";	// Any Single Word Character (Not Whitespace) 1
         String re4 = "(:)";	// Any Single Character 1
-        String re5 = ".*?";	// Non-greedy match on filler
-        String re6 = "\\d+";	// Uninteresting: int
-        String re7 = ".*?";	// Non-greedy match on filler
-        String re8 = "(\\d+)";	// Integer Number 1
-        String re9 = ".*?";	// Non-greedy match on filler
-        String re10 = "(\\d+)";	// Integer Number 2
-        String re11 = ".*?";	// Non-greedy match on filler
-        String re12 = "(\\d+)";	// Integer Number 3
+        String re5 = "(\\d+)";	// Integer Number 1
+        String re6 = "(\\s+)";	// White Space 2
+        String re7 = "((?:[a-z][a-z0-9_]*))";	// Variable Name 1
+        String re8 = "(-)";	// Any Single Character 2
+        String re9 = "((?:[a-z][a-z0-9_]*))";	// Variable Name 2
+        String re10 = "(-)";	// Any Single Character 3
+        String re11 = "(\\d+)";	// Integer Number 2
+        String re12 = "(\\.)";	// Any Single Character 4
+        String re13 = "(\\d+)";	// Integer Number 3
+        String re14 = "(\\.)";	// Any Single Character 5
+        String re15 = "(\\d+)";	// Integer Number 4
 
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14 + re15, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(machineString);
         if (m.find()) {
+            version.major = Integer.parseInt(m.group(11));
+            version.minor = Integer.parseInt(m.group(13));
+            version.bug = Integer.parseInt(m.group(15));
 
-            version.major = Integer.parseInt(m.group(4));
-            version.minor = Integer.parseInt(m.group(5));
-            version.bug = Integer.parseInt(m.group(6));
-            Base.writeLog("Version is: " + version.versionString);
+            try {
+                version.flavour = Flavour.valueOf(m.group(7));
+            } catch (IllegalArgumentException e) {
+                version.flavour = Flavour.UNKNOWN;
+            }
+            
+            try {
+                version.printer = PrinterInfo.valueOf(m.group(9));
+            } catch (IllegalArgumentException e) {
+                version.printer = PrinterInfo.UNKNOWN;
+            }
         } else {
+            version.flavour = Flavour.UNKNOWN;
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + machineString);
+            Base.writeLog("Version format invalid: " + version.versionString);
         }
+        
         return version;
     }
 
     public static Version fromMachine(String machineString) {
-
         Version version = new Version();
         version.versionString = machineString;
 
@@ -214,7 +226,7 @@ public class Version implements Comparable<Version> {
             Base.writeLog("Couldn't determine bootloader version");
             Base.writeLog("Bootloader string: " + machineString, Version.class);
         }
-        
+
         return version;
     }
 
@@ -292,7 +304,7 @@ public class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
-        return "" + major + "." + minor + "." + bug;
+        return major + "." + minor + "." + bug;
     }
 
     public int getMajor() {
