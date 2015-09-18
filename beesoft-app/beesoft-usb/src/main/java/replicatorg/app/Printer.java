@@ -70,18 +70,17 @@ public class Printer {
     public String generateGCode() {
 
         stl = generateSTL();
-        Base.writeLog("STL generated with success");
+        Base.writeLog("STL generated with success", this.getClass());
 
         options = parseParameters();
         appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
-        replaceLineInFile(gcode.getPath(), "M31 A0 L0");
 
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
         if (gcode != null && gcode.canRead() && gcode.length() != 0) {
-            Base.writeLog("GCode generated");
-//            parseGCodeToSave();
+            replaceLineInFile(gcode.getPath(), "M31 A0 L0");
+            Base.writeLog("GCode generated", this.getClass());
         } else {
             if (!gcode.canRead() || gcode.length() == 0) {
                 // handles with mesh error
@@ -104,6 +103,8 @@ public class Printer {
         m31String = "M31 A" + PrintEstimator.getEstimatedMinutes()
                 + " L" + getGCodeNLines();
 
+        Base.writeLog("Attempting to replace M31 A0 L0 with " + m31String, this.getClass());
+        
         try {
             Reader reader = new InputStreamReader(
                     new FileInputStream(fileToRead), "UTF-8");
@@ -126,10 +127,14 @@ public class Printer {
 
             // Moves the new temp file to the original one
             if (fileToRead.delete()) {
+                Base.writeLog("Copying modified file to the original one's path", this.getClass());
                 fileToWrite.renameTo(new File(pathString));
+            } else {
+                Base.writeLog("Couldn't delete original file, permission problems?", this.getClass());
             }
 
         } catch (IOException e) {
+            Base.writeLog("IOException when attempting to replace M31", this.getClass());
             Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
         }
     }
@@ -283,12 +288,7 @@ public class Printer {
      * @return
      */
     public File getGCode() {
-        //Save GCode if we are not printing locally
-//        if (!Boolean.valueOf(ProperDefault.get("localPrint"))) {
-//            parseGCodeToSave();
-//        }
         return gcode;
-
     }
 
     /**
@@ -297,22 +297,27 @@ public class Printer {
      * @return number of lines of GCode.
      */
     public int getGCodeNLines() {
+        Base.writeLog("Calculating number of lines", this.getClass());
+        int retVal;
         LineNumberReader lnrGCode = null;
         try {
             lnrGCode = new LineNumberReader(new FileReader(gcode));
             lnrGCode.skip(Long.MAX_VALUE);
         } catch (FileNotFoundException ex) {
-            Base.writeLog("Cant calculate GCode Number of lines; EX:" + ex.getMessage());
+            Base.writeLog("Can't calculate GCode number of lines; EX:" + ex.getMessage(), this.getClass());
         } catch (IOException ex) {
-            Base.writeLog("Cant calculate GCode Number of lines; EX:" + ex.getMessage());
+            Base.writeLog("Can't calculate GCode number of lines; EX:" + ex.getMessage(), this.getClass());
         } catch (NullPointerException ex) {
-            Base.writeLog("Cant calculate GCode Number of lines; EX:" + ex.getMessage());
+            Base.writeLog("Can't calculate GCode number of lines; EX:" + ex.getMessage(), this.getClass());
         }
 
         if (lnrGCode == null) {
+            Base.writeLog("lnrGCode variable is null, returning 0 lines", this.getClass());
             return 0;
         } else {
-            return lnrGCode.getLineNumber();
+            retVal = lnrGCode.getLineNumber();
+            Base.writeLog("Counted " + retVal + " lines", this.getClass());
+            return retVal;
         }
     }
 
