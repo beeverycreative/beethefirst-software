@@ -420,9 +420,12 @@ public class PrintPanel extends BaseDialog {
                 if (noFilament == false && Base.isPrinting == false) {
                     bPrint.setEnabled(true);
                 }
-                bChangeFilament.setEnabled(true);
             }
             bEstimate.setEnabled(true);
+        }
+
+        if (printerAvailable) {
+            bChangeFilament.setEnabled(true);
         }
 
         bResButtonGroup.add(bLowRes);
@@ -1591,20 +1594,20 @@ public class PrintPanel extends BaseDialog {
     }//GEN-LAST:event_bExportMouseEntered
 
     private void bChangeFilamentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseEntered
-        if (printerAvailable) {
+        if (bChangeFilament.isEnabled()) {
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
         }
     }//GEN-LAST:event_bChangeFilamentMouseEntered
 
     private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
-        if (printerAvailable) {
+        if (bChangeFilament.isEnabled()) {
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
         }
     }//GEN-LAST:event_bChangeFilamentMouseExited
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         // if the printer is available, display the filament change screen
-        if (printerAvailable) {
+        if (bChangeFilament.isEnabled()) {
             dispose();
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
             Base.getMainWindow().getButtons().goFilamentChange();
