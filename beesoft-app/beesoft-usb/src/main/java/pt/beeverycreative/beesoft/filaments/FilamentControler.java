@@ -57,10 +57,10 @@ public class FilamentControler {
 
         String connectedPrinter = Base.getMainWindow().getMachine()
                 .getDriver().getConnectedDevice().toString();
-        
+
         // Do not distinguish between the BEETHEFIRST's with the old and new 
         // bootloader
-        if(connectedPrinter.equals("BEETHEFIRST0")) {
+        if (connectedPrinter.equals("BEETHEFIRST0")) {
             connectedPrinter = "BEETHEFIRST";
         }
 
@@ -92,9 +92,11 @@ public class FilamentControler {
                     try {
                         fil = (Filament) unmarshaller.unmarshal(ff);
 
-                        // only add to available filaments if it is supported by the printer
+                        // only add to available filaments if it is supported by
+                        // the printer, or if no printer is connected
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                            if (connectedPrinter.equals(sc.getPrinterName())) {
+                            if (connectedPrinter.equals(sc.getPrinterName())
+                                    || connectedPrinter.equals("UNKNOWN")) {
                                 availableFilaments.add(fil);
                                 break;
                             }
@@ -330,18 +332,18 @@ public class FilamentControler {
 
         return false;
     }
-    
+
     public static Filament getMatchingFilament(String filamentText) {
         if (filamentList == null) {
             fetchFilaments();
         }
-        
-        for(Filament fil: filamentList) {
-            if(fil.getName().equalsIgnoreCase(filamentText)) {
+
+        for (Filament fil : filamentList) {
+            if (fil.getName().equalsIgnoreCase(filamentText)) {
                 return fil;
             }
         }
-        
+
         return null;
     }
 

@@ -104,6 +104,8 @@ public class Printer {
                 + " L" + getGCodeNLines();
 
         Base.writeLog("Attempting to replace M31 A0 L0 with " + m31String, this.getClass());
+        Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
+        Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
         
         try {
             Reader reader = new InputStreamReader(
@@ -119,11 +121,13 @@ public class Printer {
                 fout.newLine();
             }
 
-            //Remember to call close. 
-            //calling close on a BufferedReader/BufferedWriter 
-            // will automatically call close on its underlying stream 
+            // might seem weird but not doing this will prevent BEESOFT from
+            // deleting the unmodified file on Windows systems. probably a bug
+            // in the JVM (Java 6)?
             fin.close();
+            fin = null;
             fout.close();
+            fout = null;
 
             // Moves the new temp file to the original one
             if (fileToRead.delete()) {
@@ -131,11 +135,16 @@ public class Printer {
                 fileToWrite.renameTo(new File(pathString));
             } else {
                 Base.writeLog("Couldn't delete original file, permission problems?", this.getClass());
+                Base.writeLog("r: " + fileToRead.canRead() 
+                        + " w: " + fileToRead.canWrite() 
+                        + " x: " + fileToRead.canExecute(), this.getClass());
             }
 
         } catch (IOException e) {
             Base.writeLog("IOException when attempting to replace M31", this.getClass());
             Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
+        } catch (SecurityException e) {
+            Base.writeLog("OS seems to have sandboxed BEESOFT when attempting to remove the unmodified GCode file", this.getClass());
         }
     }
 
