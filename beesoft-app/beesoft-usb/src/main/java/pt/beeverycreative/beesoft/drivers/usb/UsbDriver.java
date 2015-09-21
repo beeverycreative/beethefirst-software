@@ -28,6 +28,7 @@ import javax.usb.UsbIrp;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
 
@@ -55,12 +56,12 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static String oldCompatibleVersion = "BEETHEFIRST-3.";
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
-    
+
     protected PrinterInfo connectedDevice;
-    
+
     //check this, maybe delete
     protected boolean isNewVendorID = false;
-    
+
     protected ArrayList<UsbDevice> m_usbDeviceList = new ArrayList<UsbDevice>();
     /**
      * Lock for multi-threaded access to this driver's serial port.
@@ -87,11 +88,11 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     protected UsbDriver() {
     }
-    
+
     /**
      * Gets the info object on the currently connected printer
-     * 
-     * @return 
+     *
+     * @return
      */
     public PrinterInfo getConnectedDevice() {
         return this.connectedDevice;
@@ -192,10 +193,9 @@ public class UsbDriver extends DriverBaseImplementation {
      * @param device USB device from descriptor.
      */
     public void InitUsbDevice(UsbDevice device) {
-        
+
         //UsbDeviceDescriptor descriptor;
         //descriptor = device.getUsbDeviceDescriptor();
-
         try {
             //Base.writeLog("Device found - " + descriptor.idVendor() + ":" + descriptor.idProduct());
 
@@ -206,8 +206,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 for (UsbDevice child : (List<UsbDevice>) hub.getAttachedUsbDevices()) {
                     InitUsbDevice(child);
                 }
-                
-                
+
             } else {
 
                 //Try to add using the new way, then using the old way.
@@ -230,29 +229,28 @@ public class UsbDriver extends DriverBaseImplementation {
         }
     }
 
-    
     public boolean addIfCompatible(UsbDevice device) throws UsbException, UnsupportedEncodingException {
-        
+
         UsbDeviceDescriptor descriptor;
 
         descriptor = device.getUsbDeviceDescriptor();
 
         short idVendor = descriptor.idVendor();
         short idProduct = descriptor.idProduct();
-        
-        String sDevice = idVendor+":"+idProduct;
-        
+
+        String sDevice = idVendor + ":" + idProduct;
+
         // candidate
         connectedDevice = PrinterInfo.getDevice(sDevice);
-        
-        if(connectedDevice == PrinterInfo.UNKNOWN) {
+
+        if (connectedDevice == PrinterInfo.UNKNOWN) {
             return false;
         } else {
             m_usbDeviceList.add(device);
             return true;
         }
     }
-    
+
     public boolean addIfCompatible_Legacy(UsbDevice device) throws UsbException, UnsupportedEncodingException {
 
         UsbDeviceDescriptor descriptor;
@@ -261,8 +259,6 @@ public class UsbDriver extends DriverBaseImplementation {
 
         short idVendor = descriptor.idVendor();
         short idProduct = descriptor.idProduct();
-
-        
 
         if (idVendor == BEEVERYCREATIVE_VENDOR_ID) {
 
@@ -303,7 +299,6 @@ public class UsbDriver extends DriverBaseImplementation {
                 Base.writeLog(SerialNumberString);
                 return true;
 
-
             }//else{System.out.println("No need for else.");}
         }
         return false;
@@ -334,7 +329,7 @@ public class UsbDriver extends DriverBaseImplementation {
         } finally {
             setInitialized(false);
         }
-        
+
         if (m_usbDeviceList.isEmpty()) {
             m_usbDevice = null;
             //Base.writeLog("Failed to find USB device.");
@@ -346,26 +341,29 @@ public class UsbDriver extends DriverBaseImplementation {
             short idVendor = m_usbDevice.getUsbDeviceDescriptor().idVendor();
             connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
             Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
+
+            // early load of the list of filaments, to save time later on
+            FilamentControler.initFilamentList();
+
             if (Base.isMacOS()) {
                 ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
             }
-            
-            if(m_usbDeviceList.size() == 1){
+
+            if (m_usbDeviceList.size() == 1) {
                 Base.writeLog("Found 1 device, connecting.");
             } else {
                 Base.writeLog("Multiple machines found connecting to the "
-                    + "most recently connected one");
+                        + "most recently connected one");
             }
         }
-        
-        
+
         UsbDeviceDescriptor descriptor;
         descriptor = m_usbDevice.getUsbDeviceDescriptor();
-        if(descriptor.idVendor() == BEEVERYCREATIVE_NEW_VENDOR_ID){
+        if (descriptor.idVendor() == BEEVERYCREATIVE_NEW_VENDOR_ID) {
             isNewVendorID = true;
         } //no need for else
-        
-        if(descriptor.idVendor() == BEEVERYCREATIVE_VENDOR_ID){
+
+        if (descriptor.idVendor() == BEEVERYCREATIVE_VENDOR_ID) {
             isNewVendorID = false;
         } //no need for else
     }
@@ -639,6 +637,5 @@ public class UsbDriver extends DriverBaseImplementation {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
 }

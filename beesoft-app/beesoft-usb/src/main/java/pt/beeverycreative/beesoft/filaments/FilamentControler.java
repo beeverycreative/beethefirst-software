@@ -40,13 +40,8 @@ public class FilamentControler {
      *
      * @return
      */
-    public static Set<Filament> getFilamentList() {
-
-        if (filamentList == null) {
-            fetchFilaments();
-        }
-
-        return filamentList;
+    public static void initFilamentList() {
+        fetchFilaments();
     }
 
     /**
@@ -111,6 +106,8 @@ public class FilamentControler {
                 Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+            Base.writeLog("Initial filament fetch for this printer", FilamentControler.class);
+            Base.writeLog("Aqcuired " + availableFilaments.size() + " filaments", FilamentControler.class);
             filamentList = availableFilaments;
         }
     }

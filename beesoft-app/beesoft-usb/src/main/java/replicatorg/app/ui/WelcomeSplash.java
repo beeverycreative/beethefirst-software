@@ -175,7 +175,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
             flashError.setVisible(true);
         }
 
-        Base.updateVersions();
     }
 
     /**

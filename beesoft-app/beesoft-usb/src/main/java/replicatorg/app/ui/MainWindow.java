@@ -2184,6 +2184,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         // cleanup our machine/driver.
         machineLoader.unload();
         Base.disposeAllOpenWindows();
+        Base.closeLogs();
         System.exit(0);
     }
 

@@ -32,7 +32,6 @@ public class About extends BaseDialog {
         enableDrag();
         centerOnScreen();
         setTextLanguage();
-        Base.updateVersions();
         setValues();
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
@@ -63,8 +62,6 @@ public class About extends BaseDialog {
     }
 
     private void setValues() {
-        Base.updateVersions();
-
         String beesoft = Base.VERSION_BEESOFT;
         String bootloader = Base.VERSION_BOOTLOADER;
         String firmware = Base.FIRMWARE_IN_USE;

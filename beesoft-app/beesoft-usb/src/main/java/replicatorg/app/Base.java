@@ -59,6 +59,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -99,7 +100,7 @@ import replicatorg.util.ConfigProperties;
 public class Base {
 
     private static final String newLine = System.getProperty("line.separator");
-    
+
     /**
      * enum for fast/easy OS checking
      */
@@ -213,7 +214,7 @@ public class Base {
     public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
     public static final String VERSION_FIRMWARE_FINAL_OLD = configProperties.getAppProperty("firmware.old.version");
     public static String FIRMWARE_IN_USE = "BEETHEFIRST-" + VERSION_FIRMWARE_FINAL + ".bin";
-    private static String VERSION_JAVA = "";//System.getProperty("java.version");
+    private final static String VERSION_JAVA = System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
     public static String MACHINE_NAME = "BEETHEFIRST";
@@ -236,48 +237,20 @@ public class Base {
     public static final Logger logger = Logger.getLogger("replicatorg.log");
     public static FileHandler logFileHandler = null;
     public static String logFilePath = null;
-    /**
-     * Global LOG file *
-     */
-    private static File log;
-    /**
-     * Autonomous statistics file
-     */
-    private static File statistics = null;
+
     /**
      * Properties file
      */
     private static Properties propertiesFile = null;
-    private static FileOutputStream writer;
-    private static FileInputStream read;
     /* Date time instance variables */
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     public static boolean maintenanceOpened = false;
     public static boolean maintenanceWizardOpen = false;
     public static ArrayList<Thread> systemThreads;
 
-    /*
-     * expands ~ as per python os.path.expanduser
-     */
-    public static String expanduser(String path) {
-        String user = System.getProperty("user.home");
+    private static final BufferedWriter logBW = initLog("/BEELOG.txt");
+    private static final BufferedWriter comLogBW = initLog("/comLog.txt");
 
-        return path.replaceFirst("~", user);
-    }
-
-    /**
-     * Start logging on the given path. If the path is null, stop file logging.
-     *
-     * @param path The path to log messages to
-     */
-    public static void setLogFile(String path) {
-
-        if (logFileHandler != null) {
-            logger.removeHandler(logFileHandler);
-            logFileHandler = null;
-        }
-
-    }
     /**
      * Path of filename opened on the command line, or via the MRJ open document
      * handler.
@@ -299,20 +272,6 @@ public class Base {
             prefs = prefs.node("alternate/" + alternatePrefs);
         }
         return prefs;
-    }
-
-    /**
-     * Back up the preferences
-     *
-     * @return
-     */
-    static public String getToolsPath() {
-        String toolsDir = System.getProperty("replicatorg.toolpath");
-        if (toolsDir == null || (toolsDir.length() == 0)) {
-            File appDir = Base.getApplicationDirectory();
-            toolsDir = appDir.getAbsolutePath() + File.separator + "tools";
-        }
-        return toolsDir;
     }
 
     /**
@@ -344,20 +303,40 @@ public class Base {
         return ID;
     }
 
-    /**
-     * Lists all threads running on the JVM.
-     */
-    public static void listAllJVMThreads() {
+    private static BufferedWriter initLog(String fileName) {
+        BufferedWriter bw;
+        OutputStreamWriter osw;
+        FileOutputStream fos;
+        File file;
 
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+        try {
+            file = new File(getAppDataDirectory().toString() + "/" + fileName);
 
-        for (int i = 0; i < threadArray.length; i++) {
-            System.out.println("Thread " + (i + 1) + " > " + threadArray[i]);
+            if (file.exists()) {
+                file.delete();
+            }
+
+            fos = new FileOutputStream(file);
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            bw = new BufferedWriter(osw);
+
+            return bw;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("\n");
-        System.out.println("Total Threads > " + threadArray.length);
-        System.out.println("*****************");
+
+        return null;
+    }
+
+    public static void closeLogs() {
+        try {
+            logBW.close();
+            comLogBW.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -402,27 +381,6 @@ public class Base {
         return f;
     }
 
-    public static void buildLogFile(boolean force) {
-        String content = " ";
-        File f = new File(log.getAbsolutePath());
-
-        try {
-            byte[] bytes = readAllBytes(f);
-            content = new String(bytes, "UTF-8");
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-        }
-
-        clearFileContent(f);
-
-        if (force) {
-            writeLogHeader();
-        }
-
-        writeLog(content);
-
-    }
-
     private static byte[] readAllBytes(File file) throws IOException {
         InputStream is = new FileInputStream(file);
 
@@ -452,17 +410,6 @@ public class Base {
         // Close the input stream and return bytes
         is.close();
         return bytes;
-    }
-
-    public static void clearFileContent(File inputFile) {
-        PrintWriter wrtr = null;
-        try {
-            wrtr = new PrintWriter(inputFile);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        wrtr.print("");
-        wrtr.close();
     }
 
     private static Map<String, String> getGalleryMap(File[] models) {
@@ -514,39 +461,36 @@ public class Base {
         FIRMWARE_IN_USE = editor.getMachineInterface().getDriver().getFirmwareVersion();
         VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
 
-        buildLogFile(true);
+        //buildLogFile(true);
+        writePrinterInfo();
+    }
+
+    private static void writePrinterInfo() {
+        try {
+            logBW.newLine();
+            logBW.newLine();
+            logBW.write("*************** CONNECTED PRINTER ****************" + newLine);
+            logBW.write("Bootloader version: " + VERSION_BOOTLOADER + newLine);
+            logBW.write("Firmware version: " + FIRMWARE_IN_USE + newLine);
+            logBW.write("**************************************************" + newLine);
+            logBW.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     private static void writeLogHeader() {
-
-        VERSION_BOOTLOADER = editor.getMachineInterface().getDriver().getBootloaderVersion();
-        FIRMWARE_IN_USE = editor.getMachineInterface().getDriver().getFirmwareVersion();
-        VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
-
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(log.getAbsoluteFile(), true);
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.newLine();
-            bw.write("**************************************************" + newLine);
-            bw.write(PROGRAM + " " + VERSION_BEESOFT + newLine);
-            bw.write("Bootloader version: " + VERSION_BOOTLOADER + newLine);
-            bw.write("Firmware version: " + FIRMWARE_IN_USE + newLine);
-            bw.write("Java version: " + VERSION_JAVA + newLine);
-            bw.write("Architecture: " + COMPUTER_ARCHITECTURE + newLine);
-//            bw.write("Serial Number:" + " " + VERSION_MACHINE+ "\n");
-            bw.write("Machine name: BEETHEFIRST" + newLine);
-            bw.write("Company name: BEEVERYCREATIVE" + newLine);
-            bw.write("**************************************************\n");
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            bw.close();
+            logBW.newLine();
+            logBW.write("**************************************************" + newLine);
+            logBW.write(PROGRAM + " " + VERSION_BEESOFT + newLine);
+            logBW.write("Java version: " + VERSION_JAVA + newLine);
+            logBW.write("Architecture: " + COMPUTER_ARCHITECTURE + newLine);
+            logBW.write("Machine name: BEETHEFIRST" + newLine);
+            logBW.write("Company name: BEEVERYCREATIVE" + newLine);
+            logBW.write("**************************************************" + newLine);
+            logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -556,134 +500,89 @@ public class Base {
         /**
          * *** Date and Time procedure ****
          */
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
+        Calendar calendar = Calendar.getInstance();
+        String date = dateFormat.format(calendar.getTime());
 
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(log.getAbsoluteFile(), true);
+            logBW.newLine();
+            logBW.write("[" + date + "]" + " " + message);
+            logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.newLine();
-            bw.write("[" + date + "]" + " " + message);
-            bw.flush();
-            bw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
     public static void writeLog(String message, Class logClass) {
-        
-        if(logClass == null) {
+
+        if (logClass == null) {
             writeLog(message);
             return;
         }
-        
-        /**
-         * *** Date and Time procedure ****
-         */
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
-
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(log.getAbsoluteFile(), true);
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.newLine();
-            bw.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
-            bw.flush();
-            bw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public static void writeStatistics(String message) {
 
         /**
          * *** Date and Time procedure ****
          */
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
+        Calendar calendar = Calendar.getInstance();
+        String date = dateFormat.format(calendar.getTime());
 
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(statistics.getAbsoluteFile(), true);
+            logBW.newLine();
+            logBW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
+            logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.write(date);
-            bw.newLine();
-            bw.write("-------------------------------\n");
-            bw.write(message);
-            bw.flush();
-            bw.newLine();
-            bw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
-    public static void writecomLog(long timeStamp, String message) {
+    /*
+     public static void writeStatistics(String message) {
 
-        File f = new File(getAppDataDirectory() + "/comLog.txt");
+     Calendar cal = Calendar.getInstance();
+     String date = dateFormat.format(cal.getTime());
 
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(new File(getAppDataDirectory() + "/comLog.txt"), true);
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        BufferedWriter bw = new BufferedWriter(fw);
+     FileWriter fw = null;
+     try {
+     fw = new FileWriter(statistics.getAbsoluteFile(), true);
+     } catch (IOException ex) {
+     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     BufferedWriter bw = new BufferedWriter(fw);
+     try {
+     bw.write(date);
+     bw.newLine();
+     bw.write("-------------------------------\n");
+     bw.write(message);
+     bw.flush();
+     bw.newLine();
+     bw.close();
+     } catch (IOException ex) {
+     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     try {
+     if (fw != null) {
+     fw.close();
+     }
+     } catch (IOException ex) {
+     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }
+     */
+    public static void writeComLog(long timeStamp, String message) {
+
         try {
             if (!message.equals("\n")) {
-                bw.write("Timestamp: " + timeStamp + " | " + message + newLine);
-                bw.flush();
-                bw.close();
+                comLogBW.write("Timestamp: " + timeStamp + " | " + message + newLine);
+                comLogBW.flush();
             } else {
-                bw.newLine();
+                comLogBW.newLine();
+                comLogBW.flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
     private static Properties openFileProperties() {
@@ -823,41 +722,6 @@ public class Base {
 //            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
             editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
         }
-    }
-
-    private static void getJavaVersion() {
-        String[] command = {"java", "-version"};
-        ProcessBuilder probuilder = new ProcessBuilder(command);
-        probuilder.redirectErrorStream(true);
-
-        Process process = null;
-        String out = "";
-        try {
-            process = probuilder.start();
-            //Read out dir output
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                out += line + "\n";
-            }
-        } catch (IOException ex) {
-            Base.writeLog(ex.getMessage());
-        }
-
-        //Wait to get exit value
-        try {
-            if (process != null) {
-                process.waitFor();
-            }
-        } catch (InterruptedException e) {
-            Base.writeLog(e.getMessage());
-        }
-
-        VERSION_JAVA = out.trim();
     }
 
     static public void disposeAllOpenWindows() {
@@ -1157,27 +1021,6 @@ public class Base {
         new Base();
     }
 
-    /**
-     * Creates a new BEELOG file for print log
-     *
-     * @return file
-     */
-    private File openFileLog() {
-        /**
-         * Put log file near app folder *
-         */
-        String path = getAppDataDirectory().toString();
-        File f = new File(path + "/BEELOG.txt");
-
-        if (f.exists()) {
-            f.delete();
-            return new File(path + "/BEELOG.txt");
-        } else {
-            return f;
-        }
-
-    }
-
     private File openStatsFile() {
         /**
          * Put log file near app folder *
@@ -1200,25 +1043,16 @@ public class Base {
      *
      */
     public Base() {
-
-        // Log and messages queue init
-        log = openFileLog();
-
         // Log autonomous statistics file
-        statistics = openStatsFile();
+        // statistics = openStatsFile();
+
+        writeLogHeader();
 
         // Properties file init
         propertiesFile = openFileProperties();
 
         // Loads properties at the beginning
         loadProperties();
-
-        File comLog = new File(getAppDataDirectory() + "/comLog.txt");
-        if (comLog.exists()) {
-            comLog.delete();
-        }
-
-        getJavaVersion();
 
         // Loads language
         language = ProperDefault.get("language").toLowerCase();
@@ -1315,6 +1149,7 @@ public class Base {
                 editor.reloadMachine(machineName, false);
             }
         }
+
     }
 
     // .................................................................

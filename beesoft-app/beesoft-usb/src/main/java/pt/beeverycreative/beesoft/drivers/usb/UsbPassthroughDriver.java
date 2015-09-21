@@ -23,6 +23,7 @@ import javax.usb.UsbNotOpenException;
 import org.w3c.dom.Node;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM.BLOCK;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
@@ -253,6 +254,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             p.startConditions();
+            Base.updateVersions();
             return;
         }
 
@@ -373,6 +375,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             dispatchCommand("M601", COM.DEFAULT);
             setBusy(false);
 
+            Base.updateVersions();
             return;
         }
 
@@ -604,8 +607,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             queue_size = getQfromReverse(tResponse);
 
             if (comLog) {
-                Base.writecomLog((System.currentTimeMillis() - startTS), " Response:" + tResponse);
-                Base.writecomLog((System.currentTimeMillis() - startTS), " Queue:" + queue_size);
+                Base.writeComLog((System.currentTimeMillis() - startTS), " Response:" + tResponse);
+                Base.writeComLog((System.currentTimeMillis() - startTS), " Queue:" + queue_size);
             }
         }
 
@@ -710,7 +713,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             while (true) {
                 response = _dispatchCommand(message);
                 if (comLog) {
-                    Base.writecomLog(System.currentTimeMillis() - startTS, "Trying to recover COM. R: " + response + " E: " + expected);
+                    Base.writeComLog(System.currentTimeMillis() - startTS, "Trying to recover COM. R: " + response + " E: " + expected);
                 }
 
                 /**
@@ -755,14 +758,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     QueueCommand top = resendQueue.poll();
 
                     if (comLog) {
-                        Base.writecomLog(-1, "top = " + top.toString() + "Queue size = " + resendQueue.size());
+                        Base.writeComLog(-1, "top = " + top.toString() + "Queue size = " + resendQueue.size());
                     }
 
                     if (lineNumber < top.getLineNumber() && !top.command.contains(ECHO)) {
                         ans = dispatchCommand(top.getCommand());
 
                         if (comLog) {
-                            Base.writecomLog(-1, "Resend top = " + top.toString());
+                            Base.writeComLog(-1, "Resend top = " + top.toString());
                         }
 
                         if (!ans.contains(NOK)) {
@@ -774,7 +777,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     } else {
                         // Command was previously send. No resend required.
                         if (comLog) {
-                            Base.writecomLog(-1, "Command skipped = " + top.toString());
+                            Base.writeComLog(-1, "Command skipped = " + top.toString());
                         }
                     }
                 }
@@ -1167,7 +1170,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
                 + "s : " + transferSpeed + "kbps\n";
         logTransfer += statistics;
-        Base.writeStatistics(logTransfer);
+        //Base.writeStatistics(logTransfer);
         System.out.println(statistics);
 
         double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
@@ -1334,7 +1337,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
                 + "s : " + transferSpeed + "kbps\n";
         logTransfer += statistics;
-        Base.writeStatistics(logTransfer);
+        //Base.writeStatistics(logTransfer);
         System.out.println(statistics);
 
         double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
@@ -1708,7 +1711,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (comLog) {
-            Base.writecomLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
+            Base.writeComLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
         }
 
         return cmdlen;
@@ -1781,7 +1784,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (comLog) {
-            Base.writecomLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
+            Base.writeComLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
         }
 
         return cmdlen;
@@ -1844,19 +1847,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 pipes.close();
             } catch (UsbException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
                 }
             } catch (UsbNotActiveException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
                 }
             } catch (UsbNotOpenException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
                 }
             } catch (UsbDisconnectedException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
                 }
             }
         } catch (UsbNotOpenException ex) {
@@ -1865,19 +1868,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 setInitialized(false);
             } catch (UsbException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
                 }
             } catch (UsbNotActiveException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
                 }
             } catch (UsbNotOpenException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
                 }
             } catch (UsbDisconnectedException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
                 }
             }
         } catch (IllegalArgumentException ex) {
@@ -1886,19 +1889,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 setInitialized(false);
             } catch (UsbException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
                 }
             } catch (UsbNotActiveException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
                 }
             } catch (UsbNotOpenException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
                 }
             } catch (UsbDisconnectedException ex1) {
                 if (comLog) {
-                    Base.writecomLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
                 }
             }
         }
@@ -1925,7 +1928,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //        System.out.println("RECEIVE: " + result.trim()+ "\n");
         if (comLog) {
 
-            Base.writecomLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
+            Base.writeComLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
             //   Base.writecomLog((System.currentTimeMillis() - startTS), "\n");
         }
 
