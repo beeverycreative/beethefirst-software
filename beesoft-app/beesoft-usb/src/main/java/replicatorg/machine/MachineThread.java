@@ -62,7 +62,9 @@ class MachineThread extends Thread {
             //DriverCommand assessCommand = new AssessState();
 
             machineThread.notConnectedMessage();
-            Base.disposeAllOpenWindows();
+            if (Base.welcomeSplashVisible == false) {
+                Base.disposeAllOpenWindows();
+            }
             machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
             Base.statusThreadDied = false;
             driver.initialize();
@@ -82,7 +84,6 @@ class MachineThread extends Thread {
                 machineThread.interrupt();
                 return;
             }
-
 
             while (true) {
                 try {

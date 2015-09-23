@@ -53,7 +53,7 @@ public class PrintPanel extends BaseDialog {
     private boolean noFilament = false;
     private Thread t = null;
     private static final String FORMAT = "%2d:%2d";
-    private String coilText = FilamentControler.NO_FILAMENT;
+    protected String coilText = FilamentControler.NO_FILAMENT;
     private PrintEstimationThread estimationThread = null;
     private GCodeExportThread exportThread = null;
     private boolean isRunning = true;
@@ -1529,9 +1529,12 @@ public class PrintPanel extends BaseDialog {
         // if there are any loaded models, export
         if (exportPressed == false && bExport.isEnabled()) {
 
-            if (printerAvailable == false) {
+            if (printerAvailable == false
+                    || coilText.equals(FilamentControler.NO_FILAMENT)
+                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(coilText) == false) {
                 ProfileAndPrinter selection
-                        = new ProfileAndPrinter(this);
+                        = new ProfileAndPrinter(this, printerAvailable);
                 selection.setVisible(true);
                 coilText = selection.getCoilText();
                 selectedPrinter = selection.getSelectedPrinter();
@@ -1683,11 +1686,13 @@ public class PrintPanel extends BaseDialog {
 
         // if there are any loaded model, do the estimation
         if (estimatePressed == false && bEstimate.isEnabled()) {
-
-            if (printerAvailable == false) {
+            if (printerAvailable == false
+                    || coilText.equals(FilamentControler.NO_FILAMENT)
+                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(coilText) == false) {
                 Base.writeLog("No printer available, opening selection panel", this.getClass());
                 ProfileAndPrinter selection
-                        = new ProfileAndPrinter(this);
+                        = new ProfileAndPrinter(this, printerAvailable);
                 selection.setVisible(true);
                 coilText = selection.getCoilText();
                 selectedPrinter = selection.getSelectedPrinter();
@@ -1862,6 +1867,9 @@ class PrintEstimationThread extends Thread {
                 nTimes++;
                 printPanel.showLoadingIcon(false);
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
+                
+                printPanel.coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
+                
                 this.stop();
 
             } else {
@@ -1930,6 +1938,8 @@ class GCodeExportThread extends Thread {
                 Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        printPanel.coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
     }
 
     @Override

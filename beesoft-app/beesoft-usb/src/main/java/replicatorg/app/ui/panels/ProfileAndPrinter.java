@@ -1,10 +1,13 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import pt.beeverycreative.beesoft.filaments.Filament;
@@ -29,9 +32,12 @@ public class ProfileAndPrinter extends BaseDialog {
 
     private String coilText;
     private PrinterInfo selectedPrinter;
+    private final boolean printerAvailable;
+    private boolean firstInstantiation = true;
 
-    public ProfileAndPrinter(Window window) {
+    public ProfileAndPrinter(Window window, boolean printerAvailable) {
         super(window, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.printerAvailable = printerAvailable;
         initComponents();
         setText();
         enableDrag();
@@ -41,7 +47,7 @@ public class ProfileAndPrinter extends BaseDialog {
         coilText = FilamentControler.NO_FILAMENT;
         selectedPrinter = PrinterInfo.UNKNOWN;
     }
-    
+
     private void setText() {
         jTitleLabel.setText(
                 Languager.getTagValue(1, "ProfileAndPrinter", "TitleText")
@@ -53,7 +59,6 @@ public class ProfileAndPrinter extends BaseDialog {
                 Languager.getTagValue(1, "ProfileAndPrinter", "PrinterText")
         );
     }
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -109,7 +114,7 @@ public class ProfileAndPrinter extends BaseDialog {
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
         profileComboBox.setFont(GraphicDesignComponents.getSSProLight("12"));
-        profileComboBox.setModel(new DefaultComboBoxModel(FilamentControler.getColors()));
+        profileComboBox.setModel(new DefaultComboBoxModel(FilamentControler.forceFetch()));
         populatePrinterComboBox();
         profileComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -118,6 +123,13 @@ public class ProfileAndPrinter extends BaseDialog {
         });
 
         printerComboBox.setFont(GraphicDesignComponents.getSSProLight("12"));
+        printerComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public void paint(Graphics g) {
+                setForeground(Color.BLACK);
+                super.paint(g);
+            }
+        });
 
         jFilamentLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jFilamentLabel.setText("Filament");
@@ -289,27 +301,45 @@ public class ProfileAndPrinter extends BaseDialog {
     }
 
     private void populatePrinterComboBox() {
-        printerComboBox.setEnabled(false);
-        
-        String[] supportedPrinters;
-        List<SlicerConfig> slicerConfigList;
-        int i = 0;
+        if (printerAvailable == false) {
+            printerComboBox.setEnabled(false);
 
-        Filament fil = FilamentControler.getMatchingFilament(
-                (String) profileComboBox.getSelectedItem()
-        );
+            String[] supportedPrinters;
+            List<SlicerConfig> slicerConfigList;
+            int i = 0;
 
-        slicerConfigList = fil.getSupportedPrinters();
-        supportedPrinters = new String[slicerConfigList.size()];
+            Filament fil = FilamentControler.getMatchingFilament(
+                    (String) profileComboBox.getSelectedItem()
+            );
 
-        for (SlicerConfig sc : slicerConfigList) {
-            supportedPrinters[i++] = sc.getPrinterName();
+            slicerConfigList = fil.getSupportedPrinters();
+            supportedPrinters = new String[slicerConfigList.size()];
+
+            for (SlicerConfig sc : slicerConfigList) {
+                supportedPrinters[i++] = sc.getPrinterName();
+            }
+
+            printerComboBox.setModel(
+                    new DefaultComboBoxModel(supportedPrinters)
+            );
+
+            printerComboBox.setEnabled(true);
+        } else {
+            if (firstInstantiation == true) {
+                String[] printer;
+
+                printerComboBox.setEnabled(false);
+                printer = new String[1];
+                printer[0] = Base.getMachineLoader().getMachineInterface()
+                        .getDriver().getConnectedDevice().toString();
+
+                if (printer[0].equals(PrinterInfo.BEETHEFIRST0.toString())) {
+                    printer[0] = PrinterInfo.BEETHEFIRST.toString();
+                }
+
+                printerComboBox.setModel(new DefaultComboBoxModel(printer));
+                firstInstantiation = false;
+            }
         }
-
-        printerComboBox.setModel(
-                new DefaultComboBoxModel(supportedPrinters)
-        );
-        
-        printerComboBox.setEnabled(true);
     }
 }

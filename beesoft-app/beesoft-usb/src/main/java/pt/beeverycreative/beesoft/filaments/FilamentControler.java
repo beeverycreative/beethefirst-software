@@ -68,8 +68,8 @@ public class FilamentControler {
 
         // Do not distinguish between the BEETHEFIRST's with the old and new 
         // bootloader
-        if (connectedPrinter.equals("BEETHEFIRST0")) {
-            connectedPrinter = "BEETHEFIRST";
+        if (connectedPrinter.equals(PrinterInfo.BEETHEFIRST0.toString())) {
+            connectedPrinter = PrinterInfo.BEETHEFIRST.toString();
         }
 
         // get all the files from a directory
@@ -194,6 +194,22 @@ public class FilamentControler {
         return colors;
     }
 
+    public static String[] forceFetch() {
+        fetchFilaments();
+
+        String[] colors = new String[filamentList.size()];
+
+        if (!filamentList.isEmpty()) {
+            int i = 0;
+            for (Filament fil : filamentList) {
+                colors[i] = fil.getName();
+                i++;
+            }
+        }
+
+        return colors;
+    }
+
     /**
      * Gets an HashMap of available color codes and their copy.
      *
@@ -240,9 +256,9 @@ public class FilamentControler {
     public static double getColorRatio(String coilCode, String resolution, String printerId) {
 
         double result = 1.00; //Default
-        
-        if(printerId.equals("BEETHEFIRST0")) {
-            printerId = "BEETHEFIRST";
+
+        if (printerId.equals(PrinterInfo.BEETHEFIRST0.toString())) {
+            printerId = PrinterInfo.BEETHEFIRST.toString();
         }
 
         if (filamentList == null) {
@@ -290,8 +306,8 @@ public class FilamentControler {
         // if no printer is connected, or a printer with the old bootloader is
         // connected, assume BEETHEFIRST as the ID
         if (printerId.equalsIgnoreCase("unknown")
-                || printerId.equals("BEETHEFIRST0")) {
-            printerId = "BEETHEFIRST";
+                || printerId.equals(PrinterInfo.BEETHEFIRST0.toString())) {
+            printerId = PrinterInfo.BEETHEFIRST.toString();
         }
 
         if (filamentList == null) {

@@ -34,11 +34,8 @@ import replicatorg.app.ui.panels.WelcomeQuickguide;
  */
 public class WelcomeSplash extends javax.swing.JFrame {
 
-    private MainWindow window;
-    private WelcomeQuickguide guideWizard;
+    private final MainWindow window;
     private ImageIcon image;
-    private JLabel label;
-    private JProgressBar bar;
     private int newWidth = 600;
     private int newHeight = 333;
     private int duration = 80;
@@ -50,6 +47,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
      */
     public WelcomeSplash(MainWindow wind) {
         initComponents();
+        Base.welcomeSplashVisible = true;
         Base.writeLog("Welcome Splash started ...");
         window = wind;
         // Loads Splash image
@@ -133,6 +131,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
         window.setVisible(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(false);
+        Base.welcomeSplashVisible = false;
         Base.writeLog("BEESOFT main window loaded ... ");
 
         //GuideWizard

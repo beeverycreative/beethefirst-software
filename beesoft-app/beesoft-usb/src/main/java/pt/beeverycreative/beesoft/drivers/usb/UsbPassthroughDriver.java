@@ -342,7 +342,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Firmware is not OK", this.getClass());
                 Base.writeLog("Firmware version string: "
                         + firmwareVersion.getVersionString(), this.getClass());
-                Base.writeLog("Soliting user to restart BEESOFT and the printer", this.getClass());
+                Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
                 // Warn user to restart BTF and restart BEESOFT.
                 Warning firmwareOutDate = new Warning("close");
                 firmwareOutDate.setMessage("FirmwareOutDateVersion");
@@ -425,7 +425,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void initialize() {
-        
+
         int tries = 0;
 
         // wait till we're initialized
@@ -439,8 +439,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
                         openPipe(pipes);
                         tries++;
-                        
-                        if(tries > 3) {
+
+                        if (tries > 3) {
                             Base.writeLog("Tried to open pipes 3 times and failed, initiating USB device again", this.getClass());
                             m_usbDevice = null;
                             tries = 0;
@@ -472,6 +472,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("USB Driver initialized", this.getClass());
         }
 
+        if (Base.welcomeSplashVisible == false) {
+            Base.disposeAllOpenWindows();
+        }
         sendInitializationGcode();
 
     }

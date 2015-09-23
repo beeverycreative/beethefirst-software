@@ -57,7 +57,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
 
-    protected PrinterInfo connectedDevice;
+    protected PrinterInfo connectedDevice = PrinterInfo.UNKNOWN;
 
     //check this, maybe delete
     protected boolean isNewVendorID = false;
@@ -95,7 +95,7 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     @Override
     public PrinterInfo getConnectedDevice() {
-        return this.connectedDevice;
+        return connectedDevice;
     }
 
     /**
@@ -607,10 +607,11 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("*closePipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
     }
-    
+
     @Override
     public void dispose() {
         m_usbDevice = null;
+        connectedDevice = PrinterInfo.UNKNOWN;
     }
 
     /**
