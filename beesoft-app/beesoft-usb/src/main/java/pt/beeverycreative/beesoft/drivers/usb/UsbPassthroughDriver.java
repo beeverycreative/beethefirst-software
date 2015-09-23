@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.logging.Level;
@@ -23,7 +22,6 @@ import javax.usb.UsbNotOpenException;
 import org.w3c.dom.Node;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM.BLOCK;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
@@ -31,7 +29,6 @@ import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
-import replicatorg.drivers.VersionException;
 import replicatorg.util.Point5d;
 
 /**
@@ -193,16 +190,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * type. Sent on startup and if we see "start" indicating an uncommanded
      * firmware reset.
      */
-    public void sendInitializationGcode() throws VersionException {
+    public void sendInitializationGcode() {
         hiccup(1000, 0);
-        String type = checkFirmwareType();
+        Base.writeLog("Sending initialization GCodes", this.getClass());
+        String status = checkPrinterStatus();
 
         super.isBootloader = true;
 
         //initialize serial to NO SERIAL
         serialNumberString = NO_SERIAL_NO_FIRMWARE;
 
-        if (type.contains("bootloader")) {
+        if (status.contains("bootloader")) {
             bootedFromBootloader = true;
             updateBootloaderInfo();
             if (updateFirmware() >= 0) {
@@ -221,11 +219,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 closePipe(pipes);
                 return;
             } else {
-                type = "error";
+                status = "error";
             }
         }
 
-        if (type.contains("autonomous")) {
+        if (status.contains("autonomous")) {
             lastDispatchTime = System.currentTimeMillis();
             super.isBootloader = false;
             this.isAutonomous = true;
@@ -258,7 +256,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return;
         }
 
-        if (type.contains("shutdown")) {
+        if (status.contains("shutdown")) {
             /*
              serialNumberString = "0000000000";
              lastDispatchTime = System.currentTimeMillis();
@@ -288,10 +286,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             // quick and dirty workaround, shutdown is not yet implemented
             dispatchCommand("M505", COM.DEFAULT);
-            type = "firmware";
+            status = "firmware";
         }
 
-        if (type.contains("firmware")) {
+        if (status.contains("firmware")) {
 
             // this is made just to be sure that the bootloader version
             // isn't inconsistent
@@ -379,38 +377,38 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return;
         }
 
-        if (type.contains("error")) {
+        if (status.contains("error")) {
             setBusy(true);
             setInitialized(false);
             int tries = 0;
             sendCommand(GET_STATUS_FROM_ERROR);
-            String status = readResponse();
+            String response = readResponse();
 
-            while (status.contains(NOK) && (tries < MESSAGES_IN_BLOCK)) {
+            while (response.contains(NOK) && (tries < MESSAGES_IN_BLOCK)) {
                 tries++;
                 sendCommand(GET_STATUS_FROM_ERROR);
-                status = readResponse();
+                response = readResponse();
             }
 
-            isAutonomous = status.contains(STATUS_SDCARD);
+            isAutonomous = response.contains(STATUS_SDCARD);
 
-            if (status.contains(RESPONSE_TRANSFER_ON_GOING)) {
+            if (response.contains(RESPONSE_TRANSFER_ON_GOING)) {
 
                 //Printer still waiting to transfer end of block to SDCard
                 //Solution: asking for STATUS to close the block and so abort
                 //When recovered, initialize driver again
                 //System.out.println("isOnTransfer: " + isOnTransfer);
                 //recoverFromSDCardTransfer();
-                while (!status.contains(RESPONSE_OK) && tries < MESSAGES_IN_BLOCK) {
+                while (!response.contains(RESPONSE_OK) && tries < MESSAGES_IN_BLOCK) {
                     tries++;
-                    status = dispatchCommand(GET_STATUS_FROM_ERROR);
+                    response = dispatchCommand(GET_STATUS_FROM_ERROR);
                 }
 
                 transferMode = false;
                 setBusy(false);
                 initialize();
                 return;
-            } else if (status.contains(STATUS_OK)) {
+            } else if (response.contains(STATUS_OK)) {
                 setBusy(false);
                 return;
             }
@@ -424,62 +422,57 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     /**
      * Initialize USB Device and performs some Initialization GCode
-     *
-     * @throws java.lang.VersionException
      */
     @Override
-    public void initialize() throws VersionException {
-        try {
-            // wait till we're initialized
-            if (!isInitialized()) {
+    public void initialize() {
+        
+        int tries = 0;
 
-                // record our start time.
-                Date date;
-                //long end = date.getTime() + 10000;
-
-                Base.writeLog("Initializing search for printer.", this.getClass());
-                while (!isInitialized()) {
-                    try {
-                        InitUsbDevice();
-                        if (m_usbDevice != null) {
-                            Base.writeLog("Device ready to be used");
-                            pipes = GetPipe(m_usbDevice);
-                            Base.writeLog("Pipes created");
-                            showMessage = false;
-                        } else {
-                            setInitialized(false);
-                            if (showMessage) {
-                                Base.writeLog("Error while initializing device. Device not present.");
-                            }
-                        }
+        // wait till we're initialized
+        if (!isInitialized()) {
+            Base.writeLog("Initializing search for printer.", this.getClass());
+            while (!isInitialized()) {
+                try {
+                    if (m_usbDevice != null) {
+                        Base.writeLog("Device ready to be used, creating pipes...", this.getClass());
+                        pipes = GetPipe(m_usbDevice);
+                        Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
                         openPipe(pipes);
-                        Base.writeLog("Pipes open");
-                    } catch (Exception e) {
-                        try {
-                            Thread.sleep(500); // sleep 500 ms
-                        } catch (InterruptedException ex) {
-                            Base.writeLog("Error while sleeping in open usb connection initialization: " + ex.getMessage());
+                        tries++;
+                        
+                        if(tries > 3) {
+                            Base.writeLog("Tried to open pipes 3 times and failed, initiating USB device again", this.getClass());
+                            m_usbDevice = null;
+                            tries = 0;
                         }
+                    } else {
+                        //Base.writeLog("No printer found. Waiting 1 second before trying again...", this.getClass());
+
+                        if (pipes != null) {
+                            if (pipes.isOpen()) {
+                                closePipe(pipes);
+                            }
+                            pipes = null;
+                        }
+
+                        InitUsbDevice();
+                        Thread.sleep(100); // sleep 1 second
                     }
 
-                    // record our current time
-                    date = new Date();
-                    long now = date.getTime();
+                } catch (Exception e) {
+                    try {
+                        Base.writeLog("Unknown exception on initialize()", this.getClass());
+                        Base.writeLog(e.getMessage(), this.getClass());
+                        Thread.sleep(100); // sleep 1 second
+                    } catch (InterruptedException ex) {
 
-                    if (showMessage) {
-                        Base.getMachineLoader().getMachineInterface().connect(false);
-                        Base.writeLog("USB device non-responsive. Please plug in the USB device !");
-                        //Stop showing the message 1 time is enough :) 
-                        showMessage = false;
                     }
                 }
-                Base.writeLog("USB Driver initialized");
             }
-
-            sendInitializationGcode();
-        } catch (VersionException e) {
-            throw (e);
+            Base.writeLog("USB Driver initialized", this.getClass());
         }
+
+        sendInitializationGcode();
 
     }
 
@@ -831,15 +824,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         queue_size = getQfromStatus(ans);
 
         return ans;
-    }
-
-    @Override
-    public boolean isReady(boolean forceCheck) {
-        //TODO: read a remove var update from here
-        if (forceCheck) {
-            machineReady = dispatchCommand(GET_STATUS).contains(STATUS_OK);
-        }
-        return machineReady;
     }
 
     @Override
@@ -1814,13 +1798,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
                     } else {
                         Base.writeLog("PIPES NULL");
-                        System.out.println("PIPES NULL");
-                        /**
-                         * REDSOFT: Was this causing prints to stop ????
-                         */
-                        //  setInitialized(false);
+                        setInitialized(false);
                         return NOK;
-                        //throw new UsbException("Pipe not found");
+                        //throw new UsbException("Pipe was null");
                     }
                 }
             }
@@ -2514,12 +2494,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return (super.isInitialized() && testPipes(pipes));
     }
 
-    private String checkFirmwareType() {
+    private String checkPrinterStatus() {
         Base.writeLog("Verifying what is the current status of the printer", this.getClass());
 
         sendCommand(GET_STATUS);
-        hiccup(30, 0);
+        hiccup(50, 0);
         String res = readResponse();
+
+        Base.writeLog("Response: " + res, this.getClass());
+
         if (res.contains("Pause")) {
             Base.writeLog("Printer is in pause mode", this.getClass());
             Base.printPaused = true;
@@ -2535,14 +2518,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return "error";
         }
         sendCommand("M300");
-        hiccup(30, 0);
+        hiccup(50, 0);
         readResponse();
 
 //        System.out.println(res);
         if (res.toLowerCase().contains("bad")) {
+            Base.writeLog("Requesting bootloader version");
             sendCommand("M116");
-            hiccup(10, 0);
+            hiccup(50, 0);
             res = readResponse();
+            Base.writeLog("Response: " + res, this.getClass());
 
             /**
              * Checks for type of firmware. Bootloader 3 - 3.;6. Bootloader 4 -
@@ -2564,13 +2549,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Printer is in firmware mode and idle", this.getClass());
             return "firmware";
         }
+
+        Base.writeLog("Returning error by default, this shouldn't happen.", this.getClass());
         return "error";
     }
 
     private int flashAndCheck(String filename, int nBytes) {
 
         FileInputStream in = null;
-        long loop;
         int file_size;
         int c = 0;
         int sent;
@@ -2614,7 +2600,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
 //         System.out.println("Sending");
-        loop = System.nanoTime();
         int bytesRead = 0;
 
         try {
@@ -2868,8 +2853,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         File firmwareFile = null;
 
         for (File firmwareFileTemp : firmwareList) {
-            System.out.println(firmwareFileTemp.getAbsoluteFile());
-
             if (firmwareFileTemp.getName().equalsIgnoreCase(connectedDevice.firmwareFilename())) {
                 firmwareFile = firmwareFileTemp;
                 Base.writeLog("Candidate file found:" + firmwareFile);

@@ -58,6 +58,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -1058,6 +1059,12 @@ public class Base {
         language = ProperDefault.get("language").toLowerCase();
 
         systemThreads = new ArrayList<Thread>();
+        
+        try {
+            System.setErr(new PrintStream(new FileOutputStream(getAppDataDirectory().toString() + "/err.txt")));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         // set the look and feel before opening the window
         try {

@@ -351,7 +351,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     public File getPrintFile() {
 
         if (Base.isPrintingFromGCode == false) {
-            return prt.getGCode();
+            //return prt.getGCode();
+            return new File(prt.getGCode().getPath() + "_modified");
         } else {
             return new File(preferences.getGcodeToPrint());
         }

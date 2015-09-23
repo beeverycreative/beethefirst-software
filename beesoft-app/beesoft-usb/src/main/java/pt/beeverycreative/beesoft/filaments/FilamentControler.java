@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
 
 /**
@@ -28,6 +29,7 @@ import replicatorg.app.Base;
 public class FilamentControler {
 
     private static Set<Filament> filamentList;
+    private static PrinterInfo currentPrinterFilamentList = null;
 
     public static String NO_FILAMENT = "none";
     public static String NO_FILAMENT_2 = "_no_file";
@@ -36,12 +38,23 @@ public class FilamentControler {
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
 
     /**
-     * Returns the current list of Filament objects
+     * Initializes list of filaments for a given printer. Does nothing if the
+     * current list contains the filaments for the given printer
      *
-     * @return
+     * @param printer Printer for which the list of filaments will be
+     * initialized
      */
-    public static void initFilamentList() {
-        fetchFilaments();
+    public static void initFilamentList(PrinterInfo printer) {
+        Base.writeLog("Initial filament fetch for printer " + printer, FilamentControler.class);
+
+        if (currentPrinterFilamentList == null
+                || currentPrinterFilamentList != printer) {
+            fetchFilaments();
+            currentPrinterFilamentList = printer;
+        } else {
+            Base.writeLog("No fetch is necessary, list already contains the "
+                    + "filaments for this printer", FilamentControler.class);
+        }
     }
 
     /**
@@ -106,8 +119,13 @@ public class FilamentControler {
                 Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            Base.writeLog("Initial filament fetch for this printer", FilamentControler.class);
             Base.writeLog("Aqcuired " + availableFilaments.size() + " filaments", FilamentControler.class);
+
+            if (filamentList != null) {
+                filamentList.clear();
+                filamentList = null;
+            }
+
             filamentList = availableFilaments;
         }
     }
@@ -222,6 +240,10 @@ public class FilamentControler {
     public static double getColorRatio(String coilCode, String resolution, String printerId) {
 
         double result = 1.00; //Default
+        
+        if(printerId.equals("BEETHEFIRST0")) {
+            printerId = "BEETHEFIRST";
+        }
 
         if (filamentList == null) {
             fetchFilaments();
@@ -265,8 +287,10 @@ public class FilamentControler {
     public static HashMap<String, String> getFilamentSettings(String coilCode,
             String resolution, String printerId) {
 
-        // if no printer is connected, assume BEETHEFIRST as the default
-        if (printerId.equalsIgnoreCase("unknown")) {
+        // if no printer is connected, or a printer with the old bootloader is
+        // connected, assume BEETHEFIRST as the ID
+        if (printerId.equalsIgnoreCase("unknown")
+                || printerId.equals("BEETHEFIRST0")) {
             printerId = "BEETHEFIRST";
         }
 

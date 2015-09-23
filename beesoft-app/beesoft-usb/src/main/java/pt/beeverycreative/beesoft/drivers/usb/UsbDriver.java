@@ -20,11 +20,11 @@ import javax.usb.UsbNotActiveException;
 import javax.usb.UsbServices;
 import org.w3c.dom.Node;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.usb.UsbDeviceDescriptor;
 import javax.usb.UsbIrp;
+import javax.usb.UsbNotClaimedException;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
@@ -78,7 +78,6 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     private double extrudedDistance = 0;
     private double totalExtrudedDistance = 0;
-    private final double extruderLimit = 100000; // average string lenght/bobine 105 +- 10 meters
     protected boolean transferMode = false;
     protected boolean isONShutdown = false;
 
@@ -94,6 +93,7 @@ public class UsbDriver extends DriverBaseImplementation {
      *
      * @return
      */
+    @Override
     public PrinterInfo getConnectedDevice() {
         return this.connectedDevice;
     }
@@ -145,7 +145,6 @@ public class UsbDriver extends DriverBaseImplementation {
             // Updates local and total variable with current extruded value
             totalExtrudedDistance += extrudedDistance;
 
-            //System.out.println(totalExtrudedDistance);
             /**
              * Stores totalExtruded for this print session
              */
@@ -160,10 +159,6 @@ public class UsbDriver extends DriverBaseImplementation {
              * Stores total extruded after this print session
              */
             ProperDefault.put("totalExtruded", String.valueOf(Double.valueOf(ProperDefault.get("totalExtruded")) + totalExtrudedDistance));
-
-//        System.out.println("lastSession_totalExtruded "+String.valueOf(totalExtrudedDistance)+
-//                "lastSession_filamentRemaining " + String.valueOf(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))-totalExtrudedDistance)+
-//                "totalExtruded " +String.valueOf(Double.valueOf(ProperDefault.get("totalExtruded"))+totalExtrudedDistance));
         }
 
     }
@@ -192,15 +187,11 @@ public class UsbDriver extends DriverBaseImplementation {
      *
      * @param device USB device from descriptor.
      */
-    public void InitUsbDevice(UsbDevice device) {
+    private void InitUsbDevice(UsbDevice device) {
 
-        //UsbDeviceDescriptor descriptor;
-        //descriptor = device.getUsbDeviceDescriptor();
         try {
-            //Base.writeLog("Device found - " + descriptor.idVendor() + ":" + descriptor.idProduct());
 
             if (device.isUsbHub()) {
-                //Base.writeLog("Found a USB hub");
                 UsbHub hub = (UsbHub) device;
 
                 for (UsbDevice child : (List<UsbDevice>) hub.getAttachedUsbDevices()) {
@@ -216,29 +207,29 @@ public class UsbDriver extends DriverBaseImplementation {
             }
         } catch (UsbException ex) {
             m_usbDevice = null;
-            Base.writeLog("Could not verify or add device:"
-                    + ex.getMessage() + ":" + ex.toString());
+            //Base.writeLog("*initUsbDevice(device)* <UsbException> " + ex.getMessage(), this.getClass());
         } catch (UnsupportedEncodingException ex) {
             m_usbDevice = null;
-            Base.writeLog("Could not verify or add device:"
-                    + ex.getMessage() + ":" + ex.toString());
+            Base.writeLog("*initUsbDevice(device)* <UnsupportedEncodingException> " + ex.getMessage(), this.getClass());
         } catch (UsbDisconnectedException ex) {
             m_usbDevice = null;
-            Base.writeLog("Could not verify or add device:"
-                    + ex.getMessage() + ":" + ex.toString());
+            Base.writeLog("*initUsbDevice(device)* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
     }
 
     public boolean addIfCompatible(UsbDevice device) throws UsbException, UnsupportedEncodingException {
 
         UsbDeviceDescriptor descriptor;
+        short idVendor, idProduct;
+        String manufacturerString, productString, serialNumberString, sDevice;
 
         descriptor = device.getUsbDeviceDescriptor();
-
-        short idVendor = descriptor.idVendor();
-        short idProduct = descriptor.idProduct();
-
-        String sDevice = idVendor + ":" + idProduct;
+        idVendor = descriptor.idVendor();
+        idProduct = descriptor.idProduct();
+        manufacturerString = device.getManufacturerString();
+        productString = device.getProductString();
+        serialNumberString = device.getSerialNumberString().trim();
+        sDevice = idVendor + ":" + idProduct;
 
         // candidate
         connectedDevice = PrinterInfo.getDevice(sDevice);
@@ -246,6 +237,13 @@ public class UsbDriver extends DriverBaseImplementation {
         if (connectedDevice == PrinterInfo.UNKNOWN) {
             return false;
         } else {
+            Base.writeLog("*** Adding to candidate list ***", this.getClass());
+            Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
+            Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
+            Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
+            Base.writeLog("Product string: " + productString, this.getClass());
+            Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+            Base.writeLog("********************************", this.getClass());
             m_usbDeviceList.add(device);
             return true;
         }
@@ -254,52 +252,46 @@ public class UsbDriver extends DriverBaseImplementation {
     public boolean addIfCompatible_Legacy(UsbDevice device) throws UsbException, UnsupportedEncodingException {
 
         UsbDeviceDescriptor descriptor;
+        short idVendor, idProduct;
+        String manufacturerString, productString, serialNumberString;
 
         descriptor = device.getUsbDeviceDescriptor();
-
-        short idVendor = descriptor.idVendor();
-        short idProduct = descriptor.idProduct();
+        idVendor = descriptor.idVendor();
+        idProduct = descriptor.idProduct();
+        manufacturerString = device.getManufacturerString();
+        productString = device.getProductString();
+        serialNumberString = device.getSerialNumberString().trim();
 
         if (idVendor == BEEVERYCREATIVE_VENDOR_ID) {
 
-            String manufacturerString = device.getManufacturerString();
-            String productString = device.getProductString();
-            String SerialNumberString = device.getSerialNumberString().trim();
-
             if (manufacturerString.contains(m_manufacturer)
                     || productString.contains(m_productOld)) {
-
-                Base.writeLog("Adding to candidate list.");
-
+                Base.writeLog("*** Adding to candidate list (legacy) ***", this.getClass());
+                Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
+                Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
+                Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
+                Base.writeLog("Product string: " + productString, this.getClass());
+                Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+                Base.writeLog("*****************************************", this.getClass());
                 m_usbDeviceList.add(device);
 
-                Base.writeLog("Device - " + idVendor + ":" + idProduct);
-                Base.writeLog(manufacturerString);
-                Base.writeLog(productString);
-                Base.writeLog(SerialNumberString);
                 return true;
-
-            }//else{System.out.println("No need for else.");}
-        }
-        if (idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID) {
-
-            String manufacturerString = device.getManufacturerString();
-            String productString = device.getProductString();
-            String SerialNumberString = device.getSerialNumberString().trim();
+            }
+        } else if (idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID) {
 
             if (manufacturerString.contains(m_manufacturer)
                     || productString.contains(m_productNew)) {
-
-                Base.writeLog("Adding to candidate list.");
-
+                Base.writeLog("*** Adding to candidate list (legacy) ***", this.getClass());
+                Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
+                Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
+                Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
+                Base.writeLog("Product string: " + productString, this.getClass());
+                Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+                Base.writeLog("*****************************************", this.getClass());
                 m_usbDeviceList.add(device);
-                Base.writeLog("Device - " + idVendor + ":" + idProduct);
-                Base.writeLog(manufacturerString);
-                Base.writeLog(productString);
-                Base.writeLog(SerialNumberString);
-                return true;
 
-            }//else{System.out.println("No need for else.");}
+                return true;
+            }
         }
         return false;
     }
@@ -307,27 +299,22 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Scans descriptor and inits usb device if match.
      */
-    public void InitUsbDevice() throws UsbException, UnsupportedEncodingException {
+    public void InitUsbDevice() {
         m_usbDeviceList.clear();
 
         try {
-            //Base.writeLog("Getting device list.");
-
             UsbServices services = UsbHostManager.getUsbServices();
-            //Base.writeLog("USB Serviced obtained ");
             UsbHub rootHub = services.getRootUsbHub();
-            //Base.writeLog("rootUSB obtained ");
             InitUsbDevice(rootHub);
-            //Base.writeLog("RootUSB device inited");
-
         } catch (UsbException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SecurityException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UsbDisconnectedException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
             setInitialized(false);
+            //Base.writeLog("*initUsbDevice* <UsbException> " + ex.getMessage(), this.getClass());
+        } catch (SecurityException ex) {
+            setInitialized(false);
+            Base.writeLog("*initUsbDevice* <SecurityException> " + ex.getMessage(), this.getClass());
+        } catch (UsbDisconnectedException ex) {
+            setInitialized(false);
+            Base.writeLog("*initUsbDevice* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
 
         if (m_usbDeviceList.isEmpty()) {
@@ -343,29 +330,31 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
 
             // early load of the list of filaments, to save time later on
-            FilamentControler.initFilamentList();
+            if (connectedDevice != PrinterInfo.UNKNOWN) {
+                FilamentControler.initFilamentList(connectedDevice);
+            }
 
             if (Base.isMacOS()) {
                 ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
             }
 
             if (m_usbDeviceList.size() == 1) {
-                Base.writeLog("Found 1 device, connecting.");
+                Base.writeLog("Found 1 device, connecting...", this.getClass());
             } else {
-                Base.writeLog("Multiple machines found connecting to the "
-                        + "most recently connected one");
+                Base.writeLog("Multiple machines found. "
+                        + "Connecting to the first of the list...", this.getClass());
             }
+
+            UsbDeviceDescriptor descriptor;
+            descriptor = m_usbDevice.getUsbDeviceDescriptor();
+            if (descriptor.idVendor() == BEEVERYCREATIVE_NEW_VENDOR_ID) {
+                isNewVendorID = true;
+            } //no need for else
+
+            if (descriptor.idVendor() == BEEVERYCREATIVE_VENDOR_ID) {
+                isNewVendorID = false;
+            } //no need for else
         }
-
-        UsbDeviceDescriptor descriptor;
-        descriptor = m_usbDevice.getUsbDeviceDescriptor();
-        if (descriptor.idVendor() == BEEVERYCREATIVE_NEW_VENDOR_ID) {
-            isNewVendorID = true;
-        } //no need for else
-
-        if (descriptor.idVendor() == BEEVERYCREATIVE_VENDOR_ID) {
-            isNewVendorID = false;
-        } //no need for else
     }
 
     /**
@@ -376,25 +365,28 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     public boolean deviceFound() {
         if (m_usbDevice == null) {
-            Base.writeLog("USB Device not found");
+            Base.writeLog("USB device not found", this.getClass());
             setInitialized(false);
             return false;
         } else {
             try {
                 if (m_usbDevice.getManufacturerString() == null) {
                     setInitialized(false);
-                    Base.writeLog("USB Device not found");
+                    Base.writeLog("USB device not found", this.getClass());
                     return false;
                 }
             } catch (UsbException ex) {
                 setInitialized(false);
-                Base.writeLog("USB error: " + ex.getMessage());
+                Base.writeLog("*deviceFound* <UsbException> " + ex.getMessage(), this.getClass());
+                return false;
             } catch (UnsupportedEncodingException ex) {
                 setInitialized(false);
-                Base.writeLog("USB unsupported encoding exception: " + ex.getMessage());
+                Base.writeLog("*deviceFound* <UnsupportedEncodingException> " + ex.getMessage(), this.getClass());
+                return false;
             } catch (UsbDisconnectedException ex) {
                 setInitialized(false);
-                Base.writeLog("USB disconnected exception: " + ex.getMessage());
+                Base.writeLog("*deviceFound* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+                return false;
             }
         }
 
@@ -485,16 +477,16 @@ public class UsbDriver extends DriverBaseImplementation {
                 pipes.close();
                 return false;
             } catch (UsbException ex) {
-                Base.writeLog("USB exception: " + ex.getMessage());
+                Base.writeLog("*testPipes1* <UsbException> " + ex.getMessage(), this.getClass());
                 return false;
             } catch (UsbNotActiveException ex) {
-                Base.writeLog("USB communication not active " + ex.getMessage());
+                Base.writeLog("*testPipes1* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
                 return false;
             } catch (UsbNotOpenException ex) {
-                Base.writeLog("USB communication is down " + ex.getMessage());
+                Base.writeLog("*testPipes1* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
                 return false;
             } catch (UsbDisconnectedException ex) {
-                Base.writeLog("USB disconnected exception: " + ex.getMessage());
+                Base.writeLog("*testPipes1* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
                 return false;
             }
 
@@ -529,32 +521,32 @@ public class UsbDriver extends DriverBaseImplementation {
             }
 
         } catch (UsbException ex) {
-            Base.writeLog("USB exception: " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
             return false;
         } catch (UsbNotActiveException ex) {
-            Base.writeLog("USB communication is not active: " + ex.getMessage());
+            Base.writeLog("*testPipes2* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
             return false;
         } catch (UsbNotOpenException ex) {
-            Base.writeLog("USB communication is down " + ex.getMessage());
+            Base.writeLog("*testPipes2* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
             return false;
         } catch (IllegalArgumentException ex) {
-            Base.writeLog("USB exception: " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("USB disconnected exception: " + ex.getMessage());
+            Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
             return false;
-        } catch (Exception ex) {
-            Base.writeLog("Exception test pipes: " + ex.getMessage());
-//            setInitialized(false);
-//            return false;
+        } catch (UsbDisconnectedException ex) {
+            Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+            setInitialized(false);
+            return false;
+        } catch (UsbNotClaimedException ex) {
+            Base.writeLog("*testPipes2* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
+            setInitialized(false);
+            return false;
         }
-        return true;
 
+        return true;
     }
 
     /**
@@ -572,17 +564,24 @@ public class UsbDriver extends DriverBaseImplementation {
                 pipes.open();
             }
             setInitialized(true);
+            Base.writeLog("Pipes have been opened", this.getClass());
         } catch (UsbClaimException ex) {
-            Base.writeLog("USB Claim Exception [openPipe]: " + ex.getMessage());
+            Base.writeLog("*openPipe* <UsbClaimException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
         } catch (UsbException ex) {
-            Base.writeLog("USB exception [openPipe]: " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Base.writeLog("*openPipe* <UsbException> " + ex.getMessage(), this.getClass());
+            setInitialized(false);
         } catch (UsbNotActiveException ex) {
-            Base.writeLog("USB communication not active [openPipe]:" + ex.getMessage());
+            Base.writeLog("*openPipe* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
         } catch (UsbDisconnectedException ex) {
-            Base.writeLog("USB disconnected exception [openPipe]:" + ex.getMessage());
+            Base.writeLog("*openPipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+            setInitialized(false);
+        } catch (UsbNotClaimedException ex) {
+            Base.writeLog("*openPipe* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
+            setInitialized(false);
+        } catch (Exception ex) {
+            Base.writeLog("*openPipe* <Unknown> " + ex.getMessage(), this.getClass());
             setInitialized(false);
         }
     }
@@ -599,18 +598,19 @@ public class UsbDriver extends DriverBaseImplementation {
             pipes.close();
             pipes.getUsbEndpoint().getUsbInterface().release();
         } catch (UsbException ex) {
-            Base.writeLog("USB exception: " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Base.writeLog("*closePipe* <UsbException> " + ex.getMessage(), this.getClass());
         } catch (UsbNotActiveException ex) {
-            Base.writeLog("USB communication not active " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Base.writeLog("*closePipe* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
         } catch (UsbNotOpenException ex) {
-            Base.writeLog("USB communication is down " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Base.writeLog("*closePipe* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
         } catch (UsbDisconnectedException ex) {
-            Base.writeLog("USB disconnected exception: " + ex.getMessage());
-            //Logger.getLogger(UsbDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Base.writeLog("*closePipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
+    }
+    
+    @Override
+    public void dispose() {
+        m_usbDevice = null;
     }
 
     /**

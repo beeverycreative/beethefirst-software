@@ -98,7 +98,7 @@ public class Printer {
 
         String m31String;
         File fileToRead = new File(pathString);
-        File fileToWrite = new File(pathString + "_temp");
+        File fileToWrite = new File(pathString + "_modified");
 
         m31String = "M31 A" + PrintEstimator.getEstimatedMinutes()
                 + " L" + getGCodeNLines();
@@ -130,6 +130,7 @@ public class Printer {
             fout = null;
 
             // Moves the new temp file to the original one
+            /*
             if (fileToRead.delete()) {
                 Base.writeLog("Copying modified file to the original one's path", this.getClass());
                 fileToWrite.renameTo(new File(pathString));
@@ -139,6 +140,7 @@ public class Printer {
                         + " w: " + fileToRead.canWrite() 
                         + " x: " + fileToRead.canExecute(), this.getClass());
             }
+            */
 
         } catch (IOException e) {
             Base.writeLog("IOException when attempting to replace M31", this.getClass());

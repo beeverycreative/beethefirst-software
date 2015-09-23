@@ -66,18 +66,29 @@ class MachineThread extends Thread {
             machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
             Base.statusThreadDied = false;
             driver.initialize();
-            machineThread.readyMessage();
-            setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
 
-            //machineThread.scheduleRequest(new MachineCommand(
-            //        RequestType.CONNECT, assessCommand));
+            if (driver.isBootloader() == false) {
+                machineThread.readyMessage();
+                setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+            } else {
+                Base.writeLog("Rebooting into firmware", this.getClass());
+                Base.statusThreadDied = true;
+                Base.isPrinting = false;
+                Base.printPaused = false;
+                Base.getMachineLoader().getMachineInterface().getDriver()
+                        .resetBootloaderVersion();
+                Base.getMachineLoader().getMachineInterface().getDriver()
+                        .dispose();
+                machineThread.interrupt();
+                return;
+            }
+
+
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-                    //machineThread.scheduleRequest(new MachineCommand(
-                    //        RequestType.RUN_COMMAND, assessCommand));
 
                     sleep(500, 1);
 
@@ -98,6 +109,8 @@ class MachineThread extends Thread {
                     Base.printPaused = false;
                     Base.getMachineLoader().getMachineInterface().getDriver()
                             .resetBootloaderVersion();
+                    Base.getMachineLoader().getMachineInterface().getDriver()
+                            .dispose();
                     Base.writeLog("Machine disconnected during operation");
                     machineThread.interrupt();
                     break;
@@ -864,7 +877,7 @@ class MachineThread extends Thread {
 
     public boolean isConnected() {
 
-        return (driver != null && driver.isInitialized() && !driver.isBootloader());
+        return (driver != null && driver.isInitialized());
     }
 
     private void loadDriver() {

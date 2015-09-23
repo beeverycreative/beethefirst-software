@@ -1685,11 +1685,13 @@ public class PrintPanel extends BaseDialog {
         if (estimatePressed == false && bEstimate.isEnabled()) {
 
             if (printerAvailable == false) {
+                Base.writeLog("No printer available, opening selection panel", this.getClass());
                 ProfileAndPrinter selection
                         = new ProfileAndPrinter(this);
                 selection.setVisible(true);
                 coilText = selection.getCoilText();
                 selectedPrinter = selection.getSelectedPrinter();
+                Base.writeLog(coilText + " and " + selectedPrinter + " selected", this.getClass());
             }
 
             // if the ProfileAndPrinter panel was closed on X button,
@@ -1902,7 +1904,7 @@ class GCodeExportThread extends Thread {
 
         try {
 
-            input = new BufferedInputStream(new FileInputStream(gcode));
+            input = new BufferedInputStream(new FileInputStream(gcode.getPath() + "_modified"));
             output = new BufferedOutputStream(new FileOutputStream(this.saveFile));
 
             byte[] buf = new byte[1024];

@@ -104,9 +104,7 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         result = FilamentControler.getColors();
 
-        if (result.length > 0) {
-            Base.writeLog("Obtained a list of " + result.length + " filaments", this.getClass());
-        } else {
+        if (result.length == 0) {
             Base.writeLog("No filaments found for this printer!", this.getClass());
             noFilamentsFound = true;
             result = new String[1];
