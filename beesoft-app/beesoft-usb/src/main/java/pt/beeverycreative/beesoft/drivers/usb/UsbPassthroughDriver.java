@@ -2137,29 +2137,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14 + re15 + re16 + re17 + re18, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(position);
         if (m.find()) {
-            String w1 = m.group(1);
-            String c1 = m.group(2);
-            String ws1 = m.group(3);
-            String w2 = m.group(4);
-            String c2 = m.group(5);
             String float1 = m.group(6);
-            String ws2 = m.group(7);
-            String w3 = m.group(8);
-            String c3 = m.group(9);
             String float2 = m.group(10);
-            String ws3 = m.group(11);
-            String w4 = m.group(12);
-            String c4 = m.group(13);
             String float3 = m.group(14);
-            String ws4 = m.group(15);
-            String w5 = m.group(16);
             String float4 = m.group(17);
             myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
             Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
         }
-//        synchronized (currentPosition) {
-        currentPosition.set(myCurrentPosition);
-//        }
+
+        synchronized (currentPosition) {
+            currentPosition.set(myCurrentPosition);
+            posAvailable = true;
+            currentPosition.notifyAll();
+        }
 
         return myCurrentPosition;
     }

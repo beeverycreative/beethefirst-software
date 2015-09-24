@@ -40,7 +40,6 @@ public class Maintenance extends BaseDialog {
         //enableDrag();
         disableMessageDisplay();
         evaluateInitialConditions();
-        Base.maintenanceOpened = true;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
 
@@ -157,9 +156,7 @@ public class Maintenance extends BaseDialog {
 
     private void doExit() {
         dispose();
-        //ctrlStatus.stop();
         Base.maintenanceOpened = false;
-        //ProperDefault.remove("maintenance");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.enableAllOpenWindows();
         Base.bringAllWindowsToFront();

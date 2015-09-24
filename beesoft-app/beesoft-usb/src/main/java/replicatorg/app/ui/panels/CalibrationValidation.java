@@ -136,27 +136,14 @@ public class CalibrationValidation extends BaseDialog {
     }
 
     private void doCancel() {
-        dispose();
-        Base.bringAllWindowsToFront();
-        disposeThread.stop();
-        Base.maintenanceWizardOpen = false;
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
+
+        if (ProperDefault.get("maintenance").equals("1")) {
+            ProperDefault.remove("maintenance");
+        }
 
         int nCalibrations = Integer.valueOf(ProperDefault.get("nCalibrations"));
         if ((nCalibrations + 1) == 10) {
@@ -168,6 +155,10 @@ public class CalibrationValidation extends BaseDialog {
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
         }
+
+        disposeThread.stop();
+        Base.bringAllWindowsToFront();
+        dispose();
     }
 
     @SuppressWarnings("unchecked")

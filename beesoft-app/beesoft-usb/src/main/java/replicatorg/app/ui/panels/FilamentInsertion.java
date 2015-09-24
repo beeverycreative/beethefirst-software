@@ -207,7 +207,6 @@ public class FilamentInsertion extends BaseDialog {
             Base.bringAllWindowsToFront();
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
             disposeThread.stop();
             Base.enableAllOpenWindows();
             finalizeHeat();

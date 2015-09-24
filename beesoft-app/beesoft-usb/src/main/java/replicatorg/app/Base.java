@@ -246,8 +246,6 @@ public class Base {
     private static Properties propertiesFile = null;
     /* Date time instance variables */
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    public static boolean maintenanceOpened = false;
-    public static boolean maintenanceWizardOpen = false;
     public static ArrayList<Thread> systemThreads;
 
     private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");

@@ -58,7 +58,6 @@ public class CalibrationPrintTest extends BaseDialog {
         moveToPosition();
         updateThread = new PrintThread(this, machine);
         updateThread.start();
-        Base.maintenanceWizardOpen = true;
         Base.systemThreads.add(updateThread);
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());

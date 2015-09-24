@@ -125,7 +125,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         if (Base.printPaused == false) {
             Base.writeLog("Filament selection canceled", this.getClass());
             Base.bringAllWindowsToFront();
-            Base.maintenanceWizardOpen = false;
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.enableAllOpenWindows();
@@ -408,7 +407,6 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.maintenanceWizardOpen = false;
         Base.enableAllOpenWindows();
         Base.bringAllWindowsToFront();
 

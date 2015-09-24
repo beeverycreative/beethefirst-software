@@ -170,7 +170,6 @@ public class CalibrationFinish extends BaseDialog {
     private void doCancel() {
         dispose();
         Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
         disposeThread.stop();
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
@@ -239,7 +238,7 @@ public class CalibrationFinish extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -292,7 +291,7 @@ public class CalibrationFinish extends BaseDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel6)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -488,7 +487,6 @@ public class CalibrationFinish extends BaseDialog {
 
         dispose();
         disposeThread.stop();
-        Base.maintenanceWizardOpen = false;
 
         ProperDefault.put("nTotalPrints", String.valueOf(0));
         int nCalibrations = Integer.valueOf(ProperDefault.get("nCalibrations"));
@@ -521,7 +519,7 @@ public class CalibrationFinish extends BaseDialog {
     private void jLabel23MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MousePressed
         if (!machine.getDriver().isBusy()) {
             dispose();
-            CalibrationSkrew2 p = new CalibrationSkrew2();
+            CalibrationScrew2 p = new CalibrationScrew2();
             p.setVisible(true);
         }
     }//GEN-LAST:event_jLabel23MousePressed

@@ -40,7 +40,6 @@ public class FilamentHeating extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
@@ -209,7 +208,6 @@ public class FilamentHeating extends BaseDialog {
     private void doCancel() {
         if (Base.printPaused == false) {
             Base.writeLog("Filament heating canceled", this.getClass());
-
             dispose();
             Base.THREAD_KEEP_ALIVE = true;
             finalizeHeat();

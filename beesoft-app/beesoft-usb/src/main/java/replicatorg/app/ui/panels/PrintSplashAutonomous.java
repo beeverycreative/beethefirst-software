@@ -1755,7 +1755,7 @@ class UpdateThread4 extends Thread {
             /**
              * GCode generated; set driver to autonomous and transfer it
              */
-            driver.setAutonomous(true);
+            //driver.setAutonomous(true);
             transferGCode();
 
             /**

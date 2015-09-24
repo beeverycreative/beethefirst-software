@@ -7,13 +7,11 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.MachineInterface;
-import replicatorg.util.Point5d;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -26,26 +24,24 @@ import replicatorg.util.Point5d;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class CalibrationSkrew2 extends BaseDialog {
+public class CalibrationScrew1 extends BaseDialog {
 
     private final MachineInterface machine;
+    private final DisposeFeedbackThread3 disposeThread;
 
-    private final DisposeFeedbackThread4 disposeThread;
-    private boolean jLabel24MouseClickedReady = true;
-
-    public CalibrationSkrew2() {
+    public CalibrationScrew1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
         enableDrag();
-        disableMessageDisplay();
-        jLabel23.setVisible(false);
-        centerOnScreen();
-        Base.getMainWindow().setEnabled(false);
         machine = Base.getMachineLoader().getMachineInterface();
-        moveToC();
-        disposeThread = new DisposeFeedbackThread4(this, machine);
+        Base.getMainWindow().setEnabled(false);
+        bPrev.setVisible(false);
+        centerOnScreen();
+        disableMessageDisplay();
+        moveToB();
+        disposeThread = new DisposeFeedbackThread3(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
@@ -56,20 +52,20 @@ public class CalibrationSkrew2 extends BaseDialog {
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel23.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel24.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel25.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bPrev.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Title3"));
-        jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "RightScrew_title"));
-        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "RightScrew_Info")));
+        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Title2"));
+        jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_title"));
+        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_Info")));
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        jLabel23.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        jLabel24.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bPrev.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
@@ -112,11 +108,8 @@ public class CalibrationSkrew2 extends BaseDialog {
     }
 
     public void resetFeedbackComponents() {
-        if (!jLabel24MouseClickedReady) {
-            jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel24MouseClickedReady = true;
-        }
-
+        bNext.setEnabled(true);
+        bPrev.setEnabled(true);
         disableMessageDisplay();
     }
 
@@ -126,60 +119,32 @@ public class CalibrationSkrew2 extends BaseDialog {
     }
 
     public void showMessage() {
+        bNext.setEnabled(false);
+        bPrev.setEnabled(false);
+
         enableMessageDisplay();
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        jLabel24MouseClickedReady = false;
     }
 
-    private void moveToC() {
-        Base.writeLog("Calibrating C", this.getClass());
-        machine.getDriver().setBusy(true);
-        Point5d current = machine.getDriver().getCurrentPosition(false);
-        Point5d c = machine.getTablePoints("C");
-        Point5d raise = new Point5d(current.x(), current.y(), current.z() + 10);
-        Point5d cRaise = new Point5d(c.x(), c.y(), c.z() + 10);
-
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-        double spMedium = machine.getFeedrate("spMedium");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(raise));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(cRaise));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(c));
-        machine.getDriver().setBusy(false);
+    private void moveToB() {
+        Base.writeLog("Calibrating B", this.getClass());
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
+        machine.runCommand(new replicatorg.drivers.commands.CalibrationStep());
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
     }
 
     private void doCancel() {
-        dispose();
-        Base.bringAllWindowsToFront();
-        disposeThread.stop();
-        Base.maintenanceWizardOpen = false;
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
 
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
         }
+
+        disposeThread.stop();
+        Base.bringAllWindowsToFront();
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -188,7 +153,7 @@ public class CalibrationSkrew2 extends BaseDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        bX = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -197,9 +162,9 @@ public class CalibrationSkrew2 extends BaseDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        jLabel23 = new javax.swing.JLabel();
-        jLabel24 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
+        bPrev = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
+        bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(567, 501));
@@ -213,10 +178,10 @@ public class CalibrationSkrew2 extends BaseDialog {
         jPanel5.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel5.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+        bX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        bX.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel15MousePressed(evt);
+                bXMousePressed(evt);
             }
         });
 
@@ -226,14 +191,14 @@ public class CalibrationSkrew2 extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bX, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -245,9 +210,9 @@ public class CalibrationSkrew2 extends BaseDialog {
         jLabel1.setText("CABECA DE IMPRESSAO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/cabeca_impressao_2.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/cabeca_impressao_1.png"))); // NOI18N
 
-        jLabel3.setText("2 Passo");
+        jLabel3.setText("1 Passo");
 
         jLabel4.setText("Suspendisse potenti.");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
@@ -286,19 +251,23 @@ public class CalibrationSkrew2 extends BaseDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,55 +284,57 @@ public class CalibrationSkrew2 extends BaseDialog {
                 .addComponent(jLabel3)
                 .addGap(6, 6, 6)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         jPanel6.setBackground(new java.awt.Color(255, 203, 5));
         jPanel6.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel6.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel23.setText("ANTERIOR");
-        jLabel23.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel23.addMouseListener(new java.awt.event.MouseAdapter() {
+        bPrev.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bPrev.setText("ANTERIOR");
+        bPrev.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bPrev.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel23MouseEntered(evt);
+                bPrevMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel23MouseExited(evt);
+                bPrevMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel23MousePressed(evt);
+                bPrevMousePressed(evt);
             }
         });
 
-        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        jLabel24.setText("SEGUINTE");
-        jLabel24.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel24.addMouseListener(new java.awt.event.MouseAdapter() {
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("SEGUINTE");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel24MouseEntered(evt);
+                bNextMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel24MouseExited(evt);
+                bNextMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel24MousePressed(evt);
+                bNextMousePressed(evt);
             }
         });
 
-        jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel25.setText("SAIR");
-        jLabel25.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel25.addMouseListener(new java.awt.event.MouseAdapter() {
+        bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bExit.setText("SAIR");
+        bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExit.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel25MouseEntered(evt);
+                bExitMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel25MouseExited(evt);
+                bExitMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel25MousePressed(evt);
+                bExitMousePressed(evt);
             }
         });
 
@@ -373,11 +344,11 @@ public class CalibrationSkrew2 extends BaseDialog {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel25)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
-                .addComponent(jLabel23)
+                .addComponent(bExit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel24)
+                .addComponent(bNext)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -385,9 +356,9 @@ public class CalibrationSkrew2 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel23)
-                    .addComponent(jLabel24)
-                    .addComponent(jLabel25))
+                    .addComponent(bPrev)
+                    .addComponent(bNext)
+                    .addComponent(bExit))
                 .addGap(20, 20, 20))
         );
 
@@ -396,7 +367,7 @@ public class CalibrationSkrew2 extends BaseDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -407,70 +378,66 @@ public class CalibrationSkrew2 extends BaseDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel25MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel25MouseEntered
-        jLabel25.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_jLabel25MouseEntered
+    private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bExitMouseEntered
 
-    private void jLabel25MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel25MouseExited
-        jLabel25.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_jLabel25MouseExited
+    private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bExitMouseExited
 
-    private void jLabel23MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MouseEntered
-        jLabel23.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_jLabel23MouseEntered
+    private void bPrevMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseEntered
+        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bPrevMouseEntered
 
-    private void jLabel23MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MouseExited
-        jLabel23.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_jLabel23MouseExited
-
-    private void jLabel24MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel24MouseEntered
-        if (jLabel24MouseClickedReady) {
-            jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-    }//GEN-LAST:event_jLabel24MouseEntered
-
-    private void jLabel24MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel24MouseExited
-        if (jLabel24MouseClickedReady) {
-            jLabel24.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
-    }//GEN-LAST:event_jLabel24MouseExited
-
-    private void jLabel24MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel24MousePressed
-        if (jLabel24MouseClickedReady) {
+    private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
+        if (bPrev.isEnabled()) {
+            CalibrationWelcome p = new CalibrationWelcome(false);
             dispose();
             disposeThread.stop();
-            CalibrationFinish p = new CalibrationFinish();
             p.setVisible(true);
         }
-    }//GEN-LAST:event_jLabel24MousePressed
+    }//GEN-LAST:event_bPrevMousePressed
 
-    private void jLabel23MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel23MousePressed
-        if (!machine.getDriver().isBusy()) {
+    private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bNextMouseEntered
+
+    private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bNextMouseExited
+
+    private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
+        if (bNext.isEnabled()) {
+            CalibrationScrew2 p = new CalibrationScrew2();
             dispose();
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X500"));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F15000"));
             disposeThread.stop();
-            CalibrationSkrew1 p = new CalibrationSkrew1();
             p.setVisible(true);
         }
-    }//GEN-LAST:event_jLabel23MousePressed
+    }//GEN-LAST:event_bNextMousePressed
 
-    private void jLabel25MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel25MousePressed
+    private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel25MousePressed
+    }//GEN-LAST:event_bExitMousePressed
 
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+    private void bPrevMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseExited
+        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bPrevMouseExited
+
+    private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel15MousePressed
+    }//GEN-LAST:event_bXMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bExit;
+    private javax.swing.JLabel bNext;
+    private javax.swing.JLabel bPrev;
+    private javax.swing.JLabel bX;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -482,13 +449,14 @@ public class CalibrationSkrew2 extends BaseDialog {
     // End of variables declaration//GEN-END:variables
 }
 
-class DisposeFeedbackThread4 extends Thread {
+class DisposeFeedbackThread3 extends Thread {
 
-    private MachineInterface machine;
-    private CalibrationSkrew2 calibrationPanel;
+    private final MachineInterface machine;
+    private final CalibrationScrew1 calibrationPanel;
 
-    public DisposeFeedbackThread4(CalibrationSkrew2 callIns, MachineInterface mach) {
-        super("Calibration skrew 2 Thread");
+
+    public DisposeFeedbackThread3(CalibrationScrew1 callIns, MachineInterface mach) {
+        super("Calibration skrew 1 Thread");
         this.machine = mach;
         this.calibrationPanel = callIns;
     }
