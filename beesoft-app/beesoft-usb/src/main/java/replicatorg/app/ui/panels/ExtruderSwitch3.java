@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -544,7 +543,8 @@ public class ExtruderSwitch3 extends BaseDialog {
 
                 dispose();
                 disposeThread.stop();
-                ExtruderSwitch4 p = new ExtruderSwitch4(previousColor);
+                //ExtruderSwitch4 p = new ExtruderSwitch4(previousColor);
+                FilamentCodeInsertion p = new FilamentCodeInsertion(this);
                 p.setVisible(true);
             }
     }//GEN-LAST:event_bNextMousePressed

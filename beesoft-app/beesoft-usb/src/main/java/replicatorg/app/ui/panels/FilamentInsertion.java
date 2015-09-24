@@ -591,7 +591,7 @@ public class FilamentInsertion extends BaseDialog {
             if (unloadPressed == false) {
                 Base.writeLog("Next button pressed, transitioning to next panel", this.getClass());
                 disposeThread.stop();
-                FilamentCodeInsertion p = new FilamentCodeInsertion();
+                FilamentCodeInsertion p = new FilamentCodeInsertion(this);
                 dispose();
                 p.setVisible(true);
             } else {

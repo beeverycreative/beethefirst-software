@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.Window;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
@@ -24,14 +25,16 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentCodeInsertion extends BaseDialog {
 
+    private final Window prevWindow;
     private final MachineInterface machine;
     private DefaultComboBoxModel comboModel;
     private String[] categories;
     private static final String WRITE_CONFIG = "M601";
     private boolean noFilamentsFound = false;
 
-    public FilamentCodeInsertion() {
+    public FilamentCodeInsertion(Window prevWindow) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        this.prevWindow = prevWindow;
         Base.writeLog("Final step of the filament change operation", this.getClass());
         initComponents();
         setFont();
@@ -421,7 +424,14 @@ public class FilamentCodeInsertion extends BaseDialog {
     }//GEN-LAST:event_bNextMousePressed
 
     private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
-        FilamentInsertion p = new FilamentInsertion();
+        Window p;
+        if(prevWindow instanceof FilamentInsertion) {
+            p = new FilamentInsertion();
+        } else if(prevWindow instanceof ExtruderSwitch3) {
+            p = new ExtruderSwitch3();
+        } else {//if(prevWindow instanceof ExtruderMaintenance5) {
+            p = new ExtruderMaintenance5();
+        }
         dispose();
         p.setVisible(true);
     }//GEN-LAST:event_bPrevMousePressed

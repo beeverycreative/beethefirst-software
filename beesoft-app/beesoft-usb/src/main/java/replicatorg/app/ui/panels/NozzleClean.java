@@ -517,7 +517,7 @@ public class NozzleClean extends BaseDialog {
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
         if (!ProperDefault.get("maintenance").equals("1") && achievement) {
             dispose();
-            FilamentCodeInsertion p = new FilamentCodeInsertion();
+            FilamentCodeInsertion p = new FilamentCodeInsertion(this);
             p.setVisible(true);
         }
     }//GEN-LAST:event_jLabel17MousePressed

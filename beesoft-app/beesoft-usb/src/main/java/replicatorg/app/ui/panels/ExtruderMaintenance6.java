@@ -28,17 +28,14 @@ public class ExtruderMaintenance6 extends BaseDialog {
     private final MachineInterface machine;
     private DefaultComboBoxModel comboModel;
     private String[] categories;
-    private boolean itemChanged;
     private static final String WRITE_CONFIG = "M601";
-    private String previousColor = "";
 
-    public ExtruderMaintenance6(String prevColor) {
+    public ExtruderMaintenance6() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
         enableDrag();
-        previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
         centerOnScreen();
@@ -307,11 +304,6 @@ public class ExtruderMaintenance6 extends BaseDialog {
 
         jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboBox1ItemStateChanged(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -482,9 +474,6 @@ public class ExtruderMaintenance6 extends BaseDialog {
         doCancel();
     }//GEN-LAST:event_jLabel15MousePressed
 
-    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        itemChanged = true;
-    }//GEN-LAST:event_jComboBox1ItemStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bBack;
     private javax.swing.JLabel bCancel;

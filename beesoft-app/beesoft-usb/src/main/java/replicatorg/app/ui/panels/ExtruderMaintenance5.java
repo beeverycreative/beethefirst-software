@@ -533,7 +533,8 @@ public class ExtruderMaintenance5 extends BaseDialog {
         if (bNext.isEnabled()) {
             dispose();
             disposeThread.stop();
-            ExtruderMaintenance6 p = new ExtruderMaintenance6(previousColor);
+            //ExtruderMaintenance6 p = new ExtruderMaintenance6(previousColor);
+            FilamentCodeInsertion p = new FilamentCodeInsertion(this);
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
