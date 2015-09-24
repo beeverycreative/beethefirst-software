@@ -207,7 +207,7 @@ public abstract class DriverBaseImplementation implements Driver {
                 invalidatePosition();
             } //isBootloader = true;
             // Triggers listener for main window buttons
-            Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
+            // Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
         }
     }
 
