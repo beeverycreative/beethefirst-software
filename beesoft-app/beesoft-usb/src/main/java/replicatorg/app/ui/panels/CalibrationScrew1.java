@@ -44,7 +44,6 @@ public class CalibrationScrew1 extends BaseDialog {
         disposeThread = new DisposeFeedbackThread3(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -142,7 +141,7 @@ public class CalibrationScrew1 extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        disposeThread.stop();
+        disposeThread.interrupt();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -464,7 +463,7 @@ class DisposeFeedbackThread3 extends Thread {
     @Override
     public void run() {
 
-        while (true) {
+        while (this.isInterrupted() == false) {
             machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
             try {
                 Thread.sleep(250);

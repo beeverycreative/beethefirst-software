@@ -207,10 +207,6 @@ public class CalibrationPrintTest extends BaseDialog {
 
     }
 
-    private void finalizeHeat() {
-        Base.writeLog("Cooling down...", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
 
     private void evaluateInitialConditions() {
         achievement = false;
@@ -219,13 +215,6 @@ public class CalibrationPrintTest extends BaseDialog {
         Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
 
-//        preferences = new ArrayList<String>();
-//        preferences.add("LOW");
-//        preferences.add(FilamentControler.getColor(machine.getModel().getCoilCode()));
-//        preferences.add("LOW");
-//        preferences.add(String.valueOf(false));
-//        preferences.add(String.valueOf(false));
-//        preferences.add(String.valueOf(false));
         try {
             reader = new BufferedReader(new FileReader(getPrintFile()));
         } catch (FileNotFoundException ex) {
@@ -305,36 +294,18 @@ public class CalibrationPrintTest extends BaseDialog {
     }
 
     private void doCancel() {
-        updateThread.stop();
-        dispose();
-        machine.killSwitch();
-        finalizeHeat();
-        Base.getMainWindow().handleStop();
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        try {
-            // Sleep before home after M112
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(CalibrationPrintTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
+        machine.killSwitch();
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
         }
+
+        updateThread.stop();
         Base.bringAllWindowsToFront();
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -569,8 +540,8 @@ public class CalibrationPrintTest extends BaseDialog {
 
 class PrintThread extends Thread {
 
-    CalibrationPrintTest window;
-    MachineInterface machine;
+    private final CalibrationPrintTest window;
+    private final MachineInterface machine;
 
     public PrintThread(CalibrationPrintTest w, MachineInterface machine) {
         super("Calibration Print Thread");

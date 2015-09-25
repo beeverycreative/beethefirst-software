@@ -106,7 +106,6 @@ class MachineThread extends Thread {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-
                     if (counter++ == 4) {
                         if (driver.isTransferMode() == false) {
                             driver.readStatus();

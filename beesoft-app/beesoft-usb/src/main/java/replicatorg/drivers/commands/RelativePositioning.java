@@ -1,3 +1,4 @@
+
 package replicatorg.drivers.commands;
 
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
@@ -9,11 +10,11 @@ import replicatorg.drivers.StopException;
  *
  * @author jgrego
  */
-public class CalibrationStep implements DriverCommand {
+public class RelativePositioning implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "G132";
+        return "G91";
     }
 
     @Override
@@ -27,7 +28,7 @@ public class CalibrationStep implements DriverCommand {
 
     @Override
     public void run(Driver driver) throws RetryException, StopException {
-        driver.dispatchCommand("G132", COM.DEFAULT);
+        driver.dispatchCommand("G91", COM.DEFAULT);
     }
-
+    
 }

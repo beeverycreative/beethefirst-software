@@ -7,13 +7,11 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.MachineInterface;
-import replicatorg.util.Point5d;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -31,8 +29,6 @@ public class CalibrationValidation extends BaseDialog {
     private final MachineInterface machine;
 
     private final DisposeFeedbackThread7 disposeThread;
-    private boolean jLabel5MouseClickedReady = false;
-    private boolean jLabel6MouseClickedReady = false;
 
     public CalibrationValidation() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -40,7 +36,6 @@ public class CalibrationValidation extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        evaluateInitialConditions();
         machine = Base.getMachineLoader().getMachineInterface();
         enableDrag();
         disposeThread = new DisposeFeedbackThread7(this, machine);
@@ -52,8 +47,8 @@ public class CalibrationValidation extends BaseDialog {
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel6.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bRepeatCalibration.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bConfirmCalibration.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel25.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
@@ -62,8 +57,8 @@ public class CalibrationValidation extends BaseDialog {
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Title"));
         jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "Validation_Info")));
-        jLabel5.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button2"));
-        jLabel6.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button1"));
+        bRepeatCalibration.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button2"));
+        bConfirmCalibration.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button1"));
         jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
@@ -106,33 +101,23 @@ public class CalibrationValidation extends BaseDialog {
     }
 
     public void showMessage() {
+        bRepeatCalibration.setEnabled(true);
+        bConfirmCalibration.setEnabled(true);
+        
         enableMessageDisplay();
         jLabel9.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
     }
 
     public void resetFeedbackComponents() {
-        if (!jLabel5MouseClickedReady) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-            jLabel5MouseClickedReady = true;
-        }
-
-        if (!jLabel6MouseClickedReady) {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-            jLabel6MouseClickedReady = true;
-        }
-
+        bRepeatCalibration.setEnabled(true);
+        bConfirmCalibration.setEnabled(true);
         disableMessageDisplay();
-//
     }
 
     private int getStringPixelsWidth(String s) {
         Graphics g = getGraphics();
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
         return fm.stringWidth(s);
-    }
-
-    private void evaluateInitialConditions() {
-        Base.getMainWindow().setEnabled(false);
     }
 
     private void doCancel() {
@@ -172,9 +157,9 @@ public class CalibrationValidation extends BaseDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        bRepeatCalibration = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        bConfirmCalibration = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
@@ -228,35 +213,35 @@ public class CalibrationValidation extends BaseDialog {
         jLabel4.setText("Suspendisse potenti.");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
-        jLabel5.setText("Teste de Calibracao");
-        jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+        bRepeatCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
+        bRepeatCalibration.setText("Teste de Calibracao");
+        bRepeatCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bRepeatCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel5MouseEntered(evt);
+                bRepeatCalibrationMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel5MouseExited(evt);
+                bRepeatCalibrationMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel5MousePressed(evt);
+                bRepeatCalibrationMousePressed(evt);
             }
         });
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/validation2.png"))); // NOI18N
 
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
-        jLabel6.setText("Teste de Calibracao");
-        jLabel6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
+        bConfirmCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
+        bConfirmCalibration.setText("Teste de Calibracao");
+        bConfirmCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bConfirmCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel6MouseEntered(evt);
+                bConfirmCalibrationMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel6MouseExited(evt);
+                bConfirmCalibrationMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel6MousePressed(evt);
+                bConfirmCalibrationMousePressed(evt);
             }
         });
 
@@ -292,9 +277,9 @@ public class CalibrationValidation extends BaseDialog {
             .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(93, 93, 93)
-                .addComponent(jLabel6)
+                .addComponent(bConfirmCalibration)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
+                .addComponent(bRepeatCalibration)
                 .addGap(113, 113, 113))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
@@ -326,8 +311,8 @@ public class CalibrationValidation extends BaseDialog {
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
+                    .addComponent(bRepeatCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bConfirmCalibration))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -397,26 +382,22 @@ public class CalibrationValidation extends BaseDialog {
         jLabel25.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_jLabel25MouseExited
 
-    private void jLabel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseEntered
-        jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
-    }//GEN-LAST:event_jLabel5MouseEntered
+    private void bRepeatCalibrationMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRepeatCalibrationMouseEntered
+        bRepeatCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
+    }//GEN-LAST:event_bRepeatCalibrationMouseEntered
 
-    private void jLabel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseExited
-        jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-    }//GEN-LAST:event_jLabel5MouseExited
+    private void bRepeatCalibrationMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRepeatCalibrationMouseExited
+        bRepeatCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
+    }//GEN-LAST:event_bRepeatCalibrationMouseExited
 
-    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        if (jLabel5MouseClickedReady) {
+    private void bRepeatCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRepeatCalibrationMousePressed
+        if (bRepeatCalibration.isEnabled()) {
+            CalibrationWelcome cal = new CalibrationWelcome(true);
             disposeThread.stop();
             dispose();
-            //turn off blower before heating
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-            machine.runCommand(new replicatorg.drivers.commands.SetTemperature(120));
-            CalibrationWelcome cal = new CalibrationWelcome(true);
             cal.setVisible(true);
         }
-
-    }//GEN-LAST:event_jLabel5MousePressed
+    }//GEN-LAST:event_bRepeatCalibrationMousePressed
 
     private void jLabel25MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel25MousePressed
         doCancel();
@@ -426,36 +407,34 @@ public class CalibrationValidation extends BaseDialog {
         doCancel();
     }//GEN-LAST:event_jLabel15MousePressed
 
-    private void jLabel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseEntered
-        jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
-    }//GEN-LAST:event_jLabel6MouseEntered
+    private void bConfirmCalibrationMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bConfirmCalibrationMouseEntered
+        bConfirmCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
+    }//GEN-LAST:event_bConfirmCalibrationMouseEntered
 
-    private void jLabel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseExited
-        jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-    }//GEN-LAST:event_jLabel6MouseExited
+    private void bConfirmCalibrationMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bConfirmCalibrationMouseExited
+        bConfirmCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
+    }//GEN-LAST:event_bConfirmCalibrationMouseExited
 
-    private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed
-        if (jLabel6MouseClickedReady) {
-            dispose();
-            disposeThread.stop();
+    private void bConfirmCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bConfirmCalibrationMousePressed
+        if (bConfirmCalibration.isEnabled()) {
             ProperDefault.put("nTotalPrints", String.valueOf(0));
-            Base.getMainWindow().setEnabled(true);
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
+            machine.runCommand(new replicatorg.drivers.commands.CalibrationStep());
+            dispose();
+            disposeThread.stop();
             Base.bringAllWindowsToFront();
-            ProperDefault.put("nTotalPrints", String.valueOf(0));
         }
-    }//GEN-LAST:event_jLabel6MousePressed
+    }//GEN-LAST:event_bConfirmCalibrationMousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bConfirmCalibration;
+    private javax.swing.JLabel bRepeatCalibration;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -467,8 +446,8 @@ public class CalibrationValidation extends BaseDialog {
 
 class DisposeFeedbackThread7 extends Thread {
 
-    private MachineInterface machine;
-    private CalibrationValidation calibrationPanel;
+    private final MachineInterface machine;
+    private final CalibrationValidation calibrationPanel;
 
     public DisposeFeedbackThread7(CalibrationValidation calVal, MachineInterface mach) {
         super("Calibration validation Thread");
