@@ -534,8 +534,8 @@ public class UsbDriver extends DriverBaseImplementation {
             return false;
         } catch (IllegalArgumentException ex) {
             Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-            return false;
+            //setInitialized(false);
+            //return false;
         } catch (UsbDisconnectedException ex) {
             Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
             setInitialized(false);
