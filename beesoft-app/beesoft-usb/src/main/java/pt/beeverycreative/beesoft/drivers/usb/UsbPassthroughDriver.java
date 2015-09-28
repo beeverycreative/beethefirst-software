@@ -300,23 +300,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             int tries = 100;
-            while (recoverEcho() == false) {
-                hiccup(QUEUE_WAIT, 0);
-                if ((tries--) < 0) {
-                    Base.writeLog("Communication lost, recoverEcho Failed (100)", this.getClass());
 
-                    // Warn user to restart BTF and restart BEESOFT.
-                    Warning firmwareOutDate = new Warning("close");
-                    firmwareOutDate.setMessage("FirmwareError");
-                    firmwareOutDate.setVisible(true);
-
-                    // Sleep forever, until restart.
-                    while (true) {
-                        hiccup();
-                        Base.getMainWindow().setEnabled(false);
-                    }
-                }
-            }
             lastDispatchTime = System.currentTimeMillis();
             resendQueue.clear();
             super.isBootloader = false;
@@ -415,7 +399,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             Base.writeLog("Could not recover COM from type: error.", this.getClass());
             setBusy(false);
-            closePipe(pipes);
+            //closePipe(pipes);
 
         }
     }
@@ -440,7 +424,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         openPipe(pipes);
                         tries++;
 
-                        if (tries > 3) {
+                        if (tries > 3 && !isInitialized()) {
                             Base.writeLog("Tried to open pipes 3 times and failed, initiating USB device again", this.getClass());
                             m_usbDevice = null;
                             tries = 0;
@@ -633,10 +617,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 break;
             case BLOCK:
 
-                // checks if communication is synchronized
-                while (!recoverEcho()) {
-                    hiccup(QUEUE_WAIT, 0);
-                }
                 //Checks if machine is ready before sending               
                 while (!dispatchCommand(GET_STATUS).contains(STATUS_OK)) {
                     hiccup(QUEUE_WAIT, 0);
@@ -654,11 +634,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     answer = dispatchCommand(next);
                 }
 
-                // checks if communication is synchronized
-                while (!recoverEcho()) {
-                    hiccup(QUEUE_WAIT, 0);
-                }
-
                 break;
 
         }
@@ -674,24 +649,36 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     }
 
-    // private for now, not sure if its going to be used outside
     private boolean recoverEcho() {
-        return true;
-        /*
-         int id = (int) (Math.random() * 1000.0);
-         String message = ECHO + " E" + id;
-         String expected = "E" + id;
-         Base.writeLog("recoverEcho..");
-         String response = dispatchCommand(message, COM.DEFAULT);
+        int id = (int) (Math.random() * 1000.0), tries = 10;
+        String message = ECHO + " E" + id;
+        String expected = "E" + id;
+        String response;
+        Base.writeLog("recoverEcho() invoked", this.getClass());
+        Base.writeLog("expected: " + expected, this.getClass());
+        sendCommand(message);
 
-         if (response.contains(expected)) {
-         Base.writeLog("...ok");
-         return true;
-         } else {
-         Base.writeLog("..nok");
-         return false;
-         }
-         */
+        do {
+            try {
+                Thread.sleep(100, 0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            response = readResponse();
+
+            tries--;
+            if (response.contains(expected)) {
+                Base.writeLog("recoverEcho() successful after " + (10 - tries) + " tries", this.getClass());
+                return true;
+            } else {
+                Base.writeLog("response: " + response, this.getClass());
+            }
+
+        } while (tries > 0);
+
+        Base.writeLog("recoverEcho() failed!", this.getClass());
+        return false;
     }
 
     private String recoverCOM() {
@@ -1681,15 +1668,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
             }
         } catch (UsbException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+            Base.writeLog("*sendCommandWOTest* <UsbException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
         } catch (UsbNotActiveException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+            Base.writeLog("*sendCommandWOTest* <UsbNotActiveException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
         } catch (UsbNotOpenException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+            Base.writeLog("*sendCommandWOTest* <UsbNotOpenException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
         } catch (IllegalArgumentException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+            Base.writeLog("*sendCommandWOTest* <IllegalArgumentException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
         } catch (UsbDisconnectedException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
+            Base.writeLog("*sendCommandWOTest* <UsbDisconnectedException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage());
         }
 
         if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
@@ -1755,15 +1742,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
             }
         } catch (UsbException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+            Base.writeLog("*sendCommand* <UsbException> Error while sending command " + next + " : " + ex.getMessage());
         } catch (UsbNotActiveException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+            Base.writeLog("*sendCommand* <UsbNotActiveException> Error while sending command " + next + " : " + ex.getMessage());
         } catch (UsbNotOpenException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+            Base.writeLog("*sendCommand* <UsbNotOpenException> Error while sending command " + next + " : " + ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+            Base.writeLog("*sendCommand* <IllegalArgumentException> Error while sending command " + next + " : " + ex.getMessage());
         } catch (UsbDisconnectedException ex) {
-            Base.writeLog("Error while sending command " + next + " : " + ex.getMessage());
+            Base.writeLog("*sendCommand* <UsbDisconnectedException> Error while sending command " + next + " : " + ex.getMessage());
         }
 
         if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
@@ -2498,56 +2485,68 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private String checkPrinterStatus() {
+        int tries = 0;
+        String res;
+        boolean possibleBootloader = false;
+
         Base.writeLog("Verifying what is the current status of the printer", this.getClass());
 
+        //recoverEcho();
         sendCommand(GET_STATUS);
-        hiccup(100, 0);
-        String res = readResponse();
 
-        Base.writeLog("Response: " + res, this.getClass());
-
-        if (res.contains("Pause")) {
-            Base.writeLog("Printer is in pause mode", this.getClass());
-            Base.printPaused = true;
-            return "autonomous";
-        } else if (res.toLowerCase().contains(STATUS_SDCARD)) {
-            Base.writeLog("Printer is actively printing", this.getClass());
-            return "autonomous";
-        } else if (res.toLowerCase().contains(STATUS_SHUTDOWN)) {
-            Base.writeLog("Printer is in shutdown mode", this.getClass());
-            return "shutdown";
-        } else if (res.isEmpty()) {
-            Base.writeLog("Couldn't determine the printer status", this.getClass());
-            return "error";
-        }
-
-//        System.out.println(res);
-        if (res.toLowerCase().contains("bad")) {
-            Base.writeLog("Requesting bootloader version", this.getClass());
-            sendCommand("M116");
+        do {
             hiccup(100, 0);
             res = readResponse();
+
+            Base.writeLog("Attempt " + ++tries, this.getClass());
             Base.writeLog("Response: " + res, this.getClass());
 
-            /**
-             * Checks for type of firmware. Bootloader 3 - 3.;6. Bootloader 4 -
-             * 4.;7.
-             */
-            if (res.toLowerCase().contains("3.") || res.toLowerCase().contains("6.")) {
-                Base.writeLog("Old bootloader detected", this.getClass());
-                return "bootloader";
-            }
-            if (res.toLowerCase().contains("4.") || res.toLowerCase().contains("7.")) {
-                Base.writeLog("New bootloader detected", this.getClass());
-                return "new bootloader";
-            } else {
-                Base.writeLog("Couldn't find what bootloader version this printer has", this.getClass());
+            if (res.toLowerCase().contains("bad")) {
+                possibleBootloader = true;
+                break;
+            } else if (res.contains("Pause")) {
+                Base.writeLog("Printer is in pause mode", this.getClass());
+                Base.printPaused = true;
+                return "autonomous";
+            } else if (res.toLowerCase().contains(STATUS_SDCARD)) {
+                Base.writeLog("Printer is actively printing", this.getClass());
+                return "autonomous";
+            } else if (res.toLowerCase().contains(STATUS_SHUTDOWN)) {
+                Base.writeLog("Printer is in shutdown mode", this.getClass());
+                return "shutdown";
+            } else if (res.toLowerCase().contains("ok")) {
+                Base.writeLog("Printer is in firmware mode and idle", this.getClass());
+                return "firmware";
+            } else if (res.isEmpty()) {
+                Base.writeLog("Couldn't determine the printer status", this.getClass());
                 return "error";
             }
+        } while (tries < 10);
 
-        } else if (res.toLowerCase().contains("ok") && !res.toLowerCase().contains("bad")) {
-            Base.writeLog("Printer is in firmware mode and idle", this.getClass());
-            return "firmware";
+        tries = 0;
+
+        if (possibleBootloader) {
+            Base.writeLog("Requesting bootloader version", this.getClass());
+            sendCommand("M116");
+
+            do {
+                hiccup(100, 0);
+                res = readResponse();
+                Base.writeLog("Attempt " + ++tries, this.getClass());
+                Base.writeLog("Response: " + res, this.getClass());
+
+                if (res.toLowerCase().contains("3.") || res.toLowerCase().contains("6.")) {
+                    Base.writeLog("Old bootloader detected", this.getClass());
+                    return "bootloader";
+                }
+                if (res.toLowerCase().contains("4.") || res.toLowerCase().contains("7.")) {
+                    Base.writeLog("New bootloader detected", this.getClass());
+                    return "new bootloader";
+                } else {
+                    Base.writeLog("Couldn't find what bootloader version this printer has", this.getClass());
+                    return "error";
+                }
+            } while (tries < 10);
         }
 
         Base.writeLog("Returning error by default, this shouldn't happen.", this.getClass());

@@ -303,26 +303,6 @@ public class ControlPanel extends BaseDialog {
         return duration;
     }
 
-    private void centerOnScreen() {
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-
-        // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
-        int x = (dim.width - w) / 2;
-        int y = (dim.height - h) / 2;
-
-        // Move the window
-        this.setLocation(x, y);
-        this.setLocationRelativeTo(Base.getMainWindow());
-        Base.setMainWindowNOK();
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
     private String buildString(String[] parts, int width) {
         String text = "";
         String ihtml = "<html>";
