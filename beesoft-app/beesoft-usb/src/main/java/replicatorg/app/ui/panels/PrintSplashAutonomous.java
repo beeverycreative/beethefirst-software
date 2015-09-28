@@ -60,10 +60,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     private boolean lastPanel;
     private boolean isPaused = false;
     private Point5d pausePos;
-    private long pausedTime = 0;
     private boolean isShutdown;
     private boolean userDecision;
-    private boolean shutdownFromDisconnect;
 
     public PrintSplashAutonomous(boolean printingState, PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
@@ -153,6 +151,9 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public void startConditions() {
+        if(Base.isPrintingFromGCode) {
+            prt.setGCodeFile(new File(preferences.getGcodeToPrint()));
+        }
         ut.start();
     }
 
@@ -256,7 +257,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         }
 
         userDecision = true;
-        shutdownFromDisconnect = false;
         machine.resumewatch();
         Base.resetPrintingFlags();
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
@@ -845,10 +845,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         prt.endGCodeGeneration();
     }
 
-    public long getPausedTime() {
-        return this.pausedTime;
-    }
-
     public void cancelProcess() {
         dispose();
         enableSleep();
@@ -1049,10 +1045,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         });
     }
 
-    public void setShutdownStatus() {
-        this.shutdownFromDisconnect = true;
-    }
-
     public void resumeFromShutdown() {
         final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
         final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
@@ -1082,7 +1074,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 isShutdown = false;
                 userDecision = true;
                 isPaused = false;
-                shutdownFromDisconnect = false;
+                //shutdownFromDisconnect = false;
 //                disablePreparingNewFilamentInfo();
                 Base.printPaused = false;
                 machine.resumewatch();
@@ -1843,7 +1835,7 @@ class UpdateThread4 extends Thread {
 
             // Machine in shutdown mode
             if (driver.isONShutdown()) {
-                window.setShutdownStatus();
+                //window.setShutdownStatus();
                 //set pause UI elements
                 window.restorePauseElements();
 
