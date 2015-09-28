@@ -2501,7 +2501,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeLog("Verifying what is the current status of the printer", this.getClass());
 
         sendCommand(GET_STATUS);
-        hiccup(50, 0);
+        hiccup(100, 0);
         String res = readResponse();
 
         Base.writeLog("Response: " + res, this.getClass());
@@ -2520,15 +2520,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Couldn't determine the printer status", this.getClass());
             return "error";
         }
-        sendCommand("M300");
-        hiccup(50, 0);
-        readResponse();
 
 //        System.out.println(res);
         if (res.toLowerCase().contains("bad")) {
-            Base.writeLog("Requesting bootloader version");
+            Base.writeLog("Requesting bootloader version", this.getClass());
             sendCommand("M116");
-            hiccup(50, 0);
+            hiccup(100, 0);
             res = readResponse();
             Base.writeLog("Response: " + res, this.getClass());
 
