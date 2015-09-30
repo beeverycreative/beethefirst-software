@@ -228,7 +228,7 @@ public class UsbDriver extends DriverBaseImplementation {
         idProduct = descriptor.idProduct();
         manufacturerString = device.getManufacturerString();
         productString = device.getProductString();
-        serialNumberString = device.getSerialNumberString().trim();
+        //serialNumberString = device.getSerialNumberString().trim();
         sDevice = idVendor + ":" + idProduct;
 
         // candidate
@@ -242,7 +242,7 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
             Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
             Base.writeLog("Product string: " + productString, this.getClass());
-            Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+            //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
             Base.writeLog("********************************", this.getClass());
             m_usbDeviceList.add(device);
             return true;
@@ -260,7 +260,7 @@ public class UsbDriver extends DriverBaseImplementation {
         idProduct = descriptor.idProduct();
         manufacturerString = device.getManufacturerString();
         productString = device.getProductString();
-        serialNumberString = device.getSerialNumberString().trim();
+        //serialNumberString = device.getSerialNumberString().trim();
 
         if (idVendor == BEEVERYCREATIVE_VENDOR_ID) {
 
@@ -271,7 +271,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
                 Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
                 Base.writeLog("Product string: " + productString, this.getClass());
-                Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+                //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
                 Base.writeLog("*****************************************", this.getClass());
                 m_usbDeviceList.add(device);
 
@@ -286,7 +286,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
                 Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
                 Base.writeLog("Product string: " + productString, this.getClass());
-                Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+                //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
                 Base.writeLog("*****************************************", this.getClass());
                 m_usbDeviceList.add(device);
 

@@ -12,14 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
-import replicatorg.app.ui.panels.WelcomeQuickguide;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -38,7 +35,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
     private ImageIcon image;
     private int newWidth = 600;
     private int newHeight = 333;
-    private int duration = 80;
+    private int duration = 10;
 
     /**
      * Welcome Splash init

@@ -91,7 +91,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         Base.bringAllWindowsToFront();
     }
 
-    public PrintSplashAutonomous(boolean printingState, boolean isPaused, PrintPreferences prefs) {
+    public PrintSplashAutonomous(boolean printingState, boolean isPaused, boolean isShutdown, PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         setFont();
@@ -118,6 +118,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         this.setName("Autonomous");
         Base.bringAllWindowsToFront();
         this.isPaused = isPaused;
+        this.isShutdown = isShutdown;
     }
 
     private void setFont() {
@@ -151,7 +152,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public void startConditions() {
-        if(Base.isPrintingFromGCode) {
+        if (Base.isPrintingFromGCode) {
             prt.setGCodeFile(new File(preferences.getGcodeToPrint()));
         }
         ut.start();
@@ -314,6 +315,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 parent.setEnabled(true);
                 disablePreparingNewFilamentInfo();
                 isPaused = false;
+                isShutdown = false;
                 Base.printPaused = false;
                 machine.resumewatch();
                 machine.unpause();
@@ -1114,7 +1116,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         tEstimation.setVisible(false);
         vEstimation.setVisible(false);
         jProgressBar1.setVisible(false);
-//        bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
         bPause.setVisible(true);
 
         bShutdown.setVisible(false);
@@ -1124,14 +1125,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         tInfo3.setVisible(true);
         tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Waiting2"));
 
-//        machine.getDriver().dispatchCommand(PAUSE_PRINT);
-        isShutdown = true;
-        Base.printPaused = true;
         machine.stopwatch();
-        isPaused = true;
-//        
-//        Maintenance p = new Maintenance();
-//        p.setVisible(true);
 
     }
 
@@ -1826,53 +1820,14 @@ class UpdateThread4 extends Thread {
          */
         if (window.isPrinting()) {
 
-            if (window.isPaused()) {
+            /*
+            if (window.isPaused() || window.isShutdown()) {
                 machine.stopwatch();
             }
+            */
 
             Base.writeLog("Autonomous print resumed");
             Base.isPrinting = true;
-
-            // Machine in shutdown mode
-            if (driver.isONShutdown()) {
-                //window.setShutdownStatus();
-                //set pause UI elements
-                window.restorePauseElements();
-
-                //Listens for an user option
-                boolean goOn = false;
-                while (goOn == false) {
-                    try {
-                        Thread.sleep(10);
-                        goOn = window.waitForDecision();
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                //Control var to Shutdown button lock
-                this.isOnShutdownRecover = true;
-
-                /**
-                 * Controls temperature for proper print
-                 */
-                boolean temperatureAchieved = false;
-                Base.getMainWindow().getButtons().blockModelsButton(false);
-                window.setHeatingInfo();
-                window.resetProgressBar();
-
-                while (temperatureAchieved == false) {
-                    try {
-                        temperatureAchieved = evaluateTemperature();
-                        Thread.sleep(3000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                //resume from shutdown
-                window.resumeFromShutdown();
-                this.isOnShutdownRecover = false;
-            }
 
             try {
                 Thread.sleep(10);
@@ -1907,8 +1862,42 @@ class UpdateThread4 extends Thread {
             window.startPrintCounter();
 
             if (window.isPaused()) {
+                machine.stopwatch();
                 PauseMenu pause = new PauseMenu(window);
                 pause.setVisible(true);
+            }
+
+            if (window.isShutdown()) {
+                machine.stopwatch();
+                ShutdownMenu shutdown = new ShutdownMenu(window);
+                shutdown.setVisible(true);
+                
+                //window.setShutdownStatus();
+                //set pause UI elements
+                //window.restorePauseElements();
+
+                /*
+                 //Control var to Shutdown button lock
+                 this.isOnShutdownRecover = true;
+
+                 boolean temperatureAchieved = false;
+                 Base.getMainWindow().getButtons().blockModelsButton(false);
+                 window.setHeatingInfo();
+                 window.resetProgressBar();
+
+                 while (temperatureAchieved == false) {
+                 try {
+                 temperatureAchieved = evaluateTemperature();
+                 Thread.sleep(3000);
+                 } catch (InterruptedException ex) {
+                 Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                 }
+
+                 //resume from shutdown
+                 window.resumeFromShutdown();
+                 this.isOnShutdownRecover = false;
+                 */
             }
 
             //Updates elements while visible

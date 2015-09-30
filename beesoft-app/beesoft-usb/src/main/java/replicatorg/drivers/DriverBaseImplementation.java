@@ -429,7 +429,7 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public double getTemperature() {
-        return machine.currentTool().getCurrentTemperature();
+        return machine.currentTool().getExtruderTemperature();
     }
 
     @Override
@@ -487,7 +487,7 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void resetToolTemperature() {
-        machine.currentTool().setCurrentTemperature(0);
+        machine.currentTool().setCurrentTemperature(0, 0);
     }
 
     @Override

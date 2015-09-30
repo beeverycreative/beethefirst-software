@@ -244,49 +244,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             PrintSplashAutonomous p = new PrintSplashAutonomous(
-                    true, Base.printPaused, null
+                    true, Base.printPaused, this.isONShutdown, null
             );
 
-            if (Base.printPaused == false) {
+            if (Base.printPaused == false && this.isONShutdown == false) {
                 p.setVisible(true);
             }
 
             p.startConditions();
             Base.updateVersions();
             return;
-        }
-
-        if (status.contains("shutdown")) {
-            /*
-             serialNumberString = "0000000000";
-             lastDispatchTime = System.currentTimeMillis();
-             super.isBootloader = false;
-             super.isONShutdown = true;
-             Base.getMainWindow().setEnabled(true);
-             Base.bringAllWindowsToFront();
-             */
-            /**
-             * Does not show PSAutonomous until MainWindows is visible
-             */
-            /*
-             boolean mwVisible = Base.getMainWindow().isVisible();
-             while (mwVisible == false) {
-             try {
-             Thread.sleep(1, 0);
-             } catch (InterruptedException ex) {
-             Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-             }
-             mwVisible = Base.getMainWindow().isVisible();//polls
-             }
-             PrintSplashAutonomous p = new PrintSplashAutonomous(true, null);
-             p.setVisible(true);
-             p.startConditions();
-             return;
-             */
-
-            // quick and dirty workaround, shutdown is not yet implemented
-            dispatchCommand("M505", COM.DEFAULT);
-            status = "firmware";
         }
 
         if (status.contains("firmware")) {
@@ -298,8 +265,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             } else {
                 bootedFromBootloader = false;
             }
-
-            int tries = 100;
 
             lastDispatchTime = System.currentTimeMillis();
             resendQueue.clear();
@@ -430,7 +395,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                             tries = 0;
                         }
                     } else {
-                        //Base.writeLog("No printer found. Waiting 1 second before trying again...", this.getClass());
+                        //Base.writeLog("No printer found. Waiting 100 ms before trying again...", this.getClass());
 
                         if (pipes != null) {
                             if (pipes.isOpen()) {
@@ -440,18 +405,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         }
 
                         InitUsbDevice();
-                        Thread.sleep(100); // sleep 1 second
+                        try {
+                            Thread.sleep(100); // sleep 100 ms
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
-
                 } catch (Exception e) {
                     try {
                         Base.writeLog("Unknown exception on initialize()", this.getClass());
-                        Base.writeLog(e.getMessage(), this.getClass());
+                        e.printStackTrace();
                         Thread.sleep(100); // sleep 1 second
                     } catch (InterruptedException ex) {
 
                     }
                 }
+
             }
             Base.writeLog("USB Driver initialized", this.getClass());
         }
@@ -2437,14 +2406,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void readTemperature() {
         //sendCommand(_getToolCode() + "M105");
         String temp = dispatchCommand("M105");
-        double temperature;
+        double extruderTemperature, blockTemperature;
 
         String re1 = "(T)";	// Variable Name 1
         String re2 = "(:)";	// Any Single Character 1
         String re3 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
         String re4 = "(\\s+)";	// White Space 1
-        String re5 = "((?:[a-z][a-z0-9_]*))";	// Variable Name 2
-        String re6 = "(.)";	// Any Single Character 2
+        String re5 = "(B)";	// Variable Name 2
+        String re6 = "(:)";	// Any Single Character 2
         String re7 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
 
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -2458,12 +2427,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String c2 = m.group(6);
             String float2 = m.group(7);
 
-            temperature = Double.valueOf(float1);
+            extruderTemperature = Double.valueOf(float1);
+            blockTemperature = Double.valueOf(float2);
         } else {
-            temperature = -1.0;
+            extruderTemperature = -1.0;
+            blockTemperature = -1.0;
         }
 
-        machine.currentTool().setCurrentTemperature(temperature);
+        machine.currentTool().setCurrentTemperature(extruderTemperature, blockTemperature);
 
     }
 
@@ -2513,7 +2484,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 return "autonomous";
             } else if (res.toLowerCase().contains(STATUS_SHUTDOWN)) {
                 Base.writeLog("Printer is in shutdown mode", this.getClass());
-                return "shutdown";
+                this.isONShutdown = true;
+                return "autonomous";
             } else if (res.toLowerCase().contains("ok")) {
                 Base.writeLog("Printer is in firmware mode and idle", this.getClass());
                 return "firmware";

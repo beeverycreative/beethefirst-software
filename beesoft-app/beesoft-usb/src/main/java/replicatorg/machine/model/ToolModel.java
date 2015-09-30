@@ -72,7 +72,9 @@ public class ToolModel
 	protected int spindleEncoderPPR;
 
 	//temperature variables
-	protected final AtomicReference<Double> currentTemperature =
+	protected final AtomicReference<Double> extruderTemperature =
+		new AtomicReference<Double>(0.0);
+        protected final AtomicReference<Double> blockTemperature =
 		new AtomicReference<Double>(0.0);
 	protected double targetTemperature;
 
@@ -552,15 +554,20 @@ public class ToolModel
 		return targetTemperature;
 	}
 
-	public void setCurrentTemperature(double temperature)
+	public void setCurrentTemperature(double extruderTemperature, double blockTemperature)
 	{
-		currentTemperature.set( temperature );
+		this.extruderTemperature.set( extruderTemperature );
+                this.blockTemperature.set(blockTemperature);
 	}
 	
-	public double getCurrentTemperature()
+	public double getExtruderTemperature()
 	{
-		return currentTemperature.get();
+		return extruderTemperature.get();
 	}
+        
+        public double getBlockTemperature() {
+            return blockTemperature.get();
+        }
 	
 	public boolean hasHeater()
 	{
