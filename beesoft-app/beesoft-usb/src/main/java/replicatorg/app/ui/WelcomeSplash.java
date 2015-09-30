@@ -35,7 +35,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
     private ImageIcon image;
     private int newWidth = 600;
     private int newHeight = 333;
-    private int duration = 10;
+    private int duration = 80;
 
     /**
      * Welcome Splash init
