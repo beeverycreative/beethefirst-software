@@ -400,8 +400,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         if (pipes != null) {
                             if (pipes.isOpen()) {
                                 closePipe(pipes);
+                                pipes = null;
                             }
-                            pipes = null;
                         }
 
                         InitUsbDevice();

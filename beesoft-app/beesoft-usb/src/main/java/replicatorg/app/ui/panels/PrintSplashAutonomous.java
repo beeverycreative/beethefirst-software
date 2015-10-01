@@ -26,6 +26,7 @@ import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.Driver;
+import replicatorg.drivers.RetryException;
 import replicatorg.machine.MachineInterface;
 import replicatorg.util.Point5d;
 
@@ -60,7 +61,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     private boolean lastPanel;
     private boolean isPaused = false;
     private Point5d pausePos;
-    private boolean isShutdown;
+    private boolean isShutdown = false;
     private boolean userDecision;
 
     public PrintSplashAutonomous(boolean printingState, PrintPreferences prefs) {
@@ -287,14 +288,34 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                do {
-                    machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+
+                if (isShutdown) {
                     try {
-                        Thread.sleep(500, 0);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
+                        machine.getDriver().setTemperature(210);
+                    } catch (RetryException ex) {
                     }
-                } while (machine.getDriver().getMachineStatus() == false);
+                    setHeatingInfo();
+                    boolean temperatureAchieved = false;
+
+                    resetProgressBar();
+                    while (temperatureAchieved == false) {
+                        temperatureAchieved = evaluateTemperature(210);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                } else {
+                    do {
+                        machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+                        try {
+                            Thread.sleep(500, 0);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } while (machine.getDriver().getMachineStatus() == false);
+                }
 
                 //Resume printing
                 machine.runCommand(
@@ -1639,6 +1660,28 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         }
     }//GEN-LAST:event_bShutdownMouseEntered
 
+    private boolean evaluateTemperature(double temperatureGoal) {
+        machine.getDriver().readTemperature();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        double temperature = machine.getDriver().getTemperature();
+        updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
+
+        if (temperature >= (temperatureGoal - 1)) {
+            updateTemperatureOnProgressBar(100, temperatureGoal / 100);
+            Base.writeLog("Temperature achieved");
+            return true;
+        }
+
+        return false;
+
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bOk;
@@ -1821,11 +1864,10 @@ class UpdateThread4 extends Thread {
         if (window.isPrinting()) {
 
             /*
-            if (window.isPaused() || window.isShutdown()) {
-                machine.stopwatch();
-            }
-            */
-
+             if (window.isPaused() || window.isShutdown()) {
+             machine.stopwatch();
+             }
+             */
             Base.writeLog("Autonomous print resumed");
             Base.isPrinting = true;
 
@@ -1871,7 +1913,7 @@ class UpdateThread4 extends Thread {
                 machine.stopwatch();
                 ShutdownMenu shutdown = new ShutdownMenu(window);
                 shutdown.setVisible(true);
-                
+
                 //window.setShutdownStatus();
                 //set pause UI elements
                 //window.restorePauseElements();
