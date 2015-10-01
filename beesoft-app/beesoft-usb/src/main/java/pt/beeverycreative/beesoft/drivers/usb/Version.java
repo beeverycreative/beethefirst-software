@@ -22,6 +22,7 @@ import replicatorg.app.Base;
 public class Version implements Comparable<Version> {
 
     public enum Flavour {
+
         BEEVC, MSFT, UNKNOWN;
     }
 
@@ -65,7 +66,7 @@ public class Version implements Comparable<Version> {
     }
 
     public String getVersionString() {
-        return flavour + "-" + printer + "-" + major + "." + minor + "." + bug;
+        return flavour + "-" + printer.code() + "-" + major + "." + minor + "." + bug;
     }
 
     public String getRawVersionString() {
@@ -107,7 +108,7 @@ public class Version implements Comparable<Version> {
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
             }
-            
+
             try {
                 version.printer = PrinterInfo.valueOf(m.group(9));
             } catch (IllegalArgumentException e) {
@@ -120,7 +121,7 @@ public class Version implements Comparable<Version> {
             version.bug = 0;
             Base.writeLog("Version format invalid: " + version.versionString);
         }
-        
+
         return version;
     }
 
@@ -152,11 +153,21 @@ public class Version implements Comparable<Version> {
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
             }
+            
+            String printerString = m.group(5);
 
             try {
-                version.printer = PrinterInfo.valueOf(m.group(5));
+                version.printer = PrinterInfo.valueOf(printerString);
             } catch (IllegalArgumentException e) {
-                version.printer = PrinterInfo.UNKNOWN;
+                // It might be the case where the printer code written in the
+                // firmware filename is not the same as in the PrinterInfo enum
+                // like the BEETHEFIRST_PLUS case, starting in 10.4.0 firmware
+
+                if (printerString.equals(PrinterInfo.BEETHEFIRSTPLUS.code())) {
+                    version.printer = PrinterInfo.BEETHEFIRSTPLUS;
+                } else {
+                    version.printer = PrinterInfo.UNKNOWN;
+                }
             }
 
         } else {
@@ -258,10 +269,20 @@ public class Version implements Comparable<Version> {
                 version.flavour = Flavour.UNKNOWN;
             }
 
+            String printerString = m.group(3);
+
             try {
-                version.printer = PrinterInfo.valueOf(m.group(3));
+                version.printer = PrinterInfo.valueOf(printerString);
             } catch (IllegalArgumentException e) {
-                version.printer = PrinterInfo.UNKNOWN;
+                // It might be the case where the printer code written in the
+                // firmware filename is not the same as in the PrinterInfo enum
+                // like the BEETHEFIRST_PLUS case, starting in 10.4.0 firmware
+
+                if (printerString.equals(PrinterInfo.BEETHEFIRSTPLUS.code())) {
+                    version.printer = PrinterInfo.BEETHEFIRSTPLUS;
+                } else {
+                    version.printer = PrinterInfo.UNKNOWN;
+                }
             }
 
         } else {

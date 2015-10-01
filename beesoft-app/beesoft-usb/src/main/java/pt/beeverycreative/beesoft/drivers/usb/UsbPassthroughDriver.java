@@ -287,7 +287,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Serial number: " + serialNumberString, this.getClass());
 
             // if firmware is not ok
-            if (firmwareVersion.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
+            if (firmwareVersion.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice.code() + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("Firmware is not OK", this.getClass());
                 Base.writeLog("Firmware version string: "
                         + firmwareVersion.getVersionString(), this.getClass());
@@ -2804,7 +2804,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int updateFirmware() {
 
-        String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
+        String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice.code() + "-" + Base.VERSION_FIRMWARE_FINAL;
         Base.writeLog("Firmware should be: " + versionToCompare, this.getClass());
 
         //check if the firmware is the same
