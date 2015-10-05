@@ -347,10 +347,29 @@ public abstract class DriverBaseImplementation implements Driver {
             return new Point5d(currentPosition.get());
         }
     }
+    
+    @Override
+    public Point5d getCurrentPosition2() {
+        synchronized(currentPosition) {
+            if(currentPosition.get() == null) {
+                try {
+                    currentPosition.wait(5000);
+                } catch (InterruptedException ex) {
+                }
+            }
+            
+            return currentPosition.get();
+        }
+    }
 
     @Override
     public Point5d getPosition() {
         return getCurrentPosition(false);
+    }
+    
+    @Override
+    public void getPosition2() {
+        
     }
 
     @Override

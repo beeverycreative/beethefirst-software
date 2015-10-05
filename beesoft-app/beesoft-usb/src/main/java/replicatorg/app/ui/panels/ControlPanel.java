@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,13 +19,13 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
-import javax.swing.border.TitledBorder;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -42,7 +44,6 @@ import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.MachineInterface;
-import replicatorg.machine.model.AxisId;
 import replicatorg.util.Point5d;
 
 /**
@@ -58,28 +59,24 @@ import replicatorg.util.Point5d;
  */
 public class ControlPanel extends BaseDialog {
 
-    private MachineInterface machine;
-    private double temperatureGoal;
-    private DefaultComboBoxModel comboModel;
-    private String[] categories;
+    private enum MovDir {
+
+        Z_PLUS, Z_MINUS, Y_PLUS, Y_MINUS, X_PLUS, X_MINUS
+    };
+
+    private MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    protected double temperatureGoal = 0;
+    protected double zHome = -1;
     private DefaultComboBoxModel comboModel2;
     private String[] categories2;
-    private double XYFeedrate;
-    private double ZFeedrate;
-    private static final String STOP = "M112";
-    private static final String HOME = "G28";
-    private static final String FAN_OFF = "M107";
-    private static final String FAN_ON = "M106";
-    private final double safeDistance = 122;
-    private final TemperatureThread disposeThread;
-    private boolean coolFanPressed;
+    private final TemperatureThread disposeThread = new TemperatureThread(this, machine);
+    private final InputValidationThread inputValidationThread = new InputValidationThread(this);
+    private final GetInitialValuesThread getInitialValuesThread = new GetInitialValuesThread(this, machine);
     private boolean loggingTemperature;
-    private boolean freeJogging;
     private File file;
     private FileWriter fw;
     private BufferedWriter bw;
     private static final String REDMEC_TAG = "[TemperatureLog]";
-    private boolean jogButtonPressed = false;
 
     private final TimeTableXYDataset t0MeasuredDataset = new TimeTableXYDataset();
     private final TimeTableXYDataset t0TargetDataset = new TimeTableXYDataset();
@@ -97,7 +94,15 @@ public class ControlPanel extends BaseDialog {
 
     private final long startMillis = System.currentTimeMillis();
     protected long mSpeedLastClicked = 0;
-    private Timer inputValidation;
+    private Timer setPollDataTrue;
+    private Timer showBeepLabel;
+    protected Timer movButtonHoldDown;
+    private static final int movCommandInterval = 10;
+    private static final double movCommandStep = 0.2;
+    protected volatile boolean canPollData = true;
+    protected volatile boolean canMove = true;
+
+    protected boolean validPosition = false;
 
     public ControlPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
@@ -108,9 +113,6 @@ public class ControlPanel extends BaseDialog {
         centerOnScreen();
         enableDrag();
         evaluateInitialConditions();
-        disposeThread = new TemperatureThread(this, machine);
-        disposeThread.start();
-        Base.systemThreads.add(disposeThread);
 
         this.tempPanel.setLayout(new GridBagLayout());
         this.tempPanel.add(this.makeChart());
@@ -135,124 +137,116 @@ public class ControlPanel extends BaseDialog {
         this.colorTargetTemp.setIcon(icon2);
         this.colorTargetTemp.setText("");
 
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (movButtonHoldDown.isRunning()) {
+                    movButtonHoldDown.stop();
+                }
+                machine.getDriver().dispatchCommand("M1110 S0", COM.DEFAULT);
+
+                disposeThread.cancel();
+                inputValidationThread.cancel();
+                getInitialValuesThread.cancel();
+            }
+        });
     }
 
     private void setFont() {
-        TitledBorder border = new TitledBorder(Languager.getTagValue(1, "ControlPanel", "Console_Movement"));
-        border.setTitleFont(GraphicDesignComponents.getSSProBold("12"));
-        jPanel2.setBorder(border);
-        TitledBorder border2 = new TitledBorder(Languager.getTagValue(1, "ControlPanel", "Console_Extrusion"));
-        border2.setTitleFont(GraphicDesignComponents.getSSProBold("12"));
-        jPanel3.setBorder(border2);
-
         extrudeCombo.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCenterX.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCenterY.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCenterZ.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCalibrateA.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCalibrateB.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCalibrateC.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bBeep.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bHome.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bSetCalibration.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bCurrentPosition.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bCurrentPosition.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        extruderTemperature.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        extruderTemperatureLabel.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        blockTemperatureLabel.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("14"));
         motorSpeed.setFont(GraphicDesignComponents.getSSProRegular("14"));
         extrudeDuration.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bReverse.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bForward.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        motorControl.setFont(GraphicDesignComponents.getSSProBold("16"));
-        feedRate.setFont(GraphicDesignComponents.getSSProBold("16"));
         logTemperature.setFont(GraphicDesignComponents.getSSProRegular("14"));
         notes.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bOK.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        xyFeedrate.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        zFeedrate.setFont(GraphicDesignComponents.getSSProRegular("14"));
-
-        enableFreeJog.setFont(GraphicDesignComponents.getSSProRegular("14"));
-
+        bTurnOnLEDs.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        bTurnOffLEDs.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        labelLastPrintTime.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        jLabel6.setFont(GraphicDesignComponents.getSSProRegular("14"));
     }
 
     private void setTextLanguage() {
-        feedRate.setText(Languager.getTagValue(1, "ControlPanel", "Feedrate"));
-        bCenterX.setText(Languager.getTagValue(1, "ControlPanel", "CenterX"));
-        bCenterY.setText(Languager.getTagValue(1, "ControlPanel", "CenterY"));
-        bCenterZ.setText(Languager.getTagValue(1, "ControlPanel", "CenterZ"));
-        enableFreeJog.setText(Languager.getTagValue(1, "ControlPanel", "FreeJog"));
-        bCurrentPosition.setText(Languager.getTagValue(1, "ControlPanel", "CurrentPosition"));
-        bCalibrateA.setText(Languager.getTagValue(1, "ControlPanel", "CalibrateA"));
-        bCalibrateB.setText(Languager.getTagValue(1, "ControlPanel", "CalibrateB"));
-        bCalibrateC.setText(Languager.getTagValue(1, "ControlPanel", "CalibrateC"));
-        extruderTemperature.setText(Languager.getTagValue(1, "ControlPanel", "Current_Temperature"));
+        //bCurrentPosition.setText(Languager.getTagValue(1, "ControlPanel", "CurrentPosition"));
+        extruderTemperatureLabel.setText(Languager.getTagValue(1, "ControlPanel", "Current_Temperature"));
         motorSpeed.setText(Languager.getTagValue(1, "ControlPanel", "Motor_Speed"));
         extrudeDuration.setText(Languager.getTagValue(1, "ControlPanel", "Extrude_Duration"));
         bReverse.setText(Languager.getTagValue(1, "ControlPanel", "Reverse"));
         bForward.setText(Languager.getTagValue(1, "ControlPanel", "Foward"));
-        motorControl.setText(Languager.getTagValue(1, "ControlPanel", "Motor_Control"));
         logTemperature.setText(Languager.getTagValue(1, "ControlPanel", "Log_Temperature"));
         notes.setText(Languager.getTagValue(1, "BaseDirectories", "Line9"));
-        xyFeedrate.setText(Languager.getTagValue(1, "ControlPanel", "XY_Feedrate"));
-        zFeedrate.setText(Languager.getTagValue(1, "ControlPanel", "Z_Feedrate"));
         bOK.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
     }
 
     private void evaluateInitialConditions() {
-        inputValidation = new Timer(100, new ActionListener() {
+        getPosition();
+
+        // set to relative positioning
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+
+        // enable debug mode
+        machine.getDriver().dispatchCommand("M1110 S1", COM.DEFAULT);
+
+        disposeThread.start();
+        inputValidationThread.start();
+        getInitialValuesThread.start();
+
+        setPollDataTrue = new Timer(0, new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                long currentTime;
-                double val;
-                boolean changed;
-
-                changed = false;
-                currentTime = System.nanoTime();
-
-                // 1/2 sec
-                if (currentTime - mSpeedLastClicked > 500000000) {
-                    try {
-                        val = Double.parseDouble(mSpeed.getText());
-
-                        if (val < 0) {
-                            val = -val;
-                            changed = true;
-                        }
-
-                        if (val > 2000) {
-                            val = 2000;
-                            changed = true;
-                        }
-
-                        if (changed) {
-                            mSpeed.setText(String.valueOf(val));
-                        }
-
-                    } catch (IllegalArgumentException ex) {
-
-                    }
+                if (movButtonHoldDown.isRunning() == false) {
+                    canPollData = true;
                 }
             }
         });
-        inputValidation.setRepeats(true);
-        inputValidation.start();
+        setPollDataTrue.setInitialDelay(200);
+        setPollDataTrue.setRepeats(false);
 
-        machine = Base.getMachineLoader().getMachineInterface();
-        categories = fullFillCombo();
-        comboModel = new DefaultComboBoxModel(categories);
+        showBeepLabel = new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                labelBeepValidation.setVisible(false);
+            }
+        });
+        showBeepLabel.setInitialDelay(2000);
+        showBeepLabel.setRepeats(false);
+
         categories2 = fullFillComboDuration();
         comboModel2 = new DefaultComboBoxModel(categories2);
 
         extrudeCombo.setModel(comboModel2);
         extrudeCombo.setSelectedIndex(0);
-        XYFeedrate = 2000;
-        ZFeedrate = 2000;
-        temperatureGoal = Double.valueOf(targetTemperatureVal.getText());
-        coolFanPressed = false;
         loggingTemperature = false;
-        freeJogging = false;
 
-        // set to relative positioning
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+    }
+
+    protected String mSpeedGetText() {
+        return mSpeed.getText();
+    }
+
+    protected void mSpeedSetText(String val) {
+        mSpeed.setText(val);
+    }
+
+    protected void textFieldLastPrintTimeSetText(String val) {
+        textFieldLastPrintTime.setText(val);
+    }
+
+    protected double getTargetTemperature() {
+        try {
+            return Double.valueOf(targetTemperatureVal.getText());
+        } catch (IllegalArgumentException ex) {
+            return -1;
+        }
     }
 
     private String getDate() {
@@ -339,28 +333,6 @@ public class ControlPanel extends BaseDialog {
         return duration;
     }
 
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
     private int getStringPixelsWidth(String s) {
         Graphics g = getGraphics();
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
@@ -379,17 +351,9 @@ public class ControlPanel extends BaseDialog {
 
     }
 
-    public void updateTemperature() {
+    protected void updateTemperature() {
         double extruderTemp, blockTemp;
         String extruderTempString, blockTempString;
-
-        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         extruderTemp = machine.getModel().currentTool().getExtruderTemperature();
         blockTemp = machine.getModel().currentTool().getBlockTemperature();
@@ -400,9 +364,10 @@ public class ControlPanel extends BaseDialog {
 
         if (loggingTemperature) {
             try {
-                bw.write(extruderTempString);
+                bw.write(extruderTempString + "\t");
                 bw.write(blockTempString);
                 bw.newLine();
+                bw.flush();
             } catch (IOException ex) {
                 Base.writeLog("Can't write temperature to file");
             }
@@ -412,12 +377,21 @@ public class ControlPanel extends BaseDialog {
         Second second = new Second(new Date(System.currentTimeMillis() - startMillis));
 
         t0MeasuredDataset.add(second, extruderTemp, "a");
-        t0TargetDataset.add(second, this.temperatureGoal, "a");
-
+        t0TargetDataset.add(second, temperatureGoal, "a");
     }
 
-    public double getTargetTemperature() {
-        return temperatureGoal;
+    protected void updatePosition(Point5d pos) {
+        //Point5d pos;
+
+        //pos = machine.getDriver().getCurrentPosition(false);
+        Base.writeLog("Setting coordinates", this.getClass());
+        Base.writeLog("X: " + pos.x(), this.getClass());
+        Base.writeLog("Y: " + pos.y(), this.getClass());
+        Base.writeLog("Z: " + pos.z(), this.getClass());
+        xTextFieldValue.setText(String.format("%3.3f", pos.x()));
+        yTextFieldValue.setText(String.format("%3.3f", pos.y()));
+        zTextFieldValue.setText(String.format("%3.3f", pos.z()));
+        canMove = true;
     }
 
     private void initFile() {
@@ -430,12 +404,12 @@ public class ControlPanel extends BaseDialog {
         this.bw = new BufferedWriter(fw);
     }
 
-    private void cleanLogFiles(boolean force) {
+    private void cleanLogFiles() {
         File logsDir = new File(Base.getAppDataDirectory().getAbsolutePath());
         File[] logsList = logsDir.listFiles();
 
         for (File logsList1 : logsList) {
-            if (force) {
+            if (loggingTemperature == false) {
                 if (logsList1.getName().contains(REDMEC_TAG) && logsList1.length() == 0) {
                     logsList1.delete();
                 }
@@ -447,14 +421,175 @@ public class ControlPanel extends BaseDialog {
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.maintenanceWizardOpen = false;
-        disposeThread.interrupt();
-        inputValidation.stop();
+        disposeThread.cancel();
+        inputValidationThread.cancel();
+        getInitialValuesThread.cancel();
         Base.getMainWindow().setEnabled(true);
-        cleanLogFiles(true);
+        cleanLogFiles();
+
+        try {
+            if (bw != null) {
+                bw.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         machine.runCommand(new replicatorg.drivers.commands.SendHome());
         dispose();
         Base.bringAllWindowsToFront();
+    }
+
+    private void startMovementTimer(MovDir whereTo) {
+        ActionListener listener;
+
+        if (canMove == false) {
+            Base.writeLog("*** Can't move at the moment ***", this.getClass());
+            return;
+        }
+
+        setPollDataTrue.stop();
+
+        movButtonHoldDown = new Timer(movCommandInterval, null);
+        movButtonHoldDown.setRepeats(true);
+        canPollData = false;
+
+        switch (whereTo) {
+            case Z_PLUS:
+                listener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        double val;
+
+                        machine.getDriver().dispatchCommand("G0 Z" + movCommandStep, COM.DEFAULT);
+                        val = Double.parseDouble(zTextFieldValue.getText()) + movCommandStep;
+                        zTextFieldValue.setText(String.format("%3.3f", val));
+                    }
+                };
+                movButtonHoldDown.addActionListener(listener);
+                movButtonHoldDown.start();
+                break;
+            case Z_MINUS:
+                listener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        double val;
+
+                        machine.getDriver().dispatchCommand("G0 Z-" + movCommandStep, COM.DEFAULT);
+                        val = Double.parseDouble(zTextFieldValue.getText()) - movCommandStep;
+                        zTextFieldValue.setText(String.format("%3.3f", val));;
+                    }
+                };
+                movButtonHoldDown.addActionListener(listener);
+                movButtonHoldDown.start();
+                break;
+            case Y_PLUS:
+                listener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        double val;
+
+                        machine.getDriver().dispatchCommand("G0 Y" + movCommandStep, COM.DEFAULT);
+                        val = Double.parseDouble(yTextFieldValue.getText()) + movCommandStep;
+                        yTextFieldValue.setText(String.format("%3.3f", val));
+                    }
+                };
+                movButtonHoldDown.addActionListener(listener);
+                movButtonHoldDown.start();
+                break;
+            case Y_MINUS:
+                listener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        double val;
+
+                        machine.getDriver().dispatchCommand("G0 Y-" + movCommandStep, COM.DEFAULT);
+                        val = Double.parseDouble(yTextFieldValue.getText()) - movCommandStep;
+                        yTextFieldValue.setText(String.format("%3.3f", val));
+                    }
+                };
+                movButtonHoldDown.addActionListener(listener);
+                movButtonHoldDown.start();
+                break;
+            case X_PLUS:
+                listener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        double val;
+
+                        machine.getDriver().dispatchCommand("G0 X" + movCommandStep, COM.DEFAULT);
+                        val = Double.parseDouble(xTextFieldValue.getText()) + movCommandStep;
+                        xTextFieldValue.setText(String.format("%3.3f", val));
+                    }
+                };
+                movButtonHoldDown.addActionListener(listener);
+                movButtonHoldDown.start();
+                break;
+            case X_MINUS:
+                listener = new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        double val;
+
+                        machine.getDriver().dispatchCommand("G0 X-" + movCommandStep, COM.DEFAULT);
+                        val = Double.parseDouble(xTextFieldValue.getText()) - movCommandStep;
+                        xTextFieldValue.setText(String.format("%3.3f", val));
+                    }
+                };
+                movButtonHoldDown.addActionListener(listener);
+                movButtonHoldDown.start();
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void getPosition() {
+        String ans, xValStr, yValStr, zValStr;
+        String[] parts;
+        int tries = 3;
+        double xVal = -1, yVal = -1, zVal = -1;
+
+        do {
+            if (tries-- < 0) {
+                Base.writeLog("Failed obtaining valid position!", this.getClass());
+                return;
+            }
+
+            ans = machine.getDriver().dispatchCommand("M121");
+            parts = ans.split(" ");
+        } while (parts.length < 4 || !ans.contains("X:"));
+
+        Base.writeLog("Obtained valid position!", this.getClass());
+
+        try {
+
+            for (String part : parts) {
+
+                if (part.contains("X:")) {
+                    xValStr = part.substring(2);
+                    xVal = Double.parseDouble(xValStr);
+
+                } else if (part.contains("Y:")) {
+                    yValStr = part.substring(2);
+                    yVal = Double.parseDouble(yValStr);
+
+                } else if (part.contains("Z:")) {
+                    zValStr = part.substring(2);
+                    zVal = Double.parseDouble(zValStr);
+
+                    if (zHome == -1) {
+                        zHome = zVal;
+                    }
+                }
+            }
+            updatePosition(new Point5d(xVal, yVal, zVal));
+
+        } catch (NumberFormatException ex) {
+
+        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -463,17 +598,8 @@ public class ControlPanel extends BaseDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jPanel7 = new javax.swing.JPanel();
-        jExtruderFanValue = new javax.swing.JTextField();
-        jExtruderFanTitle = new javax.swing.JLabel();
-        jSliderBlowerSpeed = new javax.swing.JSlider();
-        jSliderExtruderSpeed = new javax.swing.JSlider();
-        bBeep = new javax.swing.JButton();
-        jBlowerFanTitle = new javax.swing.JLabel();
-        jBlowerFanValue = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
-        freeJog = new javax.swing.JCheckBox();
-        panic = new javax.swing.JLabel();
+        bHomeXY = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         zTextFieldValue = new javax.swing.JTextField();
         xTextFieldValue = new javax.swing.JTextField();
@@ -482,51 +608,52 @@ public class ControlPanel extends BaseDialog {
         xRIGHT = new javax.swing.JLabel();
         yDOWN = new javax.swing.JLabel();
         yUP = new javax.swing.JLabel();
-        enableFreeJog = new javax.swing.JLabel();
         zUP = new javax.swing.JLabel();
         yTextFieldValue = new javax.swing.JTextField();
         xLEFT = new javax.swing.JLabel();
         zDOWN = new javax.swing.JLabel();
-        jPanel9 = new javax.swing.JPanel();
-        bHome = new javax.swing.JButton();
         bCurrentPosition = new javax.swing.JButton();
-        bCenterX = new javax.swing.JButton();
-        feedRate = new javax.swing.JLabel();
-        xyFeedrate = new javax.swing.JLabel();
-        bCenterY = new javax.swing.JButton();
-        bSetCalibration = new javax.swing.JButton();
-        bCalibrateA = new javax.swing.JButton();
-        bCalibrateC = new javax.swing.JButton();
-        xyFeed = new javax.swing.JTextField();
-        bCalibrateB = new javax.swing.JButton();
-        zFeedrate = new javax.swing.JLabel();
-        zFeed = new javax.swing.JTextField();
-        bCenterZ = new javax.swing.JButton();
+        bHomeZ = new javax.swing.JLabel();
+        xTextFieldGoal = new javax.swing.JTextField();
+        yTextFieldGoal = new javax.swing.JTextField();
+        zTextFieldGoal = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
+        bBeep = new javax.swing.JButton();
+        bTurnOffLEDs = new javax.swing.JButton();
+        labelBeepValidation = new javax.swing.JLabel();
+        bTurnOnLEDs = new javax.swing.JButton();
+        labelLastPrintTime = new javax.swing.JLabel();
+        textFieldLastPrintTime = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jSeparator1 = new javax.swing.JSeparator();
         notes = new javax.swing.JLabel();
-        tempPanel = new javax.swing.JPanel();
-        tempLabel = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
-        extruderTemperature1 = new javax.swing.JLabel();
+        blockTemperatureLabel = new javax.swing.JLabel();
         targetTemperatureVal = new javax.swing.JTextField();
-        saveLog = new javax.swing.JLabel();
-        extruderTemperature = new javax.swing.JLabel();
+        extruderTemperatureLabel = new javax.swing.JLabel();
         cLogTemperature = new javax.swing.JCheckBox();
         logTemperature = new javax.swing.JLabel();
         blockTemperatureVal = new javax.swing.JTextField();
         extruderTemperatureVal = new javax.swing.JTextField();
-        colorCurrentTemp = new javax.swing.JLabel();
-        colorTargetTemp = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
+        tempLabel = new javax.swing.JLabel();
+        tempPanel = new javax.swing.JPanel();
+        mSpeed = new javax.swing.JTextField();
+        extrudeDuration = new javax.swing.JLabel();
         bForward = new javax.swing.JButton();
         extrudeCombo = new javax.swing.JComboBox();
-        bReverse = new javax.swing.JButton();
-        mSpeed = new javax.swing.JTextField();
         motorSpeed = new javax.swing.JLabel();
-        extrudeDuration = new javax.swing.JLabel();
-        motorControl = new javax.swing.JLabel();
+        bReverse = new javax.swing.JButton();
+        jBlowerFanTitle = new javax.swing.JLabel();
+        jBlowerFanValue = new javax.swing.JTextField();
+        jSliderBlowerSpeed = new javax.swing.JSlider();
+        jExtruderFanTitle = new javax.swing.JLabel();
+        jExtruderFanValue = new javax.swing.JTextField();
+        jSliderExtruderSpeed = new javax.swing.JSlider();
+        jPanel6 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        colorTargetTemp = new javax.swing.JLabel();
+        colorCurrentTemp = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         bOK = new javax.swing.JLabel();
@@ -537,135 +664,29 @@ public class ControlPanel extends BaseDialog {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
         jPanel1.setToolTipText("");
+        jPanel1.setPreferredSize(new java.awt.Dimension(1063, 791));
 
         jPanel2.setBackground(new java.awt.Color(248, 248, 248));
         jPanel2.setToolTipText("");
         jPanel2.setPreferredSize(new java.awt.Dimension(415, 409));
 
-        jPanel7.setOpaque(false);
-
-        jExtruderFanValue.setEditable(false);
-        jExtruderFanValue.setText("0");
-
-        jExtruderFanTitle.setText("Extruder fan");
-
-        jSliderBlowerSpeed.setMajorTickSpacing(60);
-        jSliderBlowerSpeed.setMaximum(255);
-        jSliderBlowerSpeed.setMinorTickSpacing(30);
-        jSliderBlowerSpeed.setPaintLabels(true);
-        jSliderBlowerSpeed.setPaintTicks(true);
-        jSliderBlowerSpeed.setToolTipText("");
-        jSliderBlowerSpeed.setValue(0);
-        jSliderBlowerSpeed.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jSliderBlowerSpeedMouseReleased(evt);
-            }
-        });
-
-        jSliderExtruderSpeed.setMajorTickSpacing(60);
-        jSliderExtruderSpeed.setMaximum(255);
-        jSliderExtruderSpeed.setMinorTickSpacing(30);
-        jSliderExtruderSpeed.setPaintLabels(true);
-        jSliderExtruderSpeed.setPaintTicks(true);
-        jSliderExtruderSpeed.setToolTipText("");
-        jSliderExtruderSpeed.setValue(0);
-        jSliderExtruderSpeed.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                jSliderExtruderSpeedMouseReleased(evt);
-            }
-        });
-
-        bBeep.setText("Beep");
-        bBeep.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bBeepMousePressed(evt);
-            }
-        });
-
-        jBlowerFanTitle.setText("Blower fan");
-
-        jBlowerFanValue.setEditable(false);
-        jBlowerFanValue.setText("0");
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(bBeep, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(75, 75, 75)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel7Layout.createSequentialGroup()
-                            .addComponent(jExtruderFanTitle)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jExtruderFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jSliderExtruderSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel7Layout.createSequentialGroup()
-                            .addComponent(jBlowerFanTitle)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jBlowerFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jSliderBlowerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jBlowerFanTitle)
-                    .addComponent(jBlowerFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSliderBlowerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jExtruderFanTitle)
-                    .addComponent(jExtruderFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bBeep))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSliderExtruderSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Movement", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, GraphicDesignComponents.getSSProBold("12")));
         jPanel8.setOpaque(false);
 
-        freeJog.setBackground(new java.awt.Color(248, 248, 248));
-        freeJog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                freeJogActionPerformed(evt);
-            }
-        });
-
-        panic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/panicOver.png"))); // NOI18N
-        panic.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                panicMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                panicMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                panicMouseEntered(evt);
+        bHomeXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/home2.png"))); // NOI18N
+        bHomeXY.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                bHomeXYMouseReleased(evt);
             }
         });
 
         jLabel2.setText("X");
 
         zTextFieldValue.setEditable(false);
-        zTextFieldValue.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                zTextFieldValueKeyPressed(evt);
-            }
-        });
+        zTextFieldValue.setText("0.0");
 
         xTextFieldValue.setEditable(false);
-        xTextFieldValue.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                xTextFieldValueKeyPressed(evt);
-            }
-        });
+        xTextFieldValue.setText("0.0");
 
         jLabel4.setText("Z");
 
@@ -675,6 +696,9 @@ public class ControlPanel extends BaseDialog {
         xRIGHT.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 xRIGHTMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                xRIGHTMouseReleased(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 xRIGHTMouseExited(evt);
@@ -689,6 +713,9 @@ public class ControlPanel extends BaseDialog {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 yDOWNMousePressed(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                yDOWNMouseReleased(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 yDOWNMouseExited(evt);
             }
@@ -702,6 +729,9 @@ public class ControlPanel extends BaseDialog {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 yUPMousePressed(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                yUPMouseReleased(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 yUPMouseExited(evt);
             }
@@ -710,12 +740,13 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
-        enableFreeJog.setText("Free jog");
-
         zUP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/Z+.png"))); // NOI18N
         zUP.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 zUPMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                zUPMouseReleased(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 zUPMouseExited(evt);
@@ -726,16 +757,15 @@ public class ControlPanel extends BaseDialog {
         });
 
         yTextFieldValue.setEditable(false);
-        yTextFieldValue.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                yTextFieldValueKeyPressed(evt);
-            }
-        });
+        yTextFieldValue.setText("0.0");
 
         xLEFT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/X-.png"))); // NOI18N
         xLEFT.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 xLEFTMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                xLEFTMouseReleased(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 xLEFTMouseExited(evt);
@@ -750,6 +780,9 @@ public class ControlPanel extends BaseDialog {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 zDOWNMousePressed(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                zDOWNMouseReleased(evt);
+            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 zDOWNMouseExited(evt);
             }
@@ -758,37 +791,70 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        bCurrentPosition.setText("Calibration set 0");
+        bCurrentPosition.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                bCurrentPositionMouseReleased(evt);
+            }
+        });
+
+        bHomeZ.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/home2.png"))); // NOI18N
+        bHomeZ.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                bHomeZMouseReleased(evt);
+            }
+        });
+
+        xTextFieldGoal.setText("0.0");
+        xTextFieldGoal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                xTextFieldGoalKeyPressed(evt);
+            }
+        });
+
+        yTextFieldGoal.setText("0.0");
+        yTextFieldGoal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                yTextFieldGoalKeyPressed(evt);
+            }
+        });
+
+        zTextFieldGoal.setText("0.0");
+        zTextFieldGoal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                zTextFieldGoalKeyPressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addComponent(yUP))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(bCurrentPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(xLEFT)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(yDOWN)
                             .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(xLEFT)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bHomeXY)
+                                .addGap(6, 6, 6))
+                            .addComponent(yUP))
+                        .addGap(0, 0, 0)
+                        .addComponent(xRIGHT)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(zDOWN)
+                            .addComponent(zUP)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addComponent(panic)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(xRIGHT)))))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(zDOWN)
-                    .addComponent(zUP))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(enableFreeJog, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(freeJog))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(bHomeZ)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
@@ -800,209 +866,135 @@ public class ControlPanel extends BaseDialog {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addGap(13, 13, 13)))
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(xTextFieldValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(yTextFieldValue)
-                                .addComponent(zTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(34, 34, 34))
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(yTextFieldValue, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                            .addComponent(xTextFieldValue, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(zTextFieldValue))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(xTextFieldGoal, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(yTextFieldGoal, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(zTextFieldGoal, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(33, 33, 33))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(yUP)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(xLEFT)
+                            .addComponent(xRIGHT)
                             .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addComponent(yUP)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(xLEFT)
-                                    .addComponent(panic)
-                                    .addComponent(xRIGHT))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(yDOWN))
-                            .addGroup(jPanel8Layout.createSequentialGroup()
-                                .addGap(28, 28, 28)
-                                .addComponent(zUP)
-                                .addGap(14, 14, 14)
-                                .addComponent(zDOWN))))
+                                .addComponent(bHomeXY)))
+                        .addComponent(yDOWN))
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(freeJog)
-                            .addComponent(enableFreeJog))
-                        .addGap(18, 18, 18)
+                        .addGap(28, 28, 28)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(xTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(xTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(xTextFieldGoal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3)
-                            .addComponent(yTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(yTextFieldGoal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(yTextFieldValue))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(zTextFieldValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))))
-                .addContainerGap())
+                            .addComponent(jLabel4)
+                            .addComponent(zTextFieldGoal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(zUP)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bHomeZ)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(zDOWN)))
+                .addGap(3, 3, 3)
+                .addComponent(bCurrentPosition)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel9.setOpaque(false);
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Other", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, GraphicDesignComponents.getSSProBold("12")));
+        jPanel7.setToolTipText("");
+        jPanel7.setOpaque(false);
 
-        bHome.setText("Home XYZ");
-        bHome.setPreferredSize(new java.awt.Dimension(177, 29));
-        bHome.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bHomeActionPerformed(evt);
+        bBeep.setText("Beep");
+        bBeep.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bBeepMousePressed(evt);
             }
         });
 
-        bCurrentPosition.setText("Make Current position 0");
-        bCurrentPosition.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCurrentPositionActionPerformed(evt);
+        bTurnOffLEDs.setText("Turn off LEDs");
+        bTurnOffLEDs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                bTurnOffLEDsMouseReleased(evt);
             }
         });
 
-        bCenterX.setText("Home X");
-        bCenterX.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCenterXActionPerformed(evt);
+        labelBeepValidation.setVisible(false);
+        labelBeepValidation.setForeground(new java.awt.Color(28, 181, 28));
+        labelBeepValidation.setText("OK");
+
+        bTurnOnLEDs.setText("Turn on LEDs");
+        bTurnOnLEDs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                bTurnOnLEDsMouseReleased(evt);
             }
         });
 
-        feedRate.setText("Feedrate");
+        labelLastPrintTime.setText("Last Print time");
 
-        xyFeedrate.setText("XY (mm/s)");
+        textFieldLastPrintTime.setEditable(false);
+        textFieldLastPrintTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        textFieldLastPrintTime.setPreferredSize(new java.awt.Dimension(74, 27));
 
-        bCenterY.setText("Home Y");
-        bCenterY.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCenterYActionPerformed(evt);
-            }
-        });
+        jLabel6.setText("(hh:mm:ss)");
 
-        bSetCalibration.setText("Set Calibration");
-        bSetCalibration.setPreferredSize(new java.awt.Dimension(177, 29));
-        bSetCalibration.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bSetCalibrationActionPerformed(evt);
-            }
-        });
-
-        bCalibrateA.setText("Calibrate A");
-        bCalibrateA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCalibrateAActionPerformed(evt);
-            }
-        });
-
-        bCalibrateC.setText("Calibrate C");
-        bCalibrateC.setPreferredSize(new java.awt.Dimension(145, 29));
-        bCalibrateC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCalibrateCActionPerformed(evt);
-            }
-        });
-
-        xyFeed.setText("1.0");
-        xyFeed.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                xyFeedKeyReleased(evt);
-            }
-        });
-
-        bCalibrateB.setText("Calibrate B");
-        bCalibrateB.setPreferredSize(new java.awt.Dimension(145, 29));
-        bCalibrateB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCalibrateBActionPerformed(evt);
-            }
-        });
-
-        zFeedrate.setText("Z (mm/s)");
-
-        zFeed.setText("1.0");
-        zFeed.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                zFeedKeyReleased(evt);
-            }
-        });
-
-        bCenterZ.setText("Home Z");
-        bCenterZ.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCenterZActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(bCalibrateB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(bCalibrateA, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(bSetCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(zFeedrate)
-                            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(xyFeedrate, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(feedRate)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(xyFeed)
-                            .addComponent(zFeed, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(3, 3, 3)))
-                .addGap(75, 75, 75)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(bCurrentPosition, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bCenterZ, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bCenterY, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bCenterX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bHome, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(bCalibrateA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCalibrateB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCalibrateC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bSetCalibration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(feedRate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(xyFeedrate)
-                            .addComponent(xyFeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(bHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(bCenterX)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bCenterY)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bCenterZ)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bCurrentPosition)))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(bTurnOnLEDs, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(labelBeepValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bTurnOffLEDs, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(zFeedrate)
-                    .addComponent(zFeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(textFieldLastPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(labelLastPrintTime)
+                    .addComponent(bBeep, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(bTurnOnLEDs)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bTurnOffLEDs))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(bBeep)
+                            .addComponent(labelBeepValidation))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelLastPrintTime)
+                        .addGap(0, 0, 0)
+                        .addComponent(jLabel6)
+                        .addGap(1, 1, 1)
+                        .addComponent(textFieldLastPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -1010,22 +1002,18 @@ public class ControlPanel extends BaseDialog {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
@@ -1033,40 +1021,22 @@ public class ControlPanel extends BaseDialog {
         notes.setText("All files saved under BEESOFT folder in user directory.");
         notes.setToolTipText("");
 
-        tempPanel.setMinimumSize(new java.awt.Dimension(340, 130));
-
-        javax.swing.GroupLayout tempPanelLayout = new javax.swing.GroupLayout(tempPanel);
-        tempPanel.setLayout(tempPanelLayout);
-        tempPanelLayout.setHorizontalGroup(
-            tempPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        tempPanelLayout.setVerticalGroup(
-            tempPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 160, Short.MAX_VALUE)
-        );
-
-        tempLabel.setText("Temperature Chart");
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Extrusion", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, GraphicDesignComponents.getSSProBold("12")));
+        jPanel9.setOpaque(false);
+        jPanel9.setPreferredSize(new java.awt.Dimension(471, 759));
 
         jPanel5.setOpaque(false);
 
-        extruderTemperature1.setText("Block temperature");
+        blockTemperatureLabel.setText("Block temperature");
 
         targetTemperatureVal.setText("0");
         targetTemperatureVal.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                targetTemperatureValKeyReleased(evt);
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                targetTemperatureValKeyPressed(evt);
             }
         });
 
-        saveLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/floppy_disk.png"))); // NOI18N
-        saveLog.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                saveLogMousePressed(evt);
-            }
-        });
-
-        extruderTemperature.setText("Extruder temperature");
+        extruderTemperatureLabel.setText("Extruder temperature");
 
         cLogTemperature.setBackground(new java.awt.Color(248, 248, 248));
         cLogTemperature.addActionListener(new java.awt.event.ActionListener() {
@@ -1094,12 +1064,10 @@ public class ControlPanel extends BaseDialog {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(logTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cLogTemperature)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(saveLog))
-                    .addComponent(extruderTemperature1)
+                        .addComponent(cLogTemperature))
+                    .addComponent(blockTemperatureLabel)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(extruderTemperature, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(extruderTemperatureLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(blockTemperatureVal, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
@@ -1113,29 +1081,43 @@ public class ControlPanel extends BaseDialog {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(extruderTemperature)
+                    .addComponent(extruderTemperatureLabel)
                     .addComponent(extruderTemperatureVal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(targetTemperatureVal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(4, 4, 4)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(extruderTemperature1)
+                    .addComponent(blockTemperatureLabel)
                     .addComponent(blockTemperatureVal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(saveLog, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cLogTemperature)
                     .addComponent(logTemperature))
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
 
-        colorCurrentTemp.setBackground(new java.awt.Color(204, 204, 204));
-        colorCurrentTemp.setLabelFor(extruderTemperatureVal);
-        colorCurrentTemp.setText("color1");
+        tempLabel.setText("Temperature Chart");
 
-        colorTargetTemp.setBackground(new java.awt.Color(204, 204, 204));
-        colorTargetTemp.setText("color1");
+        tempPanel.setMinimumSize(new java.awt.Dimension(340, 130));
 
-        jPanel6.setOpaque(false);
+        javax.swing.GroupLayout tempPanelLayout = new javax.swing.GroupLayout(tempPanel);
+        tempPanel.setLayout(tempPanelLayout);
+        tempPanelLayout.setHorizontalGroup(
+            tempPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        tempPanelLayout.setVerticalGroup(
+            tempPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 160, Short.MAX_VALUE)
+        );
+
+        mSpeed.setText("500");
+        mSpeed.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                mSpeedKeyReleased(evt);
+            }
+        });
+
+        extrudeDuration.setText("Extrude duration");
 
         bForward.setText("Foward");
         bForward.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1146,6 +1128,8 @@ public class ControlPanel extends BaseDialog {
 
         extrudeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        motorSpeed.setText("Speed");
+
         bReverse.setText("Reverse");
         bReverse.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -1153,18 +1137,61 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
-        mSpeed.setText("500");
-        mSpeed.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                mSpeedKeyReleased(evt);
+        jBlowerFanTitle.setText("Blower fan");
+
+        jBlowerFanValue.setEditable(false);
+        jBlowerFanValue.setText("0");
+
+        jSliderBlowerSpeed.setMajorTickSpacing(60);
+        jSliderBlowerSpeed.setMaximum(255);
+        jSliderBlowerSpeed.setMinorTickSpacing(30);
+        jSliderBlowerSpeed.setPaintLabels(true);
+        jSliderBlowerSpeed.setPaintTicks(true);
+        jSliderBlowerSpeed.setToolTipText("");
+        jSliderBlowerSpeed.setValue(0);
+        jSliderBlowerSpeed.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSliderBlowerSpeedMouseReleased(evt);
             }
         });
 
-        motorSpeed.setText("Speed");
+        jExtruderFanTitle.setText("Extruder fan");
 
-        extrudeDuration.setText("Extrude duration");
+        jExtruderFanValue.setEditable(false);
+        jExtruderFanValue.setText("0");
 
-        motorControl.setText("Motor control");
+        jSliderExtruderSpeed.setMajorTickSpacing(60);
+        jSliderExtruderSpeed.setMaximum(255);
+        jSliderExtruderSpeed.setMinorTickSpacing(30);
+        jSliderExtruderSpeed.setPaintLabels(true);
+        jSliderExtruderSpeed.setPaintTicks(true);
+        jSliderExtruderSpeed.setToolTipText("");
+        jSliderExtruderSpeed.setValue(0);
+        jSliderExtruderSpeed.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jSliderExtruderSpeedMouseReleased(evt);
+            }
+        });
+
+        jPanel6.setOpaque(false);
+
+        jLabel1.setLabelFor(colorCurrentTemp);
+        jLabel1.setText("Current extruder temperature");
+
+        colorTargetTemp.setBackground(new java.awt.Color(204, 204, 204));
+        colorTargetTemp.setText("color1");
+        colorTargetTemp.setMaximumSize(new java.awt.Dimension(10, 10));
+        colorTargetTemp.setMinimumSize(new java.awt.Dimension(10, 10));
+        colorTargetTemp.setPreferredSize(new java.awt.Dimension(10, 10));
+
+        colorCurrentTemp.setBackground(new java.awt.Color(204, 204, 204));
+        colorCurrentTemp.setText("color1");
+        colorCurrentTemp.setMaximumSize(new java.awt.Dimension(10, 10));
+        colorCurrentTemp.setMinimumSize(new java.awt.Dimension(10, 10));
+        colorCurrentTemp.setPreferredSize(new java.awt.Dimension(10, 10));
+
+        jLabel5.setLabelFor(colorTargetTemp);
+        jLabel5.setText("Target extruder temperature");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1174,103 +1201,132 @@ public class ControlPanel extends BaseDialog {
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(88, 88, 88)
-                        .addComponent(bReverse, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
-                        .addComponent(bForward, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(motorControl, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(colorTargetTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)
+                        .addComponent(jLabel5))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(extrudeDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(motorSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(87, Short.MAX_VALUE))
+                        .addComponent(colorCurrentTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)
+                        .addComponent(jLabel1)))
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(motorControl)
-                .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(motorSpeed))
-                .addGap(17, 17, 17)
+                    .addComponent(colorCurrentTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(extrudeDuration)
-                    .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bReverse)
-                    .addComponent(bForward))
+                    .addComponent(colorTargetTemp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5))
                 .addContainerGap())
         );
 
-        jLabel1.setText("Current extruder temperature");
-
-        jLabel5.setText("Target extruder temperature");
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tempLabel)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel9Layout.createSequentialGroup()
+                                        .addComponent(jBlowerFanTitle)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jBlowerFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jSliderBlowerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                                .addComponent(jSliderExtruderSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel9Layout.createSequentialGroup()
+                                        .addGap(40, 40, 40)
+                                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jExtruderFanTitle))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jExtruderFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel9Layout.createSequentialGroup()
+                                        .addComponent(extrudeDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel9Layout.createSequentialGroup()
+                                        .addComponent(motorSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(mSpeed)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(bForward, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(bReverse, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                                .addGap(57, 57, 57))))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(tempLabel)
+                .addGap(1, 1, 1)
+                .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(39, 39, 39)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jBlowerFanTitle)
+                        .addComponent(jBlowerFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jExtruderFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jExtruderFanTitle)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jSliderBlowerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSliderExtruderSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(54, 54, 54)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(motorSpeed)
+                    .addComponent(bForward))
+                .addGap(17, 17, 17)
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(extrudeDuration)
+                    .addComponent(extrudeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bReverse)))
+        );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jSeparator1)
-                        .addGap(2, 2, 2))
-                    .addComponent(notes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(tempLabel))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(colorTargetTemp)
-                            .addComponent(colorCurrentTemp))
-                        .addGap(39, 39, 39)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel5))))
-                .addGap(0, 33, Short.MAX_VALUE))
-            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(notes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addComponent(tempLabel)
-                .addGap(1, 1, 1)
-                .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(colorCurrentTemp)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(colorTargetTemp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5))
-                .addGap(16, 16, 16)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1)
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 708, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(notes)
-                .addGap(26, 26, 26))
+                .addContainerGap())
         );
 
         jPanel4.setBackground(new java.awt.Color(255, 203, 5));
@@ -1316,19 +1372,19 @@ public class ControlPanel extends BaseDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 1039, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 1063, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 726, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -1340,15 +1396,11 @@ public class ControlPanel extends BaseDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void targetTemperatureValKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_targetTemperatureValKeyReleased
-        temperatureGoal = Double.valueOf(targetTemperatureVal.getText());
-    }//GEN-LAST:event_targetTemperatureValKeyReleased
 
     private void bOKMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOKMouseEntered
         bOK.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
@@ -1365,336 +1417,16 @@ public class ControlPanel extends BaseDialog {
     private void cLogTemperatureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cLogTemperatureActionPerformed
         if (loggingTemperature) {
             this.loggingTemperature = false;
-            cleanLogFiles(true);
+            cleanLogFiles();
 
         } else {
             this.loggingTemperature = true;
             initFile();
-            cleanLogFiles(false);
+            cleanLogFiles();
         }
 
 
     }//GEN-LAST:event_cLogTemperatureActionPerformed
-
-    private void saveLogMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveLogMousePressed
-        if (loggingTemperature) {
-            try {
-                bw.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            initFile();
-        }
-    }//GEN-LAST:event_saveLogMousePressed
-
-    private void freeJogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_freeJogActionPerformed
-        if (freeJogging) {
-            freeJog.setSelected(false);
-            freeJogging = false;
-        } else {
-            freeJog.setSelected(true);
-            freeJogging = true;
-        }
-    }//GEN-LAST:event_freeJogActionPerformed
-
-    private void zFeedKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_zFeedKeyReleased
-        ZFeedrate = Double.valueOf(zFeed.getText()) * 60;
-    }//GEN-LAST:event_zFeedKeyReleased
-
-    private void xyFeedKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xyFeedKeyReleased
-        XYFeedrate = Double.valueOf(xyFeed.getText()) * 60;
-    }//GEN-LAST:event_xyFeedKeyReleased
-
-    private void bSetCalibrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSetCalibrationActionPerformed
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M603"));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M601"));
-    }//GEN-LAST:event_bSetCalibrationActionPerformed
-
-    private void bCalibrateCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCalibrateCActionPerformed
-        Point5d current = machine.getDriver().getCurrentPosition(false);
-        Point5d c = machine.getTablePoints("C");
-        Point5d raise = new Point5d(current.x(), current.y(), current.z() + 10);
-        Point5d cRaise = new Point5d(c.x(), c.y(), c.z() + 10);
-
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-        double spMedium = machine.getFeedrate("spMedium");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(raise));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(cRaise));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(c));
-    }//GEN-LAST:event_bCalibrateCActionPerformed
-
-    private void bCalibrateBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCalibrateBActionPerformed
-        Point5d current = machine.getDriver().getCurrentPosition(false);
-
-        machine.runCommand(new replicatorg.drivers.commands.SetCurrentPosition(new Point5d(current.x(), current.y(), 0)));
-        current = machine.getDriver().getCurrentPosition(false);
-        Point5d b = machine.getTablePoints("B");
-        Point5d raise = new Point5d(current.x(), current.y(), current.z() + 10);
-        Point5d bRaise = new Point5d(b.x(), b.y(), b.z() + 10);
-
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-        double spMedium = machine.getFeedrate("spMedium");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(raise));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(bRaise));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spMedium));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-    }//GEN-LAST:event_bCalibrateBActionPerformed
-
-    private void bCalibrateAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCalibrateAActionPerformed
-        Point5d current;
-
-        Base.writeLog("Initializing and Calibrating A");
-
-        machine.getDriver().setMachineReady(false);
-        machine.getDriver().setBusy(true);
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.GetPosition());
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-        /**
-         *  //This is important! without this loop, the following line may not
-         * work properly current =
-         * machine.getDriver().getCurrentPosition(false);
-         */
-        while (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
-            try {
-                Thread.sleep(100);
-                machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        //This line is crucial!!
-
-        current = machine.getDriver().getCurrentPosition(false);
-
-        AxisId axis = AxisId.valueOf("Z");
-        Point5d a = machine.getTablePoints("A");
-
-        //            System.out.println("current:"+current);
-        current.setAxis(axis, (current.axis(axis) - (safeDistance)));
-        current.setX(a.x());
-        current.setY(a.y());
-
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-    }//GEN-LAST:event_bCalibrateAActionPerformed
-
-    private void bHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bHomeActionPerformed
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(HOME, COM.BLOCK));
-    }//GEN-LAST:event_bHomeActionPerformed
-
-    private void bCurrentPositionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCurrentPositionActionPerformed
-        machine.runCommand(new replicatorg.drivers.commands.SetCurrentPosition(new Point5d()));
-    }//GEN-LAST:event_bCurrentPositionActionPerformed
-
-    private void bCenterZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCenterZActionPerformed
-        //        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F"+XYFeedrate+" Z0",COM.DEFAULT));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 Z", COM.BLOCK));
-    }//GEN-LAST:event_bCenterZActionPerformed
-
-    private void bCenterYActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCenterYActionPerformed
-        //        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F"+XYFeedrate+" Y0",COM.DEFAULT));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 Y", COM.BLOCK));
-    }//GEN-LAST:event_bCenterYActionPerformed
-
-    private void bCenterXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCenterXActionPerformed
-        //        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F"+XYFeedrate+" X0",COM.DEFAULT));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 X", COM.BLOCK));
-    }//GEN-LAST:event_bCenterXActionPerformed
-
-    private void zTextFieldValueKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_zTextFieldValueKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            parseAndJogZ();
-        }
-    }//GEN-LAST:event_zTextFieldValueKeyPressed
-
-    private void yTextFieldValueKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_yTextFieldValueKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            parseAndJogY();
-        }
-    }//GEN-LAST:event_yTextFieldValueKeyPressed
-
-    private void xTextFieldValueKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTextFieldValueKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            parseAndJogX();
-        }
-    }//GEN-LAST:event_xTextFieldValueKeyPressed
-
-    private void zDOWNMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMousePressed
-        jogButtonPressed = true;
-        double jogValue = Double.valueOf(comboModel.getSelectedItem().toString());
-        Point5d current = machine.getDriver().getActualPosition();
-        AxisId axis = AxisId.valueOf("Z");
-        Base.writeLog("Calibrating table in negative axis");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(ZFeedrate));
-
-        if (!freeJogging) {
-            current.setAxis(axis, (current.axis(axis) + (+jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            //            machine.getDriver().dispatchCommandBypass("G1 X"+current.x()+" Y"+current.y()+" Z"+current.z());
-        } else {
-            double target = Double.valueOf(zTextFieldValue.getText());
-            double actual = machine.getDriver().getActualPosition().z();
-            jogValue = target - actual;
-            current.setAxis(axis, (current.axis(axis) + (jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            //            machine.getDriver().dispatchCommandBypass("G1 X"+current.x()+" Y"+current.y()+" Z"+current.z());
-        }
-        jogButtonPressed = false;
-    }//GEN-LAST:event_zDOWNMousePressed
-
-    private void zDOWNMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMouseExited
-        zDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z-.png")));
-    }//GEN-LAST:event_zDOWNMouseExited
-
-    private void zDOWNMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMouseEntered
-        zDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z-Over.png")));
-    }//GEN-LAST:event_zDOWNMouseEntered
-
-    private void zUPMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMousePressed
-        parseAndJogZ();
-    }//GEN-LAST:event_zUPMousePressed
-
-    private void zUPMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMouseExited
-        zUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z+.png")));
-    }//GEN-LAST:event_zUPMouseExited
-
-    private void zUPMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMouseEntered
-        zUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z+Over.png")));
-    }//GEN-LAST:event_zUPMouseEntered
-
-    private void panicMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panicMouseEntered
-        panic.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "panic.png")));
-    }//GEN-LAST:event_panicMouseEntered
-
-    private void panicMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panicMouseExited
-        panic.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "panicOver.png")));
-    }//GEN-LAST:event_panicMouseExited
-
-    private void panicMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panicMousePressed
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(STOP, COM.DEFAULT));
-    }//GEN-LAST:event_panicMousePressed
-
-    private void yDOWNMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMouseEntered
-        yDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y-Over.png")));
-    }//GEN-LAST:event_yDOWNMouseEntered
-
-    private void yDOWNMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMouseExited
-        yDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y-.png")));
-    }//GEN-LAST:event_yDOWNMouseExited
-
-    private void yDOWNMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMousePressed
-        jogButtonPressed = true;
-        double jogValue = Double.valueOf(comboModel.getSelectedItem().toString());
-        Point5d current = machine.getDriver().getActualPosition();
-        AxisId axis = AxisId.valueOf("Y");
-        Base.writeLog("Calibrating table in negative axis");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(XYFeedrate));
-
-        if (!freeJogging) {
-            current.setAxis(axis, (current.axis(axis) + (+jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        } else {
-            double target = Double.valueOf(yTextFieldValue.getText());
-            double actual = machine.getDriver().getActualPosition().y();
-            jogValue = target - actual;
-            current.setAxis(axis, (current.axis(axis) + (jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        }
-        jogButtonPressed = false;
-    }//GEN-LAST:event_yDOWNMousePressed
-
-    private void xRIGHTMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMouseEntered
-        xRIGHT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X+Over.png")));
-    }//GEN-LAST:event_xRIGHTMouseEntered
-
-    private void xRIGHTMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMouseExited
-        xRIGHT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X+.png")));
-    }//GEN-LAST:event_xRIGHTMouseExited
-
-    private void xRIGHTMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMousePressed
-        parseAndJogX();
-    }//GEN-LAST:event_xRIGHTMousePressed
-
-    private void yUPMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMouseEntered
-        yUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y+Over.png")));
-    }//GEN-LAST:event_yUPMouseEntered
-
-    private void yUPMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMouseExited
-        yUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y+.png")));
-    }//GEN-LAST:event_yUPMouseExited
-
-    private void yUPMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMousePressed
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 Y1.0 F" + xyFeed.getText()));
-    }//GEN-LAST:event_yUPMousePressed
-
-    private void xLEFTMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMouseEntered
-        xLEFT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X-Over.png")));
-    }//GEN-LAST:event_xLEFTMouseEntered
-
-    private void xLEFTMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMouseExited
-        xLEFT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X-.png")));
-    }//GEN-LAST:event_xLEFTMouseExited
-
-    private void xLEFTMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMousePressed
-        jogButtonPressed = true;
-        double jogValue = Double.valueOf(comboModel.getSelectedItem().toString());
-        Point5d current = machine.getDriver().getActualPosition();
-        AxisId axis = AxisId.valueOf("X");
-        Base.writeLog("Calibrating table in negative axis");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(XYFeedrate));
-
-        if (!freeJogging) {
-            current.setAxis(axis, (current.axis(axis) + (-jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        } else {
-            double target = Double.valueOf(xTextFieldValue.getText());
-            double actual = machine.getDriver().getActualPosition().x();
-            jogValue = target - actual;
-            current.setAxis(axis, (current.axis(axis) + (jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        }
-        jogButtonPressed = false;
-    }//GEN-LAST:event_xLEFTMousePressed
-
-    private void bBeepMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBeepMousePressed
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
-    }//GEN-LAST:event_bBeepMousePressed
-
-    private void jSliderBlowerSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderBlowerSpeedMouseReleased
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M106 S" + jSliderBlowerSpeed.getValue(), COM.DEFAULT));
-        jBlowerFanValue.setText(String.valueOf(jSliderBlowerSpeed.getValue()));
-    }//GEN-LAST:event_jSliderBlowerSpeedMouseReleased
-
-    private void jSliderExtruderSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderExtruderSpeedMouseReleased
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M126 S" + jSliderExtruderSpeed.getValue(), COM.DEFAULT));
-        jExtruderFanValue.setText(String.valueOf(jSliderExtruderSpeed.getValue()));
-    }//GEN-LAST:event_jSliderExtruderSpeedMouseReleased
 
     private void bForwardMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bForwardMouseReleased
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E0", COM.BLOCK));
@@ -1710,32 +1442,267 @@ public class ControlPanel extends BaseDialog {
         mSpeedLastClicked = System.nanoTime();
     }//GEN-LAST:event_mSpeedKeyReleased
 
+    private void zDOWNMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMouseEntered
+        zDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z-Over.png")));
+    }//GEN-LAST:event_zDOWNMouseEntered
+
+    private void zDOWNMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMouseExited
+        zDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z-.png")));
+    }//GEN-LAST:event_zDOWNMouseExited
+
+    private void zDOWNMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMouseReleased
+        movButtonHoldDown.stop();
+        if (setPollDataTrue.isRunning() == false) {
+            setPollDataTrue.start();
+        }
+    }//GEN-LAST:event_zDOWNMouseReleased
+
+    private void zDOWNMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zDOWNMousePressed
+        startMovementTimer(MovDir.Z_PLUS);
+    }//GEN-LAST:event_zDOWNMousePressed
+
+    private void xLEFTMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMouseEntered
+        xLEFT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X-Over.png")));
+    }//GEN-LAST:event_xLEFTMouseEntered
+
+    private void xLEFTMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMouseExited
+        xLEFT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X-.png")));
+    }//GEN-LAST:event_xLEFTMouseExited
+
+    private void xLEFTMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMouseReleased
+        movButtonHoldDown.stop();
+        if (setPollDataTrue.isRunning() == false) {
+            setPollDataTrue.start();
+        }
+    }//GEN-LAST:event_xLEFTMouseReleased
+
+    private void xLEFTMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xLEFTMousePressed
+        startMovementTimer(MovDir.X_MINUS);
+    }//GEN-LAST:event_xLEFTMousePressed
+
+    private void zUPMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMouseEntered
+        zUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z+Over.png")));
+    }//GEN-LAST:event_zUPMouseEntered
+
+    private void zUPMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMouseExited
+        zUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Z+.png")));
+    }//GEN-LAST:event_zUPMouseExited
+
+    private void zUPMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMouseReleased
+        movButtonHoldDown.stop();
+        if (setPollDataTrue.isRunning() == false) {
+            setPollDataTrue.start();
+        }
+    }//GEN-LAST:event_zUPMouseReleased
+
+    private void zUPMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zUPMousePressed
+        startMovementTimer(MovDir.Z_MINUS);
+    }//GEN-LAST:event_zUPMousePressed
+
+    private void yUPMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMouseEntered
+        yUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y+Over.png")));
+    }//GEN-LAST:event_yUPMouseEntered
+
+    private void yUPMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMouseExited
+        yUP.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y+.png")));
+    }//GEN-LAST:event_yUPMouseExited
+
+    private void yUPMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMouseReleased
+        movButtonHoldDown.stop();
+        if (setPollDataTrue.isRunning() == false) {
+            setPollDataTrue.start();
+        }
+    }//GEN-LAST:event_yUPMouseReleased
+
+    private void yUPMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yUPMousePressed
+        startMovementTimer(MovDir.Y_MINUS);
+    }//GEN-LAST:event_yUPMousePressed
+
+    private void yDOWNMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMouseEntered
+        yDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y-Over.png")));
+    }//GEN-LAST:event_yDOWNMouseEntered
+
+    private void yDOWNMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMouseExited
+        yDOWN.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "Y-.png")));
+    }//GEN-LAST:event_yDOWNMouseExited
+
+    private void yDOWNMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMouseReleased
+        movButtonHoldDown.stop();
+        if (setPollDataTrue.isRunning() == false) {
+            setPollDataTrue.start();
+        }
+    }//GEN-LAST:event_yDOWNMouseReleased
+
+    private void yDOWNMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_yDOWNMousePressed
+        startMovementTimer(MovDir.Y_PLUS);
+    }//GEN-LAST:event_yDOWNMousePressed
+
+    private void xRIGHTMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMouseEntered
+        xRIGHT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X+Over.png")));
+    }//GEN-LAST:event_xRIGHTMouseEntered
+
+    private void xRIGHTMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMouseExited
+        xRIGHT.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "X+.png")));
+    }//GEN-LAST:event_xRIGHTMouseExited
+
+    private void xRIGHTMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMouseReleased
+        movButtonHoldDown.stop();
+        if (setPollDataTrue.isRunning() == false) {
+            setPollDataTrue.start();
+        }
+    }//GEN-LAST:event_xRIGHTMouseReleased
+
+    private void xRIGHTMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xRIGHTMousePressed
+        startMovementTimer(MovDir.X_PLUS);
+    }//GEN-LAST:event_xRIGHTMousePressed
+
+    private void bTurnOnLEDsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bTurnOnLEDsMouseReleased
+        machine.getDriver().dispatchCommand("M5", COM.DEFAULT);
+    }//GEN-LAST:event_bTurnOnLEDsMouseReleased
+
+    private void bTurnOffLEDsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bTurnOffLEDsMouseReleased
+        machine.getDriver().dispatchCommand("M6", COM.DEFAULT);
+    }//GEN-LAST:event_bTurnOffLEDsMouseReleased
+
+    private void bBeepMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBeepMousePressed
+        String answer;
+
+        answer = machine.getDriver().dispatchCommand("M300", COM.DEFAULT);
+
+        if (answer.contains("ok")) {
+            labelBeepValidation.setVisible(true);
+            showBeepLabel.start();
+        }
+    }//GEN-LAST:event_bBeepMousePressed
+
+    private void jSliderExtruderSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderExtruderSpeedMouseReleased
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M126 S" + jSliderExtruderSpeed.getValue(), COM.DEFAULT));
+        jExtruderFanValue.setText(String.valueOf(jSliderExtruderSpeed.getValue()));
+    }//GEN-LAST:event_jSliderExtruderSpeedMouseReleased
+
+    private void jSliderBlowerSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderBlowerSpeedMouseReleased
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M106 S" + jSliderBlowerSpeed.getValue(), COM.DEFAULT));
+        jBlowerFanValue.setText(String.valueOf(jSliderBlowerSpeed.getValue()));
+    }//GEN-LAST:event_jSliderBlowerSpeedMouseReleased
+
+    private void bHomeZMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeZMouseReleased
+        machine.getDriver().dispatchCommand("G28 Z");
+        //zTextFieldValue.setText(String.format("%3.3f", zHome));
+        getPosition();
+        machine.getDriver().dispatchCommand("G91");
+    }//GEN-LAST:event_bHomeZMouseReleased
+
+    private void bHomeXYMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeXYMouseReleased
+        machine.getDriver().dispatchCommand("G28 XY");
+        //xTextFieldValue.setText(String.format("%3.3f", -96.000));
+        //yTextFieldValue.setText(String.format("%3.3f", -74.500));
+        getPosition();
+        machine.getDriver().dispatchCommand("G91");
+    }//GEN-LAST:event_bHomeXYMouseReleased
+
+    private void bCurrentPositionMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCurrentPositionMouseReleased
+        machine.getDriver().dispatchCommand("M603");
+        zHome -= Double.parseDouble(zTextFieldValue.getText());
+        zTextFieldValue.setText(String.format("%3.3f", 0.0));
+    }//GEN-LAST:event_bCurrentPositionMouseReleased
+
+    private void zTextFieldGoalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_zTextFieldGoalKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                double xVal, yVal, zVal;
+
+                xVal = Double.parseDouble(xTextFieldValue.getText());
+                yVal = Double.parseDouble(yTextFieldValue.getText());
+                zVal = Double.parseDouble(zTextFieldGoal.getText());
+
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G90"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+
+                zTextFieldValue.setText(String.format("%3.3f", zVal));
+            } catch (NumberFormatException ex) {
+                Base.writeLog("Invalid input on zTextFieldGoal", this.getClass());
+            }
+        }
+    }//GEN-LAST:event_zTextFieldGoalKeyPressed
+
+    private void xTextFieldGoalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTextFieldGoalKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+
+                double xVal, yVal, zVal;
+
+                xVal = Double.parseDouble(xTextFieldGoal.getText());
+                yVal = Double.parseDouble(yTextFieldValue.getText());
+                zVal = Double.parseDouble(zTextFieldValue.getText());
+
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G90"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+
+                xTextFieldValue.setText(String.format("%3.3f", xVal));
+            } catch (NumberFormatException ex) {
+                Base.writeLog("Invalid input on xTextFieldGoal", this.getClass());
+            }
+        }
+    }//GEN-LAST:event_xTextFieldGoalKeyPressed
+
+    private void yTextFieldGoalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_yTextFieldGoalKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                double xVal, yVal, zVal;
+
+                xVal = Double.parseDouble(xTextFieldValue.getText());
+                yVal = Double.parseDouble(yTextFieldGoal.getText());
+                zVal = Double.parseDouble(zTextFieldValue.getText());
+
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G90"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+
+                yTextFieldValue.setText(String.format("%3.3f", yVal));
+            } catch (NumberFormatException ex) {
+                Base.writeLog("Invalid input on yTextFieldGoal", this.getClass());
+            }
+        }
+    }//GEN-LAST:event_yTextFieldGoalKeyPressed
+
+    private void targetTemperatureValKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_targetTemperatureValKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            double targetTemperature;
+
+            targetTemperature = getTargetTemperature();
+
+            if (targetTemperature != temperatureGoal) {
+                if (targetTemperature != -1) {
+                    machine.runCommand(new replicatorg.drivers.commands.SetTemperature(targetTemperature));
+                    temperatureGoal = targetTemperature;
+                } else {
+                    targetTemperatureVal.setText(String.valueOf(temperatureGoal));
+                }
+            }
+        }
+    }//GEN-LAST:event_targetTemperatureValKeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bBeep;
-    private javax.swing.JButton bCalibrateA;
-    private javax.swing.JButton bCalibrateB;
-    private javax.swing.JButton bCalibrateC;
-    private javax.swing.JButton bCenterX;
-    private javax.swing.JButton bCenterY;
-    private javax.swing.JButton bCenterZ;
     private javax.swing.JButton bCurrentPosition;
     private javax.swing.JButton bForward;
-    private javax.swing.JButton bHome;
+    private javax.swing.JLabel bHomeXY;
+    private javax.swing.JLabel bHomeZ;
     private javax.swing.JLabel bOK;
     private javax.swing.JButton bReverse;
-    private javax.swing.JButton bSetCalibration;
+    private javax.swing.JButton bTurnOffLEDs;
+    private javax.swing.JButton bTurnOnLEDs;
+    private javax.swing.JLabel blockTemperatureLabel;
     private javax.swing.JTextField blockTemperatureVal;
     private javax.swing.JCheckBox cLogTemperature;
     private javax.swing.JLabel colorCurrentTemp;
     private javax.swing.JLabel colorTargetTemp;
-    private javax.swing.JLabel enableFreeJog;
     private javax.swing.JComboBox extrudeCombo;
     private javax.swing.JLabel extrudeDuration;
-    private javax.swing.JLabel extruderTemperature;
-    private javax.swing.JLabel extruderTemperature1;
+    private javax.swing.JLabel extruderTemperatureLabel;
     private javax.swing.JTextField extruderTemperatureVal;
-    private javax.swing.JLabel feedRate;
-    private javax.swing.JCheckBox freeJog;
     private javax.swing.JLabel jBlowerFanTitle;
     private javax.swing.JTextField jBlowerFanValue;
     private javax.swing.JLabel jExtruderFanTitle;
@@ -1745,6 +1712,7 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1754,111 +1722,39 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSlider jSliderBlowerSpeed;
     private javax.swing.JSlider jSliderExtruderSpeed;
+    private javax.swing.JLabel labelBeepValidation;
+    private javax.swing.JLabel labelLastPrintTime;
     private javax.swing.JLabel logTemperature;
     private javax.swing.JTextField mSpeed;
-    private javax.swing.JLabel motorControl;
     private javax.swing.JLabel motorSpeed;
     private javax.swing.JLabel notes;
-    private javax.swing.JLabel panic;
-    private javax.swing.JLabel saveLog;
     private javax.swing.JTextField targetTemperatureVal;
     private javax.swing.JLabel tempLabel;
     private javax.swing.JPanel tempPanel;
+    private javax.swing.JTextField textFieldLastPrintTime;
     private javax.swing.JLabel xLEFT;
     private javax.swing.JLabel xRIGHT;
+    private javax.swing.JTextField xTextFieldGoal;
     private javax.swing.JTextField xTextFieldValue;
-    private javax.swing.JTextField xyFeed;
-    private javax.swing.JLabel xyFeedrate;
     private javax.swing.JLabel yDOWN;
+    private javax.swing.JTextField yTextFieldGoal;
     private javax.swing.JTextField yTextFieldValue;
     private javax.swing.JLabel yUP;
     private javax.swing.JLabel zDOWN;
-    private javax.swing.JTextField zFeed;
-    private javax.swing.JLabel zFeedrate;
+    private javax.swing.JTextField zTextFieldGoal;
     private javax.swing.JTextField zTextFieldValue;
     private javax.swing.JLabel zUP;
     // End of variables declaration//GEN-END:variables
 
-    private void parseAndJogX() {
-        jogButtonPressed = true;
-        double jogValue = Double.valueOf(comboModel.getSelectedItem().toString());
-        Point5d current = machine.getDriver().getActualPosition();
-        AxisId axis = AxisId.valueOf("X");
-        Base.writeLog("Calibrating table in negative axis");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(XYFeedrate));
-
-        if (!freeJogging) {
-            current.setAxis(axis, (current.axis(axis) + (+jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        } else {
-            double target = Double.valueOf(xTextFieldValue.getText());
-            double actual = machine.getDriver().getActualPosition().x();
-            jogValue = target - actual;
-            current.setAxis(axis, (current.axis(axis) + (jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        }
-        jogButtonPressed = false;
-    }
-
-    private void parseAndJogY() {
-        jogButtonPressed = true;
-        double jogValue = Double.valueOf(comboModel.getSelectedItem().toString());
-        Point5d current = machine.getDriver().getActualPosition();
-        AxisId axis = AxisId.valueOf("Y");
-        Base.writeLog("Calibrating table in negative axis");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(XYFeedrate));
-
-        if (!freeJogging) {
-            current.setAxis(axis, (current.axis(axis) + (-jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        } else {
-            double target = Double.valueOf(yTextFieldValue.getText());
-            double actual = machine.getDriver().getActualPosition().y();
-            jogValue = target - actual;
-            current.setAxis(axis, (current.axis(axis) + (jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        }
-        jogButtonPressed = false;
-    }
-
-    private void parseAndJogZ() {
-        jogButtonPressed = true;
-        double jogValue = Double.valueOf(comboModel.getSelectedItem().toString());
-        Point5d current = machine.getDriver().getActualPosition();
-        AxisId axis = AxisId.valueOf("Z");
-        Base.writeLog("Calibrating table in negative axis");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(ZFeedrate));
-
-        if (!freeJogging) {
-            current.setAxis(axis, (current.axis(axis) + (-jogValue)));
-//            machine.getDriver().dispatchCommandBypass("G1 X"+current.x()+" Y"+current.y()+" Z"+current.z());
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-        } else {
-            double target = Double.valueOf(zTextFieldValue.getText());
-            double actual = machine.getDriver().getActualPosition().z();
-            jogValue = target - actual;
-            current.setAxis(axis, (current.axis(axis) + (jogValue)));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-//            machine.getDriver().dispatchCommandBypass("G1 X"+current.x()+" Y"+current.y()+" Z"+current.z());
-        }
-        jogButtonPressed = false;
-    }
-
-    public boolean isJogging() {
-        return jogButtonPressed;
-    }
 }
 
 class TemperatureThread extends Thread {
 
     private final MachineInterface machine;
     private final ControlPanel controlPanel;
+    private boolean stop = false;
 
     public TemperatureThread(ControlPanel cPanel, MachineInterface mach) {
         super("Cleanup Thread");
@@ -1869,17 +1765,144 @@ class TemperatureThread extends Thread {
     @Override
     public void run() {
 
-        while (this.isInterrupted() == false) {
-            if (controlPanel.isJogging() == false) {
-                machine.runCommand(new replicatorg.drivers.commands.SetTemperature(controlPanel.getTargetTemperature()));
+        while (stop == false) {
+            if (controlPanel.canPollData) {
+
+                machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
+
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    break;
                 }
 
                 controlPanel.updateTemperature();
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(TemperatureThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
             }
         }
+    }
+
+    public void cancel() {
+        stop = true;
+    }
+}
+
+class InputValidationThread extends Thread {
+
+    private final ControlPanel controlPanel;
+    private boolean stop = false;
+
+    public InputValidationThread(ControlPanel controlPanel) {
+        this.controlPanel = controlPanel;
+    }
+
+    @Override
+    public void run() {
+        long currentTime;
+        double val;
+        boolean changed;
+
+        while (stop == false) {
+            changed = false;
+            currentTime = System.nanoTime();
+
+            // 1/2 sec
+            if (currentTime - controlPanel.mSpeedLastClicked
+                    > 500000000) {
+                try {
+                    val = Double.parseDouble(controlPanel.mSpeedGetText());
+
+                    if (val < 0) {
+                        val = -val;
+                        changed = true;
+                    }
+
+                    if (val > 2000) {
+                        val = 2000;
+                        changed = true;
+                    }
+
+                    if (changed) {
+                        controlPanel.mSpeedSetText(String.valueOf(val));
+                    }
+
+                } catch (IllegalArgumentException ex) {
+
+                }
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                break;
+            }
+        }
+    }
+
+    public void cancel() {
+        stop = true;
+    }
+}
+
+class GetInitialValuesThread extends Thread {
+
+    private final ControlPanel controlPanel;
+    private final MachineInterface machine;
+    private boolean stop = false;
+
+    public GetInitialValuesThread(ControlPanel controlPanel, MachineInterface machine) {
+        this.controlPanel = controlPanel;
+        this.machine = machine;
+    }
+
+    @Override
+    public void run() {
+        String answer;
+        int beginIndex, endIndex;
+        long ms, hours, mins, secs;
+
+        while (stop == false) {
+            answer = machine.getDriver().dispatchCommand("M1002", COM.DEFAULT);
+            beginIndex = answer.lastIndexOf("Time: ");
+            endIndex = answer.lastIndexOf("\nok");
+
+            if (beginIndex > -1 && endIndex > -1) {
+                beginIndex += 6;
+                answer = answer.substring(beginIndex, endIndex);
+                try {
+                    ms = Long.parseLong(answer);
+
+                    hours = TimeUnit.MILLISECONDS.toHours(ms);
+                    ms -= TimeUnit.HOURS.toMillis(hours);
+                    mins = TimeUnit.MILLISECONDS.toMinutes(ms);
+                    ms -= TimeUnit.MINUTES.toMillis(mins);
+                    secs = TimeUnit.MILLISECONDS.toSeconds(ms);
+
+                    answer = String.format("%02d:%02d:%02d", hours, mins, secs);
+                    controlPanel.textFieldLastPrintTimeSetText(answer);
+                    break;
+                } catch (IllegalArgumentException ex) {
+                    answer = "-1";
+                    controlPanel.textFieldLastPrintTimeSetText(answer);
+                }
+
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                break;
+            }
+        }
+    }
+
+    public void cancel() {
+        stop = true;
     }
 }

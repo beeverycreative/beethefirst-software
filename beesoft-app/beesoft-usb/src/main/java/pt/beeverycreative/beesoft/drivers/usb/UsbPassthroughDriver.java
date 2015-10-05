@@ -70,7 +70,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String BEGIN_PRINT = "M33";
     private static final String fileName = "abcde";
     private static final String RESPONSE_OK = "ok";
-    ;
     private static final String FILE_CREATED = "File created";
     private static final String SET_FILENAME = "M30 ";
     private static final String READ_VARIABLES = "M32";
@@ -88,8 +87,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String RESET_AXIS = "G92";
     private static final String NOK = "NOK";
     private static final int QUEUE_LIMIT = 85;
-    private static final int QUEUE_WAIT = 30;
-    private static final int SEND_WAIT = 10; //2 did not work
+    private static final int QUEUE_WAIT = 1000;
+    private static final int SEND_WAIT = 2; //2 did not work
     private int queue_size;
     private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispatchTime;
@@ -567,11 +566,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (next.startsWith(";")) {
             return next + " did not send";
         }
-        if (next.length() < 3 || BlackListGCodes.contains(next)) {
-            return next + " did not send";
-        } else if (next.contains(RESET_AXIS)) {
-            COMTYPE = COM.BLOCK;
-        }
+        /*
+         if (next.length() < 3 || BlackListGCodes.contains(next)) {
+         return next + " did not send";
+         } else if (next.contains(RESET_AXIS)) {
+         COMTYPE = COM.BLOCK;
+         }
+         */
 
         String answer = "";
         switch (COMTYPE) {
@@ -2034,7 +2035,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         Point5d myCurrentPosition = null;
 
-        String position = dispatchCommand(GET_POSITION, COM.BLOCK);
+        String position = dispatchCommand(GET_POSITION);
+        
 //        Base.writeLog("position "+position);
         /**
          * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok

@@ -16,7 +16,7 @@ public enum BlackListGCodes {
     /**
      * List of all bad GCodes for BTF's driver.
      */
-    M29, M82, M84, M101, M103, M108, M113, M117, M140, G21, G90, G91;
+    M29, M82, M84, M101, M103, M108, M113, M117, M140, G21;
 
     /**
      * Checks if gcode line contains any of denied gcodes.

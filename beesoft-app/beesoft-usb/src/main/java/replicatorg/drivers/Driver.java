@@ -392,6 +392,8 @@ public interface Driver {
      * @return 5D point with all coordinates.
      */
     public Point5d getCurrentPosition(boolean update);
+    
+    public Point5d getCurrentPosition2();
 
     /**
      * Indicate that the currently maintained position may no longer be the
@@ -415,6 +417,8 @@ public interface Driver {
      */
     public Point5d getPosition();
 
+    public void getPosition2();
+    
     /**
      * Sets the feedrate in mm/minute
      *
