@@ -46,9 +46,10 @@ public class FilamentControler {
      */
     public static void initFilamentList(PrinterInfo printer) {
         Base.writeLog("Initial filament fetch for printer " + printer, FilamentControler.class);
+        Base.writeLog("Printer code for filament purposes: " + printer.filamentCode(), FilamentControler.class);
 
         if (currentPrinterFilamentList == null
-                || currentPrinterFilamentList != printer) {
+                || !currentPrinterFilamentList.filamentCode().equals(printer.filamentCode())) {
             fetchFilaments();
             currentPrinterFilamentList = printer;
         } else {
@@ -64,13 +65,7 @@ public class FilamentControler {
     private static void fetchFilaments() {
 
         String connectedPrinter = Base.getMainWindow().getMachine()
-                .getDriver().getConnectedDevice().toString();
-
-        // Do not distinguish between the BEETHEFIRST's with the old and new 
-        // bootloader
-        if (connectedPrinter.equals(PrinterInfo.BEETHEFIRST0.toString())) {
-            connectedPrinter = PrinterInfo.BEETHEFIRST.toString();
-        }
+                .getDriver().getConnectedDevice().filamentCode();
 
         // get all the files from a directory
         File directory = new File(filamentsDir);
@@ -119,7 +114,7 @@ public class FilamentControler {
                 Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            Base.writeLog("Aqcuired " + availableFilaments.size() + " filaments", FilamentControler.class);
+            Base.writeLog("Acquired " + availableFilaments.size() + " filaments", FilamentControler.class);
 
             if (filamentList != null) {
                 filamentList.clear();
@@ -257,10 +252,6 @@ public class FilamentControler {
 
         double result = 1.00; //Default
 
-        if (printerId.equals(PrinterInfo.BEETHEFIRST0.toString())) {
-            printerId = PrinterInfo.BEETHEFIRST.toString();
-        }
-
         if (filamentList == null) {
             fetchFilaments();
         }
@@ -302,13 +293,6 @@ public class FilamentControler {
      */
     public static HashMap<String, String> getFilamentSettings(String coilCode,
             String resolution, String printerId) {
-
-        // if no printer is connected, or a printer with the old bootloader is
-        // connected, assume BEETHEFIRST as the ID
-        if (printerId.equalsIgnoreCase("unknown")
-                || printerId.equals(PrinterInfo.BEETHEFIRST0.toString())) {
-            printerId = PrinterInfo.BEETHEFIRST.toString();
-        }
 
         if (filamentList == null) {
             fetchFilaments();

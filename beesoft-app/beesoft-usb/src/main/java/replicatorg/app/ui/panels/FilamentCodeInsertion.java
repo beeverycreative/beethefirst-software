@@ -140,6 +140,8 @@ public class FilamentCodeInsertion extends BaseDialog {
                 ProperDefault.remove("maintenance");
             }
         }
+        
+        dispose();
     }
 
     @SuppressWarnings("unchecked")

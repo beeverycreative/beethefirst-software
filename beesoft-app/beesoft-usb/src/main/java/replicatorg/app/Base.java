@@ -1061,11 +1061,13 @@ public class Base {
 
         systemThreads = new ArrayList<Thread>();
         
+        /*
         try {
             System.setErr(new PrintStream(new FileOutputStream(getAppDataDirectory().toString() + "/err.txt")));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
 
         // set the look and feel before opening the window
         try {

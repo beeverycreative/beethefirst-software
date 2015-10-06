@@ -92,7 +92,7 @@ public class CuraGenerator extends ToolpathGenerator {
 
         HashMap<String, String> overload_values
                 = FilamentControler.getFilamentSettings(prefs.getCoilText(), 
-                        prefs.getResolution(), prefs.getPrinter().toString());
+                        prefs.getResolution(), prefs.getPrinter().filamentCode());
 
         if (overload_values == null) {
             Base.getMainWindow().showFeedBackMessage("unknownColor");

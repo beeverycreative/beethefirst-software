@@ -181,7 +181,6 @@ public class ShutdownMenu extends BaseDialog {
         bResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bResume.setText("Resume");
         bResume.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        bResume.setEnabled(false);
         bResume.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bResume.setMaximumSize(new java.awt.Dimension(69, 21));
         bResume.setMinimumSize(new java.awt.Dimension(69, 21));

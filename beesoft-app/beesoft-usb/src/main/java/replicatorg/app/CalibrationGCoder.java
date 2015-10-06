@@ -137,7 +137,7 @@ public class CalibrationGCoder {
                             FilamentControler.getColorRatio(
                                     Base.getMainWindow().getMachine().getModel().getCoilText(),
                                     Base.getMainWindow().getMachine().getModel().getResolution(),
-                                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().toString()
+                                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
                                     
                             ));
                     return ("gcode: " + "M642 w"+w_val+", "+ eElement.getAttribute("value"));

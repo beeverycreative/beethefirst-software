@@ -140,7 +140,7 @@ public class ControlPanel extends BaseDialog {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                if (movButtonHoldDown.isRunning()) {
+                if (movButtonHoldDown != null && movButtonHoldDown.isRunning()) {
                     movButtonHoldDown.stop();
                 }
                 machine.getDriver().dispatchCommand("M1110 S0", COM.DEFAULT);

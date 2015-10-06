@@ -22,6 +22,7 @@ import javax.usb.UsbNotOpenException;
 import org.w3c.dom.Node;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM.BLOCK;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
@@ -84,7 +85,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String SETCOILTEXT = "M1000 ";
     private static final String GETCOILTEXT = "M1001";
     private static final String SAVE_CONFIG = "M601 ";
-    private static final String RESET_AXIS = "G92";
     private static final String NOK = "NOK";
     private static final int QUEUE_LIMIT = 85;
     private static final int QUEUE_WAIT = 1000;
@@ -144,7 +144,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private String result = "";
     private final DecimalFormat df;
-    private boolean showMessage = true;
     private final boolean comLog;
 
     /**
@@ -241,9 +240,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
                 mwVisible = Base.getMainWindow().isVisible();//polls
             }
+            
+            updateCoilText();
+            PrintPreferences prefs = new PrintPreferences();
 
             PrintSplashAutonomous p = new PrintSplashAutonomous(
-                    true, Base.printPaused, this.isONShutdown, null
+                    true, Base.printPaused, this.isONShutdown, prefs
             );
 
             if (Base.printPaused == false && this.isONShutdown == false) {
@@ -252,6 +254,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             p.startConditions();
             Base.updateVersions();
+
             return;
         }
 
@@ -286,7 +289,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Serial number: " + serialNumberString, this.getClass());
 
             // if firmware is not ok
-            if (firmwareVersion.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice.code() + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
+            if (firmwareVersion.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
                 Base.writeLog("Firmware is not OK", this.getClass());
                 Base.writeLog("Firmware version string: "
                         + firmwareVersion.getVersionString(), this.getClass());
@@ -308,7 +311,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             updateCoilText();
             Base.isPrinting = false;
 
-            dispatchCommand("M107", COM.DEFAULT); // Shut downs Blower 
             dispatchCommand("M104 S0", COM.DEFAULT); //Extruder and Table heat
             dispatchCommand("G92", COM.DEFAULT);
 
@@ -2036,7 +2038,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Point5d myCurrentPosition = null;
 
         String position = dispatchCommand(GET_POSITION);
-        
+
 //        Base.writeLog("position "+position);
         /**
          * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok
@@ -2508,14 +2510,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 res = readResponse();
                 Base.writeLog("Attempt " + ++tries, this.getClass());
                 Base.writeLog("Response: " + res, this.getClass());
-
-                if (res.toLowerCase().contains("3.") || res.toLowerCase().contains("6.")) {
-                    Base.writeLog("Old bootloader detected", this.getClass());
+                
+                if(res.contains("ok")) {
+                    Base.writeLog("Bootloader appears to be OK", this.getClass());
                     return "bootloader";
-                }
-                if (res.toLowerCase().contains("4.") || res.toLowerCase().contains("7.")) {
-                    Base.writeLog("New bootloader detected", this.getClass());
-                    return "new bootloader";
                 } else {
                     Base.writeLog("Couldn't find what bootloader version this printer has", this.getClass());
                     return "error";
@@ -2806,7 +2804,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int updateFirmware() {
 
-        String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice.code() + "-" + Base.VERSION_FIRMWARE_FINAL;
+        String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
         Base.writeLog("Firmware should be: " + versionToCompare, this.getClass());
 
         //check if the firmware is the same

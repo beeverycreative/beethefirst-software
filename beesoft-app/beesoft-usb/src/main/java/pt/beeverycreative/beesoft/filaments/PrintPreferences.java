@@ -17,6 +17,15 @@ public class PrintPreferences {
     private PrinterInfo printer = 
             Base.getMainWindow().getMachine().getDriver().getConnectedDevice();
     
+    // default preferences, to be used in autonomous mode
+    public PrintPreferences() {
+        resolution = "medium";
+        coilText = Base.getMainWindow().getMachine().getDriver().getCoilText();
+        density = 5;
+        raftPressed = false;
+        supportPressed = false;
+    }
+    
     public PrintPreferences(String resolution, String coilText, int density, 
             boolean raftPressed, boolean supportPressed) {
         this.resolution = resolution;

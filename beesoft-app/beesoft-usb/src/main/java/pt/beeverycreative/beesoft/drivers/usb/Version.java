@@ -66,7 +66,7 @@ public class Version implements Comparable<Version> {
     }
 
     public String getVersionString() {
-        return flavour + "-" + printer.code() + "-" + major + "." + minor + "." + bug;
+        return flavour + "-" + printer + "-" + major + "." + minor + "." + bug;
     }
 
     public String getRawVersionString() {
@@ -153,21 +153,13 @@ public class Version implements Comparable<Version> {
             } catch (IllegalArgumentException e) {
                 version.flavour = Flavour.UNKNOWN;
             }
-            
+
             String printerString = m.group(5);
 
             try {
                 version.printer = PrinterInfo.valueOf(printerString);
             } catch (IllegalArgumentException e) {
-                // It might be the case where the printer code written in the
-                // firmware filename is not the same as in the PrinterInfo enum
-                // like the BEETHEFIRST_PLUS case, starting in 10.4.0 firmware
-
-                if (printerString.equals(PrinterInfo.BEETHEFIRSTPLUS.code())) {
-                    version.printer = PrinterInfo.BEETHEFIRSTPLUS;
-                } else {
-                    version.printer = PrinterInfo.UNKNOWN;
-                }
+                version.printer = PrinterInfo.UNKNOWN;
             }
 
         } else {
@@ -274,15 +266,8 @@ public class Version implements Comparable<Version> {
             try {
                 version.printer = PrinterInfo.valueOf(printerString);
             } catch (IllegalArgumentException e) {
-                // It might be the case where the printer code written in the
-                // firmware filename is not the same as in the PrinterInfo enum
-                // like the BEETHEFIRST_PLUS case, starting in 10.4.0 firmware
+                version.printer = PrinterInfo.UNKNOWN;
 
-                if (printerString.equals(PrinterInfo.BEETHEFIRSTPLUS.code())) {
-                    version.printer = PrinterInfo.BEETHEFIRSTPLUS;
-                } else {
-                    version.printer = PrinterInfo.UNKNOWN;
-                }
             }
 
         } else {
