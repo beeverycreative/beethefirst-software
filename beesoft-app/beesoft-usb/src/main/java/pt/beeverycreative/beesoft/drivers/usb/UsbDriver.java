@@ -444,7 +444,7 @@ public class UsbDriver extends DriverBaseImplementation {
                     Base.writeLog("Returning new pipes", this.getClass());
                     return returnPipes;
 //                }
-                } 
+                }
             }
         }
 

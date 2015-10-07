@@ -72,7 +72,7 @@ class MachineThread extends Thread {
             if (driver.isBootloader() == false) {
                 setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                 Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
-            } else {
+            } else if(driver.isInitialized()) {
                 Base.writeLog("Rebooting into firmware", this.getClass());
                 Base.statusThreadDied = true;
                 Base.isPrinting = false;

@@ -365,7 +365,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             Base.writeLog("Could not recover COM from type: error.", this.getClass());
             setBusy(false);
-            //closePipe(pipes);
+            closePipe(pipes);
+            pipes = null;
 
         }
     }
@@ -375,7 +376,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void initialize() {
-
 
         // wait till we're initialized
         if (!isInitialized()) {
@@ -2657,7 +2657,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         int i = 0;
 
         //pipes = GetPipe(m_usbDevice);
-
         try {
             synchronized (m_usbDevice) {
                 if (!pipes.isOpen()) {
@@ -2742,22 +2741,29 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private boolean _checkFirmwareIntegrity() {
+        int tries = 3;
         //check if the firmware is properly installed
-        sendCommand(GET_FIRMWARE_OK);
-        hiccup(QUEUE_WAIT, 0);
-        String firmware_is_ok = readResponse();
+        do {
+            sendCommand(GET_FIRMWARE_OK);
+            hiccup(QUEUE_WAIT, 0);
+            String firmware_is_ok = readResponse();
 
-        //ok_message: ??
-        //nok_message: ??
-        Base.writeLog(result);
-        if ((firmware_is_ok.contains("ok") && firmware_is_ok.contains("0"))) {
-            // Everything is ok!
-            Base.writeLog("Firmware integrity check: OK");
-            return true;
-        } else {
-            Base.writeLog("Firmware integrity check: failed");
-            return false;
-        }
+            Base.writeLog("Checking firmware integrity: " + result, this.getClass());
+            if ((firmware_is_ok.contains("ok"))) {
+                // Everything is ok!
+                Base.writeLog("Firmware integrity check: OK", this.getClass());
+                return true;
+            } else {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } while (tries-- > 0);
+
+        Base.writeLog("Firmware integrity check: failed", this.getClass());
+        return false;
 
     }
 
@@ -2808,7 +2814,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         //check if the firmware is the same
         String machineFirmware = firmwareVersion.getVersionString();
-        Base.writeLog("Firmware is: " + firmwareVersion.getVersionString(), this.getClass());
+        Base.writeLog("Firmware is: " + firmwareVersion.getRawVersionString(), this.getClass());
 
         if (machineFirmware.equalsIgnoreCase(versionToCompare) == true) {
             Base.writeLog("No update necessary, firmware is as it should be", this.getClass());
@@ -2825,7 +2831,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         for (File firmwareFileTemp : firmwareList) {
             if (firmwareFileTemp.getName().equalsIgnoreCase(connectedDevice.firmwareFilename())) {
                 firmwareFile = firmwareFileTemp;
-                Base.writeLog("Candidate file found:" + firmwareFile);
+                Base.writeLog("Candidate file found:" + firmwareFile, this.getClass());
                 break;
             }
         }
@@ -2837,13 +2843,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
             hiccup(QUEUE_WAIT, 0);
             readResponse();
-            Base.writeLog("Starting Firmware update.");
+            Base.writeLog("Starting Firmware update.", this.getClass());
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
-                Base.writeLog("Firmware successfully updated");
-                Base.writeLog("Setting firmware version to: " + versionToCompare);
-                sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
-                hiccup(QUEUE_WAIT, 0);
-                readResponse();
+                Base.writeLog("Firmware successfully updated", this.getClass());
 
                 if (serialNumberString.contains(NO_SERIAL_NO_FIRMWARE)) {
                     setSerial(NO_SERIAL_FIRMWARE_OK);
@@ -2857,13 +2859,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     return -1;
                 }
 
+                Base.writeLog("Setting firmware version to: " + versionToCompare, this.getClass());
+                sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
+                hiccup(QUEUE_WAIT, 0);
+                readResponse();
+
             } else {
-                Base.writeLog("Firmware update failed");
+                Base.writeLog("Firmware update failed", this.getClass());
                 Base.errorOccured = true;
                 return -1;
             }
         }
-        return 0; // correct thsi
+        return 0; // correct this
     }
 
     private void setSerial(String serial) {
