@@ -400,16 +400,18 @@ public class UsbDriver extends DriverBaseImplementation {
      * @return USB Pipes with Endpoints set.
      */
     protected UsbPipes GetPipe(UsbDevice device) {
+        
+        UsbPipes returnPipes;
 
         if (device != null) {
             UsbConfiguration config = device.getActiveUsbConfiguration();
 
             if (pipes == null || !testPipes(pipes)) {
-                pipes = new UsbPipes();
-
+                returnPipes = new UsbPipes();
             } else {
                 return pipes;
             }
+            
             List interfaces = config.getUsbInterfaces();
             for (Object ifaceObj : interfaces) {
                 UsbInterface iface = (UsbInterface) ifaceObj;
@@ -426,25 +428,21 @@ public class UsbDriver extends DriverBaseImplementation {
                     }
 
                     if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_OUT) {
-                        this.pipes.setUsbPipeWrite(endpoint.getUsbPipe());
+                        returnPipes.setUsbPipeWrite(endpoint.getUsbPipe());
                     }
 
                     if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_IN) {
-                        this.pipes.setUsbPipeRead(endpoint.getUsbPipe());
+                        returnPipes.setUsbPipeRead(endpoint.getUsbPipe());
                     }
                 }
-                if (pipes.getUsbPipeRead() != null && pipes.getUsbPipeWrite() != null) {
-
+                
+                if (returnPipes.getUsbPipeRead() != null && returnPipes.getUsbPipeWrite() != null) {
 //                if (testPipes(pipes)) {
-                    return pipes;
+                    return returnPipes;
 //                } else {
 //                    continue;
 //                }
-
-                } else {
-                    pipes.setUsbPipeWrite(null);
-                    pipes.setUsbPipeRead(null);
-                }
+                } 
             }
         }
 
