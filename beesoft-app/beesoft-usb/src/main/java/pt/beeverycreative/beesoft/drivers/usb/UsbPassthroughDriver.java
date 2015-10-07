@@ -240,7 +240,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
                 mwVisible = Base.getMainWindow().isVisible();//polls
             }
-            
+
             updateCoilText();
             PrintPreferences prefs = new PrintPreferences();
 
@@ -376,7 +376,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public void initialize() {
 
-        int tries = 0;
 
         // wait till we're initialized
         if (!isInitialized()) {
@@ -386,15 +385,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     if (m_usbDevice != null) {
                         Base.writeLog("Device ready to be used, creating pipes...", this.getClass());
                         pipes = GetPipe(m_usbDevice);
-                        Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
-                        openPipe(pipes);
-                        tries++;
 
-                        if (tries > 3 && !isInitialized()) {
-                            Base.writeLog("Tried to open pipes 3 times and failed, initiating USB device again", this.getClass());
+                        if (pipes != null) {
+                            Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
+                            openPipe(pipes);
+                        } else {
+                            Base.writeLog("Pipes were null, initiating USB device again", this.getClass());
                             m_usbDevice = null;
-                            tries = 0;
                         }
+
                     } else {
                         //Base.writeLog("No printer found. Waiting 100 ms before trying again...", this.getClass());
 
@@ -416,7 +415,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     try {
                         Base.writeLog("Unknown exception on initialize()", this.getClass());
                         e.printStackTrace();
-                        Thread.sleep(100); // sleep 1 second
+                        Thread.sleep(1000); // sleep 1 second
                     } catch (InterruptedException ex) {
 
                     }
@@ -1617,7 +1616,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (next.length() == 0) {
             return 0;
         }
-        pipes = GetPipe(m_usbDevice);
+        //pipes = GetPipe(m_usbDevice);
 
         // do the actual send.
         String message;
@@ -1687,7 +1686,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (next.length() == 0) {
             return 0;
         }
-        pipes = GetPipe(m_usbDevice);
+        //pipes = GetPipe(m_usbDevice);
 
         // do the actual send.
         String message = next + "\n";
@@ -2510,8 +2509,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 res = readResponse();
                 Base.writeLog("Attempt " + ++tries, this.getClass());
                 Base.writeLog("Response: " + res, this.getClass());
-                
-                if(res.contains("ok")) {
+
+                if (res.contains("ok")) {
                     Base.writeLog("Bootloader appears to be OK", this.getClass());
                     return "bootloader";
                 } else {
@@ -2657,7 +2656,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         int cmdlen = 0;
         int i = 0;
 
-        pipes = GetPipe(m_usbDevice);
+        //pipes = GetPipe(m_usbDevice);
 
         try {
             synchronized (m_usbDevice) {

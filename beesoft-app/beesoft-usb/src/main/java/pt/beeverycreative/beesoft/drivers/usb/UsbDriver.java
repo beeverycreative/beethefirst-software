@@ -407,8 +407,10 @@ public class UsbDriver extends DriverBaseImplementation {
             UsbConfiguration config = device.getActiveUsbConfiguration();
 
             if (pipes == null || !testPipes(pipes)) {
+                Base.writeLog("No pipes were found, or testPipes failed. Creating new ones", this.getClass());
                 returnPipes = new UsbPipes();
             } else {
+                Base.writeLog("testPipes returned true, returning current pipes", this.getClass());
                 return pipes;
             }
             
@@ -428,24 +430,25 @@ public class UsbDriver extends DriverBaseImplementation {
                     }
 
                     if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_OUT) {
+                        Base.writeLog("Setting out direction endpoint", this.getClass());
                         returnPipes.setUsbPipeWrite(endpoint.getUsbPipe());
                     }
 
                     if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_IN) {
+                        Base.writeLog("Setting in direction endpoint", this.getClass());
                         returnPipes.setUsbPipeRead(endpoint.getUsbPipe());
                     }
                 }
                 
                 if (returnPipes.getUsbPipeRead() != null && returnPipes.getUsbPipeWrite() != null) {
-//                if (testPipes(pipes)) {
+                    Base.writeLog("Returning new pipes", this.getClass());
                     return returnPipes;
-//                } else {
-//                    continue;
 //                }
                 } 
             }
         }
 
+        Base.writeLog("Failed initializing new pipes! Returning null", this.getClass());
         return null;
     }
 
