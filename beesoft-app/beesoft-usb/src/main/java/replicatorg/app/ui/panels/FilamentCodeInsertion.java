@@ -79,11 +79,6 @@ public class FilamentCodeInsertion extends BaseDialog {
             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
-
-        if (Base.printPaused == true) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        }
-
     }
 
     private int getModelCategoryIndex() {
@@ -139,8 +134,11 @@ public class FilamentCodeInsertion extends BaseDialog {
             if (ProperDefault.get("maintenance").equals("1")) {
                 ProperDefault.remove("maintenance");
             }
+        } else {
+            Base.writeLog("Filament heating canceled", this.getClass());
+            dispose();
         }
-        
+
         dispose();
     }
 
@@ -378,15 +376,11 @@ public class FilamentCodeInsertion extends BaseDialog {
     }//GEN-LAST:event_bPrevMouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
-        if (Base.printPaused == false) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
-        if (Base.printPaused == false) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
@@ -399,7 +393,8 @@ public class FilamentCodeInsertion extends BaseDialog {
             coilText = comboModel.getSelectedItem().toString();
         }
 
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilText(coilText));
+        machine.getDriver().setCoilText(coilText);
+        //machine.runCommand(new replicatorg.drivers.commands.SetCoilText(coilText));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 
@@ -427,9 +422,9 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
         Window p;
-        if(prevWindow instanceof FilamentInsertion) {
+        if (prevWindow instanceof FilamentInsertion) {
             p = new FilamentInsertion();
-        } else if(prevWindow instanceof ExtruderSwitch3) {
+        } else if (prevWindow instanceof ExtruderSwitch3) {
             p = new ExtruderSwitch3();
         } else {//if(prevWindow instanceof ExtruderMaintenance5) {
             p = new ExtruderMaintenance5();

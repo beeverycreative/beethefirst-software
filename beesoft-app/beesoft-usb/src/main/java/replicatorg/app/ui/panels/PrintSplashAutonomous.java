@@ -297,6 +297,9 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         machine.unpause();
         bOk.setEnabled(true);
         bPause.setEnabled(true);
+        tInfo6.setText("");
+        tInfo7.setText("");
+        resetProgressBar();
     }
 
     protected void doShutdown() {
@@ -590,7 +593,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         tEstimation.setVisible(true);
         vRemaining.setVisible(false);
         vEstimation.setVisible(false);
-        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Processing"));
+        tInfo2.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
         tRemaining.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage2"));
         jProgressBar1.setVisible(true);
@@ -2048,9 +2051,9 @@ class PauseAssistantThread extends Thread {
         );
 
         do {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+            machine.getDriver().readStatus();
             try {
-                Thread.sleep(500, 0);
+                Thread.sleep(100, 0);
             } catch (InterruptedException ex) {
                 Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -34,7 +34,6 @@ public class FilamentInsertion extends BaseDialog {
     private final DisposeFeedbackThread disposeThread;
     private boolean jLabel18MouseClickedReady;
     private boolean unloadPressed;
-    private String previousColor = "";
 
     public FilamentInsertion() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -48,15 +47,10 @@ public class FilamentInsertion extends BaseDialog {
         moveToPosition();
         enableDrag();
 
-        previousColor = machine.getModel().getCoilText();
         disposeThread = new DisposeFeedbackThread(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
         bPrevious.setVisible(false);
-        if (Base.printPaused == true) {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        }
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     public void resetFeedbackComponents() {
@@ -64,16 +58,18 @@ public class FilamentInsertion extends BaseDialog {
         if (!bLoadMouseClickedReady) {
             bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
             bLoadMouseClickedReady = true;
-            if (unloadPressed == false) {
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            } else {
-                if (Base.printPaused == true) {
-                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                } else {
-                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                }
-            }
+            /*
+             if (unloadPressed == false) {
+             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+             } else {
+             if (Base.printPaused == true) {
+             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+             } else {
+             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+             }
+             }
+             */
             jLabel18MouseClickedReady = true;
         }
 
@@ -84,16 +80,18 @@ public class FilamentInsertion extends BaseDialog {
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-04.png")));
             bUnloadMouseClickedReady = true;
-            if (unloadPressed == false) {
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            } else {
-                if (Base.printPaused == true) {
-                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                } else {
-                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                }
-            }
+            /*
+             if (unloadPressed == false) {
+             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+             } else {
+             if (Base.printPaused == true) {
+             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+             } else {
+             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+             }
+             }
+             */
             jLabel18MouseClickedReady = true;
 //            jLabel5.setVisible(false);
         }
@@ -160,31 +158,6 @@ public class FilamentInsertion extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Moving to load/unload position", this.getClass());
         machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep());
-        /*
-         Point5d rest = machine.getTablePoints("rest");
-
-         double acLow = machine.getAcceleration("acLow");
-         double acHigh = machine.getAcceleration("acHigh");
-         double spHigh = machine.getFeedrate("spHigh");
-
-        
-         if (Base.printPaused == false) {
-         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
-         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-         } else {
-
-         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + spHigh + " X-85 Y-65"));
-         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-         }
-         */
     }
 
     private void finalizeHeat() {
@@ -238,6 +211,9 @@ public class FilamentInsertion extends BaseDialog {
             disposeThread.stop();
             Base.enableAllOpenWindows();
             finalizeHeat();
+        } else {
+            Base.writeLog("Filament heating canceled", this.getClass());
+            dispose();
         }
 
         if (ProperDefault.get("maintenance").equals("1")) {
@@ -551,30 +527,19 @@ public class FilamentInsertion extends BaseDialog {
         }    }//GEN-LAST:event_bUnloadMouseExited
 
     private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
-        if (Base.printPaused == false) {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bExitMouseEntered
 
     private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
-        if (Base.printPaused == false) {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bExitMouseExited
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-        if ((Base.printPaused == false || unloadPressed == false)
-                && jLabel18MouseClickedReady) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
-        if ((Base.printPaused == false || unloadPressed == false)
-                && jLabel18MouseClickedReady) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
     private void bPreviousMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseEntered
@@ -595,39 +560,22 @@ public class FilamentInsertion extends BaseDialog {
                 dispose();
                 p.setVisible(true);
             } else {
-                if (Base.printPaused == false) {
-                    Base.writeLog(
-                            "Next button pressed but no filament was loaded. "
-                            + "Moving table to home position",
-                            this.getClass()
-                    );
+                Base.writeLog(
+                        "Next button pressed but no filament was loaded. "
+                        + "Moving table to home position",
+                        this.getClass()
+                );
 
-                    disposeThread.stop();
-                    dispose();
-                    Base.bringAllWindowsToFront();
-                    finalizeHeat();
-                    Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-                    Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-                    Base.maintenanceWizardOpen = false;
-                    Base.enableAllOpenWindows();
+                disposeThread.stop();
+                dispose();
+                Base.bringAllWindowsToFront();
+                finalizeHeat();
+                Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+                Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+                Base.maintenanceWizardOpen = false;
+                Base.enableAllOpenWindows();
 
-                    machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
-
-                    /*
-                     Point5d b = machine.getTablePoints("safe");
-                     double acLow = machine.getAcceleration("acLow");
-                     double acHigh = machine.getAcceleration("acHigh");
-                     double spHigh = machine.getFeedrate("spHigh");
-
-                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-                     machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                     machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                     */
-                }
+                machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
             }
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -681,12 +629,6 @@ public class FilamentInsertion extends BaseDialog {
                     }
                 }
             });
-
-            if (Base.printPaused == true) {
-                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            }
-
         }
     }//GEN-LAST:event_bLoadMousePressed
 
@@ -696,7 +638,7 @@ public class FilamentInsertion extends BaseDialog {
             showMessage();
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
             bUnloadMouseClickedReady = false;
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+            //bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
             jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3")));
 
@@ -730,11 +672,6 @@ public class FilamentInsertion extends BaseDialog {
 
             //Set filament as NONE
             machine.runCommand(new replicatorg.drivers.commands.SetCoilText());
-
-            if (Base.printPaused == true) {
-                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-            }
         }
     }//GEN-LAST:event_bUnloadMousePressed
 

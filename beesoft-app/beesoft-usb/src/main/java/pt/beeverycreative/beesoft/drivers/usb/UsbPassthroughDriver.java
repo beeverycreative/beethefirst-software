@@ -2485,8 +2485,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             } else if (res.toLowerCase().contains(STATUS_SDCARD)) {
                 Base.writeLog("Printer is actively printing", this.getClass());
                 return "autonomous";
-            } else if (res.toLowerCase().contains(STATUS_SHUTDOWN)) {
+            } else if (res.toLowerCase().contains(STATUS_SHUTDOWN) || res.toLowerCase().contains("shutdown")) {
                 Base.writeLog("Printer is in shutdown mode", this.getClass());
+                Base.printPaused = true;
                 this.isONShutdown = true;
                 return "autonomous";
             } else if (res.toLowerCase().contains("ok")) {

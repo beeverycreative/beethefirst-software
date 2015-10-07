@@ -3,6 +3,7 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import java.awt.Window;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -18,10 +19,10 @@ public class PauseMenu extends BaseDialog {
         this.printSplash = (PrintSplashAutonomous) printSplash;
         this.printSplash.setVisible(false);
         initComponents();
+        showNoFilamentLabel();
         setFont();
         setTextLanguage();
         centerOnScreen();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -34,6 +35,7 @@ public class PauseMenu extends BaseDialog {
         lShutdown.setFont(GraphicDesignComponents.getSSProBold("14"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bResume.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLabelNoFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
@@ -49,6 +51,18 @@ public class PauseMenu extends BaseDialog {
         bResume.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line12"));
     }
 
+    private void showNoFilamentLabel() {
+        String coilText;
+        boolean showLabel;
+
+        coilText = machine.getDriver().getCoilText();
+        showLabel = coilText.equals(FilamentControler.NO_FILAMENT)
+                || coilText.equals(FilamentControler.NO_FILAMENT_2);
+
+        jLabelNoFilament.setVisible(showLabel);
+        bResume.setEnabled(!showLabel);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -60,6 +74,8 @@ public class PauseMenu extends BaseDialog {
         bChangeFilament = new javax.swing.JLabel();
         lChangeFilamentDesc = new javax.swing.JLabel();
         lChangeFilament = new javax.swing.JLabel();
+        jLabelNoFilament = new javax.swing.JLabel();
+        jLabelNoFilament.setVisible(false);
         jSeparator1 = new javax.swing.JSeparator();
         pShutdown = new javax.swing.JPanel();
         bShutdown = new javax.swing.JLabel();
@@ -119,6 +135,9 @@ public class PauseMenu extends BaseDialog {
 
         lChangeFilament.setText("Mudar FIlamento");
 
+        jLabelNoFilament.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelNoFilament.setText("NO FILAMENT SET");
+
         javax.swing.GroupLayout pChangeFilamentLayout = new javax.swing.GroupLayout(pChangeFilament);
         pChangeFilament.setLayout(pChangeFilamentLayout);
         pChangeFilamentLayout.setHorizontalGroup(
@@ -127,12 +146,16 @@ public class PauseMenu extends BaseDialog {
                 .addContainerGap()
                 .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                        .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lChangeFilament)
-                            .addComponent(bChangeFilament))
-                        .addGap(591, 591, 591))
+                        .addComponent(lChangeFilament)
+                        .addGap(591, 629, Short.MAX_VALUE))
                     .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                        .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                                .addComponent(bChangeFilament)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabelNoFilament, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
         pChangeFilamentLayout.setVerticalGroup(
@@ -143,7 +166,9 @@ public class PauseMenu extends BaseDialog {
                 .addGap(2, 2, 2)
                 .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bChangeFilament)
+                .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bChangeFilament)
+                    .addComponent(jLabelNoFilament))
                 .addGap(0, 0, 0))
         );
 
@@ -157,17 +182,16 @@ public class PauseMenu extends BaseDialog {
         bShutdown.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bShutdown.setText("Shutdown");
         bShutdown.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
-        bShutdown.setEnabled(false);
         bShutdown.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bShutdown.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bShutdownMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bShutdownMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bShutdownMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bShutdownMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bShutdownMouseEntered(evt);
             }
         });
 
@@ -182,7 +206,7 @@ public class PauseMenu extends BaseDialog {
             .addGroup(pShutdownLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pShutdownLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lShutdownDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lShutdownDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
                     .addGroup(pShutdownLayout.createSequentialGroup()
                         .addGroup(pShutdownLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lShutdown)
@@ -252,6 +276,7 @@ public class PauseMenu extends BaseDialog {
 
         bResume.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bResume.setText("Resume");
+        bResume.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bResume.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bResume.setMaximumSize(new java.awt.Dimension(69, 21));
         bResume.setMinimumSize(new java.awt.Dimension(69, 21));
@@ -309,9 +334,10 @@ public class PauseMenu extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        CancelPrint cancel = new CancelPrint(printSplash);
-        cancel.setVisible(true);
-        //dispose();
+        if (bCancel.isEnabled()) {
+            CancelPrint cancel = new CancelPrint(printSplash);
+            cancel.setVisible(true);
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
@@ -323,8 +349,13 @@ public class PauseMenu extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bShutdownMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMousePressed
-        //machine.runCommand(new replicatorg.drivers.commands.Shutdown());
-        //lTitle.setText("Shutdown");
+        if (bShutdown.isEnabled()) {
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M36"));
+
+            dispose();
+            ShutdownMenu shutdown = new ShutdownMenu(printSplash);
+            shutdown.setVisible(true);
+        }
     }//GEN-LAST:event_bShutdownMousePressed
 
     private void bShutdownMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMouseExited
@@ -336,10 +367,15 @@ public class PauseMenu extends BaseDialog {
     }//GEN-LAST:event_bShutdownMouseEntered
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
-        FilamentInsertion p = new FilamentInsertion();
-        this.setVisible(false);
-        p.setVisible(true);
-        this.setVisible(true);
+        if (bChangeFilament.isEnabled()) {
+            FilamentHeating p = new FilamentHeating();
+            this.setVisible(false);
+            p.setVisible(true);
+            this.setVisible(true);
+
+            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+            showNoFilamentLabel();
+        }
     }//GEN-LAST:event_bChangeFilamentMousePressed
 
     private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
@@ -359,10 +395,12 @@ public class PauseMenu extends BaseDialog {
     }//GEN-LAST:event_bResumeMouseExited
 
     private void bResumeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bResumeMousePressed
-        dispose();
-        printSplash.setVisible(true);
-        printSplash.doResume();
-        Base.bringAllWindowsToFront();
+        if (bResume.isEnabled()) {
+            dispose();
+            printSplash.setVisible(true);
+            printSplash.doResume();
+            Base.bringAllWindowsToFront();
+        }
     }//GEN-LAST:event_bResumeMousePressed
 
 
@@ -371,6 +409,7 @@ public class PauseMenu extends BaseDialog {
     private javax.swing.JLabel bChangeFilament;
     private javax.swing.JLabel bResume;
     private javax.swing.JLabel bShutdown;
+    private javax.swing.JLabel jLabelNoFilament;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lChangeFilament;
     private javax.swing.JLabel lChangeFilamentDesc;

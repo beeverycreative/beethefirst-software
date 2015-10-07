@@ -3,6 +3,7 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import java.awt.Window;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -18,6 +19,7 @@ public class ShutdownMenu extends BaseDialog {
         this.printSplash = (PrintSplashAutonomous) printSplash;
         this.printSplash.setVisible(false);
         initComponents();
+        showNoFilamentLabel();
         setFont();
         setTextLanguage();
         centerOnScreen();
@@ -31,6 +33,7 @@ public class ShutdownMenu extends BaseDialog {
         bChangeFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bResume.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLabelNoFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
@@ -41,6 +44,18 @@ public class ShutdownMenu extends BaseDialog {
         bChangeFilament.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "bFilamentChange"));
         bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
         bResume.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line12"));
+    }
+
+    private void showNoFilamentLabel() {
+        String coilText;
+        boolean showLabel;
+
+        coilText = machine.getDriver().getCoilText();
+        showLabel = coilText.equals(FilamentControler.NO_FILAMENT)
+                || coilText.equals(FilamentControler.NO_FILAMENT_2);
+
+        jLabelNoFilament.setVisible(showLabel);
+        bResume.setEnabled(!showLabel);
     }
 
     @SuppressWarnings("unchecked")
@@ -54,6 +69,8 @@ public class ShutdownMenu extends BaseDialog {
         bChangeFilament = new javax.swing.JLabel();
         lChangeFilamentDesc = new javax.swing.JLabel();
         lChangeFilament = new javax.swing.JLabel();
+        jLabelNoFilament = new javax.swing.JLabel();
+        jLabelNoFilament.setVisible(false);
         pBottom = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         bResume = new javax.swing.JLabel();
@@ -108,6 +125,9 @@ public class ShutdownMenu extends BaseDialog {
 
         lChangeFilament.setText("Mudar FIlamento");
 
+        jLabelNoFilament.setForeground(new java.awt.Color(255, 0, 0));
+        jLabelNoFilament.setText("NO FILAMENT SET");
+
         javax.swing.GroupLayout pChangeFilamentLayout = new javax.swing.GroupLayout(pChangeFilament);
         pChangeFilament.setLayout(pChangeFilamentLayout);
         pChangeFilamentLayout.setHorizontalGroup(
@@ -116,12 +136,16 @@ public class ShutdownMenu extends BaseDialog {
                 .addContainerGap()
                 .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                        .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lChangeFilament)
-                            .addComponent(bChangeFilament))
-                        .addGap(591, 591, 591))
+                        .addComponent(lChangeFilament)
+                        .addGap(591, 629, Short.MAX_VALUE))
                     .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                        .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                                .addComponent(bChangeFilament)
+                                .addGap(28, 28, 28)
+                                .addComponent(jLabelNoFilament, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
         pChangeFilamentLayout.setVerticalGroup(
@@ -132,7 +156,9 @@ public class ShutdownMenu extends BaseDialog {
                 .addGap(2, 2, 2)
                 .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bChangeFilament)
+                .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bChangeFilament)
+                    .addComponent(jLabelNoFilament))
                 .addGap(0, 0, 0))
         );
 
@@ -252,10 +278,16 @@ public class ShutdownMenu extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
-        FilamentInsertion p = new FilamentInsertion();
-        this.setVisible(false);
-        p.setVisible(true);
-        this.setVisible(true);
+        if (bChangeFilament.isEnabled()) {
+            FilamentHeating p = new FilamentHeating();
+            machine.getDriver().dispatchCommand("G28");
+            this.setVisible(false);
+            p.setVisible(true);
+            this.setVisible(true);
+
+            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+            showNoFilamentLabel();
+        }
     }//GEN-LAST:event_bChangeFilamentMousePressed
 
     private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
@@ -288,6 +320,7 @@ public class ShutdownMenu extends BaseDialog {
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bChangeFilament;
     private javax.swing.JLabel bResume;
+    private javax.swing.JLabel jLabelNoFilament;
     private javax.swing.JLabel lChangeFilament;
     private javax.swing.JLabel lChangeFilamentDesc;
     private javax.swing.JLabel lTitle;

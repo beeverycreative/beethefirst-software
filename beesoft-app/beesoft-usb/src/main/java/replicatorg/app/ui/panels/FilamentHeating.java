@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -173,7 +174,8 @@ public class FilamentHeating extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Waiting for extruder to reach the target temperature, " + temperatureGoal, this.getClass());
         showMessage();
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(temperatureGoal));
+        //machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(temperatureGoal));
+        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal + 5));
 
     }
 
@@ -184,7 +186,12 @@ public class FilamentHeating extends BaseDialog {
 
     private void evaluateInitialConditions() {
         achievement = false;
-        temperatureGoal = 220;
+        temperatureGoal = FilamentControler.getColorTemperature(
+                machine.getDriver().getCoilText(),
+                "medium",
+                Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
+        );
+
         Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
 
@@ -202,22 +209,26 @@ public class FilamentHeating extends BaseDialog {
     }
 
     private void doCancel() {
-        Base.writeLog("Filament heating canceled", this.getClass());
+        if (Base.printPaused == false) {
+            Base.writeLog("Filament heating canceled", this.getClass());
 
-        dispose();
-        Base.THREAD_KEEP_ALIVE = true;
-        finalizeHeat();
-        updateThread.stop();
-        Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+            dispose();
+            Base.THREAD_KEEP_ALIVE = true;
+            finalizeHeat();
+            updateThread.stop();
+            Base.bringAllWindowsToFront();
+            Base.maintenanceWizardOpen = false;
+            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+            Base.getMainWindow().setEnabled(true);
 
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
+            if (ProperDefault.get("maintenance").equals("1")) {
+                ProperDefault.remove("maintenance");
+            }
+        } else {
+            Base.writeLog("Filament heating canceled", this.getClass());
+            dispose();
         }
-
     }
 
     @SuppressWarnings("unchecked")

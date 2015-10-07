@@ -281,6 +281,38 @@ public class FilamentControler {
         return result;
     }
 
+    public static double getColorTemperature(String coilCode, String resolution, String printerId) {
+        double result = 220; //Default
+
+        if (filamentList == null) {
+            fetchFilaments();
+        }
+
+        if (!filamentList.isEmpty()) {
+            for (Filament fil : filamentList) {
+                if (fil.getName().equals(coilCode)) {
+
+                    for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                        if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
+
+                            for (Resolution res : sc.getResolutions()) {
+                                if (res.getType().equals(resolution)) {
+                                    for (SlicerParameter parameter : res.getParameters()) {
+                                        if (parameter.getName().equals("print_temperature")) {
+                                            return Double.parseDouble(parameter.getValue());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Get the Hash map with the filament settings for a specific resolution and
      * printer

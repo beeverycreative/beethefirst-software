@@ -126,14 +126,19 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lChangeFilament" min="-2" max="-2" attributes="0"/>
-                                  <Component id="bChangeFilament" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="591" max="-2" attributes="0"/>
+                              <Component id="lChangeFilament" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="591" pref="629" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="lChangeFilamentDesc" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lChangeFilamentDesc" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="bChangeFilament" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="jLabelNoFilament" min="-2" pref="114" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -148,7 +153,10 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="lChangeFilamentDesc" min="-2" pref="50" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="bChangeFilament" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="bChangeFilament" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelNoFilament" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -178,6 +186,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Mudar FIlamento"/>
               </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabelNoFilament">
+              <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="NO FILAMENT SET"/>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jLabelNoFilament.setVisible(false);"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
