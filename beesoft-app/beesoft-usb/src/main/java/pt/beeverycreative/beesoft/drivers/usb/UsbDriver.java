@@ -99,7 +99,7 @@ public class UsbDriver extends DriverBaseImplementation {
             if (usbRootHub == null) {
                 usbRootHub = usbServices.getRootUsbHub();
             }
-            
+
         } catch (UsbException ex) {
             setInitialized(false);
             //Base.writeLog("*initUsbDevice* <UsbException> " + ex.getMessage(), this.getClass());
@@ -212,6 +212,7 @@ public class UsbDriver extends DriverBaseImplementation {
      * @param device USB device from descriptor.
      */
     private void InitUsbDevice(UsbDevice device) {
+
         try {
             if (device.isUsbHub()) {
                 UsbHub hub = (UsbHub) device;
@@ -221,11 +222,13 @@ public class UsbDriver extends DriverBaseImplementation {
                 }
 
             } else {
-
+                addIfCompatible(device);
                 //Try to add using the new way, then using the old way.
-                if (addIfCompatible(device) == false) {
-                    addIfCompatible_Legacy(device);
-                }
+                /*
+                 if (addIfCompatible(device) == false) {
+                 addIfCompatible_Legacy(device);
+                 }
+                 */
             }
         } catch (UsbException ex) {
             m_usbDevice = null;
@@ -243,32 +246,35 @@ public class UsbDriver extends DriverBaseImplementation {
 
         UsbDeviceDescriptor descriptor;
         short idVendor, idProduct;
-        String manufacturerString, productString, serialNumberString, sDevice;
+        String manufacturerString, productString;
+        
+        if(device.isConfigured() == false) {
+            return false;
+        }
 
         descriptor = device.getUsbDeviceDescriptor();
         idVendor = descriptor.idVendor();
         idProduct = descriptor.idProduct();
+
+        // verify if it's one of BEE's printers, else ignore it
+        // getting more information without knowing what we're dealing with
+        // can cause ugly libusb crashes
+        if (PrinterInfo.getDevice(idVendor + ":" + idProduct) == PrinterInfo.UNKNOWN) {
+            return false;
+        }
+
         manufacturerString = device.getManufacturerString();
         productString = device.getProductString();
         //serialNumberString = device.getSerialNumberString().trim();
-        sDevice = idVendor + ":" + idProduct;
-
-        // candidate
-        connectedDevice = PrinterInfo.getDevice(sDevice);
-
-        if (connectedDevice == PrinterInfo.UNKNOWN) {
-            return false;
-        } else {
-            Base.writeLog("*** Adding to candidate list ***", this.getClass());
-            Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
-            Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
-            Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
-            Base.writeLog("Product string: " + productString, this.getClass());
-            //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
-            Base.writeLog("********************************", this.getClass());
-            m_usbDeviceList.add(device);
-            return true;
-        }
+        Base.writeLog("*** Adding to candidate list ***", this.getClass());
+        Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
+        Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
+        Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
+        Base.writeLog("Product string: " + productString, this.getClass());
+        //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
+        Base.writeLog("********************************", this.getClass());
+        m_usbDeviceList.add(device);
+        return true;
     }
 
     public boolean addIfCompatible_Legacy(UsbDevice device) throws UsbException, UnsupportedEncodingException {
