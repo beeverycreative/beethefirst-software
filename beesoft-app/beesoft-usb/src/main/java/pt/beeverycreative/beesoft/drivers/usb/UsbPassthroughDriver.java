@@ -105,6 +105,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String driverErrorDescription;
     private boolean stopTransfer = false;
     private static boolean bootedFromBootloader = false;
+    private static boolean backupConfig = false;
+    private static String backupCoilText = "";
+    private static double backupZVal = -1;
 
     public enum COM {
 
@@ -300,23 +303,33 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 firmwareOutDate.setMessage("FirmwareOutDateVersion");
                 firmwareOutDate.setVisible(true);
 
+                Base.getMainWindow().setEnabled(false);
                 // Sleep forever, until restart.
                 while (true) {
                     hiccup();
-                    Base.getMainWindow().setEnabled(false);
                 }
 
             } //no need for else
 
             setBusy(true);
-            updateCoilText();
+
+            if (backupConfig) {
+                setCoilText(backupCoilText);
+                dispatchCommand("M604 Z" + backupZVal);
+                backupConfig = false;
+                backupZVal = -1;
+                backupCoilText = "";
+            } else {
+                updateCoilText();
+            }
+
             Base.isPrinting = false;
 
             dispatchCommand("M104 S0", COM.DEFAULT); //Extruder and Table heat
             dispatchCommand("G92", COM.DEFAULT);
 
             //Set PID values
-            dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
+            //dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
 
             dispatchCommand("G28 Z", COM.BLOCK);
             dispatchCommand("G28 X Y", COM.BLOCK);
@@ -2843,6 +2856,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("No firmware file found.");
             return -1;
         } else {
+
+            backupConfig();
+
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
             hiccup(QUEUE_WAIT, 0);
             readResponse();
@@ -2874,6 +2890,72 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
         return 0; // correct this
+    }
+
+    private boolean backupConfig() {
+        Base.writeLog("Acquiring Z value and loaded filament before flashing new firmware", this.getClass());
+
+        // change into firmware
+        dispatchCommand("M630");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // reestablish connection
+        if (reestablishConnection() == false) {
+            return false;
+        }
+
+        // request data
+        readZValue();
+        updateCoilText();
+        backupZVal = machine.getzValue();
+        backupCoilText = machine.getCoilText();
+
+        // change back into bootloader
+        dispatchCommand("M609");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (reestablishConnection() == false) {
+            Base.writeLog("Couldn't go back to bootloader after obtaining data from firmware, requesting user to restart", this.getClass());
+
+            // Warn user to restart BTF and restart BEESOFT.
+            Warning firmwareOutDate = new Warning("close");
+            firmwareOutDate.setMessage("FirmwareOutDateVersion");
+            firmwareOutDate.setVisible(true);
+
+            Base.getMainWindow().setEnabled(false);
+            // Sleep forever, until restart.
+            while (true) {
+                hiccup();
+            }
+        }
+
+        backupConfig = true;
+        return true;
+
+    }
+
+    private boolean reestablishConnection() {
+        try {
+            closePipe(pipes);
+            pipes = null;
+            InitUsbDevice();
+            pipes = GetPipe(m_usbDevice);
+            openPipe(pipes);
+        } catch (Exception ex) {
+            return false;
+        }
+
+        return true;
     }
 
     private void setSerial(String serial) {
