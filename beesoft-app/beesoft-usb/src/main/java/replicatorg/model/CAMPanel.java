@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -782,7 +781,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //            v.startView();  
 
         universe.getViewingPlatform().setNominalViewingTransform();
-        universe.getViewer().getView().setSceneAntialiasingEnable(true);
         universe.getViewer().getView().setFrontClipDistance(1d);
         universe.getViewer().getView().setBackClipDistance(1000d);
         universe.getViewer().getView().setMinimumFrameCycleTime(10);

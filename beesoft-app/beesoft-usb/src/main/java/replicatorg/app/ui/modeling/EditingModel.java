@@ -33,7 +33,6 @@ import replicatorg.machine.model.BuildVolume;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
-import replicatorg.util.Units_and_Numbers;
 
 /**
  * A wrapper for displaying and editing an underlying model object.

@@ -999,7 +999,7 @@ public class Base {
         // Use the default system proxy settings
         System.setProperty("java.net.useSystemProxies", "true");
         // Use antialiasing implicitly
-        System.setProperty("j3d.implicitAntialiasing", "true");
+        // System.setProperty("j3d.implicitAntialiasing", "true");
 
         // MAC OS X ONLY:
         // register a temporary/early version of the mrj open document handler,
