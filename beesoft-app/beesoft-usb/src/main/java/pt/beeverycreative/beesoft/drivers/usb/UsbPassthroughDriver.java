@@ -306,7 +306,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.getMainWindow().setEnabled(false);
                 // Sleep forever, until restart.
                 while (true) {
-                    hiccup();
+                    hiccup(100, 0);
                 }
 
             } //no need for else
@@ -330,7 +330,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             //Set PID values
             //dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
-
             dispatchCommand("G28 Z", COM.BLOCK);
             dispatchCommand("G28 X Y", COM.BLOCK);
 
@@ -2898,12 +2897,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // change into firmware
         dispatchCommand("M630");
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         // reestablish connection
         if (reestablishConnection() == false) {
             return false;
@@ -2918,12 +2911,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // change back into bootloader
         dispatchCommand("M609");
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         if (reestablishConnection() == false) {
             Base.writeLog("Couldn't go back to bootloader after obtaining data from firmware, requesting user to restart", this.getClass());
 
@@ -2935,7 +2922,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.getMainWindow().setEnabled(false);
             // Sleep forever, until restart.
             while (true) {
-                hiccup();
+                hiccup(500, 0);
             }
         }
 
@@ -2948,7 +2935,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         try {
             closePipe(pipes);
             pipes = null;
-            InitUsbDevice();
+            m_usbDevice = null;
+            while (m_usbDevice == null) {
+                InitUsbDevice();
+                hiccup(100, 0);
+            }
             pipes = GetPipe(m_usbDevice);
             openPipe(pipes);
         } catch (Exception ex) {
