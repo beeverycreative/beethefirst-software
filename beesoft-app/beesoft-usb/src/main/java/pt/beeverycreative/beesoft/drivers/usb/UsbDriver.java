@@ -27,6 +27,7 @@ import javax.usb.UsbIrp;
 import javax.usb.UsbNotClaimedException;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
+import javax.usb.event.UsbServicesListener;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.ProperDefault;
@@ -57,6 +58,9 @@ public class UsbDriver extends DriverBaseImplementation {
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
 
+    private static UsbServices usbServices = null;
+    private static UsbHub usbRootHub = null;
+
     protected PrinterInfo connectedDevice = PrinterInfo.UNKNOWN;
 
     //check this, maybe delete
@@ -86,6 +90,26 @@ public class UsbDriver extends DriverBaseImplementation {
      *
      */
     protected UsbDriver() {
+
+        try {
+            if (usbServices == null) {
+                usbServices = UsbHostManager.getUsbServices();
+            }
+
+            if (usbRootHub == null) {
+                usbRootHub = usbServices.getRootUsbHub();
+            }
+            
+        } catch (UsbException ex) {
+            setInitialized(false);
+            //Base.writeLog("*initUsbDevice* <UsbException> " + ex.getMessage(), this.getClass());
+        } catch (SecurityException ex) {
+            setInitialized(false);
+            Base.writeLog("*initUsbDevice* <SecurityException> " + ex.getMessage(), this.getClass());
+        } catch (UsbDisconnectedException ex) {
+            setInitialized(false);
+            Base.writeLog("*initUsbDevice* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+        }
     }
 
     /**
@@ -188,9 +212,7 @@ public class UsbDriver extends DriverBaseImplementation {
      * @param device USB device from descriptor.
      */
     private void InitUsbDevice(UsbDevice device) {
-
         try {
-
             if (device.isUsbHub()) {
                 UsbHub hub = (UsbHub) device;
 
@@ -302,20 +324,7 @@ public class UsbDriver extends DriverBaseImplementation {
     public void InitUsbDevice() {
         m_usbDeviceList.clear();
 
-        try {
-            UsbServices services = UsbHostManager.getUsbServices();
-            UsbHub rootHub = services.getRootUsbHub();
-            InitUsbDevice(rootHub);
-        } catch (UsbException ex) {
-            setInitialized(false);
-            //Base.writeLog("*initUsbDevice* <UsbException> " + ex.getMessage(), this.getClass());
-        } catch (SecurityException ex) {
-            setInitialized(false);
-            Base.writeLog("*initUsbDevice* <SecurityException> " + ex.getMessage(), this.getClass());
-        } catch (UsbDisconnectedException ex) {
-            setInitialized(false);
-            Base.writeLog("*initUsbDevice* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-        }
+        InitUsbDevice(usbRootHub);
 
         if (m_usbDeviceList.isEmpty()) {
             m_usbDevice = null;
@@ -400,11 +409,17 @@ public class UsbDriver extends DriverBaseImplementation {
      * @return USB Pipes with Endpoints set.
      */
     protected UsbPipes GetPipe(UsbDevice device) {
-        
+
         UsbPipes returnPipes;
+        UsbConfiguration config;
 
         if (device != null) {
-            UsbConfiguration config = device.getActiveUsbConfiguration();
+            if (device.isConfigured()) {
+                config = device.getActiveUsbConfiguration();
+            } else {
+                Base.writeLog("Couldn't obtain valid USB configuration. Obtaining pipes failed", this.getClass());
+                return null;
+            }
 
             if (pipes == null || !testPipes(pipes)) {
                 Base.writeLog("No pipes were found, or testPipes failed. Creating new ones", this.getClass());
@@ -413,7 +428,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 Base.writeLog("testPipes returned true, returning current pipes", this.getClass());
                 return pipes;
             }
-            
+
             List interfaces = config.getUsbInterfaces();
             for (Object ifaceObj : interfaces) {
                 UsbInterface iface = (UsbInterface) ifaceObj;
@@ -439,7 +454,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         returnPipes.setUsbPipeRead(endpoint.getUsbPipe());
                     }
                 }
-                
+
                 if (returnPipes.getUsbPipeRead() != null && returnPipes.getUsbPipeWrite() != null) {
                     Base.writeLog("Returning new pipes", this.getClass());
                     return returnPipes;
