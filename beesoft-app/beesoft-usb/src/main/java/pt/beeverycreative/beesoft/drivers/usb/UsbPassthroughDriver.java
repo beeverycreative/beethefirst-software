@@ -192,7 +192,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void closeFeedback() {
-        if (feedbackThread.isAlive()) {
+        if (feedbackThread != null && feedbackThread.isAlive()) {
             feedbackThread.cancel();
         }
         feedbackWindow.dispose();
@@ -216,7 +216,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         if (status.contains("bootloader")) {
             // DELETE THIS, TESTING PURPOSES
-            dispatchCommand("M114 A0");
+            // dispatchCommand("M114 A0");
 
             bootedFromBootloader = true;
             updateBootloaderInfo();
@@ -2898,7 +2898,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             feedbackWindow.setFeedback1("Flashing firmware. Please don't disconnect your printer...");
             //FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
             //feedbackThread.start();
-            backupConfig();
+            //backupConfig();
             Base.writeLog("Carrying on with firmware flash", this.getClass());
 
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
