@@ -409,9 +409,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // wait till we're initialized
         if (!isInitialized()) {
             Base.writeLog("Initializing search for printer.", this.getClass());
+            establishConnection();
+            /*
             while (!isInitialized()) {
                 try {
                     if (m_usbDevice != null) {
+                        
                         feedbackWindow.setFeedback1("Printer detected");
                         feedbackWindow.setFeedback2("Establishing connection with printer...");
                         feedbackThread = new FeedbackThread(feedbackWindow);
@@ -459,6 +462,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
             }
+            */
             Base.writeLog("USB Driver initialized", this.getClass());
         }
 
@@ -2884,6 +2888,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             //FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
             //feedbackThread.start();
             backupConfig();
+            Base.writeLog("Carrying on with firmware flash", this.getClass());
 
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
             hiccup(QUEUE_WAIT, 0);
@@ -2938,7 +2943,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommand("M630");
 
         // reestablish connection
-        if (reestablishConnection() == false) {
+        if (establishConnection() == false) {
             return false;
         }
 
@@ -2951,7 +2956,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // change back into bootloader
         dispatchCommand("M609");
 
-        if (reestablishConnection() == false) {
+        if (establishConnection() == false) {
             Base.writeLog("Couldn't go back to bootloader after obtaining data from firmware, requesting user to restart", this.getClass());
 
             // Warn user to restart BTF and restart BEESOFT.
@@ -2966,17 +2971,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
+        Base.writeLog("Acquired Z value and loaded filament with success!", this.getClass());
         backupConfig = true;
         return true;
 
     }
 
-    private boolean reestablishConnection() {
+    private boolean establishConnection() {
         try {
             boolean ready;
 
             ready = false;
-            closePipe(pipes);
+
+            if (pipes != null) {
+                closePipe(pipes);
+            }
 
             do {
                 pipes = null;
