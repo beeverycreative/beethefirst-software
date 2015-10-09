@@ -248,8 +248,10 @@ public class Base {
     public static boolean maintenanceWizardOpen = false;
     public static ArrayList<Thread> systemThreads;
 
-    private static final BufferedWriter logBW = initLog("/BEELOG.txt");
-    private static final BufferedWriter comLogBW = initLog("/comLog.txt");
+    private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
+    private static final File comLogFile = new File(getAppDataDirectory().toString() + "/comLog.txt");
+    private static final BufferedWriter logBW = initLog(BEELOGfile);
+    private static final BufferedWriter comLogBW = initLog(comLogFile);
 
     /**
      * Path of filename opened on the command line, or via the MRJ open document
@@ -312,6 +314,30 @@ public class Base {
         try {
             file = new File(getAppDataDirectory().toString() + "/" + fileName);
 
+            if (file.exists()) {
+                file.delete();
+            }
+
+            fos = new FileOutputStream(file);
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            bw = new BufferedWriter(osw);
+
+            return bw;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    private static BufferedWriter initLog(File file) {
+        BufferedWriter bw;
+        OutputStreamWriter osw;
+        FileOutputStream fos;
+
+        try {
             if (file.exists()) {
                 file.delete();
             }
@@ -497,6 +523,11 @@ public class Base {
     }
 
     public static void writeLog(String message) {
+
+        if (BEELOGfile.length() > 10000000) {
+            return;
+        }
+
         /**
          * *** Date and Time procedure ****
          */
@@ -514,6 +545,10 @@ public class Base {
     }
 
     public static void writeLog(String message, Class logClass) {
+
+        if (BEELOGfile.length() > 10000000) {
+            return;
+        }
 
         if (logClass == null) {
             writeLog(message);
@@ -570,6 +605,10 @@ public class Base {
      }
      */
     public static void writeComLog(long timeStamp, String message) {
+
+        if (comLogFile.length() > 10000000) {
+            return;
+        }
 
         try {
             if (!message.equals("\n")) {
@@ -1058,15 +1097,14 @@ public class Base {
         language = ProperDefault.get("language").toLowerCase();
 
         systemThreads = new ArrayList<Thread>();
-        
-        /*
-        try {
-            System.setErr(new PrintStream(new FileOutputStream(getAppDataDirectory().toString() + "/err.txt")));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
 
+        /*
+         try {
+         System.setErr(new PrintStream(new FileOutputStream(getAppDataDirectory().toString() + "/err.txt")));
+         } catch (FileNotFoundException ex) {
+         Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+         }
+         */
         // set the look and feel before opening the window
         try {
             if (Base.isMacOS()) {
