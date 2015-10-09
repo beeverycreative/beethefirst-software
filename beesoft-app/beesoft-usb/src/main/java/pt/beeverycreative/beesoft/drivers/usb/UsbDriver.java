@@ -233,14 +233,14 @@ public class UsbDriver extends DriverBaseImplementation {
             return false;
         }
 
-        manufacturerString = device.getManufacturerString();
-        productString = device.getProductString();
+        //manufacturerString = device.getManufacturerString();
+        //productString = device.getProductString();
         //serialNumberString = device.getSerialNumberString().trim();
         Base.writeLog("*** Adding to candidate list ***", this.getClass());
         Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
         Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
-        Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
-        Base.writeLog("Product string: " + productString, this.getClass());
+        //Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
+        //Base.writeLog("Product string: " + productString, this.getClass());
         //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
         Base.writeLog("********************************", this.getClass());
         m_usbDeviceList.add(device);
@@ -444,7 +444,7 @@ public class UsbDriver extends DriverBaseImplementation {
         readUsbIrp.setAcceptShortPacket(true);
 
         try {
-
+            
             if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
                 pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
             }
@@ -452,7 +452,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 pipes.open();
             }
 
-            if (!isBootloader) {
+            //if (!isBootloader) {
                 if (!transferMode) {
                     if (pipes != null) {
                         UsbPipe pipeWrite = pipes.getUsbPipeWrite();
@@ -463,7 +463,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         }
                     }
                 }
-            }
+            //}
 
         } catch (UsbException ex) {
             Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());

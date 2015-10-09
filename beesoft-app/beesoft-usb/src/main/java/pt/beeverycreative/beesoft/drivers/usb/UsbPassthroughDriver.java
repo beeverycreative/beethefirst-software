@@ -2973,15 +2973,32 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private boolean reestablishConnection() {
         try {
+            boolean ready;
+
+            ready = false;
             closePipe(pipes);
-            pipes = null;
-            m_usbDevice = null;
-            while (m_usbDevice == null) {
-                InitUsbDevice();
-                hiccup(100, 0);
-            }
-            pipes = GetPipe(m_usbDevice);
-            openPipe(pipes);
+
+            do {
+                pipes = null;
+                m_usbDevice = null;
+                while (m_usbDevice == null) {
+                    InitUsbDevice();
+                    hiccup(100, 0);
+                }
+
+                pipes = GetPipe(m_usbDevice);
+                
+                if (pipes != null) {
+                    openPipe(pipes);
+                } else {
+                    continue;
+                }
+                
+                if (testPipes(pipes)) {
+                    ready = true;
+                }
+            } while (ready == false);
+
         } catch (Exception ex) {
             return false;
         }
