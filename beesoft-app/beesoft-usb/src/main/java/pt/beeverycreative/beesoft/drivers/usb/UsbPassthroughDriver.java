@@ -196,6 +196,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             feedbackThread.cancel();
         }
         feedbackWindow.dispose();
+        feedbackThread = null;
     }
 
     /**
@@ -411,58 +412,58 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Initializing search for printer.", this.getClass());
             establishConnection();
             /*
-            while (!isInitialized()) {
-                try {
-                    if (m_usbDevice != null) {
+             while (!isInitialized()) {
+             try {
+             if (m_usbDevice != null) {
                         
-                        feedbackWindow.setFeedback1("Printer detected");
-                        feedbackWindow.setFeedback2("Establishing connection with printer...");
-                        feedbackThread = new FeedbackThread(feedbackWindow);
+             feedbackWindow.setFeedback1("Printer detected");
+             feedbackWindow.setFeedback2("Establishing connection with printer...");
+             feedbackThread = new FeedbackThread(feedbackWindow);
 
-                        if (feedbackThread.isAlive() == false) {
-                            feedbackThread.start();
-                        }
+             if (feedbackThread.isAlive() == false) {
+             feedbackThread.start();
+             }
 
-                        Base.writeLog("Device ready to be used, creating pipes...", this.getClass());
-                        pipes = GetPipe(m_usbDevice);
+             Base.writeLog("Device ready to be used, creating pipes...", this.getClass());
+             pipes = GetPipe(m_usbDevice);
 
-                        if (pipes != null) {
-                            Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
-                            openPipe(pipes);
-                        } else {
-                            Base.writeLog("Pipes were null, initiating USB device again", this.getClass());
-                            m_usbDevice = null;
-                        }
+             if (pipes != null) {
+             Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
+             openPipe(pipes);
+             } else {
+             Base.writeLog("Pipes were null, initiating USB device again", this.getClass());
+             m_usbDevice = null;
+             }
 
-                    } else {
-                        //Base.writeLog("No printer found. Waiting 100 ms before trying again...", this.getClass());
+             } else {
+             //Base.writeLog("No printer found. Waiting 100 ms before trying again...", this.getClass());
 
-                        if (pipes != null) {
-                            if (pipes.isOpen()) {
-                                closePipe(pipes);
-                                pipes = null;
-                            }
-                        }
+             if (pipes != null) {
+             if (pipes.isOpen()) {
+             closePipe(pipes);
+             pipes = null;
+             }
+             }
 
-                        InitUsbDevice();
-                        try {
-                            Thread.sleep(100); // sleep 100 ms
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                } catch (Exception e) {
-                    try {
-                        Base.writeLog("Unknown exception on initialize()", this.getClass());
-                        e.printStackTrace();
-                        Thread.sleep(1000); // sleep 1 second
-                    } catch (InterruptedException ex) {
+             InitUsbDevice();
+             try {
+             Thread.sleep(100); // sleep 100 ms
+             } catch (InterruptedException ex) {
+             Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+             }
+             }
+             } catch (Exception e) {
+             try {
+             Base.writeLog("Unknown exception on initialize()", this.getClass());
+             e.printStackTrace();
+             Thread.sleep(1000); // sleep 1 second
+             } catch (InterruptedException ex) {
 
-                    }
-                }
+             }
+             }
 
-            }
-            */
+             }
+             */
             Base.writeLog("USB Driver initialized", this.getClass());
         }
 
@@ -2883,6 +2884,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("No firmware file found.");
             return -1;
         } else {
+            
+            if(feedbackThread != null) {
+                feedbackThread = null;
+            }
+
+            feedbackThread = new FeedbackThread(feedbackWindow);
+
+            if (feedbackThread.isAlive() == false) {
+                feedbackThread.start();
+            }
 
             feedbackWindow.setFeedback1("Flashing firmware. Please don't disconnect your printer...");
             //FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
