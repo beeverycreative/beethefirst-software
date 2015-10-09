@@ -160,7 +160,7 @@ public class ShutdownMenu extends BaseDialog {
         pChangeFilamentLayout.setVerticalGroup(
             pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(30, 30, 30)
                 .addComponent(lChangeFilament)
                 .addGap(2, 2, 2)
                 .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)

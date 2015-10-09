@@ -121,7 +121,7 @@ public class PauseMenu extends BaseDialog {
                 .addComponent(lTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lSubTitle)
-                .addContainerGap())
+                .addGap(30, 30, 30))
         );
 
         pChangeFilament.setBackground(new java.awt.Color(248, 248, 248));
