@@ -650,19 +650,23 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
 
         <PausePanel>
             <Title value="Pause"/>
+            <SubTitle value="You can resume or cancel your print." />
             <FilamentTitle value="Filament change"/>
             <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
             <bFilamentChange value="Change filament now"/>
             <bShutdown value="Shutdown now"/>
-            <ShutdownIntro value="Coming soon!"/>
+            <ShutdownIntro value="This operation saves the print state. You can power off your printer and resume printing at a later time."/>
             <ShutdownTitle value="Shutdown"/>
+            <NoFilament value="NO FILAMENT SET"/>
         </PausePanel>
 
         <ShutdownPanel>
             <Title value="Shutdown"/>
+            <SubTitle value="You can power off your printer. Alternatively you can resume or cancel your print."/>
             <FilamentTitle value="Filament change"/>
             <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
             <bFilamentChange value="Change filament now"/>
+            <NoFilament value = "NO FILAMENT SET" />
         </ShutdownPanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       

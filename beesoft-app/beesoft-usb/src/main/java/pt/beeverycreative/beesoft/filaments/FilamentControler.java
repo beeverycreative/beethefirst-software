@@ -32,7 +32,7 @@ public class FilamentControler {
     private static PrinterInfo currentPrinterFilamentList = null;
 
     public static String NO_FILAMENT = "none";
-    public static String NO_FILAMENT_2 = "_no_file";
+    public static String NO_FILAMENT_2 = "no_file";
     public static String NO_FILAMENT_CODE = "A000";
 
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";

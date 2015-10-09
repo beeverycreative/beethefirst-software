@@ -27,6 +27,7 @@ public class PauseMenu extends BaseDialog {
 
     private void setFont() {
         lTitle.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        lSubTitle.setFont(GraphicDesignComponents.getSSProRegular("12"));
         lChangeFilament.setFont(GraphicDesignComponents.getSSProBold("14"));
         lChangeFilamentDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
         bChangeFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -41,12 +42,14 @@ public class PauseMenu extends BaseDialog {
     private void setTextLanguage() {
         int fileKey = 1;
         lTitle.setText(Languager.getTagValue(fileKey, "PausePanel", "Title").toUpperCase());
+        lSubTitle.setText(Languager.getTagValue(fileKey, "PausePanel", "SubTitle"));
         lChangeFilament.setText(Languager.getTagValue(fileKey, "PausePanel", "FilamentTitle"));
         lChangeFilamentDesc.setText(Languager.getTagValue(fileKey, "PausePanel", "FilamentIntro"));
         bChangeFilament.setText(Languager.getTagValue(fileKey, "PausePanel", "bFilamentChange"));
         bShutdown.setText(Languager.getTagValue(fileKey, "PausePanel", "bShutdown"));
         lShutdownDesc.setText(Languager.getTagValue(fileKey, "PausePanel", "ShutdownIntro"));
         lShutdown.setText(Languager.getTagValue(fileKey, "PausePanel", "ShutdownTitle"));
+        jLabelNoFilament.setText(Languager.getTagValue(fileKey, "PausePanel", "NoFilament"));
         bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
         bResume.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line12"));
     }
@@ -70,6 +73,7 @@ public class PauseMenu extends BaseDialog {
         pMaintenance = new javax.swing.JPanel();
         pTop = new javax.swing.JPanel();
         lTitle = new javax.swing.JLabel();
+        lSubTitle = new javax.swing.JLabel();
         pChangeFilament = new javax.swing.JPanel();
         bChangeFilament = new javax.swing.JLabel();
         lChangeFilamentDesc = new javax.swing.JLabel();
@@ -87,7 +91,7 @@ public class PauseMenu extends BaseDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(772, 324));
+        setPreferredSize(new java.awt.Dimension(772, 334));
         setResizable(false);
 
         pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
@@ -97,13 +101,17 @@ public class PauseMenu extends BaseDialog {
         lTitle.setText("Pause");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
+        lSubTitle.setText("Subtitle");
+
         javax.swing.GroupLayout pTopLayout = new javax.swing.GroupLayout(pTop);
         pTop.setLayout(pTopLayout);
         pTopLayout.setHorizontalGroup(
             pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pTopLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lTitle)
+                .addGroup(pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lTitle)
+                    .addComponent(lSubTitle))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pTopLayout.setVerticalGroup(
@@ -111,7 +119,9 @@ public class PauseMenu extends BaseDialog {
             .addGroup(pTopLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lTitle)
-                .addGap(13, 13, 13))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lSubTitle)
+                .addContainerGap())
         );
 
         pChangeFilament.setBackground(new java.awt.Color(248, 248, 248));
@@ -161,7 +171,7 @@ public class PauseMenu extends BaseDialog {
         pChangeFilamentLayout.setVerticalGroup(
             pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addComponent(lChangeFilament)
                 .addGap(2, 2, 2)
                 .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -415,6 +425,7 @@ public class PauseMenu extends BaseDialog {
     private javax.swing.JLabel lChangeFilamentDesc;
     private javax.swing.JLabel lShutdown;
     private javax.swing.JLabel lShutdownDesc;
+    private javax.swing.JLabel lSubTitle;
     private javax.swing.JLabel lTitle;
     private javax.swing.JPanel pBottom;
     private javax.swing.JPanel pChangeFilament;

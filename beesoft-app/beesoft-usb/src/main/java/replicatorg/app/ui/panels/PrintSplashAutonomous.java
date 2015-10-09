@@ -285,7 +285,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
     protected void disableButtons() {
         bOk.setEnabled(false);
-        bPause.setEnabled(false);
+        bPause.setVisible(false);
+        bCancel.setEnabled(false);
     }
 
     protected void restoreAfterPauseResume() {
@@ -296,7 +297,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         machine.resumewatch();
         machine.unpause();
         bOk.setEnabled(true);
-        bPause.setEnabled(true);
+        bPause.setVisible(true);
+        bCancel.setEnabled(true);
         tInfo6.setText("");
         tInfo7.setText("");
         resetProgressBar();
@@ -569,11 +571,13 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public void setHeatingInfo() {
+        bPause.setVisible(false);
         tInfo7.setVisible(false);
         tRemaining.setVisible(true);
         tEstimation.setVisible(true);
         vRemaining.setVisible(false);
         vEstimation.setVisible(false);
+        bCancel.setEnabled(true);
         tInfo2.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
         tRemaining.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage2"));
@@ -1445,8 +1449,9 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         if (bPause.isEnabled()) {
             final PrintSplashAutonomous parent = this;
 
-            bPause.setEnabled(false);
+            bPause.setVisible(false);
             bOk.setEnabled(false);
+            bCancel.setEnabled(false);
 
             setPreparingNewFilamentInfo();
             Base.printPaused = true;
