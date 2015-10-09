@@ -2987,19 +2987,24 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 pipes = GetPipe(m_usbDevice);
-                
-                if (pipes != null) {
-                    openPipe(pipes);
-                } else {
-                    continue;
-                }
-                
-                if (testPipes(pipes)) {
-                    ready = true;
+
+                try {
+                    if (pipes != null) {
+                        openPipe(pipes);
+                    } else {
+                        continue;
+                    }
+
+                    if (testPipes(pipes)) {
+                        ready = true;
+                    }
+                } catch (UsbDisconnectedException ex) {
+                    ready = false;
                 }
             } while (ready == false);
 
         } catch (Exception ex) {
+            Base.writeLog("Exception on reestablishConnection()");
             return false;
         }
 
