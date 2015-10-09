@@ -2856,7 +2856,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return -1;
         } else {
 
-            backupConfig();
+            //backupConfig();
 
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
             hiccup(QUEUE_WAIT, 0);
