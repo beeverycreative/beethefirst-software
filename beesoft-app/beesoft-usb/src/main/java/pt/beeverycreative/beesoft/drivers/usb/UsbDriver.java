@@ -26,11 +26,9 @@ import javax.usb.UsbIrp;
 import javax.usb.UsbNotClaimedException;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
-import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
-import replicatorg.app.ui.panels.Feedback;
 
 import replicatorg.drivers.DriverBaseImplementation;
 
@@ -47,13 +45,13 @@ import replicatorg.drivers.DriverBaseImplementation;
  */
 public class UsbDriver extends DriverBaseImplementation {
 
-    protected static UsbDevice m_usbDevice;
+    protected UsbDevice m_usbDevice;
 
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
 
-    private static UsbServices usbServices = null;
-    private static UsbHub usbRootHub = null;
+    private UsbServices usbServices = null;
+    private UsbHub usbRootHub = null;
 
     protected PrinterInfo connectedDevice = PrinterInfo.UNKNOWN;
 

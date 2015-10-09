@@ -20,8 +20,6 @@ import javax.usb.UsbNotActiveException;
 import javax.usb.UsbNotOpenException;
 
 import org.w3c.dom.Node;
-import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
-import static pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM.BLOCK;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 
 import replicatorg.app.Base;

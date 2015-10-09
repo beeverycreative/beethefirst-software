@@ -91,7 +91,7 @@ public class PauseMenu extends BaseDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(772, 334));
+        setPreferredSize(new java.awt.Dimension(772, 344));
         setResizable(false);
 
         pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
