@@ -2896,7 +2896,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             feedbackWindow.setFeedback1("Flashing firmware. Please don't disconnect your printer...");
             //FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
             //feedbackThread.start();
-            //backupConfig();
+            backupConfig();
             Base.writeLog("Carrying on with firmware flash", this.getClass());
 
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
