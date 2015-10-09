@@ -2884,8 +2884,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("No firmware file found.");
             return -1;
         } else {
-            
-            if(feedbackThread != null) {
+
+            if (feedbackThread != null) {
                 feedbackThread = null;
             }
 
@@ -2994,11 +2994,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             ready = false;
 
-            if (pipes != null) {
-                closePipe(pipes);
-            }
-
             do {
+                
+                if(pipes != null && pipes.isOpen()) {
+                    closePipe(pipes);
+                }
+                
                 pipes = null;
                 m_usbDevice = null;
                 while (m_usbDevice == null) {
@@ -3008,25 +3009,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 pipes = GetPipe(m_usbDevice);
 
-                try {
-                    if (pipes != null) {
-                        openPipe(pipes);
-                    } else {
-                        continue;
-                    }
+                if (pipes != null) {
+                    openPipe(pipes);
+                } else {
+                    continue;
+                }
 
-                    if (testPipes(pipes)) {
-                        ready = true;
-                    } else {
-                        Thread.sleep(100);
-                    }
-                } catch (UsbDisconnectedException ex) {
-                    ready = false;
+                if (isInitialized() && testPipes(pipes)) {
+                    ready = true;
+                } else {
+                    Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
+                    Thread.sleep(1000);
                 }
             } while (ready == false);
 
         } catch (Exception ex) {
-            Base.writeLog("Exception on reestablishConnection()");
+            Base.writeLog("Exception on establishConnection()", this.getClass());
             return false;
         }
 
