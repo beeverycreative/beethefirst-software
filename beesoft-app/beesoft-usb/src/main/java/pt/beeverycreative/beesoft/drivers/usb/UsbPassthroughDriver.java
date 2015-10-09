@@ -189,10 +189,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             bootloaderVersion = new Version();
         }
     }
-    
+
     @Override
     public void closeFeedback() {
-        if(feedbackThread.isAlive()) {
+        if (feedbackThread.isAlive()) {
             feedbackThread.cancel();
         }
         feedbackWindow.dispose();
@@ -214,6 +214,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
         serialNumberString = NO_SERIAL_NO_FIRMWARE;
 
         if (status.contains("bootloader")) {
+            // DELETE THIS, TESTING PURPOSES
+            dispatchCommand("M114 A0");
+
             bootedFromBootloader = true;
             updateBootloaderInfo();
             if (updateFirmware() >= 0) {
@@ -412,7 +415,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         feedbackWindow.setFeedback1("Printer detected");
                         feedbackWindow.setFeedback2("Establishing connection with printer...");
                         feedbackThread = new FeedbackThread(feedbackWindow);
-                        
+
                         if (feedbackThread.isAlive() == false) {
                             feedbackThread.start();
                         }
@@ -2886,11 +2889,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             hiccup(QUEUE_WAIT, 0);
             readResponse();
 
-            if (firmwareFile.getName().length() > 30) {
-                feedbackWindow.setFeedback2("Flashing new firmware...");
-            } else {
-                feedbackWindow.setFeedback2("Flashing firmware " + firmwareFile.getName());
-            }
+            //if (firmwareFile.getName().length() > 45) {
+            feedbackWindow.setFeedback2("Flashing new firmware...");
+            //} else {
+            //    feedbackWindow.setFeedback2("Flashing firmware " + firmwareFile.getName());
+            //}
 
             Base.writeLog("Starting Firmware update.", this.getClass());
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
