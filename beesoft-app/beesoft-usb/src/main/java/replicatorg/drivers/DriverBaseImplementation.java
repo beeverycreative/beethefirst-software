@@ -613,4 +613,9 @@ public abstract class DriverBaseImplementation implements Driver {
     public void resetBootloaderVersion() {
 
     }
+    
+    @Override
+    public void closeFeedback() {
+        
+    }
 }

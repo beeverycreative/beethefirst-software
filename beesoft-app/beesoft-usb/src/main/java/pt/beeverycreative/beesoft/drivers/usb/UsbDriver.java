@@ -30,6 +30,7 @@ import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
+import replicatorg.app.ui.panels.Feedback;
 
 import replicatorg.drivers.DriverBaseImplementation;
 
@@ -77,7 +78,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private double totalExtrudedDistance = 0;
     protected boolean transferMode = false;
     protected boolean isONShutdown = false;
-
+   
     /**
      * USBDriver high level definition.
      *

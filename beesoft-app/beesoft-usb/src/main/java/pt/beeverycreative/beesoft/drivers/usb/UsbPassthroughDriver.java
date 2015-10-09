@@ -26,6 +26,7 @@ import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
+import replicatorg.app.ui.panels.Feedback;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
@@ -109,6 +110,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static String backupCoilText = "";
     private static double backupZVal = -1;
 
+    private static final Feedback feedbackWindow = new Feedback();
+    private static FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
+
     public enum COM {
 
         DEFAULT, WAIT, NONBLOCK, BLOCK, NO_RESPONSE, COM_LOST, TRANSFER
@@ -185,6 +189,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
             bootloaderVersion = new Version();
         }
     }
+    
+    @Override
+    public void closeFeedback() {
+        if(feedbackThread.isAlive()) {
+            feedbackThread.cancel();
+        }
+        feedbackWindow.dispose();
+    }
 
     /**
      * Send any gcode needed to synchronize the driver type and the firmware
@@ -215,6 +227,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 super.isBootloader = true;
 
                 Base.writeLog("Launching firmware!", this.getClass());
+                feedbackWindow.setFeedback2("Launching new firmware!");
                 sendCommand(LAUNCH_FIRMWARE); // Launch firmware
                 hiccup(100, 0);
                 closePipe(pipes);
@@ -396,6 +409,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
             while (!isInitialized()) {
                 try {
                     if (m_usbDevice != null) {
+                        feedbackWindow.setFeedback1("Printer detected");
+                        feedbackWindow.setFeedback2("Establishing connection with printer...");
+                        feedbackThread = new FeedbackThread(feedbackWindow);
+                        
+                        if (feedbackThread.isAlive() == false) {
+                            feedbackThread.start();
+                        }
+
                         Base.writeLog("Device ready to be used, creating pipes...", this.getClass());
                         pipes = GetPipe(m_usbDevice);
 
@@ -441,8 +462,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (Base.welcomeSplashVisible == false) {
             Base.disposeAllOpenWindows();
         }
-        sendInitializationGcode();
 
+        sendInitializationGcode();
     }
 
     @Override
@@ -2856,11 +2877,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return -1;
         } else {
 
-            //backupConfig();
+            feedbackWindow.setFeedback1("Flashing firmware. Please don't disconnect your printer...");
+            //FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
+            //feedbackThread.start();
+            backupConfig();
 
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
             hiccup(QUEUE_WAIT, 0);
             readResponse();
+
+            if (firmwareFile.getName().length() > 30) {
+                feedbackWindow.setFeedback2("Flashing new firmware...");
+            } else {
+                feedbackWindow.setFeedback2("Flashing firmware " + firmwareFile.getName());
+            }
+
             Base.writeLog("Starting Firmware update.", this.getClass());
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
                 Base.writeLog("Firmware successfully updated", this.getClass());
@@ -2892,7 +2923,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private boolean backupConfig() {
+
+        if (dispatchCommand("M651").toLowerCase().contains("ok") == false) {
+            return false;
+        }
+
         Base.writeLog("Acquiring Z value and loaded filament before flashing new firmware", this.getClass());
+        feedbackWindow.setFeedback2("Saving current calibration and filament settings");
 
         // change into firmware
         dispatchCommand("M630");
@@ -2962,4 +2999,34 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
     }
 
+}
+
+class FeedbackThread extends Thread {
+
+    private final Feedback feedbackWindow;
+    private boolean stop = false;
+
+    public FeedbackThread(Feedback feedbackWindow) {
+        this.feedbackWindow = feedbackWindow;
+    }
+
+    @Override
+    public void run() {
+        while (feedbackWindow.isVisible() == false && stop == false) {
+
+            if (Base.welcomeSplashVisible == false) {
+                feedbackWindow.setVisible(true);
+            }
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void cancel() {
+        stop = true;
+    }
 }

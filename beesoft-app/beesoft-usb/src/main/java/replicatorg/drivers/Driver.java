@@ -586,4 +586,5 @@ public interface Driver {
     public void resetBootloaderVersion();
     public boolean getMachinePaused();
     public void setMachinePaused(boolean machinePaused);
+    public void closeFeedback();
 }

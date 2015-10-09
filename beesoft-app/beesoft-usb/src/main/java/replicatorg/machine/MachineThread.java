@@ -72,7 +72,8 @@ class MachineThread extends Thread {
             if (driver.isBootloader() == false) {
                 setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                 Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
-            } else if(driver.isInitialized()) {
+                driver.closeFeedback();
+            } else if (driver.isInitialized()) {
                 Base.writeLog("Rebooting into firmware", this.getClass());
                 Base.statusThreadDied = true;
                 Base.isPrinting = false;
@@ -90,8 +91,6 @@ class MachineThread extends Thread {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-                    
-                    
 
                     sleep(500, 1);
 

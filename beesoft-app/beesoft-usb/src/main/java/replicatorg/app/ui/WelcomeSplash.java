@@ -107,7 +107,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
                 while (i < getDuration()) {
                     jProgressBar1.setValue(inc);
                     i++;
-                    inc += getWidth() / 80;
+                    inc += getWidth() / 50;
                     try {
                         sleep(100);
                     } catch (InterruptedException ex) {
