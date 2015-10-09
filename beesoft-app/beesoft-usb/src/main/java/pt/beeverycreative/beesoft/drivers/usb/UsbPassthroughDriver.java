@@ -2997,6 +2997,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                     if (testPipes(pipes)) {
                         ready = true;
+                    } else {
+                        Thread.sleep(100);
                     }
                 } catch (UsbDisconnectedException ex) {
                     ready = false;
