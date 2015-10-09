@@ -174,9 +174,7 @@ public class FilamentHeating extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Waiting for extruder to reach the target temperature, " + temperatureGoal, this.getClass());
         showMessage();
-        //machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(temperatureGoal));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal + 5));
-
+        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(temperatureGoal + 5));
     }
 
     private void finalizeHeat() {
@@ -227,6 +225,7 @@ public class FilamentHeating extends BaseDialog {
             }
         } else {
             Base.writeLog("Filament heating canceled", this.getClass());
+            finalizeHeat();
             dispose();
         }
     }

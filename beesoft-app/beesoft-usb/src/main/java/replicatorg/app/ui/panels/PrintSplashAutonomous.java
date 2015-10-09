@@ -60,7 +60,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     private boolean firstUnloadStep = false;
     private boolean lastPanel;
     private boolean isPaused = false;
-    private Point5d pausePos;
     private boolean isShutdown = false;
     private boolean userDecision;
 
@@ -235,16 +234,17 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
      * Cancel ongoing operation and idles BEESOFT to a machine idle state
      */
     protected void doCancel() {
-        //machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
+        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));    // not sure if necessary
         if (machine.getDriver().isTransferMode()) {
             // stopTransfer() blocks while the process isn't concluded
             machine.getDriver().stopTransfer();
         } else {
             machine.killSwitch();
-            machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
-            machine.runCommand(new replicatorg.drivers.commands.ReloadConfig());
-            machine.runCommand(new replicatorg.drivers.commands.SendHome("Z"));
-            machine.runCommand(new replicatorg.drivers.commands.SendHome("XY"));
+            //machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
+            machine.getDriver().dispatchCommand("M112");
+            //machine.runCommand(new replicatorg.drivers.commands.ReloadConfig());
+            //machine.runCommand(new replicatorg.drivers.commands.SendHome("Z"));
+            //machine.runCommand(new replicatorg.drivers.commands.SendHome("XY"));
 
             Base.getMainWindow().doStop();
 
@@ -300,25 +300,6 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         tInfo6.setText("");
         tInfo7.setText("");
         resetProgressBar();
-    }
-
-    protected void doShutdown() {
-        //machine.runCommand(new replicatorg.drivers.commands.Shutdown());
-        /*else {
-         // resume from shutdown
-         machine.getDriver().dispatchCommand("M21", COM.DEFAULT);
-         machine.getDriver().dispatchCommand("M35", COM.DEFAULT);
-         pausePos = machine.getDriver().getShutdownPosition();
-         userDecision = true;
-         if (shutdownFromDisconnect == false) {
-         //                    resetProgressBar();
-         //                    setHeatingInfo();
-         bShutdown.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
-         jProgressBar1.setVisible(false);
-         resumeFromShutdown();
-         }
-         }
-         }*/
     }
 
     /**
@@ -1723,44 +1704,15 @@ class UpdateThread4 extends Thread {
             window.setPrintElements();
             window.startPrintCounter();
 
-            if (window.isPaused()) {
-                window.disableButtons();
-                PauseMenu pause = new PauseMenu(window);
-                pause.setVisible(true);
-            }
-
             if (window.isShutdown()) {
                 window.disableButtons();
                 ShutdownMenu shutdown = new ShutdownMenu(window);
                 shutdown.setVisible(true);
-
-                //window.setShutdownStatus();
-                //set pause UI elements
-                //window.restorePauseElements();
-
-                /*
-                 //Control var to Shutdown button lock
-                 this.isOnShutdownRecover = true;
-
-                 boolean temperatureAchieved = false;
-                 Base.getMainWindow().getButtons().blockModelsButton(false);
-                 window.setHeatingInfo();
-                 window.resetProgressBar();
-
-                 while (temperatureAchieved == false) {
-                 try {
-                 temperatureAchieved = evaluateTemperature();
-                 Thread.sleep(3000);
-                 } catch (InterruptedException ex) {
-                 Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-                 }
-                 }
-
-                 //resume from shutdown
-                 window.resumeFromShutdown();
-                 this.isOnShutdownRecover = false;
-                 */
-            }
+            } else if (window.isPaused()) {
+                window.disableButtons();
+                PauseMenu pause = new PauseMenu(window);
+                pause.setVisible(true);
+            } 
 
             //Updates elements while visible
             while (true) {

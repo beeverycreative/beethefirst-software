@@ -136,6 +136,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             }
         } else {
             Base.writeLog("Filament heating canceled", this.getClass());
+            finalizeHeat();
             dispose();
         }
 
@@ -411,13 +412,8 @@ public class FilamentCodeInsertion extends BaseDialog {
         Base.enableAllOpenWindows();
         Base.bringAllWindowsToFront();
 
-        /**
-         * If print is not paused, cool down
-         */
-        if (Base.printPaused == false) {
-            Base.writeLog("Filament selection finished!", this.getClass());
-            finalizeHeat();
-        }//no need for else
+        Base.writeLog("Filament selection finished!", this.getClass());
+        finalizeHeat();
     }//GEN-LAST:event_bNextMousePressed
 
     private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed

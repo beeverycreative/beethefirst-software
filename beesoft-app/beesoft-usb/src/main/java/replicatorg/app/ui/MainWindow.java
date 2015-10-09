@@ -2179,7 +2179,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         // bring down our machine temperature, don't want it to stay hot
         // 		actually, it has been pointed out that we might want it to stay hot,
         //		so I'm taking this out
-        doPreheat(false);
+        //doPreheat(false);
 
         // cleanup our machine/driver.
         machineLoader.unload();

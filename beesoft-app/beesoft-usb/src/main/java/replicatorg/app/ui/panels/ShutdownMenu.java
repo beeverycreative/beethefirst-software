@@ -280,7 +280,6 @@ public class ShutdownMenu extends BaseDialog {
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
             FilamentHeating p = new FilamentHeating();
-            machine.getDriver().dispatchCommand("G28");
             this.setVisible(false);
             p.setVisible(true);
             this.setVisible(true);

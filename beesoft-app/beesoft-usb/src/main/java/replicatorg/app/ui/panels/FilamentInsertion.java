@@ -213,6 +213,7 @@ public class FilamentInsertion extends BaseDialog {
             finalizeHeat();
         } else {
             Base.writeLog("Filament heating canceled", this.getClass());
+            finalizeHeat();
             dispose();
         }
 
@@ -605,7 +606,7 @@ public class FilamentInsertion extends BaseDialog {
             showMessage();
             bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
             bLoadMouseClickedReady = false;
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+            //bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
             jLabel18MouseClickedReady = false;
 
             Base.writeLog("Loading filament", this.getClass());

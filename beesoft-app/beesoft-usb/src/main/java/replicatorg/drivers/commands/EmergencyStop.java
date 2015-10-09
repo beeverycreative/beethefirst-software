@@ -24,7 +24,7 @@ public class EmergencyStop implements DriverCommand {
 
     @Override
     public boolean isPrintingCommand() {
-        return false;
+        return true;
     }
 
     @Override

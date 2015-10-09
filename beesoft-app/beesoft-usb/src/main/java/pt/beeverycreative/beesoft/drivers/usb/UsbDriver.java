@@ -18,7 +18,6 @@ import javax.usb.UsbHub;
 import javax.usb.UsbInterface;
 import javax.usb.UsbNotActiveException;
 import javax.usb.UsbServices;
-import org.w3c.dom.Node;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,13 +26,11 @@ import javax.usb.UsbIrp;
 import javax.usb.UsbNotClaimedException;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
-import javax.usb.event.UsbServicesListener;
 import static pt.beeverycreative.beesoft.drivers.usb.UsbDriver.m_usbDevice;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
 
-import replicatorg.app.tools.XML;
 import replicatorg.drivers.DriverBaseImplementation;
 
 /**
@@ -51,10 +48,6 @@ public class UsbDriver extends DriverBaseImplementation {
 
     protected static UsbDevice m_usbDevice;
 
-    private static String m_manufacturer = "BEEVERYCREATIVE";
-    private static String m_productNew = "BEETHEFIRST";
-    protected static String m_productOld = "BEETHEFIRST - ";
-    protected static String oldCompatibleVersion = "BEETHEFIRST-3.";
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
 
@@ -120,24 +113,6 @@ public class UsbDriver extends DriverBaseImplementation {
     @Override
     public PrinterInfo getConnectedDevice() {
         return connectedDevice;
-    }
-
-    /**
-     * Loads machine xml.
-     *
-     * @param xml XML file with machine properties.
-     */
-    public void loadXml(Node xml) {
-        super.loadXML(xml);
-
-        //load from our XML config, if we have it
-        if (XML.hasChildNode(xml, "manufacturer")) {
-            m_manufacturer = XML.getChildNodeValue(xml, "manufacturer");
-        }
-
-        if (XML.hasChildNode(xml, "product")) {
-            m_productNew = XML.getChildNodeValue(xml, "product");
-        }
     }
 
     /**
@@ -223,12 +198,6 @@ public class UsbDriver extends DriverBaseImplementation {
 
             } else {
                 addIfCompatible(device);
-                //Try to add using the new way, then using the old way.
-                /*
-                 if (addIfCompatible(device) == false) {
-                 addIfCompatible_Legacy(device);
-                 }
-                 */
             }
         } catch (UsbException ex) {
             m_usbDevice = null;
@@ -256,7 +225,7 @@ public class UsbDriver extends DriverBaseImplementation {
         idVendor = descriptor.idVendor();
         idProduct = descriptor.idProduct();
 
-        // verify if it's one of BEE's printers, else ignore it
+        // verify if it's one of BEE's printers, else ignore it;
         // getting more information without knowing what we're dealing with
         // can cause ugly libusb crashes
         if (PrinterInfo.getDevice(idVendor + ":" + idProduct) == PrinterInfo.UNKNOWN) {
@@ -275,53 +244,6 @@ public class UsbDriver extends DriverBaseImplementation {
         Base.writeLog("********************************", this.getClass());
         m_usbDeviceList.add(device);
         return true;
-    }
-
-    public boolean addIfCompatible_Legacy(UsbDevice device) throws UsbException, UnsupportedEncodingException {
-
-        UsbDeviceDescriptor descriptor;
-        short idVendor, idProduct;
-        String manufacturerString, productString, serialNumberString;
-
-        descriptor = device.getUsbDeviceDescriptor();
-        idVendor = descriptor.idVendor();
-        idProduct = descriptor.idProduct();
-        manufacturerString = device.getManufacturerString();
-        productString = device.getProductString();
-        //serialNumberString = device.getSerialNumberString().trim();
-
-        if (idVendor == BEEVERYCREATIVE_VENDOR_ID) {
-
-            if (manufacturerString.contains(m_manufacturer)
-                    || productString.contains(m_productOld)) {
-                Base.writeLog("*** Adding to candidate list (legacy) ***", this.getClass());
-                Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
-                Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
-                Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
-                Base.writeLog("Product string: " + productString, this.getClass());
-                //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
-                Base.writeLog("*****************************************", this.getClass());
-                m_usbDeviceList.add(device);
-
-                return true;
-            }
-        } else if (idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID) {
-
-            if (manufacturerString.contains(m_manufacturer)
-                    || productString.contains(m_productNew)) {
-                Base.writeLog("*** Adding to candidate list (legacy) ***", this.getClass());
-                Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
-                Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
-                Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
-                Base.writeLog("Product string: " + productString, this.getClass());
-                //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
-                Base.writeLog("*****************************************", this.getClass());
-                m_usbDeviceList.add(device);
-
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
