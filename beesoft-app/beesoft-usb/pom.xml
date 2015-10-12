@@ -181,8 +181,8 @@
                                 <copy todir="${target.dir}/filaments">
                                     <fileset dir="${resources.dir}/filaments" />
                                 </copy>
-                                <copy todir="${target.dir}/config">
-                                    <filelist dir="${resources.dir}/config" files="app.properties" />
+                                <copy todir="${target.dir}/firmware/">
+                                    <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy> 
                                 <copy todir="${target.dir}">
                                     <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
@@ -255,8 +255,8 @@
                                 <copy todir="${target.dir}/filaments">
                                     <fileset dir="${resources.dir}/filaments" />
                                 </copy>                                
-                                <copy todir="${target.dir}/config">
-                                    <filelist dir="${resources.dir}/config" files="app.properties" />
+                                <copy todir="${target.dir}/firmware">
+                                    <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy>                                 
                                 <copy todir="${target.dir}/lib-i686">
                                     <fileset dir="${dist.dir}/lib-i686" includes="*.so" />
@@ -380,8 +380,8 @@
                                         <copy todir="${reso.dir}/filaments">
                                             <fileset dir="${project.basedir}/src/main/resources/filaments" />
                                         </copy>                                        
-                                        <copy todir="${reso.dir}/config">
-                                            <filelist dir="${project.basedir}/src/main/resources/config" files="app.properties" />
+                                        <copy todir="${reso.dir}/firmware">
+                                            <filelist dir="${project.basedir}/src/main/resources/firmware" files="firmware.properties" />
                                         </copy> 
                                         <!-- permissions -->
                                         <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />

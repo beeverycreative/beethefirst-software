@@ -306,8 +306,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Firmware version " + firmwareVersion, this.getClass());
             Base.writeLog("Serial number: " + serialNumberString, this.getClass());
 
-            // if firmware is not ok
-            //if (firmwareVersion.getVersionString().equalsIgnoreCase(Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL) == false) {
+            // this no longer makes sense, as we allow the user to choose which firmware he wants to flash
+            /*
             if (firmwareVersion.getVersionString().equalsIgnoreCase(connectedDevice.bootloaderString()) == false) {
                 Base.writeLog("Firmware is not OK", this.getClass());
                 Base.writeLog("Firmware version string: "
@@ -325,6 +325,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
             } //no need for else
+            */
 
             setBusy(true);
 
