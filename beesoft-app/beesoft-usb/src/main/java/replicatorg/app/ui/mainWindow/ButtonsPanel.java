@@ -53,16 +53,15 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
     public void setLogo(String iconPath) {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/"+iconPath)));
-        String deleteme = jLabel2.getIcon().toString();
-        String test;
     }
     
     public void setMessage(String message) {
 
         if (message.equals("is connected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
-        }
-        if (message.equals("is disconnected")) {
+        } else if (message.equals("power saving")) {
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
+        } else if (message.equals("is disconnected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
         } else {
             // REDSOFT: CONSIDER OTHER SITUATION ?

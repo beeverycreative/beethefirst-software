@@ -754,6 +754,7 @@ public class Base {
     }
 
     public static void turnOnPowerSaving(boolean turnOn) {
+        /*
         if (turnOn) {
 //            editor.getMachine().getDriver().dispatchCommand("M641 A1");
             editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
@@ -761,6 +762,7 @@ public class Base {
 //            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
             editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
         }
+        */
     }
 
     static public void disposeAllOpenWindows() {

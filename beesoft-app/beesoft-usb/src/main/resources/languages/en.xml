@@ -375,6 +375,7 @@
             <PrinterStatusConnected value="is connected"/>
             <PrinterStatusDisconnected value="is disconnected"/>
             <PrinterStatusReady value="is ready"/>
+            <PrinterStatusPowerSaving value="is ready (power saving)" />
             <MovingMessage value="Moving... Please wait."/> 
             <MovingMessage2 value="Please wait! Getting ready..."/>
             <HeatingMessage value="Heating... Please wait."/>

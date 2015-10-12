@@ -86,10 +86,20 @@ class MachineThread extends Thread {
                 return;
             }
 
+            int counter = 0;
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
+                    }
+
+                    if (counter++ == 4) {
+                        driver.readStatus();
+                        if (machineThread.getModel().isMachineInPowerSaving()) {
+                            Base.getMainWindow().getButtons().setMessage("power saving");
+                        }
+                        
+                        counter = 0;
                     }
 
                     sleep(500, 1);

@@ -239,6 +239,9 @@
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_12.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Mudar filamento agora"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_12.png"/>
+                </Property>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
               </Properties>
               <Events>
@@ -342,6 +345,9 @@
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_12.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Calibrar agora"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_12.png"/>
+                </Property>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
               </Properties>
               <Events>
@@ -433,6 +439,9 @@
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_12.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Limpar bico agora"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_12.png"/>
+                </Property>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
               </Properties>
               <Events>
@@ -500,6 +509,9 @@
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_12.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Limpar bico agora"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_12.png"/>
+                </Property>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
               </Properties>
               <Events>

@@ -96,6 +96,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
     private boolean machineReady;
     private boolean machinePaused;
+    private boolean machinePowerSaving;
     private long startTS;
     private int ID = 0;
     private boolean isAutonomous;
@@ -344,10 +345,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             dispatchCommand("G92", COM.DEFAULT);
 
             //Set PID values
-            //dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
-            dispatchCommand("G28 Z", COM.BLOCK);
-            dispatchCommand("G28 X Y", COM.BLOCK);
-
+            dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
+            
+            dispatchCommand("G28", COM.DEFAULT);
+            
             dispatchCommand("M601", COM.DEFAULT);
             setBusy(false);
 
@@ -2036,6 +2037,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         status = dispatchCommand(GET_STATUS);
         machineReady = status.contains(STATUS_OK);
+        machinePowerSaving = status.contains("Power_Saving");
 
         if (machinePaused == false) {
             machinePaused = status.contains(STATUS_PAUSED);
@@ -2047,6 +2049,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //machine.currentTool().setCurrentTemperature(temperature);        
         machine.setMachineReady(machineReady);
         machine.setMachinePaused(machinePaused);
+        machine.setMachinePowerSaving(machinePowerSaving);
     }
 
     @Override

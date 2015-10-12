@@ -21,7 +21,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
 public class Feedback extends BaseDialog {
 
     public Feedback() {
-        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
