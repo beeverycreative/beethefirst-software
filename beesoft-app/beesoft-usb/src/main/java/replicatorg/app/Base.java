@@ -196,6 +196,7 @@ public class Base {
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
+    public static boolean rebootingIntoFirmware = false;
 
     public enum InitialOpenBehavior {
 

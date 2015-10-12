@@ -372,7 +372,8 @@
             <Line23 value="Cargar área de trabajo"/>
             <Line24 value="Cargar modelo"/>
             <Line25 value="Espere un momento por favor"/>
-            <PrinterStatusConnected value="eestá conectada"/>
+            <PrinterStatusConnected value="está conectada"/>
+            <PrinterStatusConnecting value="is connecting" />
             <PrinterStatusDisconnected value="está desconectada"/>
             <PrinterStatusReady value="está lista"/>
             <PrinterStatusPowerSaving value="is ready (power saving)" />

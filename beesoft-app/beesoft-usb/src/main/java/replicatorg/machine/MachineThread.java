@@ -61,7 +61,9 @@ class MachineThread extends Thread {
             // Send out a request, then sleep for a bit, then start over.
             //DriverCommand assessCommand = new AssessState();
 
-            machineThread.notConnectedMessage();
+            if (Base.rebootingIntoFirmware == false) {
+                machineThread.notConnectedMessage();
+            }
             if (Base.welcomeSplashVisible == false) {
                 Base.disposeAllOpenWindows();
             }
@@ -70,20 +72,10 @@ class MachineThread extends Thread {
             driver.initialize();
 
             if (driver.isBootloader() == false) {
+                Base.rebootingIntoFirmware = false;
                 setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                 Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
                 driver.closeFeedback();
-            } else if (driver.isInitialized()) {
-                Base.writeLog("Rebooting into firmware", this.getClass());
-                Base.statusThreadDied = true;
-                Base.isPrinting = false;
-                Base.printPaused = false;
-                Base.getMachineLoader().getMachineInterface().getDriver()
-                        .resetBootloaderVersion();
-                Base.getMachineLoader().getMachineInterface().getDriver()
-                        .dispose();
-                machineThread.interrupt();
-                return;
             }
 
             int counter = 0;
@@ -94,11 +86,12 @@ class MachineThread extends Thread {
                     }
 
                     if (counter++ == 4) {
-                        driver.readStatus();
-                        if (machineThread.getModel().isMachineInPowerSaving()) {
-                            Base.getMainWindow().getButtons().setMessage("power saving");
+                        if (driver.isTransferMode() == false) {
+                            driver.readStatus();
+                            if (machineThread.getModel().isMachineInPowerSaving()) {
+                                Base.getMainWindow().getButtons().setMessage("power saving");
+                            }
                         }
-                        
                         counter = 0;
                     }
 
@@ -116,6 +109,9 @@ class MachineThread extends Thread {
                     machineThread.interrupt();
                     break;
                 } catch (UsbException ex) {
+                    if (Base.rebootingIntoFirmware == false) {
+                        Base.getMainWindow().getButtons().setMessage("is disconnected");
+                    }
                     Base.statusThreadDied = true;
                     Base.isPrinting = false;
                     Base.printPaused = false;

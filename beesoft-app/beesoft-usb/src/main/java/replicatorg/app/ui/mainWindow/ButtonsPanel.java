@@ -1,6 +1,5 @@
 package replicatorg.app.ui.mainWindow;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -57,15 +56,15 @@ public class ButtonsPanel extends javax.swing.JPanel {
     
     public void setMessage(String message) {
 
-        if (message.equals("is connected")) {
+        if(message.equals("is connecting")) {
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusConnecting"));
+        } else if (message.equals("is connected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
         } else if (message.equals("power saving")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
         } else if (message.equals("is disconnected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
-        } else {
-            // REDSOFT: CONSIDER OTHER SITUATION ?
-        }
+        } 
 
     }
 

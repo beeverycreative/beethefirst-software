@@ -214,8 +214,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         serialNumberString = NO_SERIAL_NO_FIRMWARE;
 
         if (status.contains("bootloader")) {
-            // DELETE THIS, TESTING PURPOSES
-            // dispatchCommand("M114 A0");
 
             bootedFromBootloader = true;
             updateBootloaderInfo();
@@ -231,6 +229,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 Base.writeLog("Launching firmware!", this.getClass());
                 feedbackWindow.setFeedback2("Launching new firmware!");
+                Base.rebootingIntoFirmware = true;
                 sendCommand(LAUNCH_FIRMWARE); // Launch firmware
                 hiccup(100, 0);
                 closePipe(pipes);
@@ -346,9 +345,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             //Set PID values
             dispatchCommand("M130 T6 U1.3 V80", COM.DEFAULT);
-            
+
             dispatchCommand("G28", COM.DEFAULT);
-            
+
             dispatchCommand("M601", COM.DEFAULT);
             setBusy(false);
 
@@ -2996,11 +2995,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             ready = false;
 
             do {
-                
-                if(pipes != null && pipes.isOpen()) {
+
+                if (pipes != null && pipes.isOpen()) {
                     closePipe(pipes);
                 }
-                
+
                 pipes = null;
                 m_usbDevice = null;
                 while (m_usbDevice == null) {
@@ -3017,6 +3016,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 if (isInitialized() && testPipes(pipes)) {
+                    Base.getMainWindow().getButtons().setMessage("is connecting");
                     ready = true;
                 } else {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());

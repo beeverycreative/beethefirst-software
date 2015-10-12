@@ -76,7 +76,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private double totalExtrudedDistance = 0;
     protected boolean transferMode = false;
     protected boolean isONShutdown = false;
-   
+
     /**
      * USBDriver high level definition.
      *
@@ -215,8 +215,8 @@ public class UsbDriver extends DriverBaseImplementation {
         UsbDeviceDescriptor descriptor;
         short idVendor, idProduct;
         String manufacturerString, productString;
-        
-        if(device.isConfigured() == false) {
+
+        if (device.isConfigured() == false) {
             return false;
         }
 
@@ -442,7 +442,7 @@ public class UsbDriver extends DriverBaseImplementation {
         readUsbIrp.setAcceptShortPacket(true);
 
         try {
-            
+
             if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
                 pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
             }
@@ -451,16 +451,16 @@ public class UsbDriver extends DriverBaseImplementation {
             }
 
             //if (!isBootloader) {
-                if (!transferMode) {
-                    if (pipes != null) {
-                        UsbPipe pipeWrite = pipes.getUsbPipeWrite();
-                        if (pipeWrite != null) {
-                            if (usbIrp != null) {
-                                pipeWrite.syncSubmit(usbIrp);
-                            }
+            if (!transferMode) {
+                if (pipes != null) {
+                    UsbPipe pipeWrite = pipes.getUsbPipeWrite();
+                    if (pipeWrite != null) {
+                        if (usbIrp != null) {
+                            pipeWrite.syncSubmit(usbIrp);
                         }
                     }
                 }
+            }
             //}
 
         } catch (UsbException ex) {

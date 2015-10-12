@@ -644,17 +644,15 @@ public class PrintPanel extends BaseDialog {
 
         densitySlider.setValue(lastUsedDensity);
 
-        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
+        //if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
+        if (lastUsedResolution.contains("low")) {
             bLowRes.setSelected(true);
-        }
-        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
+        } else if (lastUsedResolution.contains("medium")) {
             bMediumRes.setSelected(true);
-        }
-        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
-            bHighRes.setSelected(true);
-        }
-        if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
+        } else if (lastUsedResolution.contains("high+")) {
             bHighPlusRes.setSelected(true);
+        } else if (lastUsedResolution.contains("high")) {
+            bHighRes.setSelected(true);
         }
 
         checkChanges();
@@ -1867,9 +1865,9 @@ class PrintEstimationThread extends Thread {
                 nTimes++;
                 printPanel.showLoadingIcon(false);
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-                
+
                 printPanel.coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
-                
+
                 this.stop();
 
             } else {
@@ -1938,7 +1936,7 @@ class GCodeExportThread extends Thread {
                 Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         printPanel.coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
     }
 
