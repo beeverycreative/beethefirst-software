@@ -2858,10 +2858,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeLog("Firmware should be: " + versionToCompare, this.getClass());
 
         //check if the firmware is the same
-        String machineFirmware = firmwareVersion.getVersionString();
+        String machineFirmware = firmwareVersion.getRawVersionString();
         Base.writeLog("Firmware is: " + firmwareVersion.getRawVersionString(), this.getClass());
 
-        if (machineFirmware.equalsIgnoreCase(versionToCompare) == true) {
+        if (machineFirmware.toLowerCase().contains(versionToCompare.toLowerCase()) == true) {
             Base.writeLog("No update necessary, firmware is as it should be", this.getClass());
             return 0; // NO UPDATE NECESSARY
         } // else carry on updating
