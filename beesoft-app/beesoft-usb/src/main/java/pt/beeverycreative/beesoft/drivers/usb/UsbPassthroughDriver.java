@@ -308,25 +308,24 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             // this no longer makes sense, as we allow the user to choose which firmware he wants to flash
             /*
-            if (firmwareVersion.getVersionString().equalsIgnoreCase(connectedDevice.bootloaderString()) == false) {
-                Base.writeLog("Firmware is not OK", this.getClass());
-                Base.writeLog("Firmware version string: "
-                        + firmwareVersion.getVersionString(), this.getClass());
-                Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
-                // Warn user to restart BTF and restart BEESOFT.
-                Warning firmwareOutDate = new Warning("close");
-                firmwareOutDate.setMessage("FirmwareOutDateVersion");
-                firmwareOutDate.setVisible(true);
+             if (firmwareVersion.getVersionString().equalsIgnoreCase(connectedDevice.bootloaderString()) == false) {
+             Base.writeLog("Firmware is not OK", this.getClass());
+             Base.writeLog("Firmware version string: "
+             + firmwareVersion.getVersionString(), this.getClass());
+             Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
+             // Warn user to restart BTF and restart BEESOFT.
+             Warning firmwareOutDate = new Warning("close");
+             firmwareOutDate.setMessage("FirmwareOutDateVersion");
+             firmwareOutDate.setVisible(true);
 
-                Base.getMainWindow().setEnabled(false);
-                // Sleep forever, until restart.
-                while (true) {
-                    hiccup(100, 0);
-                }
+             Base.getMainWindow().setEnabled(false);
+             // Sleep forever, until restart.
+             while (true) {
+             hiccup(100, 0);
+             }
 
-            } //no need for else
-            */
-
+             } //no need for else
+             */
             setBusy(true);
 
             if (backupConfig) {
@@ -2907,7 +2906,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             readResponse();
 
             //if (firmwareFile.getName().length() > 45) {
-            feedbackWindow.setFeedback2("Flashing new firmware...");
+            if (backupConfig) {
+                feedbackWindow.setFeedback2("Flashing new firmware...");
+            } else {
+                feedbackWindow.setFeedback2("Flashing new firmware... (calibration will be lost!)");
+            }
             //} else {
             //    feedbackWindow.setFeedback2("Flashing firmware " + firmwareFile.getName());
             //}
@@ -2943,19 +2946,26 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private boolean backupConfig() {
-
-        if (dispatchCommand("M651").toLowerCase().contains("ok") == false) {
-            return false;
-        }
+        String response;
 
         Base.writeLog("Acquiring Z value and loaded filament before flashing new firmware", this.getClass());
         feedbackWindow.setFeedback2("Saving current calibration and filament settings");
 
         // change into firmware
-        dispatchCommand("M630");
+        String temp = dispatchCommand("M630");
+
+        hiccup(100, 0);
 
         // reestablish connection
         if (establishConnection() == false) {
+            Base.writeLog("Establishing connection after changing into firmware failed", this.getClass());
+            return false;
+        }
+
+        // going into firmware may have failed
+        response = dispatchCommand("M625").toLowerCase();
+        if (response.contains("bad")) {
+            Base.writeLog("Something is wrong with the firmware, flashing without saving calibration", this.getClass());
             return false;
         }
 
@@ -2967,6 +2977,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         // change back into bootloader
         dispatchCommand("M609");
+
+        hiccup(100, 0);
 
         if (establishConnection() == false) {
             Base.writeLog("Couldn't go back to bootloader after obtaining data from firmware, requesting user to restart", this.getClass());
