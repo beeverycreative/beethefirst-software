@@ -538,8 +538,8 @@ public class UsbDriver extends DriverBaseImplementation {
     protected void closePipe(UsbPipes pipes) {
         try {
             setInitialized(false);
-            pipes.close();
             pipes.getUsbEndpoint().getUsbInterface().release();
+            pipes.close();
         } catch (UsbException ex) {
             Base.writeLog("*closePipe* <UsbException> " + ex.getMessage(), this.getClass());
         } catch (UsbNotActiveException ex) {

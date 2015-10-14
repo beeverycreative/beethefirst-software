@@ -2957,7 +2957,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         feedbackWindow.setFeedback2("Saving current calibration and filament settings");
 
         // change into firmware
-        String temp = dispatchCommand("M630");
+        dispatchCommand("M630");
 
         hiccup(100, 0);
 
@@ -3071,6 +3071,7 @@ class FeedbackThread extends Thread {
     private boolean stop = false;
 
     public FeedbackThread(Feedback feedbackWindow) {
+        super("FeedbackThread");
         this.feedbackWindow = feedbackWindow;
     }
 

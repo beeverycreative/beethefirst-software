@@ -767,9 +767,12 @@ public class Base {
     }
 
     static public void disposeAllOpenWindows() {
+        String name;
+        
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
-            if (!win1.getName().equals("mainWindow")) {
+            name = win1.getName();
+            if (!name.equals("mainWindow") && !name.equals("FeedbackThread")) {
                 win1.dispose();
             }
 //            System.out.println(win[i].getName());
