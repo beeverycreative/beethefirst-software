@@ -116,7 +116,7 @@ class MachineThread extends Thread {
                     Base.isPrinting = false;
                     Base.printPaused = false;
                     Base.getMachineLoader().getMachineInterface().getDriver()
-                            .resetBootloaderVersion();
+                            .resetBootloaderAndFirmwareVersion();
                     Base.getMachineLoader().getMachineInterface().getDriver()
                             .dispose();
                     Base.writeLog("Machine disconnected during operation");

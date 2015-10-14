@@ -189,7 +189,7 @@ public class PrintPanel extends BaseDialog {
         Base.writeLog("Print panel coil code: " + code);
 
         if (code.equals(FilamentControler.NO_FILAMENT)
-                || code.equals(FilamentControler.NO_FILAMENT_2)) {
+                || code.contains(FilamentControler.NO_FILAMENT_2)) {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             code = Languager.getTagValue(1, "Print", "Print_Splash_Info9").toUpperCase();
@@ -1529,7 +1529,7 @@ public class PrintPanel extends BaseDialog {
 
             if (printerAvailable == false
                     || coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
                     || FilamentControler.colorExistsLocally(coilText) == false) {
                 ProfileAndPrinter selection
                         = new ProfileAndPrinter(this, printerAvailable);
@@ -1541,7 +1541,7 @@ public class PrintPanel extends BaseDialog {
             // if the ProfileAndPrinter panel was closed on X button,
             // cancel the estimation process
             if (coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
                     || FilamentControler.colorExistsLocally(coilText) == false
                     || selectedPrinter == PrinterInfo.UNKNOWN) {
                 return;
@@ -1686,7 +1686,7 @@ public class PrintPanel extends BaseDialog {
         if (estimatePressed == false && bEstimate.isEnabled()) {
             if (printerAvailable == false
                     || coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
                     || FilamentControler.colorExistsLocally(coilText) == false) {
                 Base.writeLog("No printer available, opening selection panel", this.getClass());
                 ProfileAndPrinter selection
@@ -1700,7 +1700,7 @@ public class PrintPanel extends BaseDialog {
             // if the ProfileAndPrinter panel was closed on X button,
             // cancel the estimation process
             if (coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.equals(FilamentControler.NO_FILAMENT_2)
+                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
                     || FilamentControler.colorExistsLocally(coilText) == false
                     || selectedPrinter == PrinterInfo.UNKNOWN) {
                 return;

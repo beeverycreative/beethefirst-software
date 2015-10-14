@@ -214,7 +214,7 @@ public class Base {
     ;
     
     //public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
-    public static String FIRMWARE_IN_USE = "";
+    public static String FIRMWARE_IN_USE;
     private final static String VERSION_JAVA = System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";

@@ -583,7 +583,7 @@ public interface Driver {
      */
     public PrinterInfo getConnectedDevice();
     
-    public void resetBootloaderVersion();
+    public void resetBootloaderAndFirmwareVersion();
     public boolean getMachinePaused();
     public void setMachinePaused(boolean machinePaused);
     public void closeFeedback();

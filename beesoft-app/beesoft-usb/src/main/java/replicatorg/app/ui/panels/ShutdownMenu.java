@@ -55,7 +55,7 @@ public class ShutdownMenu extends BaseDialog {
 
         coilText = machine.getDriver().getCoilText();
         showLabel = coilText.equals(FilamentControler.NO_FILAMENT)
-                || coilText.equals(FilamentControler.NO_FILAMENT_2);
+                || coilText.contains(FilamentControler.NO_FILAMENT_2);
 
         jLabelNoFilament.setVisible(showLabel);
         bResume.setEnabled(!showLabel);

@@ -66,7 +66,7 @@ public class About extends BaseDialog {
         String firmware = Base.FIRMWARE_IN_USE;
         String coilCode = parseCoilCode();
 
-        if (bootloader.equals("0.0.0")) {
+        if (bootloader == null || bootloader.equals("0.0.0")) {
             bootloader = Languager.getTagValue(1, "AboutSoftware",
                     "About_NotAvailable");
 
@@ -75,7 +75,7 @@ public class About extends BaseDialog {
             }
         }
 
-        if (firmware.contains("UNKNOWN")) {
+        if (firmware == null || firmware.contains("UNKNOWN")) {
             firmware = Languager.getTagValue(1, "AboutSoftware",
                     "About_NotAvailable");
         }
@@ -99,15 +99,11 @@ public class About extends BaseDialog {
         }
 
         if(code.equals(FilamentControler.NO_FILAMENT)
-                || code.equals(FilamentControler.NO_FILAMENT_2)) {
+                || code.contains(FilamentControler.NO_FILAMENT_2)) {
             return "No filament currently loaded";
         }
         
         return code;
-    }
-
-    private String getFilamentType(String code) {
-        return FilamentControler.getFilamentType(code);
     }
 
     @SuppressWarnings("unchecked")

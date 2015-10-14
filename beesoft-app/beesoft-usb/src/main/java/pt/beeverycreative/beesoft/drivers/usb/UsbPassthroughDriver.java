@@ -183,12 +183,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public void resetBootloaderVersion() {
+    public void resetBootloaderAndFirmwareVersion() {
         if (bootedFromBootloader == false) {
             bootloaderVersion = new Version();
         }
+        
+        firmwareVersion = new Version();
+        
+        Base.FIRMWARE_IN_USE = null;
+        Base.VERSION_BOOTLOADER = null;
     }
-
+    
     @Override
     public void closeFeedback() {
         if (feedbackThread != null && feedbackThread.isAlive()) {
