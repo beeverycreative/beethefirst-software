@@ -219,7 +219,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         serialNumberString = NO_SERIAL_NO_FIRMWARE;
 
         if (status.contains("bootloader")) {
-            dispatchCommand("M114 A0");
 
             bootedFromBootloader = true;
             updateBootloaderInfo();
