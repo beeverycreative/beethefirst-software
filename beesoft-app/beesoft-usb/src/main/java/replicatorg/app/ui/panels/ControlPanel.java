@@ -98,8 +98,8 @@ public class ControlPanel extends BaseDialog {
     private Timer setPollDataTrue;
     private Timer showBeepLabel;
     protected Timer movButtonHoldDown;
-    private static final int movCommandInterval = 10;
-    private static final double movCommandStep = 0.2;
+    private static final int movCommandInterval = 50;
+    private static final double movCommandStep = 1.2;
     protected volatile boolean canPollData = true;
     protected volatile boolean canMove = true;
 

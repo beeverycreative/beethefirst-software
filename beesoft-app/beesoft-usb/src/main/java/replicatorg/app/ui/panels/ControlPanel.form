@@ -678,7 +678,6 @@
                                           <Group type="102" alignment="0" attributes="0">
                                               <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                                               <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="53" pref="53" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
