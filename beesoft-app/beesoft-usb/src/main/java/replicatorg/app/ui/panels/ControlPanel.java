@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -388,9 +389,9 @@ public class ControlPanel extends BaseDialog {
         Base.writeLog("X: " + pos.x(), this.getClass());
         Base.writeLog("Y: " + pos.y(), this.getClass());
         Base.writeLog("Z: " + pos.z(), this.getClass());
-        xTextFieldValue.setText(String.format("%3.3f", pos.x()));
-        yTextFieldValue.setText(String.format("%3.3f", pos.y()));
-        zTextFieldValue.setText(String.format("%3.3f", pos.z()));
+        xTextFieldValue.setText(String.format(Locale.US, "%3.3f", pos.x()));
+        yTextFieldValue.setText(String.format(Locale.US, "%3.3f", pos.y()));
+        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", pos.z()));
         canMove = true;
     }
 
@@ -463,7 +464,7 @@ public class ControlPanel extends BaseDialog {
 
                         machine.getDriver().dispatchCommand("G0 Z" + movCommandStep, COM.DEFAULT);
                         val = Double.parseDouble(zTextFieldValue.getText()) + movCommandStep;
-                        zTextFieldValue.setText(String.format("%3.3f", val));
+                        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);
@@ -477,7 +478,7 @@ public class ControlPanel extends BaseDialog {
 
                         machine.getDriver().dispatchCommand("G0 Z-" + movCommandStep, COM.DEFAULT);
                         val = Double.parseDouble(zTextFieldValue.getText()) - movCommandStep;
-                        zTextFieldValue.setText(String.format("%3.3f", val));;
+                        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));;
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);
@@ -491,7 +492,7 @@ public class ControlPanel extends BaseDialog {
 
                         machine.getDriver().dispatchCommand("G0 Y" + movCommandStep, COM.DEFAULT);
                         val = Double.parseDouble(yTextFieldValue.getText()) + movCommandStep;
-                        yTextFieldValue.setText(String.format("%3.3f", val));
+                        yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);
@@ -505,7 +506,7 @@ public class ControlPanel extends BaseDialog {
 
                         machine.getDriver().dispatchCommand("G0 Y-" + movCommandStep, COM.DEFAULT);
                         val = Double.parseDouble(yTextFieldValue.getText()) - movCommandStep;
-                        yTextFieldValue.setText(String.format("%3.3f", val));
+                        yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);
@@ -519,7 +520,7 @@ public class ControlPanel extends BaseDialog {
 
                         machine.getDriver().dispatchCommand("G0 X" + movCommandStep, COM.DEFAULT);
                         val = Double.parseDouble(xTextFieldValue.getText()) + movCommandStep;
-                        xTextFieldValue.setText(String.format("%3.3f", val));
+                        xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);
@@ -533,7 +534,7 @@ public class ControlPanel extends BaseDialog {
 
                         machine.getDriver().dispatchCommand("G0 X-" + movCommandStep, COM.DEFAULT);
                         val = Double.parseDouble(xTextFieldValue.getText()) - movCommandStep;
-                        xTextFieldValue.setText(String.format("%3.3f", val));
+                        xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);
@@ -1586,15 +1587,12 @@ public class ControlPanel extends BaseDialog {
 
     private void bHomeZMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeZMouseReleased
         machine.getDriver().dispatchCommand("G28 Z");
-        //zTextFieldValue.setText(String.format("%3.3f", zHome));
         getPosition();
         machine.getDriver().dispatchCommand("G91");
     }//GEN-LAST:event_bHomeZMouseReleased
 
     private void bHomeXYMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeXYMouseReleased
         machine.getDriver().dispatchCommand("G28 XY");
-        //xTextFieldValue.setText(String.format("%3.3f", -96.000));
-        //yTextFieldValue.setText(String.format("%3.3f", -74.500));
         getPosition();
         machine.getDriver().dispatchCommand("G91");
     }//GEN-LAST:event_bHomeXYMouseReleased
@@ -1602,7 +1600,7 @@ public class ControlPanel extends BaseDialog {
     private void bCurrentPositionMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCurrentPositionMouseReleased
         machine.getDriver().dispatchCommand("M603");
         zHome -= Double.parseDouble(zTextFieldValue.getText());
-        zTextFieldValue.setText(String.format("%3.3f", 0.0));
+        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", 0.0));
     }//GEN-LAST:event_bCurrentPositionMouseReleased
 
     private void zTextFieldGoalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_zTextFieldGoalKeyPressed
@@ -1618,7 +1616,7 @@ public class ControlPanel extends BaseDialog {
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
 
-                zTextFieldValue.setText(String.format("%3.3f", zVal));
+                zTextFieldValue.setText(String.format(Locale.US, "%3.3f", zVal));
             } catch (NumberFormatException ex) {
                 Base.writeLog("Invalid input on zTextFieldGoal", this.getClass());
             }
@@ -1639,7 +1637,7 @@ public class ControlPanel extends BaseDialog {
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
 
-                xTextFieldValue.setText(String.format("%3.3f", xVal));
+                xTextFieldValue.setText(String.format(Locale.US, "%3.3f", xVal));
             } catch (NumberFormatException ex) {
                 Base.writeLog("Invalid input on xTextFieldGoal", this.getClass());
             }
@@ -1659,7 +1657,7 @@ public class ControlPanel extends BaseDialog {
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
 
-                yTextFieldValue.setText(String.format("%3.3f", yVal));
+                yTextFieldValue.setText(String.format(Locale.US, "%3.3f", yVal));
             } catch (NumberFormatException ex) {
                 Base.writeLog("Invalid input on yTextFieldGoal", this.getClass());
             }
