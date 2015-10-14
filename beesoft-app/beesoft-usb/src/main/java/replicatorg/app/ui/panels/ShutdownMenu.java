@@ -13,6 +13,8 @@ public class ShutdownMenu extends BaseDialog {
 
     private final PrintSplashAutonomous printSplash;
     private final MachineInterface machine = Base.getMainWindow().getMachine();
+    
+    private static final int FILE_KEY = 1;
 
     public ShutdownMenu(Window printSplash) {
         super(printSplash, Dialog.ModalityType.MODELESS);
@@ -38,15 +40,14 @@ public class ShutdownMenu extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        int fileKey = 1;
-        lTitle.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "Title").toUpperCase());
-        lSubTitle.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "SubTitle"));
-        lChangeFilament.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "FilamentTitle"));
-        lChangeFilamentDesc.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "FilamentIntro"));
-        bChangeFilament.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "bFilamentChange"));
-        jLabelNoFilament.setText(Languager.getTagValue(fileKey, "ShutdownPanel", "NoFilament"));
-        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
-        bResume.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line12"));
+        lTitle.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "Title").toUpperCase());
+        lSubTitle.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "SubTitle"));
+        lChangeFilament.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "FilamentTitle"));
+        lChangeFilamentDesc.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "FilamentIntro"));
+        bChangeFilament.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "bFilamentChange"));
+        jLabelNoFilament.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "NoFilament").toUpperCase());
+        bCancel.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line3"));
+        bResume.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line12"));
     }
 
     private void showNoFilamentLabel() {

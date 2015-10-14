@@ -219,6 +219,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         serialNumberString = NO_SERIAL_NO_FIRMWARE;
 
         if (status.contains("bootloader")) {
+            dispatchCommand("M114 A0");
 
             bootedFromBootloader = true;
             updateBootloaderInfo();
@@ -233,7 +234,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 super.isBootloader = true;
 
                 Base.writeLog("Launching firmware!", this.getClass());
-                feedbackWindow.setFeedback2("Launching new firmware!");
+                feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
                 sendCommand(LAUNCH_FIRMWARE); // Launch firmware
                 hiccup(100, 0);
@@ -2900,9 +2901,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 feedbackThread.start();
             }
 
-            feedbackWindow.setFeedback1("Flashing firmware. Please don't disconnect your printer...");
-            //FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
-            //feedbackThread.start();
+            feedbackWindow.setFeedback1(Feedback.FLASHING_MAIN_MESSAGE);
             backupConfig();
             Base.writeLog("Carrying on with firmware flash", this.getClass());
 
@@ -2912,9 +2911,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             //if (firmwareFile.getName().length() > 45) {
             if (backupConfig) {
-                feedbackWindow.setFeedback2("Flashing new firmware...");
+                feedbackWindow.setFeedback2(Feedback.FLASHING_SUB_MESSAGE);
             } else {
-                feedbackWindow.setFeedback2("Flashing new firmware... (calibration will be lost!)");
+                feedbackWindow.setFeedback2(Feedback.FLASHING_SUB_MESSAGE_NO_CALIBRATION);
             }
             //} else {
             //    feedbackWindow.setFeedback2("Flashing firmware " + firmwareFile.getName());
@@ -2954,7 +2953,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String response;
 
         Base.writeLog("Acquiring Z value and loaded filament before flashing new firmware", this.getClass());
-        feedbackWindow.setFeedback2("Saving current calibration and filament settings");
+        feedbackWindow.setFeedback2(Feedback.SAVING_MESSAGE);
 
         // change into firmware
         dispatchCommand("M630");

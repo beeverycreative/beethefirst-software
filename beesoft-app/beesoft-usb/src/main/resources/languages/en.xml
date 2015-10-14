@@ -629,7 +629,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Title value="Maintenance"/>
             <Filament_Title value="Filament change"/>
             <Filament_Type value="Filament type: "/>
-            <Filament_Intro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <Filament_Intro value="This operation is needed if you want to print with a different color or if the filament available in the spool is not enough."/>
             <FilamentChange_button value="Change filament now"/>
             <Filament_Info value="You have x grams of filament (estimated)"/>  
             <Filament_Info_None value="Remaining filament may not be enough for the next print session."/>
@@ -654,12 +654,12 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Title value="Pause"/>
             <SubTitle value="You can resume or cancel your print." />
             <FilamentTitle value="Filament change"/>
-            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <FilamentIntro value="This operation is needed if you want to print with a different color or if the filament available in the spool is not enough."/>
             <bFilamentChange value="Change filament now"/>
             <bShutdown value="Shutdown now"/>
             <ShutdownIntro value="This operation saves the print state. You can power off your printer and resume printing at a later time."/>
             <ShutdownTitle value="Shutdown"/>
-            <NoFilament value="NO FILAMENT SET"/>
+            <NoFilament value="No filament set"/>
         </PausePanel>
 
         <ShutdownPanel>
@@ -668,8 +668,16 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <FilamentTitle value="Filament change"/>
             <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
             <bFilamentChange value="Change filament now"/>
-            <NoFilament value = "NO FILAMENT SET" />
+            <NoFilament value = "No filament set" />
         </ShutdownPanel>
+
+        <FeedbackPanel>
+            <FlashingMainMessage value="Flashing firmware. Please don't disconnect your printer..." />
+            <FlashingSubMessage value="Flashing new firmware..." />
+            <FlashingSubMessageNoCalibration value="Flashing new firmware... (calibration will be lost!)" />
+            <LaunchingMessage value="Launching new firmware!" />
+            <SavingMessage value="Saving current calibration and filament settings" />
+        </FeedbackPanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>

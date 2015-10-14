@@ -772,7 +772,7 @@ public class Base {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             name = win1.getName();
-            if (!name.equals("mainWindow") && !name.equals("FeedbackThread")) {
+            if (!name.equals("mainWindow") && !name.equals("FeedbackDialog")) {
                 win1.dispose();
             }
 //            System.out.println(win[i].getName());

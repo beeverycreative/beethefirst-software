@@ -214,25 +214,25 @@
             <About_SoftwareVersion value="Versão do software"/> 
             <About_FirmwareVersion value="Versão do firmware"/> 
             <About_BootloaderVersion value="Versão do Bootloader"/> 
-            <About_NotAvailable value="Not available" />
-            <About_BootloaderVersionNotAvailableText value="The bootloader version is not accessible at this moment. Please restart your printer to obtain this information." />
+            <About_NotAvailable value="Indisponível" />
+            <About_BootloaderVersionNotAvailableText value="A versão do bootloader não está acessível neste momento. Por favor reinicie a sua impressora para obter esta informação" />
             <About_SerialNumber value="Número de série da impressora"/> 
             <About_FilamentColor value="Tipo de filamento"/> 
         </AboutSoftware>
 
         <CancelPrint>
-            <CancelPrintText value="Are you sure you want to cancel your print?" />
+            <CancelPrintText value="Tem a certeza que pretende cancelar a sua impressão?" />
         </CancelPrint>
 
         <UnknownFilament>
-            <UnknownFilamentTitle value="Unknown filament loaded in your printer" />
-            <UnknownFilamentText value="There are no existing settings in BEESOFT for the filament loaded on the printer. Please change the filament." />
+            <UnknownFilamentTitle value="Filamento desconhecido carregado na sua impressora" />
+            <UnknownFilamentText value="Não existem definições no BEESOFT para o filamento carregado na impressora. Por favor mude o filamento." />
         </UnknownFilament>
 
         <ProfileAndPrinter>
-            <TitleText value="Please select the filament and the printer" />
-            <FilamentText value="Filament" />
-            <PrinterText value="Printer" />
+            <TitleText value="Por favor escolha o filamento e a impressora" />
+            <FilamentText value="Filamento" />
+            <PrinterText value="Impressora" />
         </ProfileAndPrinter>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
@@ -372,11 +372,11 @@
             <Line23 value="Carregar área de trabalho"/>
             <Line24 value="Carregar modelo"/>
             <Line25 value="Aguarde um momento por favor"/>
-            <PrinterStatusConnected value="está conectada"/>
-            <PrinterStatusConnecting value="is connecting" />
-            <PrinterStatusDisconnected value="está desconectada"/>
+            <PrinterStatusConnected value="está ligada"/>
+            <PrinterStatusConnecting value="está a ligar" />
+            <PrinterStatusDisconnected value="está desligada"/>
             <PrinterStatusReady value="está pronta"/>
-            <PrinterStatusPowerSaving value="is ready (power saving)" />
+            <PrinterStatusPowerSaving value="está pronta (poupança de energia)" />
             <MovingMessage value="A mover... aguarde."/> 
             <MovingMessage2 value="Por favor aguarde! Quase pronto..."/>
             <HeatingMessage value="A aquecer... aguarde."/>
@@ -651,27 +651,35 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
         </MaintenancePanel>
 
         <PausePanel>
-            <Title value="Pause"/>
-            <SubTitle value="You can resume or cancel your print." />
-            <FilamentTitle value="Filament change"/>
-            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
-            <bFilamentChange value="Change filament now"/>
-            <bShutdown value="Shutdown now"/>
-            <ShutdownIntro value="This operation saves the print state. You can power off your printer and resume printing at a later time."/>
+            <Title value="Pausa"/>
+            <SubTitle value="Pode continuar ou cancelar a sua impressão" />
+            <FilamentTitle value="Mudança de filamento"/>
+            <FilamentIntro value="Esta operação é necessária se pretender imprimir com uma cor diferente, ou quando o filamento disponível na bobine não é suficiente."/>
+            <bFilamentChange value="Mude o filamento agora"/>
+            <bShutdown value="Shutdown agora"/>
+            <ShutdownIntro value="Esta operação grava o estado da impressão. Pode desligar a sua impressora e continuar a imprimir mais tarde" />
             <ShutdownTitle value="Shutdown"/>
-            <NoFilament value="NO FILAMENT SET"/>
+            <NoFilament value="Sem filamento definido"/>
         </PausePanel>
 
         <ShutdownPanel>
             <Title value="Shutdown"/>
-            <SubTitle value="You can power off your printer. Alternatively you can resume or cancel your print."/>
-            <FilamentTitle value="Filament change"/>
-            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
-            <bFilamentChange value="Change filament now"/>
-            <NoFilament value = "NO FILAMENT SET" />
+            <SubTitle value="Pode desligar a sua impressora. Alternativamente, pode continuar ou cancelar a sua impressão."/>
+            <FilamentTitle value="Mudança de filamento"/>
+            <FilamentIntro value="Esta operação é necessária se pretender imprimir com uma cor diferente, ou quando o filamento disponível na bobine não é suficiente."/>
+            <bFilamentChange value="Mude o filamento agora"/>
+            <NoFilament value = "Sem filamento definido" />
         </ShutdownPanel>
 
-        <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
+        <FeedbackPanel>
+            <FlashingMainMessage value="Actualizando o firmware. Por favor não desligue a impressora..." />
+            <FlashingSubMessage value="A inserir um novo firmware..." />
+            <FlashingSubMessageNoCalibration value="A inserir um novo firmware... (irá perder a calibração!)" />
+            <LaunchingMessage value="A executar o novo firmware!" />
+            <SavingMessage value="A gravar a calibração e as definições de filamento actuais" />
+        </FeedbackPanel>
+
+      <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
             <Models_tooltip value="MODELOS"/>
             <Maintenance_tooltip value="MANUTENÇÃO"/>

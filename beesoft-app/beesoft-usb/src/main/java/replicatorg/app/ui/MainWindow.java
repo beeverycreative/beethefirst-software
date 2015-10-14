@@ -106,7 +106,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;

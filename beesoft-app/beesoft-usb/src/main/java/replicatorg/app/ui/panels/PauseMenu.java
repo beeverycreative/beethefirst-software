@@ -13,6 +13,8 @@ public class PauseMenu extends BaseDialog {
 
     private final PrintSplashAutonomous printSplash;
     private final MachineInterface machine = Base.getMainWindow().getMachine();
+    
+    private static final int FILE_KEY = 1;
 
     public PauseMenu(Window printSplash) {
         super(printSplash, Dialog.ModalityType.MODELESS);
@@ -40,18 +42,17 @@ public class PauseMenu extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        int fileKey = 1;
-        lTitle.setText(Languager.getTagValue(fileKey, "PausePanel", "Title").toUpperCase());
-        lSubTitle.setText(Languager.getTagValue(fileKey, "PausePanel", "SubTitle"));
-        lChangeFilament.setText(Languager.getTagValue(fileKey, "PausePanel", "FilamentTitle"));
-        lChangeFilamentDesc.setText(Languager.getTagValue(fileKey, "PausePanel", "FilamentIntro"));
-        bChangeFilament.setText(Languager.getTagValue(fileKey, "PausePanel", "bFilamentChange"));
-        bShutdown.setText(Languager.getTagValue(fileKey, "PausePanel", "bShutdown"));
-        lShutdownDesc.setText(Languager.getTagValue(fileKey, "PausePanel", "ShutdownIntro"));
-        lShutdown.setText(Languager.getTagValue(fileKey, "PausePanel", "ShutdownTitle"));
-        jLabelNoFilament.setText(Languager.getTagValue(fileKey, "PausePanel", "NoFilament"));
-        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
-        bResume.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line12"));
+        lTitle.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "Title").toUpperCase());
+        lSubTitle.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "SubTitle"));
+        lChangeFilament.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "FilamentTitle"));
+        lChangeFilamentDesc.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "FilamentIntro"));
+        bChangeFilament.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "bFilamentChange"));
+        bShutdown.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "bShutdown"));
+        lShutdownDesc.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "ShutdownIntro"));
+        lShutdown.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "ShutdownTitle"));
+        jLabelNoFilament.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "NoFilament").toUpperCase());
+        bCancel.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line3"));
+        bResume.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line12"));
     }
 
     private void showNoFilamentLabel() {
