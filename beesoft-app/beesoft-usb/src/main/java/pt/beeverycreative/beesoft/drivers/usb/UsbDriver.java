@@ -45,7 +45,7 @@ import replicatorg.drivers.DriverBaseImplementation;
  */
 public class UsbDriver extends DriverBaseImplementation {
 
-    protected UsbDevice m_usbDevice;
+    protected AbstractDevice m_usbDevice;
 
     private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
@@ -58,7 +58,7 @@ public class UsbDriver extends DriverBaseImplementation {
     //check this, maybe delete
     protected boolean isNewVendorID = false;
 
-    protected ArrayList<UsbDevice> m_usbDeviceList = new ArrayList<UsbDevice>();
+    protected ArrayList<AbstractDevice> m_usbDeviceList = new ArrayList<AbstractDevice>();
     /**
      * Lock for multi-threaded access to this driver's serial port.
      */
@@ -241,7 +241,7 @@ public class UsbDriver extends DriverBaseImplementation {
         //Base.writeLog("Product string: " + productString, this.getClass());
         //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
         Base.writeLog("********************************", this.getClass());
-        m_usbDeviceList.add(device);
+        m_usbDeviceList.add((AbstractDevice) device);
         return true;
     }
 

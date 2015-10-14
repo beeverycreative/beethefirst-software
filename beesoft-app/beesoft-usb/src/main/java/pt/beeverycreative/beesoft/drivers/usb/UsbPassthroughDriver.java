@@ -187,13 +187,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (bootedFromBootloader == false) {
             bootloaderVersion = new Version();
         }
-        
+
         firmwareVersion = new Version();
-        
+
         Base.FIRMWARE_IN_USE = null;
         Base.VERSION_BOOTLOADER = null;
     }
-    
+
     @Override
     public void closeFeedback() {
         if (feedbackThread != null && feedbackThread.isAlive()) {
@@ -3017,8 +3017,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     closePipe(pipes);
                 }
 
+                if (m_usbDevice != null) {
+                    m_usbDevice.close();
+                    m_usbDevice = null;
+                }
+
                 pipes = null;
-                m_usbDevice = null;
                 while (m_usbDevice == null) {
                     InitUsbDevice();
                     hiccup(100, 0);
