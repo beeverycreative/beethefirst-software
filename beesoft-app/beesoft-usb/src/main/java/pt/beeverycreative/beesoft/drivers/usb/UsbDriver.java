@@ -214,9 +214,8 @@ public class UsbDriver extends DriverBaseImplementation {
 
         UsbDeviceDescriptor descriptor;
         short idVendor, idProduct;
-        String manufacturerString, productString;
 
-        if (device.isConfigured() == false) {
+        if (device.isConfigured() == false && Base.isMacOS() == false) {
             return false;
         }
 
