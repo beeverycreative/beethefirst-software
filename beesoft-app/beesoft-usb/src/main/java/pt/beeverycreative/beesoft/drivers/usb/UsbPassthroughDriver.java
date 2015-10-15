@@ -906,15 +906,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void updateCoilText() {
-        String coilText;
+        String coilText, coilTextLowerCase;
 
         coilText = dispatchCommand(GETCOILTEXT, COM.DEFAULT);
+        coilTextLowerCase = coilText.toLowerCase();
 
-        if (coilText.contains("ok")) {
-            coilText = coilText.substring(
-                    coilText.indexOf('\'') + 1, coilText.lastIndexOf('\'')
-            );
-        } else {
+        try {
+            if (coilTextLowerCase.contains("ok") 
+                    && coilTextLowerCase.contains("bad") == false) {
+                coilText = coilText.substring(
+                        coilText.indexOf('\'') + 1, coilText.lastIndexOf('\'')
+                );
+            } else {
+                coilText = "none";
+            }
+        } catch (StringIndexOutOfBoundsException e) {
             coilText = "none";
         }
 
