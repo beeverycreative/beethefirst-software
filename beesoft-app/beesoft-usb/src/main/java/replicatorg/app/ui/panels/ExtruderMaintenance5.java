@@ -553,7 +553,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (!machine.getDriver().isBusy()) {
-            Base.writeLog("Unload filament pressed");
+            Base.writeLog("Unload filament pressed", this.getClass());
             machine.getDriver().setBusy(true);
             showMessage();
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
@@ -561,7 +561,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
             ProperDefault.put("coilCode", String.valueOf("N/A"));
 
-            Base.writeLog("Unloading Filament");
+            Base.writeLog("Unloading Filament", this.getClass());
 
             EventQueue.invokeLater(new Runnable() {
                 @Override
@@ -614,12 +614,12 @@ public class ExtruderMaintenance5 extends BaseDialog {
                 @Override
                 public void run() {
                     try {
-                        Base.writeLog("Load filament pressed");
+                        Base.writeLog("Load filament pressed", this.getClass());
                         machine.getDriver().setBusy(true);
                         showMessage();
                         bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
 
-                        Base.writeLog("Loading Filament");
+                        Base.writeLog("Loading Filament", this.getClass());
 
                         //machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE));
                         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));

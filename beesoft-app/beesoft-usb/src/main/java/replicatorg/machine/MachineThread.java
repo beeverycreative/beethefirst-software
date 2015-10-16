@@ -100,12 +100,12 @@ class MachineThread extends Thread {
                     // these catches are VERY important
                 } catch (InterruptedException e) {
                     Base.statusThreadDied = true;
-                    Base.writeLog("taking assess status thread down");
+                    Base.writeLog("taking assess status thread down", this.getClass());
                     machineThread.interrupt();
                     break;
                 } catch (VersionException E) {
                     Base.statusThreadDied = true;
-                    Base.writeLog("Initialize, probably failed.");
+                    Base.writeLog("Initialize, probably failed.", this.getClass());
                     machineThread.interrupt();
                     break;
                 } catch (UsbException ex) {
@@ -119,7 +119,7 @@ class MachineThread extends Thread {
                             .resetBootloaderAndFirmwareVersion();
                     Base.getMachineLoader().getMachineInterface().getDriver()
                             .dispose();
-                    Base.writeLog("Machine disconnected during operation");
+                    Base.writeLog("Machine disconnected during operation", this.getClass());
                     machineThread.interrupt();
                     break;
                 }
@@ -359,13 +359,13 @@ class MachineThread extends Thread {
                 if (state.getState() == MachineState.State.NOT_ATTACHED && driver.isInitialized()) {
                     setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                     Base.getMainWindow().getButtons().connect();
-                    Base.writeLog("New State: " + state.getState().toString());
+                    Base.writeLog("New State: " + state.getState().toString(), this.getClass());
 //                    System.out.println("1");
                 }
 
                 if (state.getState() == MachineState.State.READY && !driver.isInitialized()) {
                     setState(new MachineState(MachineState.State.NOT_ATTACHED), notConnectedMessage());
-                    Base.writeLog("New State: " + state.getState().toString());
+                    Base.writeLog("New State: " + state.getState().toString(), this.getClass());
 
 //                    System.out.println("2");
                 }
@@ -400,18 +400,18 @@ class MachineThread extends Thread {
                 if (command.remoteName.equals("Print")) {
                     if (state.canPrint()) {
 
-                        Base.writeLog("Print Started ...");
+                        Base.writeLog("Print Started ...", this.getClass());
                         startTimeMillis = System.currentTimeMillis();
 
                         if (!isSimulating()) {
                             driver.getCurrentPosition(false); // reconcile position
                         }
                         setState(new MachineState(MachineState.State.BUILDING), buildingMessage());
-                        Base.writeLog("New State: BUILDING");
+                        Base.writeLog("New State: BUILDING", this.getClass());
                     }
                 } else // Ready
                 {
-                    Base.writeLog("Print ended ...");
+                    Base.writeLog("Print ended ...", this.getClass());
                     double printDuration = System.currentTimeMillis() - startTimeMillis;
                     Base.getMainWindow().setBuildTime(String.valueOf(printDuration));
 
@@ -484,11 +484,11 @@ class MachineThread extends Thread {
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
-                    Base.writeLog("New State: READY");
+                    Base.writeLog("New State: READY", this.getClass());
                 } else if (state.getState() == MachineState.State.BUILDING_OFFLINE) {
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             notConnectedMessage());
-                    Base.writeLog("New State: NOT_ATTACHED");
+                    Base.writeLog("New State: NOT_ATTACHED", this.getClass());
                 }
                 break;
             case STOP_ALL:
@@ -501,12 +501,12 @@ class MachineThread extends Thread {
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
-                    Base.writeLog("New State: READY");
+                    Base.writeLog("New State: READY", this.getClass());
                 }
                 if (state.getState() == MachineState.State.BUILDING_OFFLINE) {
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             notConnectedMessage());
-                    Base.writeLog("New State: NOT_ATTACHED");
+                    Base.writeLog("New State: NOT_ATTACHED", this.getClass());
                 }
                 break;
             case DISCONNECT_REMOTE_BUILD:
@@ -565,13 +565,13 @@ class MachineThread extends Thread {
                     // transition to a disconnected state
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             error.getMessage());
-                    Base.writeLog("New State: NOT_ATTACHED. USB driver has errors and got disconnected");
+                    Base.writeLog("New State: NOT_ATTACHED. USB driver has errors and got disconnected", this.getClass());
                 } else {
                     // Otherwise, transition to an error state, where we can still
                     // configure the machine, but can't print.
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             error.getMessage());
-                    Base.writeLog("New State: NOT_ATTACHED. An error has occured");
+                    Base.writeLog("New State: NOT_ATTACHED. An error has occured", this.getClass());
                 }
 
             }
@@ -701,11 +701,11 @@ class MachineThread extends Thread {
 
                         setState(new MachineState(MachineState.State.READY),
                                 readyMessage());
-                        Base.writeLog("New State: READY");
+                        Base.writeLog("New State: READY", this.getClass());
                     } else {
                         setState(new MachineState(MachineState.State.NOT_ATTACHED),
                                 notConnectedMessage());
-                        Base.writeLog("New State: NOT_ATTACHED");
+                        Base.writeLog("New State: NOT_ATTACHED", this.getClass());
                     }
 
                 }
@@ -736,7 +736,7 @@ class MachineThread extends Thread {
         this.stop();
         statusThread.stop();
 
-        Base.writeLog("MachineThread interrupted, terminating.");
+        Base.writeLog("MachineThread interrupted, terminating.", this.getClass());
         Base.logger.fine("MachineThread interrupted, terminating.");
         dispose();
     }

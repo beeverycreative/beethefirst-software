@@ -133,7 +133,7 @@ public class CalibrationSkrew1 extends BaseDialog {
     }
 
     private void moveToB() {
-        Base.writeLog("Calibrating B");
+        Base.writeLog("Calibrating B", this.getClass());
         Point5d current = machine.getDriver().getCurrentPosition(false);
 
 //        System.err.println("Z: "+current.z());

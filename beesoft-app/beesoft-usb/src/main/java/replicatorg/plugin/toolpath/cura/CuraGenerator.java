@@ -120,7 +120,7 @@ public class CuraGenerator extends ToolpathGenerator {
         //Tests if CuraEngine has +x permissions or if it does exist
         File curaBin = new File(CURA_BIN_PATH);
         if (curaBin.canExecute() == false || curaBin.exists() == false) {
-            Base.writeLog("CuraEngine no execute permissions");
+            Base.writeLog("CuraEngine no execute permissions", this.getClass());
             Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
             return null;
         }
@@ -166,8 +166,8 @@ public class CuraGenerator extends ToolpathGenerator {
         arguments.addAll(Arrays.asList(filesArguments));
 //        System.out.println("********************");
 //        // Prints arguments
-        Base.writeLog("Cura Path " + CURA_BIN_PATH);
-        Base.writeLog("Cura prefs path " + CURA_CONFIGURATION_FILE_PATH);
+        Base.writeLog("Cura Path " + CURA_BIN_PATH, this.getClass());
+        Base.writeLog("Cura prefs path " + CURA_CONFIGURATION_FILE_PATH, this.getClass());
 //        for (String arg : arguments) {
 //            Base.writeLog(arg+" ");
 //        }
@@ -178,13 +178,13 @@ public class CuraGenerator extends ToolpathGenerator {
         process = null;
         try {
             process = pb.start();
-            Base.writeLog("Starting ProcessBuilder");
+            Base.writeLog("Starting ProcessBuilder", this.getClass());
             ist = new StreamLoggerThread(
                     process.getInputStream()) {
                         @Override
                         protected void logMessage(String line) {
                             emitUpdate(line);
-                            Base.writeLog(line);
+                            Base.writeLog(line, this.getClass());
                             super.logMessage(line);
                         }
                     };
@@ -196,13 +196,13 @@ public class CuraGenerator extends ToolpathGenerator {
             est.start();
             int value = process.waitFor();
             if (value != 0) {
-                Base.writeLog("Unrecognized error code returned by CuraEngine.");
+                Base.writeLog("Unrecognized error code returned by CuraEngine.", this.getClass());
                 // Throw ToolpathGeneratorException
                 return null;
             }
         } catch (IOException ioe) {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ioe);
-            Base.writeLog(ERROR_MESSAGE);
+            Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
             ist.stop();
             est.stop();
@@ -210,7 +210,7 @@ public class CuraGenerator extends ToolpathGenerator {
             return null;
         } catch (InterruptedException ex) {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ex);
-            Base.writeLog(ERROR_MESSAGE);
+            Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
             ist.stop();
             est.stop();
@@ -224,7 +224,7 @@ public class CuraGenerator extends ToolpathGenerator {
         // Signals Oracle that GCode generation has finished
         Oracle.setToc();
 
-        Base.writeLog("File " + root + ".gcode created with success");
+        Base.writeLog("File " + root + ".gcode created with success", this.getClass());
         File gcode = new File(gcodePath);
 
         ist.stop();

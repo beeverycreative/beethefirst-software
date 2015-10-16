@@ -247,7 +247,7 @@ public class CuraEngineConfigurator {
                             // Fills Map with CURA parameters
                             curaIni.put(attribute, value);
                         } catch (ArrayIndexOutOfBoundsException e) {
-                            Base.writeLog("Error parsing INI file. " + NO_ATTRIBUTE + " Key<>Value may be empty");
+                            Base.writeLog("Error parsing INI file. " + NO_ATTRIBUTE + " Key<>Value may be empty", this.getClass());
                             //Do nothing, skip the line
                         }
 
@@ -258,10 +258,10 @@ public class CuraEngineConfigurator {
             }
             bufferedReader.close();
         } catch (FileNotFoundException ex) {
-            Base.writeLog("Unable to open file '" + curaIniFile.getAbsolutePath() + "'");
+            Base.writeLog("Unable to open file '" + curaIniFile.getAbsolutePath() + "'", this.getClass());
             error = -1;
         } catch (IOException ex) {
-            Base.writeLog("Error reading file '" + curaIniFile.getAbsolutePath() + "'");
+            Base.writeLog("Error reading file '" + curaIniFile.getAbsolutePath() + "'", this.getClass());
             error = -1;
         }
         return error;
@@ -747,7 +747,7 @@ public class CuraEngineConfigurator {
                 }
             }
         } catch (Exception e) {
-            Base.writeLog("Cura configurator error on translating values: " + e.getMessage());
+            Base.writeLog("Cura configurator error on translating values: " + e.getMessage(), this.getClass());
             return curaCfg.get(key) + "# Generated from exception " + e.toString();
         }
 

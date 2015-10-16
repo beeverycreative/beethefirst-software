@@ -79,7 +79,7 @@ public class CalibrationGCoder {
                 }
 
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(configFile).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(configFile).concat(".xml"), CalibrationGCoder.class);
 
             }
         } catch (ParserConfigurationException pce) {
@@ -127,7 +127,7 @@ public class CalibrationGCoder {
                     code = Base.getMainWindow().getMachine().getModel().getCoilText();
                 } //no need for else
 
-                Base.writeLog("Filament controler coil code: " + code);
+                Base.writeLog("Filament controler coil code: " + code, CalibrationGCoder.class);
 
                 if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
                     //no_Filament = true;

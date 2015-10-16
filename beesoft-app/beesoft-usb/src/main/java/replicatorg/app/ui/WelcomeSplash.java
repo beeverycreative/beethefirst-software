@@ -45,7 +45,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
     public WelcomeSplash(MainWindow wind) {
         initComponents();
         Base.welcomeSplashVisible = true;
-        Base.writeLog("Welcome Splash started ...");
+        Base.writeLog("Welcome Splash started ...", this.getClass());
         window = wind;
         // Loads Splash image
         image = new ImageIcon(Base.getImage("images/welcomeSplash.png", this));
@@ -129,11 +129,11 @@ public class WelcomeSplash extends javax.swing.JFrame {
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(false);
         Base.welcomeSplashVisible = false;
-        Base.writeLog("BEESOFT main window loaded ... ");
+        Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
 
         //GuideWizard
         if (Boolean.valueOf(ProperDefault.get("firstTime"))) {
-            Base.writeLog("BEESOFT tour loaded ... ");
+            Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
 
             TourWelcome p = new TourWelcome();
             p.setVisible(true);

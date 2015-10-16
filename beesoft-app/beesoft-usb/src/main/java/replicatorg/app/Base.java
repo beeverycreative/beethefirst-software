@@ -477,7 +477,7 @@ public class Base {
                     outStream.close();
                 }
             } catch (IOException e) {
-                Base.writeLog(e.getMessage());
+                Base.writeLog(e.getMessage(), Base.class);
             }
         }
 
@@ -523,11 +523,7 @@ public class Base {
         }
     }
 
-    public static void writeLog(String message) {
-
-        if (BEELOGfile.length() > 10000000) {
-            return;
-        }
+    private static void writeLog(String message) {
 
         /**
          * *** Date and Time procedure ****
@@ -1135,15 +1131,15 @@ public class Base {
 
                 // need to enable the preferences option manually
 //                macApplication.setEnabledPreferencesMenu(true);
-                writeLog("Operating System: Mac OS");
+                writeLog("Operating System: Mac OS", this.getClass());
 
             } else if (Base.isLinux()) {
-                writeLog("Operating System: Linux");
+                writeLog("Operating System: Linux", this.getClass());
             } else {
-                writeLog("Operating System: Windows");
+                writeLog("Operating System: Windows", this.getClass());
             }
         } catch (Exception e) {
-            writeLog(e.getMessage());
+            writeLog(e.getMessage(), this.getClass());
         }
 
         // use native popups so they don't look so crappy on osx
@@ -1156,10 +1152,10 @@ public class Base {
                 String machineName = ProperDefault.get("machine.name");
                 // build the editor object
                 editor = new MainWindow();
-                writeLog("Main Window initialized");
+                writeLog("Main Window initialized", this.getClass());
 //                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
                 editor.restorePreferences();
-                writeLog("Preferences restored");
+                writeLog("Preferences restored", this.getClass());
                 // add shutdown hook to store preferences
                 Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
                     final private MainWindow w = editor;
@@ -1171,14 +1167,14 @@ public class Base {
                 });
 //                Languager.printXML();
                 editor.loadMachine(machineName, false);
-                writeLog("Machine Loaded");
+                writeLog("Machine Loaded", this.getClass());
                 // show the window
                 editor.setVisible(false);
                 WelcomeSplash splash = new WelcomeSplash(editor);
                 splash.setVisible(true);
 
 //                buildLogFile(false);
-                writeLog("Log file created");
+                writeLog("Log file created", this.getClass());
             }
         });
         ProperDefault.put("machine.name", MACHINE_NAME);
@@ -1276,7 +1272,7 @@ public class Base {
         notificationHandler.showError(title, message, e);
 
         if (e != null) {
-            Base.writeLog(e.getMessage());
+            Base.writeLog(e.getMessage(), Base.class);
         }
         System.exit(1);
     }

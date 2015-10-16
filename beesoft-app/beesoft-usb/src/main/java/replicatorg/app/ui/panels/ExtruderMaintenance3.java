@@ -128,7 +128,7 @@ public class ExtruderMaintenance3 extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Heating...");
+        Base.writeLog("Heating...", this.getClass());
         Point5d heat = machine.getTablePoints("heat");
 
         double acHigh = machine.getAcceleration("acHigh");
@@ -150,7 +150,7 @@ public class ExtruderMaintenance3 extends BaseDialog {
     }
 
     private void finalizeHeat() {
-        Base.writeLog("Cooling down...");
+        Base.writeLog("Cooling down...", this.getClass());
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
 

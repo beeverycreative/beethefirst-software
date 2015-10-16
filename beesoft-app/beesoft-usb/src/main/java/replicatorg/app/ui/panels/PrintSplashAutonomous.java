@@ -326,10 +326,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             DoNotSleep ds = new DoNotSleep();
             ds.EnabledSleep();
 
-            Base.writeLog("Sleep started!");
+            Base.writeLog("Sleep started!", this.getClass());
 
         } catch (Exception ex) {
-            Base.writeLog("Error starting Sleep!");
+            Base.writeLog("Error starting Sleep!", this.getClass());
         }
     }
 
@@ -339,10 +339,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
             DoNotSleep ds = new DoNotSleep();
             ds.DisableSleep();
 
-            Base.writeLog("Sleep stoped!");
+            Base.writeLog("Sleep stoped!", this.getClass());
 
         } catch (Exception ex) {
-            Base.writeLog("Error stoping Sleep!");
+            Base.writeLog("Error stoping Sleep!", this.getClass());
         }
     }
 
@@ -676,10 +676,10 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
                 }
             }
         } catch (FileNotFoundException ex) {
-            Base.writeLog("Error estimating from GCode file: file not found");
+            Base.writeLog("Error estimating from GCode file: file not found", this.getClass());
         } catch (IOException ex) {
             Base.writeLog("Error estimating from GCode file: error while "
-                    + "reading GCode");
+                    + "reading GCode", this.getClass());
         }
 
         PrintEstimator.estimateTime(new File(preferences.getGcodeToPrint()));
@@ -1546,7 +1546,7 @@ class UpdateThread4 extends Thread {
             try {
                 reader = new BufferedReader(new FileReader(gcode));
             } catch (FileNotFoundException ex) {
-                Base.writeLog("Can't read gCode file to print in autonomous mode");
+                Base.writeLog("Can't read gCode file to print in autonomous mode", this.getClass());
             }
 
             //Calculate number of lines of GCode
@@ -1630,7 +1630,7 @@ class UpdateThread4 extends Thread {
 
         if (temperature >= (temperatureGoal - 1)) {
             window.updateTemperatureOnProgressBar(100, temperatureGoal / 100);
-            Base.writeLog("Temperature achieved");
+            Base.writeLog("Temperature achieved", this.getClass());
             return true;
         }
 
@@ -1674,7 +1674,7 @@ class UpdateThread4 extends Thread {
                 machine.stopwatch();
             }
 
-            Base.writeLog("Autonomous print resumed");
+            Base.writeLog("Autonomous print resumed", this.getClass());
             Base.isPrinting = true;
 
             try {
@@ -1922,7 +1922,7 @@ class TransferControlThread extends Thread {
 
         String assumedTime;
 
-        Base.writeLog("Estimating printing time...");
+        Base.writeLog("Estimating printing time...", this.getClass());
 
         if (printingFromGCode) {
             assumedTime = window.estimateGCodeFromFile();
@@ -1950,7 +1950,7 @@ class TransferControlThread extends Thread {
             }
 
             window.cancelProcess();
-            Base.writeLog("Printing estimation failed...");
+            Base.writeLog("Printing estimation failed...", this.getClass());
             return false;
         } else {
             if (assumedTime.contains(":")) {
@@ -1960,7 +1960,7 @@ class TransferControlThread extends Thread {
                 estimatedTime = Integer.valueOf(assumedTime);
             }
 
-            Base.writeLog("Printing estimation successful...");
+            Base.writeLog("Printing estimation successful...", this.getClass());
             return true;
         }
     }
@@ -2033,7 +2033,7 @@ class PauseAssistantThread extends Thread {
 
         if (temperature >= (temperatureGoal - 1)) {
             printPanel.updateTemperatureOnProgressBar(100, temperatureGoal / 100);
-            Base.writeLog("Temperature achieved");
+            Base.writeLog("Temperature achieved", this.getClass());
             return true;
         }
 

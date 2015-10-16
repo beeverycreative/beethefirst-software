@@ -103,7 +103,7 @@ public class PrintEstimator {
             try {
                 process = probuilder.start();
             } catch (IOException ex) {
-                Base.writeLog("Error starting process to estimate print duration");
+                Base.writeLog("Error starting process to estimate print duration", PrintEstimator.class);
                 estimatedTime = ERROR_MESSAGE;
                 return "Error";
             }
@@ -119,7 +119,7 @@ public class PrintEstimator {
                     output = output.concat(line);
                 }
             } catch (IOException ex) {
-                Base.writeLog("Error reading gcode estimater output");
+                Base.writeLog("Error reading gcode estimater output", PrintEstimator.class);
             }
 
             //Wait to get exit value
@@ -134,7 +134,7 @@ public class PrintEstimator {
             estimatedTime = parseTimeOutput(output);
 
         } else {
-            Base.writeLog("Error starting process to estimate print duration");
+            Base.writeLog("Error starting process to estimate print duration", PrintEstimator.class);
             estimatedTime = ERROR_MESSAGE;
             return "Error";
         }

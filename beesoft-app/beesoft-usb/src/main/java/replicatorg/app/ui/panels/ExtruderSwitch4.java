@@ -105,7 +105,7 @@ public class ExtruderSwitch4 extends BaseDialog {
     }
 
     private void initializeHeat() {
-        Base.writeLog("Initializing");
+        Base.writeLog("Initializing", this.getClass());
         //turn off blower before heating
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
@@ -434,7 +434,7 @@ public class ExtruderSwitch4 extends BaseDialog {
         ProperDefault.put("filamentCoilRemaining", String.valueOf("105000"));
         Base.writeConfig();
         Base.loadProperties();
-        Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()));
+        Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()), this.getClass());
         Base.getMainWindow().getBed().setGcodeOK(false);
         dispose();
 

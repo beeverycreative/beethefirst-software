@@ -202,7 +202,7 @@ public class Model implements Serializable, Cloneable {
     }
 
     public void setTransform(Transform3D t, String description, boolean newOp) {
-        Base.writeLog("Performed transformation " + description + " to model " + name);
+        Base.writeLog("Performed transformation " + description + " to model " + name, this.getClass());
         
         // commented because the equals only seems to recognize that the movel has moved but not that it has been resized
         /*

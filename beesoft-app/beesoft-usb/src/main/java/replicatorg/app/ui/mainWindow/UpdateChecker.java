@@ -255,11 +255,11 @@ public class UpdateChecker extends BaseDialog {
 
         } catch (MalformedURLException e) {
             setMessage("NoConnection");
-            Base.writeLog("Cant read update xml from server  " + e.getMessage());
+            Base.writeLog("Cant read update xml from server  " + e.getMessage(), this.getClass());
             fileFromServer = null;
         } catch (IOException e) {
             setMessage("NoConnection");
-            Base.writeLog("Cant read update xml from server  " + e.getMessage());
+            Base.writeLog("Cant read update xml from server  " + e.getMessage(), this.getClass());
             fileFromServer = null;
         }
         return fileFromServer;
@@ -310,14 +310,14 @@ public class UpdateChecker extends BaseDialog {
                     }
                 }
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"), this.getClass());
             }
         } catch (ParserConfigurationException pce) {
-            Base.writeLog(pce.getMessage());
+            Base.writeLog(pce.getMessage(), this.getClass());
         } catch (SAXException se) {
-            Base.writeLog(se.getMessage());
+            Base.writeLog(se.getMessage(), this.getClass());
         } catch (IOException ioe) {
-            Base.writeLog(ioe.getMessage());
+            Base.writeLog(ioe.getMessage(), this.getClass());
         }
 
         return null;
@@ -525,7 +525,7 @@ public class UpdateChecker extends BaseDialog {
                     openURL(new URI(serverURL + filenameToDownload));
                 }
             } catch (URISyntaxException ex) {
-                Base.writeLog("Searching for new software version. Cant connect to internet");
+                Base.writeLog("Searching for new software version. Cant connect to internet", this.getClass());
             }
             dispose();
             Base.bringAllWindowsToFront();

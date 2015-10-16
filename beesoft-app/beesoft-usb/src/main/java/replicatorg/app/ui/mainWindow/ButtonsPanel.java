@@ -463,7 +463,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
           
-        Base.writeLog("BEESOFT tour loaded ... ");
+        Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
         
         TourWelcome p = new TourWelcome();
         p.setVisible(true);

@@ -275,7 +275,7 @@ public class Printer {
             }
             output.close();
         } catch (Exception e) {
-            Base.writeLog("Error while generating STL");
+            Base.writeLog("Error while generating STL", this.getClass());
         }
 
         return stlFile;

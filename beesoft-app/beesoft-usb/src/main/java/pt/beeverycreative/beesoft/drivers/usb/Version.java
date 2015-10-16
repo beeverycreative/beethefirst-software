@@ -119,7 +119,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + version.versionString);
+            Base.writeLog("Version format invalid: " + version.versionString, Version.class);
         }
 
         return version;
@@ -167,7 +167,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + version.versionString);
+            Base.writeLog("Version format invalid: " + version.versionString, Version.class);
         }
 
         return version;
@@ -226,7 +226,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Couldn't determine bootloader version");
+            Base.writeLog("Couldn't determine bootloader version", Version.class);
             Base.writeLog("Bootloader string: " + machineString, Version.class);
         }
 
@@ -275,7 +275,7 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + version.versionString);
+            Base.writeLog("Version format invalid: " + version.versionString, Version.class);
         }
         return version;
     }

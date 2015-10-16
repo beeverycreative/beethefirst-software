@@ -108,7 +108,7 @@ public class ControlPanel extends BaseDialog {
     public ControlPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
-        Base.writeLog("Advanced panel opened...");
+        Base.writeLog("Control panel opened...", this.getClass());
         setFont();
         setTextLanguage();
         centerOnScreen();
@@ -370,7 +370,7 @@ public class ControlPanel extends BaseDialog {
                 bw.newLine();
                 bw.flush();
             } catch (IOException ex) {
-                Base.writeLog("Can't write temperature to file");
+                Base.writeLog("Can't write temperature to file", this.getClass());
             }
         }
 
@@ -400,7 +400,7 @@ public class ControlPanel extends BaseDialog {
         try {
             this.fw = new FileWriter(file.getAbsoluteFile());
         } catch (IOException ex) {
-            Base.writeLog("Can't create file to log temperature");
+            Base.writeLog("Can't create file to log temperature", this.getClass());
         }
         this.bw = new BufferedWriter(fw);
     }

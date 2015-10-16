@@ -186,7 +186,7 @@ public class PrintPanel extends BaseDialog {
             code = Base.getMainWindow().getMachine().getModel().getCoilText();
         } //no need for else
 
-        Base.writeLog("Print panel coil code: " + code);
+        Base.writeLog("Print panel coil code: " + code, this.getClass());
 
         if (code.equals(FilamentControler.NO_FILAMENT)
                 || code.contains(FilamentControler.NO_FILAMENT_2)) {
@@ -581,7 +581,7 @@ public class PrintPanel extends BaseDialog {
         if (rv == JFileChooser.APPROVE_OPTION) {
             fc.getSelectedFile().getName();
             ProperDefault.put("ui.open_dir0", fc.getCurrentDirectory().getAbsolutePath());
-            Base.writeLog("GCode File selected " + fc.getSelectedFile().getAbsolutePath());
+            Base.writeLog("GCode File selected " + fc.getSelectedFile().getAbsolutePath(), this.getClass());
             return fc.getSelectedFile();
         } else {
             return null;
@@ -823,7 +823,7 @@ public class PrintPanel extends BaseDialog {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Base.writeLog(e.getMessage());
+                Base.writeLog(e.getMessage(), this.getClass());
             }
         }
     }
@@ -1922,7 +1922,7 @@ class GCodeExportThread extends Thread {
 
         } catch (Exception ex) {
 
-            Base.writeLog(ex.getMessage());
+            Base.writeLog(ex.getMessage(), this.getClass());
         } finally {
             try {
                 if (input != null) {

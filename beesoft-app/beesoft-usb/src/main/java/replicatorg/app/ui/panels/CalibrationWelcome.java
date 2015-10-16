@@ -249,7 +249,7 @@ public class CalibrationWelcome extends BaseDialog {
         if (!keepZ) {
             Point5d current;
 
-            Base.writeLog("Initializing and Calibrating A");
+            Base.writeLog("Initializing and Calibrating A", this.getClass());
 
             machine.getDriver().setMachineReady(false);
             machine.getDriver().setBusy(true);
@@ -301,7 +301,7 @@ public class CalibrationWelcome extends BaseDialog {
         } else {
             Point5d current;
 
-            Base.writeLog("Initializing and repeating Calibrating A");
+            Base.writeLog("Initializing and repeating Calibrating A", this.getClass());
 
             machine.getDriver().setMachineReady(false);
             machine.getDriver().setBusy(true);
@@ -839,7 +839,7 @@ public class CalibrationWelcome extends BaseDialog {
 
             Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in negative axis");
+            Base.writeLog("Calibrating table in negative axis", this.getClass());
             current.setAxis(axis, (current.axis(axis) + (-0.05)));
 
             currentValue += -0.05;
@@ -865,7 +865,7 @@ public class CalibrationWelcome extends BaseDialog {
 
             Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in positive axis");
+            Base.writeLog("Calibrating table in positive axis", this.getClass());
             current.setAxis(axis, (current.axis(axis) + (0.05)));
 
             currentValue += 0.05;
@@ -898,7 +898,7 @@ public class CalibrationWelcome extends BaseDialog {
 
             Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in negative axis");
+            Base.writeLog("Calibrating table in negative axis", this.getClass());
             current.setAxis(axis, (current.axis(axis) + (-0.5)));
 
             currentValue += -0.5;
@@ -931,7 +931,7 @@ public class CalibrationWelcome extends BaseDialog {
 
             Point5d current = machine.getDriver().getCurrentPosition(false);
             AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in positive axis");
+            Base.writeLog("Calibrating table in positive axis", this.getClass());
             current.setAxis(axis, (current.axis(axis) + (0.5)));
 
             currentValue += 0.5;

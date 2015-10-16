@@ -181,7 +181,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Heating...");
+        Base.writeLog("Heating...", this.getClass());
         Point5d heat = machine.getTablePoints("heat");
 
         double acHigh = machine.getAcceleration("acHigh");
@@ -203,7 +203,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
     }
 
     private void finalizeHeat() {
-        Base.writeLog("Cooling down...");
+        Base.writeLog("Cooling down...", this.getClass());
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
 
@@ -592,7 +592,7 @@ ExtruderMaintenance4 window;
     public ExtruderMaintenanceUpdateThread(ExtruderMaintenance4 w) {
         super("Filament Heating Thread");
         window = w;
-        Base.writeLog("Reading Temperature ...");
+        Base.writeLog("Reading Temperature...", this.getClass());
     }
 
     @Override
@@ -607,13 +607,13 @@ ExtruderMaintenance4 window;
                 temperatureAchieved = window.getAchievement();
                 Thread.sleep(500);
             } catch (Exception e) {
-                Base.writeLog("Exception occured while reading Temperature ...");
+                Base.writeLog("Exception occured while reading Temperature ...", this.getClass());
                 this.stop();
                 break;
             }
             window.showMessage();
         }
-        Base.writeLog("Temperature achieved...");
+        Base.writeLog("Temperature achieved...", this.getClass());
         window.sinalizeHeatSuccess();
         this.stop();
 

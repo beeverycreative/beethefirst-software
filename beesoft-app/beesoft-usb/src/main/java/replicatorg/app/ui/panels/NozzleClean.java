@@ -130,7 +130,7 @@ public class NozzleClean extends BaseDialog {
 
     private void initializeHeatNClean() {
         jLabel4.setVisible(false);
-        Base.writeLog("Cleaning Nozzle");
+        Base.writeLog("Cleaning Nozzle", this.getClass());
         showMessage();
         if (ProperDefault.get("maintenance").equals("1")) {
             Point5d rest = machine.getTablePoints("rest");
@@ -193,7 +193,7 @@ public class NozzleClean extends BaseDialog {
         dispose();
         disposeThread.stop();
         Base.bringAllWindowsToFront();
-        Base.writeLog("Nozzle cleaned");
+        Base.writeLog("Nozzle cleaned", this.getClass());
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.enableAllOpenWindows();
@@ -567,12 +567,12 @@ class DisposeFeedbackThread6 extends Thread {
                 temperatureAchieved = nozzlePanel.getAchievement();
                 Thread.sleep(500);
             } catch (Exception e) {
-                Base.writeLog("Exception occured while reading Temperature ...");
+                Base.writeLog("Exception occured while reading Temperature ...", this.getClass());
                 this.stop();
                 break;
             }
         }
-        Base.writeLog("Temperature achieved...");
+        Base.writeLog("Temperature achieved...", this.getClass());
         nozzlePanel.sinalizeHeatSuccess();
         this.stop();
 
