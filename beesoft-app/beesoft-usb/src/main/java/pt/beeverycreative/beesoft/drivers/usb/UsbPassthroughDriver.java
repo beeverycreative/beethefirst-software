@@ -311,26 +311,24 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Firmware version " + firmwareVersion, this.getClass());
             Base.writeLog("Serial number: " + serialNumberString, this.getClass());
 
-            // this no longer makes sense, as we allow the user to choose which firmware he wants to flash
-            /*
-             if (firmwareVersion.getVersionString().equalsIgnoreCase(connectedDevice.bootloaderString()) == false) {
-             Base.writeLog("Firmware is not OK", this.getClass());
-             Base.writeLog("Firmware version string: "
-             + firmwareVersion.getVersionString(), this.getClass());
-             Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
-             // Warn user to restart BTF and restart BEESOFT.
-             Warning firmwareOutDate = new Warning("close");
-             firmwareOutDate.setMessage("FirmwareOutDateVersion");
-             firmwareOutDate.setVisible(true);
+            if (firmwareVersion.getVersionString().equals(connectedDevice.bootloaderString()) == false) {
+                Base.writeLog("Firmware is not OK", this.getClass());
+                Base.writeLog("Firmware version string: "
+                        + firmwareVersion.getVersionString(), this.getClass());
+                Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
+                // Warn user to restart BTF and restart BEESOFT.
+                Warning firmwareOutDate = new Warning("close");
+                firmwareOutDate.setMessage("FirmwareOutDateVersion");
+                firmwareOutDate.setVisible(true);
 
-             Base.getMainWindow().setEnabled(false);
-             // Sleep forever, until restart.
-             while (true) {
-             hiccup(100, 0);
-             }
+                Base.getMainWindow().setEnabled(false);
+                // Sleep forever, until restart.
+                while (true) {
+                    hiccup(100, 0);
+                }
 
-             } //no need for else
-             */
+            } //no need for else
+
             setBusy(true);
 
             if (backupConfig) {
@@ -912,7 +910,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         coilTextLowerCase = coilText.toLowerCase();
 
         try {
-            if (coilTextLowerCase.contains("ok") 
+            if (coilTextLowerCase.contains("ok")
                     && coilTextLowerCase.contains("bad") == false) {
                 coilText = coilText.substring(
                         coilText.indexOf('\'') + 1, coilText.lastIndexOf('\'')
@@ -1174,10 +1172,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         transferMode = false;
 
-        // WORKAROUND FOR FIRMWARE BUG
-        // dispatchCommand("M506", COM.BLOCK);
-        // dispatchCommand("G28 Z", COM.BLOCK);
-        // dispatchCommand("G28 X Y", COM.BLOCK);
         return RESPONSE_OK;
     }
 
@@ -2822,15 +2816,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private void updateMachineInfo() {
-
-//        //get bootloader version
-//        sendCommand(GET_BOOTLOADER_VERSION);
-//        hiccup(10, 0);
-//        String bootloader = readResponse();
-//        bootloader_version = new Version().fromMachine3(bootloader);
-//
-//        System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + ":" + bootloader_version.toString());
-        //get serial number - Must have exactly 10 chars!
         serialNumberString = "0000000000";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
@@ -2863,15 +2848,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int updateFirmware() {
 
-        //String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
         String versionToCompare = connectedDevice.bootloaderString();
         Base.writeLog("Firmware should be: " + versionToCompare, this.getClass());
 
         //check if the firmware is the same
-        String machineFirmware = firmwareVersion.getRawVersionString();
-        Base.writeLog("Firmware is: " + firmwareVersion.getRawVersionString(), this.getClass());
+        String machineFirmware = firmwareVersion.getVersionString();
+        Base.writeLog("Firmware is: " + machineFirmware, this.getClass());
 
-        if (machineFirmware.toLowerCase().contains(versionToCompare.toLowerCase()) == true) {
+        if (machineFirmware.equals(versionToCompare) == true) {
             Base.writeLog("No update necessary, firmware is as it should be", this.getClass());
             return 0; // NO UPDATE NECESSARY
         } // else carry on updating

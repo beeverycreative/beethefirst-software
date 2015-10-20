@@ -85,7 +85,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
 import replicatorg.app.ui.WelcomeSplash;

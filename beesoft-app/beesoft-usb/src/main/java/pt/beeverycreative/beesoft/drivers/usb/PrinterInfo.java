@@ -15,11 +15,9 @@ public enum PrinterInfo {
     BEETHEFIRST_PLUS_A ("BEETHEFIRSTPLUS", (short) 0x29c9, (short) 0x0005, Base.configProperties.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plus.png"),
     UNKNOWN         ("BEETHEFIRST", (short) 0x0000, (short) 0x0000, "", "");
     
-    private final String filamentCode;
+    private final String filamentCode, firmwareFilename, iconFilename;
     private final short productID;
     private final short vendorID;
-    private final String firmwareFilename;
-    private final String iconFilename;
     
     PrinterInfo(String filamentCode, short vendorID, short productID, String firmwareFilename, String iconFilename) {
         this.filamentCode = filamentCode;
@@ -28,6 +26,7 @@ public enum PrinterInfo {
         this.firmwareFilename = firmwareFilename;
         this.iconFilename = iconFilename;
     }
+    
     
     public String filamentCode() {
         return filamentCode;
@@ -46,7 +45,7 @@ public enum PrinterInfo {
     }
     
     public String bootloaderString() {
-        return firmwareFilename.substring(0, firmwareFilename.lastIndexOf('.'));
+        return Version.fromFilename(firmwareFilename);
     }
     
     public String iconFilename() {

@@ -1784,7 +1784,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     }
                 }
                 Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...", this.getClass());
+                Base.writeLog("Loading " + path + " ...", this.getClass());
 
                 bed.addSTL(new File(path));
                 Model m = bed.getModels().get(bed.getModels().size() - 1);
@@ -1818,7 +1818,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     }
                 }
                 Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...", this.getClass());
+                Base.writeLog("Loading " + path + " ...", this.getClass());
 
                 //Adds default print preferences, they aren't going to be used
                 //since we're printing from a GCode file
