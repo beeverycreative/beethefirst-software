@@ -96,6 +96,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
     private boolean machineReady;
     private boolean machinePaused;
+    private boolean machineShutdown;
     private boolean machinePowerSaving;
     private long startTS;
     private int ID = 0;
@@ -1354,7 +1355,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String printSession;
         String[] data;
 
-        printSession = dispatchCommand(READ_VARIABLES, COM.DEFAULT);
+        printSession = dispatchCommand(READ_VARIABLES);
         data = parseData(printSession);
 
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
@@ -2042,6 +2043,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         status = dispatchCommand(GET_STATUS);
         machineReady = status.contains(STATUS_OK);
         machinePowerSaving = status.contains("Power_Saving");
+        machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");
 
         if (machinePaused == false) {
             machinePaused = status.contains(STATUS_PAUSED);
@@ -2054,6 +2056,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machine.setMachineReady(machineReady);
         machine.setMachinePaused(machinePaused);
         machine.setMachinePowerSaving(machinePowerSaving);
+        machine.setMachineShutdown(machineShutdown);
     }
 
     @Override

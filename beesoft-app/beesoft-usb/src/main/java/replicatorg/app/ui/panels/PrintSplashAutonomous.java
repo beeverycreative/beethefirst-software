@@ -28,6 +28,7 @@ import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.RetryException;
 import replicatorg.machine.MachineInterface;
+import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -297,11 +298,8 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         machine.resumewatch();
         machine.unpause();
         bOk.setEnabled(true);
-        bPause.setVisible(true);
         bCancel.setEnabled(true);
-        tInfo6.setText("");
-        tInfo7.setText("");
-        resetProgressBar();
+        setPrintInfo();
     }
 
     /**
@@ -601,7 +599,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
         tEstimation.setVisible(true);
         vEstimation.setVisible(true);
         vRemaining.setVisible(true);
-        bPause.setVisible(false);
+        bPause.setVisible(true);
     }
 
     private void setPreparingNewFilamentInfo() {
@@ -1575,6 +1573,8 @@ class UpdateThread4 extends Thread {
         window.updatePrintEstimation(estimatedTime, false);
 
         //Updates elements while visible
+        boolean machineFinished;
+        MachineModel machineModel = machine.getModel();
         while (!window.isAtErrorState()) {
             // Enables test of pipes to handle cable disconnection
             //driver.setAutonomous(true);
@@ -1592,9 +1592,12 @@ class UpdateThread4 extends Thread {
                 window.setProgression((int) ((lines / (double) nLines) * 100));
             }
 
-            if (lines >= nLines) {
-                //finished = true;
-                //break;
+            machineFinished = machineModel.getMachineReady()
+                    && machineModel.getMachinePaused() == false
+                    && machineModel.getMachineShutdown() == false;
+            if (machineFinished) {
+                finished = true;
+                break;
             }
 
             try {
@@ -1717,9 +1720,11 @@ class UpdateThread4 extends Thread {
                 window.disableButtons();
                 PauseMenu pause = new PauseMenu(window);
                 pause.setVisible(true);
-            } 
+            }
 
             //Updates elements while visible
+            boolean machineFinished;
+            MachineModel machineModel = machine.getModel();
             while (true) {
 
                 if (!window.isPaused() && !window.isShutdown()) {
@@ -1733,9 +1738,14 @@ class UpdateThread4 extends Thread {
                     window.updatePrintBar((currentNumberLines / (double) nLines) * 100);
                     window.setProgression((int) ((currentNumberLines / (double) nLines) * 100));
                 }
-                if (currentNumberLines >= nLines) {
-                    //finished = true;
-                    //break;
+
+                machineFinished = machineModel.getMachineReady()
+                        && machineModel.getMachinePaused() == false
+                        && machineModel.getMachineShutdown() == false;
+
+                if (machineFinished) {
+                    finished = true;
+                    break;
                 }
                 //no need for else
 
