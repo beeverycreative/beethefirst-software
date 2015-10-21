@@ -164,7 +164,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
     }
 
     public void updatePrintBar(double progression) {
-        jProgressBar1.setIndeterminate(false);
+         jProgressBar1.setIndeterminate(false);
         final int val = (int) (progression);
         jProgressBar1.setValue(val);
 
@@ -311,7 +311,7 @@ public class PrintSplashAutonomous extends BaseDialog implements WindowListener 
 
         if (Base.isPrintingFromGCode == false) {
             //return prt.getGCode();
-            return new File(prt.getGCode().getPath() + "_modified");
+            return new File(Base.GCODE2PRINTER_PATH);
         } else {
             return new File(preferences.getGcodeToPrint());
         }
@@ -1575,6 +1575,8 @@ class UpdateThread4 extends Thread {
         //Updates elements while visible
         boolean machineFinished;
         MachineModel machineModel = machine.getModel();
+
+        int iterations = 0;
         while (!window.isAtErrorState()) {
             // Enables test of pipes to handle cable disconnection
             //driver.setAutonomous(true);
@@ -1595,11 +1597,12 @@ class UpdateThread4 extends Thread {
             machineFinished = machineModel.getMachineReady()
                     && machineModel.getMachinePaused() == false
                     && machineModel.getMachineShutdown() == false;
-            if (machineFinished) {
+            if (machineFinished && iterations >= 10) {
                 finished = true;
                 break;
             }
 
+            iterations++;
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException ex) {

@@ -1354,8 +1354,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //        currentNumberLines - [3];
         String printSession;
         String[] data;
+        int tries;
 
         printSession = dispatchCommand(READ_VARIABLES);
+        
+        tries = 0;
+        while(printSession.contains("A") == false 
+                || printSession.contains("B") == false 
+                || printSession.contains("C") == false 
+                || printSession.contains("D") == false) {
+            printSession = readResponse();
+            
+            if(tries++ >= 5) {
+                break;
+            }
+        }
+        
         data = parseData(printSession);
 
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
@@ -2039,8 +2053,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public void readStatus() {
         String status;
-
+        
         status = dispatchCommand(GET_STATUS);
+        
+        if(status.contains("S:") == false) {
+            return;
+        }
+        
         machineReady = status.contains(STATUS_OK);
         machinePowerSaving = status.contains("Power_Saving");
         machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");

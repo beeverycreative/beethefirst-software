@@ -98,7 +98,7 @@ public class Printer {
 
         String m31String;
         File fileToRead = new File(pathString);
-        File fileToWrite = new File(pathString + "_modified");
+        File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
 
         m31String = "M31 A" + PrintEstimator.getEstimatedMinutes()
                 + " L" + getGCodeNLines();
@@ -112,7 +112,7 @@ public class Printer {
                     new FileInputStream(fileToRead), "UTF-8");
             BufferedReader fin = new BufferedReader(reader);
             Writer writer = new OutputStreamWriter(
-                    new FileOutputStream(fileToWrite), "UTF-8");
+                    new FileOutputStream(fileToWrite, false), "UTF-8");
             BufferedWriter fout = new BufferedWriter(writer);
             String s;
             while ((s = fin.readLine()) != null) {
@@ -128,19 +128,6 @@ public class Printer {
             fin = null;
             fout.close();
             fout = null;
-
-            // Moves the new temp file to the original one
-            /*
-            if (fileToRead.delete()) {
-                Base.writeLog("Copying modified file to the original one's path", this.getClass());
-                fileToWrite.renameTo(new File(pathString));
-            } else {
-                Base.writeLog("Couldn't delete original file, permission problems?", this.getClass());
-                Base.writeLog("r: " + fileToRead.canRead() 
-                        + " w: " + fileToRead.canWrite() 
-                        + " x: " + fileToRead.canExecute(), this.getClass());
-            }
-            */
 
         } catch (IOException e) {
             Base.writeLog("IOException when attempting to replace M31", this.getClass());
