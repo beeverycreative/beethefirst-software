@@ -98,6 +98,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean machinePaused;
     private boolean machineShutdown;
     private boolean machinePowerSaving;
+    private boolean machinePrinting;
     private long startTS;
     private int ID = 0;
     private boolean isAutonomous;
@@ -1552,7 +1553,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         command = TRANSFER_BLOCK + "A" + srcPos + " D" + destPos;
         out += command + "\n";
 
-        out = dispatchCommand(command);
+        //out = dispatchCommand(command);
+        
+        sendCommand(command);
+        
+        hiccup(100, 0);
+        
+        out = readResponse();
 
 //        System.err.println("Source Pos = " + srcPos);
 //        System.err.println("Destination Pos = " + destPos);
@@ -1592,6 +1599,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
         if (!(tries > 0)) {
             out += response + "\n";
             return ERROR + out + "M28 failed. Response not OK";
@@ -2057,6 +2065,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machineReady = status.contains(STATUS_OK);
         machinePowerSaving = status.contains("Power_Saving");
         machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");
+        machinePrinting = status.toLowerCase().contains(STATUS_SDCARD);
 
         if (machinePaused == false) {
             machinePaused = status.contains(STATUS_PAUSED);
@@ -2070,6 +2079,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machine.setMachinePaused(machinePaused);
         machine.setMachinePowerSaving(machinePowerSaving);
         machine.setMachineShutdown(machineShutdown);
+        machine.setMachinePrinting(machinePrinting);
     }
 
     @Override

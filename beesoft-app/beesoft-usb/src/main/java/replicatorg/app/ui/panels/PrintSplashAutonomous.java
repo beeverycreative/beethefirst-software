@@ -56,6 +56,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private boolean isPaused = false;
     private boolean isShutdown = false;
     private boolean userDecision;
+    private int machinePrintingCount = 0;
 
     public PrintSplashAutonomous(boolean printingState, PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
@@ -118,7 +119,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo3.setFont(GraphicDesignComponents.getSSProBold("12"));
         tEstimation.setFont(GraphicDesignComponents.getSSProRegular("11"));
         tRemaining.setFont(GraphicDesignComponents.getSSProRegular("11"));
-        vEstimation.setFont(GraphicDesignComponents.getSSProRegular("11"));
+        vEstimate.setFont(GraphicDesignComponents.getSSProRegular("11"));
         vRemaining.setFont(GraphicDesignComponents.getSSProRegular("11"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bOk.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -315,7 +316,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tRemaining.setVisible(true);
         tInfo6.setVisible(false);
         vRemaining.setVisible(false);
-        vEstimation.setVisible(false);
+        vEstimate.setVisible(false);
         tInfo7.setVisible(false);
         tInfo3.setVisible(true);
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_BuildAborted"));
@@ -339,7 +340,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
         tEstimation.setVisible(true);
         tRemaining.setVisible(true);
-        vEstimation.setVisible(true);
+        vEstimate.setVisible(true);
         vRemaining.setVisible(true);
         bPause.setVisible(true);
     }
@@ -351,22 +352,36 @@ public class PrintSplashAutonomous extends BaseDialog {
     protected void updatePrintTimes(int estimatedTime, int remainingTime) {
         int hours, minutes;
 
-        /*
-         * Set estimated time
-         */
-        if (estimatedTime > 0) {
-            hours = estimatedTime / 60;
-            minutes = estimatedTime % 60;
-            vEstimation.setText(generateTimeString(hours, minutes));
-        } 
+        if (machine.getModel().getMachinePrinting() == false 
+                && (isPaused() || isShutdown())) {
+            activateLoadingIcons();
+            machinePrintingCount = 0;
+        } else {
+            machinePrintingCount++;
+            
+            if(machinePrintingCount < 2 && estimatedTime <= 0) {
+                return;
+            }
+            
+            /*
+             * Set estimated time
+             */
+            if (estimatedTime > -1) {
+                hours = estimatedTime / 60;
+                minutes = estimatedTime % 60;
+                vEstimate.setIcon(null);
+                vEstimate.setText(generateTimeString(hours, minutes));
+            }
 
-        /*
-         * Set remaining time
-         */
-        if (remainingTime > -1) {
-            hours = remainingTime / 60;
-            minutes = remainingTime % 60;
-            vRemaining.setText(generateTimeString(hours, minutes));
+            /*
+             * Set remaining time
+             */
+            if (remainingTime > -1) {
+                hours = remainingTime / 60;
+                minutes = remainingTime % 60;
+                vRemaining.setIcon(null);
+                vRemaining.setText(generateTimeString(hours, minutes));
+            }
         }
     }
 
@@ -511,12 +526,23 @@ public class PrintSplashAutonomous extends BaseDialog {
 
      }
      */
+    protected void activateLoadingIcons() {
+        ImageIcon loadingIcon = new ImageIcon(
+                getClass().getResource("/replicatorg/app/ui/panels/loading.gif")
+        );
+
+        vEstimate.setText("");
+        vRemaining.setText("");
+        vEstimate.setIcon(loadingIcon);
+        vRemaining.setIcon(loadingIcon);
+    }
+
     public void setTransferInfo() {
         jProgressBar1.setIndeterminate(false);
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Transfering"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Estimation"));
-        vEstimation.setText(estimateTransferTime());
-        vEstimation.setVisible(true);
+        vEstimate.setText(estimateTransferTime());
+        vEstimate.setVisible(true);
         tInfo6.setVisible(false);
         tInfo7.setVisible(false);
     }
@@ -526,7 +552,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Processing"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
         tRemaining.setVisible(false);
-        vEstimation.setVisible(false);
+        vEstimate.setVisible(false);
         vRemaining.setVisible(false);
         tInfo6.setVisible(false);
         tInfo7.setVisible(false);
@@ -539,7 +565,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tRemaining.setVisible(true);
         tEstimation.setVisible(true);
         vRemaining.setVisible(false);
-        vEstimation.setVisible(false);
+        vEstimate.setVisible(false);
         bCancel.setEnabled(true);
         tInfo2.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
@@ -562,7 +588,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo3.setVisible(true);
         tRemaining.setVisible(true);
         tEstimation.setVisible(true);
-        vEstimation.setVisible(true);
+        vEstimate.setVisible(true);
         vRemaining.setVisible(true);
         bPause.setVisible(true);
     }
@@ -574,7 +600,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tRemaining.setVisible(false);
         vRemaining.setVisible(false);
         tEstimation.setVisible(false);
-        vEstimation.setVisible(false);
+        vEstimate.setVisible(false);
         jProgressBar1.setVisible(false);
     }
 
@@ -585,7 +611,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tRemaining.setVisible(false);
         vRemaining.setVisible(false);
         tEstimation.setVisible(false);
-        vEstimation.setVisible(false);
+        vEstimate.setVisible(false);
         jProgressBar1.setVisible(false);
     }
 
@@ -595,7 +621,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo3.setVisible(true);
         tEstimation.setVisible(true);
         tRemaining.setVisible(true);
-        vEstimation.setVisible(true);
+        vEstimate.setVisible(true);
         vRemaining.setVisible(true);
         jProgressBar1.setVisible(true);
         bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line11"));
@@ -778,7 +804,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         unloadPressed = false;
         tInfo6.setText("");
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_BuildFinished"));
-        vEstimation.setVisible(false);
+        vEstimate.setVisible(false);
         vRemaining.setVisible(false);
         tInfo3.setVisible(false);
         bCancel.setVisible(false);
@@ -802,20 +828,20 @@ public class PrintSplashAutonomous extends BaseDialog {
     private String generateTimeString(int hours, int minutes) {
         String temp;
 
-        if (hours > 2) {
+        if (hours >= 2) {
             if (minutes != 1) {
-                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours")
+                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " 
                         + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
             } else {
-                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours")
+                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " "
                         + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute");
             }
         } else if (hours == 1) {
             if (minutes != 1) {
-                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHour")
+                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " "
                         + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
             } else {
-                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHour")
+                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " "
                         + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute");
             }
         } else {
@@ -997,7 +1023,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo2 = new javax.swing.JLabel();
         tInfo7 = new javax.swing.JLabel();
         tEstimation = new javax.swing.JLabel();
-        vEstimation = new javax.swing.JLabel();
+        vEstimate = new javax.swing.JLabel();
         tInfo3 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jPanel3 = new javax.swing.JPanel();
@@ -1052,7 +1078,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 
         tEstimation.setText("tEstimation");
 
-        vEstimation.setText("N/A");
+        vEstimate.setText("N/A");
 
         tInfo3.setText("A PROCESSAR... POR FAVOR AGUARDE");
 
@@ -1070,7 +1096,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
                                 .addComponent(tEstimation)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(vEstimation))
+                                .addComponent(vEstimate))
                             .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 32, Short.MAX_VALUE))
                     .addComponent(tInfo7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1086,7 +1112,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tEstimation)
-                    .addComponent(vEstimation))
+                    .addComponent(vEstimate))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1425,7 +1451,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private javax.swing.JLabel tInfo6;
     private javax.swing.JLabel tInfo7;
     private javax.swing.JLabel tRemaining;
-    private javax.swing.JLabel vEstimation;
+    private javax.swing.JLabel vEstimate;
     private javax.swing.JLabel vRemaining;
     // End of variables declaration//GEN-END:variables
 
@@ -1507,7 +1533,7 @@ class UpdateThread4 extends Thread {
             // Enables test of pipes to handle cable disconnection
             //driver.setAutonomous(true);
 
-            if (!window.isPaused()) {
+            if (!window.isPaused() && !window.isShutdown()) {
                 getLinesAndTime();
             }
 
@@ -1745,7 +1771,6 @@ class UpdateThread4 extends Thread {
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -1762,11 +1787,11 @@ class UpdateThread4 extends Thread {
              * Start printing from SDCard
              */
             machine.runCommand(new replicatorg.drivers.commands.StartPrint());
-
+            window.activateLoadingIcons();
             /**
              * GCode transfered so start print
              */
-            window.updatePrintTimes(gcodeGenerator.getGenerationTime(), gcodeGenerator.getGenerationTime());
+            //window.updatePrintTimes(gcodeGenerator.getGenerationTime(), gcodeGenerator.getGenerationTime());
             monitorPrintFromSDCard();
 
             /**
@@ -1930,6 +1955,10 @@ class PauseAssistantThread extends Thread {
                         colorRatio, temperatureGoal
                 )
         );
+
+        if (printPanel.isShutdown()) {
+            printPanel.activateLoadingIcons();
+        }
 
         do {
             machine.getDriver().readStatus();

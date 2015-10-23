@@ -80,6 +80,7 @@ public class MachineModel {
     private boolean machinePaused = false;
     private boolean machinePowerSaving = false;
     private boolean machineShutdown = false;
+    private boolean machinePrinting = false;
     private double zValue;
 
     // Filament code currently on the printer
@@ -557,7 +558,7 @@ public class MachineModel {
     public void setMachineShutdown(boolean machineShutdown) {
         this.machineShutdown = machineShutdown;
     }
-    
+
     public boolean getMachineShutdown() {
         return machineShutdown;
     }
@@ -566,8 +567,16 @@ public class MachineModel {
         this.machinePowerSaving = machinePowerSaving;
     }
 
-    public boolean isMachineInPowerSaving() {
+    public boolean getMachinePowerSaving() {
         return machinePowerSaving;
+    }
+
+    public void setMachinePrinting(boolean machinePrinting) {
+        this.machinePrinting = machinePrinting;
+    }
+    
+    public boolean getMachinePrinting() {
+        return machinePrinting;
     }
 
     /* Get and Setter CoilCode/BEECODE */

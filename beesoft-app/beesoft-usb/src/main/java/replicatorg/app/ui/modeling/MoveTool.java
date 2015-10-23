@@ -25,36 +25,42 @@ public class MoveTool extends Tool {
 
     Transform3D vt;
 
+    @Override
     public Icon getButtonIcon() {
         return null;
     }
 
+    @Override
     public String getButtonName() {
         return "Move";
     }
 
     JFormattedTextField transX, transY, transZ;
 
+    @Override
     public JPanel getControls() {
         return null;
     }
 
+    @Override
     public String getInstructions() {
         return Base.isMacOS()
                 ? "<html><body>Drag to move object<br>Shift-drag to rotate view<br>Mouse wheel to zoom</body></html>"
                 : "<html><body>Left drag to move object<br>Right drag to rotate view<br>Mouse wheel to zoom</body></html>";
     }
 
+    @Override
     public String getTitle() {
         return "Move Object";
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
 //            Base.getMainWindow().getCanvas().redrawBoundingBox(parent.getModelEditing().model, 1);
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
-
         if (parent.getModelEditing().model != null) {
             Base.getMainWindow().getBed().setGcodeOK(false);
             if (startPoint == null) {
@@ -70,16 +76,16 @@ public class MoveTool extends Tool {
                     mode = DragMode.TRANSLATE_OBJECT;
                 }
             }
-            
+
             double xd = (e.getX() - startPoint.x);
             double yd = -(e.getY() - startPoint.y);
-            
+
             switch (mode) {
                 case NONE:
                     super.mouseDragged(e);
                     break;
                 case TRANSLATE_OBJECT:
-                    
+
                     if (advOption) {
                         doTranslate(0.5 * xd, 0.5 * yd);
                         break;
@@ -87,19 +93,9 @@ public class MoveTool extends Tool {
                         doTranslate(0.25 * xd, 0.25 * yd);
                         break;
                     }
-                    
+
             }
             startPoint = e.getPoint();
-        } else {
-            if (startPoint == null) {
-                return;
-            }
-            Point p = e.getPoint();
-            DragMode mode = DragMode.NONE;
-            double xd = (double) (p.x - startPoint.x);
-            double yd = -(double) (p.y - startPoint.y);
-            super.mouseDragged(e);
-            startPoint = p;
         }
     }
 

@@ -110,8 +110,10 @@ class MachineThread extends Thread {
                     if (counter++ == 4) {
                         if (driver.isTransferMode() == false) {
                             driver.readStatus();
-                            if (machineThread.getModel().isMachineInPowerSaving()) {
+                            if (machineThread.getModel().getMachinePowerSaving()) {
                                 Base.getMainWindow().getButtons().setMessage("power saving");
+                            } else if(getModel().getMachineReady()) {
+                                Base.getMainWindow().getButtons().setMessage("is connected");
                             }
                         }
                         counter = 0;
