@@ -550,17 +550,12 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous) {
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void getPrintSessionsVariables() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getTransferPercentage() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -586,11 +581,6 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void readLastLineNumber() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

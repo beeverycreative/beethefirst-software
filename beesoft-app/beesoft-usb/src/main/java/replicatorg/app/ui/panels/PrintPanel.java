@@ -1453,15 +1453,6 @@ public class PrintPanel extends BaseDialog {
 
             PrintPreferences prefs = getPreferences();
 
-            /*
-             prefs.add(parseSlider1());
-             //            prefs.add(parseCoilCode());
-             prefs.add(FilamentControler.getColor(coilText));
-             prefs.add(parseSlider2());
-             prefs.add(String.valueOf(raftPressed));
-             prefs.add(String.valueOf(supportPressed));
-             prefs.add(String.valueOf(gcodeToPrint));
-             */
             Base.getMainWindow().getBed().setLastRaft(raftPressed);
             Base.getMainWindow().getBed().setLastDensity(parseSlider2());
             Base.getMainWindow().getBed().setLastResolution(parseSlider1());

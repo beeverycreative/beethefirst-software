@@ -99,8 +99,9 @@ public class EditingModel implements Serializable {
 
     /**
      * Create the branchgroup that will display the object.
+     *
      * @param model
-     * @return 
+     * @return
      */
     public BranchGroup makeShape2(Model model) {
         originalShape = model.getShape();
@@ -217,25 +218,41 @@ public class EditingModel implements Serializable {
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
 
-        if(axis == 'X'){
+        if (axis == 'X') {
             if ((Math.abs(lower.x) + Math.abs(upper.x)) > machineVolume.getX()) {
                 return true;
             }
         }
-        if(axis == 'Y') {
+        if (axis == 'Y') {
             if ((Math.abs(lower.y) + Math.abs(upper.y)) > machineVolume.getY()) {
                 return true;
             }
         }
-        if(axis == 'Z') {
+        if (axis == 'Z') {
             if (Math.round(upper.z) > (machineVolume.getZ())) { //|| !isOnPlatform()
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
+    private boolean modelInvalidPosition() {
+        BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
+        Point3d lower = new Point3d();
+        Point3d upper = new Point3d();
+        getBoundingBox().getLower(lower);
+        getBoundingBox().getUpper(upper);
+
+        if ((Math.abs(lower.x) + Math.abs(upper.x)) > machineVolume.getX()
+                || (Math.abs(lower.y) + Math.abs(upper.y)) > machineVolume.getY()
+                || Math.round(upper.z) > (machineVolume.getZ())) {
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean modelInBed() {
 
         BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
@@ -255,35 +272,35 @@ public class EditingModel implements Serializable {
         Point3d upper = new Point3d();
         bb.getLower(lower);
         bb.getUpper(upper);
-        double zoff = -lower.z;                 
+        double zoff = -lower.z;
         double yoff;
         double xoff;
-        
+
         ArrayList<Model> models = Base.getMainWindow().getBed().getModels();
         int nmodelsInBed = models.size();
         if (nmodelsInBed > 1) { // If there are more models in bed controls their positioning
-            
+
             // Gets the model inserted before
-            Model mp = models.get(models.size() -2);                        
+            Model mp = models.get(models.size() - 2);
             double offset_prev_model = mp.getEditer().getWidth() / 2.0;
-            Point3d centroid_prev = mp.getEditer().getCentroid();            
-            
-            Model mc = models.get(models.size() -1);                        
+            Point3d centroid_prev = mp.getEditer().getCentroid();
+
+            Model mc = models.get(models.size() - 1);
             double offset_curr_model = mc.getEditer().getWidth() / 2.0;
-            
+
             xoff = centroid_prev.x + offset_curr_model + offset_prev_model + 5;
             yoff = (upper.y + lower.y) / 2.0d;
-            
+
             translateObjectWithoutValidation(xoff, yoff, zoff);
-            
+
         } else {
             xoff = (upper.x + lower.x) / 2.0d;
             yoff = (upper.y + lower.y) / 2.0d;
-            
+
             //Uses negative x and y values to place the model correctly in the center
             translateObjectWithoutValidation(-xoff, -yoff, zoff);
         }
-             
+
         BoundingBox bb2 = getBoundingBox(shapeTransform);
         Point3d lower2 = new Point3d();
         bb2.getLower(lower2);
@@ -293,67 +310,68 @@ public class EditingModel implements Serializable {
     }
 
     public boolean evaluateModelOutOfBounds() {
-        if (modelOutBonds() || !modelInBed()) {
+        boolean invalidPosition;
+        //if (modelOutBonds() || !modelInBed()) {
+        invalidPosition = modelInvalidPosition();
+        
+        if (invalidPosition) {
             updateModelOverSize();
             showMessage();
             return true;
         } else {
             if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
-                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPicked();
+                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPickedLite(true);
             }
-
         }
         return false;
     }
-    
-    public boolean evaluateCollision(){
-                
-        TriangleArray vertices = null;        
-        Geometry g = Base.getMainWindow().getBed().getModel(0).getShape().getGeometry();
-		if (g instanceof TriangleArray) { 
-            vertices = (TriangleArray)g; 
-        }
-                
-		if (g == null) {
-			Base.logger.info("Couldn't find valid geometry during save.");
-			return false;
-		}
 
-		int faces = vertices.getVertexCount()/3;
-		float[] norm = new float[3];
-		double[] coord = new double[3];
-		for (int faceIdx = 0; faceIdx < faces; faceIdx++) {
+    public boolean evaluateCollision() {
+
+        TriangleArray vertices = null;
+        Geometry g = Base.getMainWindow().getBed().getModel(0).getShape().getGeometry();
+        if (g instanceof TriangleArray) {
+            vertices = (TriangleArray) g;
+        }
+
+        if (g == null) {
+            Base.logger.info("Couldn't find valid geometry during save.");
+            return false;
+        }
+
+        int faces = vertices.getVertexCount() / 3;
+        float[] norm = new float[3];
+        double[] coord = new double[3];
+        for (int faceIdx = 0; faceIdx < faces; faceIdx++) {
 //			vertices.getNormal(faceIdx*3, norm);
 //			Vector3f norm3f = new Vector3f(norm);
 
 //			norm3f.normalize();
 //			System.out.println("  facet normal %e %e %e\n"+ " "+ norm3f.x+ " "+norm3f.y+ " "+norm3f.z);
 //			System.out.println("    outer loop\n");
-			Point3d face3d;
-			vertices.getCoordinate(faceIdx*3, coord);
-			face3d = new Point3d(coord);
+            Point3d face3d;
+            vertices.getCoordinate(faceIdx * 3, coord);
+            face3d = new Point3d(coord);
 
 //			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
 //                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
-			vertices.getCoordinate((faceIdx*3)+1, coord);
-			face3d = new Point3d(coord);
-	
+            vertices.getCoordinate((faceIdx * 3) + 1, coord);
+            face3d = new Point3d(coord);
+
 //			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
 //                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
-			vertices.getCoordinate((faceIdx*3)+2, coord);
-			face3d = new Point3d(coord);
-	
+            vertices.getCoordinate((faceIdx * 3) + 2, coord);
+            face3d = new Point3d(coord);
+
 //			System.out.println("      vertex %e %e %e\n"+ " "+ face3d.x+ " "+face3d.y+ " "+face3d.z);
 //                        Base.getMainWindow().getBed().addPoint(df.format(face3d.x), df.format(face3d.y));
-		}                
+        }
         System.err.println("evaluateCollision: DONE");
-        
+
         return false;
     }
-   
-    
-    public boolean evaluateModelOutOfBoundsX()
-    {
+
+    public boolean evaluateModelOutOfBoundsX() {
         if (modelOutBonds('X')) {
             updateModelOverSize();
             showMessage();
@@ -364,11 +382,10 @@ public class EditingModel implements Serializable {
             }
 
         }
-        return false; 
+        return false;
     }
-    
-    public boolean evaluateModelOutOfBoundsY()
-    {
+
+    public boolean evaluateModelOutOfBoundsY() {
         if (modelOutBonds('Y')) {
             updateModelOverSize();
             showMessage();
@@ -379,11 +396,10 @@ public class EditingModel implements Serializable {
             }
 
         }
-        return false; 
+        return false;
     }
 
-    public boolean evaluateModelOutOfBoundsZ()
-    {
+    public boolean evaluateModelOutOfBoundsZ() {
         if (modelOutBonds('Z')) {
             updateModelOverSize();
             showMessage();
@@ -394,7 +410,7 @@ public class EditingModel implements Serializable {
             }
 
         }
-        return false; 
+        return false;
     }
 
     public double getBedMaxMeasure() {
@@ -425,6 +441,19 @@ public class EditingModel implements Serializable {
         if (objectMaterial != null) {
 
             if (!modelTooBig() && !modelOutBonds() && modelInBed()) {
+                Color modelColor = new Color(253, 204, 6);
+                objectMaterial.setAmbientColor(new Color3f(modelColor));
+                objectMaterial.setDiffuseColor(new Color3f(modelColor));
+            } else {
+                updateModelOverSize();
+                showMessage();
+            }
+        }
+    }
+
+    public void updateModelPickedLite(boolean validPosition) {
+        if (objectMaterial != null) {
+            if (validPosition) {
                 Color modelColor = new Color(253, 204, 6);
                 objectMaterial.setAmbientColor(new Color3f(modelColor));
                 objectMaterial.setDiffuseColor(new Color3f(modelColor));
@@ -639,7 +668,6 @@ public class EditingModel implements Serializable {
 //            Vector3d boxdims = new Vector3d(buildVol.getX(), buildVol.getY(), buildVol.getZ());
         Shape3D boxframe = cam.makeBoxFrame(getLowerPoint3D(), new Vector3d(getWidth(), getDepth(), getHeight()));
 
-
 //			Appearance ap = new Appearance();
 //			Color3f col = new Color3f(0.0f, 0.0f, 1.0f);
 //			ColoringAttributes ca = new ColoringAttributes(col, ColoringAttributes.NICEST);
@@ -648,7 +676,6 @@ public class EditingModel implements Serializable {
 //			ap.setTransparencyAttributes( t_attr );
 //			Box box = new Box(buildVol.getX()/2,buildVol.getY()/2,buildVol.getZ()/2, ap);
 //			boxGroup.addChild(box);
-
         boxframe.setPickable(false);
         boxGroup.addChild(boxframe);
 
@@ -667,10 +694,8 @@ public class EditingModel implements Serializable {
 //            tg.addChild(box);
 //
 //            boxGroup.addChild(tg);
-
 //            boxGroup.addChild(shape);
 //        }
-
         boxGroup.setCapability(BranchGroup.ALLOW_DETACH);
 //            boxGroup.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
 //            boxGroup.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
@@ -821,10 +846,9 @@ public class EditingModel implements Serializable {
         return lower.z < 0.001d && lower.z > -0.001d;
     }
 
-    
-    public void updateDimensions(double targetX, double targetY, double targetZ, boolean isOnPlatform){
+    public void updateDimensions(double targetX, double targetY, double targetZ, boolean isOnPlatform) {
         Transform3D t = new Transform3D();
-                                      
+
         t.setScale(new Vector3d(targetX / getWidth(), targetY / getDepth(), targetZ / getHeight()));
         if (isOnPlatform) {
             t = transformOnBottom(t);
@@ -837,7 +861,7 @@ public class EditingModel implements Serializable {
         evaluateModelOutOfBounds();
         Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
     }
-    
+
     public void scale(double scale, boolean isOnPlatform, boolean evaluateOutOfBounds) {
 
         if (model != null && validSizeConstraints(scale)) {
@@ -851,8 +875,9 @@ public class EditingModel implements Serializable {
             }
             shapeTransform.setTransform(t);
             model.setTransform(t, "resize", isNewOp());
-            if (evaluateOutOfBounds)
+            if (evaluateOutOfBounds) {
                 evaluateModelOutOfBounds();
+            }
             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
         }
     }
@@ -880,7 +905,7 @@ public class EditingModel implements Serializable {
                 boolean invalid = evaluateModelOutOfBoundsX();
                 Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
                 model.setXscale(newScale / 100.0);
-                
+
                 /**
                  * Tests if newScale represents a invalid model volume
                  */
@@ -888,17 +913,14 @@ public class EditingModel implements Serializable {
                     double reductionToFit = calculateOverplus('X');
                     double scaleToFit = (newScale / reductionToFit);
                     this.scaleX(scaleToFit, isOnPlatform, false);
-                }
-                else
-                {
+                } else {
                     evaluateModelOutOfBounds();
 
                 }
             }
         }
     }
-    
-        
+
     public void scaleXY(double scale, boolean isOnPlatform) {
         if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
@@ -914,7 +936,7 @@ public class EditingModel implements Serializable {
             evaluateModelOutOfBounds();
             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
         }
-    }   
+    }
 
     public void scaleY(double scale, boolean isOnPlatform, boolean arrowsScale) {
         if (model != null) {
@@ -936,7 +958,7 @@ public class EditingModel implements Serializable {
                 boolean invalid = evaluateModelOutOfBoundsY();
                 Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
                 model.setYscale(newScale / 100.0);
-                                
+
                 /**
                  * Tests if newScale represents a invalid model volume
                  */
@@ -944,9 +966,7 @@ public class EditingModel implements Serializable {
                     double reductionToFit = calculateOverplus('Y');
                     double scaleToFit = (newScale / reductionToFit);
                     this.scaleY(scaleToFit, isOnPlatform, false);
-                }
-                else
-                {
+                } else {
                     evaluateModelOutOfBounds();
                 }
             }
@@ -969,7 +989,7 @@ public class EditingModel implements Serializable {
             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
         }
     }
-    
+
     public void scaleZ(double scale, boolean isOnPlatform, boolean arrowsScale) {
         if (model != null) {
             double currentScale = model.getZscalePercentage();
@@ -997,9 +1017,7 @@ public class EditingModel implements Serializable {
                     double reductionToFit = calculateOverplus('Z');
                     double scaleToFit = (newScale / reductionToFit);
                     this.scaleZ(scaleToFit, isOnPlatform, false);
-                }
-                else
-                {
+                } else {
                     evaluateModelOutOfBounds();
                 }
             }
@@ -1022,7 +1040,7 @@ public class EditingModel implements Serializable {
             Base.getMainWindow().getCanvas().getModelsPanel().updateDimensions();
         }
     }
-    
+
     public void scaleAxisLock(double scale, boolean isOnPlatform, String axis) {
         if (model != null && validSizeConstraints(scale)) {
             this.scale = scale / 100;
@@ -1036,7 +1054,7 @@ public class EditingModel implements Serializable {
             } else {
                 t.setNonUniformScale(1, 1, 1);
             }
-            
+
             if (isOnPlatform) {
                 t = transformOnBottom(t);
             } else {
@@ -1049,7 +1067,6 @@ public class EditingModel implements Serializable {
         }
     }
 
-        
     private double calculateOverplus(char axis) {
         double diffDistance;
         double diffFactor;
@@ -1129,8 +1146,6 @@ public class EditingModel implements Serializable {
         }
     }
 
-    
-    
     public Point3d getCentroid() {
         validateBounds();
         return centroid;

@@ -79,7 +79,7 @@ public class Printer {
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
         if (gcode != null && gcode.canRead() && gcode.length() != 0) {
-            replaceLineInFile(gcode.getPath(), "M31 A0 L0");
+            replaceLineInFile(gcode.getPath(), "M31 A0");
             Base.writeLog("GCode generated", this.getClass());
         } else {
             if (!gcode.canRead() || gcode.length() == 0) {
@@ -100,10 +100,10 @@ public class Printer {
         File fileToRead = new File(pathString);
         File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
 
-        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes()
-                + " L" + getGCodeNLines();
+        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes();
+                //+ " L" + getGCodeNLines();
 
-        Base.writeLog("Attempting to replace M31 A0 L0 with " + m31String, this.getClass());
+        Base.writeLog("Attempting to replace M31 A0 with " + m31String, this.getClass());
         Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
         Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
         
@@ -132,9 +132,7 @@ public class Printer {
         } catch (IOException e) {
             Base.writeLog("IOException when attempting to replace M31", this.getClass());
             Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
-        } catch (SecurityException e) {
-            Base.writeLog("OS seems to have sandboxed BEESOFT when attempting to remove the unmodified GCode file", this.getClass());
-        }
+        } 
     }
 
     private void appendStartAndEndGCode() {

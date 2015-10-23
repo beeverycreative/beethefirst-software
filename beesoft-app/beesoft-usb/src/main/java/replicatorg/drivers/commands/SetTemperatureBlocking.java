@@ -13,7 +13,7 @@ public class SetTemperatureBlocking implements DriverCommand {
 
     @Override
     public void run(Driver driver) throws RetryException {
-        driver.setTemperature(temperature);
+        driver.setTemperatureBlocking(temperature);
     }
 
     @Override

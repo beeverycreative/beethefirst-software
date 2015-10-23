@@ -124,7 +124,7 @@
                                   </Group>
                                   <Component id="jPanel5" alignment="0" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="36" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="32" max="32767" attributes="0"/>
                           </Group>
                           <Component id="tInfo7" alignment="0" max="32767" attributes="0"/>
                           <Component id="tInfo3" alignment="0" max="32767" attributes="0"/>
@@ -200,7 +200,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="vRemaining">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="NA"/>
+                    <Property name="text" type="java.lang.String" value="N/A"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -222,7 +222,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="vEstimation">
               <Properties>
-                <Property name="text" type="java.lang.String" value="NA"/>
+                <Property name="text" type="java.lang.String" value="N/A"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="tInfo3">

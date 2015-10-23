@@ -98,8 +98,8 @@ public class ControlPanel extends BaseDialog {
     private Timer setPollDataTrue;
     private Timer showBeepLabel;
     protected Timer movButtonHoldDown;
-    private static final int movCommandInterval = 50;
-    private static final double movCommandStep = 1.2;
+    private static final int movCommandInterval = 25;
+    private static final double movCommandStep = 0.6;
     protected volatile boolean canPollData = true;
     protected volatile boolean canMove = true;
 
@@ -190,15 +190,20 @@ public class ControlPanel extends BaseDialog {
     private void evaluateInitialConditions() {
         getPosition();
 
+        disposeThread.start();
+        sleep(100);
+        inputValidationThread.start();
+        sleep(100);
+        getInitialValuesThread.start();
+        sleep(100);
+
         // set to relative positioning
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+        sleep(100);
 
         // enable debug mode
         machine.getDriver().dispatchCommand("M1110 S1", COM.DEFAULT);
-
-        disposeThread.start();
-        inputValidationThread.start();
-        getInitialValuesThread.start();
+        sleep(100);
 
         setPollDataTrue = new Timer(0, new ActionListener() {
 
@@ -247,6 +252,14 @@ public class ControlPanel extends BaseDialog {
             return Double.valueOf(targetTemperatureVal.getText());
         } catch (IllegalArgumentException ex) {
             return -1;
+        }
+    }
+
+    private void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1896,7 +1909,7 @@ class GetInitialValuesThread extends Thread {
             }
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 break;
             }
