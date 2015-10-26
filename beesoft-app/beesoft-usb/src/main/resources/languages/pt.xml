@@ -677,6 +677,8 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <FlashingSubMessageNoCalibration value="A inserir um novo firmware... (irá perder a calibração!)" />
             <LaunchingMessage value="A executar o novo firmware!" />
             <SavingMessage value="A gravar a calibração e as definições de filamento actuais" />
+            <RestartMessage value="Problem with firmware. Please restart your printer." />
+            <RestartMessageTimeout value="(it's taking a while... try to restart your printer)" />
         </FeedbackPanel>
 
       <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       

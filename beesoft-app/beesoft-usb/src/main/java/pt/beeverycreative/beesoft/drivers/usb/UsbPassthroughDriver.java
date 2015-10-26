@@ -1,5 +1,6 @@
 package pt.beeverycreative.beesoft.drivers.usb;
 
+import com.sun.xml.internal.ws.resources.SenderMessages;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -1147,7 +1148,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-            transferPercentage = ( (double) message / totalMessages) * 100;
+            transferPercentage = ((double) message / totalMessages) * 100;
             psAutonomous.updatePrintBar((int) transferPercentage);
         }
         System.out.println("Block " + totalBlocks + "/" + totalBlocks);
@@ -1554,11 +1555,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         out += command + "\n";
 
         //out = dispatchCommand(command);
-        
         sendCommand(command);
-        
+
         hiccup(100, 0);
-        
+
         out = readResponse();
 
 //        System.err.println("Source Pos = " + srcPos);
@@ -1599,7 +1599,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         if (!(tries > 0)) {
             out += response + "\n";
             return ERROR + out + "M28 failed. Response not OK";
@@ -2985,6 +2985,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         response = dispatchCommand("M625").toLowerCase();
         if (response.contains("bad")) {
             Base.writeLog("Something is wrong with the firmware, flashing without saving calibration", this.getClass());
+            establishConnectionToBootloader();
             return false;
         }
 
@@ -3023,6 +3024,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean establishConnection() {
         try {
             boolean ready;
+            int tries = 0;
 
             ready = false;
 
@@ -3058,12 +3060,79 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
                     Thread.sleep(1000);
                 }
+                
+                if(tries++ >= 10) {
+                    feedbackWindow.setFeedback3(Feedback.RESTART_PRINTER);
+                }
             } while (ready == false);
 
         } catch (Exception ex) {
             Base.writeLog("Exception on establishConnection()", this.getClass());
             return false;
         }
+
+        return true;
+    }
+
+    private boolean establishConnectionToBootloader() {
+        boolean ready;
+        String response;
+
+        ready = false;
+
+        do {
+            try {
+
+                if (pipes != null && pipes.isOpen()) {
+                    closePipe(pipes);
+                }
+
+                if (m_usbDevice != null) {
+                    m_usbDevice.close();
+                    m_usbDevice = null;
+                }
+
+                pipes = null;
+                while (m_usbDevice == null) {
+                    InitUsbDevice();
+                    hiccup(100, 0);
+                }
+
+                pipes = GetPipe(m_usbDevice);
+
+                if (pipes != null) {
+                    openPipe(pipes);
+                } else {
+                    continue;
+                }
+
+                if (isInitialized() && testPipes(pipes)) {
+
+                    hiccup(100, 0);
+
+                    int i = 100;
+                    while (readResponse().equals("") == false) {
+                        hiccup(10, 0);
+                    }
+
+                    sendCommand("M116");
+                    hiccup(100, 0);
+                    response = readResponse().toLowerCase();
+
+                    if (response.contains("bad") == false) {
+                        //Base.getMainWindow().getButtons().setMessage("is connecting");
+                        ready = true;
+                    } else {
+                        feedbackWindow.setFeedback2(Feedback.RESTART_PRINTER);
+                    }
+                } else {
+                    Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
+                    Thread.sleep(1000);
+                }
+
+            } catch (Exception ex) {
+            }
+        } while (ready == false);
 
         return true;
     }
