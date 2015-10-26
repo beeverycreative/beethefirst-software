@@ -3118,7 +3118,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     hiccup(100, 0);
                     response = readResponse().toLowerCase();
 
-                    if (response.contains("bad") == false) {
+                    if (response.equals("") == false 
+                            && response.contains("bad") == false) {
                         //Base.getMainWindow().getButtons().setMessage("is connecting");
                         ready = true;
                     } else {

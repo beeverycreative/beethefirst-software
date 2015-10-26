@@ -336,12 +336,12 @@ public class UsbDriver extends DriverBaseImplementation {
         UsbConfiguration config;
 
         if (device != null) {
-            if (device.isConfigured()) {
-                config = device.getActiveUsbConfiguration();
-            } else {
-                Base.writeLog("Couldn't obtain valid USB configuration. Obtaining pipes failed", this.getClass());
-                return null;
-            }
+            //if (device.isConfigured()) {
+            config = device.getActiveUsbConfiguration();
+            //} else {
+            //    Base.writeLog("Couldn't obtain valid USB configuration. Obtaining pipes failed", this.getClass());
+            //    return null;
+            //}
 
             if (pipes == null || !testPipes(pipes)) {
                 Base.writeLog("No pipes were found, or testPipes failed. Creating new ones", this.getClass());
