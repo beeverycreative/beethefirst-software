@@ -1,6 +1,5 @@
 package pt.beeverycreative.beesoft.drivers.usb;
 
-import com.sun.xml.internal.ws.resources.SenderMessages;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
