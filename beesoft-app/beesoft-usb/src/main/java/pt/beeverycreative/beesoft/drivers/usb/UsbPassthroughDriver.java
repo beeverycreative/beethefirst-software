@@ -108,7 +108,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static boolean bootedFromBootloader = false;
     private static boolean backupConfig = false;
     private static String backupCoilText = "";
-    private static double backupZVal = -1;
+    private static double backupZVal = 123.495;
 
     private static final Feedback feedbackWindow = new Feedback();
     private static FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
@@ -203,7 +203,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         feedbackWindow.dispose();
         feedbackThread = null;
     }
-    
+
     @Override
     public int getQueueSize() {
         return queue_size;
@@ -341,7 +341,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 setCoilText(backupCoilText);
                 dispatchCommand("M604 Z" + backupZVal);
                 backupConfig = false;
-                backupZVal = -1;
+                backupZVal = 123.495;
                 backupCoilText = "";
             } else {
                 updateCoilText();
@@ -830,10 +830,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String dispatchCommand(String next) {
 
-        if(next.contains("G")) {
+        if (next.contains("G")) {
             setBusy(true);
         }
-        
+
         String ans = _dispatchCommand(next);
         queue_size = getQfromStatus(ans);
 
@@ -965,8 +965,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void readZValue() {
-        String temp = dispatchCommand("M600");
-        String home_pos_z = "0.0";
+        String temp = "", response, home_pos_z = "123.495";
+        sendCommand("M600");
+        
+        hiccup(100, 0);
+        
+        while((response = readResponse()).equals("") == false) {
+            temp += response;
+            hiccup(10, 0);
+        }
+        
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "(home_pos_z)";	// Variable Name 1
         String re3 = "(\\s+)";	// White Space 1
@@ -2070,9 +2078,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return;
         }
 
-        if(status.contains(STATUS_OK)) {
+        if (status.contains(STATUS_OK)) {
             machineReady = true;
-            if(queue_size == 0) {
+            if (queue_size == 0) {
                 setBusy(false);
             }
         }
@@ -3004,7 +3012,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         hiccup(3000, 0);
 
         if (establishConnection() == false) {
-            Base.writeLog("Couldn't go back to bootloader after obtaining data from firmware, requesting user to restart", this.getClass());
+            Base.writeLog("Couldn't establish connection after attempting to go back to bootloader, requesting user to restart", this.getClass());
 
             // Warn user to restart BTF and restart BEESOFT.
             Warning firmwareOutDate = new Warning("close");
@@ -3016,6 +3024,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             while (true) {
                 hiccup(3000, 0);
             }
+        }
+
+        response = dispatchCommand("M116").toLowerCase();
+        if (response.contains("bad")) {
+            Base.writeLog("Couldn't go back to bootloader, asking user to restart printer", this.getClass());
+            establishConnectionToBootloader();
         }
 
         Base.writeLog("Acquired Z value and loaded filament with success!", this.getClass());
