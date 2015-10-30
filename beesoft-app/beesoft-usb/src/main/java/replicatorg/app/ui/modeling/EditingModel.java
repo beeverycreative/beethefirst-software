@@ -18,7 +18,6 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
-import javax.media.j3d.TriangleArray;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
@@ -43,7 +42,6 @@ import replicatorg.model.Model;
 public class EditingModel implements Serializable {
 
     private final double MINIMUM_SIZE_LIMIT = Float.parseFloat(ProperDefault.get("editor.xmin"));
-    private final BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
 
     public class ReferenceFrame {
 
@@ -238,7 +236,9 @@ public class EditingModel implements Serializable {
      */
     public boolean modelInvalidPosition() {
         double xLimit, yLimit, zLimit;
-
+        BuildVolume machineVolume;
+        
+        machineVolume= Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
         xLimit = machineVolume.getX() / 2;
         yLimit = machineVolume.getY() / 2;
         zLimit = machineVolume.getZ();
