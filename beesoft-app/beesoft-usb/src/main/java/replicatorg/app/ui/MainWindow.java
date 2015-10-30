@@ -122,7 +122,6 @@ import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenter;
 import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
 import replicatorg.app.ui.mainWindow.MessagesPopUp;
-import replicatorg.app.ui.mainWindow.CameraControl;
 import replicatorg.app.ui.mainWindow.ModelsDetailsPanel;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
@@ -210,7 +209,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     private boolean oktoGoOnSave = false;
     private boolean newSceneOnDialog = false;
     MessagesPopUp messagesPP;
-    CameraControl camCtrl;
     CompoundEdit compoundEdit;
 
     public MainWindow() {
@@ -341,10 +339,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public ButtonsPanel getButtons() {
         return buttons;
-    }
-
-    public CameraControl getCameraControl() {
-        return camCtrl;
     }
 
     public String getBuildTime() {
@@ -1078,7 +1072,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
+                if (!machine.getDriver().getMachineReady() && machine.getDriver().isBusy()) {
                     showFeedBackMessage("moving");
                 } else {
                     if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0

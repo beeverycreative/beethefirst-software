@@ -11,6 +11,16 @@ import replicatorg.drivers.StopException;
  */
 public class CalibrationStep implements DriverCommand {
 
+    private final Thread thread;
+
+    public CalibrationStep() {
+        this.thread = null;
+    }
+
+    public CalibrationStep(Thread thread) {
+        this.thread = thread;
+    }
+
     @Override
     public String getCommand() {
         return "G132";
@@ -28,6 +38,11 @@ public class CalibrationStep implements DriverCommand {
     @Override
     public void run(Driver driver) throws RetryException, StopException {
         driver.dispatchCommand("G132", COM.DEFAULT);
+        driver.setBusy(true);
+
+        if (thread != null) {
+            thread.start();
+        }
     }
 
 }

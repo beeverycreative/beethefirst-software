@@ -572,7 +572,6 @@ public class FilamentInsertion extends BaseDialog {
                 finalizeHeat();
                 Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
                 Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-                Base.maintenanceWizardOpen = false;
                 Base.enableAllOpenWindows();
 
                 machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());

@@ -88,7 +88,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final int QUEUE_LIMIT = 85;
     private static final int QUEUE_WAIT = 1000;
     private static final int SEND_WAIT = 2; //2 did not work
-    private int queue_size;
+    private int queue_size = 0;
     private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispatchTime;
     private static Version bootloaderVersion = new Version();
@@ -202,6 +202,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
         feedbackWindow.dispose();
         feedbackThread = null;
+    }
+    
+    @Override
+    public int getQueueSize() {
+        return queue_size;
     }
 
     /**
@@ -825,6 +830,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String dispatchCommand(String next) {
 
+        if(next.contains("G")) {
+            setBusy(true);
+        }
+        
         String ans = _dispatchCommand(next);
         queue_size = getQfromStatus(ans);
 
@@ -2061,7 +2070,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return;
         }
 
-        machineReady = status.contains(STATUS_OK);
+        if(status.contains(STATUS_OK)) {
+            machineReady = true;
+            if(queue_size == 0) {
+                setBusy(false);
+            }
+        }
         machinePowerSaving = status.contains("Power_Saving");
         machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");
         machinePrinting = status.toLowerCase().contains(STATUS_SDCARD);
@@ -3049,8 +3063,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
                     Thread.sleep(1000);
                 }
-                
-                if(tries++ >= 10) {
+
+                if (tries++ >= 10) {
                     feedbackWindow.setFeedback3(Feedback.RESTART_PRINTER);
                 }
             } while (ready == false);
@@ -3108,7 +3122,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     hiccup(100, 0);
                     response = readResponse().toLowerCase();
 
-                    if (response.equals("") == false 
+                    if (response.equals("") == false
                             && response.contains("bad") == false) {
                         //Base.getMainWindow().getButtons().setMessage("is connecting");
                         ready = true;

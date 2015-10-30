@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -26,8 +24,8 @@ import replicatorg.machine.MachineInterface;
  */
 public class CalibrationWelcome extends BaseDialog {
 
-    private final MachineInterface machine;
-    private final DisposeFeedbackThread2 disposeThread;
+    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
     private boolean repeatCalibration;
 
     public CalibrationWelcome(boolean repeatCalibration) {
@@ -35,14 +33,11 @@ public class CalibrationWelcome extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        machine = Base.getMachineLoader().getMachineInterface();
         this.repeatCalibration = repeatCalibration;
-        disposeThread = new DisposeFeedbackThread2(this, machine);
-        evaluateInitialConditions();
         enableDrag();
         moveToA();
-        Base.systemThreads.add(disposeThread);
         centerOnScreen();
+        evaluateInitialConditions();
     }
 
     private void setFont() {
@@ -118,13 +113,13 @@ public class CalibrationWelcome extends BaseDialog {
 
     private void evaluateInitialConditions() {
         enableMessageDisplay();
-        disposeThread.start();
     }
 
     public void setZUse(boolean use) {
         this.repeatCalibration = use;
     }
 
+    @Override
     public void resetFeedbackComponents() {
         bMinus05.setEnabled(true);
         bMinus005.setEnabled(true);
@@ -136,6 +131,7 @@ public class CalibrationWelcome extends BaseDialog {
 //
     }
 
+    @Override
     public void showMessage() {
         bMinus05.setEnabled(false);
         bMinus005.setEnabled(false);
@@ -149,10 +145,8 @@ public class CalibrationWelcome extends BaseDialog {
 
     private void moveToA() {
         Base.writeLog("Initializing and Calibrating A", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.InitCalibration(repeatCalibration));
+        machine.runCommand(new replicatorg.drivers.commands.InitCalibration(repeatCalibration, busyThread));
         machine.runCommand(new replicatorg.drivers.commands.RelativePositioning());
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
     }
 
     private void doCancel() {
@@ -166,7 +160,7 @@ public class CalibrationWelcome extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        disposeThread.interrupt();
+        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -637,9 +631,7 @@ public class CalibrationWelcome extends BaseDialog {
             machine.runCommand(new replicatorg.drivers.commands.AbsolutePositioning());
             CalibrationScrew1 p = new CalibrationScrew1();
             dispose();
-            if (disposeThread.isAlive()) {
-                disposeThread.stop();
-            }
+            busyThread.terminate();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -675,38 +667,4 @@ public class CalibrationWelcome extends BaseDialog {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-}
-
-class DisposeFeedbackThread2 extends Thread {
-
-    private final MachineInterface machine;
-    private final CalibrationWelcome calibrationPanel;
-
-    public DisposeFeedbackThread2(CalibrationWelcome filIns, MachineInterface mach) {
-        super("Calibration Welcome Thread");
-        this.machine = mach;
-        this.calibrationPanel = filIns;
-    }
-
-    @Override
-    public void run() {
-        while (this.isInterrupted() == false) {
-            machine.getModel().setMachineReady(false);
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (machine.getModel().getMachineReady()
-                    && machine.getDriver().isBusy() == false) {
-                calibrationPanel.resetFeedbackComponents();
-                break;
-            } else {
-                calibrationPanel.showMessage();
-            }
-        }
-    }
 }

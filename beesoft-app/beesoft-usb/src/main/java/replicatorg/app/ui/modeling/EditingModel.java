@@ -243,14 +243,18 @@ public class EditingModel implements Serializable {
         Point3d upper = new Point3d();
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
+        
+        double lowerX = lower.x;
+        double lowerY = lower.y;
+        double lowerZ = lower.z;
+        double upperX = upper.x;
+        double upperY = upper.y;
+        double upperZ = upper.z;
+        
 
-        if ((Math.abs(lower.x) + Math.abs(upper.x)) > machineVolume.getX()
+        return (Math.abs(lower.x) + Math.abs(upper.x)) > machineVolume.getX()
                 || (Math.abs(lower.y) + Math.abs(upper.y)) > machineVolume.getY()
-                || Math.round(upper.z) > (machineVolume.getZ())) {
-            return true;
-        }
-
-        return false;
+                || Math.round(upper.z) > (machineVolume.getZ());
     }
 
     public boolean modelInBed() {

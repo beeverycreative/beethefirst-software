@@ -1531,4 +1531,12 @@ public class Base {
             return applicationVersion;
         }
     }
+    
+    public static void hiccup(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Base.writeLog("Interrupted during hiccup", Base.class);
+        }
+    }
 }

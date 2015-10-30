@@ -876,7 +876,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 
                 if (!machine.getDriver().isBusy()) {
                     unloadPressed = true;
-                    while (!machine.getDriver().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineReady()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -919,7 +919,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                         Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    while (!machine.getDriver().getMachineStatus()) {
+                    while (!machine.getDriver().getMachineReady()) {
                         machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                         try {
                             Thread.sleep(1000);
@@ -1416,7 +1416,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                         } catch (InterruptedException ex) {
                             Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                    } while (machine.getDriver().getMachineStatus() == false);
+                    } while (machine.getDriver().getMachineReady() == false);
 
                     machine.getDriver().setBusy(false);
                     bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
@@ -1603,7 +1603,7 @@ class UpdateThread4 extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (machine.getDriver().getMachineStatus() && finished) {
+            if (machine.getDriver().getMachineReady() && finished) {
                 ready = true;
                 break;
             }

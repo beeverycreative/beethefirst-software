@@ -88,6 +88,7 @@ public class MachineModel {
     private String resolution = "lowRes";
 
     private AutonomousData autonomousData;
+    private final Object autonomousDataMutex = new Object();
     private boolean autonomousDataReady = false;
 
     /**
@@ -574,7 +575,7 @@ public class MachineModel {
     public void setMachinePrinting(boolean machinePrinting) {
         this.machinePrinting = machinePrinting;
     }
-    
+
     public boolean getMachinePrinting() {
         return machinePrinting;
     }
@@ -597,19 +598,23 @@ public class MachineModel {
         this.resolution = res;
     }
 
-    public synchronized void setAutonomousData(AutonomousData data) {
-        this.autonomousData = data;
-        autonomousDataReady = true;
-        notifyAll();
+    public void setAutonomousData(AutonomousData data) {
+        synchronized (autonomousDataMutex) {
+            this.autonomousData = data;
+            autonomousDataReady = true;
+            autonomousDataMutex.notifyAll();
+        }
     }
 
-    public synchronized AutonomousData getAutonomousData() throws InterruptedException {
-        if (autonomousDataReady == false) {
-            wait();
-        }
+    public AutonomousData getAutonomousData() throws InterruptedException {
+        synchronized (autonomousDataMutex) {
+            if (autonomousDataReady == false) {
+                autonomousDataMutex.wait();
+            }
 
-        autonomousDataReady = false;
-        return autonomousData;
+            autonomousDataReady = false;
+            return autonomousData;
+        }
     }
 
 }

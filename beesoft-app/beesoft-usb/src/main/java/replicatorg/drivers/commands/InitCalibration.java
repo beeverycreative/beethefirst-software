@@ -12,13 +12,16 @@ import replicatorg.drivers.StopException;
 public class InitCalibration implements DriverCommand {
 
     private final boolean repeatingCalibration;
+    private final Thread thread;
 
-    public InitCalibration() {
+    public InitCalibration(Thread thread) {
         repeatingCalibration = false;
+        this.thread = thread;
     }
 
-    public InitCalibration(boolean repeat) {
+    public InitCalibration(boolean repeat, Thread thread) {
         this.repeatingCalibration = repeat;
+        this.thread = thread;
     }
 
     @Override
@@ -43,8 +46,12 @@ public class InitCalibration implements DriverCommand {
     public void run(Driver driver) throws RetryException, StopException {
         if (repeatingCalibration == false) {
             driver.dispatchCommand("G131 S0", COM.DEFAULT);
+            driver.setBusy(true);
+            thread.start();
         } else {
             driver.dispatchCommand("G131 S0 Z0", COM.DEFAULT);
+            driver.setBusy(true);
+            thread.start();
         }
     }
 

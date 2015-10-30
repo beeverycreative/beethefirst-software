@@ -434,7 +434,6 @@ public class ControlPanel extends BaseDialog {
     private void doCancel() {
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.maintenanceWizardOpen = false;
         disposeThread.cancel();
         inputValidationThread.cancel();
         getInitialValuesThread.cancel();

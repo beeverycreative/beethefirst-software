@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import replicatorg.app.Base;
+import replicatorg.machine.MachineInterface;
 
 /**
  *
@@ -55,5 +58,50 @@ public abstract class BaseDialog extends javax.swing.JDialog {
         this.setLocation(x, y);
         this.setLocationRelativeTo(Base.getMainWindow());
     }
+    
+    protected void resetFeedbackComponents() {
+        
+    }
+    
+    protected void showMessage() {
+        
+    }
 
+}
+
+class BusyFeedbackThread extends Thread {
+
+    private final MachineInterface machine;
+    private final BaseDialog dialog;
+    private boolean stop = false;
+
+    public BusyFeedbackThread(BaseDialog child, MachineInterface mach) {
+        super("BusyFeedbackThread");
+        this.machine = mach;
+        this.dialog = child;
+    }
+
+    @Override
+    public void run() {
+
+        while (stop == false) {
+
+            if (machine.getDriver().isBusy() == false) {
+                dialog.resetFeedbackComponents();
+                break;
+            } else {
+                dialog.showMessage();
+            }
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void terminate() {
+        stop = true;
+    }
 }

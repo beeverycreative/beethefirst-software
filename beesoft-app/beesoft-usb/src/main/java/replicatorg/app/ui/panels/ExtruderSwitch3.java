@@ -721,7 +721,7 @@ class ExtruderSwitchDisposeFeedbackThread extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriver().getMachineStatus()) {
+            if (!machine.getDriver().getMachineReady()) {
                 filamentPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -730,7 +730,7 @@ class ExtruderSwitchDisposeFeedbackThread extends Thread {
                 }
             }
 
-            if (machine.getDriver().getMachineStatus()
+            if (machine.getDriver().getMachineReady()
                     && !machine.getDriver().isBusy()) {
                 filamentPanel.resetFeedbackComponents();
             }

@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -26,8 +24,8 @@ import replicatorg.machine.MachineInterface;
  */
 public class CalibrationScrew1 extends BaseDialog {
 
-    private final MachineInterface machine;
-    private final DisposeFeedbackThread3 disposeThread;
+    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
 
     public CalibrationScrew1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -35,15 +33,10 @@ public class CalibrationScrew1 extends BaseDialog {
         setFont();
         setTextLanguage();
         enableDrag();
-        machine = Base.getMachineLoader().getMachineInterface();
         Base.getMainWindow().setEnabled(false);
-        bPrev.setVisible(false);
         centerOnScreen();
         disableMessageDisplay();
         moveToB();
-        disposeThread = new DisposeFeedbackThread3(this, machine);
-        disposeThread.start();
-        Base.systemThreads.add(disposeThread);
     }
 
     private void setFont() {
@@ -51,7 +44,6 @@ public class CalibrationScrew1 extends BaseDialog {
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bPrev.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
@@ -62,7 +54,6 @@ public class CalibrationScrew1 extends BaseDialog {
         jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_title"));
         jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_Info")));
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        bPrev.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
@@ -106,9 +97,9 @@ public class CalibrationScrew1 extends BaseDialog {
         jLabel5.setForeground(new Color(0, 0, 0));
     }
 
+    @Override
     public void resetFeedbackComponents() {
         bNext.setEnabled(true);
-        bPrev.setEnabled(true);
         disableMessageDisplay();
     }
 
@@ -117,9 +108,9 @@ public class CalibrationScrew1 extends BaseDialog {
         jLabel5.setForeground(new Color(248, 248, 248));
     }
 
+    @Override
     public void showMessage() {
         bNext.setEnabled(false);
-        bPrev.setEnabled(false);
 
         enableMessageDisplay();
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
@@ -127,9 +118,8 @@ public class CalibrationScrew1 extends BaseDialog {
 
     private void moveToB() {
         Base.writeLog("Calibrating B", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.CalibrationStep());
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        machine.getDriver().setBusy(true);
+        machine.runCommand(new replicatorg.drivers.commands.CalibrationStep(busyThread));
     }
 
     private void doCancel() {
@@ -141,7 +131,7 @@ public class CalibrationScrew1 extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        disposeThread.interrupt();
+        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -161,7 +151,6 @@ public class CalibrationScrew1 extends BaseDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        bPrev = new javax.swing.JLabel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
 
@@ -290,21 +279,6 @@ public class CalibrationScrew1 extends BaseDialog {
         jPanel6.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel6.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bPrev.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bPrev.setText("ANTERIOR");
-        bPrev.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bPrev.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPrevMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bPrevMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPrevMousePressed(evt);
-            }
-        });
-
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
         bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
@@ -345,8 +319,6 @@ public class CalibrationScrew1 extends BaseDialog {
                 .addContainerGap()
                 .addComponent(bExit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bPrev)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -355,7 +327,6 @@ public class CalibrationScrew1 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bPrev)
                     .addComponent(bNext)
                     .addComponent(bExit))
                 .addGap(20, 20, 20))
@@ -388,19 +359,6 @@ public class CalibrationScrew1 extends BaseDialog {
         bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bExitMouseExited
 
-    private void bPrevMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseEntered
-        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bPrevMouseEntered
-
-    private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
-        if (bPrev.isEnabled()) {
-            CalibrationWelcome p = new CalibrationWelcome(false);
-            dispose();
-            disposeThread.stop();
-            p.setVisible(true);
-        }
-    }//GEN-LAST:event_bPrevMousePressed
-
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bNextMouseEntered
@@ -413,7 +371,7 @@ public class CalibrationScrew1 extends BaseDialog {
         if (bNext.isEnabled()) {
             CalibrationScrew2 p = new CalibrationScrew2();
             dispose();
-            disposeThread.stop();
+            busyThread.terminate();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -422,10 +380,6 @@ public class CalibrationScrew1 extends BaseDialog {
         doCancel();
     }//GEN-LAST:event_bExitMousePressed
 
-    private void bPrevMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseExited
-        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bPrevMouseExited
-
     private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
         doCancel();
     }//GEN-LAST:event_bXMousePressed
@@ -433,7 +387,6 @@ public class CalibrationScrew1 extends BaseDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bExit;
     private javax.swing.JLabel bNext;
-    private javax.swing.JLabel bPrev;
     private javax.swing.JLabel bX;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -448,42 +401,4 @@ public class CalibrationScrew1 extends BaseDialog {
     // End of variables declaration//GEN-END:variables
 }
 
-class DisposeFeedbackThread3 extends Thread {
 
-    private final MachineInterface machine;
-    private final CalibrationScrew1 calibrationPanel;
-
-
-    public DisposeFeedbackThread3(CalibrationScrew1 callIns, MachineInterface mach) {
-        super("Calibration skrew 1 Thread");
-        this.machine = mach;
-        this.calibrationPanel = callIns;
-    }
-
-    @Override
-    public void run() {
-
-        while (this.isInterrupted() == false) {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (!machine.getDriver().getMachineStatus()) {
-                calibrationPanel.showMessage();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (machine.getDriver().getMachineStatus()
-                    && !machine.getDriver().isBusy()) {
-                calibrationPanel.resetFeedbackComponents();
-            }
-
-        }
-    }
-}

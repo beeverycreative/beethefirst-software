@@ -526,7 +526,7 @@ public interface Driver {
      * @return <true> if machine ready
      * <false> if not
      */
-    public boolean getMachineStatus();
+    public boolean getMachineReady();
 
     /**
      * Checks if machine is ready - firmware side.
@@ -568,4 +568,5 @@ public interface Driver {
     public boolean getMachinePaused();
     public void setMachinePaused(boolean machinePaused);
     public void closeFeedback();
+    public int getQueueSize();
 }

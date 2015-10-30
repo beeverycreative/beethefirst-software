@@ -100,6 +100,11 @@ public abstract class DriverBaseImplementation implements Driver {
         // The truth is that the name come from the xml
         driverName = "virtualprinter";
     }
+    
+    @Override
+    public int getQueueSize() {
+        return -1;
+    }
 
     @Override
     public PrinterInfo getConnectedDevice() {
@@ -477,7 +482,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public boolean getMachineStatus() {
+    public boolean getMachineReady() {
         return machine.getMachineReady();
     }
 

@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -26,9 +24,8 @@ import replicatorg.machine.MachineInterface;
  */
 public class CalibrationValidation extends BaseDialog {
 
-    private final MachineInterface machine;
-
-    private final DisposeFeedbackThread7 disposeThread;
+    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
 
     public CalibrationValidation() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -36,12 +33,9 @@ public class CalibrationValidation extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        machine = Base.getMachineLoader().getMachineInterface();
         enableDrag();
-        disposeThread = new DisposeFeedbackThread7(this, machine);
-        disposeThread.start();
-        Base.systemThreads.add(disposeThread);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        resetFeedbackComponents();
+        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -100,6 +94,7 @@ public class CalibrationValidation extends BaseDialog {
         jLabel9.setForeground(new Color(248, 248, 248));
     }
 
+    @Override
     public void showMessage() {
         bRepeatCalibration.setEnabled(true);
         bConfirmCalibration.setEnabled(true);
@@ -108,6 +103,7 @@ public class CalibrationValidation extends BaseDialog {
         jLabel9.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
     }
 
+    @Override
     public void resetFeedbackComponents() {
         bRepeatCalibration.setEnabled(true);
         bConfirmCalibration.setEnabled(true);
@@ -141,7 +137,7 @@ public class CalibrationValidation extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        disposeThread.stop();
+        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -393,7 +389,7 @@ public class CalibrationValidation extends BaseDialog {
     private void bRepeatCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRepeatCalibrationMousePressed
         if (bRepeatCalibration.isEnabled()) {
             CalibrationWelcome cal = new CalibrationWelcome(true);
-            disposeThread.stop();
+            busyThread.terminate();
             dispose();
             cal.setVisible(true);
         }
@@ -420,9 +416,10 @@ public class CalibrationValidation extends BaseDialog {
             ProperDefault.put("nTotalPrints", String.valueOf(0));
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            machine.runCommand(new replicatorg.drivers.commands.CalibrationStep());
+            machine.runCommand(new replicatorg.drivers.commands.CalibrationStep(busyThread));
+            machine.runCommand(new replicatorg.drivers.commands.SendHome());
             dispose();
-            disposeThread.stop();
+            busyThread.terminate();
             Base.bringAllWindowsToFront();
         }
     }//GEN-LAST:event_bConfirmCalibrationMousePressed
@@ -442,43 +439,4 @@ public class CalibrationValidation extends BaseDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-}
-
-class DisposeFeedbackThread7 extends Thread {
-
-    private final MachineInterface machine;
-    private final CalibrationValidation calibrationPanel;
-
-    public DisposeFeedbackThread7(CalibrationValidation calVal, MachineInterface mach) {
-        super("Calibration validation Thread");
-        this.machine = mach;
-        this.calibrationPanel = calVal;
-    }
-
-    @Override
-    public void run() {
-
-        while (true) {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (!machine.getDriver().getMachineStatus()) {
-                calibrationPanel.showMessage();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (machine.getDriver().getMachineStatus()
-                    && !machine.getDriver().isBusy()) {
-                calibrationPanel.resetFeedbackComponents();
-            }
-
-        }
-    }
 }
