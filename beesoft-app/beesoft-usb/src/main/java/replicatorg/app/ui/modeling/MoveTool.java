@@ -2,15 +2,14 @@ package replicatorg.app.ui.modeling;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-
+import java.awt.image.BufferedImage;
 import javax.media.j3d.Transform3D;
 import javax.swing.Icon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
-import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
-
 import replicatorg.app.Base;
+import replicatorg.app.ui.MainWindow;
 import replicatorg.model.CAMPanel.DragMode;
 import static replicatorg.model.CAMPanel.DragMode.TRANSLATE_OBJECT;
 
@@ -18,6 +17,8 @@ import static replicatorg.model.CAMPanel.DragMode.TRANSLATE_OBJECT;
  *  Copyright (c) 2013 BEEVC - Electronic Systems
  */
 public class MoveTool extends Tool {
+    
+    private final MainWindow frame = Base.getMainWindow();
 
     public MoveTool(ToolPanel parent) {
         super(parent);
@@ -57,6 +58,7 @@ public class MoveTool extends Tool {
     @Override
     public void mouseReleased(MouseEvent e) {
 //            Base.getMainWindow().getCanvas().redrawBoundingBox(parent.getModelEditing().model, 1);
+        frame.setCursor(null);
     }
 
     @Override
@@ -76,6 +78,11 @@ public class MoveTool extends Tool {
                     mode = DragMode.TRANSLATE_OBJECT;
                 }
             }
+
+            double mouseX = e.getX();
+            double mouseY = e.getY();
+            double mouseX2 = e.getXOnScreen();
+            double mouseY2 = e.getYOnScreen();
 
             double xd = (e.getX() - startPoint.x);
             double yd = -(e.getY() - startPoint.y);
@@ -104,6 +111,11 @@ public class MoveTool extends Tool {
         // Set up view transform
         vt = parent.preview.getViewTransform();
         startPoint = e.getPoint();
+
+        frame.setCursor(frame.getToolkit().createCustomCursor(
+                new BufferedImage(3, 3, BufferedImage.TYPE_INT_ARGB), 
+                new Point(0, 0), "null"));
+
         super.mousePressed(e);
     }
 

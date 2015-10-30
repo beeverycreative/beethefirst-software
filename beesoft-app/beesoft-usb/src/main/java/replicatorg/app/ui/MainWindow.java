@@ -363,19 +363,21 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public boolean validatePrintConditions() {
         for (int i = 0; i < bed.getModels().size(); i++) {
-            if (bed.getModels().get(i).getEditer().modelOutBonds()) {
+            if (bed.getModels().get(i).getEditer().modelInvalidPosition()) {
 //                Warning p = new Warning();
 //                p.setVisible(true);
 //                p.setMessage("MessageOutOfBounds");
                 showFeedBackMessage("MessageOutOfBounds");
                 return false;
-            } else if (!bed.getModels().get(i).getEditer().modelInBed()) {
+            }/*
+            else if (!bed.getModels().get(i).getEditer().modelInBed()) {
 //                Warning p = new Warning();
 //                p.setVisible(true);
 //                p.setMessage("MessageNotInBed");
                 showFeedBackMessage("MessageNotInBed");
                 return false;
             }
+            */
         }
         return true;
     }

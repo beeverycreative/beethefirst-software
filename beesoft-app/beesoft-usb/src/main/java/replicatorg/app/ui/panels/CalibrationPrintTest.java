@@ -567,7 +567,6 @@ class PrintThread extends Thread {
 
         Base.writeLog("n_lines = " + n_lines, this.getClass());
         while (machine.getDriver().getQueueSize() < 20) {
-            Base.writeLog("Queue is still at 0, waiting", this.getClass());
             Base.hiccup(1000);
         }
 
@@ -575,12 +574,8 @@ class PrintThread extends Thread {
             Base.hiccup(1000);
             if ((queue = machine.getDriver().getQueueSize()) > 0) {
                 window.showPrintMessage();
-                Base.writeLog("n_lines - queue_size = " + (n_lines - queue), this.getClass());
-                Base.writeLog("n_lines = " + n_lines, this.getClass());
                 progress = ((double) n_lines - queue) / n_lines;
-                Base.writeLog("(n_lines - queue_size) / n_lines = " + progress, this.getClass());
                 if (progress > 0.5) {
-                    Base.writeLog("Setting progress...", this.getClass());
                     window.updatePrintBar(progress);
                 }
             } else {
@@ -597,7 +592,6 @@ class PrintThread extends Thread {
 
                     break;
                 } else {
-                    Base.writeLog("***** READY COUNT *****", this.getClass());
                     readyCount++;
                 }
             }

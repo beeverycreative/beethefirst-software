@@ -599,7 +599,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         model.getEditer().center();
         model.getEditer().scale(scale, true, false);
 
-        if (model.getEditer().modelOutBonds()) {
+        if (model.getEditer().modelInvalidPosition()) {
             //Small adjustment to avoid the model being out of bounds
             scale = 0.975;
             model.getEditer().scale(scale, true, true);
