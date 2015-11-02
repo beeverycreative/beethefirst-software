@@ -89,6 +89,7 @@ import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
 import replicatorg.app.ui.WelcomeSplash;
+import replicatorg.app.util.RealSenseDemo;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
 
@@ -1057,7 +1058,10 @@ public class Base {
             }
         };
         MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
-
+        
+        RealSenseDemo rsd = new RealSenseDemo();
+        rsd.start();
+        
         // Create the new application "Base" class.
         new Base();
     }

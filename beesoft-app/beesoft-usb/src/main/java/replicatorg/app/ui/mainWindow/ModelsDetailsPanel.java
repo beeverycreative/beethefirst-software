@@ -458,7 +458,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -498,6 +498,13 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jLabel8MouseExited
 
+    public void resetModel() { 
+        try {
+            this.jLabel8MousePressed(null);
+        } catch (Exception ex) {
+            
+        }
+    }
     private void jLabel8MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MousePressed
         if (!panelDisabled) {
             
