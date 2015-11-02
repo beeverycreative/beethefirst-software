@@ -181,6 +181,9 @@
                                 <copy todir="${target.dir}/filaments">
                                     <fileset dir="${resources.dir}/filaments" />
                                 </copy>
+                                <copy todir="${target.dir}/3dfscan">
+                                    <fileset dir="${resources.dir}/3dfscan" />
+                                </copy>
                                 <copy todir="${target.dir}/firmware/">
                                     <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy> 

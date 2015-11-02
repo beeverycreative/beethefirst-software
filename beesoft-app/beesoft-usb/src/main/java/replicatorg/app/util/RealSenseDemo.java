@@ -1,6 +1,5 @@
 package replicatorg.app.util;
 
-import intel.rssdk.PXCM3DScan;
 import intel.rssdk.PXCMCapture;
 import intel.rssdk.PXCMCaptureManager;
 import intel.rssdk.PXCMHandConfiguration;
@@ -11,6 +10,9 @@ import intel.rssdk.PXCMPointF32;
 import intel.rssdk.PXCMSenseManager;
 import intel.rssdk.PXCMSession;
 import intel.rssdk.pxcmStatus;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import replicatorg.app.Base;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 
@@ -20,6 +22,7 @@ import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
  */
 public class RealSenseDemo extends Thread implements Runnable {
 
+    private Process scannerExe = null;
     public RealSenseDemo() {
         super();
     }
@@ -101,6 +104,27 @@ public class RealSenseDemo extends Thread implements Runnable {
                         Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
                     }
                     Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToMax();
+                    
+                }
+                
+                if (handData.IsGestureFired("v_sign", gestData)) {
+                    
+                    if (this.scannerExe == null) {
+                        System.out.println("Opening scanner application...");
+                        try {
+                            session.close();
+                            senseMgr.close();
+                            this.scannerExe = new ProcessBuilder(
+                                    System.getProperty("user.dir") + "/3dfscan/DF_3DScan.cs.exe").start();
+               
+                            
+                            break;
+                        } catch (IOException ex) {
+                            Logger.getLogger(RealSenseDemo.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    
+                    
                 }
                 
                 if (handData.IsGestureFired("thumb_down", gestData)) {
