@@ -79,11 +79,6 @@ public class MoveTool extends Tool {
                 }
             }
 
-            double mouseX = e.getX();
-            double mouseY = e.getY();
-            double mouseX2 = e.getXOnScreen();
-            double mouseY2 = e.getYOnScreen();
-
             double xd = (e.getX() - startPoint.x);
             double yd = -(e.getY() - startPoint.y);
 

@@ -1782,13 +1782,6 @@ class TemperatureThread extends Thread {
             if (controlPanel.canPollData) {
 
                 machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    break;
-                }
-
                 controlPanel.updateTemperature();
 
                 try {

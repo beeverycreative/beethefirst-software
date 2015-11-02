@@ -90,6 +90,7 @@ public class MachineModel {
     private AutonomousData autonomousData;
     private final Object autonomousDataMutex = new Object();
     private boolean autonomousDataReady = false;
+    private String lastStatusString = "";
 
     /**
      * ***********************************
@@ -531,6 +532,14 @@ public class MachineModel {
     public Endstops getEndstops(AxisId axis) {
         return this.endstops.get(axis);
     }
+    
+    public void setLastStatusString(String status) {
+        this.lastStatusString = status;
+    }
+    
+    public String getLastStatusString() {
+        return lastStatusString;
+    }
 
     public void setMachineReady(boolean machReady) {
         this.machineReady = machReady;
@@ -609,7 +618,7 @@ public class MachineModel {
     public AutonomousData getAutonomousData() throws InterruptedException {
         synchronized (autonomousDataMutex) {
             if (autonomousDataReady == false) {
-                autonomousDataMutex.wait();
+                autonomousDataMutex.wait(3000);
             }
 
             autonomousDataReady = false;

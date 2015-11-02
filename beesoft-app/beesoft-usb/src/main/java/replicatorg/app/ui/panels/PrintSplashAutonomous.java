@@ -57,6 +57,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private boolean isShutdown = false;
     private boolean userDecision;
     private int machinePrintingCount = 0;
+    protected final double temperatureGoal;
 
     public PrintSplashAutonomous(boolean printingState, PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
@@ -66,6 +67,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         centerOnScreen();
         preferences = prefs;
         prt = new Printer(preferences);
+        temperatureGoal = getFilamentTemperature();
         machine = Base.getMachineLoader().getMachineInterface();
         setProgressBarColor();
         printEnded = false;
@@ -80,7 +82,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         ut = new UpdateThread4(this, gcodeGenerator);
         Base.systemThreads.add(ut);
 //        Base.getMainWindow().setEnabled(false);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+//        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.setName("Autonomous");
         Base.bringAllWindowsToFront();
     }
@@ -93,6 +95,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         centerOnScreen();
         preferences = prefs;
         prt = new Printer(preferences);
+        temperatureGoal = getFilamentTemperature();
         machine = Base.getMachineLoader().getMachineInterface();
         setProgressBarColor();
         printEnded = false;
@@ -107,7 +110,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         ut = new UpdateThread4(this, gcodeGenerator);
         Base.systemThreads.add(ut);
 //        Base.getMainWindow().setEnabled(false);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+//        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.setName("Autonomous");
         Base.bringAllWindowsToFront();
         this.isPaused = isPaused;
@@ -217,8 +220,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
             Base.getMainWindow().doStop();
 
-            // I KNOW IT'S DEPRECATED
-            // .interrupt() doesn't work
             gcodeGenerator.stop();
             ut.stop();
         }
@@ -331,7 +332,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         return prt.getGCodeNLines();
     }
 
-    protected double getFilamentTemperature() {
+    private double getFilamentTemperature() {
         return prt.getFilamentTemperature();
     }
 
@@ -350,182 +351,35 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     protected void updatePrintTimes(int estimatedTime, int remainingTime) {
-        int hours, minutes;
-
-        if (machine.getModel().getMachinePrinting() == false 
+        if (machine.getModel().getMachinePrinting() == false
                 && (isPaused() || isShutdown())) {
             activateLoadingIcons();
             machinePrintingCount = 0;
         } else {
             machinePrintingCount++;
-            
-            if(machinePrintingCount < 2 && estimatedTime <= 0) {
+
+            if (machinePrintingCount < 2 && estimatedTime <= 0) {
                 return;
             }
-            
+
             /*
              * Set estimated time
              */
             if (estimatedTime > -1) {
-                hours = estimatedTime / 60;
-                minutes = estimatedTime % 60;
                 vEstimate.setIcon(null);
-                vEstimate.setText(generateTimeString(hours, minutes));
+                vEstimate.setText(generateTimeString(estimatedTime));
             }
 
             /*
              * Set remaining time
              */
             if (remainingTime > -1) {
-                hours = remainingTime / 60;
-                minutes = remainingTime % 60;
                 vRemaining.setIcon(null);
-                vRemaining.setText(generateTimeString(hours, minutes));
+                vRemaining.setText(generateTimeString(remainingTime));
             }
         }
     }
-
-    /*
-     public void updatePrintEstimation(String printEstimation, boolean cutout) {
-     String[] duration = null;
-     String textE = "";
-     String textR = "";
-
-     if (!printEstimation.contains("NA")) {
-     if (printEstimation.contains(":")) {
-     duration = printEstimation.split(":");
-     int hours = Integer.valueOf(duration[0]);
-     int minutes = Integer.valueOf(duration[1]);
-
-     remainingTime = hours * 60 + minutes;
-
-     if (hours > 1) {
-     if (cutout) {
-     textE = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHours")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     textR = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHours")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-
-     vEstimation.setText(textR);
-     } else {
-     textR = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHours")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-
-     }
-     } else {
-     if (cutout) {
-     textE = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHour")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-
-     vEstimation.setText(textE);
-     } else {
-     textR = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHour")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-
-     vRemaining.setText(textR);
-     }
-     }
-     } else {
-     remainingTime = Integer.valueOf(printEstimation);
-     int hours = 0;
-     int minutes = 0;
-     if (printEstimation.contains(":")) {
-     duration = printEstimation.split(":");
-     hours = Integer.valueOf(duration[0]);
-     minutes = Integer.valueOf(duration[1]);
-     } else {
-     if (remainingTime > 60) {
-     printEstimation = minutesToHours(remainingTime, false);
-     duration = printEstimation.split(":");
-     hours = Integer.valueOf(duration[0]);
-     minutes = Integer.valueOf(duration[1]);
-     }
-     }
-
-     if (cutout) {
-     textE = printEstimation
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     if (remainingTime > 60) {
-     if (hours == 1) {
-     textR = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHour")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     } else {
-     textR = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHours")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     }
-
-     } else if (remainingTime == -100000) {
-     //In case PrintEstimator fails
-     textE = "";
-     vEstimation.setText("");
-     tRemaining.setText("");
-     vEstimation.setText("");
-     vRemaining.setText("");
-     tInfo6.setText("");
-     tInfo7.setText("");
-     tEstimation.setText(Languager.getTagValue(1, "Print", "Print_EstimatorError"));
-     return;
-     } else {
-     textR = remainingTime
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     }
-     vEstimation.setText(textR);
-     } else {
-     if (remainingTime > 60) {
-     textR = hours
-     + " " + Languager.getTagValue(1, "Print", "PrintHours")
-     + " " + minutes
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     }
-     if (remainingTime > 1 && remainingTime <= 60) {
-     textR = remainingTime
-     + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-     }
-     if (remainingTime == 1) {
-     textR = remainingTime
-     + " " + Languager.getTagValue(1, "Print", "PrintMinute");
-     }
-     if (remainingTime == -100000) {
-     //In case PrintEstimator fails, dont appear 2min
-     textE = "";
-     vEstimation.setText("");
-     tRemaining.setText("");
-     vEstimation.setText("");
-     vRemaining.setText("");
-     tEstimation.setText(Languager.getTagValue(1, "Print", "Print_EstimatorError"));
-     return;
-     }
-
-     if (remainingTime < 1) {
-     tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Info2"));
-     vRemaining.setText("");
-     return;
-     }
-
-     // no need for else. Parse is being made before calling thin method
-     vRemaining.setText(textR);
-     }
-     }
-     } else {
-     remainingTime = 00;
-     }
-
-     }
-     */
+    
     protected void activateLoadingIcons() {
         ImageIcon loadingIcon = new ImageIcon(
                 getClass().getResource("/replicatorg/app/ui/panels/loading.gif")
@@ -604,17 +458,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         jProgressBar1.setVisible(false);
     }
 
-    private void setPreparingShutdown() {
-        tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Processing"));
-//        tInfo3.setText(Languager.getTagValue("Print", "Print_Info"));
-        tInfo3.setVisible(false);
-        tRemaining.setVisible(false);
-        vRemaining.setVisible(false);
-        tEstimation.setVisible(false);
-        vEstimate.setVisible(false);
-        jProgressBar1.setVisible(false);
-    }
-
     protected void disablePreparingNewFilamentInfo() {
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
         tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
@@ -633,7 +476,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         double transferSpeed = Double.valueOf(ProperDefault.get("transferSpeed")); //speed = 42 KB/s
         double estimatedTime = Math.round(gcodeSize / transferSpeed);
         int timeInMinutes = (int) (estimatedTime / 60) + 1;
-        return buildTimeEstimationString(String.valueOf(timeInMinutes));
+        return generateTimeString(timeInMinutes);
     }
 
     /**
@@ -675,6 +518,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         return PrintEstimator.getEstimatedTime();
     }
 
+    /*
     private int estimatorTimeToMinutes(String durT) {
         if (durT.contains(":")) {
             String[] cells = durT.split(":");
@@ -687,6 +531,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         }
     }
 
+    
     private String buildTimeEstimationString(String durT) {
         String text = "N/A";
         if (!durT.equals("NA")) {
@@ -723,8 +568,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         return text;
 
     }
-
-    /*
+    
      public void updateTimeElapsed(int elapsedTime) {
      boolean noEstimationAvailable = false;
 
@@ -748,6 +592,7 @@ public class PrintSplashAutonomous extends BaseDialog {
      }
      }
      */
+    
     public boolean isUnloadPressed() {
         return unloadPressed;
     }
@@ -796,10 +641,8 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     public void setPrintEnded(int elapsedMinutes) {
-        int hours, minutes, nPrints;
+        int nPrints;
 
-        hours = elapsedMinutes / 60;
-        minutes = elapsedMinutes % 60;
         printEnded = true;
         unloadPressed = false;
         tInfo6.setText("");
@@ -821,16 +664,20 @@ public class PrintSplashAutonomous extends BaseDialog {
         ProperDefault.put("nTotalPrints", String.valueOf(nPrints));
 
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Completion")
-                + " " + generateTimeString(hours, minutes));
+                + " " + generateTimeString(elapsedMinutes));
 
     }
 
-    private String generateTimeString(int hours, int minutes) {
+    private String generateTimeString(int totalMinutes) {
         String temp;
+        int hours, minutes;
+        
+        hours = totalMinutes / 60;
+        minutes = totalMinutes % 60;
 
         if (hours >= 2) {
             if (minutes != 1) {
-                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " 
+                temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " "
                         + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
             } else {
                 temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " "
@@ -971,43 +818,22 @@ public class PrintSplashAutonomous extends BaseDialog {
         return userDecision;
     }
 
-    /*
-     @Override
-     public void windowOpened(WindowEvent e) {
-   
-     }
+    protected boolean evaluateTemperature() {
+        double temperature;
 
-     @Override
-     public void windowClosing(WindowEvent e) {
-        
-     }
+        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
+        temperature = machine.getDriver().getTemperature();
+        updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
 
-     @Override
-     public void windowClosed(WindowEvent e) {
-       
-     }
+        if (temperature >= (temperatureGoal - 1)) {
+            updateTemperatureOnProgressBar(100, temperatureGoal / 100);
+            Base.writeLog("Temperature " + temperatureGoal + " achieved", this.getClass());
+            return true;
+        }
 
-     @Override
-     public void windowIconified(WindowEvent e) {
-     Base.getMainWindow().setState(JFrame.ICONIFIED);
+        return false;
+    }
 
-     }
-
-     @Override
-     public void windowDeiconified(WindowEvent e) {
-     jProgressBar1.setValue(progression);
-     Base.getMainWindow().setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-     }
-
-     @Override
-     public void windowActivated(WindowEvent e) {
-     }
-
-     @Override
-     public void windowDeactivated(WindowEvent e) {
-     }
-     */
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1463,12 +1289,9 @@ class UpdateThread4 extends Thread {
     private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
     private final TransferControlThread gcodeGenerator;
     private static final String ERROR = "error";
-    private final double temperatureGoal;
     private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
     private boolean finished = false;
     private BufferedReader reader = null;
-    private final long updateSleep = 500;
-    private boolean isOnShutdownRecover;
     private File gcode = null;
     private int elapsedMinutes = 0;
 
@@ -1476,7 +1299,6 @@ class UpdateThread4 extends Thread {
         super("Autonomous Thread");
         this.window = w;
         this.gcodeGenerator = gcodeGen;
-        this.temperatureGoal = window.getFilamentTemperature();
     }
 
     private void transferGCode() {
@@ -1520,40 +1342,32 @@ class UpdateThread4 extends Thread {
 
     private void monitorPrintFromSDCard() {
 
-        int iterations;
         boolean machineFinished;
         MachineModel machineModel;
 
         machineModel = machine.getModel();
-        iterations = 0;
-
         window.setPrintElements();
 
         while (!window.isAtErrorState()) {
-            // Enables test of pipes to handle cable disconnection
-            //driver.setAutonomous(true);
 
             if (!window.isPaused() && !window.isShutdown()) {
                 getLinesAndTime();
             }
 
+            String status = machineModel.getLastStatusString();
+
             machineFinished = machineModel.getMachineReady()
                     && machineModel.getMachinePaused() == false
-                    && machineModel.getMachineShutdown() == false;
+                    && machineModel.getMachineShutdown() == false
+                    && status.contains("W:") == false;             // W:Waiting4File
 
-            if (machineFinished && iterations >= 10) {
+            if (machineFinished) {
                 finished = true;
                 break;
             }
 
-            iterations++;
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Base.hiccup(3000);
         }
-        //what to do at error?
     }
 
     private void finalizePrint() {
@@ -1564,52 +1378,6 @@ class UpdateThread4 extends Thread {
 //        long dur = Long.parseLong(variables.getElapsedTime().toString());
         window.setPrintEnded(elapsedMinutes);
 
-    }
-
-    public boolean evaluateTemperature() {
-        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-
-        try {
-            Thread.sleep(updateSleep);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        double temperature = machine.getDriver().getTemperature();
-        window.updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
-
-        if (temperature >= (temperatureGoal - 1)) {
-            window.updateTemperatureOnProgressBar(100, temperatureGoal / 100);
-            Base.writeLog("Temperature achieved", this.getClass());
-            return true;
-        }
-
-        return false;
-
-    }
-
-    public boolean isOnShutdownRecover() {
-        return this.isOnShutdownRecover;
-    }
-
-    private boolean checkIFReady() {
-        boolean ready = false;
-
-        while (true) {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (machine.getDriver().getMachineReady() && finished) {
-                ready = true;
-                break;
-            }
-        }
-
-        return ready;
     }
 
     private void getLinesAndTime() {
@@ -1668,39 +1436,13 @@ class UpdateThread4 extends Thread {
 
             window.setPrintInfo();
             window.setPrintElements();
-
-            //Updates elements while visible
-            boolean machineFinished;
-            MachineModel machineModel = machine.getModel();
-            while (true) {
-
-                if (!window.isPaused() && !window.isShutdown()) {
-                    getLinesAndTime();
-                }
-
-                machineFinished = machineModel.getMachineReady()
-                        && machineModel.getMachinePaused() == false
-                        && machineModel.getMachineShutdown() == false;
-
-                if (machineFinished) {
-                    finished = true;
-                    break;
-                }
-                //no need for else
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
+            monitorPrintFromSDCard();
         } else { // First run in Autonomous mode
 
             /**
              * Heat
              */
-            machine.runCommand(new replicatorg.drivers.commands.SetTemperatureBlocking(temperatureGoal + 5));
+            machine.runCommand(new replicatorg.drivers.commands.SetTemperatureBlocking(window.temperatureGoal + 5));
 
             /**
              * If not printing directly from gcode, generates it.
@@ -1737,11 +1479,7 @@ class UpdateThread4 extends Thread {
                 boolean gcodeDone = false;
 
                 while (gcodeDone == false) {
-                    try {
-                        Thread.sleep(250, 0);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    Base.hiccup(3000);
                     gcodeDone = gcodeGenerator.getGCodeDone();
                 }
 
@@ -1751,11 +1489,6 @@ class UpdateThread4 extends Thread {
                 gcodeGenerator.stop();
             }
 
-            //estimatedTime = String.valueOf((int) gcodeGenerator.getGenerationTime());
-            /**
-             * GCode generated; set driver to autonomous and transfer it
-             */
-            //driver.setAutonomous(true);
             transferGCode();
 
             /**
@@ -1767,11 +1500,8 @@ class UpdateThread4 extends Thread {
 
             window.resetProgressBar();
             while (temperatureAchieved == false) {
-                temperatureAchieved = evaluateTemperature();
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ex) {
-                }
+                temperatureAchieved = window.evaluateTemperature();
+                Base.hiccup(3000);
             }
 
             /**
@@ -1779,19 +1509,9 @@ class UpdateThread4 extends Thread {
              */
             window.setPrintInfo();
 
-            /**
-             * Reset elapsed time of Autonomous to 0
-             */
-            //machine.runCommand(new replicatorg.drivers.commands.SendStandaloneVariables());
-            /**
-             * Start printing from SDCard
-             */
             machine.runCommand(new replicatorg.drivers.commands.StartPrint());
             window.activateLoadingIcons();
-            /**
-             * GCode transfered so start print
-             */
-            //window.updatePrintTimes(gcodeGenerator.getGenerationTime(), gcodeGenerator.getGenerationTime());
+
             monitorPrintFromSDCard();
 
             /**
@@ -1807,43 +1527,36 @@ class UpdateThread4 extends Thread {
 
         }
 
-        /**
-         * Check if machine is ready to continue
-         */
-        if (checkIFReady()) {
+        if (finished) {
             finalizePrint();
         }
 
         while (true) {
-            boolean tempReached = false;
+            boolean tempReached;
 
             if (window.isUnloadPressed()) {
-                tempReached = evaluateTemperature();
+                tempReached = window.evaluateTemperature();
                 if (tempReached) {
                     window.startUnload();
                     break;
                 }
             }
+            
+            Base.hiccup(3000);
         }
 
-        this.stop();
     }
 }
 
 class TransferControlThread extends Thread {
 
     PrintSplashAutonomous window;
-    boolean finish = false;
     double estimatedTime = 0;
-    boolean gCodeDone = false;
+    boolean gCodeDone = false, stop = false;
 
     public TransferControlThread(PrintSplashAutonomous w) {
         super("Autonomous gcode generation Thread");
         window = w;
-    }
-
-    public boolean isReady() {
-        return finish;
     }
 
     public int getGenerationTime() {
@@ -1941,12 +1654,8 @@ class PauseAssistantThread extends Thread {
 
         printPanel.resetProgressBar();
         while (temperatureAchieved == false) {
-            temperatureAchieved = evaluateTemperature();
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            temperatureAchieved = printPanel.evaluateTemperature();
+            Base.hiccup(3000);
         }
 
         //Resume printing
@@ -1962,35 +1671,9 @@ class PauseAssistantThread extends Thread {
 
         do {
             machine.getDriver().readStatus();
-            try {
-                Thread.sleep(100, 0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Base.hiccup(100);
         } while (machine.getDriver().getMachinePaused());
 
         printPanel.restoreAfterPauseResume();
-    }
-
-    private boolean evaluateTemperature() {
-        machine.getDriver().readTemperature();
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        double temperature = machine.getDriver().getTemperature();
-        printPanel.updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
-
-        if (temperature >= (temperatureGoal - 1)) {
-            printPanel.updateTemperatureOnProgressBar(100, temperatureGoal / 100);
-            Base.writeLog("Temperature achieved", this.getClass());
-            return true;
-        }
-
-        return false;
-
     }
 }

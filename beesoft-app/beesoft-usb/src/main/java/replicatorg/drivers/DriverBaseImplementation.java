@@ -336,7 +336,7 @@ public abstract class DriverBaseImplementation implements Driver {
         synchronized (currentPosition) {
             while (posAvailable == false && forceUpdate) {
                 try {
-                    currentPosition.wait();
+                    currentPosition.wait(3000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DriverBaseImplementation.class.getName()).log(Level.SEVERE, null, ex);
                 }

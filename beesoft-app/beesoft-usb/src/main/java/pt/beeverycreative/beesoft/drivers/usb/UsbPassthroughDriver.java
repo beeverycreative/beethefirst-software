@@ -2083,7 +2083,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             if (queue_size == 0) {
                 setBusy(false);
             }
+        } else {
+            machineReady = false;
         }
+        
         machinePowerSaving = status.contains("Power_Saving");
         machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");
         machinePrinting = status.toLowerCase().contains(STATUS_SDCARD);
@@ -2096,6 +2099,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //        System.out.println("machineReady: "+machineReady);
         //machine.currentTool().setCurrentTemperature(temperature);        
+        machine.setLastStatusString(status);
         machine.setMachineReady(machineReady);
         machine.setMachinePaused(machinePaused);
         machine.setMachinePowerSaving(machinePowerSaving);
