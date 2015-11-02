@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.SwingWorker;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -47,7 +48,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     private final MachineInterface machine;
     private final UpdateThread4 ut;
     private final TransferControlThread gcodeGenerator;
-    private static final String FORMAT = "%2d:%2d";
     private boolean alreadyPrinting;
     private boolean errorOccured = false;
     private boolean unloadPressed;
@@ -177,7 +177,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 
         // Restart Button
         bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line13"));
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
     }
 
     public boolean isAtErrorState() {
@@ -194,12 +194,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     public void setPrintState(boolean state) {
         alreadyPrinting = state;
-    }
-
-    private String minutesToHours(int minutes) {
-        int hours = minutes / 60;
-        int minute = minutes % 60;
-        return String.format(FORMAT, hours, minute);
     }
 
     /**
@@ -379,7 +373,7 @@ public class PrintSplashAutonomous extends BaseDialog {
             }
         }
     }
-    
+
     protected void activateLoadingIcons() {
         ImageIcon loadingIcon = new ImageIcon(
                 getClass().getResource("/replicatorg/app/ui/panels/loading.gif")
@@ -449,7 +443,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void setPreparingNewFilamentInfo() {
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Pausing"));
-//        tInfo3.setText(Languager.getTagValue("Print", "Print_Info"));
         tInfo3.setVisible(false);
         tRemaining.setVisible(false);
         vRemaining.setVisible(false);
@@ -518,81 +511,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         return PrintEstimator.getEstimatedTime();
     }
 
-    /*
-    private int estimatorTimeToMinutes(String durT) {
-        if (durT.contains(":")) {
-            String[] cells = durT.split(":");
-            int hours = Integer.valueOf(cells[0]) * 60;
-            int minutes = Integer.valueOf(cells[1]);
-
-            return hours + minutes;
-        } else {
-            return Integer.valueOf(durT);
-        }
-    }
-
-    
-    private String buildTimeEstimationString(String durT) {
-        String text = "N/A";
-        if (!durT.equals("NA")) {
-            int duration = estimatorTimeToMinutes(durT);
-            String hours = minutesToHours(duration).split("\\:")[0];
-            String minutes = minutesToHours(duration).split("\\:")[1];
-            int min = Integer.valueOf(minutes.trim());
-
-            if (duration >= 120) {
-                if (min > 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
-                } else if (min == 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
-                } else {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
-                }
-            } else if (duration >= 60 && duration < 120) {
-                if (min > 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
-                } else if (min == 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
-                } else {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
-                }
-            } else if (duration == 1) {
-                text = (" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
-            } else {
-                text = (" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
-            }
-        } else {
-            text = (durT);
-        }
-
-        return text;
-
-    }
-    
-     public void updateTimeElapsed(int elapsedTime) {
-     boolean noEstimationAvailable = false;
-
-     if (elapsedTime > 60) {
-     // Not able to estimate print time
-     // 00 - error code
-     if (remainingTime == 00) {
-     tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Info"));
-     vRemaining.setVisible(false);
-     } else {
-     if (remainingTime > 0) {
-     updatePrintEstimation(String.valueOf(remainingTime), false);
-     } else {
-     if (noEstimationAvailable == false) {
-     tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Info2"));
-     vRemaining.setVisible(false);
-     }
-     }
-     }
-     startTimeMillis2 = System.currentTimeMillis();
-     }
-     }
-     */
-    
     public boolean isUnloadPressed() {
         return unloadPressed;
     }
@@ -656,7 +574,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         bUnload.setVisible(true);
         bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
         jProgressBar1.setVisible(false);
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info5"));
 
@@ -671,7 +589,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private String generateTimeString(int totalMinutes) {
         String temp;
         int hours, minutes;
-        
+
         hours = totalMinutes / 60;
         minutes = totalMinutes % 60;
 
@@ -819,19 +737,27 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     protected boolean evaluateTemperature() {
-        double temperature;
+        final double temperature;
+        final boolean achieved;
 
         machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
         temperature = machine.getDriver().getTemperature();
-        updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
+        achieved = temperature >= (temperatureGoal - 1);
 
-        if (temperature >= (temperatureGoal - 1)) {
-            updateTemperatureOnProgressBar(100, temperatureGoal / 100);
-            Base.writeLog("Temperature " + temperatureGoal + " achieved", this.getClass());
-            return true;
-        }
+        Runnable thread = new Runnable() {
+            @Override
+            public void run() {
+                if (temperature >= (temperatureGoal - 1)) {
+                    updateTemperatureOnProgressBar(100, temperatureGoal / 100);
+                    Base.writeLog("Temperature " + temperatureGoal + " achieved", this.getClass());
+                } else {
+                    updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
+                }
+            }
+        };
 
-        return false;
+        thread.run();
+        return achieved;
     }
 
 
@@ -1091,21 +1017,17 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void bOkMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMouseEntered
         if (printEnded) {
-            bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+            bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_20.png")));
         } else {
-            if (errorOccured) {
-                bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-            }
+            bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
         }
     }//GEN-LAST:event_bOkMouseEntered
 
     private void bOkMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMouseExited
         if (printEnded) {
-            bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
         } else {
-            if (errorOccured) {
-                bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            }
+            bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         }
     }//GEN-LAST:event_bOkMouseExited
 
@@ -1123,10 +1045,8 @@ public class PrintSplashAutonomous extends BaseDialog {
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed
-
         if (bOk.isEnabled()) {
             if (printEnded) {
-
                 if (firstUnloadStep) {
                     bOk.setVisible(false);
                     iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-07.png")));
@@ -1139,13 +1059,11 @@ public class PrintSplashAutonomous extends BaseDialog {
                 } else {
                     disposePanel();
                 }
-            } else {
-                if (errorOccured) {
-                    dispose();
-                    PrintSplashAutonomous p = new PrintSplashAutonomous(false, preferences);
-                    p.setVisible(true);
-                    p.startConditions();
-                }
+            } else if (errorOccured) {
+                dispose();
+                PrintSplashAutonomous p = new PrintSplashAutonomous(false, preferences);
+                p.setVisible(true);
+                p.startConditions();
             }
         }
     }//GEN-LAST:event_bOkMousePressed
@@ -1541,7 +1459,7 @@ class UpdateThread4 extends Thread {
                     break;
                 }
             }
-            
+
             Base.hiccup(3000);
         }
 
