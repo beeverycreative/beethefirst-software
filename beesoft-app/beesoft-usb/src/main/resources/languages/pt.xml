@@ -405,7 +405,7 @@
             <Print_Splash_Info2 value="A imprimir... Por favor aguarde."/>
             <Print_Splash_Info3 value="A imprimir em modo autónomo. Por favor aguarde."/>
             <Print_Splash_Info4 value="Podes desconectar agora a tua impressora."/>
-            <Print_Splash_Info5 value="Carrega em Nova Impressão ou de descarrega filamento se não fores imprimir mais."/>
+            <Print_Splash_Info5 value="Carrega em Nova Impressão ou descarrega filamento se não fores imprimir mais."/>
             <Print_Splash_Info6 value="Não deixa a tua impressora com o filamento carregado."/>
             <Print_Splash_Info7 value="Isto permitirá manter o filamento em melhores condições."/>
             <Print_Splash_Info8 value="Agora podes remover a bobine de filamento e guardá-la num espaço fresco e seco."/>
