@@ -85,11 +85,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
 import replicatorg.app.ui.WelcomeSplash;
-import replicatorg.app.util.RealSenseDemo;
+import replicatorg.app.util.RSMonitor;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
 
@@ -1011,7 +1010,7 @@ public class Base {
                         debugLevelArg = Integer.parseInt(args[i + 1]);
                         i++;
                     } catch (NumberFormatException e) {
-                    };
+                    }
                 }
                 if (debugLevelArg == 0) {
                     logger.setLevel(Level.INFO);
@@ -1059,13 +1058,18 @@ public class Base {
         };
         MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
         
-        RealSenseDemo rsd = new RealSenseDemo();
-        rsd.start();
+        Base.rsm = new RSMonitor();
+        rsm.start();
         
         // Create the new application "Base" class.
         new Base();
     }
 
+    static RSMonitor rsm;
+    static public RSMonitor getRSMonitor (){
+        return Base.rsm;
+    } 
+    
     private File openStatsFile() {
         /**
          * Put log file near app folder *

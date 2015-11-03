@@ -1783,23 +1783,28 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         return;
                     }
                 }
-                Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...", this.getClass());
-
-                bed.addSTL(new File(path));
-                Model m = bed.getModels().get(bed.getModels().size() - 1);
-                m.getEditer().centerAndToBed();
-                sceneDP.updateBedInfo();
-                canvas.updateBedImportedModels(bed);
-                showFeedBackMessage("importModel");
-                Base.getMainWindow().getBed().setGcodeOK(false);
-                bed.setSceneDifferent(true);
-                oktoGoOnSave = false;
-
-                //Selects the last inserted model
-                Base.getMainWindow().selectLastInsertedModel();
+                
+                Base.getMainWindow().loadNewModel(path);
             }
         });
+    }
+    
+    public void loadNewModel(String path) {
+        Base.logger.log(Level.INFO, "Loading {0}", path);
+        Base.writeLog("Loading" + path + " ...", this.getClass());
+
+        bed.addSTL(new File(path));
+        Model m = bed.getModels().get(bed.getModels().size() - 1);
+        m.getEditer().centerAndToBed();
+        sceneDP.updateBedInfo();
+        canvas.updateBedImportedModels(bed);
+        showFeedBackMessage("importModel");
+        Base.getMainWindow().getBed().setGcodeOK(false);
+        bed.setSceneDifferent(true);
+        oktoGoOnSave = false;
+
+        //Selects the last inserted model
+        Base.getMainWindow().selectLastInsertedModel();
     }
 
     /**
