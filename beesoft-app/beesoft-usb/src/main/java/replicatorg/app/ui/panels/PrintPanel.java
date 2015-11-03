@@ -1439,6 +1439,51 @@ public class PrintPanel extends BaseDialog {
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bCancelMouseExited
 
+    public void startPrint() {
+        if (!checkChanges()) {
+            Base.getMainWindow().getBed().setGcodeOK(false);
+        }
+
+        PrintPreferences prefs = getPreferences();
+
+        /*
+         prefs.add(parseSlider1());
+         //            prefs.add(parseCoilCode());
+         prefs.add(FilamentControler.getColor(coilText));
+         prefs.add(parseSlider2());
+         prefs.add(String.valueOf(raftPressed));
+         prefs.add(String.valueOf(supportPressed));
+         prefs.add(String.valueOf(gcodeToPrint));
+         */
+        Base.getMainWindow().getBed().setLastRaft(raftPressed);
+        Base.getMainWindow().getBed().setLastDensity(parseSlider2());
+        Base.getMainWindow().getBed().setLastResolution(parseSlider1());
+        Base.getMainWindow().getBed().setLastSupport(supportPressed);
+
+        Base.isPrinting = true;
+        Base.getMainWindow().getButtons().blockModelsButton(true);
+        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+        dispose();
+        Base.getMainWindow().getCanvas().unPickAll();
+        isRunning = false;
+        Base.getMainWindow().getButtons().updatePressedStateButton("print");
+        Base.turnOnPowerSaving(false);
+
+        final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
+        p.setVisible(true);
+
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+
+                if (Base.getMainWindow().getBed().isSceneDifferent()) {
+                    Base.getMainWindow().handleSave(true);
+                }
+                p.startConditions();
+            }
+        });
+    }
+    
     private void bPrintMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMousePressed
 
         if (t != null) {
@@ -1447,49 +1492,8 @@ public class PrintPanel extends BaseDialog {
         estimationThread.stop();
 
         if (bPrint.isEnabled()) {
-            if (!checkChanges()) {
-                Base.getMainWindow().getBed().setGcodeOK(false);
-            }
-
-            PrintPreferences prefs = getPreferences();
-
-            /*
-             prefs.add(parseSlider1());
-             //            prefs.add(parseCoilCode());
-             prefs.add(FilamentControler.getColor(coilText));
-             prefs.add(parseSlider2());
-             prefs.add(String.valueOf(raftPressed));
-             prefs.add(String.valueOf(supportPressed));
-             prefs.add(String.valueOf(gcodeToPrint));
-             */
-            Base.getMainWindow().getBed().setLastRaft(raftPressed);
-            Base.getMainWindow().getBed().setLastDensity(parseSlider2());
-            Base.getMainWindow().getBed().setLastResolution(parseSlider1());
-            Base.getMainWindow().getBed().setLastSupport(supportPressed);
-
-            Base.isPrinting = true;
-            Base.getMainWindow().getButtons().blockModelsButton(true);
-            Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
-            dispose();
-            Base.getMainWindow().getCanvas().unPickAll();
-            isRunning = false;
-            Base.getMainWindow().getButtons().updatePressedStateButton("print");
-            Base.turnOnPowerSaving(false);
-
-            final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
-            p.setVisible(true);
-
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (Base.getMainWindow().getBed().isSceneDifferent()) {
-                        Base.getMainWindow().handleSave(true);
-                    }
-                    p.startConditions();
-                }
-            });
-
+           this.startPrint();
+           
         } else {
             t = new Thread(new Runnable() {
                 @Override

@@ -50,11 +50,11 @@ public class RSMonitor extends Thread implements Runnable {
                     
                     mainWindow.loadNewModel(f.getPath());
                     
-                    // Scales the model to the maximum size
+                    // Scales the model to the medium size
                     if (mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                         mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
                     }
-                    mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToMax();
+                    mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
                 }
             } 
             

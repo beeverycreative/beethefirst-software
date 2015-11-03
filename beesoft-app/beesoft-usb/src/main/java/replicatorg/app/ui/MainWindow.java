@@ -415,6 +415,10 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         }
     }
 
+    public void showCustomMessage(String message) {
+        
+        messagesPP.quickMessage(message);
+    }
     private CAMPanel getPreviewPanel() {
         if (canvas == null) {
 //            canvas = new PreviewPanel(this);
@@ -476,27 +480,27 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 handleNew(false);
             } else {
                 // Get last path opened; MRU keeps this.
-                Iterator<String> i = mruList.iterator();
-                if (i.hasNext()) {
-                    String lastOpened = i.next();
-                    if (new File(lastOpened).exists()) {
-                        handleOpen2Scene(lastOpened);
-                    }
-                } else {
-                    handleNew(false);
-                    File model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.stl");
-                    if (model.exists() && model.canRead() && model.isFile()) {
-                        bed.addSTL(model);
-                        bed.setSceneDifferent(true);
-                    } else {
-                        model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.STL");
-                        if (model.exists() && model.canRead() && model.isFile()) {
-                            bed.addSTL(model);
-                            bed.setSceneDifferent(true);
-                        } //no need for else {}
-
-                    }
-                }
+//                Iterator<String> i = mruList.iterator();
+//                if (i.hasNext()) {
+//                    String lastOpened = i.next();
+//                    if (new File(lastOpened).exists()) {
+//                        handleOpen2Scene(lastOpened);
+//                    }
+//                } else {
+//                    handleNew(false);
+//                    File model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.stl");
+//                    if (model.exists() && model.canRead() && model.isFile()) {
+//                        bed.addSTL(model);
+//                        bed.setSceneDifferent(true);
+//                    } else {
+//                        model = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER + "/BEE.STL");
+//                        if (model.exists() && model.canRead() && model.isFile()) {
+//                            bed.addSTL(model);
+//                            bed.setSceneDifferent(true);
+//                        } //no need for else {}
+//
+//                    }
+//                }
             }
         }
     }

@@ -58,7 +58,16 @@ public class MessagesPopUp extends javax.swing.JDialog {
                 visibility(false);
             }
         }, 5000);
-
+    }
+    
+    private void hide(int timeoutMili) {
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                visibility(false);
+            }
+        }, timeoutMili);
     }
 
     private void setLocation() {
@@ -148,6 +157,13 @@ public class MessagesPopUp extends javax.swing.JDialog {
             jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "UnknownColor"));
         }
 
+        autoHide();
+        setLocation();
+    }
+    
+    public void quickMessage(String message) {
+        jLabel3.setText(message);
+        
         autoHide();
         setLocation();
     }

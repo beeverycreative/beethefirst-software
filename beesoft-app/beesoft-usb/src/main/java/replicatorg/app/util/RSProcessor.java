@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import replicatorg.app.Base;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
+import replicatorg.app.ui.panels.PrintPanel;
 
 /**
  *
@@ -90,8 +91,7 @@ public class RSProcessor extends Thread implements Runnable {
                 
                 if (!sts.isSuccessful()) break;
                 if (sts.compareTo(pxcmStatus.PXCM_STATUS_NO_ERROR)<0) break;
-                
-                
+                                
                 PXCMCapture.Sample sample = senseMgr.QueryHandSample();
                 
                 // Query and Display Joint of Hand or Palm
@@ -101,11 +101,12 @@ public class RSProcessor extends Thread implements Runnable {
                 PXCMHandData.GestureData gestData=new PXCMHandData.GestureData();
                 if (handData.IsGestureFired("tap", gestData)) {
                    // handle tap gesture
-                   System.out.println("TAP DETECTED");                                      
-                                       
+                   Base.getMainWindow().showCustomMessage("TAP detected! Doing nothing...");                                   
                 }
 
-                if (handData.IsGestureFired("thumb_up", gestData)) {
+                if (handData.IsGestureFired("spreadfingers", gestData)) {
+                    Base.getMainWindow().showCustomMessage("SPREADFINGERS detected! Scaling the model to maximum size.");
+                    
                     if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                         Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
                     }
@@ -113,17 +114,35 @@ public class RSProcessor extends Thread implements Runnable {
                     
                 }
                 
-                if (handData.IsGestureFired("spreadfingers", gestData) || this.externalRsScanRequest) {                    
-
+                if (handData.IsGestureFired("fist", gestData)) {
+                    Base.getMainWindow().showCustomMessage("FIST detected! Scaling the model to medium size.");
+                    
+                    if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
+                        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
+                    }
+                    Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
+                    
+                }                
+                
+                if (handData.IsGestureFired("v_shape", gestData) || this.externalRsScanRequest) {       
+                    Base.getMainWindow().showCustomMessage("V SHAPE detected! Starting 3D scan...");
                     session.close();
                     senseMgr.close();
-
                     this.startScannerApp();
 
                     break;                                                           
                 }
                 
+                if (handData.IsGestureFired("thumb_up", gestData)) {
+                    Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
+                    
+                    PrintPanel pp = new PrintPanel();
+                    pp.startPrint();
+                }
+                
                 if (handData.IsGestureFired("thumb_down", gestData)) {
+                    Base.getMainWindow().showCustomMessage("THUMBS DOWN detected! Resetting model.");
+                    
                     Base.getMainWindow().getCanvas().getModelsPanel().resetModel();
                 }
                 //System.out.println ("Frame # " + nframes + " Hands: " + handData.QueryNumberOfHands());
