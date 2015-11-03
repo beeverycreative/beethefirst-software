@@ -574,6 +574,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
         jProgressBar1.setVisible(false);
         bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
+        bOk.setDisabledIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_20.png")));
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info5"));
 
@@ -641,12 +642,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 if (!machine.getDriver().isBusy()) {
                     unloadPressed = true;
                     while (!machine.getDriver().getMachineReady()) {
-                        machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        Base.hiccup(2000);
                     }
                     Point5d rest = machine.getTablePoints("rest");
 
@@ -675,22 +671,13 @@ public class PrintSplashAutonomous extends BaseDialog {
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
                     machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
-                    Base.getMainWindow().getMachineInterface().getModel().setMachineReady(false);
+                    machine.getModel().setMachineReady(false);
+                    machine.getDriver().setBusy(true);
 
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    Base.hiccup(10000);
 
                     while (!machine.getDriver().getMachineReady()) {
-                        machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
+                        Base.hiccup(2000);
                     }
                 }
 
@@ -1111,8 +1098,9 @@ public class PrintSplashAutonomous extends BaseDialog {
             if (printEnded && unloadPressed == false && firstUnloadStep) {
                 unloadPressed = true;
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
-                bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+                bOk.setEnabled(false);
                 startUnload();
+                bOk.setEnabled(true);
                 return;
             } // no need for else
 
@@ -1452,6 +1440,7 @@ class UpdateThread4 extends Thread {
             boolean tempReached;
 
             if (window.isUnloadPressed()) {
+                machine.runCommand(new replicatorg.drivers.commands.SetTemperature(window.temperatureGoal + 5));
                 tempReached = window.evaluateTemperature();
                 if (tempReached) {
                     window.startUnload();

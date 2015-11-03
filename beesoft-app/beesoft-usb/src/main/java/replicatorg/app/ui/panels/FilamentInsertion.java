@@ -53,6 +53,7 @@ public class FilamentInsertion extends BaseDialog {
         bPrevious.setVisible(false);
     }
 
+    @Override
     public void resetFeedbackComponents() {
         this.setEnabled(true);
         if (!bLoadMouseClickedReady) {
@@ -139,6 +140,7 @@ public class FilamentInsertion extends BaseDialog {
 
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
