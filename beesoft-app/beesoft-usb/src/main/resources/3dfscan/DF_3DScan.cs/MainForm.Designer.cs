@@ -72,6 +72,7 @@
             this.DeviceMenu.Name = "DeviceMenu";
             this.DeviceMenu.Size = new System.Drawing.Size(90, 29);
             this.DeviceMenu.Text = "Device";
+            this.DeviceMenu.Visible = false;
             // 
             // ColorMenu
             // 
@@ -81,6 +82,7 @@
             this.ColorMenu.Name = "ColorMenu";
             this.ColorMenu.Size = new System.Drawing.Size(75, 29);
             this.ColorMenu.Text = "Color";
+            this.ColorMenu.Visible = false;
             this.ColorMenu.Click += new System.EventHandler(this.ColorMenu_Click);
             // 
             // ColorNone
@@ -101,7 +103,7 @@
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
             this.MainMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.MainMenu.Size = new System.Drawing.Size(770, 33);
+            this.MainMenu.Size = new System.Drawing.Size(770, 24);
             this.MainMenu.TabIndex = 0;
             this.MainMenu.Text = "MainMenu";
             // 
@@ -113,6 +115,7 @@
             this.DepthMenu.Name = "DepthMenu";
             this.DepthMenu.Size = new System.Drawing.Size(81, 29);
             this.DepthMenu.Text = "Depth";
+            this.DepthMenu.Visible = false;
             // 
             // DepthNone
             // 
@@ -130,6 +133,7 @@
             this.ModeMenu.Name = "ModeMenu";
             this.ModeMenu.Size = new System.Drawing.Size(78, 29);
             this.ModeMenu.Text = "Mode";
+            this.ModeMenu.Visible = false;
             // 
             // ModeLive
             // 
@@ -182,9 +186,9 @@
             this.MainPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.MainPanel.ErrorImage = null;
             this.MainPanel.InitialImage = null;
-            this.MainPanel.Location = new System.Drawing.Point(12, 32);
+            this.MainPanel.Location = new System.Drawing.Point(12, 12);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(587, 397);
+            this.MainPanel.Size = new System.Drawing.Size(587, 417);
             this.MainPanel.TabIndex = 27;
             this.MainPanel.TabStop = false;
             // 
@@ -193,7 +197,7 @@
             this.Reconstruct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.Reconstruct.Enabled = false;
             this.Reconstruct.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Reconstruct.Location = new System.Drawing.Point(605, 84);
+            this.Reconstruct.Location = new System.Drawing.Point(608, 39);
             this.Reconstruct.Name = "Reconstruct";
             this.Reconstruct.Size = new System.Drawing.Size(153, 42);
             this.Reconstruct.TabIndex = 37;
@@ -208,6 +212,8 @@
             this.Solid.BackColor = System.Drawing.SystemColors.Control;
             this.Solid.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Solid.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Solid.Checked = true;
+            this.Solid.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Solid.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Solid.Location = new System.Drawing.Point(654, 191);
             this.Solid.Name = "Solid";
@@ -215,6 +221,7 @@
             this.Solid.TabIndex = 46;
             this.Solid.Text = "Solid";
             this.Solid.UseVisualStyleBackColor = false;
+            this.Solid.Visible = false;
             // 
             // targetingOptions
             // 
@@ -246,6 +253,7 @@
             this.Textured.TabIndex = 45;
             this.Textured.Text = "Texture";
             this.Textured.UseVisualStyleBackColor = true;
+            this.Textured.Visible = false;
             // 
             // tooClose
             // 
@@ -268,7 +276,7 @@
             this.tooFar.BackColor = System.Drawing.Color.Red;
             this.tooFar.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F);
             this.tooFar.ForeColor = System.Drawing.Color.White;
-            this.tooFar.Location = new System.Drawing.Point(624, 48);
+            this.tooFar.Location = new System.Drawing.Point(624, 12);
             this.tooFar.Name = "tooFar";
             this.tooFar.Size = new System.Drawing.Size(124, 24);
             this.tooFar.TabIndex = 48;
@@ -308,7 +316,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MainMenuStrip = this.MainMenu;
             this.Name = "MainForm";
-            this.Text = "BEESOFT - Intel(R) RealSense(TM) SDK - DF_3DScan.cs Sample";
+            this.Text = "BEESOFT - Intel(R) RealSense(TM)";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
