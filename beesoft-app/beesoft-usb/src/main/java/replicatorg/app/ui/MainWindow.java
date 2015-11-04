@@ -1315,13 +1315,15 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     }
 
-    public void handlePrintPanel() {
+    public PrintPanel handlePrintPanel() {
         this.setEnabled(false);
         boolean localPrint = Boolean.valueOf(ProperDefault.get("localPrint"));
         handleGenBuild();
 
         PrintPanel p = new PrintPanel();
         p.setVisible(true);
+        
+        return p;
     }
 
     public void handleMaintenance() {

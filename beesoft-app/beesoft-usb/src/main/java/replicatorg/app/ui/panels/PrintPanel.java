@@ -76,7 +76,7 @@ public class PrintPanel extends BaseDialog {
     private PrinterInfo selectedPrinter;
 
     public PrintPanel() {
-        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         initSlidersLabels();
         setFont();

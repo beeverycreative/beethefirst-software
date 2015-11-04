@@ -7,6 +7,7 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProLight;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProRegular;
+import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.machine.MachineInterface;
 
@@ -472,7 +473,8 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
     }//GEN-LAST:event_jLabel5MousePressed
 
-    private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
+    public PrintPanel startPrint() {
+               
         MachineInterface machine = Base.getMainWindow().getMachineInterface();
 
         if (machine.getModel().getMachineBusy()) {
@@ -483,9 +485,15 @@ public class ButtonsPanel extends javax.swing.JPanel {
                 jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
                 jLabel1Bool = false;
                 print_pressed = true;
-                editor.handlePrintPanel();
+                return editor.handlePrintPanel();
             }
-        }
+        } 
+        
+        return null;
+    }
+    
+    private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
+        this.startPrint();
     }//GEN-LAST:event_jLabel1MousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

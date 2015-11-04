@@ -72,6 +72,24 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jLabel23.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate") + " 5 " + Languager.getTagValue(1, "MainWindowButtons", "Degrees"));
     }
 
+    public void rotate2TheRight() {
+        if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
+            Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(0d, 0d, 1d, Math.PI / 2));  
+            Base.getMainWindow().getBed().setGcodeOK(false);
+        } else {
+            Base.getMainWindow().showFeedBackMessage("modelNotPicked");
+        }
+    }
+    
+    public void rotate2TheLeft() {
+        if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
+            Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(0d, 0d, 1d, -Math.PI / 2));  
+            Base.getMainWindow().getBed().setGcodeOK(false);
+        } else {
+            Base.getMainWindow().showFeedBackMessage("modelNotPicked");
+        }
+    }    
+    
     private void rotateRight() {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             if (jRadioButton1.isSelected()) {

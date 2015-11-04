@@ -18,6 +18,7 @@ import javax.vecmath.Point3d;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
+import replicatorg.app.ui.mainWindow.ModelsOperationCenterRotate;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.model.CAMPanel.DragMode;
 import static replicatorg.model.CAMPanel.DragMode.CONTROL_VIEW;
@@ -31,7 +32,8 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
     boolean lockZ;
     boolean advOption = false;
     ModelsOperationCenterScale mOCS;
-
+    ModelsOperationCenterRotate mOCR;
+    
     public class AxisControl {
 
         SpinnerNumberModel model;
@@ -62,6 +64,14 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
     public ModelsOperationCenterScale getModelsOperationScale() {
         return this.mOCS;
     }
+    
+    public void setModelsOperationRotate(ModelsOperationCenterRotate mocr) {
+        this.mOCR = mocr;
+    }
+    
+    public ModelsOperationCenterRotate getModelsOperationRotate() {
+        return this.mOCR;
+    }    
     
     public boolean getAdvOption() {
         return this.advOption;

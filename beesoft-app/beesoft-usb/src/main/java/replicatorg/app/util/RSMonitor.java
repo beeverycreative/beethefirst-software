@@ -33,9 +33,7 @@ public class RSMonitor extends Thread implements Runnable {
         
         while(true) {
             // Checks for running status
-            if (!this.processorThread.isAlive()) {
-                this.processorThread = new RSProcessor();
-                this.processorThread.start();
+            if (this.processorThread.isReadyToRunAgain()) {
                 
                 // Tries to load the generated STL
                 File f = new File(System.getProperty("user.dir") + "/3dfscan/BEESOFT_3DScan.stl");
@@ -56,6 +54,9 @@ public class RSMonitor extends Thread implements Runnable {
                     }
                     mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
                 }
+                
+               this.processorThread = new RSProcessor();
+               this.processorThread.start();
             } 
             
             try {

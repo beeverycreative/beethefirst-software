@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import replicatorg.app.Base;
+import replicatorg.app.ui.mainWindow.ModelsOperationCenterRotate;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.panels.PrintPanel;
 
@@ -27,11 +28,19 @@ public class RSProcessor extends Thread implements Runnable {
 
     private boolean rsSessionActive;
     private boolean externalRsScanRequest;
+    private boolean readyToRunAgain;
+    
+    private PrintPanel tempPrintPanel;
     
     public RSProcessor() {
         super();
         this.rsSessionActive = true;
         this.externalRsScanRequest = false;
+        this.readyToRunAgain = false;
+    }
+    
+    public boolean isReadyToRunAgain() {
+        return this.readyToRunAgain;
     }
     
     @Override
@@ -84,6 +93,8 @@ public class RSProcessor extends Thread implements Runnable {
             PXCMHandData handData = handModule.CreateOutput();
             
             int nframes = 0;
+            double gestureStartTime = 0;
+            
             boolean modelScaledToMax = false;
             while(rsSessionActive) {
                 nframes++;
@@ -98,52 +109,103 @@ public class RSProcessor extends Thread implements Runnable {
                 handData.Update(); 
                 
                 // poll for gestures
-                PXCMHandData.GestureData gestData=new PXCMHandData.GestureData();
-                if (handData.IsGestureFired("tap", gestData)) {
-                   // handle tap gesture
-                   Base.getMainWindow().showCustomMessage("TAP detected! Doing nothing...");                                   
-                }
+                try {
+                    PXCMHandData.GestureData gestData=new PXCMHandData.GestureData();
+                    if (handData.IsGestureFired("tap", gestData)) {
+                       // handle tap gesture
+                        Base.getMainWindow().showCustomMessage("TAP detected! Scaling the model to maximum size.");
 
-                if (handData.IsGestureFired("spreadfingers", gestData)) {
-                    Base.getMainWindow().showCustomMessage("SPREADFINGERS detected! Scaling the model to maximum size.");
-                    
-                    if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
-                        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
+                        if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
+                            Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
+                        }
+                        Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToMax();  
+                        
+                        
                     }
-                    Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToMax();
                     
-                }
-                
-                if (handData.IsGestureFired("fist", gestData)) {
-                    Base.getMainWindow().showCustomMessage("FIST detected! Scaling the model to medium size.");
-                    
-                    if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
-                        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
-                    }
-                    Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
-                    
-                }                
-                
-                if (handData.IsGestureFired("v_shape", gestData) || this.externalRsScanRequest) {       
-                    Base.getMainWindow().showCustomMessage("V SHAPE detected! Starting 3D scan...");
-                    session.close();
-                    senseMgr.close();
-                    this.startScannerApp();
+                    if (handData.IsGestureFired("click", gestData)) {
+                        if ( (System.currentTimeMillis() - gestureStartTime) > 500 ) { //Prevents double gestures
+                            Base.getMainWindow().showCustomMessage("CLICK detected! Reducing model size.");
 
-                    break;                                                           
-                }
-                
-                if (handData.IsGestureFired("thumb_up", gestData)) {
-                    Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
+                            if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
+                                Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
+                            }
+                            Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToQuarter();
+                                                
+                        }
+                        
+                        gestureStartTime = System.currentTimeMillis();
+                    }                    
+
+                    if (handData.IsGestureFired("swipe_right", gestData)) {
+                        
+                        if ( (System.currentTimeMillis() - gestureStartTime) > 500 ) { //Prevents double gestures
+                                                   
+                            Base.getMainWindow().showCustomMessage("SWIPE RIGHT detected! Rotating model.");
+
+                            if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationRotate() == null) {
+                                ModelsOperationCenterRotate mCOR = new ModelsOperationCenterRotate();
+                                Base.getMainWindow().getCanvas().getControlTool(3).setModelsOperationRotate(mCOR);
+                                Base.getMainWindow().updateModelsOperationCenter(mCOR);
+                            }
+
+                            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationRotate().rotate2TheRight();
+                        }
+                        
+                        gestureStartTime = System.currentTimeMillis();
+                    }
                     
-                    PrintPanel pp = new PrintPanel();
-                    pp.startPrint();
-                }
-                
-                if (handData.IsGestureFired("thumb_down", gestData)) {
-                    Base.getMainWindow().showCustomMessage("THUMBS DOWN detected! Resetting model.");
+                    if (handData.IsGestureFired("swipe_left", gestData)) {
+                        if ( (System.currentTimeMillis() - gestureStartTime) > 500 ) { //Prevents double gestures
+                            Base.getMainWindow().showCustomMessage("SWIPE LEFT detected! Rotating model.");
+
+                            if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationRotate() == null) {
+                                ModelsOperationCenterRotate mCOR = new ModelsOperationCenterRotate();
+                                Base.getMainWindow().getCanvas().getControlTool(3).setModelsOperationRotate(mCOR);
+                                Base.getMainWindow().updateModelsOperationCenter(mCOR);
+                            }
+
+                            Base.getMainWindow().getCanvas().getControlTool(3).getModelsOperationRotate().rotate2TheLeft();
+                                                
+                        }
+               
+                        gestureStartTime = System.currentTimeMillis();
+                    }                    
                     
-                    Base.getMainWindow().getCanvas().getModelsPanel().resetModel();
+                    if (handData.IsGestureFired("two_fingers_pinch_open", gestData)) {       
+                        Base.getMainWindow().showCustomMessage("TWO FINGERS PINCH! Starting 3D scan...");
+                        session.close();
+                        senseMgr.close();
+                        this.startScannerApp();
+
+                        this.readyToRunAgain = true;
+                        break;                                                           
+                    }
+
+                    if (this.externalRsScanRequest) {
+                        session.close();
+                        senseMgr.close();
+                        this.startScannerApp();
+                        this.readyToRunAgain = true;
+                        break; 
+                    }
+
+                    if (handData.IsGestureFired("thumb_up", gestData)) {
+                        if ( (System.currentTimeMillis() - gestureStartTime) > 1000 ) { //Prevents double gestures
+                            Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
+
+                            if (this.tempPrintPanel == null) {
+                                this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
+                            } else {
+                                this.tempPrintPanel.startPrint();
+                                this.tempPrintPanel = null;
+                            }
+                        }
+                        gestureStartTime = System.currentTimeMillis();
+                    }
+
+                } catch(Exception ex) {
+                    System.err.println("Unexpected exception detected: " + ex.getMessage());
                 }
                 //System.out.println ("Frame # " + nframes + " Hands: " + handData.QueryNumberOfHands());
             
@@ -210,4 +272,25 @@ public class RSProcessor extends Thread implements Runnable {
             Logger.getLogger(RSProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public class PrintPanelHelperThread extends Thread implements Runnable {
+        
+        private PrintPanel ppanel;
+        @Override
+        public void run() {
+                               
+            this.ppanel = Base.getMainWindow().getButtons().startPrint();            
+        }
+        
+        public void confirmPrint() {
+            if (this.ppanel != null) {
+                this.ppanel.startPrint();
+                this.ppanel.dispose();
+                this.ppanel = null;
+            }
+        }
+    }
 }
+
+
+
