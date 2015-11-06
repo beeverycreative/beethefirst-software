@@ -1294,6 +1294,11 @@ class UpdateThread4 extends Thread {
         try {
             variables = getAutonomousData();
             //window.resetProgressBar();
+            
+            if(variables == null) {
+                return;
+            }
+            
             estimatedTime = variables.getEstimatedTime().toString();
             elapsedTime = variables.getElapsedTime().toString();
             totalLines = Integer.valueOf(variables.getNLines().toString());
