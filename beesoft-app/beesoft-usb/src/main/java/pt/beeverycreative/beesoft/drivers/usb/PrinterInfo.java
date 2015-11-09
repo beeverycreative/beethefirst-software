@@ -13,7 +13,7 @@ public enum PrinterInfo {
     BEETHEFIRST_PLUS("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0002, Base.configProperties.getFirmwareProperty("firmware.beethefirstplus"), "logo_beethefirst_plus.png"),
     BEEME("BEEME", (short) 0x29c9, (short) 0x0003, Base.configProperties.getFirmwareProperty("firmware.beeme"), "logo_beeme.png"),
     BEEINSCHOOL("BEEINSCHOOL", (short) 0x29c9, (short) 0x0004, Base.configProperties.getFirmwareProperty("firmware.beeinschool"), "logo_beeinschool.png"),
-    BEETHEFIRST_PLUS_A("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0005, Base.configProperties.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plus.png"),
+    BEETHEFIRST_PLUS_A("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0005, Base.configProperties.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plusA.png"),
     UNKNOWN("BEETHEFIRST", (short) 0x0000, (short) 0x0000, "", "");
 
     private final String filamentCode, firmwareFilename, iconFilename, presentationName;
@@ -40,6 +40,10 @@ public enum PrinterInfo {
 
     public String filamentCode() {
         return filamentCode;
+    }
+    
+    public String presentationName() {
+        return presentationName;
     }
 
     public short productID() {

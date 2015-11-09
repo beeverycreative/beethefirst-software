@@ -334,11 +334,9 @@ public class ProfileAndPrinter extends BaseDialog {
                 printerComboBox.setEnabled(false);
                 printer = new String[1];
                 printer[0] = Base.getMachineLoader().getMachineInterface()
-                        .getDriver().getConnectedDevice().toString();
-
-                if (printer[0].equals(PrinterInfo.BEETHEFIRST0.toString())) {
-                    printer[0] = PrinterInfo.BEETHEFIRST.toString();
-                }
+                        .getDriver().getConnectedDevice().presentationName();
+                
+              
 
                 printerComboBox.setModel(new DefaultComboBoxModel(printer));
                 firstInstantiation = false;

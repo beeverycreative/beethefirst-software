@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.1" encoding="utf-8"?>
 <languages>
     <tags>
         <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
@@ -215,22 +215,22 @@
             <About_FirmwareVersion value="Firmware Version"/> 
             <About_BootloaderVersion value="Bootloader Version"/> 
             <About_NotAvailable value="Nicht verfügbar" />
-            <About_BootloaderVersionNotAvailableText value="Der Bootloader Version ist in diesem Moment nicht erreichbar. Bitte starten Sie Ihren Drucker, um diese Informationen zu erhalten." />
+            <About_BootloaderVersionNotAvailableText value="Die Bootloader Version ist in diesem Moment nicht erreichbar. Bitte starten Sie Ihren Drucker neu, um diese Informationen zu erhalten." />
             <About_SerialNumber value="Seriennummer des Druckers"/> 
             <About_FilamentColor value="Filament-Typ"/> 
         </AboutSoftware>
 
         <CancelPrint>
-            <CancelPrintText value="Sind Sie sicher, dass Sie Ihre Druck abbrechen wollen?" />
+            <CancelPrintText value="Sind Sie sicher, dass Sie Ihren Druck abbrechen wollen?" />
         </CancelPrint>
 
         <UnknownFilament>
-            <UnknownFilamentTitle value="Unbekannte Filament in Ihren Drucker eingelegt" />
-            <UnknownFilamentText value="Es gibt keine bestehenden Einstellungen in BEESOFT für das Filament, dass auf dem Drucker geladen ist. Bitte wechseln Sie das Filament." />
+            <UnknownFilamentTitle value="Unbekanntes Filament in Ihrem Drucker eingelegt" />
+            <UnknownFilamentText value="Es gibt keine vorhandenen Einstellungen in BEESOFT für das Filament, dass momentan in Ihrem Drucker geladen ist. Bitte wechseln Sie das Filament." />
         </UnknownFilament>
 
         <ProfileAndPrinter>
-            <TitleText value="Bitte wählen Sie das Filament und den Drucker" />
+            <TitleText value="Bitte wählen Sie das Filament und den Drucker aus" />
             <FilamentText value="Filament" />
             <PrinterText value="Drucker" />
         </ProfileAndPrinter>
@@ -654,32 +654,32 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <Title value="Pause"/>
             <SubTitle value="Sie können fortsetzen oder Ihre Druck abzubrechen." />
             <FilamentTitle value="Filament Wechseln"/>
-            <FilamentIntro value="Diese Operation wird benötigt, wenn Sie mit einer anderen Farbe drucken wollen oder wenn das Filament in der Spule nicht genug ist."/>
+            <FilamentIntro value="Diese Funktion ist notwendig, wenn Sie mit einer anderen Farbe drucken wollen oder wenn das Filament in der Spule nicht ausreicht."/>
             <bFilamentChange value="Filament jetzt Wechseln"/>
             <bShutdown value="Jetzt Herunterfahren"/>
-            <ShutdownIntro value="Diese Operation speichert die Druckstatus. Sie können den Drucker ausschalten und den Druckvorgang fortzusetzen zu einem späteren Zeitpunkt."/>
+            <ShutdownIntro value="Diese Funktion speichert den Druckstatus. Sie können den Drucker ausschalten und den Druckvorgang zu einem späteren Zeitpunkt fortsetzen."/>
             <ShutdownTitle value="Herunterfahren"/>
             <NoFilament value="Kein Filament"/>
         </PausePanel>
 
         <ShutdownPanel>
             <Title value="Herunterfahren"/>
-            <SubTitle value="Sie können den Drucker ausschalten. Alternativ können Sie fortsetzen oder Ihre Druck abzubrechen."/>
+            <SubTitle value="Sie können den Drucker ausschalten. Alternativ können Sie weitermachen oder Ihren Druck abbrechen."/>
             <FilamentTitle value="Filament Wechseln"/>
-            <FilamentIntro value="Diese Operation wird benötigt, wenn Sie mit einer anderen Farbe drucken wollen oder wenn das Filament in der Spule nicht genug ist."/>
+            <FilamentIntro value="Diese Funktion ist notwendig, wenn Sie mit einer anderen Farbe drucken wollen oder wenn das Filament in der Spule nicht ausreicht."/>
             <bFilamentChange value="Filament jetzt Wechseln"/>
             <NoFilament value = "Kein Filament" />
         </ShutdownPanel>
 
         <FeedbackPanel>
-            <FlashingMainMessage value="Flashing Firmware. Bitte trennen Sie nicht Ihren Drucker..." />
-            <FlashingSubMessage value="Flashing neu firmware..." />
-            <FlashingSubMessageNoCalibration value="Flashing neu firmware... (Kalibrierung verloren wird!)" />
-            <LaunchingMessage value="Einführung neue firmware!" />
+            <FlashingMainMessage value="Firmware wird neu programmiert. Bitte die Verbindung nicht trennen..." />
+            <FlashingSubMessage value="Firmware wird neu programmiert..." />
+            <FlashingSubMessageNoCalibration value="Firmware wird neu programmiert... (Kalibrierung verloren wird!)" />
+            <LaunchingMessage value="Einführung neue Firmware!" />
             <SavingMessage value="Speichern von aktuellen Kalibrierung und Filament-Einstellungen" />
             <RestartMessage value="Problem mit dem Firmware. Bitte starten Sie Ihren Drucker." />
             <RestartMessageTimeout value="(versuchen Sie den Drucker neu zu starten)" />
-        </FeedbackPanel>
+       </FeedbackPanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
