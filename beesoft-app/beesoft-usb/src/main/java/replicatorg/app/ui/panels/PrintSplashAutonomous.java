@@ -495,8 +495,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 lines++;
                 if (line.contains("M31")) {
                     int indexAtA = line.indexOf('A');
-                    int indexAtL = line.indexOf('L');
-                    return line.substring(indexAtA + 1, indexAtL - 1);
+                    return line.substring(indexAtA + 1);
                 }
             }
         } catch (FileNotFoundException ex) {
