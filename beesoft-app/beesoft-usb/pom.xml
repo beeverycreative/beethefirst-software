@@ -672,6 +672,7 @@
             <version>1.0.2</version>
         </dependency>
         
+        <!--
         <dependency>
             <groupId>de.ailis.usb4java</groupId>
             <artifactId>usb4java</artifactId>
@@ -679,7 +680,8 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/external_libs/usb4java-1.0.0.jar</systemPath>
         </dependency>
-
+        -->
+        
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>
             <artifactId>jarbundler</artifactId>
