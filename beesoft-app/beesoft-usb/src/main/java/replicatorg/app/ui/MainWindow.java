@@ -179,8 +179,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     JSplitPane splitPane;
     JLabel lineNumberComponent;
     public PrintBed bed;
-    public SimulationThread simulationThread;
-    public EstimationThread estimationThread;
     JMenuItem saveMenuItem;
     JMenuItem saveAsMenuItem;
     JMenuItem controlPanelItem;
@@ -1354,40 +1352,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         compoundEdit = new CompoundEdit();
     }
 
-    public void handleEstimate() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        // fire off our thread.
-        estimationThread = new EstimationThread(this);
-        estimationThread.start();
-    }
-
-    public void handleSimulate() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        // buttons/status.
-        simulating = true;
-        //buttons.activate(MainButtonPanel.SIMULATE);
-
-        // load our simulator machine
-        // loadSimulator();
-        setEditorBusy(true);
-
-        // fire off our thread.
-        simulationThread = new SimulationThread(this);
-        simulationThread.start();
-    }
-
     public void simulationOver() {
 //        message("Done simulating.");
         simulating = false;
@@ -2156,19 +2120,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * has the callback from EditorStatus.
      */
     public void handleQuitInternal() {
-        try {
-            if (simulationThread != null) {
-                simulationThread.interrupt();
-                simulationThread.join();
-            }
-            if (estimationThread != null) {
-                estimationThread.interrupt();
-                estimationThread.join();
-            }
-        } catch (InterruptedException e) {
-            assert (false);
-        }
-
         // bring down our machine temperature, don't want it to stay hot
         // 		actually, it has been pointed out that we might want it to stay hot,
         //		so I'm taking this out

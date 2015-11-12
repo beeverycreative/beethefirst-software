@@ -81,7 +81,7 @@ public enum PrinterInfo {
 
     public static PrinterInfo getDeviceByName(String printerName) {
         for (PrinterInfo printer : PrinterInfo.values()) {
-            if (printer.toString().equals(printerName)) {
+            if (printer.presentationName.equals(printerName)) {
                 return printer;
             }
         }
