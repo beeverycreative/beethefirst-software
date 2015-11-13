@@ -1293,11 +1293,11 @@ class UpdateThread4 extends Thread {
         try {
             variables = getAutonomousData();
             //window.resetProgressBar();
-            
-            if(variables == null) {
+
+            if (variables == null) {
                 return;
             }
-            
+
             estimatedTime = variables.getEstimatedTime().toString();
             elapsedTime = variables.getElapsedTime().toString();
             totalLines = Integer.valueOf(variables.getNLines().toString());
@@ -1398,7 +1398,10 @@ class UpdateThread4 extends Thread {
                 gcodeGenerator.stop();
             }
 
+            machine.runCommand(new replicatorg.drivers.commands.SetTemperatureBlocking(window.temperatureGoal + 5));
             transferGCode();
+            machine.runCommand(new replicatorg.drivers.commands.SetTemperatureBlocking(window.temperatureGoal + 5));
+
 
             /**
              * Controls temperature for proper print
