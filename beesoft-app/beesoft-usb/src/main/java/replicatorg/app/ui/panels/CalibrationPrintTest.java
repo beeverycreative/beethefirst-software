@@ -207,7 +207,7 @@ public class CalibrationPrintTest extends BaseDialog {
                 machine.getDriver().getCoilText(),
                 "medium",
                 Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-        );
+        ) + 5;
         okEnabled = false;
         Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
