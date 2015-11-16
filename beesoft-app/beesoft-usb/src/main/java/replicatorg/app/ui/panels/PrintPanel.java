@@ -182,7 +182,7 @@ public class PrintPanel extends BaseDialog {
         code = FilamentControler.NO_FILAMENT;
 
         if (Base.getMachineLoader().isConnected()) {
-            Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
+            //Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
             code = Base.getMainWindow().getMachine().getModel().getCoilText();
         } //no need for else
 
