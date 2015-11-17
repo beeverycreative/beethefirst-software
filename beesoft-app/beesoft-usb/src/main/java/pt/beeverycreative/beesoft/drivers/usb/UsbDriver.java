@@ -337,7 +337,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
         if (device != null) {
             if (device.isConfigured()) {
-            config = device.getActiveUsbConfiguration();
+                config = device.getActiveUsbConfiguration();
             } else {
                 Base.writeLog("Couldn't obtain valid USB configuration. Obtaining pipes failed", this.getClass());
                 return null;
