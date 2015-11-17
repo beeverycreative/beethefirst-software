@@ -3063,7 +3063,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 pipes = null;
                 while (m_usbDevice == null) {
                     InitUsbDevice();
-                    hiccup(100, 0);
+                    hiccup(1000, 0);
                 }
 
                 pipes = GetPipe(m_usbDevice);
