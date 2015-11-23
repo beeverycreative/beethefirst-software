@@ -47,7 +47,6 @@ public class NozzleClean extends BaseDialog {
         disposeThread = new DisposeFeedbackThread6(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
-        Base.maintenanceWizardOpen = true;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
     }
@@ -130,7 +129,7 @@ public class NozzleClean extends BaseDialog {
 
     private void initializeHeatNClean() {
         jLabel4.setVisible(false);
-        Base.writeLog("Cleaning Nozzle");
+        Base.writeLog("Cleaning Nozzle", this.getClass());
         showMessage();
         if (ProperDefault.get("maintenance").equals("1")) {
             Point5d rest = machine.getTablePoints("rest");
@@ -143,17 +142,17 @@ public class NozzleClean extends BaseDialog {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.QueuePoint(rest));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 //turn off blower before heating
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             } else {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + spHigh + " X-85 Y-65"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             }
         }
@@ -193,7 +192,7 @@ public class NozzleClean extends BaseDialog {
         dispose();
         disposeThread.stop();
         Base.bringAllWindowsToFront();
-        Base.writeLog("Nozzle cleaned");
+        Base.writeLog("Nozzle cleaned", this.getClass());
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.enableAllOpenWindows();
@@ -207,10 +206,10 @@ public class NozzleClean extends BaseDialog {
             double spHigh = machine.getFeedrate("spHigh");
 
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
         }
@@ -264,7 +263,7 @@ public class NozzleClean extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 9, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -272,7 +271,7 @@ public class NozzleClean extends BaseDialog {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(5, Short.MAX_VALUE))
         );
 
         jLabel1.setText("CLEAN EXTRUDER");
@@ -302,7 +301,7 @@ public class NozzleClean extends BaseDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,7 +407,7 @@ public class NozzleClean extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 333, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 327, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
@@ -494,7 +493,6 @@ public class NozzleClean extends BaseDialog {
             dispose();
             disposeThread.stop();
             Base.bringAllWindowsToFront();
-            Base.maintenanceWizardOpen = false;
             Point5d b = machine.getTablePoints("safe");
             double acLow = machine.getAcceleration("acLow");
             double acHigh = machine.getAcceleration("acHigh");
@@ -502,10 +500,10 @@ public class NozzleClean extends BaseDialog {
 
             if (Base.printPaused == false) {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                 machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             }
@@ -517,7 +515,7 @@ public class NozzleClean extends BaseDialog {
     private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
         if (!ProperDefault.get("maintenance").equals("1") && achievement) {
             dispose();
-            FilamentCodeInsertion p = new FilamentCodeInsertion(machine.getModel().getCoilCode());
+            FilamentCodeInsertion p = new FilamentCodeInsertion(this);
             p.setVisible(true);
         }
     }//GEN-LAST:event_jLabel17MousePressed
@@ -567,12 +565,12 @@ class DisposeFeedbackThread6 extends Thread {
                 temperatureAchieved = nozzlePanel.getAchievement();
                 Thread.sleep(500);
             } catch (Exception e) {
-                Base.writeLog("Exception occured while reading Temperature ...");
+                Base.writeLog("Exception occured while reading Temperature ...", this.getClass());
                 this.stop();
                 break;
             }
         }
-        Base.writeLog("Temperature achieved...");
+        Base.writeLog("Temperature achieved...", this.getClass());
         nozzlePanel.sinalizeHeatSuccess();
         this.stop();
 

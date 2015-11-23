@@ -44,7 +44,7 @@ import replicatorg.app.ui.panels.BaseDialog;
  */
 public class UpdateChecker extends BaseDialog {
 
-    private static final String serverURL = "https://www.beeverycreative.com/public/software/software/";
+    private static final String serverURL = "https://www.beeverycreative.com/public/software/BEESOFT/";
 
     private File fileFromServer = null;
     private boolean updateStableAvailable;
@@ -158,9 +158,6 @@ public class UpdateChecker extends BaseDialog {
         softwareFromServer.setVersionFromString(softServerVersionString);
         softwareBetaFromServer.setVersionFromString(softServerVersionBetaString);
 
-        /**
-         * If is a beta versions, alert for updates of betas or stable
-         */
         if (softVersionString.contains("beta")) {
             betaSoftVersion = Integer.valueOf(softVersionString.split("beta")[1]);
 
@@ -179,6 +176,7 @@ public class UpdateChecker extends BaseDialog {
              * Alert for stable updates if BEESOFT version is stable
              */
             if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
+                Base.writeLog("New version, " + softwareFromServer +", available!", this.getClass());
                 updateStableAvailable = true;
                 grabFilenames(false);
                 return true;
@@ -255,11 +253,11 @@ public class UpdateChecker extends BaseDialog {
 
         } catch (MalformedURLException e) {
             setMessage("NoConnection");
-            Base.writeLog("Cant read update xml from server  " + e.getMessage());
+            Base.writeLog("Cant read update xml from server  " + e.getMessage(), this.getClass());
             fileFromServer = null;
         } catch (IOException e) {
             setMessage("NoConnection");
-            Base.writeLog("Cant read update xml from server  " + e.getMessage());
+            Base.writeLog("Cant read update xml from server  " + e.getMessage(), this.getClass());
             fileFromServer = null;
         }
         return fileFromServer;
@@ -310,14 +308,14 @@ public class UpdateChecker extends BaseDialog {
                     }
                 }
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"), this.getClass());
             }
         } catch (ParserConfigurationException pce) {
-            Base.writeLog(pce.getMessage());
+            Base.writeLog(pce.getMessage(), this.getClass());
         } catch (SAXException se) {
-            Base.writeLog(se.getMessage());
+            Base.writeLog(se.getMessage(), this.getClass());
         } catch (IOException ioe) {
-            Base.writeLog(ioe.getMessage());
+            Base.writeLog(ioe.getMessage(), this.getClass());
         }
 
         return null;
@@ -525,7 +523,7 @@ public class UpdateChecker extends BaseDialog {
                     openURL(new URI(serverURL + filenameToDownload));
                 }
             } catch (URISyntaxException ex) {
-                Base.writeLog("Searching for new software version. Cant connect to internet");
+                Base.writeLog("Searching for new software version. Cant connect to internet", this.getClass());
             }
             dispose();
             Base.bringAllWindowsToFront();

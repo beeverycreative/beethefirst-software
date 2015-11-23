@@ -9,7 +9,7 @@
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.11.6</version>
+    <version>3.12.0</version>
     <name>beesoft-usb</name>
     <properties>
         
@@ -17,7 +17,7 @@
         <!-- if release.type = 'alpha' the app internally will append the 
         current Date to the version -->
         <release.type>stable</release.type>
-        <project.release.version>3.11.6</project.release.version>
+        <project.release.version>3.12.0</project.release.version>
         <maven.build.timestamp.format>yyyy.MM.dd_HH'h'mm</maven.build.timestamp.format>
         <build.number>${maven.build.timestamp}</build.number>
         <!-- #################################### -->
@@ -154,9 +154,6 @@
                                 </copy>
                                 
                                 <!-- standard files -->                                
-                                <copy todir="${target.dir}/pypy">
-                                    <fileset dir="${resources.dir}/pypy/distro/pypy-2.0-beta1-win32" />
-                                </copy>
                                 <copy todir="${target.dir}/curaEngine/bin">
                                     <fileset dir="${resources.dir}/curaEngine/distros/windows" />
                                 </copy>
@@ -177,9 +174,12 @@
                                 </copy>    
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />
-                                </copy>  
-                                <copy todir="${target.dir}/config">
-                                    <filelist dir="${resources.dir}/config" files="app.properties" />
+                                </copy>                                                                
+                                <copy todir="${target.dir}/filaments">
+                                    <fileset dir="${resources.dir}/filaments" />
+                                </copy>
+                                <copy todir="${target.dir}/firmware/">
+                                    <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy> 
                                 <copy todir="${target.dir}">
                                     <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
@@ -225,9 +225,6 @@
                                 <copy todir="${target.dir}">
                                     <filelist dir="${dist.dir}" files="BEESOFT" />
                                 </copy>
-                                <copy todir="${target.dir}/pypy">
-                                    <fileset dir="${resources.dir}/pypy/distro/pypy-2.0-beta1-linux" />
-                                </copy>
                                 <copy todir="${target.dir}/curaEngine/bin">
                                     <fileset dir="${resources.dir}/curaEngine/distros/linux" />
                                 </copy>
@@ -249,8 +246,11 @@
                                 <copy todir="${target.dir}/languages">
                                     <fileset dir="${resources.dir}/languages" />
                                 </copy>
-                                <copy todir="${target.dir}/config">
-                                    <filelist dir="${resources.dir}/config" files="app.properties" />
+                                <copy todir="${target.dir}/filaments">
+                                    <fileset dir="${resources.dir}/filaments" />
+                                </copy>                                
+                                <copy todir="${target.dir}/firmware">
+                                    <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy>                                 
                                 <copy todir="${target.dir}/lib-i686">
                                     <fileset dir="${dist.dir}/lib-i686" includes="*.so" />
@@ -260,7 +260,6 @@
                                 </copy>
                                 <!-- permissions -->
                                 <chmod file="${target.dir}/BEESOFT" perm="ugo+rx" />
-                                <chmod file="${target.dir}/pypy/bin/pypy" perm="ugo+rx" />
                                 <chmod file="${target.dir}/curaEngine" perm="ugo+rx" includes="**/*" />
                                                         
                             </target>                                        
@@ -359,9 +358,6 @@
                                         <copy todir="${reso.dir}/3DModels">
                                             <fileset dir="${project.basedir}/src/main/resources/3DModels" />
                                         </copy>
-                                        <copy todir="${reso.dir}/pypy">
-                                            <fileset dir="${project.basedir}/src/main/resources/pypy/distro/pypy-2.0-beta1-osx" />
-                                        </copy>
                                         <copy todir="${reso.dir}/estimator">
                                             <fileset dir="${project.basedir}/src/main/resources/estimator" />
                                         </copy>
@@ -371,8 +367,11 @@
                                         <copy todir="${reso.dir}/languages">
                                             <fileset dir="${project.basedir}/src/main/resources/languages" />
                                         </copy>
-                                        <copy todir="${reso.dir}/config">
-                                            <filelist dir="${project.basedir}/src/main/resources/config" files="app.properties" />
+                                        <copy todir="${reso.dir}/filaments">
+                                            <fileset dir="${project.basedir}/src/main/resources/filaments" />
+                                        </copy>                                        
+                                        <copy todir="${reso.dir}/firmware">
+                                            <filelist dir="${project.basedir}/src/main/resources/firmware" files="firmware.properties" />
                                         </copy> 
                                         <!-- permissions -->
                                         <chmod file="${target.app.dir}/BEESOFT.app" perm="ugo+rx" />
@@ -673,6 +672,7 @@
             <version>1.0.2</version>
         </dependency>
         
+        <!--
         <dependency>
             <groupId>de.ailis.usb4java</groupId>
             <artifactId>usb4java</artifactId>
@@ -680,7 +680,8 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/external_libs/usb4java-1.0.0.jar</systemPath>
         </dependency>
-
+        -->
+        
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>
             <artifactId>jarbundler</artifactId>

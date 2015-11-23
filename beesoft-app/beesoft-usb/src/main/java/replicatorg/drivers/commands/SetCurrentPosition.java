@@ -1,5 +1,7 @@
 package replicatorg.drivers.commands;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.RetryException;
 import replicatorg.util.Point5d;
@@ -19,7 +21,15 @@ public class SetCurrentPosition implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        DecimalFormat df;
+        DecimalFormatSymbols dfs;
+
+        dfs = DecimalFormatSymbols.getInstance();
+        dfs.setDecimalSeparator('.');
+        df = new DecimalFormat("#.######", dfs);
+        
+        return "G92 X" + df.format(point.x()) + " Y" + df.format(point.y()) 
+                + " Z" + df.format(point.z());
     }
 
     @Override

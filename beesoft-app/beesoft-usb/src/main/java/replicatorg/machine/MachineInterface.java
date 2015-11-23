@@ -1,6 +1,7 @@
 package replicatorg.machine;
 
 import org.w3c.dom.Node;
+import replicatorg.app.util.AutonomousData;
 
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.commands.DriverCommand;
@@ -143,8 +144,8 @@ public interface MachineInterface {
     public void setFilamentChanged(boolean isChanged);
     
     public boolean hasFilamentChanged();
-
-    public void setLastBEECode(String code);
     
     public void setLastPrintedPoint(Point5d point);
+    
+    public AutonomousData getAutonomousData() throws InterruptedException;
 }

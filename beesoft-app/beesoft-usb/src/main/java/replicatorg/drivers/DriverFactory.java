@@ -131,7 +131,7 @@ public class DriverFactory {
                         driver.setDriverName(driverName);
 			if (driver == null) {
 				Base.logger.severe("Driver not found, failing over to 'null'.");
-                                Base.writeLog("Driver not found, failing over to 'null'.");
+                                Base.writeLog("Driver not found, failing over to 'null'.", DriverFactory.class);
 				return loadClass("replicatorg.drivers.NullDriver", xml);
 			} else {
 				return driver;

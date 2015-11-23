@@ -5,7 +5,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -85,7 +85,7 @@ public class ExtruderSwitch4 extends BaseDialog {
     }
 
     private int getModelCategoryIndex() {
-        String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+        String code = Base.getMainWindow().getMachine().getModel().getCoilText();
 
         for (int i = 0; i < categories.length; i++) {
             /**
@@ -105,7 +105,7 @@ public class ExtruderSwitch4 extends BaseDialog {
     }
 
     private void initializeHeat() {
-        Base.writeLog("Initializing");
+        Base.writeLog("Initializing", this.getClass());
         //turn off blower before heating
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
@@ -116,7 +116,7 @@ public class ExtruderSwitch4 extends BaseDialog {
     }
 
     private String parseComboCode() {
-        String[] filamentCodes = FilamentControler.getFilamentCodes();
+        String[] filamentCodes = FilamentControler.getColors();
 
         for (String enumCode : filamentCodes) {
             /**
@@ -137,7 +137,6 @@ public class ExtruderSwitch4 extends BaseDialog {
         if (Base.printPaused == false) {
             dispose();
             Base.bringAllWindowsToFront();
-            Base.maintenanceWizardOpen = false;
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.enableAllOpenWindows();
@@ -149,10 +148,10 @@ public class ExtruderSwitch4 extends BaseDialog {
                 double spHigh = machine.getFeedrate("spHigh");
 
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                 machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
                 finalizeHeat();
@@ -426,7 +425,7 @@ public class ExtruderSwitch4 extends BaseDialog {
         String code = parseComboCode();
 
         //set the coil code: M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
+        machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 
@@ -434,7 +433,7 @@ public class ExtruderSwitch4 extends BaseDialog {
         ProperDefault.put("filamentCoilRemaining", String.valueOf("105000"));
         Base.writeConfig();
         Base.loadProperties();
-        Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()));
+        Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()), this.getClass());
         Base.getMainWindow().getBed().setGcodeOK(false);
         dispose();
 
@@ -457,10 +456,10 @@ public class ExtruderSwitch4 extends BaseDialog {
             double spHigh = machine.getFeedrate("spHigh");
 
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
             machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
             machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             //            ProperDefault.remove("maintenance");

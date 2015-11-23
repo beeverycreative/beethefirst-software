@@ -18,7 +18,7 @@ public class SetTemperature implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M104 S" + temperature;
     }
 
     @Override

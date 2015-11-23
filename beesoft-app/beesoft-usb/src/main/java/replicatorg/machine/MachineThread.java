@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.tools.XML;
+import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.DriverError;
 import replicatorg.drivers.DriverFactory;
@@ -23,10 +24,7 @@ import replicatorg.drivers.OnboardParameters;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.StopException;
 import replicatorg.drivers.VersionException;
-import replicatorg.drivers.commands.AssessState;
-import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.Machine.JobTarget;
-import replicatorg.machine.Machine.RequestType;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
@@ -45,13 +43,11 @@ class MachineThread extends Thread {
     private final HashMap<String, Point5d> tablePoints;
     private static final String COMMAND_ACCELERATION = "M206";
     private int stopwatch;
-    private boolean isPaused;
+    private boolean isPaused = false;
     private final Point5d lastPoint = new Point5d();
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
-    private String lastBEECode = "";
-    private double previousEParsed = 0;
-    private final double absoluteDistance = 0;
+    private static boolean checkedForUpdates = false;
 
     class AssessStatusThread extends Thread {
 
@@ -65,40 +61,88 @@ class MachineThread extends Thread {
         @Override
         public void run() {
             // Send out a request, then sleep for a bit, then start over.
-            DriverCommand assessCommand = new AssessState();
+            //DriverCommand assessCommand = new AssessState();
 
-            machineThread.notConnectedMessage();
-            Base.disposeAllOpenWindows();
+            if (Base.rebootingIntoFirmware == false) {
+                machineThread.notConnectedMessage();
+            }
+            if (Base.welcomeSplashVisible == false) {
+                Base.disposeAllOpenWindows();
+            }
             machineThread.setState(new MachineState(MachineState.State.NOT_ATTACHED));
             Base.statusThreadDied = false;
             driver.initialize();
-            machineThread.scheduleRequest(new MachineCommand(
-                    RequestType.CONNECT, assessCommand));
 
+            if (driver.isBootloader() == false) {
+                Base.rebootingIntoFirmware = false;
+                setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+                Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
+                driver.closeFeedback();
+            }
+
+            if (checkedForUpdates == false) {
+                // Checks for software and firmware updates
+                if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
+                    UpdateChecker advise = new UpdateChecker();
+                    checkedForUpdates = true;
+
+                    /*
+                    if (advise.isUpdateBetaAvailable()) {
+                        advise.setMessage("AvailableBeta");
+                        advise.setVisible(true);
+                    }*/ 
+                    if (advise.isUpdateStableAvailable()) {
+                        advise.setMessage("AvailableStable");
+                        advise.setVisible(true);
+                    } else {
+                        advise.dispose();
+                    }
+                }
+            }
+
+            int counter = 0;
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-                    machineThread.scheduleRequest(new MachineCommand(
-                            RequestType.RUN_COMMAND, assessCommand));
+                    if (counter++ == 4) {
+                        if (driver.isTransferMode() == false) {
+                            driver.readStatus();
+                            if (machineThread.getModel().getMachinePowerSaving()) {
+                                Base.getMainWindow().getButtons().setMessage("power saving");
+                            } else if(getModel().getMachineReady()) {
+                                Base.getMainWindow().getButtons().setMessage("is connected");
+                            }
+                        }
+                        counter = 0;
+                    }
 
                     sleep(500, 1);
-                    
+
                     // these catches are VERY important
                 } catch (InterruptedException e) {
                     Base.statusThreadDied = true;
-                    Base.writeLog("taking assess status thread down");
+                    Base.writeLog("taking assess status thread down", this.getClass());
                     machineThread.interrupt();
                     break;
                 } catch (VersionException E) {
                     Base.statusThreadDied = true;
-                    Base.writeLog("Initialize, probably failed.");
+                    Base.writeLog("Initialize, probably failed.", this.getClass());
                     machineThread.interrupt();
                     break;
                 } catch (UsbException ex) {
+                    if (Base.rebootingIntoFirmware == false) {
+                        Base.getMainWindow().getButtons().setMessage("is disconnected");
+                    }
                     Base.statusThreadDied = true;
-                    Base.writeLog("Machine disconnected during operation");
+                    Base.isPrinting = false;
+                    Base.printPaused = false;
+                    Base.getMachineLoader().getMachineInterface().getDriver()
+                            .resetBootloaderAndFirmwareVersion();
+                    Base.getMachineLoader().getMachineInterface().getDriver()
+                            .dispose();
+                    Base.writeLog("Machine disconnected during operation", this.getClass());
                     machineThread.interrupt();
                     break;
                 }
@@ -323,12 +367,6 @@ class MachineThread extends Thread {
         return message;
     }
 
-    private String cableRemovedMessage() {
-        String message = "has the USB cable unplugged";
-        Base.getMainWindow().setMessage(message);
-        return message;
-    }
-
     private String buildingMessage() {
         String message = "is building";
         Base.getMainWindow().setMessage(message);
@@ -344,13 +382,13 @@ class MachineThread extends Thread {
                 if (state.getState() == MachineState.State.NOT_ATTACHED && driver.isInitialized()) {
                     setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                     Base.getMainWindow().getButtons().connect();
-                    Base.writeLog("New State: " + state.getState().toString());
+                    Base.writeLog("New State: " + state.getState().toString(), this.getClass());
 //                    System.out.println("1");
                 }
 
                 if (state.getState() == MachineState.State.READY && !driver.isInitialized()) {
                     setState(new MachineState(MachineState.State.NOT_ATTACHED), notConnectedMessage());
-                    Base.writeLog("New State: " + state.getState().toString());
+                    Base.writeLog("New State: " + state.getState().toString(), this.getClass());
 
 //                    System.out.println("2");
                 }
@@ -385,18 +423,18 @@ class MachineThread extends Thread {
                 if (command.remoteName.equals("Print")) {
                     if (state.canPrint()) {
 
-                        Base.writeLog("Print Started ...");
+                        Base.writeLog("Print Started ...", this.getClass());
                         startTimeMillis = System.currentTimeMillis();
 
                         if (!isSimulating()) {
                             driver.getCurrentPosition(false); // reconcile position
                         }
                         setState(new MachineState(MachineState.State.BUILDING), buildingMessage());
-                        Base.writeLog("New State: BUILDING");
+                        Base.writeLog("New State: BUILDING", this.getClass());
                     }
                 } else // Ready
                 {
-                    Base.writeLog("Print ended ...");
+                    Base.writeLog("Print ended ...", this.getClass());
                     double printDuration = System.currentTimeMillis() - startTimeMillis;
                     Base.getMainWindow().setBuildTime(String.valueOf(printDuration));
 
@@ -469,11 +507,11 @@ class MachineThread extends Thread {
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
-                    Base.writeLog("New State: READY");
+                    Base.writeLog("New State: READY", this.getClass());
                 } else if (state.getState() == MachineState.State.BUILDING_OFFLINE) {
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             notConnectedMessage());
-                    Base.writeLog("New State: NOT_ATTACHED");
+                    Base.writeLog("New State: NOT_ATTACHED", this.getClass());
                 }
                 break;
             case STOP_ALL:
@@ -486,12 +524,12 @@ class MachineThread extends Thread {
                 if (state.getState() == MachineState.State.BUILDING) {
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
-                    Base.writeLog("New State: READY");
+                    Base.writeLog("New State: READY", this.getClass());
                 }
                 if (state.getState() == MachineState.State.BUILDING_OFFLINE) {
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             notConnectedMessage());
-                    Base.writeLog("New State: NOT_ATTACHED");
+                    Base.writeLog("New State: NOT_ATTACHED", this.getClass());
                 }
                 break;
             case DISCONNECT_REMOTE_BUILD:
@@ -550,13 +588,13 @@ class MachineThread extends Thread {
                     // transition to a disconnected state
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             error.getMessage());
-                    Base.writeLog("New State: NOT_ATTACHED. USB driver has errors and got disconnected");
+                    Base.writeLog("New State: NOT_ATTACHED. USB driver has errors and got disconnected", this.getClass());
                 } else {
                     // Otherwise, transition to an error state, where we can still
                     // configure the machine, but can't print.
                     setState(new MachineState(MachineState.State.NOT_ATTACHED),
                             error.getMessage());
-                    Base.writeLog("New State: NOT_ATTACHED. An error has occured");
+                    Base.writeLog("New State: NOT_ATTACHED. An error has occured", this.getClass());
                 }
 
             }
@@ -621,7 +659,6 @@ class MachineThread extends Thread {
                                 }
 
                                 actualPoint.setA(actualEValue);
-                                previousEParsed = actualEValue;
 
                             }
                             if (cmdValue.contains(COMMAND_ACCELERATION)) {
@@ -687,11 +724,11 @@ class MachineThread extends Thread {
 
                         setState(new MachineState(MachineState.State.READY),
                                 readyMessage());
-                        Base.writeLog("New State: READY");
+                        Base.writeLog("New State: READY", this.getClass());
                     } else {
                         setState(new MachineState(MachineState.State.NOT_ATTACHED),
                                 notConnectedMessage());
-                        Base.writeLog("New State: NOT_ATTACHED");
+                        Base.writeLog("New State: NOT_ATTACHED", this.getClass());
                     }
 
                 }
@@ -722,7 +759,7 @@ class MachineThread extends Thread {
         this.stop();
         statusThread.stop();
 
-        Base.writeLog("MachineThread interrupted, terminating.");
+        Base.writeLog("MachineThread interrupted, terminating.", this.getClass());
         Base.logger.fine("MachineThread interrupted, terminating.");
         dispose();
     }
@@ -749,10 +786,6 @@ class MachineThread extends Thread {
 
     public String getLastFeedrate() {
         return lastFeedrate;
-    }
-
-    public void setLastBEECode(String code) {
-        lastBEECode = code;
     }
 
     public String getLastE() {
@@ -875,7 +908,7 @@ class MachineThread extends Thread {
 
     public boolean isConnected() {
 
-        return (driver != null && driver.isInitialized() && !driver.isBootloader());
+        return (driver != null && driver.isInitialized());
     }
 
     private void loadDriver() {

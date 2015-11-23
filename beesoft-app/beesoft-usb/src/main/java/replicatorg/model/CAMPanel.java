@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -782,7 +781,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //            v.startView();  
 
         universe.getViewingPlatform().setNominalViewingTransform();
-        universe.getViewer().getView().setSceneAntialiasingEnable(true);
         universe.getViewer().getView().setFrontClipDistance(1d);
         universe.getViewer().getView().setBackClipDistance(1000d);
         universe.getViewer().getView().setMinimumFrameCycleTime(10);
@@ -998,8 +996,8 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
             double gridSpacing = 10.0; // Dim grid has hash marks at 10mm intervals.
             // Set up the appearance object for the central crosshairs.
             Appearance crosshairAppearance = new Appearance();
-            crosshairAppearance.setLineAttributes(new LineAttributes(2f, LineAttributes.PATTERN_SOLID, true));
-            crosshairAppearance.setColoringAttributes(new ColoringAttributes(.694f, .694f, .694f, ColoringAttributes.NICEST));
+            crosshairAppearance.setLineAttributes(new LineAttributes(1.5f, LineAttributes.PATTERN_SOLID, true));
+            crosshairAppearance.setColoringAttributes(new ColoringAttributes(.450f, .450f, .450f, ColoringAttributes.NICEST));
             // Set up the crosshair lines
             LineArray crosshairLines = new LineArray(2 * 2, GeometryArray.COORDINATES);
             crosshairLines.setCoordinate(0, new Point3d(0, -buildVol.getY() / 2, 0));
@@ -1010,21 +1008,19 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 
             // Set up the appearance object for the measurement hash marks.
             Appearance hashAppearance = new Appearance(); // color float value = rgv_value/255
-            hashAppearance.setLineAttributes(new LineAttributes(2f, LineAttributes.PATTERN_SOLID, true));
-            hashAppearance.setColoringAttributes(new ColoringAttributes(.694f, .694f, .694f, ColoringAttributes.NICEST));
+            hashAppearance.setLineAttributes(new LineAttributes(1.5f, LineAttributes.PATTERN_SOLID, true));
+            hashAppearance.setColoringAttributes(new ColoringAttributes(.450f, .450f, .450f, ColoringAttributes.NICEST));
             // hashes in each direction on x axis
-            int xHashes = (int) ((buildVol.getX() - 0.0001) / (2 * gridSpacing));
+            int xHashes = (int) Math.floor((double) buildVol.getX() / (2 * gridSpacing));
             // hashes in each direction on y axis
-            int yHashes = (int) ((buildVol.getY() - 0.0001) / (2 * gridSpacing));
+            int yHashes = (int) Math.floor((double) buildVol.getY() / (2 * gridSpacing));
             // Set up hash lines
             LineArray hashLines = new LineArray(8 + 2 * (2 * xHashes + 2 * yHashes), GeometryArray.COORDINATES);
 
             int idx = 0;
             double offset = 0;
 
-            // -1 to get rid of the last line
-            // Avoids displaying a 2mm gap between the last line and buildVolumeX coordinates limit
-            for (int i = 0; i < xHashes - 1; i++) {
+            for (int i = 0; i < xHashes; i++) {
                 offset += gridSpacing;
                 hashLines.setCoordinate(idx++, new Point3d(offset, -buildVol.getY() / 2, 0));
                 hashLines.setCoordinate(idx++, new Point3d(offset, buildVol.getY() / 2, 0));

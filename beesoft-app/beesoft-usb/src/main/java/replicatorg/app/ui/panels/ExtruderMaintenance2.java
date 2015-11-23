@@ -37,7 +37,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
         evaluateInitialConditions();
         setTextLanguage();
         enableDrag();
-        Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
@@ -129,7 +128,7 @@ public class ExtruderMaintenance2 extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Heating...");
+        Base.writeLog("Heating...", this.getClass());
         Point5d heat = machine.getTablePoints("heat");
 
         double acHigh = machine.getAcceleration("acHigh");
@@ -142,16 +141,16 @@ public class ExtruderMaintenance2 extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         //turn off blower before heating
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acMedium));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
     }
 
     private void finalizeHeat() {
-        Base.writeLog("Cooling down...");
+        Base.writeLog("Cooling down...", this.getClass());
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
 
@@ -174,7 +173,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
         Base.THREAD_KEEP_ALIVE = true;
         finalizeHeat();
         Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
@@ -185,10 +183,10 @@ public class ExtruderMaintenance2 extends BaseDialog {
         double spHigh = machine.getFeedrate("spHigh");
 
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
@@ -280,7 +278,7 @@ public class ExtruderMaintenance2 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -334,7 +332,7 @@ public class ExtruderMaintenance2 extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -356,7 +354,7 @@ public class ExtruderMaintenance2 extends BaseDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(

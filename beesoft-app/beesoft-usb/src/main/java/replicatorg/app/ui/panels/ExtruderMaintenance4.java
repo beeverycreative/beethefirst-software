@@ -39,7 +39,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
@@ -145,8 +144,9 @@ public class ExtruderMaintenance4 extends BaseDialog {
         try {
             Thread.sleep(500);
         } catch (InterruptedException ex) {
-            Logger.getLogger(PrintSplashSimple.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExtruderMaintenance4.class.getName()).log(Level.SEVERE, null, ex);
         }
+    
 
         double temperature = machine.getDriver().getTemperature();
         if (temperature > (int) (jProgressBar1.getValue() * 2)) {
@@ -180,7 +180,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Heating...");
+        Base.writeLog("Heating...", this.getClass());
         Point5d heat = machine.getTablePoints("heat");
 
         double acHigh = machine.getAcceleration("acHigh");
@@ -193,16 +193,16 @@ public class ExtruderMaintenance4 extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         //turn off blower before heating
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acMedium));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
     }
 
     private void finalizeHeat() {
-        Base.writeLog("Cooling down...");
+        Base.writeLog("Cooling down...", this.getClass());
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
     }
 
@@ -231,7 +231,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
         finalizeHeat();
         updateThread.stop();
         Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
@@ -242,10 +241,10 @@ public class ExtruderMaintenance4 extends BaseDialog {
         double spHigh = machine.getFeedrate("spHigh");
 
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
@@ -338,7 +337,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -398,7 +397,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -420,7 +419,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -591,7 +590,7 @@ ExtruderMaintenance4 window;
     public ExtruderMaintenanceUpdateThread(ExtruderMaintenance4 w) {
         super("Filament Heating Thread");
         window = w;
-        Base.writeLog("Reading Temperature ...");
+        Base.writeLog("Reading Temperature...", this.getClass());
     }
 
     @Override
@@ -606,13 +605,13 @@ ExtruderMaintenance4 window;
                 temperatureAchieved = window.getAchievement();
                 Thread.sleep(500);
             } catch (Exception e) {
-                Base.writeLog("Exception occured while reading Temperature ...");
+                Base.writeLog("Exception occured while reading Temperature ...", this.getClass());
                 this.stop();
                 break;
             }
             window.showMessage();
         }
-        Base.writeLog("Temperature achieved...");
+        Base.writeLog("Temperature achieved...", this.getClass());
         window.sinalizeHeatSuccess();
         this.stop();
 

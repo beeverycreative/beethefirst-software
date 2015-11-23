@@ -14,6 +14,10 @@
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>application.ico</icon>
+  <singleInstance>
+    <mutexName>BEESOFT</mutexName>
+    <windowTitle>BEESOFT</windowTitle>
+  </singleInstance>
   <classPath>
     <mainClass>replicatorg.app.Base</mainClass>
     <cp>./lib/*</cp>
@@ -30,4 +34,11 @@
     <maxHeapSize>1024</maxHeapSize>
     <opt>-D32 -Xmx512m</opt>
   </jre>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <bundledJreErr>This application was configured to use a bundled Java Runtime Environment but the runtime is missing or corrupted.</bundledJreErr>
+    <jreVersionErr>This application requires a Java Runtime Environment</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
 </launch4jConfig>

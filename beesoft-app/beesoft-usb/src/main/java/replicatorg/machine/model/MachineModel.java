@@ -33,17 +33,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
 import replicatorg.app.tools.XML;
+import replicatorg.app.util.AutonomousData;
 import replicatorg.util.Point5d;
 
 public class MachineModel {
 
     //our xml config info
-
     protected Node xml = null;
 
-	//our machine space
+    //our machine space
     //private Point3d currentPosition;
     @SuppressWarnings("unused")
     private Point5d minimum;
@@ -78,16 +77,24 @@ public class MachineModel {
     protected BuildVolume buildVolume;
     private boolean machineReady = false;
     private boolean machineBusy = false;
+    private boolean machinePaused = false;
+    private boolean machinePowerSaving = false;
+    private boolean machineShutdown = false;
+    private boolean machinePrinting = false;
     private double zValue;
 
     // Filament code currently on the printer
-    private String CoilCode = FilamentControler.NO_FILAMENT_CODE;
+    private String coilText = "";
     private String resolution = "lowRes";
+
+    private AutonomousData autonomousData;
+    private final Object autonomousDataMutex = new Object();
+    private boolean autonomousDataReady = false;
+    private String lastStatusString = "";
 
     /**
      * ***********************************
-     * Creates the model object.
-	************************************
+     * Creates the model object. ***********************************
      */
     public MachineModel() {
         clamps = new Vector<ClampModel>();
@@ -150,7 +157,6 @@ public class MachineModel {
     }
 
     //load axes configuration
-
     private void parseAxes() {
         if (XML.hasChildNode(xml, "geometry")) {
             Node geometry = XML.getChildNodeByName(xml, "geometry");
@@ -172,7 +178,7 @@ public class MachineModel {
                         double homingFeedrate = 0.0;
                         double stepspermm = 1.0;
                         Endstops endstops = Endstops.NONE;
-						// abritrary # of seconds to time out,
+                        // abritrary # of seconds to time out,
                         // can be overriden in .xml for each axis, the max val is all we use currently
                         double defaultTimeout = 20.0;
                         double timeout = 0;
@@ -286,7 +292,6 @@ public class MachineModel {
     }
 
     //load axes configuration
-
     private void parseBuildVolume() {
 //		Base.logger.info("parsing build volume!");
 
@@ -327,8 +332,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Reporting available axes
-	************************************
+     * Reporting available axes ***********************************
      */
     /**
      * Return a set enumerating all the axes that this machine has available.
@@ -349,8 +353,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Convert steps to millimeter units
-	************************************
+     * Convert steps to millimeter units ***********************************
      */
     public Point5d stepsToMM(Point5d steps) {
         Point5d temp = new Point5d();
@@ -368,8 +371,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Convert millimeters to machine steps
-	************************************
+     * Convert millimeters to machine steps ***********************************
      */
     public Point5d mmToSteps(Point5d mm) {
         Point5d temp = new Point5d();
@@ -382,8 +384,7 @@ public class MachineModel {
     /**
      * ***********************************
      * Convert millimeters to machine steps, factoring in previous rounding
-     * error and providing carryover error
-	************************************
+     * error and providing carryover error ***********************************
      */
     public Point5d mmToSteps(Point5d mm, Point5d excess) {
         Point5d temp = new Point5d();
@@ -395,8 +396,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Drive interface functions
-	************************************
+     * Drive interface functions ***********************************
      */
     public void enableDrives() {
         drivesEnabled = true;
@@ -412,8 +412,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Gear Ratio functions
-	************************************
+     * Gear Ratio functions ***********************************
      */
     public void changeGearRatio(int ratioIndex) {
         gearRatio = ratioIndex;
@@ -429,8 +428,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Clamp interface functions
-	************************************
+     * Clamp interface functions ***********************************
      */
     public ClampModel getClamp(int index) {
         try {
@@ -446,8 +444,7 @@ public class MachineModel {
 
     /**
      * ***********************************
-     * Tool interface functions
-	************************************
+     * Tool interface functions ***********************************
      */
     public void selectTool(int index) {
         synchronized (currentTool) {
@@ -461,7 +458,7 @@ public class MachineModel {
                 if (xml != null) {
                     Base.logger.severe("Cannot select non-existant tool (#" + index + ").");
                 } else {
-					// If this machine is not configured, it's presumed it's a null machine
+                    // If this machine is not configured, it's presumed it's a null machine
                     // and it's expected that toolheads are not specified.
                 }
                 currentTool.set(nullTool);
@@ -535,6 +532,14 @@ public class MachineModel {
     public Endstops getEndstops(AxisId axis) {
         return this.endstops.get(axis);
     }
+    
+    public void setLastStatusString(String status) {
+        this.lastStatusString = status;
+    }
+    
+    public String getLastStatusString() {
+        return lastStatusString;
+    }
 
     public void setMachineReady(boolean machReady) {
         this.machineReady = machReady;
@@ -552,13 +557,45 @@ public class MachineModel {
         return machineBusy;
     }
 
-    /* Get and Setter CoilCode/BEECODE */
-    public String getCoilCode() {
-        return CoilCode;
+    public void setMachinePaused(boolean machinePaused) {
+        this.machinePaused = machinePaused;
     }
 
-    public void setCoilCode(String CoilCode) {
-        this.CoilCode = CoilCode;
+    public boolean getMachinePaused() {
+        return machinePaused;
+    }
+
+    public void setMachineShutdown(boolean machineShutdown) {
+        this.machineShutdown = machineShutdown;
+    }
+
+    public boolean getMachineShutdown() {
+        return machineShutdown;
+    }
+
+    public void setMachinePowerSaving(boolean machinePowerSaving) {
+        this.machinePowerSaving = machinePowerSaving;
+    }
+
+    public boolean getMachinePowerSaving() {
+        return machinePowerSaving;
+    }
+
+    public void setMachinePrinting(boolean machinePrinting) {
+        this.machinePrinting = machinePrinting;
+    }
+
+    public boolean getMachinePrinting() {
+        return machinePrinting;
+    }
+
+    /* Get and Setter CoilCode/BEECODE */
+    public String getCoilText() {
+        return coilText;
+    }
+
+    public void setCoilText(String coilText) {
+        this.coilText = coilText;
     }
 
     /* Get and Setter Resolution/BEECODE */
@@ -569,4 +606,24 @@ public class MachineModel {
     public void setResolution(String res) {
         this.resolution = res;
     }
+
+    public void setAutonomousData(AutonomousData data) {
+        synchronized (autonomousDataMutex) {
+            this.autonomousData = data;
+            autonomousDataReady = true;
+            autonomousDataMutex.notifyAll();
+        }
+    }
+
+    public AutonomousData getAutonomousData() throws InterruptedException {
+        synchronized (autonomousDataMutex) {
+            if (autonomousDataReady == false) {
+                autonomousDataMutex.wait(3000);
+            }
+
+            autonomousDataReady = false;
+            return autonomousData;
+        }
+    }
+
 }

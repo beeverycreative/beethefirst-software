@@ -1,16 +1,16 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.Window;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.MachineInterface;
-import replicatorg.util.Point5d;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -25,20 +25,21 @@ import replicatorg.util.Point5d;
  */
 public class FilamentCodeInsertion extends BaseDialog {
 
+    private final Window prevWindow;
     private final MachineInterface machine;
     private DefaultComboBoxModel comboModel;
     private String[] categories;
-    private boolean itemChanged;
     private static final String WRITE_CONFIG = "M601";
-    private String previousColor = "";
+    private boolean noFilamentsFound = false;
 
-    public FilamentCodeInsertion(String prevColor) {
+    public FilamentCodeInsertion(Window prevWindow) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        this.prevWindow = prevWindow;
+        Base.writeLog("Final step of the filament change operation", this.getClass());
         initComponents();
         setFont();
         setTextLanguage();
         enableDrag();
-        previousColor = prevColor;
         machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
         centerOnScreen();
@@ -48,8 +49,8 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel17.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bPrev.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
 
@@ -58,8 +59,8 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title5"));
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
-        jLabel17.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        bPrev.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
@@ -69,21 +70,19 @@ public class FilamentCodeInsertion extends BaseDialog {
         categories = fullFillCombo();
         comboModel = new DefaultComboBoxModel(categories);
         jComboBox1.setModel(comboModel);
-        jComboBox1.setSelectedIndex(getModelCategoryIndex());
+
+        if (categories.length > 0) {
+            jComboBox1.setSelectedIndex(getModelCategoryIndex());
+        }
 
         if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         }
-
-        if (Base.printPaused == true) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        }
-
     }
 
     private int getModelCategoryIndex() {
-        String code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+        String code = Base.getMainWindow().getMachine().getModel().getCoilText();
 
         for (int i = 0; i < categories.length; i++) {
             /**
@@ -99,66 +98,48 @@ public class FilamentCodeInsertion extends BaseDialog {
     }
 
     private String[] fullFillCombo() {
-        return FilamentControler.getColors();
-    }
+        String[] result;
 
-    private void initializeHeat() {
-        Base.writeLog("Initializing");
-        //turn off blower before heating
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(220));
+        result = FilamentControler.getColors();
+
+        if (result.length == 0) {
+            Base.writeLog("No filaments found for this printer!", this.getClass());
+            noFilamentsFound = true;
+            result = new String[1];
+            result[0] = "No filaments found";
+        }
+
+        return result;
+
     }
 
     private void finalizeHeat() {
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private String parseComboCode() {
-        String[] filamentCodes = FilamentControler.getFilamentCodes();
-
-        for (String enumCode : filamentCodes) {
-            /**
-             * Color with BEECODE - Filkemp new
-             */
-            if (String.valueOf(comboModel.getSelectedItem()).contains(enumCode)) {
-                return enumCode;
-            }
-        }
-        /**
-         * Color without BEECODE - KDI
-         */
-        return FilamentControler.getBEECode(String.valueOf(comboModel.getSelectedItem()));
+        Base.writeLog("Moving table to home position", this.getClass());
+        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
     }
 
     private void doCancel() {
 
+        Base.writeLog("Filament load/unload canceled", this.getClass());
+
         if (Base.printPaused == false) {
-            dispose();
+            Base.writeLog("Filament selection canceled", this.getClass());
             Base.bringAllWindowsToFront();
-            Base.maintenanceWizardOpen = false;
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.enableAllOpenWindows();
+            finalizeHeat();
 
-            if (Base.printPaused == false) {
-                Point5d b = machine.getTablePoints("safe");
-                double acLow = machine.getAcceleration("acLow");
-                double acHigh = machine.getAcceleration("acHigh");
-                double spHigh = machine.getFeedrate("spHigh");
-
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                finalizeHeat();
-            }
             if (ProperDefault.get("maintenance").equals("1")) {
                 ProperDefault.remove("maintenance");
             }
+        } else {
+            Base.writeLog("Filament heating canceled", this.getClass());
+            finalizeHeat();
+            dispose();
         }
+
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -166,12 +147,12 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
+        bPrev = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        bX = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -190,33 +171,33 @@ public class FilamentCodeInsertion extends BaseDialog {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel17.setText("ANTERIOR");
-        jLabel17.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
+        bPrev.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bPrev.setText("ANTERIOR");
+        bPrev.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bPrev.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel17MouseEntered(evt);
+                bPrevMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel17MouseExited(evt);
+                bPrevMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel17MousePressed(evt);
+                bPrevMousePressed(evt);
             }
         });
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel18.setText("SEGUINTE");
-        jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel18MouseEntered(evt);
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("SEGUINTE");
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNextMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel18MouseExited(evt);
+                bNextMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel18MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNextMouseEntered(evt);
             }
         });
 
@@ -242,10 +223,10 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 334, Short.MAX_VALUE)
-                .addComponent(jLabel17)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
+                .addComponent(bPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel18)
+                .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
         jPanel2Layout.setVerticalGroup(
@@ -253,8 +234,8 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(jLabel18)
+                    .addComponent(bPrev)
+                    .addComponent(bNext)
                     .addComponent(bCancel))
                 .addGap(20, 20, 20))
         );
@@ -267,10 +248,10 @@ public class FilamentCodeInsertion extends BaseDialog {
         jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
         jPanel4.setRequestFocusEnabled(false);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+        bX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        bX.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel15MousePressed(evt);
+                bXMousePressed(evt);
             }
         });
 
@@ -280,14 +261,14 @@ public class FilamentCodeInsertion extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(bX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bX, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -307,11 +288,6 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboBox1ItemStateChanged(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -383,141 +359,89 @@ public class FilamentCodeInsertion extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel18MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseEntered
-        if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-        } else {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-    }//GEN-LAST:event_jLabel18MouseEntered
+    private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bNextMouseEntered
 
-    private void jLabel18MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseExited
-        if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-        } else {
-            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
-    }//GEN-LAST:event_jLabel18MouseExited
+    private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bNextMouseExited
 
-    private void jLabel17MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseEntered
-        jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_jLabel17MouseEntered
+    private void bPrevMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseEntered
+        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bPrevMouseEntered
 
-    private void jLabel17MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MouseExited
-        jLabel17.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_jLabel17MouseExited
+    private void bPrevMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseExited
+        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bPrevMouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
-        if (Base.printPaused == false) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
-        if (Base.printPaused == false) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bCancelMouseExited
 
-    private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
-//        if (validateCode()) {
+    private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
 
-        String code = parseComboCode();
+        String coilText;
 
-        /**
-         * Checks if color switch was between this combinations
-         */
-        boolean blackTurquoise = previousColor.equals("A335") && code.equals("A332")
-                || previousColor.equals("A332") && code.equals("A335");
+        if (noFilamentsFound) {
+            coilText = FilamentControler.NO_FILAMENT;
+        } else {
+            coilText = comboModel.getSelectedItem().toString();
+        }
 
-        boolean yellowRed = previousColor.equals("A333") && code.equals("A334")
-                || previousColor.equals("A334") && code.equals("A333");
-
-        /**
-         * If this is made on print paused and color is not the same then flag
-         * it to machineThread to process GCode on runCommand
-         */
-        if (Base.printPaused && !blackTurquoise && !yellowRed) {
-            machine.setFilamentChanged(true);
-            machine.setLastBEECode(previousColor);
-        }//no need for else
-
-        //set the coil code: M400 <COILCODE>
-        machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(code));
+        machine.getDriver().setCoilText(coilText);
+        //machine.runCommand(new replicatorg.drivers.commands.SetCoilText(coilText));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
 
-        ProperDefault.put("coilCode", String.valueOf(code));
-        ProperDefault.put("filamentCoilRemaining", String.valueOf("105000"));
+        Base.writeLog("Filament " + coilText + " selected", this.getClass());
         Base.writeConfig();
         Base.loadProperties();
-        Base.writeLog("New coil inserted. CODE:" + String.valueOf(comboModel.getSelectedItem()));
         Base.getMainWindow().getBed().setGcodeOK(false);
 
-        if (!ProperDefault.get("maintenance").equals("1")) {
-            dispose();
-            NozzleClean p = new NozzleClean();
-            p.setVisible(true);
-        } else {
-            dispose();
-
-            /**
-             * If print is not paused, cool down
-             */
-            if (Base.printPaused == false) {
-                finalizeHeat();
-            }//no need for else
-
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
-            Base.enableAllOpenWindows();
-            Base.bringAllWindowsToFront();
-
-            if (Base.printPaused == false) {
-                Point5d b = machine.getTablePoints("safe");
-                double acLow = machine.getAcceleration("acLow");
-                double acHigh = machine.getAcceleration("acHigh");
-                double spHigh = machine.getFeedrate("spHigh");
-
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                //            ProperDefault.remove("maintenance");
-            }
-
-        }
-    }//GEN-LAST:event_jLabel18MousePressed
-
-    private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
-        FilamentInsertion p = new FilamentInsertion();
-        p.setVisible(true);
         dispose();
 
-    }//GEN-LAST:event_jLabel17MousePressed
+        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        Base.enableAllOpenWindows();
+        Base.bringAllWindowsToFront();
+
+        Base.writeLog("Filament selection finished!", this.getClass());
+        finalizeHeat();
+    }//GEN-LAST:event_bNextMousePressed
+
+    private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
+        Window p;
+        if (prevWindow instanceof FilamentInsertion) {
+            p = new FilamentInsertion();
+        } else if (prevWindow instanceof ExtruderSwitch3) {
+            p = new ExtruderSwitch3();
+        } else {//if(prevWindow instanceof ExtruderMaintenance5) {
+            p = new ExtruderMaintenance5();
+        }
+        dispose();
+        p.setVisible(true);
+    }//GEN-LAST:event_bPrevMousePressed
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         doCancel();
     }//GEN-LAST:event_bCancelMousePressed
 
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+    private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel15MousePressed
+    }//GEN-LAST:event_bXMousePressed
 
-    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
-        itemChanged = true;
-    }//GEN-LAST:event_jComboBox1ItemStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
+    private javax.swing.JLabel bNext;
+    private javax.swing.JLabel bPrev;
+    private javax.swing.JLabel bX;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;

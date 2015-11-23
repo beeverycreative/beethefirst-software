@@ -10,9 +10,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 
 import replicatorg.app.Base;
-import replicatorg.app.Languager;
 import replicatorg.app.Oracle;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.ProperDefault;
@@ -24,23 +25,19 @@ public class CuraGenerator extends ToolpathGenerator {
     private static String CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
     private static String CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "/configs/";
     private static String ERROR_MESSAGE = "Can't run Cura!";
-    private static String BIN_PATH_UNIX = "python";
-    private static String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
     private static final String gallery = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
     private CuraEngineConfigurator curaGenerator = new CuraEngineConfigurator();
-    boolean configSuccess = false;
-    String profile = null;
-    List<String> preferences;
-    Process process;
-    StreamLoggerThread ist;
-    StreamLoggerThread est;
+    private String profile = null;
+    private Process process;
+    private StreamLoggerThread ist;
+    private StreamLoggerThread est;
+    private final PrintPreferences prefs;
 
     /**
      * Sets Cura generator paths for bin and gcode export.
+     * @param prefs printing preferences
      */
-    public CuraGenerator() {
-        preferences = getPreferences();
-
+    public CuraGenerator(PrintPreferences prefs) {
         if (Base.isLinux() || Base.isMacOS()) {
             CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
             CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "/configs/";
@@ -56,15 +53,8 @@ public class CuraGenerator extends ToolpathGenerator {
             }
             CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "\\configs\\";
         }
-    }
-
-    /**
-     * Gets print parameters.
-     *
-     * @return print parameters
-     */
-    public List<String> getPreferences() {
-        return preferences;
+        
+        this.prefs = prefs;
     }
 
     /**
@@ -89,22 +79,6 @@ public class CuraGenerator extends ToolpathGenerator {
         return curaGenerator.getDensity(densityPercentage);
     }
 
-    /**
-     * Sets profile type for the Cura generator.
-     *
-     * @param profile2 profile type.
-     */
-    public void setProfile(String profile2) {
-        this.profile = CURA_CONFIGURATION_FILE_PATH + profile2;
-    }
-
-    /**
-     * Process INI file from profile type.
-     */
-    public void readINI() {
-        curaGenerator.processINI(profile);
-    }
-    
     public String getValue(String key) {
         return curaGenerator.getValue(key);
     }
@@ -113,23 +87,24 @@ public class CuraGenerator extends ToolpathGenerator {
      * Pre gcode generation setup. Creates the INI file to be passed for the CFG
      * creator.
      *
-     * @param profile profile type.
-     * @return path for the INI file created
      */
-    public String preparePrint(String profile) {
+    public boolean preparePrint() {
 
-        String bee_code = profile.split(":")[0];
-        String resol = profile.split(":")[1];
-        HashMap<String, String> overload_values = Languager.getTagValues(2, bee_code, resol);
-        
-        System.out.println("bee_code = " + bee_code);
-        
-        if(overload_values == null){
+        HashMap<String, String> overload_values
+                = FilamentControler.getFilamentSettings(prefs.getCoilText(), 
+                        prefs.getResolution(), prefs.getPrinter().filamentCode());
+
+        if (overload_values == null) {
             Base.getMainWindow().showFeedBackMessage("unknownColor");
-            return null;
-        }        
+            return false;
+        }
+
+        this.profile = CURA_CONFIGURATION_FILE_PATH 
+                + curaGenerator.setupINI(overload_values, prefs.getCoilText(), 
+                        prefs.getResolution());
+        curaGenerator.processINI(profile);
         
-        return curaGenerator.setupINI(overload_values, bee_code, resol);
+        return true;
     }
 
     /**
@@ -145,7 +120,7 @@ public class CuraGenerator extends ToolpathGenerator {
         //Tests if CuraEngine has +x permissions or if it does exist
         File curaBin = new File(CURA_BIN_PATH);
         if (curaBin.canExecute() == false || curaBin.exists() == false) {
-            Base.writeLog("CuraEngine no execute permissions");
+            Base.writeLog("CuraEngine no execute permissions", this.getClass());
             Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
             return null;
         }
@@ -191,8 +166,8 @@ public class CuraGenerator extends ToolpathGenerator {
         arguments.addAll(Arrays.asList(filesArguments));
 //        System.out.println("********************");
 //        // Prints arguments
-        Base.writeLog("Cura Path " + CURA_BIN_PATH);
-        Base.writeLog("Cura prefs path " + CURA_CONFIGURATION_FILE_PATH);
+        Base.writeLog("Cura Path " + CURA_BIN_PATH, this.getClass());
+        Base.writeLog("Cura prefs path " + CURA_CONFIGURATION_FILE_PATH, this.getClass());
 //        for (String arg : arguments) {
 //            Base.writeLog(arg+" ");
 //        }
@@ -203,16 +178,16 @@ public class CuraGenerator extends ToolpathGenerator {
         process = null;
         try {
             process = pb.start();
-            Base.writeLog("Starting ProcessBuilder");
+            Base.writeLog("Starting ProcessBuilder", this.getClass());
             ist = new StreamLoggerThread(
                     process.getInputStream()) {
-                @Override
-                protected void logMessage(String line) {
-                    emitUpdate(line);
-                    Base.writeLog(line);
-                    super.logMessage(line);
-                }
-            };
+                        @Override
+                        protected void logMessage(String line) {
+                            emitUpdate(line);
+                            Base.writeLog(line, this.getClass());
+                            super.logMessage(line);
+                        }
+                    };
             est = new StreamLoggerThread(
                     process.getErrorStream());
             est.setDefaultLevel(Level.SEVERE);
@@ -221,13 +196,13 @@ public class CuraGenerator extends ToolpathGenerator {
             est.start();
             int value = process.waitFor();
             if (value != 0) {
-                Base.writeLog("Unrecognized error code returned by CuraEngine.");
+                Base.writeLog("Unrecognized error code returned by CuraEngine.", this.getClass());
                 // Throw ToolpathGeneratorException
                 return null;
             }
         } catch (IOException ioe) {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ioe);
-            Base.writeLog(ERROR_MESSAGE);
+            Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
             ist.stop();
             est.stop();
@@ -235,7 +210,7 @@ public class CuraGenerator extends ToolpathGenerator {
             return null;
         } catch (InterruptedException ex) {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ex);
-            Base.writeLog(ERROR_MESSAGE);
+            Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
             ist.stop();
             est.stop();
@@ -249,12 +224,11 @@ public class CuraGenerator extends ToolpathGenerator {
         // Signals Oracle that GCode generation has finished
         Oracle.setToc();
 
-        Base.writeLog("File " + root + ".gcode created with success");
+        Base.writeLog("File " + root + ".gcode created with success", this.getClass());
         File gcode = new File(gcodePath);
 
         ist.stop();
         est.stop();
-
 
         // Estimates print time
         PrintEstimator.estimateTime(gcode);

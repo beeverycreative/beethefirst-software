@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import replicatorg.app.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -33,7 +32,6 @@ public class ExtruderSwitch3 extends BaseDialog {
     private final MachineInterface machine;
 
     private final ExtruderSwitchDisposeFeedbackThread disposeThread;
-    private String previousColor = "";
     private int temperatureGoal;
 
     public ExtruderSwitch3() {
@@ -48,7 +46,6 @@ public class ExtruderSwitch3 extends BaseDialog {
         Base.getMainWindow().setEnabled(false);
         
         moveToPosition();
-        previousColor = machine.getModel().getCoilCode();
         disposeThread = new ExtruderSwitchDisposeFeedbackThread(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
@@ -129,9 +126,9 @@ public class ExtruderSwitch3 extends BaseDialog {
 
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(nozzle));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
         machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
 
     }
@@ -183,7 +180,6 @@ public class ExtruderSwitch3 extends BaseDialog {
             Base.bringAllWindowsToFront();
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
             disposeThread.stop();
             Base.enableAllOpenWindows();
             Point5d b = machine.getTablePoints("safe");
@@ -193,19 +189,19 @@ public class ExtruderSwitch3 extends BaseDialog {
 
             if (Base.printPaused == false) {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
                 machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
                 finalizeHeat();
             } else {
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                 machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 X-85 Y-60"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
+                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
                 machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
             }
         }
@@ -544,7 +540,8 @@ public class ExtruderSwitch3 extends BaseDialog {
 
                 dispose();
                 disposeThread.stop();
-                ExtruderSwitch4 p = new ExtruderSwitch4(previousColor);
+                //ExtruderSwitch4 p = new ExtruderSwitch4(previousColor);
+                FilamentCodeInsertion p = new FilamentCodeInsertion(this);
                 p.setVisible(true);
             }
     }//GEN-LAST:event_bNextMousePressed
@@ -563,7 +560,7 @@ public class ExtruderSwitch3 extends BaseDialog {
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (!machine.getDriver().isBusy()) {
-            Base.writeLog("Unload filament pressed");
+            Base.writeLog("Unload filament pressed", this.getClass());
             machine.getDriver().setBusy(true);
             showMessage();
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
@@ -571,14 +568,14 @@ public class ExtruderSwitch3 extends BaseDialog {
             ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
             ProperDefault.put("coilCode", String.valueOf("N/A"));
 
-            Base.writeLog("Unloading Filament");
+            Base.writeLog("Unloading Filament", this.getClass());
 
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
 
                     //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilCode(FilamentControler.NO_FILAMENT_CODE));
+                    machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
@@ -630,12 +627,12 @@ public class ExtruderSwitch3 extends BaseDialog {
                 @Override
                 public void run() {
                     try {
-                        Base.writeLog("Load filament pressed");
+                        Base.writeLog("Load filament pressed", this.getClass());
                         machine.getDriver().setBusy(true);
                         showMessage();
                         bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
 
-                        Base.writeLog("Loading Filament");
+                        Base.writeLog("Loading Filament", this.getClass());
 
                         //machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE));
                         machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
@@ -724,7 +721,7 @@ class ExtruderSwitchDisposeFeedbackThread extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriver().getMachineStatus()) {
+            if (!machine.getDriver().getMachineReady()) {
                 filamentPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -733,7 +730,7 @@ class ExtruderSwitchDisposeFeedbackThread extends Thread {
                 }
             }
 
-            if (machine.getDriver().getMachineStatus()
+            if (machine.getDriver().getMachineReady()
                     && !machine.getDriver().isBusy()) {
                 filamentPanel.resetFeedbackComponents();
             }

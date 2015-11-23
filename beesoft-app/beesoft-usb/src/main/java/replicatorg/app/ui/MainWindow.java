@@ -106,7 +106,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -115,14 +114,14 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
 import replicatorg.app.CategoriesList;
-import replicatorg.app.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenter;
 import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
 import replicatorg.app.ui.mainWindow.MessagesPopUp;
-import replicatorg.app.ui.mainWindow.CameraControl;
 import replicatorg.app.ui.mainWindow.ModelsDetailsPanel;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
@@ -136,7 +135,6 @@ import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PreferencesPanel;
 import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.ui.panels.PrintSplashSimple;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.ui.panels.WelcomeQuickguide;
@@ -181,8 +179,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     JSplitPane splitPane;
     JLabel lineNumberComponent;
     public PrintBed bed;
-    public SimulationThread simulationThread;
-    public EstimationThread estimationThread;
     JMenuItem saveMenuItem;
     JMenuItem saveAsMenuItem;
     JMenuItem controlPanelItem;
@@ -211,7 +207,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     private boolean oktoGoOnSave = false;
     private boolean newSceneOnDialog = false;
     MessagesPopUp messagesPP;
-    CameraControl camCtrl;
     CompoundEdit compoundEdit;
 
     public MainWindow() {
@@ -344,10 +339,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         return buttons;
     }
 
-    public CameraControl getCameraControl() {
-        return camCtrl;
-    }
-
     public String getBuildTime() {
         return buildTime;
     }
@@ -370,19 +361,21 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public boolean validatePrintConditions() {
         for (int i = 0; i < bed.getModels().size(); i++) {
-            if (bed.getModels().get(i).getEditer().modelOutBonds()) {
+            if (bed.getModels().get(i).getEditer().modelInvalidPosition()) {
 //                Warning p = new Warning();
 //                p.setVisible(true);
 //                p.setMessage("MessageOutOfBounds");
                 showFeedBackMessage("MessageOutOfBounds");
                 return false;
-            } else if (!bed.getModels().get(i).getEditer().modelInBed()) {
+            }/*
+            else if (!bed.getModels().get(i).getEditer().modelInBed()) {
 //                Warning p = new Warning();
 //                p.setVisible(true);
 //                p.setMessage("MessageNotInBed");
                 showFeedBackMessage("MessageNotInBed");
                 return false;
             }
+            */
         }
         return true;
     }
@@ -753,7 +746,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 MachineInterface machine = getMachineInterface();
 
                 noFilament = Base.getMainWindow().getMachine().getModel()
-                        .getCoilCode()
+                        .getCoilText()
                         .equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE);
 
                 if (Base.isPrinting == true) {
@@ -1079,7 +1072,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
+                if (!machine.getDriver().getMachineReady() && machine.getDriver().isBusy()) {
                     showFeedBackMessage("moving");
                 } else {
                     if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
@@ -1142,7 +1135,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Base.writeLog("BEESOFT tour loaded ... ");
+                Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
 
                 TourWelcome p = new TourWelcome();
                 p.setVisible(true);
@@ -1238,7 +1231,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         if (machine != null && !building) {
             // To heat
             if (preheat) {
-                Base.writeLog("Heating ...");
+                Base.writeLog("Heating ...", this.getClass());
                 machine.runCommand(new replicatorg.drivers.commands.SelectTool(0));
                 //turn off blower before heating
                 machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
@@ -1317,26 +1310,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         boolean localPrint = Boolean.valueOf(ProperDefault.get("localPrint"));
         handleGenBuild();
 
-        if (!localPrint) {
-            PrintPanel p = new PrintPanel();
-            p.setVisible(true);
-        } else {
-            final PrintSplashSimple p = new PrintSplashSimple(null);
-            p.setVisible(true);
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (bed.isSceneDifferent()) {
-                        Base.getMainWindow().handleSave(false);
-                    } else {
-                        sceneDP = new SceneDetailsPanel();
-                        sceneDP.updateBed(bed);
-                        updateDetailsCenter(sceneDP);
-                    }
-                    p.startConditions();
-                }
-            });
-        }
+        PrintPanel p = new PrintPanel();
+        p.setVisible(true);
     }
 
     public void handleMaintenance() {
@@ -1377,40 +1352,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         compoundEdit = new CompoundEdit();
     }
 
-    public void handleEstimate() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        // fire off our thread.
-        estimationThread = new EstimationThread(this);
-        estimationThread.start();
-    }
-
-    public void handleSimulate() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        // buttons/status.
-        simulating = true;
-        //buttons.activate(MainButtonPanel.SIMULATE);
-
-        // load our simulator machine
-        // loadSimulator();
-        setEditorBusy(true);
-
-        // fire off our thread.
-        simulationThread = new SimulationThread(this);
-        simulationThread.start();
-    }
-
     public void simulationOver() {
 //        message("Done simulating.");
         simulating = false;
@@ -1434,7 +1375,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public void handleGenBuild() {
 
-        Base.writeLog("Starting building ...");
+        Base.writeLog("Starting building ...", this.getClass());
         buildOnComplete = true;
         doPreheat(Boolean.valueOf(ProperDefault.get("build.doPreheat")));
         //machineLoader.getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.BLOCK));
@@ -1598,7 +1539,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         buildTime = time_string;
         String message = "Build finished.\n\nCompleted in " + time_string;
 
-        Base.writeLog("Build finished. Completed in " + time_string);
+        Base.writeLog("Build finished. Completed in " + time_string, this.getClass());
 
         building = false;
         buildingOver();
@@ -1667,7 +1608,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * Stops the machine from running, and sets gui to 'no build running' mode
      */
     public void handleStop() {
-        Base.writeLog("Stopping ...");
+        Base.writeLog("Stopping ...", this.getClass());
 
         if (Base.printPaused == false) {
             Base.getMachineLoader().getMachineInterface().killSwitch();
@@ -1680,7 +1621,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         }
 
         doStop();
-        Base.writeLog("Print stopped ...");
+        Base.writeLog("Print stopped ...", this.getClass());
         setEditorBusy(false);
     }
 
@@ -1791,7 +1732,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * Add new model to scene
      */
     public void handleNewModel() {
-        Base.writeLog("Opening model ...");
+        Base.writeLog("Opening model ...", this.getClass());
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -1803,7 +1744,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     }
                 }
                 Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...");
+                Base.writeLog("Loading " + path + " ...", this.getClass());
 
                 bed.addSTL(new File(path));
                 Model m = bed.getModels().get(bed.getModels().size() - 1);
@@ -1825,7 +1766,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * Prints a G-code file
      */
     public void handleGCodeImport() {
-        Base.writeLog("Importing G-code file ...");
+        Base.writeLog("Importing G-code file ...", this.getClass());
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -1837,21 +1778,15 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     }
                 }
                 Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...");
+                Base.writeLog("Loading " + path + " ...", this.getClass());
 
-                ArrayList<String> prefs = new ArrayList<String>();
-
-                //Adds default print preferences
-                prefs.add("LOW"); //resolution
-                prefs.add(FilamentControler.getColor(FilamentControler.NO_FILAMENT_CODE));
-                prefs.add("20"); //density
-                prefs.add("false"); //raft
-                prefs.add("false"); //support 
-                prefs.add("true"); //autonomous pressed
-                prefs.add(path); //Path to g-code file
+                //Adds default print preferences, they aren't going to be used
+                //since we're printing from a GCode file
+                PrintPreferences prefs = 
+                        new PrintPreferences("", FilamentControler.NO_FILAMENT, 
+                                20, false, false, path);
 
                 Base.isPrintingFromGCode = true;
-
                 final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
                 p.setVisible(true);
 
@@ -1914,7 +1849,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             if (rv == JFileChooser.APPROVE_OPTION) {
                 fc.getSelectedFile().getName();
                 ProperDefault.put("ui.open_dir0", fc.getCurrentDirectory().getAbsolutePath());
-                Base.writeLog("File selected " + fc.getSelectedFile().getAbsolutePath());
                 Base.getMainWindow().getButtons().updatePressedStateButton("models");
                 Base.getMainWindow().setEnabled(true);
                 return fc.getSelectedFile().getAbsolutePath();
@@ -1937,7 +1871,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             if (rv == JFileChooser.APPROVE_OPTION) {
                 fc.getSelectedFile().getName();
                 ProperDefault.put("ui.open_dir", fc.getCurrentDirectory().getAbsolutePath());
-                Base.writeLog("File selected " + fc.getSelectedFile().getAbsolutePath());
                 return fc.getSelectedFile().getAbsolutePath();
             } else {
                 return null;
@@ -1971,7 +1904,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * @param ipath
      */
     public void handleOpenScene(final String ipath) {
-        Base.writeLog("Opening scene ...");
+        Base.writeLog("Opening scene ...", this.getClass());
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -1983,7 +1916,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     }
                 }
                 Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...");
+                Base.writeLog("Loading " + path + " ...", this.getClass());
                 handleOpenPath = path;
 
                 ObjectInputStream ois;
@@ -2049,9 +1982,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 mruList.update(path);
                 reloadMruMenu();
             }
-            Base.writeLog("Open model: " + path);
+            Base.writeLog("Open model: " + path, this.getClass());
         } catch (Exception e) {
-            Base.writeLog("Couldn't Open model: " + path);
+            Base.writeLog("Couldn't Open model: " + path, this.getClass());
             error(e);
         } finally {
             this.setCursor(Cursor.getDefaultCursor());
@@ -2068,7 +2001,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             @Override
             public void run() {
                 Base.logger.info("Saving Scene...");
-                Base.writeLog("Saving Scene...");
+                Base.writeLog("Saving Scene...", this.getClass());
 
                 ObjectOutputStream oos;
                 try {
@@ -2082,7 +2015,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         oos.writeObject(bed);
                         oos.close();
 
-                        Base.writeLog("Scene Saved...");
+                        Base.writeLog("Scene Saved...", this.getClass());
                         handleOpenPath = bed.getPrintBedFile().getAbsolutePath();
                         mruList.update(handleOpenPath);
                         reloadMruMenu();
@@ -2137,7 +2070,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             public void run() {
                 // TODO: lock sketch?
                 Base.logger.info("Saving...");
-                Base.writeLog("Saving...");
+                Base.writeLog("Saving...", this.getClass());
 
                 if (!bed.saveAs(false)) {
                     showFeedBackMessage("notSaveScene");
@@ -2163,8 +2096,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     } catch (IOException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    Base.writeLog("Save operation complete.");
-                    Base.writeLog("Scene Saved...");
+                    Base.writeLog("Save operation complete.", this.getClass());
+                    Base.writeLog("Scene Saved...", this.getClass());
                     sceneDP = new SceneDetailsPanel();
                     sceneDP.updateBed(bed);
                     updateDetailsCenter(sceneDP);
@@ -2187,27 +2120,15 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * has the callback from EditorStatus.
      */
     public void handleQuitInternal() {
-        try {
-            if (simulationThread != null) {
-                simulationThread.interrupt();
-                simulationThread.join();
-            }
-            if (estimationThread != null) {
-                estimationThread.interrupt();
-                estimationThread.join();
-            }
-        } catch (InterruptedException e) {
-            assert (false);
-        }
-
         // bring down our machine temperature, don't want it to stay hot
         // 		actually, it has been pointed out that we might want it to stay hot,
         //		so I'm taking this out
-        doPreheat(false);
+        //doPreheat(false);
 
         // cleanup our machine/driver.
         machineLoader.unload();
         Base.disposeAllOpenWindows();
+        Base.closeLogs();
         System.exit(0);
     }
 

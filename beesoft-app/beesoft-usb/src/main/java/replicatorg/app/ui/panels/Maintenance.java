@@ -31,23 +31,25 @@ public class Maintenance extends BaseDialog {
 
     public Maintenance() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        Base.writeLog("Maintenance panel opened", this.getClass());
         initComponents();
         setFont();
         setTextLanguage();
         centerOnScreen();
-        ProperDefault.put("maintenance", "1");
+        //ProperDefault.put("maintenance", "1");
         //enableDrag();
         disableMessageDisplay();
         evaluateInitialConditions();
-        Base.maintenanceOpened = true;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
-        if (isConnected) {
-            Base.turnOnPowerSaving(false);
-            ctrlStatus.start();
-            Base.systemThreads.add(ctrlStatus);
-        }
 
+        /*
+         if (isConnected) {
+         Base.turnOnPowerSaving(false);
+         ctrlStatus.start();
+         Base.systemThreads.add(ctrlStatus);
+         }
+         */
     }
 
     private void setFont() {
@@ -108,16 +110,6 @@ public class Maintenance extends BaseDialog {
 
     }
 
-    private int gramsCalculator(double meters) {
-        int grams = (int) meters * 12 / 4;
-
-        if (grams > 0) {
-            return (int) meters * 12 / 4;
-        }
-
-        return 0;
-    }
-
     private void evaluateInitialConditions() {
         moving = true;
         lChangeFilament_warn.setVisible(false);
@@ -135,10 +127,10 @@ public class Maintenance extends BaseDialog {
 
         if (!Base.getMainWindow().getMachineInterface().isConnected()) {
             this.isConnected = false;
-            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-            bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-            bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
+            bCalibration.setEnabled(false);
+            bChangeFilament.setEnabled(false);
+            bExtruderMaintenance.setEnabled(false);
+            bNozzleSwitch.setEnabled(false);
         }
     }
 
@@ -164,24 +156,9 @@ public class Maintenance extends BaseDialog {
 
     private void doExit() {
         dispose();
-        ctrlStatus.stop();
-        Base.maintenanceOpened = false;
-        ProperDefault.remove("maintenance");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.enableAllOpenWindows();
         Base.bringAllWindowsToFront();
-
-        /**
-         * If not autonomous then turn power saving on again
-         */
-        if (isConnected) {
-            if (Base.getMainWindow().getMachine().getDriver().isAutonomous() == false) {
-                /**
-                 * Power saving
-                 */
-                Base.turnOnPowerSaving(true);
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -201,10 +178,10 @@ public class Maintenance extends BaseDialog {
         jLabel10 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         pCalibration = new javax.swing.JPanel();
-        lCalibration_warn = new javax.swing.JLabel();
         bCalibration = new javax.swing.JLabel();
         lCalibration_desc = new javax.swing.JLabel();
         lCalibration = new javax.swing.JLabel();
+        lCalibration_warn = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         pExtruderMaintenance = new javax.swing.JPanel();
         bExtruderMaintenance = new javax.swing.JLabel();
@@ -221,7 +198,7 @@ public class Maintenance extends BaseDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(747, 565));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(747, 577));
+        setPreferredSize(new java.awt.Dimension(747, 558));
         setResizable(false);
 
         pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
@@ -280,6 +257,7 @@ public class Maintenance extends BaseDialog {
 
         bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bChangeFilament.setText("Mudar filamento agora");
+        bChangeFilament.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
         bChangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bChangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -344,10 +322,9 @@ public class Maintenance extends BaseDialog {
 
         pCalibration.setBackground(new java.awt.Color(248, 248, 248));
 
-        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
-
         bCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bCalibration.setText("Calibrar agora");
+        bCalibration.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
         bCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -365,6 +342,9 @@ public class Maintenance extends BaseDialog {
 
         lCalibration.setText("Calibrar");
 
+        lCalibration_warn.setFont(new java.awt.Font("DejaVu Sans", 0, 10)); // NOI18N
+        lCalibration_warn.setText("Foram feitas 10 impressoes desde a ultima calibracao");
+
         javax.swing.GroupLayout pCalibrationLayout = new javax.swing.GroupLayout(pCalibration);
         pCalibration.setLayout(pCalibrationLayout);
         pCalibrationLayout.setHorizontalGroup(
@@ -378,7 +358,7 @@ public class Maintenance extends BaseDialog {
                             .addComponent(lCalibration)
                             .addGroup(pCalibrationLayout.createSequentialGroup()
                                 .addComponent(bCalibration)
-                                .addGap(10, 10, 10)
+                                .addGap(18, 18, 18)
                                 .addComponent(lCalibration_warn)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -406,6 +386,7 @@ public class Maintenance extends BaseDialog {
 
         bExtruderMaintenance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bExtruderMaintenance.setText("Limpar bico agora");
+        bExtruderMaintenance.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
         bExtruderMaintenance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bExtruderMaintenance.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -436,12 +417,12 @@ public class Maintenance extends BaseDialog {
                     .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
                         .addComponent(lExtruderMaintenance)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 582, Short.MAX_VALUE))))
         );
         pExtruderMaintenanceLayout.setVerticalGroup(
             pExtruderMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addComponent(lExtruderMaintenance)
                 .addGap(2, 2, 2)
                 .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -454,6 +435,7 @@ public class Maintenance extends BaseDialog {
 
         bNozzleSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bNozzleSwitch.setText("Limpar bico agora");
+        bNozzleSwitch.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
         bNozzleSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNozzleSwitch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -495,7 +477,7 @@ public class Maintenance extends BaseDialog {
                 .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNozzleSwitch)
-                .addGap(24, 24, 24))
+                .addContainerGap())
         );
 
         jSeparator3.setBackground(new java.awt.Color(255, 255, 255));
@@ -581,8 +563,8 @@ public class Maintenance extends BaseDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
+            .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -597,33 +579,31 @@ public class Maintenance extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bExtruderMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMousePressed
-
-        if (!moving && isConnected) {
+        if (bExtruderMaintenance.isEnabled()) {
             dispose();
-            ctrlStatus.stop();
+            //ctrlStatus.stop();
             ExtruderMaintenance1 p = new ExtruderMaintenance1();
             p.setVisible(true);
 
             Base.getMainWindow().getCanvas().unPickAll();
-        } else {
-            if (Base.getMachineLoader().isConnected() == false) {
-                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-            } else if (Base.isPrinting) {
-                Base.getMainWindow().showFeedBackMessage("btfPrinting");
-            }
+            /*
+             } else {
+             if (Base.getMachineLoader().isConnected() == false) {
+             Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+             } else if (Base.isPrinting) {
+             Base.getMainWindow().showFeedBackMessage("btfPrinting");
+             }
+             */
         }
+
     }//GEN-LAST:event_bExtruderMaintenanceMousePressed
 
     private void bExtruderMaintenanceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseExited
-        if (isConnected) {
-            bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
+        bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
     }//GEN-LAST:event_bExtruderMaintenanceMouseExited
 
     private void bExtruderMaintenanceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseEntered
-        if (isConnected) {
-            bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
-        }
+        bExtruderMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
     }//GEN-LAST:event_bExtruderMaintenanceMouseEntered
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
@@ -639,101 +619,61 @@ public class Maintenance extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseEntered
 
     private void bNozzleSwitchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMouseEntered
-        if (isConnected) {
-            bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
-        }
+        bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
     }//GEN-LAST:event_bNozzleSwitchMouseEntered
 
     private void bNozzleSwitchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMouseExited
-        if (isConnected) {
-            bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
+        bNozzleSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
     }//GEN-LAST:event_bNozzleSwitchMouseExited
 
 
     private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
-
-        if (!moving && isConnected) {
+        if (bNozzleSwitch.isEnabled()) {
             dispose();
-            ctrlStatus.stop();
+            //ctrlStatus.stop();
             ExtruderSwitch1 p = new ExtruderSwitch1();
             p.setVisible(true);
 
             Base.getMainWindow().getCanvas().unPickAll();
 
-        } else {
-            if (Base.getMachineLoader().isConnected() == false) {
-                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-            } else if (Base.isPrinting) {
-                Base.getMainWindow().showFeedBackMessage("btfPrinting");
-            }
-        }   
+        }
     }//GEN-LAST:event_bNozzleSwitchMousePressed
 
     private void bCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMousePressed
-
-        if (!moving && !Base.printPaused && isConnected) {
+        if (bCalibration.isEnabled()) {
             dispose();
-            ctrlStatus.stop();
-            //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("G28",COM.BLOCK));
-            //            Base.getMainWindow().getMachineInterface().runCommand(new replicatorg.drivers.commands.SetBusy(false));
+            //ctrlStatus.stop();
             CalibrationWelcome p = new CalibrationWelcome(false);
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
-        } else {
-            if (Base.getMachineLoader().isConnected() == false) {
-                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-            } else if (Base.isPrinting) {
-                Base.getMainWindow().showFeedBackMessage("btfPrinting");
-            }
         }
     }//GEN-LAST:event_bCalibrationMousePressed
 
     private void bCalibrationMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMouseExited
-        if (!Base.printPaused && isConnected) {
-            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
+        bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
     }//GEN-LAST:event_bCalibrationMouseExited
 
     private void bCalibrationMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMouseEntered
-        if (!Base.printPaused && isConnected) {
-            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
-        }
+        bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
     }//GEN-LAST:event_bCalibrationMouseEntered
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
-
-        if (!moving && isConnected) {
+        if (bChangeFilament.isEnabled()) {
             dispose();
-            ctrlStatus.stop();
-            if (Base.printPaused) {
-                FilamentInsertion p = new FilamentInsertion();
-                p.setVisible(true);
-            } else {
-                FilamentHeating p = new FilamentHeating();
-                p.setVisible(true);
-            }
+
+            FilamentHeating p = new FilamentHeating();
+            p.setVisible(true);
+
             Base.getMainWindow().getCanvas().unPickAll();
-        } else {
-            if (Base.getMachineLoader().isConnected() == false) {
-                Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-            } else if (Base.isPrinting) {
-                Base.getMainWindow().showFeedBackMessage("btfPrinting");
-            }
         }
     }//GEN-LAST:event_bChangeFilamentMousePressed
 
     private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
-        if (isConnected) {
-            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
-        }
+        bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
     }//GEN-LAST:event_bChangeFilamentMouseExited
 
     private void bChangeFilamentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseEntered
-        if (isConnected) {
-            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
-        }
+        bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
     }//GEN-LAST:event_bChangeFilamentMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

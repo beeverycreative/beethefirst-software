@@ -13,10 +13,10 @@
             <REDMEC_Console value="Konsole"/>
             <REDMEC_GCode value="GCode Tafel"/>
             <REDMEC_Bootloader value="Bootloader updater"/>
-            <File_New value="Neue Arbeitsbereich"/>
-            <File_Open value="Öffnen Arbeitsbereich"/>
-            <File_Save value="Speichern Arbeitsbereich"/>
-            <File_Save_as value="Speichern Arbeitsbereich unter"/>
+            <File_New value="Neuer Arbeitsbereich"/>
+            <File_Open value="Arbeitsbereich öffnen"/>
+            <File_Save value="Arbeitsbereich speichern"/>
+            <File_Save_as value="Arbeitsbereich speichern unter"/>
             <File_Preferences value="Voreinstellungen"/>
             <File_Quit value="Beenden"/>
             <Edit_Undo value="Rückgängig machen"/>
@@ -110,7 +110,7 @@
             <WallThickness value="Wandstärke"/>
             <SLayerThickness value="Solid Schichtstärke"/>
             <BottomThickness value="Boden Schichtstärke"/>
-            <FillDensity value="Füllgrad ausfüllen"/>
+            <FillDensity value="Dichte ausfüllen"/>
             <FilamentDiameter value="Filament durchmesser"/>
             <FilamentFlow value="Filament fließen"/>
             <NozzleSize value="Düsengröße"/>
@@ -169,7 +169,7 @@
             <Maintenance value="WARTUNG"/>
             <QuickWizard value="KURZANLEITUNG"/>
             <Print value="DRUCKEN"/>
-            <Mirror value="Spiegel"/>
+            <Mirror value="Spiegeln"/>
             <Scale value="Skalieren"/>  
             <ScaleToMax value="Skalieren zu maximal"/>  
             <Apply value="Skalieren anwenden"/>  
@@ -189,12 +189,12 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->
         <SceneDetails>
             <Scene value="Arbeitsbereich"/>
-            <Scene_Name_Hint value="Titel"/>
+            <Scene_Name_Hint value="Titel des Arbeitsbereichs"/>
             <Scene_Notes value="Beschreibung"/>
             <Scene_NModels value="Anzahl der Modelle"/>
-            <Scene_LastPrintDate value="Datum des letzten Drucks"/>
-            <Scene_LastPrintTime value="Dauer des letzten Drucks"/>
-            <Scene_Notes_Placeholder value="Notizen über diesen Arbeitsbereich" />
+            <Scene_LastPrintDate value="Datum der letzten Druck"/>
+            <Scene_LastPrintTime value="Dauer der letzten Druck"/>
+            <Scene_Notes_Placeholder value="Schreiben Sie hier Ihre Notizen über diesen Arbeitsbereich" />
         </SceneDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação dos modelos presentes na Cena -->
@@ -206,7 +206,7 @@
             <Model_Dimensions value="Maße"/>
             <Model_Notes value="Beschreibung"/>
             <Model_Category value="Kategorie"/>
-            <Model_Notes_Placeholder value="Notizen über dieses Modell" />
+            <Model_Notes_Placeholder value="Schreiben Sie hier Ihre Notizen über dieses Modell" />
         </ModelDetails>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação do software -->
@@ -214,9 +214,26 @@
             <About_SoftwareVersion value="Software Version"/> 
             <About_FirmwareVersion value="Firmware Version"/> 
             <About_BootloaderVersion value="Bootloader Version"/> 
+            <About_NotAvailable value="Nicht verfügbar" />
+            <About_BootloaderVersionNotAvailableText value="Die Bootloader Version ist in diesem Moment nicht erreichbar. Bitte starten Sie Ihren Drucker neu, um diese Informationen zu erhalten." />
             <About_SerialNumber value="Seriennummer des Druckers"/> 
             <About_FilamentColor value="Filament-Typ"/> 
         </AboutSoftware>
+
+        <CancelPrint>
+            <CancelPrintText value="Sind Sie sicher, dass Sie Ihren Druck abbrechen wollen?" />
+        </CancelPrint>
+
+        <UnknownFilament>
+            <UnknownFilamentTitle value="Unbekanntes Filament in Ihrem Drucker eingelegt" />
+            <UnknownFilamentText value="Es gibt keine vorhandenen Einstellungen in BEESOFT für das Filament, dass momentan in Ihrem Drucker geladen ist. Bitte wechseln Sie das Filament." />
+        </UnknownFilament>
+
+        <ProfileAndPrinter>
+            <TitleText value="Bitte wählen Sie das Filament und den Drucker aus" />
+            <FilamentText value="Filament" />
+            <PrinterText value="Drucker" />
+        </ProfileAndPrinter>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
         <Other>
@@ -311,7 +328,7 @@
             <Line5 value="Sie haben Änderungen an diesem Modell gemacht"/>
             <Line6 value="Sie werden noch nicht gespeicherte Änderungen verloren."/>
             <Line7 value="Speichern Sie den Arbeitsbereich?"/>
-            <Line8 value="Speichern Arbeitsbereich"/>
+            <Line8 value="Arbeitsbereich speichern"/>
             <Line9 value="Dieses Modell ist größer als die Druckfläche"/>
             <Line10 value="Sind Sie sicher, dass Sie das Code erzeugen wollen?"/>
             <Line11 value="Erzeugen überdimensionalen Modell?"/>
@@ -354,15 +371,17 @@
             <Line22 value="VERBUNDEN"/>
             <Line23 value="Arbeitsbereich laden"/>
             <Line24 value="Modell laden"/>
-            <Line25 value="Bitte warten"/>
+            <Line25 value="Bitte warten Sie"/>
             <PrinterStatusConnected value="ist verbunden"/>
+            <PrinterStatusConnecting value="ist verbunden" />
             <PrinterStatusDisconnected value="ist nicht verbunden"/>
             <PrinterStatusReady value="ist fertig"/>
-            <MovingMessage value="Verschiebend..Bitte warten"/> 
-            <MovingMessage2 value="Bitte warten!Gleich fertig.."/>
-            <HeatingMessage value="Erhitzen..Bitte warten."/>
-            <HeatingMessage2 value="Erhitzen.."/>
-            <HeatingNozzleMessage value="Erhitzen..Bitte warten Sie bevor es saubermachen."/>            
+            <PrinterStatusPowerSaving value="ist bereit (Energiesparen)" />
+            <MovingMessage value="Verschiebend... Bitte warten."/> 
+            <MovingMessage2 value="Bitte warten Sie! Gleich fertig..."/>
+            <HeatingMessage value="Erhitzen... Bitte warten."/>
+            <HeatingMessage2 value="Erhitzen..."/>
+            <HeatingNozzleMessage value="Erhitzen... Bitte warten Sie bevor es saubermachen."/>            
             <Configurations_Save value="Die aktuellen Einstellungen werden gespeichert..."/>
             <StatusMessage value="Zustandsmeldung"/>
             <GCodeGeneration value="Vorbereitung der Druck..."/>
@@ -378,12 +397,12 @@
             <Print_LogoType value="Logo"/>
             <Print_PortraitType value="Porträt"/>
             <Print_Title value="DRUCKEN"/>
-            <Print_Splash_Gcode_Title value="VERARBEITEND...BITTE WARTEN"/>
+            <Print_Splash_Gcode_Title value="VERARBEITEND... BITTE WARTEN"/>
             <Print_Splash_Gcode_Info value="Dieser Vorgang kann einige Minuten dauern"/>	
             <Print_Calibration_Info value="Dieser Vorgang kann einige Momente dauern"/>
             <Print_Splash_Title value="Der Drucker ist druckbereit"/>
             <Print_Splash_Info value="Drück den Knopf."/>
-            <Print_Splash_Info2 value="DRUCKEN...BITTE WARTEN"/>
+            <Print_Splash_Info2 value="DRUCKEN... BITTE WARTEN"/>
             <Print_Splash_Info3 value="Drucken in selbständig mode. Bitte warten Sie."/>
             <Print_Splash_Info4 value="Jetzt können Sie der Drucker trennen."/>
             <Print_Splash_Info5 value="Drücken Sie Neu Druck oder Entladen, wenn Sie heute nicht drucken wollen."/>
@@ -392,18 +411,18 @@
             <Print_Splash_Info8 value="Jetzt können Sie die Spule entfernen und es in einem kalten, trockenen Ort speichern."/>
             <Print_Splash_Info9 value="Kein Filament"/>
             <Print_Splash_Info10 value="Der Drucker ist ausladend. Warten Sie bitte, bis es fertig ist.."/>
-            <Print_Splash_Info11 value="Zum Drucken müssen Sie jetzt das Filament ändern."/>
+            <Print_Splash_Info11 value="Zum Drucken müssen Sie jetzt den Filament ändern."/>
             <Print_Quality value="Auflösung"/>	
             <Print_Quality_Low value="Niedrig"/>	
-            <Print_Quality_Medium value="Mittel"/>	
+            <Print_Quality_Medium value="Medium"/>	
             <Print_Quality_Normal value="Normal"/>	
-            <Print_Quality_High value="Hoch"/>	
-            <Print_Quality_SHigh value="Sehr Hoch"/>
-            <Print_Density value="Füllgrad"/>
+            <Print_Quality_High value="Hohe"/>	
+            <Print_Quality_SHigh value="Hohe+"/>
+            <Print_Density value="Dichte"/>
             <Print_Density_Low value="Gering"/>
             <Print_Density_Medium value="Medium"/>
             <Print_Density_High value="Hohe"/>	
-            <Print_Density_Insertion value="Füllgrad (%) :"/>	
+            <Print_Density_Insertion value="Dichtewert (%) :"/>	
             <Print_GCode_Selected value="Ausgewählte Datei: "/>
             <Print_GCode_Clear value="Löschen"/>
             <Print_Raft value="Raft"/>	
@@ -414,8 +433,8 @@
             <Print_ChooseGCodeFile value="Bitte wählen Sie eine Datei zu Drucken"/>
             <Print_EstimationPrintTime value="Druckzeit:"/>
             <Print_EstimationMaterial value="Filamentgewicht:"/>
-            <Print_Raft_Info value="Diese Option erstellt eine Basis, mit denen das Modell auf den Drucktisch zu halten ist. Es hilft Verzug der Form zu verhindern. Es kann schwierig sein das Raft aus der Form zu entfernen, daher verwenden Sie es nur wenn nötig."/>	
-            <Print_Support_Info value="Diese Option wird eine automatische abnehmbare Struktur unter einem Überhang oder stark geneigten Flächen erstellen. Es erlaubt, dass das Modell gedruckt werden kann."/>	
+            <Print_Raft_Info value="Diese Option erstellt eine Basis, mit denen das Modell auf den Drucktisch zu halten wird. Es kann das Verziehen zu vermieden. Das Raft kann schwierig sein, aus dem Modell zu entfernen, so verwenden Sie es nur wenn nötig ist."/>	
+            <Print_Support_Info value="Diese Option wird eine automatische abnehmbare Struktur unter einem Überhang oder stark geneigten Flächen machen. Es erlaubt, dass das Modell gedruckt ist."/>	
             <Print_Autonomy_Info value="Diese Option ermöglich, ohne Verbindung zu einem Computer auszudrucken. Sie werden darüber informiert, wenn den Computer trennen können."/>
             <Print_GCode_Info value="Mit dieser Option können Sie die Gcode speichern und drucken es später."/>
             <Print_ChangeFilament value="Filament jetzt wechseln"/>
@@ -425,12 +444,12 @@
             <Print_Filament value="Verbleibende Filament kann nicht genug für dieser Druck sein. Sind Sie sicher, dass Sie den richtigen Filament Farbe ausgewählt haben?"/>
             <Print_Autonomy value="Ermöglicht dem Drucker, druckt ohne dem Computer verbunden.
 				       Sie werden informiert, wenn Sie das Kabel trennen können."/>
-            <Print_Transfering value="Übertragen..Bitte warten."/>
+            <Print_Transfering value="Übertragen... Bitte warten Sie."/>
             <Print_EstimatorError value="Es ist nicht möglich, die Gesamtdruckzeit zu schätzen"/>
-            <Print_Processing value="Verarbeitung..Bitte warten"/>
-            <Print_Pausing value="Pausierend..Bitte warten"/>
-            <Print_Resuming value="Wiederaufnahme..Bitte warten"/> 
-            <Print_Waiting value="Warten...Wieder aufzunehmen, wenn es bereit ist."/>
+            <Print_Processing value="Verarbeitung... Bitte warten Sie.."/>
+            <Print_Pausing value="Pausierend... Bitte warten Sie."/>
+            <Print_Resuming value="Wiederaufnahme... Bitte warten Sie."/> 
+            <Print_Waiting value="Warten... Wieder aufzunehmen, wenn es bereit ist."/>
             <Print_Waiting2 value="Sie können auch Herunterfahren und weiterhin Druck später."/>
             <Print_Waiting3 value="Aufzunehmen, wenn Sie wieder druck möchten."/>
             <Print_Waiting4 value="Sie können auch Herunterfahren und weiterhin Druck später."/>
@@ -472,7 +491,7 @@
             <Title1 value="VORBEREITUNG"/>
             <Heating_Info_Title value="Extruderdüse Temperatur"/>
             <Heating_Info value="Die Extruderdüse erwärmt, immer wann Sie das Filament zu wechseln möchten. Wenn es die ideale Temperatur erreicht, können Sie in die nächste Phase zu bewegen."/>
-            <Info_Warning value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
             <Title2 value="Das Filament entladen"/>
             <LoadButton value="Laden"/>
             <UnloadButton value="Entladen"/>
@@ -526,9 +545,9 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Limpeza do Bico -->       
         <ExtruderCleanWizard>
             <Title1 value="EXTRUDER SAUBER"/>
-            <Title2 value="Erhitzen..Bitte warten"/>
+            <Title2 value="Erhitzen... Bitte warten."/>
             <Info value="Dieser Vorgang ermöglicht, den Extruder sauber. Verwenden einer Pinzette, um alle Filament Überreste aus der Extruderdüse zu entfernen."/>
-            <Info_Warning value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
         </ExtruderCleanWizard>
 
 
@@ -539,37 +558,37 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <HeatingMessage1 value="Erhitzen..."/>
             <Info1a value="Dieser Vorgang ermöglicht, den Extruder sauber machen."/>
             <Info1b value = "Bitte nutzen Sie die Werkzeuge verfügbar im Wartungs-Kit und stellen Sie sicher, das der Lehrmaterial beobachtet haben, bevor Sie fortfahren."/>
-            <Info_Warning1 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning1 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
 
             <Title2 value="Extruder Wartung"/>
             <HeatingMessage2 value="Erhitzen..."/>
             <Info2a value="Benutzen Sie das Sechskantschüssel, um die Schrauben an der oberen Abdeckung des Druckers zu entfernen. Entfernen Sie die Abdeckung nach oben vorsichtig."/>
             <Info2b value = "Achten Sie darauf, die Schrauben an einem sicheren Ort legen."/>
-            <Info_Warning2 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning2 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
 
             <Title3 value="Extruder Wartung"/>
             <HeatingMessage3 value="Erhitzen..."/>
             <Info3a value="Benutzen Sie das gleiche Werkzeug von dem letzten Schritt, um die Schrauben von die Griffstruktur zu entfernen. Dann bewegen Sie die Griffstruktur in Richtung'OPEN'."/>
             <Info3b value = "Achten Sie darauf, die Schrauben an einem sicheren Ort legen."/>
-            <Info_Warning3 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning3 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
 
             <Title4 value="Extruder Wartung"/>
             <HeatingMessage4 value="Erhitzen..."/>
             <Info4a value="Bevor diesen Vorgang weiterhin, muss der Drucker Erhitzen."/>
             <Info4b value = " "/>
-            <Info_Warning4 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
+            <Info_Warning4 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
 
             <Title5 value="Extruder Wartung"/>
             <HeatingMessage5 value="Erhitzen..."/>
             <Info5a value = "Wenn das Filament noch in der Drucker ist, entladen Sie es. Bitte benutzen Sie das Werkzeug an der Bild gezeigt, um der Extruder sauber zu machen."/>
             <Info5b value = "Nach der Säuberung des Extruders, drücken Sie die Option Laden und sicherzustellen, dass das Filament normalerweise extrudiert ist."/>
-            <Info_Warning5 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning5 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
 
             <Title6 value="Extruder Wartung"/>
             <HeatingMessage6 value="Erhitzen..."/>
             <Info6a value = " "/>
             <Info6b value = " "/>
-            <Info_Warning6 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/> 
+            <Info_Warning6 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
 
         </ExtruderMaintenance>
 
@@ -580,19 +599,19 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <HeatingMessage1 value="Erhitzen..."/>
             <Info1a value="Benutzen Sie diesen Vorgang, wenn Sie die Extruderdüse ersetzen möchten. Dies beinhaltet die Handhabung eines heißen Extruder, benötigen Sie: eine hitzebeständige Schale oder Oberfläche, eine Ersatzdüse und das Werkzeug von Ihrem Wartungs-Kit."/>
             <Info1b value = " "/>
-            <Info_Warning1 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
+            <Info_Warning1 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
 
             <Title2 value="Extruderdüse wechseln"/>
             <HeatingMessage2 value="Erhitzen..."/>
             <Info2a value="Bevor diese Operation weiterhin, muss der Drucker erhitzen."/>
             <Info2b value ="Der Extruder ist heiß, wenn diese Statusleiste voll ist. Lassen Sie den Drucker für eine kurze Zeit, um PLA innen zu schmelzen."/>
-            <Info_Warning2 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
+            <Info_Warning2 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
             
             <Title3 value="Extruderdüse wechseln"/>
             <HeatingMessage3 value="Erhitzen..."/>
             <Info3a value="Benutzen Sie das Düsenwerkzeug, um die Düse abszuchrauben und stellen es auf einer hitzebeständigen Oberfläche bis er abgekühlt ist."/>
             <Info3b value="Schrauben Sie in die neue Düse und stoppen sobald Sie harte Widerstand spüren. Jetzt können Sie das Filament laden und das Ergebnis sehen. Das Filament wird dick und eben sein."/>
-            <Info_Warning3 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINSCHALTEN IST."/>
+            <Info_Warning3 value = "VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
  
             <Title4 value="Extruderdüse wechseln"/>
         </ExtruderSwitch>
@@ -610,29 +629,57 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <Title value="Wartung"/>
             <Filament_Title value="Filament wechseln"/>
             <Filament_Type value="Filamenttyp: "/>
-            <Filament_Intro value="Dieser Vorgang ist erforderlich, wenn mit einer anderen Farbe gedruckt werden soll oder wenn das Filament in der Spule nicht ausreicht."/>
+            <Filament_Intro value="Dieser Vorgang ist erforderlich, wenn mit einer anderen Farbe gedruckt werden soll oder wenn das Filament in der Spule nicht reicht."/>
             <FilamentChange_button value="Filament jetzt wechseln"/>
             <Filament_Info value="Sie haben x Gramm Filament (geschätzt)"/>  
             <Filament_Info_None value="Verbleibende Filament kann nicht genug für den nächsten Druck sein."/>
             <Calibration_Title value="Kalibrierung"/>
             <Calibration_Intro value="Dieser Vorgang ist nötig, um die Qualität der 3D-Drucke zu gewährleisten."/>
             <CalibrationChange_button value="Jetzt kalibrieren"/>
-            <Calibration_Info value="x Drucke seit der letzten Kalibrierung."/>
+            <Calibration_Info value="x Drücke seit der letzten Kalibrierung."/>
             <ExtruderClean_Title value="Sauber Extruderdüse"/>
             <ExtruderClean_button value="Extruderdüse jetzt sauber"/>
             <ExtruderClean_Intro value="Dieser Vorgang ist wichtig um Teile der Filaments auf die drücken zu vermeiden."/>
 
             <ExtruderMaintenance_Title value="Extruder Wartung"/>
             <ExtruderMaintenance_button value="Extruder Wartung beginnen"/>
-            <ExtruderMaintenance_Intro value="Dieser Vorgang ist nötig, um die Extruderdüse zu reinigen. Für diesem Vorgang müssen Sie das Wartungs-Kit benutzen."/>
+            <ExtruderMaintenance_Intro value="Dieser Vorgang ist nötig um die Extruderdüse zu entsperren. Für diesem Vorgang sollen Sie die Wartungs-Kit benutzen."/>
 
             <NozzleSwitch_Title value="Extruderdüse wechseln"/>
             <NozzleSwitch_button value="Extruderdüse jetzt wechseln"/>
-            <NozzleSwitch_Intro value="Dieser Vorgang ist nötig, um die Extruderdüse zu wechseln. Für diesem Vorgang müssen Sie das Wartungs-Kit benutzen."/>
-
-
-
+            <NozzleSwitch_Intro value="Dieser Vorgang ist nötig um die Extruderdüse zu wechseln. Für diesem Vorgang sollen Sie die Wartungs-Kit benutzen."/>
         </MaintenancePanel>
+
+        <PausePanel>
+            <Title value="Pause"/>
+            <SubTitle value="Sie können fortsetzen oder Ihre Druck abzubrechen." />
+            <FilamentTitle value="Filament Wechseln"/>
+            <FilamentIntro value="Diese Funktion ist notwendig, wenn Sie mit einer anderen Farbe drucken wollen oder wenn das Filament in der Spule nicht ausreicht."/>
+            <bFilamentChange value="Filament jetzt Wechseln"/>
+            <bShutdown value="Jetzt Herunterfahren"/>
+            <ShutdownIntro value="Diese Funktion speichert den Druckstatus. Sie können den Drucker ausschalten und den Druckvorgang zu einem späteren Zeitpunkt fortsetzen."/>
+            <ShutdownTitle value="Herunterfahren"/>
+            <NoFilament value="Kein Filament"/>
+        </PausePanel>
+
+        <ShutdownPanel>
+            <Title value="Herunterfahren"/>
+            <SubTitle value="Sie können den Drucker ausschalten. Alternativ können Sie weitermachen oder Ihren Druck abbrechen."/>
+            <FilamentTitle value="Filament Wechseln"/>
+            <FilamentIntro value="Diese Funktion ist notwendig, wenn Sie mit einer anderen Farbe drucken wollen oder wenn das Filament in der Spule nicht ausreicht."/>
+            <bFilamentChange value="Filament jetzt Wechseln"/>
+            <NoFilament value = "Kein Filament" />
+        </ShutdownPanel>
+
+        <FeedbackPanel>
+            <FlashingMainMessage value="Firmware wird neu programmiert. Bitte die Verbindung nicht trennen..." />
+            <FlashingSubMessage value="Firmware wird neu programmiert..." />
+            <FlashingSubMessageNoCalibration value="Firmware wird neu programmiert... (Kalibrierung verloren wird!)" />
+            <LaunchingMessage value="Einführung neue Firmware!" />
+            <SavingMessage value="Speichern von aktuellen Kalibrierung und Filament-Einstellungen" />
+            <RestartMessage value="Problem mit dem Firmware. Bitte starten Sie Ihren Drucker." />
+            <RestartMessageTimeout value="(versuchen Sie den Drucker neu zu starten)" />
+       </FeedbackPanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
@@ -747,60 +794,7 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <Scene value="Arbeitsbereich"/>
             <Models value="Modelle"/>
             <All value="Alle"/>
-        </Gallery>
-        
-        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
-        <CoilColors>
-            <a000 value="A000 - No filament" />
-            <!-- Filamentos da Filkemp -->
-            <a001 value="A001 - Transparent"/>
-            <a002 value="A002 - White"/>
-            <a003 value="A003 - Black"/>
-            <a004 value="A004 - Red"/>
-            <a005 value="A005 - Yellow"/>
-            <a006 value="A006 - Blue"/>
-            <a007 value="A007 - Olive Green"/>
-            <a008 value="A008 - Pink"/>
-            <a009 value="A009 - Silver"/>
-            <a010 value="A010 - Turquoise"/>
-            <a011 value="A011 - Green"/>
-            <a012 value="A012 - Orange"/>
-            <a021 value="A021 - Transparent"/>
-            <a022 value="A022 - White"/>
-            <a023 value="A023 - Black"/>
-            <a024 value="A024 - Red"/>
-            <a025 value="A025 - Yellow"/>
-            <a026 value="A026 - Blue"/>
-            <a027 value="A027 - Olive Green"/>
-            <a028 value="A028 - Fuchsia"/>
-            <a029 value="A029 - Silver"/>
-            <a030 value="A030 - Turquoise"/>
-            <a031 value="A031 - Neon Green"/>
-            <a032 value="A032 - Orange"/>
-            
-            <!-- Filamentos da FiberForce -->
-            <a101 value="A101 - Transparent"/>
-            <a102 value="A102 - Blanc Gris"/>
-            <a103 value="A103 - Zinc Yellow"/>
-            <a104 value="A104 - Signal Yellow"/>
-            <a105 value="A105 - Bright Red Orange"/>
-            <a106 value="A106 - Traffic Red"/>
-            <a107 value="A107 - Tomato Red"/>
-            <a108 value="A108 - Light Pink"/>
-            <a109 value="A109 - Traffic Purple"/>
-            <a110 value="A110 - Violet"/>
-            <a111 value="A111 - Sky Blue"/>
-            <a112 value="A112 - Traffic Blue"/>
-            <a113 value="A113 - Ultramarine Blue"/>
-            <a114 value="A114 - Yellow Green"/>
-            <a115 value="A115 - Pure Green"/>
-            <a116 value="A116 - Chrome Green"/>
-            <a117 value="A117 - Chocolate Brown"/>
-            <a118 value="A118 - Telegrey"/>
-            <a119 value="A119 - Signal Black"/>
-            <a120 value="A120 - Pearl Gold"/>
-            <a121 value="A121 - Pearl Light Grey"/>
-        </CoilColors>
+        </Gallery>        
         
     </tags>      
 </languages>

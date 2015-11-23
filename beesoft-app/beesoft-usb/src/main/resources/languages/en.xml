@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <languages>
     <tags>
         <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
@@ -214,9 +214,26 @@
             <About_SoftwareVersion value="Software version"/> 
             <About_FirmwareVersion value="Firmware version"/> 
             <About_BootloaderVersion value="Bootloader version"/> 
+            <About_NotAvailable value="Not available" />
+            <About_BootloaderVersionNotAvailableText value="The bootloader version is not accessible at this moment. Please restart your printer to obtain this information." />
             <About_SerialNumber value="3D printer serial number"/> 
             <About_FilamentColor value="Filament type"/> 
         </AboutSoftware>
+
+        <CancelPrint>
+            <CancelPrintText value="Are you sure you want to cancel your print?" />
+        </CancelPrint>
+
+        <UnknownFilament>
+            <UnknownFilamentTitle value="Unknown filament loaded in your printer" />
+            <UnknownFilamentText value="There are no existing settings in BEESOFT for the filament loaded on the printer. Please change the filament." />
+        </UnknownFilament>
+
+        <ProfileAndPrinter>
+            <TitleText value="Please select the filament and the printer" />
+            <FilamentText value="Filament" />
+            <PrinterText value="Printer" />
+        </ProfileAndPrinter>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
         <Other>
@@ -340,9 +357,9 @@
             <Line9 value="Saving operation complete"/>
             <Line10 value="Saving operation aborted"/>
             <Line11 value="Loading Driver"/>
-            <Line12 value="Estimating building time and scanning code for errors..."/>
+            <Line12 value="Estimating printing time and scanning code for errors..."/>
             <Line13 value="Beginning to build"/>
-            <Line14 value="Estimating building time..."/>
+            <Line14 value="Estimating printing time..."/>
             <Line15 value="Loading simulator"/>
             <Line15 value="Beginning toolpath generation"/>
             <Line16 value="The profile can be found in this directory"/>
@@ -356,8 +373,10 @@
             <Line24 value="Load model"/>
             <Line25 value="Please wait"/>
             <PrinterStatusConnected value="is connected"/>
+            <PrinterStatusConnecting value="is connecting" />
             <PrinterStatusDisconnected value="is disconnected"/>
             <PrinterStatusReady value="is ready"/>
+            <PrinterStatusPowerSaving value="is ready (power saving)" />
             <MovingMessage value="Moving... Please wait."/> 
             <MovingMessage2 value="Please wait! Getting ready..."/>
             <HeatingMessage value="Heating... Please wait."/>
@@ -446,17 +465,17 @@
             <Print_PercentageCompleted value="Completed: "/>
             <Print_InfoLowStatus value="Start printing session as soon as possible"/>
             <Print_Start value="Press button to start"/>
-            <Print_BuildFinished value="Building process finished."/>
+            <Print_BuildFinished value="Printing process finished."/>
             <Unloading_Title value="Unloading..."/>
             <Unload_BuildFinished value="Unload process finished."/>
             <Print_Completion value="Completed in"/>
-            <Print_BuildAborted value="Building process aborted."/>
+            <Print_BuildAborted value="Printing process aborted."/>
             <Print_BuildAborted2 value="Please restart the transfer and try again."/>
             <Print_BuildAborted3 value="If the problem persists, switch your printer off."/>
             <Print_BuildAborted4 value="Then restart BEESOFT then switch the printer on."/>
             <Print_Stopped value="Stopped after"/>
-            <Print_DoneBuilding value="Done building."/>
-            <Print_PrintAborted value="You are currently printing from BEESOFT! The building process will be stopped."/>
+            <Print_DoneBuilding value="Done printing."/>
+            <Print_PrintAborted value="You are currently printing from BEESOFT! The printing process will be stopped."/>
             <Print_PrintAbortedContinue value="Continue and abort print?"/>
             <Print_PrintAbortQuestion value="Abort print?"/>
             <Print_PrinterNotAvailable value="BEESOFT can't connect to your 3D printer. Try checking your settings and resetting"/>
@@ -610,7 +629,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Title value="Maintenance"/>
             <Filament_Title value="Filament change"/>
             <Filament_Type value="Filament type: "/>
-            <Filament_Intro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <Filament_Intro value="This operation is needed if you want to print with a different color or if the filament available in the spool is not enough."/>
             <FilamentChange_button value="Change filament now"/>
             <Filament_Info value="You have x grams of filament (estimated)"/>  
             <Filament_Info_None value="Remaining filament may not be enough for the next print session."/>
@@ -629,10 +648,38 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <NozzleSwitch_Title value="Replace nozzle "/>
             <NozzleSwitch_button value="Replace nozzle  now"/>
             <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
-
-
-
         </MaintenancePanel>
+
+        <PausePanel>
+            <Title value="Pause"/>
+            <SubTitle value="You can resume or cancel your print." />
+            <FilamentTitle value="Filament change"/>
+            <FilamentIntro value="This operation is needed if you want to print with a different color or if the filament available in the spool is not enough."/>
+            <bFilamentChange value="Change filament now"/>
+            <bShutdown value="Shutdown now"/>
+            <ShutdownIntro value="This operation saves the print state. You can power off your printer and resume printing at a later time."/>
+            <ShutdownTitle value="Shutdown"/>
+            <NoFilament value="No filament set"/>
+        </PausePanel>
+
+        <ShutdownPanel>
+            <Title value="Shutdown"/>
+            <SubTitle value="You can power off your printer. Alternatively you can resume or cancel your print."/>
+            <FilamentTitle value="Filament change"/>
+            <FilamentIntro value="This operation is needed when you want to print with a different color or when the filament available in the spool is not enough."/>
+            <bFilamentChange value="Change filament now"/>
+            <NoFilament value = "No filament set" />
+        </ShutdownPanel>
+
+        <FeedbackPanel>
+            <FlashingMainMessage value="Flashing firmware. Please don't disconnect your printer..." />
+            <FlashingSubMessage value="Flashing new firmware..." />
+            <FlashingSubMessageNoCalibration value="Flashing new firmware... (calibration will be lost!)" />
+            <LaunchingMessage value="Launching new firmware!" />
+            <SavingMessage value="Saving current calibration and filament settings" />
+            <RestartMessage value="Problem with firmware. Please restart your printer." />
+            <RestartMessageTimeout value="(it's taking a while... try to restart your printer)" />
+        </FeedbackPanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
@@ -748,59 +795,6 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Models value="Models"/>
             <All value="All"/>
         </Gallery>
-        
-        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
-        <CoilColors>
-            <a000 value="A000 - No filament" />
-            <!-- Filamentos da Filkemp -->
-            <a001 value="A001 - Transparent"/>
-            <a002 value="A002 - White"/>
-            <a003 value="A003 - Black"/>
-            <a004 value="A004 - Red"/>
-            <a005 value="A005 - Yellow"/>
-            <a006 value="A006 - Blue"/>
-            <a007 value="A007 - Olive Green"/>
-            <a008 value="A008 - Pink"/>
-            <a009 value="A009 - Silver"/>
-            <a010 value="A010 - Turquoise"/>
-            <a011 value="A011 - Green"/>
-            <a012 value="A012 - Orange"/>
-            <a021 value="A021 - Transparent"/>
-            <a022 value="A022 - White"/>
-            <a023 value="A023 - Black"/>
-            <a024 value="A024 - Red"/>
-            <a025 value="A025 - Yellow"/>
-            <a026 value="A026 - Blue"/>
-            <a027 value="A027 - Olive Green"/>
-            <a028 value="A028 - Fuchsia"/>
-            <a029 value="A029 - Silver"/>
-            <a030 value="A030 - Turquoise"/>
-            <a031 value="A031 - Neon Green"/>
-            <a032 value="A032 - Orange"/>
-            
-            <!-- Filamentos da FiberForce -->
-            <a101 value="A101 - Transparent"/>
-            <a102 value="A102 - Blanc Gris"/>
-            <a103 value="A103 - Zinc Yellow"/>
-            <a104 value="A104 - Signal Yellow"/>
-            <a105 value="A105 - Bright Red Orange"/>
-            <a106 value="A106 - Traffic Red"/>
-            <a107 value="A107 - Tomato Red"/>
-            <a108 value="A108 - Light Pink"/>
-            <a109 value="A109 - Traffic Purple"/>
-            <a110 value="A110 - Violet"/>
-            <a111 value="A111 - Sky Blue"/>
-            <a112 value="A112 - Traffic Blue"/>
-            <a113 value="A113 - Ultramarine Blue"/>
-            <a114 value="A114 - Yellow Green"/>
-            <a115 value="A115 - Pure Green"/>
-            <a116 value="A116 - Chrome Green"/>
-            <a117 value="A117 - Chocolate Brown"/>
-            <a118 value="A118 - Telegrey"/>
-            <a119 value="A119 - Signal Black"/>
-            <a120 value="A120 - Pearl Gold"/>
-            <a121 value="A121 - Pearl Light Grey"/>
-        </CoilColors>
-        
+
     </tags>      
 </languages>

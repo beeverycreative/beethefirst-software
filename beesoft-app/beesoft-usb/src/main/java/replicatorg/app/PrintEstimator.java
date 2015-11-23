@@ -21,12 +21,12 @@ import java.util.regex.Pattern;
  */
 public class PrintEstimator {
 
-    private static String GCODER_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/estimator/gcoder.py");
-    private static String ERROR_MESSAGE = "NA";
+    private static final String GCODER_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/estimator/gcoder.py");
+    private static final String ERROR_MESSAGE = "NA";
     private static String estimatedTime = ERROR_MESSAGE;
     private static String estimatedCost = ERROR_MESSAGE;
-    private static String BIN_PATH_UNIX = "python";
-    private static String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
+    private static final String BIN_PATH_UNIX = "python";
+    private static final String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
     private static final double patch = 1.50;
     private static final String dayKeyWord = "day";
 
@@ -40,8 +40,11 @@ public class PrintEstimator {
     }
 
     public static int getEstimatedMinutes() {
-        int hours, minutes;
+        int hours, minutes, retVal;
 
+        Base.writeLog("Calculating estimated minutes", PrintEstimator.class);
+        Base.writeLog("estimatedTime: " + estimatedTime, PrintEstimator.class);
+        
         if (estimatedTime.contains(":")) {
             hours = Integer.parseInt(estimatedTime.substring(0,
                     estimatedTime.indexOf(':')));
@@ -51,8 +54,14 @@ public class PrintEstimator {
             hours = 0;
             minutes = Integer.parseInt(estimatedTime);
         }
+        
+        retVal = minutes + hours * 60;
+        
+        Base.writeLog("Hours: " + hours, PrintEstimator.class);
+        Base.writeLog("Minutes: " + minutes, PrintEstimator.class);
+        Base.writeLog("Returning: " + retVal, PrintEstimator.class);
 
-        return minutes + hours * 60;
+        return retVal;
     }
 
     /**
@@ -94,7 +103,7 @@ public class PrintEstimator {
             try {
                 process = probuilder.start();
             } catch (IOException ex) {
-                Base.writeLog("Error starting process to estimate print duration");
+                Base.writeLog("Error starting process to estimate print duration", PrintEstimator.class);
                 estimatedTime = ERROR_MESSAGE;
                 return "Error";
             }
@@ -110,7 +119,7 @@ public class PrintEstimator {
                     output = output.concat(line);
                 }
             } catch (IOException ex) {
-                Base.writeLog("Error reading gcode estimater output");
+                Base.writeLog("Error reading gcode estimater output", PrintEstimator.class);
             }
 
             //Wait to get exit value
@@ -125,7 +134,7 @@ public class PrintEstimator {
             estimatedTime = parseTimeOutput(output);
 
         } else {
-            Base.writeLog("Error starting process to estimate print duration");
+            Base.writeLog("Error starting process to estimate print duration", PrintEstimator.class);
             estimatedTime = ERROR_MESSAGE;
             return "Error";
         }

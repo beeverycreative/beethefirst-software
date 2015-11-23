@@ -12,14 +12,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
-import replicatorg.app.ui.panels.WelcomeQuickguide;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -34,14 +31,11 @@ import replicatorg.app.ui.panels.WelcomeQuickguide;
  */
 public class WelcomeSplash extends javax.swing.JFrame {
 
-    private MainWindow window;
-    private WelcomeQuickguide guideWizard;
+    private final MainWindow window;
     private ImageIcon image;
-    private JLabel label;
-    private JProgressBar bar;
     private int newWidth = 600;
     private int newHeight = 333;
-    private int duration = 80;
+    private int duration = 50;
 
     /**
      * Welcome Splash init
@@ -50,7 +44,8 @@ public class WelcomeSplash extends javax.swing.JFrame {
      */
     public WelcomeSplash(MainWindow wind) {
         initComponents();
-        Base.writeLog("Welcome Splash started ...");
+        Base.welcomeSplashVisible = true;
+        Base.writeLog("Welcome Splash started ...", this.getClass());
         window = wind;
         // Loads Splash image
         image = new ImageIcon(Base.getImage("images/welcomeSplash.png", this));
@@ -112,7 +107,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
                 while (i < getDuration()) {
                     jProgressBar1.setValue(inc);
                     i++;
-                    inc += getWidth() / 80;
+                    inc += getWidth() / 50;
                     try {
                         sleep(100);
                     } catch (InterruptedException ex) {
@@ -133,11 +128,12 @@ public class WelcomeSplash extends javax.swing.JFrame {
         window.setVisible(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setVisible(false);
-        Base.writeLog("BEESOFT main window loaded ... ");
+        Base.welcomeSplashVisible = false;
+        Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
 
         //GuideWizard
         if (Boolean.valueOf(ProperDefault.get("firstTime"))) {
-            Base.writeLog("BEESOFT tour loaded ... ");
+            Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
 
             TourWelcome p = new TourWelcome();
             p.setVisible(true);
@@ -151,21 +147,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
         window.setEnabled(true);
 
-        // Checks for software and firmware updates
-        if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
-            UpdateChecker advise = new UpdateChecker();
-
-            if (advise.isUpdateBetaAvailable()) {
-                advise.setMessage("AvailableBeta");
-                advise.setVisible(true);
-            } else if (advise.isUpdateStableAvailable()) {
-                advise.setMessage("AvailableStable");
-                advise.setVisible(true);
-            } else {
-                advise.dispose();
-            }
-        }
-
         /**
          * Error occured during driver initialization
          */
@@ -175,7 +156,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
             flashError.setVisible(true);
         }
 
-        Base.updateVersions();
     }
 
     /**

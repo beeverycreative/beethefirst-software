@@ -4,19 +4,12 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.MachineInterface;
-import replicatorg.machine.model.AxisId;
-import replicatorg.util.Point5d;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -31,45 +24,20 @@ import replicatorg.util.Point5d;
  */
 public class CalibrationWelcome extends BaseDialog {
 
-    private JLabel val_0;
-    private JLabel val_35;
-    private JLabel val_65;
-    private JLabel val_100;
-    private final boolean panelHidden;
-    private final MachineInterface machine;
+    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private boolean repeatCalibration;
 
-    private boolean jLabel12MouseClickedReady = true;
-    private boolean jLabel16MouseClickedReady = true;
-    private boolean jLabel9MouseClickedReady = true;
-    private boolean jLabel10MouseClickedReady = true;
-    private boolean jLabel21MouseClickedReady = true;
-    private final DisposeFeedbackThread2 disposeThread;
-    private boolean keepZ;
-    private double currentValue;
-    private double height;
-    private final double safeDistance;
-
-    public CalibrationWelcome(boolean repeat) {
+    public CalibrationWelcome(boolean repeatCalibration) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        initSlidersLables();
         setFont();
         setTextLanguage();
-        initSliderConfigs();
-        machine = Base.getMachineLoader().getMachineInterface();
-        keepZ = repeat;
-        evaluateInitialConditions();
-        panelHidden = false;
-        currentValue = 0.0;
-        safeDistance = 122;
-        disposeThread = new DisposeFeedbackThread2(this, machine);
-        disposeThread.start();
+        this.repeatCalibration = repeatCalibration;
         enableDrag();
         moveToA();
-        Base.maintenanceWizardOpen = true;
-        Base.systemThreads.add(disposeThread);
         centerOnScreen();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        evaluateInitialConditions();
     }
 
     private void setFont() {
@@ -77,17 +45,12 @@ public class CalibrationWelcome extends BaseDialog {
         jLabel3.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("10"));
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("14"));
-//        jLabel6.setFont(GraphicDesignComponents.getSSProBold("12"));
-//        jLabel7.setFont(GraphicDesignComponents.getSSProBold("12"));
-//        jLabel8.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel9.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
-//        jLabel11.setFont(GraphicDesignComponents.getSSProRegular("12"));        
-        jLabel12.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel16.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel20.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel21.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel22.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bMinus005.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        bPlus005.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        bMinus05.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        bPlus05.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
@@ -97,34 +60,12 @@ public class CalibrationWelcome extends BaseDialog {
         jLabel3.setText(splitString(Languager.getTagValue(fileKey, "CalibrationWizard", "Info") + warning));
         jLabel4.setText(Languager.getTagValue(fileKey, "CalibrationWizard", "Buttons_Info"));
         jLabel5.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
-//        jLabel6.setText(Languager.getTagValue("CalibrationWizard", "CalibrationOldValue"));
-//        jLabel7.setText(Languager.getTagValue("CalibrationWizard", "CalibrationCurrentValue"));
-        jLabel9.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        jLabel10.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        jLabel12.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        jLabel16.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        jLabel20.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line4"));
-        jLabel21.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line7"));
-        jLabel22.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
-
-    }
-
-    private void initSliderConfigs() {
-
-        Hashtable labelTable1 = new Hashtable();
-        labelTable1.put(new Integer(0), val_0);
-        labelTable1.put(new Integer(35), val_35);
-        labelTable1.put(new Integer(65), val_65);
-        labelTable1.put(new Integer(100), val_100);
-
-    }
-
-    private void initSlidersLables() {
-        val_0 = new JLabel("0.05");
-        val_35 = new JLabel("0.5");
-        val_65 = new JLabel("5");
-        val_100 = new JLabel("10");
-
+        bMinus005.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
+        bPlus005.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
+        bMinus05.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
+        bPlus05.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
+        bNext.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
     }
 
     private String splitString(String s) {
@@ -171,214 +112,57 @@ public class CalibrationWelcome extends BaseDialog {
     }
 
     private void evaluateInitialConditions() {
-        Base.getMainWindow().setEnabled(false);
-        jLabel20.setVisible(false);
-        //turn off blower before heating
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(120));
         enableMessageDisplay();
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            jLabel20.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        }
-        machine.runCommand(new replicatorg.drivers.commands.ReadZValue());
     }
 
     public void setZUse(boolean use) {
-        this.keepZ = use;
+        this.repeatCalibration = use;
     }
 
+    @Override
     public void resetFeedbackComponents() {
-        if (!jLabel12MouseClickedReady) {
-            jLabel12.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3D.png")));
-            jLabel12MouseClickedReady = true;
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel21MouseClickedReady = true;
-        }
-
-        if (!jLabel16MouseClickedReady) {
-            jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_invertedD.png")));
-            jLabel16MouseClickedReady = true;
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel21MouseClickedReady = true;
-        }
-
-        if (!jLabel9MouseClickedReady) {
-            jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-            jLabel9MouseClickedReady = true;
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel21MouseClickedReady = true;
-        }
-
-        if (!jLabel10MouseClickedReady) {
-            jLabel10.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-            jLabel10MouseClickedReady = true;
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel21MouseClickedReady = true;
-        }
-
-        if (!jLabel21MouseClickedReady) {
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            jLabel21MouseClickedReady = true;
-        }
+        bMinus05.setEnabled(true);
+        bMinus005.setEnabled(true);
+        bPlus05.setEnabled(true);
+        bPlus005.setEnabled(true);
+        bNext.setEnabled(true);
 
         disableMessageDisplay();
 //
     }
 
+    @Override
     public void showMessage() {
+        bMinus05.setEnabled(false);
+        bMinus005.setEnabled(false);
+        bPlus05.setEnabled(false);
+        bPlus005.setEnabled(false);
+        bNext.setEnabled(false);
+
         enableMessageDisplay();
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        jLabel21MouseClickedReady = false;
-    }
-
-    public void showOldValue() {
-//        System.out.println("Height = "+height);
-//        System.out.println("ZValue = "+machine.getZValue());
-//        jLabel8.setText(String.format("%3.2f",- (Double.valueOf(machine.getZValue()) - safeDistance)));
-    }
-
-    public void showCurrentValue() {
-//        System.out.println(Double.valueOf(machine.getZValue())+currentValue);
-//        System.out.println(String.valueOf(height - Double.valueOf(machine.getZValue())+currentValue));
-//        jLabel11.setText(String.format("%3.2f",currentValue));
     }
 
     private void moveToA() {
-        if (!keepZ) {
-            Point5d current;
-
-            Base.writeLog("Initializing and Calibrating A");
-
-            machine.getDriver().setMachineReady(false);
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-            machine.runCommand(new replicatorg.drivers.commands.GetPosition());
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-            /**
-             *  //This is important! without this loop, the following line may
-             * not work properly current =
-             * machine.getDriver().getCurrentPosition(false);
-             */
-            while (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
-                try {
-                    Thread.sleep(100);
-                    machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CalibrationWelcome.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-            //This line is cruacial!!
-
-            current = machine.getDriver().getCurrentPosition(false);
-
-            AxisId axis = AxisId.valueOf("Z");
-            Point5d a = machine.getTablePoints("A");
-
-//            System.out.println("current:"+current);
-            current.setAxis(axis, (current.axis(axis) - (safeDistance)));
-            current.setX(a.x());
-            current.setY(a.y());
-
-            height = current.z();
-
-            double acLow = machine.getAcceleration("acLow");
-            double acHigh = machine.getAcceleration("acHigh");
-            double spHigh = machine.getFeedrate("spHigh");
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-
-        } else {
-            Point5d current;
-
-            Base.writeLog("Initializing and repeating Calibrating A");
-
-            machine.getDriver().setMachineReady(false);
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28"));
-            machine.runCommand(new replicatorg.drivers.commands.GetPosition());
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-
-            /**
-             *  //This is important! without this loop, the following line may
-             * not work properly current =
-             * machine.getDriver().getCurrentPosition(false);
-             */
-            while (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
-                try {
-                    Thread.sleep(100);
-                    machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CalibrationWelcome.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-            //This line is cruacial!!
-
-            current = machine.getDriver().getCurrentPosition(false);
-
-            AxisId axis = AxisId.valueOf("Z");
-            Point5d a = machine.getTablePoints("A");
-
-            height = current.z();
-
-            current.setZ(0);
-            current.setX(a.x());
-            current.setY(a.y());
-
-
-            double acLow = machine.getAcceleration("acLow");
-            double acHigh = machine.getAcceleration("acHigh");
-            double spHigh = machine.getFeedrate("spHigh");
-
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        }
-
+        Base.writeLog("Initializing and Calibrating A", this.getClass());
+        machine.runCommand(new replicatorg.drivers.commands.InitCalibration(repeatCalibration, busyThread));
+        machine.runCommand(new replicatorg.drivers.commands.RelativePositioning());
     }
 
     private void doCancel() {
-        dispose();
-        Base.bringAllWindowsToFront();
-        disposeThread.stop();
-        Base.maintenanceWizardOpen = false;
+        Base.writeLog("Cancelling calibration process", this.getClass());
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        machine.runCommand(new replicatorg.drivers.commands.AbsolutePositioning());
+        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
         }
+
+        busyThread.terminate();
+        Base.bringAllWindowsToFront();
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -387,7 +171,7 @@ public class CalibrationWelcome extends BaseDialog {
 
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        bX = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jLabel3 = new javax.swing.JLabel();
@@ -397,17 +181,16 @@ public class CalibrationWelcome extends BaseDialog {
         jLabel5 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        bMinus005 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
+        bMinus05 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
+        bPlus05 = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
+        bPlus005 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jLabel20 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
+        bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(567, 501));
@@ -420,10 +203,10 @@ public class CalibrationWelcome extends BaseDialog {
         jPanel5.setMinimumSize(new java.awt.Dimension(62, 26));
         jPanel5.setPreferredSize(new java.awt.Dimension(70, 30));
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+        bX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        bX.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel15MousePressed(evt);
+                bXMousePressed(evt);
             }
         });
 
@@ -433,14 +216,14 @@ public class CalibrationWelcome extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bX, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -501,18 +284,20 @@ public class CalibrationWelcome extends BaseDialog {
 
         jLabel4.setText("jLabel4");
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
-        jLabel9.setText("Afinar");
-        jLabel9.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+        bMinus005.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
+        bMinus005.setText("Afinar -0.05");
+        bMinus005.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_hover_3.png"))); // NOI18N
+        bMinus005.setEnabled(false);
+        bMinus005.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bMinus005.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel9MousePressed(evt);
+                bMinus005MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel9MouseExited(evt);
+                bMinus005MouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel9MouseEntered(evt);
+                bMinus005MouseEntered(evt);
             }
         });
 
@@ -522,29 +307,31 @@ public class CalibrationWelcome extends BaseDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel9)
+                .addComponent(bMinus005)
                 .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel9)
+                .addComponent(bMinus005)
                 .addGap(0, 0, 0))
         );
 
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3D.png"))); // NOI18N
-        jLabel12.setText("Afinar");
-        jLabel12.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
+        bMinus05.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3D.png"))); // NOI18N
+        bMinus05.setText("Afinar -0.5");
+        bMinus05.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_hover_3D.png"))); // NOI18N
+        bMinus05.setEnabled(false);
+        bMinus05.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bMinus05.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel12MousePressed(evt);
+                bMinus05MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel12MouseExited(evt);
+                bMinus05MouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel12MouseEntered(evt);
+                bMinus05MouseEntered(evt);
             }
         });
 
@@ -554,29 +341,31 @@ public class CalibrationWelcome extends BaseDialog {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel12)
+                .addComponent(bMinus05)
                 .addGap(0, 0, 0))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel12)
+                .addComponent(bMinus05)
                 .addGap(0, 0, 0))
         );
 
-        jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_invertedD.png"))); // NOI18N
-        jLabel16.setText("Afinar");
-        jLabel16.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel16.addMouseListener(new java.awt.event.MouseAdapter() {
+        bPlus05.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_invertedD.png"))); // NOI18N
+        bPlus05.setText("Afinar 0.5");
+        bPlus05.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_hover_3_invertedD.png"))); // NOI18N
+        bPlus05.setEnabled(false);
+        bPlus05.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bPlus05.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel16MousePressed(evt);
+                bPlus05MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel16MouseExited(evt);
+                bPlus05MouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel16MouseEntered(evt);
+                bPlus05MouseEntered(evt);
             }
         });
 
@@ -586,29 +375,31 @@ public class CalibrationWelcome extends BaseDialog {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel16)
+                .addComponent(bPlus05)
                 .addGap(0, 0, 0))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel16)
+                .addComponent(bPlus05)
                 .addGap(0, 0, 0))
         );
 
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
-        jLabel10.setText("Afinar");
-        jLabel10.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+        bPlus005.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
+        bPlus005.setText("Afinar 0.05");
+        bPlus005.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_hover_3_inverted.png"))); // NOI18N
+        bPlus005.setEnabled(false);
+        bPlus005.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bPlus005.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel10MousePressed(evt);
+                bPlus005MousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel10MouseExited(evt);
+                bPlus005MouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel10MouseEntered(evt);
+                bPlus005MouseEntered(evt);
             }
         });
 
@@ -618,14 +409,14 @@ public class CalibrationWelcome extends BaseDialog {
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel10)
+                .addComponent(bPlus005)
                 .addGap(0, 0, 0))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel10)
+                .addComponent(bPlus005)
                 .addGap(0, 0, 0))
         );
 
@@ -691,48 +482,35 @@ public class CalibrationWelcome extends BaseDialog {
         jPanel4.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel4.setPreferredSize(new java.awt.Dimension(567, 27));
 
-        jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel20.setText("ANTERIOR");
-        jLabel20.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel20.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel20MouseEntered(evt);
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("SEGUINTE");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNextMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel20MouseExited(evt);
+                bNextMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel20MousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNextMouseEntered(evt);
             }
         });
 
-        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        jLabel21.setText("SEGUINTE");
-        jLabel21.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel21.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel21MouseEntered(evt);
+        bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bExit.setText("SAIR");
+        bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExitMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel21MouseExited(evt);
+                bExitMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel21MousePressed(evt);
-            }
-        });
-
-        jLabel22.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        jLabel22.setText("SAIR");
-        jLabel22.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel22.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel22MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel22MouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel22MousePressed(evt);
+                bExitMouseEntered(evt);
             }
         });
 
@@ -742,11 +520,9 @@ public class CalibrationWelcome extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel22)
+                .addComponent(bExit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel20)
-                .addGap(10, 10, 10)
-                .addComponent(jLabel21)
+                .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
         jPanel4Layout.setVerticalGroup(
@@ -754,9 +530,8 @@ public class CalibrationWelcome extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel20)
-                    .addComponent(jLabel21)
-                    .addComponent(jLabel22))
+                    .addComponent(bNext)
+                    .addComponent(bExit))
                 .addGap(20, 20, 20))
         );
 
@@ -778,211 +553,109 @@ public class CalibrationWelcome extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel9MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseEntered
-        jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3.png")));
-    }//GEN-LAST:event_jLabel9MouseEntered
+    private void bMinus005MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinus005MouseEntered
+        bMinus005.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3.png")));
+    }//GEN-LAST:event_bMinus005MouseEntered
 
-    private void jLabel9MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseExited
-        jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-    }//GEN-LAST:event_jLabel9MouseExited
+    private void bMinus005MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinus005MouseExited
+        bMinus005.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
+    }//GEN-LAST:event_bMinus005MouseExited
 
-    private void jLabel10MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseEntered
-        jLabel10.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_inverted.png")));
-    }//GEN-LAST:event_jLabel10MouseEntered
+    private void bPlus005MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPlus005MouseEntered
+        bPlus005.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_inverted.png")));
+    }//GEN-LAST:event_bPlus005MouseEntered
 
-    private void jLabel10MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseExited
-        jLabel10.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-    }//GEN-LAST:event_jLabel10MouseExited
+    private void bPlus005MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPlus005MouseExited
+        bPlus005.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
+    }//GEN-LAST:event_bPlus005MouseExited
 
-    private void jLabel22MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel22MouseEntered
-        jLabel22.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_jLabel22MouseEntered
+    private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bExitMouseEntered
 
-    private void jLabel22MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel22MouseExited
-        jLabel22.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_jLabel22MouseExited
+    private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bExitMouseExited
 
-    private void jLabel21MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MouseEntered
-        if (jLabel21MouseClickedReady) {
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-    }//GEN-LAST:event_jLabel21MouseEntered
+    private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bNextMouseEntered
 
-    private void jLabel21MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MouseExited
-        if (jLabel21MouseClickedReady) {
-            jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
-    }//GEN-LAST:event_jLabel21MouseExited
+    private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bNextMouseExited
 
-    private void jLabel20MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel20MouseEntered
-        if (!ProperDefault.get("maintenance").equals("1")) {
-            jLabel20.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-    }//GEN-LAST:event_jLabel20MouseEntered
+    private void bMinus005MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinus005MousePressed
+        Base.writeLog("Moving table -0.05mm in the Z axis", this.getClass());
+        bMinus005.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 Z-0.05"));
+    }//GEN-LAST:event_bMinus005MousePressed
 
-    private void jLabel20MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel20MouseExited
-        if (!ProperDefault.get("maintenance").equals("1")) {
-            jLabel20.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
-    }//GEN-LAST:event_jLabel20MouseExited
+    private void bPlus005MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPlus005MousePressed
+        Base.writeLog("Moving table 0.05mm in the Z axis", this.getClass());
+        bPlus005.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 Z0.05"));
+    }//GEN-LAST:event_bPlus005MousePressed
 
-    private void jLabel9MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MousePressed
-        jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
-        jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        if (!machine.getDriver().isBusy()) {
+    private void bMinus05MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinus05MouseEntered
+        bMinus05.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3D.png")));
+    }//GEN-LAST:event_bMinus05MouseEntered
 
-            machine.getDriver().setBusy(true);
-            showMessage();
-            jLabel9.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
-            jLabel9MouseClickedReady = false;
-            jLabel21MouseClickedReady = false;
+    private void bMinus05MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinus05MouseExited
+        bMinus05.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3D.png")));
+    }//GEN-LAST:event_bMinus05MouseExited
 
-            Point5d current = machine.getDriver().getCurrentPosition(false);
-            AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in negative axis");
-            current.setAxis(axis, (current.axis(axis) + (-0.05)));
+    private void bMinus05MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMinus05MousePressed
+        Base.writeLog("Moving table -0.5mm in the Z axis", this.getClass());
+        bMinus05.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3D.png")));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 Z-0.5"));
+    }//GEN-LAST:event_bMinus05MousePressed
 
-            currentValue += -0.05;
+    private void bPlus05MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPlus05MouseEntered
+        bPlus05.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_invertedD.png")));
+    }//GEN-LAST:event_bPlus05MouseEntered
 
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        }
-    }//GEN-LAST:event_jLabel9MousePressed
+    private void bPlus05MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPlus05MouseExited
+        bPlus05.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_invertedD.png")));
+    }//GEN-LAST:event_bPlus05MouseExited
 
-    private void jLabel10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MousePressed
-        jLabel10.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
-        jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
+    private void bPlus05MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPlus05MousePressed
+        Base.writeLog("Moving table 0.5mm in the Z axis", this.getClass());
+        bPlus05.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_invertedD.png")));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 Z0.5"));
+    }//GEN-LAST:event_bPlus05MousePressed
 
-        if (!machine.getDriver().isBusy()) {
-
-            machine.getDriver().setBusy(true);
-            showMessage();
-
-            jLabel10MouseClickedReady = false;
-            jLabel21MouseClickedReady = false;
-
-            Point5d current = machine.getDriver().getCurrentPosition(false);
-            AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in positive axis");
-            current.setAxis(axis, (current.axis(axis) + (0.05)));
-
-            currentValue += 0.05;
-
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-        }
-    }//GEN-LAST:event_jLabel10MousePressed
-
-    private void jLabel12MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseEntered
-        jLabel12.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3D.png")));
-    }//GEN-LAST:event_jLabel12MouseEntered
-
-    private void jLabel12MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseExited
-        jLabel12.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3D.png")));
-    }//GEN-LAST:event_jLabel12MouseExited
-
-    private void jLabel12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MousePressed
-        jLabel12.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3D.png")));
-        jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        if (!machine.getDriver().isBusy()) {
-
-            machine.getDriver().setBusy(true);
-            showMessage();
-            jLabel12MouseClickedReady = false;
-            jLabel21MouseClickedReady = false;
-
-            Point5d current = machine.getDriver().getCurrentPosition(false);
-            AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in negative axis");
-            current.setAxis(axis, (current.axis(axis) + (-0.5)));
-
-            currentValue += -0.5;
-
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-        }
-    }//GEN-LAST:event_jLabel12MousePressed
-
-    private void jLabel16MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MouseEntered
-        jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_invertedD.png")));
-    }//GEN-LAST:event_jLabel16MouseEntered
-
-    private void jLabel16MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MouseExited
-        jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_invertedD.png")));
-    }//GEN-LAST:event_jLabel16MouseExited
-
-    private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
-        jLabel16.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_invertedD.png")));
-        jLabel21.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        if (!machine.getDriver().isBusy()) {
-
-            machine.getDriver().setBusy(true);
-            showMessage();
-
-            jLabel16MouseClickedReady = false;
-            jLabel21MouseClickedReady = false;
-
-            Point5d current = machine.getDriver().getCurrentPosition(false);
-            AxisId axis = AxisId.valueOf("Z");
-            Base.writeLog("Calibrating table in positive axis");
-            current.setAxis(axis, (current.axis(axis) + (0.5)));
-
-            currentValue += 0.5;
-
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-            machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(2000));
-            machine.runCommand(new replicatorg.drivers.commands.QueuePoint(current));
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-        }
-    }//GEN-LAST:event_jLabel16MousePressed
-
-    private void jLabel21MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel21MousePressed
-        if (jLabel21MouseClickedReady) {
+    private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
+        if (bNext.isEnabled()) {
+            Base.writeLog("Next button pressed, moving to next panel", this.getClass());
+            machine.runCommand(new replicatorg.drivers.commands.AbsolutePositioning());
+            CalibrationScrew1 p = new CalibrationScrew1();
             dispose();
-            disposeThread.stop();
-            CalibrationSkrew1 p = new CalibrationSkrew1();
+            busyThread.terminate();
             p.setVisible(true);
         }
-    }//GEN-LAST:event_jLabel21MousePressed
+    }//GEN-LAST:event_bNextMousePressed
 
-    private void jLabel20MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel20MousePressed
-        if (!ProperDefault.get("maintenance").equals("1")) {
-            dispose();
-            disposeThread.stop();
-            NozzleClean p = new NozzleClean();
-            p.setVisible(true);
-        }
-    }//GEN-LAST:event_jLabel20MousePressed
-
-    private void jLabel22MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel22MousePressed
+    private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel22MousePressed
+    }//GEN-LAST:event_bExitMousePressed
 
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+    private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
         doCancel();
-    }//GEN-LAST:event_jLabel15MousePressed
+    }//GEN-LAST:event_bXMousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bExit;
+    private javax.swing.JLabel bMinus005;
+    private javax.swing.JLabel bMinus05;
+    private javax.swing.JLabel bNext;
+    private javax.swing.JLabel bPlus005;
+    private javax.swing.JLabel bPlus05;
+    private javax.swing.JLabel bX;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -994,48 +667,4 @@ public class CalibrationWelcome extends BaseDialog {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-}
-
-class DisposeFeedbackThread2 extends Thread {
-
-    private final MachineInterface machine;
-    private final CalibrationWelcome calibrationPanel;
-
-    public DisposeFeedbackThread2(CalibrationWelcome filIns, MachineInterface mach) {
-        super("Calibration Welcome Thread");
-        this.machine = mach;
-        this.calibrationPanel = filIns;
-    }
-
-    @Override
-    public void run() {
-
-        while (true) {
-            calibrationPanel.showOldValue();
-            calibrationPanel.showCurrentValue();
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread2.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-
-            if (!machine.getDriver().getMachineStatus()) {
-                calibrationPanel.showMessage();
-                machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread2.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (machine.getDriver().getMachineStatus()
-                    && !machine.getDriver().isBusy()) {
-                calibrationPanel.resetFeedbackComponents();
-            }
-
-        }
-    }
 }

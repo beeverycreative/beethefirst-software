@@ -223,7 +223,7 @@ public class CuraEngineConfigurator {
      * @return operation code.
      */
     public int readIni(File curaIniFile) {
-        String line = null;
+        String line;
         int error = 0;
         
         try {
@@ -247,7 +247,7 @@ public class CuraEngineConfigurator {
                             // Fills Map with CURA parameters
                             curaIni.put(attribute, value);
                         } catch (ArrayIndexOutOfBoundsException e) {
-                            Base.writeLog("Error parsing INI file. " + NO_ATTRIBUTE + " Key<>Value may be empty");
+                            Base.writeLog("Error parsing INI file. " + NO_ATTRIBUTE + " Key<>Value may be empty", this.getClass());
                             //Do nothing, skip the line
                         }
 
@@ -258,10 +258,10 @@ public class CuraEngineConfigurator {
             }
             bufferedReader.close();
         } catch (FileNotFoundException ex) {
-            Base.writeLog("Unable to open file '" + curaIniFile.getAbsolutePath() + "'");
+            Base.writeLog("Unable to open file '" + curaIniFile.getAbsolutePath() + "'", this.getClass());
             error = -1;
         } catch (IOException ex) {
-            Base.writeLog("Error reading file '" + curaIniFile.getAbsolutePath() + "'");
+            Base.writeLog("Error reading file '" + curaIniFile.getAbsolutePath() + "'", this.getClass());
             error = -1;
         }
         return error;
@@ -271,11 +271,9 @@ public class CuraEngineConfigurator {
      * Maps INI attributes to a CFG file to be passed to CuraEngine.
      */
     public void mapIniToCFG() {
-        Iterator it = curaCfg.entrySet().iterator();
-
         // Reads CURA CFG Map to map parameter
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
+        
+        for (Map.Entry pairs : curaCfg.entrySet()) {
             String cfgKey = pairs.getKey().toString();
             //(pairs.getKey() + "=" + pairs.getValue());
 
@@ -299,19 +297,6 @@ public class CuraEngineConfigurator {
         System.out.println("*****************************************");
     }
 
-    private void printCFG() {
-        Iterator it = curaCfg.entrySet().iterator();
-
-        // Reads CURA CFG Map to map parameter
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-
-            String cfgKey = pairs.getKey().toString();
-            System.out.println(pairs.getKey() + "=" + pairs.getValue());
-
-        }
-    }
-
     /**
      * Overrides internal INI with the values from the XML and creates new INI
      * file.
@@ -331,8 +316,7 @@ public class CuraEngineConfigurator {
         while (it.hasNext()) {
             Map.Entry pairs = (Map.Entry) it.next();
             //Replace existing pairs by the new ones.
-            // overload_values is a mirrored map with keys and values switched
-            ini.put(pairs.getValue().toString(), pairs.getKey().toString());
+            ini.put(pairs.getKey().toString(), pairs.getValue().toString());
             it.remove(); // avoids a ConcurrentModificationException
         }
 
@@ -763,7 +747,7 @@ public class CuraEngineConfigurator {
                 }
             }
         } catch (Exception e) {
-            Base.writeLog("Cura configurator error on translating values: " + e.getMessage());
+            Base.writeLog("Cura configurator error on translating values: " + e.getMessage(), this.getClass());
             return curaCfg.get(key) + "# Generated from exception " + e.toString();
         }
 

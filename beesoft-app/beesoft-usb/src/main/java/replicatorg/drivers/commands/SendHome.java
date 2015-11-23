@@ -1,4 +1,3 @@
-
 package replicatorg.drivers.commands;
 
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
@@ -24,7 +23,17 @@ public class SendHome implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        if (orientation.equals("X")) {
+            return "G28 X";
+        } else if (orientation.equals("Y")) {
+            return "G28 Y";
+        } else if (orientation.equals("Z")) {
+            return "G28 Z";
+        } else if (orientation.equals("XY")) {
+            return "G28 XY";
+        } else {
+            return "G28";
+        }
     }
 
     @Override
@@ -40,20 +49,16 @@ public class SendHome implements DriverCommand {
     @Override
     public void run(Driver driver) throws RetryException, StopException {
         // not sure if more orientations are possible, add as convenient
-        if (orientation.equals("X")) {            
+        if (orientation.equals("X")) {
             driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
-        }
-        else if (orientation.equals("Y")) {                               
-            driver.dispatchCommand("G28 Y", COM.NO_RESPONSE);                
-        }
-        else if (orientation.equals("Z")) {                               
-            driver.dispatchCommand("G28 Z", COM.NO_RESPONSE);                
-        }
-        else if (orientation.equals("XY")) {                               
-            driver.dispatchCommand("G28 XY", COM.NO_RESPONSE);                
-        }
-        else {
-            driver.dispatchCommand("G28", COM.NO_RESPONSE);              
+        } else if (orientation.equals("Y")) {
+            driver.dispatchCommand("G28 Y", COM.NO_RESPONSE);
+        } else if (orientation.equals("Z")) {
+            driver.dispatchCommand("G28 Z", COM.NO_RESPONSE);
+        } else if (orientation.equals("XY")) {
+            driver.dispatchCommand("G28 XY", COM.NO_RESPONSE);
+        } else {
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }
     }
 

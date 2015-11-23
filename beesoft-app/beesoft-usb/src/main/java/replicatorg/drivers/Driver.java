@@ -26,11 +26,11 @@ package replicatorg.drivers;
 import java.io.File;
 
 import org.w3c.dom.Node;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.util.AutonomousData;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
@@ -64,7 +64,9 @@ public interface Driver {
     /**
      * Execute a line of GCode directly (ie, don't use the parser)
      *
-     * @param code The line of GCode that we should execute
+     * @param command
+     * 
+     * @return 
      */
     public String dispatchCommand(String command);
 
@@ -90,42 +92,22 @@ public interface Driver {
      * Transfer a GCode file content.
      *
      * @param gcode GCode file
-     * @param estimatedTime Estimated time for print duration
-     * @param nLines Number of lines of GCode file
      * @param psAutonomous Autonomous agent that handles print with autonomy
      * @return error or success message
      */
-    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous);
-
-    /**
-     * Transfer a GCode file content - simple transfer.
-     *
-     * @param gcode GCode file
-     * @param psAutonomous Autonomous agent that handles print with autonomy
-     * @return error or success message
-     */
-    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous);
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous);
 
     /**
      * Start print via Autonomous mode.
      *
-     * @return
      */
-    public String startPrintAutonomous();
+    public void startPrintAutonomous();
 
     /**
      * Get print session variables during autonomous print.
      *
-     * @return AutonomousData structure with all variables.
      */
-    public AutonomousData getPrintSessionsVariables();
-
-    /**
-     * Getter for current transfer percentage during a transfer.
-     *
-     * @return transfer percentage during a transfer.
-     */
-    public double getTransferPercentage();
+    public void getPrintSessionsVariables();
 
     /**
      * Read machine temperature.
@@ -164,17 +146,16 @@ public interface Driver {
     /**
      * Stores the BEECODE/COIL CODE/Fillament Code in the printer.
      *
-     * coilCode is AXXX printer stores return AXXX
      *
-     * @param coilCode code to be set on the printer
+     * @param coilText code to be set on the printer
      */
-    public void setCoilCode(String coilCode);
+    public void setCoilText(String coilText);
 
     /**
      * Return the BEECODE/COILCODE/Filament Code in the printer. coilCode is
      * AXXX printer stores return AXXX.
      */
-    public void updateCoilCode();
+    public void updateCoilText();
 
     /**
      * Read data from the read endpoint.
@@ -185,6 +166,7 @@ public interface Driver {
 
     /**
      * Get Total Extruded Value since filament change.
+     * @return 
      */
     public double getTotalExtrudedValue();
 
@@ -391,6 +373,8 @@ public interface Driver {
      * @return 5D point with all coordinates.
      */
     public Point5d getCurrentPosition(boolean update);
+    
+    public Point5d getCurrentPosition2();
 
     /**
      * Indicate that the currently maintained position may no longer be the
@@ -414,6 +398,8 @@ public interface Driver {
      */
     public Point5d getPosition();
 
+    public void getPosition2();
+    
     /**
      * Sets the feedrate in mm/minute
      *
@@ -435,6 +421,7 @@ public interface Driver {
      * @throws RetryException
      */
     public void setTemperature(double temperature) throws RetryException;
+    public void setTemperatureBlocking(double temperature) throws RetryException;
 
     /**
      * Read temperature from machine and updates internal variable.
@@ -500,7 +487,6 @@ public interface Driver {
     /**
      * Gets last line number of the gcode processed in firmware (autonomy).
      *
-     * @return last executed command line number
      */
     public void readLastLineNumber();
 
@@ -540,11 +526,12 @@ public interface Driver {
      * @return <true> if machine ready
      * <false> if not
      */
-    public boolean getMachineStatus();
+    public boolean getMachineReady();
 
     /**
      * Checks if machine is ready - firmware side.
      *
+     * @param forceCheck
      * @return <li> true, if so
      * <li> false if not
      */
@@ -566,7 +553,20 @@ public interface Driver {
     /**
      * Returns coil code.
      *
-     * @return string containing coil code: Axxxx
+     * @return string containing coil text
      */
-    public String getCoilCode();
+    public String getCoilText();
+    
+    /**
+     * Gets the info object on the currently connected printer
+     * 
+     * @return 
+     */
+    public PrinterInfo getConnectedDevice();
+    
+    public void resetBootloaderAndFirmwareVersion();
+    public boolean getMachinePaused();
+    public void setMachinePaused(boolean machinePaused);
+    public void closeFeedback();
+    public int getQueueSize();
 }

@@ -403,7 +403,7 @@ public class Help extends BaseDialog {
         try {
             openURL(new URI(parseHTMLURL(jLabel8.getText())));
         } catch (URISyntaxException ex) {
-            Base.writeLog("Searching for FAQ. Cant connect to internet");
+            Base.writeLog("Searching for FAQ. Cant connect to internet", this.getClass());
         }
     }//GEN-LAST:event_jLabel8MousePressed
 
@@ -412,7 +412,7 @@ public class Help extends BaseDialog {
         try {
             openURL(new URI(parseHTMLURL(jLabel9.getText())));
         } catch (URISyntaxException ex) {
-            Base.writeLog("Searching for Troubleshooting. Cant connect to internet");
+            Base.writeLog("Searching for Troubleshooting. Cant connect to internet", this.getClass());
         }
     }//GEN-LAST:event_jLabel9MousePressed
 
@@ -423,7 +423,7 @@ public class Help extends BaseDialog {
         try {
             openURL(new URI(parseHTMLURL(jLabel12.getText())));
         } catch (URISyntaxException ex) {
-            Base.writeLog("Searching for Support. Cant connect to internet");
+            Base.writeLog("Searching for Support. Cant connect to internet", this.getClass());
         }
     }//GEN-LAST:event_jLabel12MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables

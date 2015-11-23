@@ -12,7 +12,7 @@ public class ReadTemperature implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M105";
     }
 
     @Override

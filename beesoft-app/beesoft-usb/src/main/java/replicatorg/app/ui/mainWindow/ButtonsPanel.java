@@ -1,6 +1,5 @@
 package replicatorg.app.ui.mainWindow;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -53,20 +52,19 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
     public void setLogo(String iconPath) {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/"+iconPath)));
-        String deleteme = jLabel2.getIcon().toString();
-        String test;
     }
     
     public void setMessage(String message) {
 
-        if (message.equals("is connected")) {
+        if(message.equals("is connecting")) {
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusConnecting"));
+        } else if (message.equals("is connected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
-        }
-        if (message.equals("is disconnected")) {
+        } else if (message.equals("power saving")) {
+            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
+        } else if (message.equals("is disconnected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
-        } else {
-            // REDSOFT: CONSIDER OTHER SITUATION ?
-        }
+        } 
 
     }
 
@@ -465,7 +463,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
     private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
           
-        Base.writeLog("BEESOFT tour loaded ... ");
+        Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
         
         TourWelcome p = new TourWelcome();
         p.setVisible(true);

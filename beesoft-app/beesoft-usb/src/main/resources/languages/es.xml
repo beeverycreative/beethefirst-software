@@ -1,4 +1,4 @@
-﻿<?xml version="1.1" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <languages>
     <tags>
         <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
@@ -33,7 +33,7 @@
             <Edit_Reset value="Reiniciar modelo"/>
             <Model_Add value="Agregar modelo de la galería"/>
             <Model_Import value="Importar modelo"/>
-            <GCode_Import value="Imprimir fichero G-code"/>
+            <GCode_Import value="Imprimir ficheiro G-code"/>
             <GCode_Export value="Exportar fichero G-code"/>
             <Model_Online value="Modelos online"/>
             <Printer_Maintenance value="Mantenimiento"/>
@@ -214,9 +214,26 @@
             <About_SoftwareVersion value="Versión de software"/> 
             <About_FirmwareVersion value="Versión de firmware"/> 
             <About_BootloaderVersion value="Versión de Bootloader"/> 
-            <About_SerialNumber value="Número de série da impressora"/> 
+            <About_NotAvailable value="No disponible" />
+            <About_BootloaderVersionNotAvailableText value="La versión del bootloader no es accesible en este momento. Reinicie la impresora para obtener esta información." />
+            <About_SerialNumber value="Número de série de la impresora"/> 
             <About_FilamentColor value="Tipo de filamento"/> 
         </AboutSoftware>
+
+        <CancelPrint>
+            <CancelPrintText value="¿Seguro que deseas cancelar la impresión?" />
+        </CancelPrint>
+
+        <UnknownFilament>
+            <UnknownFilamentTitle value="Filamento desconocido cargado en tu impresora" />
+            <UnknownFilamentText value="No hay configuraciones existentes en el BEESOFT para el filamento cargado en la impresora. Por favor cambia el filamento." />
+        </UnknownFilament>
+
+        <ProfileAndPrinter>
+            <TitleText value="Por favor, seleccione el filamento y la impresora" />
+            <FilamentText value="Filamento" />
+            <PrinterText value="Impresora" />
+        </ProfileAndPrinter>
 
         <!-- A próxima secção XML contém o texto a ser apresentado em várias ocasiões que não contemplam nas outras secções -->
         <Other>
@@ -355,16 +372,18 @@
             <Line23 value="Cargar área de trabajo"/>
             <Line24 value="Cargar modelo"/>
             <Line25 value="Espere un momento por favor"/>
-            <PrinterStatusConnected value="eestá conectada"/>
+            <PrinterStatusConnected value="está conectada"/>
+            <PrinterStatusConnecting value="está conectando." />
             <PrinterStatusDisconnected value="está desconectada"/>
             <PrinterStatusReady value="está lista"/>
+            <PrinterStatusPowerSaving value="está listo (ahorro de energía)" />
             <MovingMessage value="Preparándose... espere."/> 
             <MovingMessage2 value="Por favor espere! Está casi listo..."/>
             <HeatingMessage value="Calentando... espere."/>
             <HeatingMessage2 value="Calentando..."/>
             <HeatingNozzleMessage value="Calentando... Por favor espere antes de limpiar."/>            
             <Configurations_Save value="Se guardan los ajustes..."/>
-            <StatusMessage value="EMensaje de estado"/>
+            <StatusMessage value="Mensaje de estado"/>
             <GCodeGeneration value="Preparando tu impresión..."/>
         </FeedbackLabel>
         
@@ -446,17 +465,17 @@
             <Print_PercentageCompleted value="Completado:"/>
             <Print_InfoLowStatus value="Comienza tu impresión tan pronto como sea posible"/>
             <Print_Start value="Pulsa el botón para iniciar"/>
-            <Print_BuildFinished value="Proceso de construcción terminado."/>
+            <Print_BuildFinished value="Proceso de impresión terminado."/>
             <Unloading_Title value="Descargar..."/>
             <Unload_BuildFinished value="Proceso de descarga de filamento completado."/>
             <Print_Completion value="Completo en"/>
-            <Print_BuildAborted value="Proceso de construcción abortado.."/>
+            <Print_BuildAborted value="Proceso de impresión abortado.."/>
             <Print_BuildAborted2 value="Por favor, reinicia la transferencia y vuelve a intentarlo."/>
             <Print_BuildAborted3 value="Si el problema persiste, apaga tu impresora."/>
             <Print_BuildAborted4 value="A continuación reinicia el BEESOFT y enciende la impresora."/>
             <Print_Stopped value="Detenido después de"/>
-            <Print_DoneBuilding value="Construcción terminada."/>
-            <Print_PrintAborted value="En este momento estas imprimiendo a partir del BEESOFT! Se detendrá el proceso de construcción."/>
+            <Print_DoneBuilding value="Impresión terminada."/>
+            <Print_PrintAborted value="En este momento estas imprimiendo a partir del BEESOFT! Se detendrá el proceso de impresión."/>
             <Print_PrintAbortedContinue value="Continuar y abortar la impresión?"/>
             <Print_PrintAbortQuestion value="Abortar la impressión?"/>
             <Print_PrinterNotAvailable value="El BEESOFT no puede conectarse con su impresora. Por favor ve las configuraciones y reinicia."/>
@@ -549,20 +568,20 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
 
             <Title3 value="Mantenimiento de la extrusora"/>
             <HeatingMessage3 value="Calentando..."/>
-            <Info3a value="Utiliza la misma herramienta que utilizaste antes para quitar el tornillo que fija la estructura de la asa impresora. Luego deslice la tapa en la dirección indicada 'OPEN'."/>
+            <Info3a value="Utiliza la misma herramienta que utilizaste antes para quitar el tornillo que fija la estructura de la asa impresora. Luego desliza la tapa en la dirección indicada 'OPEN'."/>
             <Info3b value = "Asegúrate de colocar los tornillos en un lugar seguro."/>
             <Info_Warning3 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/> 
 
             <Title4 value="Mantenimiento de la extrusora"/>
             <HeatingMessage4 value="Calentando..."/>
             <Info4a value="Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
-            <Info4b value = "Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
+            <Info4b value = " "/>
             <Info_Warning4 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
 
             <Title5 value="Mantenimiento de la extrusora"/>
             <HeatingMessage5 value="Calentando..."/>
             <Info5a value = "Asegúrate de descargar cualquier filamento que pueda estar cargado en tu impresora. Aplicar la herramienta de limpieza para eliminar los materiales sobrantes que pueden estar alojados dentro de la extrusora."/>
-            <Info5b value = "Despues de limpiar la extrusora, pulsa en 'cargar'y asegúrate que el filamento es extrudido normalmente."/>
+            <Info5b value = "Despues de limpiar la extrusora, pulsa en 'cargar' y asegúrate que el filamento es extrudido normalmente."/>
             <Info_Warning5 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/> 
 
             <Title6 value="Mantenimiento de la extrusora"/>
@@ -578,7 +597,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
 
             <Title1 value="Cambio de nozzle"/>
             <HeatingMessage1 value="Calentando..."/>
-            <Info1a value="Utilice esta operación si desea reemplazar el nozzle de la extrusora. Esto implicará el manejo de la extrusora caliente, vas a necesitar: una bandeja o superficie resistente al calor, un nozzle de repuesto, y la herramienta para retirar el nozzle de tu kit de mantenimiento"/>
+            <Info1a value="Utiliza esta operación si deseas reemplazar el nozzle de la extrusora. Esto implicará el manejo de la extrusora caliente, vas a necesitar: una bandeja o superficie resistente al calor, un nozzle de repuesto, y la herramienta para retirar el nozzle de tu kit de mantenimiento"/>
             <Info1b value = " "/>
             <Info_Warning1 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
 
@@ -590,8 +609,8 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             
             <Title3 value="Cambio de nozzle"/>
             <HeatingMessage3 value="Calentando..."/>
-            <Info3a value="Utilice la herramienta para desenroscar el nozzle y colocalo sobre una superficie resistente al calor hasta que se haya enfriado."/>
-            <Info3b value="Rosca el nuevo nozzle, deja de apretar tan pronto como se sienta resistencia. Ahora puede cargar el filamento y ver el resultado del nuevo nozzle. El filamento deve salir de forma continua y uniforme."/>
+            <Info3a value="Utiliza la herramienta para desenroscar el nozzle y colocalo sobre una superficie resistente al calor hasta que se haya enfriado."/>
+            <Info3b value="Rosca el nuevo nozzle, deja de apretar tan pronto como se sienta resistencia. Ahora puedes cargar el filamento y ver el resultado del nuevo nozzle. El filamento deve salir de forma continua y uniforme."/>
             <Info_Warning3 value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
  
             <Title4 value="Cambio de nozzle"/>
@@ -629,10 +648,38 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <NozzleSwitch_Title value="Reemplazar el nozzle"/>
             <NozzleSwitch_button value="Reemplazar ahora"/>
             <NozzleSwitch_Intro value="Esta operación sirve para reemplazar el nozzle por el repuesto de tu kit de mantenimiento."/>
-
-
-
         </MaintenancePanel>
+
+        <PausePanel>
+            <Title value="Pausa"/>
+            <SubTitle value="Puedes reanudar o cancelar la impresión." />
+            <FilamentTitle value="Cambio de filamento."/>
+            <FilamentIntro value="Es necesaria esta operación si deseas imprimir con un color diferente o si el filamento disponible en el carrete no es suficiente."/>
+            <bFilamentChange value="Cambiar el filamento ahora"/>
+            <bShutdown value="Apagar ahora"/>
+            <ShutdownIntro value="Esta operación guarda el estado de impresión. Puedes apagar la impresora y reanudar la impresión en un momento posterior."/>
+            <ShutdownTitle value="Apagar"/>
+            <NoFilament value="Ningún filamento fijado"/>
+        </PausePanel>
+
+        <ShutdownPanel>
+            <Title value="apagar"/>
+            <SubTitle value="Puedes apagar la impresora. Alternativamente, puedes reanudar o cancelar la impresión."/>
+            <FilamentTitle value="Cambio de filamento"/>
+            <FilamentIntro value="Es necesaria esta operación si deseas imprimir con un color diferente o si el filamento disponible en el carrete no es suficiente."/>
+            <bFilamentChange value="Cambiar el filamento ahora"/>
+            <NoFilament value = "Ningún filamento fijado" />
+        </ShutdownPanel>
+ 
+        <FeedbackPanel>
+            <FlashingMainMessage value="Flashing firmware. Por favor, no desconecte la impresora..." />
+            <FlashingSubMessage value="Flashing nuevo firmware..." />
+            <FlashingSubMessageNoCalibration value="lashing nuevo firmware... (se perderá la calibración!)" />
+            <LaunchingMessage value="Lanzamiento de un nuevo firmware!" />
+            <SavingMessage value="Guardar los ajustes de calibración y de filamento actuales." />
+            <RestartMessage value="está tomando algún tiempo... intenta reiniciar la impresora" />
+            <RestartMessageTimeout value="Problema con el firmware. Por favor, reinicia la impresora." />
+        </FeedbackPanel>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       
         <ToolTips>
@@ -688,7 +735,7 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
         <Tour>
             <Tour1_Title value="Está casi..."/>
-            <Tour1_Text value="Para iniciar la impresión de sus modelos, siga los siguientes pasos."/>
+            <Tour1_Text value="Para iniciar la impresión de tus modelos, sigue los siguientes pasos."/>
             <Tour1_Jump value="Saltar el tutorial."/>
             <Tour2 value="Añadir un modelo para el área de trabajo. Puede importar un modelo de la carpeta 'archivos 3D'en el BEESOFT, o se puede importar o arrastrar uno de sus propios archivos."/>
             <Tour3 value="Utiliza 'Mover', 'Girar', 'Escala' o 'espejo' para establecer el modelo exactamente cómo deseas que se imprima."/>
@@ -697,14 +744,14 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Tour6 value="operaciones de mantenimiento de la impresora se puede encontrar aquí -. Que son esenciales para la calidad de impresión."/>
             <DefaultMessage value="Bienvenido!"/>
             <EndMessage value="Está todo listo"/>
-            <TourFinishMessage value="Ya está listo para empezar a imprimir! Haz tu creatividad real!"/>
+            <TourFinishMessage value="Ya está listo para comenzar a imprimir! Haz tu creatividad real!"/>
         </Tour>
 
         <!-- A próxima secção XML contém o texto para a janela das Preferências -->
         <Preferences>
             <Preferences_title value="Preferencias"/>
             <Language value="Idiomas"/>
-            <LanguageWarning value="Si se cambian las opciones, el efecto sólo se notará después de reiniciar el  BEESOFT."/>
+            <LanguageWarning value="Si se cambian las opciones, el efecto sólo se notará después de reiniciar el BEESOFT."/>
             <Measures value="Medidas"/>
             <LockHeight value="Bloquear eje vertical"/>
             <LockHeight_info value="Los modelos sólo puede moverse en paralelo a la plataforma."/>
@@ -748,59 +795,6 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Models value="Modelos"/>
             <All value="Todos"/>
         </Gallery>
-        
-        <!-- A próxima secção XML contém o texto a apresentar na lista de selecção da core de bobine. O valor "a002" é o BEECODE, código que 4 dígitos e indentifica o tipo de filamento e que está impresso na bobine. -->
-        <CoilColors>
-            <a000 value="A000 - No filament" />
-            <!-- Filamentos da Filkemp -->
-            <a001 value="A001 - Transparent"/>
-            <a002 value="A002 - White"/>
-            <a003 value="A003 - Black"/>
-            <a004 value="A004 - Red"/>
-            <a005 value="A005 - Yellow"/>
-            <a006 value="A006 - Blue"/>
-            <a007 value="A007 - Olive Green"/>
-            <a008 value="A008 - Pink"/>
-            <a009 value="A009 - Silver"/>
-            <a010 value="A010 - Turquoise"/>
-            <a011 value="A011 - Green"/>
-            <a012 value="A012 - Orange"/>
-            <a021 value="A021 - Transparent"/>
-            <a022 value="A022 - White"/>
-            <a023 value="A023 - Black"/>
-            <a024 value="A024 - Red"/>
-            <a025 value="A025 - Yellow"/>
-            <a026 value="A026 - Blue"/>
-            <a027 value="A027 - Olive Green"/>
-            <a028 value="A028 - Fuchsia"/>
-            <a029 value="A029 - Silver"/>
-            <a030 value="A030 - Turquoise"/>
-            <a031 value="A031 - Neon Green"/>
-            <a032 value="A032 - Orange"/>
-            
-            <!-- Filamentos da FiberForce -->
-            <a101 value="A101 - Transparent"/>
-            <a102 value="A102 - Blanc Gris"/>
-            <a103 value="A103 - Zinc Yellow"/>
-            <a104 value="A104 - Signal Yellow"/>
-            <a105 value="A105 - Bright Red Orange"/>
-            <a106 value="A106 - Traffic Red"/>
-            <a107 value="A107 - Tomato Red"/>
-            <a108 value="A108 - Light Pink"/>
-            <a109 value="A109 - Traffic Purple"/>
-            <a110 value="A110 - Violet"/>
-            <a111 value="A111 - Sky Blue"/>
-            <a112 value="A112 - Traffic Blue"/>
-            <a113 value="A113 - Ultramarine Blue"/>
-            <a114 value="A114 - Yellow Green"/>
-            <a115 value="A115 - Pure Green"/>
-            <a116 value="A116 - Chrome Green"/>
-            <a117 value="A117 - Chocolate Brown"/>
-            <a118 value="A118 - Telegrey"/>
-            <a119 value="A119 - Signal Black"/>
-            <a120 value="A120 - Pearl Gold"/>
-            <a121 value="A121 - Pearl Light Grey"/>
-        </CoilColors>
-        
+
     </tags>      
 </languages>

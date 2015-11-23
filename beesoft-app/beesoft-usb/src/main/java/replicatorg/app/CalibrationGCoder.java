@@ -1,5 +1,6 @@
 package replicatorg.app;
 
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -78,7 +79,7 @@ public class CalibrationGCoder {
                 }
 
             } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(configFile).concat(".xml"));
+                Base.writeLog("Permission denied over " + "languages/".concat(configFile).concat(".xml"), CalibrationGCoder.class);
 
             }
         } catch (ParserConfigurationException pce) {
@@ -122,11 +123,11 @@ public class CalibrationGCoder {
                 code = FilamentControler.NO_FILAMENT_CODE;
 
                 if (Base.getMachineLoader().isConnected()) {
-                    Base.getMachineLoader().getMachineInterface().getDriver().updateCoilCode();
-                    code = Base.getMainWindow().getMachine().getModel().getCoilCode();
+                    Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
+                    code = Base.getMainWindow().getMachine().getModel().getCoilText();
                 } //no need for else
 
-                Base.writeLog("Filament controler coil code: " + code);
+                Base.writeLog("Filament controler coil code: " + code, CalibrationGCoder.class);
 
                 if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
                     //no_Filament = true;
@@ -134,8 +135,11 @@ public class CalibrationGCoder {
                 } else {
                     String w_val = Double.toString(
                             FilamentControler.getColorRatio(
-                                    Base.getMainWindow().getMachine().getModel().getCoilCode(),
-                                    Base.getMainWindow().getMachine().getModel().getResolution()));
+                                    Base.getMainWindow().getMachine().getModel().getCoilText(),
+                                    Base.getMainWindow().getMachine().getModel().getResolution(),
+                                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
+                                    
+                            ));
                     return ("gcode: " + "M642 w"+w_val+", "+ eElement.getAttribute("value"));
                     
                 }

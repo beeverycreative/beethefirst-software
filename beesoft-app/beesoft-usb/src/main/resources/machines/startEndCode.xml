@@ -17,7 +17,7 @@ G92 E,
 ,
 ;BEESOFT SPECIFIC,
 M642 W1,
-M31 A0 L0
+M31 A0
 "/>
 			<endCode value =
 			"M300,

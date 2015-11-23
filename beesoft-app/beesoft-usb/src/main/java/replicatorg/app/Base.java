@@ -29,12 +29,17 @@
  */
 package replicatorg.app;
 
+import ch.randelshofer.quaqua.QuaquaManager;
+import com.apple.eawt.Application;
+import com.apple.mrj.MRJApplicationUtils;
+import com.apple.mrj.MRJOpenDocumentHandler;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -45,18 +50,28 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -64,34 +79,16 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
-import replicatorg.machine.MachineLoader;
-import ch.randelshofer.quaqua.QuaquaManager;
-import com.apple.eawt.Application;
-
-import com.apple.mrj.MRJApplicationUtils;
-import com.apple.mrj.MRJOpenDocumentHandler;
-import java.awt.Window;
-import java.io.FileNotFoundException;
-import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.ui.WelcomeSplash;
+import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
 
 /**
@@ -101,16 +98,7 @@ import replicatorg.util.ConfigProperties;
  */
 public class Base {
 
-    /**
-     * Languages supported
-     */
-    public enum Language {
-
-        en,
-        pt,
-        es,
-        de
-    };
+    private static final String newLine = System.getProperty("line.separator");
 
     /**
      * enum for fast/easy OS checking
@@ -197,15 +185,17 @@ public class Base {
         }
     }
 
-    private static final ConfigProperties configProperties = new ConfigProperties();
+    public static final ConfigProperties configProperties = new ConfigProperties();
     public static boolean statusThreadDied = false;
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
     public static boolean isPrinting = false;
+    public static boolean welcomeSplashVisible = false;
     public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
+    public static boolean rebootingIntoFirmware = false;
 
     public enum InitialOpenBehavior {
 
@@ -219,19 +209,20 @@ public class Base {
     public static final String VERSION_BEESOFT = setVersionString();
 
     public static final String PROGRAM = "BEESOFT";
-    public static String VERSION_BOOTLOADER = "Bootloader v" + configProperties.getAppProperty("bootloader.version");
+    public static String VERSION_BOOTLOADER;
     ;
     
-    public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
-    public static final String VERSION_FIRMWARE_FINAL_OLD = configProperties.getAppProperty("firmware.old.version");
-    public static String firmware_version_in_use = "BEETHEFIRST-" + VERSION_FIRMWARE_FINAL + ".bin";
-    private static String VERSION_JAVA = "";//System.getProperty("java.version");
+    //public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
+    public static String FIRMWARE_IN_USE;
+    private final static String VERSION_JAVA = System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
-    public static Language language = Language.en;
+    public static String language = "en";
     public static String MACHINE_NAME = "BEETHEFIRST";
-    public static String GCODE_DELIMITER = "--";
-    public static String GCODE_TEMP_FILENAME = "temp.gcode";
-    public static String MODELS_FOLDER = "3DModels";
+    public static final String GCODE_DELIMITER = "--";
+    public static final String GCODE_TEMP_FILENAME = "temp.gcode";
+    public static final String MODELS_FOLDER = "3DModels";
+    public static final String GCODE2PRINTER_PATH = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/gcodeToPrinter.gcode";
+
     /**
      * The textual representation of this version (4 digits, zero padded).
      */
@@ -248,48 +239,20 @@ public class Base {
     public static final Logger logger = Logger.getLogger("replicatorg.log");
     public static FileHandler logFileHandler = null;
     public static String logFilePath = null;
-    /**
-     * Global LOG file *
-     */
-    private static File log;
-    /**
-     * Autonomous statistics file
-     */
-    private static File statistics = null;
+
     /**
      * Properties file
      */
     private static Properties propertiesFile = null;
-    private static FileOutputStream writer;
-    private static FileInputStream read;
     /* Date time instance variables */
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    public static boolean maintenanceOpened = false;
-    public static boolean maintenanceWizardOpen = false;
     public static ArrayList<Thread> systemThreads;
 
-    /*
-     * expands ~ as per python os.path.expanduser
-     */
-    public static String expanduser(String path) {
-        String user = System.getProperty("user.home");
+    private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
+    private static final File comLogFile = new File(getAppDataDirectory().toString() + "/comLog.txt");
+    private static final BufferedWriter logBW = initLog(BEELOGfile);
+    private static final BufferedWriter comLogBW = initLog(comLogFile);
 
-        return path.replaceFirst("~", user);
-    }
-
-    /**
-     * Start logging on the given path. If the path is null, stop file logging.
-     *
-     * @param path The path to log messages to
-     */
-    public static void setLogFile(String path) {
-
-        if (logFileHandler != null) {
-            logger.removeHandler(logFileHandler);
-            logFileHandler = null;
-        }
-
-    }
     /**
      * Path of filename opened on the command line, or via the MRJ open document
      * handler.
@@ -311,20 +274,6 @@ public class Base {
             prefs = prefs.node("alternate/" + alternatePrefs);
         }
         return prefs;
-    }
-
-    /**
-     * Back up the preferences
-     *
-     * @return
-     */
-    static public String getToolsPath() {
-        String toolsDir = System.getProperty("replicatorg.toolpath");
-        if (toolsDir == null || (toolsDir.length() == 0)) {
-            File appDir = Base.getApplicationDirectory();
-            toolsDir = appDir.getAbsolutePath() + File.separator + "tools";
-        }
-        return toolsDir;
     }
 
     /**
@@ -356,20 +305,64 @@ public class Base {
         return ID;
     }
 
-    /**
-     * Lists all threads running on the JVM.
-     */
-    public static void listAllJVMThreads() {
+    private static BufferedWriter initLog(String fileName) {
+        BufferedWriter bw;
+        OutputStreamWriter osw;
+        FileOutputStream fos;
+        File file;
 
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+        try {
+            file = new File(getAppDataDirectory().toString() + "/" + fileName);
 
-        for (int i = 0; i < threadArray.length; i++) {
-            System.out.println("Thread " + (i + 1) + " > " + threadArray[i]);
+            if (file.exists()) {
+                file.delete();
+            }
+
+            fos = new FileOutputStream(file);
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            bw = new BufferedWriter(osw);
+
+            return bw;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("\n");
-        System.out.println("Total Threads > " + threadArray.length);
-        System.out.println("*****************");
+
+        return null;
+    }
+
+    private static BufferedWriter initLog(File file) {
+        BufferedWriter bw;
+        OutputStreamWriter osw;
+        FileOutputStream fos;
+
+        try {
+            if (file.exists()) {
+                file.delete();
+            }
+
+            fos = new FileOutputStream(file);
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            bw = new BufferedWriter(osw);
+
+            return bw;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    public static void closeLogs() {
+        try {
+            logBW.close();
+            comLogBW.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -414,27 +407,6 @@ public class Base {
         return f;
     }
 
-    public static void buildLogFile(boolean force) {
-        String content = " ";
-        File f = new File(log.getAbsolutePath());
-
-        try {
-            byte[] bytes = readAllBytes(f);
-            content = new String(bytes, "UTF-8");
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-        }
-
-        clearFileContent(f);
-
-        if (force) {
-            writeLogHeader();
-        }
-
-        writeLog(content);
-
-    }
-
     private static byte[] readAllBytes(File file) throws IOException {
         InputStream is = new FileInputStream(file);
 
@@ -464,17 +436,6 @@ public class Base {
         // Close the input stream and return bytes
         is.close();
         return bytes;
-    }
-
-    public static void clearFileContent(File inputFile) {
-        PrintWriter wrtr = null;
-        try {
-            wrtr = new PrintWriter(inputFile);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        wrtr.print("");
-        wrtr.close();
     }
 
     private static Map<String, String> getGalleryMap(File[] models) {
@@ -515,7 +476,7 @@ public class Base {
                     outStream.close();
                 }
             } catch (IOException e) {
-                Base.writeLog(e.getMessage());
+                Base.writeLog(e.getMessage(), Base.class);
             }
         }
 
@@ -523,143 +484,140 @@ public class Base {
 
     public static void updateVersions() {
         VERSION_BOOTLOADER = editor.getMachineInterface().getDriver().getBootloaderVersion();
-        firmware_version_in_use = editor.getMachineInterface().getDriver().getFirmwareVersion();
+        FIRMWARE_IN_USE = editor.getMachineInterface().getDriver().getFirmwareVersion();
         VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
 
-        buildLogFile(true);
+        //buildLogFile(true);
+        writePrinterInfo();
+    }
+
+    private static void writePrinterInfo() {
+        try {
+            logBW.newLine();
+            logBW.newLine();
+            logBW.write("*************** CONNECTED PRINTER ****************" + newLine);
+            logBW.write("Bootloader version: " + VERSION_BOOTLOADER + newLine);
+            logBW.write("Firmware version: " + FIRMWARE_IN_USE + newLine);
+            logBW.write("**************************************************" + newLine);
+            logBW.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     private static void writeLogHeader() {
-
-        VERSION_BOOTLOADER = editor.getMachineInterface().getDriver().getBootloaderVersion();
-        firmware_version_in_use = editor.getMachineInterface().getDriver().getFirmwareVersion();
-        VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
-
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(log.getAbsoluteFile(), true);
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.newLine();
-            bw.write("**************************************************\n");
-            bw.write(PROGRAM + " " + VERSION_BEESOFT + "\n");
-            bw.write("Bootloader version: " + VERSION_BOOTLOADER + "\n");
-            bw.write("Firmware version: " + firmware_version_in_use + "\n");
-            bw.write("Java version: " + VERSION_JAVA + "\n");
-            bw.write("Architecture: " + COMPUTER_ARCHITECTURE + "\n");
-//            bw.write("Serial Number:" + " " + VERSION_MACHINE+ "\n");
-            bw.write("Machine name: BEETHEFIRST\n");
-            bw.write("Company name: BEEVERYCREATIVE\n");
-            bw.write("**************************************************\n");
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            bw.close();
+            logBW.newLine();
+            logBW.write("**************************************************" + newLine);
+            logBW.write(PROGRAM + " " + VERSION_BEESOFT + newLine);
+            logBW.write("Java version: " + VERSION_JAVA + newLine);
+            logBW.write("Architecture: " + COMPUTER_ARCHITECTURE + newLine);
+            logBW.write("Machine name: BEETHEFIRST" + newLine);
+            logBW.write("Company name: BEEVERYCREATIVE" + newLine);
+            logBW.write("**************************************************" + newLine);
+            logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void writeLog(String message) {
+    private static void writeLog(String message) {
 
         /**
          * *** Date and Time procedure ****
          */
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
+        Calendar calendar = Calendar.getInstance();
+        String date = dateFormat.format(calendar.getTime());
 
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(log.getAbsoluteFile(), true);
+            logBW.newLine();
+            logBW.write("[" + date + "]" + " " + message);
+            logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.newLine();
-            bw.write("[" + date + "]" + " " + message);
-            bw.flush();
-            bw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
-    public static void writeStatistics(String message) {
+    public static void writeLog(String message, Class logClass) {
+
+        if (BEELOGfile.length() > 10000000) {
+            return;
+        }
+
+        if (logClass == null) {
+            writeLog(message);
+            return;
+        }
 
         /**
          * *** Date and Time procedure ****
          */
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
+        Calendar calendar = Calendar.getInstance();
+        String date = dateFormat.format(calendar.getTime());
 
-        FileWriter fw = null;
         try {
-            fw = new FileWriter(statistics.getAbsoluteFile(), true);
+            logBW.newLine();
+            logBW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
+            logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        BufferedWriter bw = new BufferedWriter(fw);
-        try {
-            bw.write(date);
-            bw.newLine();
-            bw.write("-------------------------------\n");
-            bw.write(message);
-            bw.flush();
-            bw.newLine();
-            bw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
-    public static void writecomLog(long timeStamp, String message) {
+    /*
+     public static void writeStatistics(String message) {
 
-        File f = new File(getAppDataDirectory() + "/comLog.txt");
+     Calendar cal = Calendar.getInstance();
+     String date = dateFormat.format(cal.getTime());
 
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(new File(getAppDataDirectory() + "/comLog.txt"), true);
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     FileWriter fw = null;
+     try {
+     fw = new FileWriter(statistics.getAbsoluteFile(), true);
+     } catch (IOException ex) {
+     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     BufferedWriter bw = new BufferedWriter(fw);
+     try {
+     bw.write(date);
+     bw.newLine();
+     bw.write("-------------------------------\n");
+     bw.write(message);
+     bw.flush();
+     bw.newLine();
+     bw.close();
+     } catch (IOException ex) {
+     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     try {
+     if (fw != null) {
+     fw.close();
+     }
+     } catch (IOException ex) {
+     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }
+     */
+    public static void writeComLog(long timeStamp, String message) {
+
+        if (comLogFile.length() > 10000000) {
+            return;
         }
-        BufferedWriter bw = new BufferedWriter(fw);
+
         try {
             if (!message.equals("\n")) {
-                bw.write("Timestamp: " + timeStamp + " | " + message + "\n");
-                bw.flush();
-                bw.close();
+                comLogBW.write("Timestamp: " + timeStamp + " | " + message + newLine);
+                comLogBW.flush();
             } else {
-                bw.newLine();
+                comLogBW.newLine();
+                comLogBW.flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            if (fw != null) {
-                fw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
     private static Properties openFileProperties() {
@@ -785,61 +743,31 @@ public class Base {
 
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && isBeesoftAlpha == false)) {
+            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && file.getName().contains("gcodeToPrinter") == false)) {
                 file.delete();
             }
         }
     }
 
     public static void turnOnPowerSaving(boolean turnOn) {
-        if (turnOn) {
-//            editor.getMachine().getDriver().dispatchCommand("M641 A1");
-            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
-        } else {
-//            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
-            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
-        }
-    }
-
-    private static void getJavaVersion() {
-        String[] command = {"java", "-version"};
-        ProcessBuilder probuilder = new ProcessBuilder(command);
-        probuilder.redirectErrorStream(true);
-
-        Process process = null;
-        String out = "";
-        try {
-            process = probuilder.start();
-            //Read out dir output
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                out += line + "\n";
-            }
-        } catch (IOException ex) {
-            Base.writeLog(ex.getMessage());
-        }
-
-        //Wait to get exit value
-        try {
-            if (process != null) {
-                process.waitFor();
-            }
-        } catch (InterruptedException e) {
-            Base.writeLog(e.getMessage());
-        }
-
-        VERSION_JAVA = out.trim();
+        /*
+         if (turnOn) {
+         //            editor.getMachine().getDriver().dispatchCommand("M641 A1");
+         editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
+         } else {
+         //            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
+         editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
+         }
+         */
     }
 
     static public void disposeAllOpenWindows() {
+        String name;
+
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
-            if (!win1.getName().equals("mainWindow")) {
+            name = win1.getName();
+            if (!name.equals("mainWindow") && !name.equals("FeedbackDialog")) {
                 win1.dispose();
             }
 //            System.out.println(win[i].getName());
@@ -1111,7 +1039,7 @@ public class Base {
         // Use the default system proxy settings
         System.setProperty("java.net.useSystemProxies", "true");
         // Use antialiasing implicitly
-        System.setProperty("j3d.implicitAntialiasing", "true");
+        // System.setProperty("j3d.implicitAntialiasing", "true");
 
         // MAC OS X ONLY:
         // register a temporary/early version of the mrj open document handler,
@@ -1131,27 +1059,6 @@ public class Base {
 
         // Create the new application "Base" class.
         new Base();
-    }
-
-    /**
-     * Creates a new BEELOG file for print log
-     *
-     * @return file
-     */
-    private File openFileLog() {
-        /**
-         * Put log file near app folder *
-         */
-        String path = getAppDataDirectory().toString();
-        File f = new File(path + "/BEELOG.txt");
-
-        if (f.exists()) {
-            f.delete();
-            return new File(path + "/BEELOG.txt");
-        } else {
-            return f;
-        }
-
     }
 
     private File openStatsFile() {
@@ -1176,12 +1083,10 @@ public class Base {
      *
      */
     public Base() {
-
-        // Log and messages queue init
-        log = openFileLog();
-
         // Log autonomous statistics file
-        statistics = openStatsFile();
+        // statistics = openStatsFile();
+
+        writeLogHeader();
 
         // Properties file init
         propertiesFile = openFileProperties();
@@ -1189,18 +1094,18 @@ public class Base {
         // Loads properties at the beginning
         loadProperties();
 
-        File comLog = new File(getAppDataDirectory() + "/comLog.txt");
-        if (comLog.exists()) {
-            comLog.delete();
-        }
-
-        getJavaVersion();
-
         // Loads language
-        language = getLanguage();
+        language = ProperDefault.get("language").toLowerCase();
 
         systemThreads = new ArrayList<Thread>();
 
+        /*
+         try {
+         System.setErr(new PrintStream(new FileOutputStream(getAppDataDirectory().toString() + "/err.txt")));
+         } catch (FileNotFoundException ex) {
+         Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+         }
+         */
         // set the look and feel before opening the window
         try {
             if (Base.isMacOS()) {
@@ -1225,15 +1130,15 @@ public class Base {
 
                 // need to enable the preferences option manually
 //                macApplication.setEnabledPreferencesMenu(true);
-                writeLog("Operating System: Mac OS");
+                writeLog("Operating System: Mac OS", this.getClass());
 
             } else if (Base.isLinux()) {
-                writeLog("Operating System: Linux");
+                writeLog("Operating System: Linux", this.getClass());
             } else {
-                writeLog("Operating System: Windows");
+                writeLog("Operating System: Windows", this.getClass());
             }
         } catch (Exception e) {
-            writeLog(e.getMessage());
+            writeLog(e.getMessage(), this.getClass());
         }
 
         // use native popups so they don't look so crappy on osx
@@ -1246,10 +1151,10 @@ public class Base {
                 String machineName = ProperDefault.get("machine.name");
                 // build the editor object
                 editor = new MainWindow();
-                writeLog("Main Window initialized");
+                writeLog("Main Window initialized", this.getClass());
 //                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
                 editor.restorePreferences();
-                writeLog("Preferences restored");
+                writeLog("Preferences restored", this.getClass());
                 // add shutdown hook to store preferences
                 Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
                     final private MainWindow w = editor;
@@ -1261,14 +1166,14 @@ public class Base {
                 });
 //                Languager.printXML();
                 editor.loadMachine(machineName, false);
-                writeLog("Machine Loaded");
+                writeLog("Machine Loaded", this.getClass());
                 // show the window
                 editor.setVisible(false);
                 WelcomeSplash splash = new WelcomeSplash(editor);
                 splash.setVisible(true);
 
 //                buildLogFile(false);
-                writeLog("Log file created");
+                writeLog("Log file created", this.getClass());
             }
         });
         ProperDefault.put("machine.name", MACHINE_NAME);
@@ -1291,6 +1196,7 @@ public class Base {
                 editor.reloadMachine(machineName, false);
             }
         }
+
     }
 
     // .................................................................
@@ -1365,7 +1271,7 @@ public class Base {
         notificationHandler.showError(title, message, e);
 
         if (e != null) {
-            Base.writeLog(e.getMessage());
+            Base.writeLog(e.getMessage(), Base.class);
         }
         System.exit(1);
     }
@@ -1625,12 +1531,12 @@ public class Base {
             return applicationVersion;
         }
     }
-
-    private Language getLanguage() {
+    
+    public static void hiccup(int ms) {
         try {
-            return Language.valueOf(ProperDefault.get("language").toLowerCase());
-        } catch (IllegalArgumentException e) {
-            return Language.en;
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Base.writeLog("Interrupted during hiccup", Base.class);
         }
     }
 }

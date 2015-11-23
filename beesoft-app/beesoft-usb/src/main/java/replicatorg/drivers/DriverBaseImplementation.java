@@ -24,6 +24,7 @@
 package replicatorg.drivers;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,17 +35,17 @@ import java.util.logging.Logger;
 import javax.vecmath.Point3d;
 
 import org.w3c.dom.Node;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 
 import replicatorg.app.Base;
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.util.AutonomousData;
 import replicatorg.machine.model.AxisId;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
-public class DriverBaseImplementation implements Driver {
+public abstract class DriverBaseImplementation implements Driver {
 //	// our gcode parser
 //	private GCodeParser parser;
 
@@ -53,14 +54,14 @@ public class DriverBaseImplementation implements Driver {
     // Driver name
     protected String driverName;
     // our firmware version info
-    private String firmwareName = "Unknown";
+    private final String firmwareName = "Unknown";
     protected Version version = new Version(0, 0);
     protected Version preferredVersion = new Version(0, 0);
     protected Version minimumVersion = new Version(0, 0);
     // our point offsets
     private Point3d[] offsets;
     // are we initialized?
-    private AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     // our error variable.
     ConcurrentLinkedQueue<DriverError> errorList;
     // how fast are we moving in mm/minute
@@ -80,6 +81,7 @@ public class DriverBaseImplementation implements Driver {
      */
     protected boolean hasSoftStop = false;
     protected boolean isBootloader = true;
+    protected boolean posAvailable = false;
 
     /**
      * Creates the driver object.
@@ -98,59 +100,83 @@ public class DriverBaseImplementation implements Driver {
         // The truth is that the name come from the xml
         driverName = "virtualprinter";
     }
+    
+    @Override
+    public int getQueueSize() {
+        return -1;
+    }
 
+    @Override
+    public PrinterInfo getConnectedDevice() {
+        return null;
+    }
+
+    @Override
     public void loadXML(Node xml) {
     }
 
+    @Override
     public void updateManualControl() {
     }
 
+    @Override
     public boolean isPassthroughDriver() {
         return false;
     }
 
+    @Override
     public void executeGCodeLine(String code) {
-        Base.logger.severe("Ignoring executeGCode command: " + code);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
+    @Override
     public String dispatchCommand(String code) {
-        Base.logger.severe("Ignoring executeGCode command: " + code);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
         return "";
     }
 
+    @Override
     public int sendCommandBytes(byte[] next) {
-        Base.logger.severe("Ignoring sending bytes" + next);
+        Base.logger.log(Level.SEVERE, "Ignoring sending bytes{0}", Arrays.toString(next));
         return -1;
     }
 
+    @Override
     public String dispatchCommand(String code, Enum comtype) {
-        Base.logger.severe("Ignoring executeGCode command: " + code + ":" + comtype);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
         return "";
     }
 
+    @Override
     public double read() {
         return 30;
     }
 
+    @Override
     public String getFirmwareVersion() {
         return "";
     }
 
+    @Override
     public String getBootloaderVersion() {
         return "";
     }
 
+    @Override
     public String getSerialNumber() {
         return "";
     }
 
+    @Override
     public double getTotalExtrudedValue() {
         return 0.0;
     }
 
+    @Override
     public void resetExtrudeSession() {
     }
 
+    @Override
     public boolean isBootloader() {
         return true;
     }
@@ -160,20 +186,23 @@ public class DriverBaseImplementation implements Driver {
     }
 
     public void read(String code) {
-        Base.logger.severe("Ignoring executeGCode command: " + code);
+        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
+    @Override
     public void dispose() {
         if (Base.logger.isLoggable(Level.FINE)) {
-            Base.logger.fine("Disposing of driver " + getDriverName());
+            Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
         }
 //		parser = null;
     }
 
+    @Override
     public void initialize() throws VersionException {
         setInitialized(true);
     }
 
+    @Override
     public void uninitialize() {
         setInitialized(false);
     }
@@ -185,20 +214,24 @@ public class DriverBaseImplementation implements Driver {
                 invalidatePosition();
             } //isBootloader = true;
             // Triggers listener for main window buttons
-            Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
+            // Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
         }
     }
 
+    @Override
     public boolean isInitialized() {
         return isInitialized.get();
     }
 
+    @Override
     public void hiccup() {
     }
 
+    @Override
     public void hiccup(int mili, int nano) {
     }
 
+    @Override
     public void assessState() {
     }
 
@@ -210,55 +243,65 @@ public class DriverBaseImplementation implements Driver {
         setError(new DriverError(e, true));
     }
 
+    @Override
     public boolean hasError() {
         return (errorList.size() > 0);
     }
 
+    @Override
     public DriverError getError() {
         return errorList.remove();
     }
 
     @Deprecated
+    @Override
     public void checkErrors() throws BuildFailureException {
         if (errorList.size() > 0) {
             throw new BuildFailureException(getError().getMessage());
         }
     }
 
+    @Override
     public boolean isFinished() {
         return true;
     }
 
+    @Override
     public boolean isBufferEmpty() {
         return true;
     }
 
+    @Override
     public String getFirmwareInfo() {
         return firmwareName + " v" + getVersion();
     }
 
+    @Override
     public Version getVersion() {
         return version;
     }
 
+    @Override
     public Version getMinimumVersion() {
         return minimumVersion;
     }
 
+    @Override
     public Version getPreferredVersion() {
         return preferredVersion;
     }
-    protected final AtomicReference<Point5d> currentPosition =
-            new AtomicReference<Point5d>(null);
+    protected final AtomicReference<Point5d> currentPosition
+            = new AtomicReference<Point5d>(null);
 
+    @Override
     public void setCurrentPosition(Point5d p) throws RetryException {
         currentPosition.set(p);
     }
 
+    @Override
     public void invalidatePosition() {
 //		System.err.println("invalidating position.");
         currentPosition.set(null);
-
 
     }
 
@@ -270,7 +313,6 @@ public class DriverBaseImplementation implements Driver {
         }
 
         Point5d temp = new Point5d(currentPosition.get());
-
 
         for (AxisId axis : home) {
             temp.setAxis(axis, 0.0);
@@ -284,37 +326,56 @@ public class DriverBaseImplementation implements Driver {
         throw new RuntimeException("Position reconcilliation requested, but not implemented for this driver");
     }
 
+    @Override
     public boolean positionLost() {
         return (currentPosition.get() == null);
     }
 
+    @Override
     public Point5d getCurrentPosition(boolean forceUpdate) {
         synchronized (currentPosition) {
-            // If we are lost, or an explicit update has been requested, poll the machine for it's state. 
-            if (positionLost() || forceUpdate) {
+            while (posAvailable == false && forceUpdate) {
                 try {
-                    // Try to reconcile our position. 
-                    Point5d newPoint = reconcilePosition();
-                    //currentPosition.set(newPoint);
-
-                } catch (RetryException e) {
-                    Base.logger.severe("Attempt to reconcile machine position failed, due to Retry Exception");
+                    currentPosition.wait(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DriverBaseImplementation.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            posAvailable = false;
 
-            // If we are still lost, just return a zero position.
-            if (positionLost()) {
+            if (currentPosition.get() == null) {
                 return new Point5d();
+            } else {
+                return new Point5d(currentPosition.get());
             }
-
-            return new Point5d(currentPosition.get());
+        }
+    }
+    
+    @Override
+    public Point5d getCurrentPosition2() {
+        synchronized(currentPosition) {
+            if(currentPosition.get() == null) {
+                try {
+                    currentPosition.wait(5000);
+                } catch (InterruptedException ex) {
+                }
+            }
+            
+            return currentPosition.get();
         }
     }
 
+    @Override
     public Point5d getPosition() {
         return getCurrentPosition(false);
     }
+    
+    @Override
+    public void getPosition2() {
+        
+    }
 
+    @Override
     public void queuePoint(Point5d p) throws RetryException {
         setInternalPosition(p);
     }
@@ -323,10 +384,12 @@ public class DriverBaseImplementation implements Driver {
         currentPosition.set(position);
     }
 
+    @Override
     public void setFeedrate(double feed) {
         currentFeedrate = feed;
     }
 
+    @Override
     public double getCurrentFeedrate() {
         return currentFeedrate;
     }
@@ -341,10 +404,12 @@ public class DriverBaseImplementation implements Driver {
         return delta;
     }
 
+    @Override
     public MachineModel getMachine() {
         return machine;
     }
 
+    @Override
     public void setMachine(MachineModel m) {
         machine = m;
     }
@@ -357,7 +422,13 @@ public class DriverBaseImplementation implements Driver {
         machine.disableDrives();
     }
 
+    @Override
     public void setTemperature(double temperature) throws RetryException {
+        machine.currentTool().setTargetTemperature(temperature);
+    }
+
+    @Override
+    public void setTemperatureBlocking(double temperature) throws RetryException {
         machine.currentTool().setTargetTemperature(temperature);
     }
 
@@ -365,6 +436,7 @@ public class DriverBaseImplementation implements Driver {
         machine.currentTool().setTargetTemperature(0);
     }
 
+    @Override
     public void readTemperature() {
     }
 
@@ -377,18 +449,22 @@ public class DriverBaseImplementation implements Driver {
         return "";
     }
 
+    @Override
     public double getTemperature() {
-        return machine.currentTool().getCurrentTemperature();
+        return machine.currentTool().getExtruderTemperature();
     }
 
+    @Override
     public void setDriverName(String name) {
         this.driverName = name;
     }
 
+    @Override
     public String getDriverName() {
         return driverName;
     }
 
+    @Override
     public boolean isReady(boolean forceCheck) {
         return false;
     }
@@ -398,7 +474,6 @@ public class DriverBaseImplementation implements Driver {
 
     @Override
     public void readStatus() {
-        return;
     }
 
     @Override
@@ -407,8 +482,18 @@ public class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public boolean getMachineStatus() {
+    public boolean getMachineReady() {
         return machine.getMachineReady();
+    }
+
+    @Override
+    public boolean getMachinePaused() {
+        return machine.getMachinePaused();
+    }
+
+    @Override
+    public void setMachinePaused(boolean machinePaused) {
+        machine.setMachinePaused(machinePaused);
     }
 
     @Override
@@ -424,7 +509,7 @@ public class DriverBaseImplementation implements Driver {
 
     @Override
     public void resetToolTemperature() {
-        machine.currentTool().setCurrentTemperature(0);
+        machine.currentTool().setCurrentTemperature(0, 0);
     }
 
     @Override
@@ -433,17 +518,17 @@ public class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public void setCoilCode(String coilCode) {
-        machine.setCoilCode(coilCode);
+    public void setCoilText(String coilText) {
+        machine.setCoilText(coilText);
     }
 
     @Override
-    public String getCoilCode() {
-        return machine.getCoilCode();
+    public String getCoilText() {
+        return machine.getCoilText();
     }
 
     @Override
-    public void updateCoilCode() {
+    public void updateCoilText() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -468,22 +553,17 @@ public class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous) {
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public AutonomousData getPrintSessionsVariables() {
+    public void getPrintSessionsVariables() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public double getTransferPercentage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String startPrintAutonomous() {
+    public void startPrintAutonomous() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -508,11 +588,6 @@ public class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Point5d getActualPosition() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -525,5 +600,15 @@ public class DriverBaseImplementation implements Driver {
     @Override
     public Point5d getShutdownPosition() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void resetBootloaderAndFirmwareVersion() {
+
+    }
+    
+    @Override
+    public void closeFeedback() {
+        
     }
 }

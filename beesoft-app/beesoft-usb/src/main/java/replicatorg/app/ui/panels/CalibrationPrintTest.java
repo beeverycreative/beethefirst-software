@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.CalibrationGCoder;
 import replicatorg.app.Languager;
@@ -36,11 +37,11 @@ import replicatorg.util.Point5d;
  */
 public class CalibrationPrintTest extends BaseDialog {
 
-    private final MachineInterface machine;
+    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
     private boolean achievement;
 
     private double temperatureGoal;
-    private final PrintThread updateThread;
+    private final PrintThread printThread = new PrintThread(this, machine);
     private BufferedReader reader = null;
     public boolean okEnabled;
 
@@ -50,18 +51,12 @@ public class CalibrationPrintTest extends BaseDialog {
         setFont();
         setTextLanguage();
         enableDrag();
-        machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
         centerOnScreen();
         setProgressBarColor();
         moveToPosition();
-        updateThread = new PrintThread(this, machine);
-        updateThread.start();
-        Base.maintenanceWizardOpen = true;
-        Base.systemThreads.add(updateThread);
-        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -160,10 +155,7 @@ public class CalibrationPrintTest extends BaseDialog {
     }
 
     public void updatePrintBar(double p) {
-
-        //int currentValue = jProgressBar1.getValue();
-        jProgressBar1.setValue(50 + (int) (p / 2));
-
+        jProgressBar1.setValue((int) (p * 100));
     }
 
     private void enableMessageDisplay() {
@@ -176,6 +168,7 @@ public class CalibrationPrintTest extends BaseDialog {
         jLabel7.setForeground(new Color(248, 248, 248));
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
@@ -187,7 +180,7 @@ public class CalibrationPrintTest extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Heating...");
+        Base.writeLog("Heating...", this.getClass());
         Point5d heat = machine.getTablePoints("heat");
 
         double acHigh = machine.getAcceleration("acHigh");
@@ -200,33 +193,24 @@ public class CalibrationPrintTest extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
 
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acMedium));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acMedium));
         machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
         machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 x" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
 
-    }
-
-    private void finalizeHeat() {
-        Base.writeLog("Cooling down...");
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
+        printThread.start();
     }
 
     private void evaluateInitialConditions() {
         achievement = false;
-        temperatureGoal = 220;
+        temperatureGoal = FilamentControler.getColorTemperature(
+                machine.getDriver().getCoilText(),
+                "medium",
+                Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
+        ) + 5;
         okEnabled = false;
         Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
-
-//        preferences = new ArrayList<String>();
-//        preferences.add("LOW");
-//        preferences.add(FilamentControler.getColor(machine.getModel().getCoilCode()));
-//        preferences.add("LOW");
-//        preferences.add(String.valueOf(false));
-//        preferences.add(String.valueOf(false));
-//        preferences.add(String.valueOf(false));
 
         try {
             reader = new BufferedReader(new FileReader(getPrintFile()));
@@ -267,8 +251,9 @@ public class CalibrationPrintTest extends BaseDialog {
 
         String sCurrentLine;
         int n_lines = 0;
+
         try {
-            machine.setStopwatch(0);
+            //machine.setStopwatch(0);
             machine.getDriver().setBusy(true);
             while ((sCurrentLine = reader.readLine()) != null) {
                 try {
@@ -283,7 +268,6 @@ public class CalibrationPrintTest extends BaseDialog {
             }
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
 
-
         } catch (FileNotFoundException ex) {
         } catch (IOException ex) {
         }
@@ -293,51 +277,28 @@ public class CalibrationPrintTest extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28 Z", COM.BLOCK));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 Y65"));
         machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
+        n_lines += 4;
 
         try {
-            machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-
             reader.close();
-
-
         } catch (IOException ex) {
-            return n_lines;
         }
         return n_lines;
-
     }
 
     private void doCancel() {
-        updateThread.stop();
-        dispose();
-        machine.killSwitch();
-        finalizeHeat();
-        Base.getMainWindow().handleStop();
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        // Sleep befpore home after M112
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PrintSplashSimpleWaiting.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
+        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
+        machine.killSwitch();
 
         if (ProperDefault.get("maintenance").equals("1")) {
             ProperDefault.remove("maintenance");
         }
+
+        printThread.terminate();
         Base.bringAllWindowsToFront();
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -572,71 +533,73 @@ public class CalibrationPrintTest extends BaseDialog {
 
 class PrintThread extends Thread {
 
-    CalibrationPrintTest window;
-    MachineInterface machine;
+    private final CalibrationPrintTest window;
+    private final MachineInterface machine;
+    private boolean stop = false;
 
     public PrintThread(CalibrationPrintTest w, MachineInterface machine) {
         super("Calibration Print Thread");
         window = w;
         this.machine = machine;
-        Base.writeLog("Reading Temperature ...");
+        Base.writeLog("Reading Temperature ...", this.getClass());
     }
 
     @Override
     public void run() {
 
         boolean temperatureAchieved = false;
-        // we'll break on interrupts
         while (!temperatureAchieved) {
-            try {
-                window.updateHeatBar();
-                temperatureAchieved = window.getAchievement();
-                Thread.sleep(200);
-            } catch (Exception e) {
-                Base.writeLog("Exception occured while reading Temperature ...");
-                this.stop();
-                break;
-            }
+            window.updateHeatBar();
             window.showMessage();
+            temperatureAchieved = window.getAchievement();
+            Base.hiccup(3000);
+
+            if (stop) {
+                return;
+            }
         }
-        Base.writeLog("Temperature achieved...");
+        Base.writeLog("Temperature achieved...", this.getClass());
         window.sinalizeHeatSuccess();
 
-
         int n_lines = window.printTest();
+        int readyCount = 0, queue;
+        double progress;
 
-        while (true) {
-            //machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (!machine.getDriver().getMachineStatus() || machine.getDriver().isBusy()) {
+        Base.writeLog("n_lines = " + n_lines, this.getClass());
+        while (machine.getDriver().getQueueSize() < 20) {
+            Base.hiccup(1000);
+        }
+
+        while (stop == false) {
+            Base.hiccup(1000);
+            if ((queue = machine.getDriver().getQueueSize()) > 0) {
                 window.showPrintMessage();
-                try {
-                    Thread.sleep(1000);
-                    window.updatePrintBar(100 * machine.getStopwatch() / n_lines);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(PrintThread.class.getName()).log(Level.SEVERE, null, ex);
+                progress = ((double) n_lines - queue) / n_lines;
+                if (progress > 0.5) {
+                    window.updatePrintBar(progress);
                 }
-
             } else {
-                window.sinalizeHeatSuccess();
-                window.disableMessageDisplay();
-                //when the print is over do this
-                Base.setPrintEnded(true);
-                window.okEnabled = true;
-                window.dispose();
+                if (readyCount >= 5) {
+                    window.sinalizeHeatSuccess();
+                    window.disableMessageDisplay();
+                    //when the print is over do this
+                    Base.setPrintEnded(true);
+                    window.okEnabled = true;
+                    window.dispose();
 //            
-                CalibrationValidation calVal = new CalibrationValidation();
-                calVal.setVisible(window.okEnabled);
+                    CalibrationValidation calVal = new CalibrationValidation();
+                    calVal.setVisible(window.okEnabled);
 
-                break;
-
+                    break;
+                } else {
+                    readyCount++;
+                }
             }
         }
 
-        this.stop();
+    }
+
+    public void terminate() {
+        stop = true;
     }
 }

@@ -206,7 +206,7 @@ public class MachineStatusPanel extends BGPanel implements MachineListener {
 		SwingUtilities.invokeLater(new Runnable() {
             @Override
 			public void run() {
-				double temperature = e.getTool().getCurrentTemperature();
+				double temperature = e.getTool().getExtruderTemperature();
 				tempLabel.setText(String.format("Temp: %1$3.1f\u00B0C", temperature));
 			}
 		});

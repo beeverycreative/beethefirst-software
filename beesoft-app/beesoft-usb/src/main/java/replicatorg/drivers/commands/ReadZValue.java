@@ -12,7 +12,7 @@ public class ReadZValue implements DriverCommand {
 
     @Override
     public String getCommand() {
-        return "";
+        return "M600";
     }
 
     @Override
