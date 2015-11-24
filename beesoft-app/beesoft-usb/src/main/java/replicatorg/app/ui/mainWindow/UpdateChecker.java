@@ -44,7 +44,7 @@ import replicatorg.app.ui.panels.BaseDialog;
  */
 public class UpdateChecker extends BaseDialog {
 
-    private static final String serverURL = "https://www.beeverycreative.com/public/software/software/";
+    private static final String serverURL = "https://www.beeverycreative.com/public/software/BEESOFT/";
 
     private File fileFromServer = null;
     private boolean updateStableAvailable;
@@ -158,9 +158,6 @@ public class UpdateChecker extends BaseDialog {
         softwareFromServer.setVersionFromString(softServerVersionString);
         softwareBetaFromServer.setVersionFromString(softServerVersionBetaString);
 
-        /**
-         * If is a beta versions, alert for updates of betas or stable
-         */
         if (softVersionString.contains("beta")) {
             betaSoftVersion = Integer.valueOf(softVersionString.split("beta")[1]);
 
@@ -179,6 +176,7 @@ public class UpdateChecker extends BaseDialog {
              * Alert for stable updates if BEESOFT version is stable
              */
             if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
+                Base.writeLog("New version, " + softwareFromServer +", available!", this.getClass());
                 updateStableAvailable = true;
                 grabFilenames(false);
                 return true;

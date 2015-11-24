@@ -47,7 +47,6 @@ public class NozzleClean extends BaseDialog {
         disposeThread = new DisposeFeedbackThread6(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
-        Base.maintenanceWizardOpen = true;
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
     }
@@ -494,7 +493,6 @@ public class NozzleClean extends BaseDialog {
             dispose();
             disposeThread.stop();
             Base.bringAllWindowsToFront();
-            Base.maintenanceWizardOpen = false;
             Point5d b = machine.getTablePoints("safe");
             double acLow = machine.getAcceleration("acLow");
             double acHigh = machine.getAcceleration("acHigh");

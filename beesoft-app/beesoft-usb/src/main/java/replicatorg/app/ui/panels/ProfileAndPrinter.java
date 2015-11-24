@@ -29,7 +29,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class ProfileAndPrinter extends BaseDialog {
-
+    
     private String coilText;
     private PrinterInfo selectedPrinter;
     private final boolean printerAvailable;
@@ -301,6 +301,8 @@ public class ProfileAndPrinter extends BaseDialog {
     }
 
     private void populatePrinterComboBox() {
+        String printerName;
+        
         if (printerAvailable == false) {
             printerComboBox.setEnabled(false);
 
@@ -316,7 +318,8 @@ public class ProfileAndPrinter extends BaseDialog {
             supportedPrinters = new String[slicerConfigList.size()];
 
             for (SlicerConfig sc : slicerConfigList) {
-                supportedPrinters[i++] = sc.getPrinterName();
+                printerName = sc.getPrinterName();
+                supportedPrinters[i++] = PrinterInfo.filamentCodeToFormalString(printerName);
             }
 
             printerComboBox.setModel(
@@ -331,11 +334,9 @@ public class ProfileAndPrinter extends BaseDialog {
                 printerComboBox.setEnabled(false);
                 printer = new String[1];
                 printer[0] = Base.getMachineLoader().getMachineInterface()
-                        .getDriver().getConnectedDevice().toString();
-
-                if (printer[0].equals(PrinterInfo.BEETHEFIRST0.toString())) {
-                    printer[0] = PrinterInfo.BEETHEFIRST.toString();
-                }
+                        .getDriver().getConnectedDevice().presentationName();
+                
+              
 
                 printerComboBox.setModel(new DefaultComboBoxModel(printer));
                 firstInstantiation = false;

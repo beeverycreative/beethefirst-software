@@ -147,21 +147,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
         window.setEnabled(true);
 
-        // Checks for software and firmware updates
-        if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
-            UpdateChecker advise = new UpdateChecker();
-
-            if (advise.isUpdateBetaAvailable()) {
-                advise.setMessage("AvailableBeta");
-                advise.setVisible(true);
-            } else if (advise.isUpdateStableAvailable()) {
-                advise.setMessage("AvailableStable");
-                advise.setVisible(true);
-            } else {
-                advise.dispose();
-            }
-        }
-
         /**
          * Error occured during driver initialization
          */

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.model.PrintBed;
@@ -79,7 +80,7 @@ public class Printer {
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
         if (gcode != null && gcode.canRead() && gcode.length() != 0) {
-            replaceLineInFile(gcode.getPath(), "M31 A0 L0");
+            replaceLineInFile(gcode.getPath(), "M31 A0");
             Base.writeLog("GCode generated", this.getClass());
         } else {
             if (!gcode.canRead() || gcode.length() == 0) {
@@ -98,21 +99,21 @@ public class Printer {
 
         String m31String;
         File fileToRead = new File(pathString);
-        File fileToWrite = new File(pathString + "_modified");
+        File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
 
-        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes()
-                + " L" + getGCodeNLines();
+        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes();
+        //+ " L" + getGCodeNLines();
 
-        Base.writeLog("Attempting to replace M31 A0 L0 with " + m31String, this.getClass());
+        Base.writeLog("Attempting to replace M31 A0 with " + m31String, this.getClass());
         Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
         Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
-        
+
         try {
             Reader reader = new InputStreamReader(
                     new FileInputStream(fileToRead), "UTF-8");
             BufferedReader fin = new BufferedReader(reader);
             Writer writer = new OutputStreamWriter(
-                    new FileOutputStream(fileToWrite), "UTF-8");
+                    new FileOutputStream(fileToWrite, false), "UTF-8");
             BufferedWriter fout = new BufferedWriter(writer);
             String s;
             while ((s = fin.readLine()) != null) {
@@ -129,24 +130,9 @@ public class Printer {
             fout.close();
             fout = null;
 
-            // Moves the new temp file to the original one
-            /*
-            if (fileToRead.delete()) {
-                Base.writeLog("Copying modified file to the original one's path", this.getClass());
-                fileToWrite.renameTo(new File(pathString));
-            } else {
-                Base.writeLog("Couldn't delete original file, permission problems?", this.getClass());
-                Base.writeLog("r: " + fileToRead.canRead() 
-                        + " w: " + fileToRead.canWrite() 
-                        + " x: " + fileToRead.canExecute(), this.getClass());
-            }
-            */
-
         } catch (IOException e) {
             Base.writeLog("IOException when attempting to replace M31", this.getClass());
             Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
-        } catch (SecurityException e) {
-            Base.writeLog("OS seems to have sandboxed BEESOFT when attempting to remove the unmodified GCode file", this.getClass());
         }
     }
 
@@ -387,7 +373,11 @@ public class Printer {
         if (printPrepared) {
             return Double.parseDouble(generator.getValue("print_temperature"));
         } else {
-            return -1;
+            return FilamentControler.getColorTemperature(
+                    Base.getMainWindow().getMachine().getDriver().getCoilText(),
+                    "medium",
+                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
+            );
         }
     }
 }

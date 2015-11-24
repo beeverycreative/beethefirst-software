@@ -41,7 +41,6 @@ public class ExtruderSwitch2 extends BaseDialog {
         setFont();
         setTextLanguage();
         enableDrag();
-        Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
@@ -230,7 +229,6 @@ public class ExtruderSwitch2 extends BaseDialog {
         finalizeHeat();
         updateThread.stop();
         Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);

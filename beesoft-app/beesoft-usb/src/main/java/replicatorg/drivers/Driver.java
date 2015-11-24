@@ -92,26 +92,14 @@ public interface Driver {
      * Transfer a GCode file content.
      *
      * @param gcode GCode file
-     * @param estimatedTime Estimated time for print duration
-     * @param nLines Number of lines of GCode file
      * @param psAutonomous Autonomous agent that handles print with autonomy
      * @return error or success message
      */
-    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous);
-
-    /**
-     * Transfer a GCode file content - simple transfer.
-     *
-     * @param gcode GCode file
-     * @param psAutonomous Autonomous agent that handles print with autonomy
-     * @return error or success message
-     */
-    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous);
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous);
 
     /**
      * Start print via Autonomous mode.
      *
-     * @return
      */
     public void startPrintAutonomous();
 
@@ -120,13 +108,6 @@ public interface Driver {
      *
      */
     public void getPrintSessionsVariables();
-
-    /**
-     * Getter for current transfer percentage during a transfer.
-     *
-     * @return transfer percentage during a transfer.
-     */
-    public double getTransferPercentage();
 
     /**
      * Read machine temperature.
@@ -545,7 +526,7 @@ public interface Driver {
      * @return <true> if machine ready
      * <false> if not
      */
-    public boolean getMachineStatus();
+    public boolean getMachineReady();
 
     /**
      * Checks if machine is ready - firmware side.
@@ -587,4 +568,5 @@ public interface Driver {
     public boolean getMachinePaused();
     public void setMachinePaused(boolean machinePaused);
     public void closeFeedback();
+    public int getQueueSize();
 }

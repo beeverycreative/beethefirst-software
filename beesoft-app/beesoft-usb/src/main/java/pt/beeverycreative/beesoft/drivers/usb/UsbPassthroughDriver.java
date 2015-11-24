@@ -88,7 +88,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final int QUEUE_LIMIT = 85;
     private static final int QUEUE_WAIT = 1000;
     private static final int SEND_WAIT = 2; //2 did not work
-    private int queue_size;
+    private int queue_size = 0;
     private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispatchTime;
     private static Version bootloaderVersion = new Version();
@@ -96,18 +96,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
     private boolean machineReady;
     private boolean machinePaused;
+    private boolean machineShutdown;
     private boolean machinePowerSaving;
+    private boolean machinePrinting;
     private long startTS;
     private int ID = 0;
     private boolean isAutonomous;
-    private double transferPercentage = 0;
     private boolean driverError = false;
     private String driverErrorDescription;
     private boolean stopTransfer = false;
     private static boolean bootedFromBootloader = false;
     private static boolean backupConfig = false;
     private static String backupCoilText = "";
-    private static double backupZVal = -1;
+    private static double backupZVal = 123.495;
 
     private static final Feedback feedbackWindow = new Feedback();
     private static FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
@@ -201,6 +202,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
         feedbackWindow.dispose();
         feedbackThread = null;
+    }
+
+    @Override
+    public int getQueueSize() {
+        return queue_size;
     }
 
     /**
@@ -311,33 +317,31 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Firmware version " + firmwareVersion, this.getClass());
             Base.writeLog("Serial number: " + serialNumberString, this.getClass());
 
-            // this no longer makes sense, as we allow the user to choose which firmware he wants to flash
-            /*
-             if (firmwareVersion.getVersionString().equalsIgnoreCase(connectedDevice.bootloaderString()) == false) {
-             Base.writeLog("Firmware is not OK", this.getClass());
-             Base.writeLog("Firmware version string: "
-             + firmwareVersion.getVersionString(), this.getClass());
-             Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
-             // Warn user to restart BTF and restart BEESOFT.
-             Warning firmwareOutDate = new Warning("close");
-             firmwareOutDate.setMessage("FirmwareOutDateVersion");
-             firmwareOutDate.setVisible(true);
+            if (firmwareVersion.getVersionString().equals(connectedDevice.bootloaderString()) == false) {
+                Base.writeLog("Firmware is not OK", this.getClass());
+                Base.writeLog("Firmware version string: "
+                        + firmwareVersion.getVersionString(), this.getClass());
+                Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
+                // Warn user to restart BTF and restart BEESOFT.
+                Warning firmwareOutDate = new Warning("close");
+                firmwareOutDate.setMessage("FirmwareOutDateVersion");
+                firmwareOutDate.setVisible(true);
 
-             Base.getMainWindow().setEnabled(false);
-             // Sleep forever, until restart.
-             while (true) {
-             hiccup(100, 0);
-             }
+                Base.getMainWindow().setEnabled(false);
+                // Sleep forever, until restart.
+                while (true) {
+                    hiccup(100, 0);
+                }
 
-             } //no need for else
-             */
+            } //no need for else
+
             setBusy(true);
 
             if (backupConfig) {
                 setCoilText(backupCoilText);
                 dispatchCommand("M604 Z" + backupZVal);
                 backupConfig = false;
-                backupZVal = -1;
+                backupZVal = 123.495;
                 backupCoilText = "";
             } else {
                 updateCoilText();
@@ -826,6 +830,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String dispatchCommand(String next) {
 
+        if (next.contains("G")) {
+            setBusy(true);
+        }
+
         String ans = _dispatchCommand(next);
         queue_size = getQfromStatus(ans);
 
@@ -912,7 +920,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         coilTextLowerCase = coilText.toLowerCase();
 
         try {
-            if (coilTextLowerCase.contains("ok") 
+            if (coilTextLowerCase.contains("ok")
                     && coilTextLowerCase.contains("bad") == false) {
                 coilText = coilText.substring(
                         coilText.indexOf('\'') + 1, coilText.lastIndexOf('\'')
@@ -957,8 +965,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void readZValue() {
-        String temp = dispatchCommand("M600");
-        String home_pos_z = "0.0";
+        String temp = "", response, home_pos_z = "123.495";
+        sendCommand("M600");
+        
+        hiccup(100, 0);
+        
+        while((response = readResponse()).equals("") == false) {
+            temp += response;
+            hiccup(10, 0);
+        }
+        
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "(home_pos_z)";	// Variable Name 1
         String re3 = "(\\s+)";	// White Space 1
@@ -988,24 +1004,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public double getTransferPercentage() {
-        return transferPercentage;
-    }
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
 
-    @Override
-    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous) {
-
-        long loop = System.currentTimeMillis();
-        long time;
-        int file_size;
+        long time, loop = System.currentTimeMillis();
         byte[] gcodeBytes;
-        int srcPos;
+        int file_size, srcPos, totalBlocks;
         int offset = MESSAGE_SIZE;
         int destPos = 0;
         int totalMessages;
         int message = 0;
         int totalBytes = 0;
-        int totalBlocks;
+        double transferPercentage;
         String logTransfer = "";
 
         file_size = (int) gcode.length();
@@ -1096,10 +1105,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 //System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-                transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
+                transferPercentage = ((double) message / totalMessages) * 100;
 
                 if (Base.printPaused == false) {
-                    psAutonomous.updatePrintBar(transferPercentage);
+                    psAutonomous.updatePrintBar((int) transferPercentage);
                 }
 
 //                System.out.println("\tmessage: "+message);
@@ -1155,175 +1164,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-            transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
-            psAutonomous.updatePrintBar(transferPercentage);
-        }
-        System.out.println("Block " + totalBlocks + "/" + totalBlocks);
-
-//        System.out.println("Message " + totalMessages + "/" + totalMessages + " with " + lastMessage.length + " bytes transfered with success");
-        loop = System.currentTimeMillis() - loop;
-        double transferSpeed = totalBytes / (loop / 1000.0);
-        String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
-                + "s : " + transferSpeed + "kbps\n";
-        logTransfer += statistics;
-        //Base.writeStatistics(logTransfer);
-        System.out.println(statistics);
-
-        double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
-        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
-
-        transferMode = false;
-
-        // WORKAROUND FOR FIRMWARE BUG
-        // dispatchCommand("M506", COM.BLOCK);
-        // dispatchCommand("G28 Z", COM.BLOCK);
-        // dispatchCommand("G28 X Y", COM.BLOCK);
-        return RESPONSE_OK;
-    }
-
-    @Override
-    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
-
-        long loop = System.currentTimeMillis();
-        long time;
-        int file_size;
-        byte[] gcodeBytes;
-        int srcPos;
-        int offset = MESSAGE_SIZE;
-        int destPos = 0;
-        int totalMessages;
-        int message = 0;
-        int totalBytes = 0;
-        int totalBlocks;
-        String logTransfer = "";
-
-        file_size = (int) gcode.length();
-        totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
-        totalBlocks = (int) Math.ceil((double) file_size / (double) (MESSAGES_IN_BLOCK * MESSAGE_SIZE));
-
-        String fileSizeInfo = "File size: " + file_size + " bytes";
-        logTransfer += fileSizeInfo + "\n";
-        System.out.println(fileSizeInfo);
-        String s_totalMessages = "Number of messages to Transfer: " + totalMessages;
-        System.out.println(s_totalMessages);
-        logTransfer += s_totalMessages + "\n";
-        String s_totalBlocks = "Number of blocks to Transfer: " + totalBlocks;
-        System.out.println(s_totalBlocks);
-        logTransfer += s_totalBlocks + "\n";
-
-        transferMode = true;
-
-        //Stores file in byte array
-        gcodeBytes = getBytesFromFile(gcode);
-        byte[] iMessage;
-
-        //Send the file 1 block at a time, only send full blocks
-        //Each block is MESSAGES_IN_BLOCK messages long        
-        for (int block = 1; block < totalBlocks; block++) {
-
-            //check if the transfer was canceled
-            if (stopTransfer == true) {
-                Base.writeLog("Transfer canceled.", this.getClass());
-                driverErrorDescription = ERROR + ":Transfer canceled.";
-                //dispatchCommand("G28");
-                transferMode = false;
-                isAutonomous = false;
-                stopTransfer = false;
-                return driverErrorDescription;
-            }
-
-            // size is MAX_BLOCK_SIZE of file_size
-            if (setTransferSize(destPos, (destPos + MAX_BLOCK_SIZE) - 1).contains(ERROR)) {
-                driverError = true;
-                driverErrorDescription = ERROR + ":setTransferSize failed";
-                transferMode = false;
-
-                return driverErrorDescription;
-            } else {
-                Base.writeLog("SDCard space allocated with success", this.getClass());
-            }
-//            System.out.println("block:" + block + "M28 A" + srcPos + " D" + ((srcPos + MAX_BLOCK_SIZE) - 1));
-            for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
-
-                message++;
-                //Get byte array with MESSAGE_SIZE
-                time = System.currentTimeMillis();
-
-                // Updates variables
-                srcPos = destPos;
-                destPos = srcPos + offset;
-                iMessage = subbytes(gcodeBytes, srcPos, destPos);
-                //Transfer each Block
-                if (transferMessage(iMessage).contains(ERROR)) {
-                    driverError = true;
-                    driverErrorDescription = ERROR + ":512B message transfer failed";
-                    transferMode = false;
-
-                    return driverErrorDescription;
-                } else {
-                    totalBytes += iMessage.length;
-//                Base.writeLog("512B block transfered with success");
-                }
-
-                System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-                transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
-                psAutonomous.updatePrintBar(transferPercentage);
-//                System.out.println("\tmessage: "+message);
-//                System.out.println("\tsrc: "+srcPos+"\tdst: "+destPos);
-
-            }
-            System.out.println("Block " + block + "/" + totalBlocks);
-        }
-
-        //Do the last Block!
-        // Updates variables
-        srcPos = destPos;
-
-//        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
-        //check if the transfer was canceled
-        if (stopTransfer == true) {
-            Base.writeLog("Transfer canceled.", this.getClass());
-            driverErrorDescription = ERROR + ":Transfer canceled.";
-            //dispatchCommand("G28");
-            transferMode = false;
-            isAutonomous = false;
-            stopTransfer = false;
-            return driverErrorDescription;
-        }
-
-        // last block is special
-        //destpos is MAX_BLOCK_SIZE+src or file_size
-        if (setTransferSize(srcPos, Math.min(srcPos + MAX_BLOCK_SIZE, file_size) - 1).contains(ERROR)) {
-            driverError = true;
-            driverErrorDescription = ERROR + ":setTransferSize failed";
-            transferMode = false;
-
-            return driverErrorDescription;
-        } else {
-            Base.writeLog("SDCard space allocated with success", this.getClass());
-        }
-
-        for (; srcPos < file_size; srcPos += offset) {
-            message++;
-            //Get byte array with MESSAGE_SIZE
-            time = System.currentTimeMillis();
-
-            iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
-            //Transfer each Block
-            if (transferMessage(iMessage).contains(ERROR)) {
-                driverError = true;
-                driverErrorDescription = ERROR + ":512B message transfer failed";
-                transferMode = false;
-
-                return driverErrorDescription;
-            } else {
-                totalBytes += iMessage.length;
-//                Base.writeLog("512B block transfered with success");
-            }
-
-            System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-            transferPercentage = (message * 1.0 / totalMessages * 1.0) * 100;
-            psAutonomous.updatePrintBar(transferPercentage);
+            transferPercentage = ((double) message / totalMessages) * 100;
+            psAutonomous.updatePrintBar((int) transferPercentage);
         }
         System.out.println("Block " + totalBlocks + "/" + totalBlocks);
 
@@ -1344,6 +1186,171 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return RESPONSE_OK;
     }
 
+    /*
+     @Override
+     public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
+
+     long loop = System.currentTimeMillis();
+     long time;
+     int file_size;
+     byte[] gcodeBytes;
+     int srcPos;
+     int offset = MESSAGE_SIZE;
+     int destPos = 0;
+     int totalMessages;
+     int message = 0;
+     int totalBytes = 0;
+     int totalBlocks;
+     int transferPercentage;
+     String logTransfer = "";
+
+     file_size = (int) gcode.length();
+     totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
+     totalBlocks = (int) Math.ceil((double) file_size / (double) (MESSAGES_IN_BLOCK * MESSAGE_SIZE));
+
+     String fileSizeInfo = "File size: " + file_size + " bytes";
+     logTransfer += fileSizeInfo + "\n";
+     System.out.println(fileSizeInfo);
+     String s_totalMessages = "Number of messages to Transfer: " + totalMessages;
+     System.out.println(s_totalMessages);
+     logTransfer += s_totalMessages + "\n";
+     String s_totalBlocks = "Number of blocks to Transfer: " + totalBlocks;
+     System.out.println(s_totalBlocks);
+     logTransfer += s_totalBlocks + "\n";
+
+     transferMode = true;
+
+     //Stores file in byte array
+     gcodeBytes = getBytesFromFile(gcode);
+     byte[] iMessage;
+
+     //Send the file 1 block at a time, only send full blocks
+     //Each block is MESSAGES_IN_BLOCK messages long        
+     for (int block = 1; block < totalBlocks; block++) {
+
+     //check if the transfer was canceled
+     if (stopTransfer == true) {
+     Base.writeLog("Transfer canceled.", this.getClass());
+     driverErrorDescription = ERROR + ":Transfer canceled.";
+     //dispatchCommand("G28");
+     transferMode = false;
+     isAutonomous = false;
+     stopTransfer = false;
+     return driverErrorDescription;
+     }
+
+     // size is MAX_BLOCK_SIZE of file_size
+     if (setTransferSize(destPos, (destPos + MAX_BLOCK_SIZE) - 1).contains(ERROR)) {
+     driverError = true;
+     driverErrorDescription = ERROR + ":setTransferSize failed";
+     transferMode = false;
+
+     return driverErrorDescription;
+     } else {
+     Base.writeLog("SDCard space allocated with success", this.getClass());
+     }
+     //            System.out.println("block:" + block + "M28 A" + srcPos + " D" + ((srcPos + MAX_BLOCK_SIZE) - 1));
+     for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
+
+     message++;
+     //Get byte array with MESSAGE_SIZE
+     time = System.currentTimeMillis();
+
+     // Updates variables
+     srcPos = destPos;
+     destPos = srcPos + offset;
+     iMessage = subbytes(gcodeBytes, srcPos, destPos);
+     //Transfer each Block
+     if (transferMessage(iMessage).contains(ERROR)) {
+     driverError = true;
+     driverErrorDescription = ERROR + ":512B message transfer failed";
+     transferMode = false;
+
+     return driverErrorDescription;
+     } else {
+     totalBytes += iMessage.length;
+     //                Base.writeLog("512B block transfered with success");
+     }
+
+     System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
+     transferPercentage = (message / totalMessages) * 100;
+     psAutonomous.updatePrintBar(transferPercentage);
+     //                System.out.println("\tmessage: "+message);
+     //                System.out.println("\tsrc: "+srcPos+"\tdst: "+destPos);
+
+     }
+     System.out.println("Block " + block + "/" + totalBlocks);
+     }
+
+     //Do the last Block!
+     // Updates variables
+     srcPos = destPos;
+
+     //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
+     //check if the transfer was canceled
+     if (stopTransfer == true) {
+     Base.writeLog("Transfer canceled.", this.getClass());
+     driverErrorDescription = ERROR + ":Transfer canceled.";
+     //dispatchCommand("G28");
+     transferMode = false;
+     isAutonomous = false;
+     stopTransfer = false;
+     return driverErrorDescription;
+     }
+
+     // last block is special
+     //destpos is MAX_BLOCK_SIZE+src or file_size
+     if (setTransferSize(srcPos, Math.min(srcPos + MAX_BLOCK_SIZE, file_size) - 1).contains(ERROR)) {
+     driverError = true;
+     driverErrorDescription = ERROR + ":setTransferSize failed";
+     transferMode = false;
+
+     return driverErrorDescription;
+     } else {
+     Base.writeLog("SDCard space allocated with success", this.getClass());
+     }
+
+     for (; srcPos < file_size; srcPos += offset) {
+     message++;
+     //Get byte array with MESSAGE_SIZE
+     time = System.currentTimeMillis();
+
+     iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
+     //Transfer each Block
+     if (transferMessage(iMessage).contains(ERROR)) {
+     driverError = true;
+     driverErrorDescription = ERROR + ":512B message transfer failed";
+     transferMode = false;
+
+     return driverErrorDescription;
+     } else {
+     totalBytes += iMessage.length;
+     //                Base.writeLog("512B block transfered with success");
+     }
+
+     System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
+     transferPercentage = (message / totalMessages) * 100;
+     psAutonomous.updatePrintBar(transferPercentage);
+     }
+     System.out.println("Block " + totalBlocks + "/" + totalBlocks);
+
+     //        System.out.println("Message " + totalMessages + "/" + totalMessages + " with " + lastMessage.length + " bytes transfered with success");
+     loop = System.currentTimeMillis() - loop;
+     double transferSpeed = totalBytes / (loop / 1000.0);
+     String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
+     + "s : " + transferSpeed + "kbps\n";
+     logTransfer += statistics;
+     //Base.writeStatistics(logTransfer);
+     System.out.println(statistics);
+
+     double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
+     ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
+
+     transferMode = false;
+
+     return RESPONSE_OK;
+     }
+     */
     @Override
     public void startPrintAutonomous() {
         dispatchCommand(BEGIN_PRINT, COM.DEFAULT);
@@ -1359,8 +1366,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
 //        currentNumberLines - [3];
         String printSession;
         String[] data;
+        int tries;
 
-        printSession = dispatchCommand(READ_VARIABLES, COM.DEFAULT);
+        printSession = dispatchCommand(READ_VARIABLES);
+
+        tries = 0;
+        while (printSession.contains("A") == false
+                || printSession.contains("B") == false
+                || printSession.contains("C") == false
+                || printSession.contains("D") == false) {
+            printSession = readResponse();
+
+            if (tries++ >= 3) {
+                break;
+            }
+        }
+
         data = parseData(printSession);
 
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
@@ -1549,7 +1570,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
         command = TRANSFER_BLOCK + "A" + srcPos + " D" + destPos;
         out += command + "\n";
 
-        out = dispatchCommand(command);
+        //out = dispatchCommand(command);
+        sendCommand(command);
+
+        hiccup(100, 0);
+
+        out = readResponse();
 
 //        System.err.println("Source Pos = " + srcPos);
 //        System.err.println("Destination Pos = " + destPos);
@@ -1589,6 +1615,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
         if (!(tries > 0)) {
             out += response + "\n";
             return ERROR + out + "M28 failed. Response not OK";
@@ -2046,8 +2073,23 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String status;
 
         status = dispatchCommand(GET_STATUS);
-        machineReady = status.contains(STATUS_OK);
+
+        if (status.contains("S:") == false) {
+            return;
+        }
+
+        if (status.contains(STATUS_OK)) {
+            machineReady = true;
+            if (queue_size == 0) {
+                setBusy(false);
+            }
+        } else {
+            machineReady = false;
+        }
+        
         machinePowerSaving = status.contains("Power_Saving");
+        machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");
+        machinePrinting = status.toLowerCase().contains(STATUS_SDCARD);
 
         if (machinePaused == false) {
             machinePaused = status.contains(STATUS_PAUSED);
@@ -2057,9 +2099,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
 //        System.out.println("machineReady: "+machineReady);
         //machine.currentTool().setCurrentTemperature(temperature);        
+        machine.setLastStatusString(status);
         machine.setMachineReady(machineReady);
         machine.setMachinePaused(machinePaused);
         machine.setMachinePowerSaving(machinePowerSaving);
+        machine.setMachineShutdown(machineShutdown);
+        machine.setMachinePrinting(machinePrinting);
     }
 
     @Override
@@ -2118,29 +2163,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14 + re15 + re16 + re17 + re18, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher m = p.matcher(position);
         if (m.find()) {
-            String w1 = m.group(1);
-            String c1 = m.group(2);
-            String ws1 = m.group(3);
-            String w2 = m.group(4);
-            String c2 = m.group(5);
             String float1 = m.group(6);
-            String ws2 = m.group(7);
-            String w3 = m.group(8);
-            String c3 = m.group(9);
             String float2 = m.group(10);
-            String ws3 = m.group(11);
-            String w4 = m.group(12);
-            String c4 = m.group(13);
             String float3 = m.group(14);
-            String ws4 = m.group(15);
-            String w5 = m.group(16);
             String float4 = m.group(17);
             myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
             Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
         }
-//        synchronized (currentPosition) {
-        currentPosition.set(myCurrentPosition);
-//        }
+
+        synchronized (currentPosition) {
+            currentPosition.set(myCurrentPosition);
+            posAvailable = true;
+            currentPosition.notifyAll();
+        }
 
         return myCurrentPosition;
     }
@@ -2822,15 +2857,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private void updateMachineInfo() {
-
-//        //get bootloader version
-//        sendCommand(GET_BOOTLOADER_VERSION);
-//        hiccup(10, 0);
-//        String bootloader = readResponse();
-//        bootloader_version = new Version().fromMachine3(bootloader);
-//
-//        System.out.println(GET_BOOTLOADER_VERSION + ": " + bootloader + ":" + bootloader_version.toString());
-        //get serial number - Must have exactly 10 chars!
         serialNumberString = "0000000000";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
@@ -2863,15 +2889,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int updateFirmware() {
 
-        //String versionToCompare = Version.Flavour.BEEVC + "-" + connectedDevice + "-" + Base.VERSION_FIRMWARE_FINAL;
         String versionToCompare = connectedDevice.bootloaderString();
         Base.writeLog("Firmware should be: " + versionToCompare, this.getClass());
 
         //check if the firmware is the same
-        String machineFirmware = firmwareVersion.getRawVersionString();
-        Base.writeLog("Firmware is: " + firmwareVersion.getRawVersionString(), this.getClass());
+        String machineFirmware = firmwareVersion.getVersionString();
+        Base.writeLog("Firmware is: " + machineFirmware, this.getClass());
 
-        if (machineFirmware.toLowerCase().contains(versionToCompare.toLowerCase()) == true) {
+        if (machineFirmware.equals(versionToCompare) == true) {
             Base.writeLog("No update necessary, firmware is as it should be", this.getClass());
             return 0; // NO UPDATE NECESSARY
         } // else carry on updating
@@ -2975,6 +3000,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         response = dispatchCommand("M625").toLowerCase();
         if (response.contains("bad")) {
             Base.writeLog("Something is wrong with the firmware, flashing without saving calibration", this.getClass());
+            establishConnectionToBootloader();
             return false;
         }
 
@@ -2990,7 +3016,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         hiccup(3000, 0);
 
         if (establishConnection() == false) {
-            Base.writeLog("Couldn't go back to bootloader after obtaining data from firmware, requesting user to restart", this.getClass());
+            Base.writeLog("Couldn't establish connection after attempting to go back to bootloader, requesting user to restart", this.getClass());
 
             // Warn user to restart BTF and restart BEESOFT.
             Warning firmwareOutDate = new Warning("close");
@@ -3004,6 +3030,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
+        response = dispatchCommand("M116").toLowerCase();
+        if (response.contains("bad")) {
+            Base.writeLog("Couldn't go back to bootloader, asking user to restart printer", this.getClass());
+            establishConnectionToBootloader();
+        }
+
         Base.writeLog("Acquired Z value and loaded filament with success!", this.getClass());
         backupConfig = true;
         return true;
@@ -3013,6 +3045,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean establishConnection() {
         try {
             boolean ready;
+            int tries = 0;
 
             ready = false;
 
@@ -3048,12 +3081,80 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
                     Thread.sleep(1000);
                 }
+
+                if (tries++ >= 10) {
+                    feedbackWindow.setFeedback3(Feedback.RESTART_PRINTER);
+                }
             } while (ready == false);
 
         } catch (Exception ex) {
             Base.writeLog("Exception on establishConnection()", this.getClass());
             return false;
         }
+
+        return true;
+    }
+
+    private boolean establishConnectionToBootloader() {
+        boolean ready;
+        String response;
+
+        ready = false;
+
+        do {
+            try {
+
+                if (pipes != null && pipes.isOpen()) {
+                    closePipe(pipes);
+                }
+
+                if (m_usbDevice != null) {
+                    m_usbDevice.close();
+                    m_usbDevice = null;
+                }
+
+                pipes = null;
+                while (m_usbDevice == null) {
+                    InitUsbDevice();
+                    hiccup(100, 0);
+                }
+
+                pipes = GetPipe(m_usbDevice);
+
+                if (pipes != null) {
+                    openPipe(pipes);
+                } else {
+                    continue;
+                }
+
+                if (isInitialized() && testPipes(pipes)) {
+
+                    hiccup(100, 0);
+
+                    int i = 100;
+                    while (readResponse().equals("") == false) {
+                        hiccup(10, 0);
+                    }
+
+                    sendCommand("M116");
+                    hiccup(100, 0);
+                    response = readResponse().toLowerCase();
+
+                    if (response.equals("") == false
+                            && response.contains("bad") == false) {
+                        //Base.getMainWindow().getButtons().setMessage("is connecting");
+                        ready = true;
+                    } else {
+                        feedbackWindow.setFeedback2(Feedback.RESTART_PRINTER);
+                    }
+                } else {
+                    Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
+                    Thread.sleep(1000);
+                }
+
+            } catch (Exception ex) {
+            }
+        } while (ready == false);
 
         return true;
     }

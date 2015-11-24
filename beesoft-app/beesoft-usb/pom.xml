@@ -154,9 +154,6 @@
                                 </copy>
                                 
                                 <!-- standard files -->                                
-                                <copy todir="${target.dir}/pypy">
-                                    <fileset dir="${resources.dir}/pypy/distro/pypy-2.0-beta1-win32" />
-                                </copy>
                                 <copy todir="${target.dir}/curaEngine/bin">
                                     <fileset dir="${resources.dir}/curaEngine/distros/windows" />
                                 </copy>
@@ -231,9 +228,6 @@
                                 <copy todir="${target.dir}">
                                     <filelist dir="${dist.dir}" files="BEESOFT" />
                                 </copy>
-                                <copy todir="${target.dir}/pypy">
-                                    <fileset dir="${resources.dir}/pypy/distro/pypy-2.0-beta1-linux" />
-                                </copy>
                                 <copy todir="${target.dir}/curaEngine/bin">
                                     <fileset dir="${resources.dir}/curaEngine/distros/linux" />
                                 </copy>
@@ -269,7 +263,6 @@
                                 </copy>
                                 <!-- permissions -->
                                 <chmod file="${target.dir}/BEESOFT" perm="ugo+rx" />
-                                <chmod file="${target.dir}/pypy/bin/pypy" perm="ugo+rx" />
                                 <chmod file="${target.dir}/curaEngine" perm="ugo+rx" includes="**/*" />
                                                         
                             </target>                                        
@@ -367,9 +360,6 @@
                                         </copy>
                                         <copy todir="${reso.dir}/3DModels">
                                             <fileset dir="${project.basedir}/src/main/resources/3DModels" />
-                                        </copy>
-                                        <copy todir="${reso.dir}/pypy">
-                                            <fileset dir="${project.basedir}/src/main/resources/pypy/distro/pypy-2.0-beta1-osx" />
                                         </copy>
                                         <copy todir="${reso.dir}/estimator">
                                             <fileset dir="${project.basedir}/src/main/resources/estimator" />
@@ -684,7 +674,7 @@
             <artifactId>usb-api</artifactId>
             <version>1.0.2</version>
         </dependency>
-        
+        <!--        
         <dependency>
             <groupId>de.ailis.usb4java</groupId>
             <artifactId>usb4java</artifactId>
@@ -692,12 +682,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/external_libs/usb4java-1.0.0.jar</systemPath>
         </dependency>
+        -->
         <dependency>
             <groupId>intel.rssdk</groupId>
             <artifactId>libpxcclr</artifactId>
             <version>1.0.0</version>
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/src/main/resources/external_libs/libpxcclr-1.0.0.jar</systemPath>-->
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/external_libs/libpxcclr-1.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>

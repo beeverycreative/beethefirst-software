@@ -53,6 +53,7 @@ public class FilamentInsertion extends BaseDialog {
         bPrevious.setVisible(false);
     }
 
+    @Override
     public void resetFeedbackComponents() {
         this.setEnabled(true);
         if (!bLoadMouseClickedReady) {
@@ -139,6 +140,7 @@ public class FilamentInsertion extends BaseDialog {
 
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
@@ -207,7 +209,6 @@ public class FilamentInsertion extends BaseDialog {
             Base.bringAllWindowsToFront();
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
             disposeThread.stop();
             Base.enableAllOpenWindows();
             finalizeHeat();
@@ -573,7 +574,6 @@ public class FilamentInsertion extends BaseDialog {
                 finalizeHeat();
                 Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
                 Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-                Base.maintenanceWizardOpen = false;
                 Base.enableAllOpenWindows();
 
                 machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());

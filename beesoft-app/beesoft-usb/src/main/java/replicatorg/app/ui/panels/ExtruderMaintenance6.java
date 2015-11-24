@@ -133,7 +133,6 @@ public class ExtruderMaintenance6 extends BaseDialog {
         if (Base.printPaused == false) {
             dispose();
             Base.bringAllWindowsToFront();
-            Base.maintenanceWizardOpen = false;
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             Base.enableAllOpenWindows();

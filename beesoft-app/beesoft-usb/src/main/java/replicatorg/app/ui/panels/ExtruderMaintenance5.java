@@ -170,7 +170,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
             Base.bringAllWindowsToFront();
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
             disposeThread.stop();
             Base.enableAllOpenWindows();
             Point5d b = machine.getTablePoints("safe");

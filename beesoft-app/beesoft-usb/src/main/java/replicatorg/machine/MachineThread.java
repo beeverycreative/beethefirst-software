@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.tools.XML;
+import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.DriverError;
 import replicatorg.drivers.DriverFactory;
@@ -46,6 +47,7 @@ class MachineThread extends Thread {
     private final Point5d lastPoint = new Point5d();
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
+    private static boolean checkedForUpdates = false;
 
     class AssessStatusThread extends Thread {
 
@@ -78,18 +80,39 @@ class MachineThread extends Thread {
                 driver.closeFeedback();
             }
 
+            if (checkedForUpdates == false) {
+                // Checks for software and firmware updates
+                if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
+                    UpdateChecker advise = new UpdateChecker();
+                    checkedForUpdates = true;
+
+                    /*
+                    if (advise.isUpdateBetaAvailable()) {
+                        advise.setMessage("AvailableBeta");
+                        advise.setVisible(true);
+                    }*/ 
+                    if (advise.isUpdateStableAvailable()) {
+                        advise.setMessage("AvailableStable");
+                        advise.setVisible(true);
+                    } else {
+                        advise.dispose();
+                    }
+                }
+            }
+
             int counter = 0;
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-
                     if (counter++ == 4) {
                         if (driver.isTransferMode() == false) {
                             driver.readStatus();
-                            if (machineThread.getModel().isMachineInPowerSaving()) {
+                            if (machineThread.getModel().getMachinePowerSaving()) {
                                 Base.getMainWindow().getButtons().setMessage("power saving");
+                            } else if(getModel().getMachineReady()) {
+                                Base.getMainWindow().getButtons().setMessage("is connected");
                             }
                         }
                         counter = 0;

@@ -219,9 +219,11 @@ public class Base {
     public static String VERSION_MACHINE = "000000000000";
     public static String language = "en";
     public static String MACHINE_NAME = "BEETHEFIRST";
-    public static String GCODE_DELIMITER = "--";
-    public static String GCODE_TEMP_FILENAME = "temp.gcode";
-    public static String MODELS_FOLDER = "3DModels";
+    public static final String GCODE_DELIMITER = "--";
+    public static final String GCODE_TEMP_FILENAME = "temp.gcode";
+    public static final String MODELS_FOLDER = "3DModels";
+    public static final String GCODE2PRINTER_PATH = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/gcodeToPrinter.gcode";
+
     /**
      * The textual representation of this version (4 digits, zero padded).
      */
@@ -245,8 +247,6 @@ public class Base {
     private static Properties propertiesFile = null;
     /* Date time instance variables */
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    public static boolean maintenanceOpened = false;
-    public static boolean maintenanceWizardOpen = false;
     public static ArrayList<Thread> systemThreads;
 
     private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
@@ -744,7 +744,7 @@ public class Base {
 
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && isBeesoftAlpha == false)) {
+            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && file.getName().contains("gcodeToPrinter") == false)) {
                 file.delete();
             }
         }
@@ -752,19 +752,19 @@ public class Base {
 
     public static void turnOnPowerSaving(boolean turnOn) {
         /*
-        if (turnOn) {
-//            editor.getMachine().getDriver().dispatchCommand("M641 A1");
-            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
-        } else {
-//            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
-            editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
-        }
-        */
+         if (turnOn) {
+         //            editor.getMachine().getDriver().dispatchCommand("M641 A1");
+         editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
+         } else {
+         //            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
+         editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
+         }
+         */
     }
 
     static public void disposeAllOpenWindows() {
         String name;
-        
+
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             name = win1.getName();
@@ -1538,6 +1538,14 @@ public class Base {
             return applicationVersion + "-" + releaseType;
         } else {
             return applicationVersion;
+        }
+    }
+    
+    public static void hiccup(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            Base.writeLog("Interrupted during hiccup", Base.class);
         }
     }
 }

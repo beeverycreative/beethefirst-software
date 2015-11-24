@@ -1011,18 +1011,16 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
             hashAppearance.setLineAttributes(new LineAttributes(1.5f, LineAttributes.PATTERN_SOLID, true));
             hashAppearance.setColoringAttributes(new ColoringAttributes(.450f, .450f, .450f, ColoringAttributes.NICEST));
             // hashes in each direction on x axis
-            int xHashes = (int) ((buildVol.getX() - 0.0001) / (2 * gridSpacing));
+            int xHashes = (int) Math.floor((double) buildVol.getX() / (2 * gridSpacing));
             // hashes in each direction on y axis
-            int yHashes = (int) ((buildVol.getY() - 0.0001) / (2 * gridSpacing));
+            int yHashes = (int) Math.floor((double) buildVol.getY() / (2 * gridSpacing));
             // Set up hash lines
             LineArray hashLines = new LineArray(8 + 2 * (2 * xHashes + 2 * yHashes), GeometryArray.COORDINATES);
 
             int idx = 0;
             double offset = 0;
 
-            // -1 to get rid of the last line
-            // Avoids displaying a 2mm gap between the last line and buildVolumeX coordinates limit
-            for (int i = 0; i < xHashes - 1; i++) {
+            for (int i = 0; i < xHashes; i++) {
                 offset += gridSpacing;
                 hashLines.setCoordinate(idx++, new Point3d(offset, -buildVol.getY() / 2, 0));
                 hashLines.setCoordinate(idx++, new Point3d(offset, buildVol.getY() / 2, 0));

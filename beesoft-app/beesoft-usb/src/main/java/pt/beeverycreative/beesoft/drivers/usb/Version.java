@@ -173,6 +173,51 @@ public class Version implements Comparable<Version> {
         return version;
     }
 
+    public static String fromFilename(String filename) {
+        Version version;
+        String re1, re2, re3, re4, re5, re6, re7, re8, re9;
+
+        version = new Version();
+
+        re1 = "((?:[a-z][a-z]+))";	// Word 1
+        re2 = "(-)";	// Any Single Character 1
+        re3 = "((?:[a-z][a-z0-9_]*))";	// Variable Name 1
+        re4 = "(-)";	// Any Single Character 2
+        re5 = "(\\d+)";	// Integer Number 1
+        re6 = "(\\.)";	// Any Single Character 3
+        re7 = "(\\d+)";	// Integer Number 2
+        re8 = "(\\.)";	// Any Single Character 4
+        re9 = "(\\d+)";	// Integer Number 3
+
+        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher m = p.matcher(filename);
+        if (m.find()) {
+            try {
+                version.flavour = Flavour.valueOf(m.group(1));
+            } catch (IllegalArgumentException e) {
+                version.flavour = Flavour.UNKNOWN;
+            }
+            
+            try {
+                version.printer = PrinterInfo.valueOf(m.group(3));
+            } catch (IllegalArgumentException e) {
+                version.printer = PrinterInfo.UNKNOWN;
+            }
+            
+            try {
+                version.major = Integer.parseInt(m.group(5));
+                version.minor = Integer.parseInt(m.group(7));
+                version.bug = Integer.parseInt(m.group(9));
+            } catch (NumberFormatException e) {
+                version.major = 0;
+                version.minor = 0;
+                version.bug = 0;
+            }
+        }
+
+        return version.getVersionString();
+    }
+
     public static Version bootloaderVersion(String machineString) {
         Version version = new Version();
         version.versionString = machineString;
@@ -226,8 +271,12 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Couldn't determine bootloader version", Version.class);
-            Base.writeLog("Bootloader string: " + machineString, Version.class);
+            Base
+                    .writeLog("Couldn't determine bootloader version", Version.class
+                    );
+            Base.writeLog(
+                    "Bootloader string: " + machineString, Version.class
+            );
         }
 
         return version;
@@ -275,7 +324,9 @@ public class Version implements Comparable<Version> {
             version.major = 0;
             version.minor = 0;
             version.bug = 0;
-            Base.writeLog("Version format invalid: " + version.versionString, Version.class);
+            Base
+                    .writeLog("Version format invalid: " + version.versionString, Version.class
+                    );
         }
         return version;
     }

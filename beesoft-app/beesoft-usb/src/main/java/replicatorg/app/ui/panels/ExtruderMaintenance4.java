@@ -39,7 +39,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
@@ -232,7 +231,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
         finalizeHeat();
         updateThread.stop();
         Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);

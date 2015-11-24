@@ -22,7 +22,7 @@ import replicatorg.util.Units_and_Numbers;
 public class ModelsOperationCenterMove extends javax.swing.JPanel {
 
     private boolean fiveMM_pressed;
-    
+
     public ModelsOperationCenterMove() {
         initComponents();
         this.fiveMM_pressed = false;
@@ -68,7 +68,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
             jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 0.2 " + Languager.getTagValue(fileKey, "MainWindowButtons", "Inches"));
         } else {
             jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM"));
-        } 
+        }
     }
 
     private void toggle5MM() {
@@ -339,7 +339,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                         jTextField4.setText("");
                     }
                 }
-                    
+
                 if (ProperDefault.get("measures").equals("inches")) {
                     xValue = Units_and_Numbers.inchesToMillimeters(xValue);
                 }
@@ -367,7 +367,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                         jTextField5.setText("");
                     }
                 }
-                
+
                 if (ProperDefault.get("measures").equals("inches")) {
                     yValue = Units_and_Numbers.inchesToMillimeters(yValue);
                 }
@@ -382,7 +382,8 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
 
     private void jTextField6KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField6KeyPressed
 
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER && !Base.getMainWindow().getCanvas().getControlTool(1).heightLocked()) {
+        //if (evt.getKeyCode() == KeyEvent.VK_ENTER && !Base.getMainWindow().getCanvas().getControlTool(1).heightLocked()) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             int nPickedModels = Base.getMainWindow().getBed().getPickedModels().size();
 
             if (nPickedModels > 0) {
@@ -398,7 +399,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
 
                 if (ProperDefault.get("measures").equals("inches")) {
                     zValue = Units_and_Numbers.inchesToMillimeters(zValue);
-                }                
+                }
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, 0, zValue);
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");

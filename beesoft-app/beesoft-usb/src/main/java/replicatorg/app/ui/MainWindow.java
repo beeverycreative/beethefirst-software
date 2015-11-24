@@ -122,7 +122,6 @@ import replicatorg.app.ui.mainWindow.ButtonsPanel;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenter;
 import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
 import replicatorg.app.ui.mainWindow.MessagesPopUp;
-import replicatorg.app.ui.mainWindow.CameraControl;
 import replicatorg.app.ui.mainWindow.ModelsDetailsPanel;
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
@@ -180,8 +179,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     JSplitPane splitPane;
     JLabel lineNumberComponent;
     public PrintBed bed;
-    public SimulationThread simulationThread;
-    public EstimationThread estimationThread;
     JMenuItem saveMenuItem;
     JMenuItem saveAsMenuItem;
     JMenuItem controlPanelItem;
@@ -210,7 +207,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     private boolean oktoGoOnSave = false;
     private boolean newSceneOnDialog = false;
     MessagesPopUp messagesPP;
-    CameraControl camCtrl;
     CompoundEdit compoundEdit;
 
     public MainWindow() {
@@ -343,10 +339,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         return buttons;
     }
 
-    public CameraControl getCameraControl() {
-        return camCtrl;
-    }
-
     public String getBuildTime() {
         return buildTime;
     }
@@ -369,19 +361,21 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public boolean validatePrintConditions() {
         for (int i = 0; i < bed.getModels().size(); i++) {
-            if (bed.getModels().get(i).getEditer().modelOutBonds()) {
+            if (bed.getModels().get(i).getEditer().modelInvalidPosition()) {
 //                Warning p = new Warning();
 //                p.setVisible(true);
 //                p.setMessage("MessageOutOfBounds");
                 showFeedBackMessage("MessageOutOfBounds");
                 return false;
-            } else if (!bed.getModels().get(i).getEditer().modelInBed()) {
+            }/*
+            else if (!bed.getModels().get(i).getEditer().modelInBed()) {
 //                Warning p = new Warning();
 //                p.setVisible(true);
 //                p.setMessage("MessageNotInBed");
                 showFeedBackMessage("MessageNotInBed");
                 return false;
             }
+            */
         }
         return true;
     }
@@ -1082,7 +1076,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (!machine.getDriver().getMachineStatus() && machine.getDriver().isBusy()) {
+                if (!machine.getDriver().getMachineReady() && machine.getDriver().isBusy()) {
                     showFeedBackMessage("moving");
                 } else {
                     if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
@@ -1362,40 +1356,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public void beginCompoundEdit() {
         compoundEdit = new CompoundEdit();
-    }
-
-    public void handleEstimate() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        // fire off our thread.
-        estimationThread = new EstimationThread(this);
-        estimationThread.start();
-    }
-
-    public void handleSimulate() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        // buttons/status.
-        simulating = true;
-        //buttons.activate(MainButtonPanel.SIMULATE);
-
-        // load our simulator machine
-        // loadSimulator();
-        setEditorBusy(true);
-
-        // fire off our thread.
-        simulationThread = new SimulationThread(this);
-        simulationThread.start();
     }
 
     public void simulationOver() {
@@ -1829,7 +1789,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     }
                 }
                 Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading" + path + " ...", this.getClass());
+                Base.writeLog("Loading " + path + " ...", this.getClass());
 
                 //Adds default print preferences, they aren't going to be used
                 //since we're printing from a GCode file
@@ -2171,19 +2131,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * has the callback from EditorStatus.
      */
     public void handleQuitInternal() {
-        try {
-            if (simulationThread != null) {
-                simulationThread.interrupt();
-                simulationThread.join();
-            }
-            if (estimationThread != null) {
-                estimationThread.interrupt();
-                estimationThread.join();
-            }
-        } catch (InterruptedException e) {
-            assert (false);
-        }
-
         // bring down our machine temperature, don't want it to stay hot
         // 		actually, it has been pointed out that we might want it to stay hot,
         //		so I'm taking this out

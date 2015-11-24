@@ -6,26 +6,14 @@ import replicatorg.drivers.RetryException;
 public class SendStandaloneVariables implements DriverCommand {
 
     private final int minutes;
-    private final int lines;
 
-    public SendStandaloneVariables() {
-        this.minutes = 0;
-        this.lines = 0;
-    }
-
-    public SendStandaloneVariables(int lines) {
-        this.minutes = 0;
-        this.lines = lines;
-    }
-
-    public SendStandaloneVariables(int minutes, int lines) {
+    public SendStandaloneVariables(int minutes) {
         this.minutes = minutes;
-        this.lines = lines;
     }
 
     @Override
     public String getCommand() {
-        return "M31 A" + minutes + " L" + lines;
+        return "M31 A" + minutes;
     }
 
     @Override
@@ -39,6 +27,6 @@ public class SendStandaloneVariables implements DriverCommand {
 
     @Override
     public void run(Driver driver) throws RetryException {
-        driver.dispatchCommand("M31 A" + minutes + " L" + lines);
+        driver.dispatchCommand("M31 A" + minutes);
     }
 }

@@ -1,8 +1,6 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -25,6 +23,7 @@ public class Feedback extends BaseDialog {
     public static final int FLASHING_SUB_MESSAGE_NO_CALIBRATION = 2;
     public static final int LAUNCHING_MESSAGE = 3;
     public static final int SAVING_MESSAGE = 4;
+    public static final int RESTART_PRINTER = 5;
 
     private static final int FILE_KEY = 1;
     private static final String ROOT_TAG = "FeedbackPanel";
@@ -38,6 +37,7 @@ public class Feedback extends BaseDialog {
         enableDrag();
         lFeedbackMain.setText("");
         lFeedbackSub.setText("");
+        lFeedbackRestart.setText("");
     }
 
     public void setFeedback1(int index) {
@@ -64,7 +64,20 @@ public class Feedback extends BaseDialog {
             case SAVING_MESSAGE:
                 lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "SavingMessage"));
                 break;
+            case RESTART_PRINTER:
+                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessage"));
+                break;
             default:
+                break;
+        }
+    }
+    
+    public void setFeedback3(int index) {
+        switch(index) {
+            case RESTART_PRINTER:
+                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessageTimeout"));
+                break;
+            default: 
                 break;
         }
     }
@@ -73,39 +86,8 @@ public class Feedback extends BaseDialog {
         jLabel1.setFont(GraphicDesignComponents.getSSProLight("33"));
         lFeedbackMain.setFont(GraphicDesignComponents.getSSProBold("12"));
         lFeedbackSub.setFont(GraphicDesignComponents.getSSProRegular("12"));
-    }
+        lFeedbackRestart.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
-    private String splitString(String s) {
-        int width = 425;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,6 +100,7 @@ public class Feedback extends BaseDialog {
         lFeedbackMain = new javax.swing.JLabel();
         lFeedbackSub = new javax.swing.JLabel();
         loading = new javax.swing.JLabel();
+        lFeedbackRestart = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(350, 150));
@@ -150,6 +133,8 @@ public class Feedback extends BaseDialog {
 
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
 
+        lFeedbackRestart.setText("Feedback3");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -157,6 +142,9 @@ public class Feedback extends BaseDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lFeedbackRestart)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -182,7 +170,9 @@ public class Feedback extends BaseDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lFeedbackSub)
                     .addComponent(loading))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lFeedbackRestart)
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -204,6 +194,7 @@ public class Feedback extends BaseDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel lFeedbackMain;
+    private javax.swing.JLabel lFeedbackRestart;
     private javax.swing.JLabel lFeedbackSub;
     private javax.swing.JLabel loading;
     // End of variables declaration//GEN-END:variables

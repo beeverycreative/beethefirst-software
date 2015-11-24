@@ -36,7 +36,6 @@ public class ExtruderMaintenance3 extends BaseDialog {
         enableDrag();
         evaluateInitialConditions();
         setTextLanguage();
-        Base.maintenanceWizardOpen = true;
         Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
@@ -173,7 +172,6 @@ public class ExtruderMaintenance3 extends BaseDialog {
         Base.THREAD_KEEP_ALIVE = true;
         finalizeHeat();
         Base.bringAllWindowsToFront();
-        Base.maintenanceWizardOpen = false;
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
@@ -278,7 +276,7 @@ public class ExtruderMaintenance3 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -330,7 +328,7 @@ public class ExtruderMaintenance3 extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -352,7 +350,7 @@ public class ExtruderMaintenance3 extends BaseDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(

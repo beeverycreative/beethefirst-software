@@ -1,4 +1,4 @@
-﻿<?xml version="1.1" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <languages>
     <tags>
         <!-- A próxima secção XML contém o texto a ser apresentado nos itens dos menus superiores do ecrã principal --> 
@@ -405,7 +405,7 @@
             <Print_Splash_Info2 value="A imprimir... Por favor aguarde."/>
             <Print_Splash_Info3 value="A imprimir em modo autónomo. Por favor aguarde."/>
             <Print_Splash_Info4 value="Podes desconectar agora a tua impressora."/>
-            <Print_Splash_Info5 value="Carrega em Nova Impressão ou de descarrega filamento se não fores imprimir mais."/>
+            <Print_Splash_Info5 value="Carrega em Nova Impressão ou descarrega filamento se não fores imprimir mais."/>
             <Print_Splash_Info6 value="Não deixa a tua impressora com o filamento carregado."/>
             <Print_Splash_Info7 value="Isto permitirá manter o filamento em melhores condições."/>
             <Print_Splash_Info8 value="Agora podes remover a bobine de filamento e guardá-la num espaço fresco e seco."/>
@@ -465,17 +465,17 @@
             <Print_PercentageCompleted value="Completo:"/>
             <Print_InfoLowStatus value="Começa a tua impressão assim que possível"/>
             <Print_Start value="Carregar no botão para começar"/>
-            <Print_BuildFinished value="Processo de construção concluída."/>
+            <Print_BuildFinished value="Processo de impressão concluído."/>
             <Unloading_Title value="A descarregar..."/>
             <Unload_BuildFinished value="Processo de Descarregar Filamento finalizado."/>
             <Print_Completion value="Completo em"/>
-            <Print_BuildAborted value="Processo de construção abortado."/>
+            <Print_BuildAborted value="Processo de impressão abortado."/>
             <Print_BuildAborted2 value="Por favor reinicia a trasnferência e tenta de novo."/>
             <Print_BuildAborted3 value="Se o problema persistir, desliga a tua impressora."/>
             <Print_BuildAborted4 value="De seguida reinicia o BEESOFT e liga a impressora."/>
             <Print_Stopped value="Parado após"/>
-            <Print_DoneBuilding value="Construção terminada."/>
-            <Print_PrintAborted value="Estás neste momento a imprimir do BEESOFT! O processo de construção será terminado."/>
+            <Print_DoneBuilding value="Impressão terminada."/>
+            <Print_PrintAborted value="Estás neste momento a imprimir do BEESOFT! O processo de impressão será terminado."/>
             <Print_PrintAbortedContinue value="Continuar ou abortar a impressão?"/>
             <Print_PrintAbortQuestion value="Abortar a impressão?"/>
             <Print_PrinterNotAvailable value="BEESOFT não consegue conectar com a impressora. Por favor vê as configurações e reinicia."/>
@@ -677,6 +677,8 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <FlashingSubMessageNoCalibration value="A inserir um novo firmware... (irá perder a calibração!)" />
             <LaunchingMessage value="A executar o novo firmware!" />
             <SavingMessage value="A gravar a calibração e as definições de filamento actuais" />
+            <RestartMessage value="Problema com o firmware. Por favor reinicia a impressora." />
+            <RestartMessageTimeout value="(está a demorar... experimente reiniciar a impressora)" />
         </FeedbackPanel>
 
       <!-- A próxima secção XML contém o texto a ser apresentado no Tool Tips dos botões que o incluem -->       

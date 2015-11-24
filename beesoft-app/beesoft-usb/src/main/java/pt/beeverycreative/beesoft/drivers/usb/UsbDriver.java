@@ -209,7 +209,7 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("*initUsbDevice(device)* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
     }
-
+    
     public boolean addIfCompatible(UsbDevice device) throws UsbException, UnsupportedEncodingException {
 
         UsbDeviceDescriptor descriptor;

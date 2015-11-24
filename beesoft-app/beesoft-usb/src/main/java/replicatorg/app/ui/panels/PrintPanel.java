@@ -182,7 +182,7 @@ public class PrintPanel extends BaseDialog {
         code = FilamentControler.NO_FILAMENT;
 
         if (Base.getMachineLoader().isConnected()) {
-            Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
+            //Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
             code = Base.getMainWindow().getMachine().getModel().getCoilText();
         } //no need for else
 
@@ -1914,7 +1914,7 @@ class GCodeExportThread extends Thread {
 
         try {
 
-            input = new BufferedInputStream(new FileInputStream(gcode.getPath() + "_modified"));
+            input = new BufferedInputStream(new FileInputStream(Base.GCODE2PRINTER_PATH));
             output = new BufferedOutputStream(new FileOutputStream(this.saveFile));
 
             byte[] buf = new byte[1024];

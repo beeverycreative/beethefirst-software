@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.vecmath.Point3d;
 
@@ -80,6 +81,7 @@ public abstract class DriverBaseImplementation implements Driver {
      */
     protected boolean hasSoftStop = false;
     protected boolean isBootloader = true;
+    protected boolean posAvailable = false;
 
     /**
      * Creates the driver object.
@@ -97,6 +99,11 @@ public abstract class DriverBaseImplementation implements Driver {
         // This must be initialize anyway so, it doesnt matter what name does it have. 
         // The truth is that the name come from the xml
         driverName = "virtualprinter";
+    }
+    
+    @Override
+    public int getQueueSize() {
+        return -1;
     }
 
     @Override
@@ -327,24 +334,20 @@ public abstract class DriverBaseImplementation implements Driver {
     @Override
     public Point5d getCurrentPosition(boolean forceUpdate) {
         synchronized (currentPosition) {
-            // If we are lost, or an explicit update has been requested, poll the machine for it's state. 
-            if (positionLost() || forceUpdate) {
+            while (posAvailable == false && forceUpdate) {
                 try {
-                    // Try to reconcile our position. 
-                    Point5d newPoint = reconcilePosition();
-                    //currentPosition.set(newPoint);
-
-                } catch (RetryException e) {
-                    Base.logger.severe("Attempt to reconcile machine position failed, due to Retry Exception");
+                    currentPosition.wait(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DriverBaseImplementation.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            posAvailable = false;
 
-            // If we are still lost, just return a zero position.
-            if (positionLost()) {
+            if (currentPosition.get() == null) {
                 return new Point5d();
+            } else {
+                return new Point5d(currentPosition.get());
             }
-
-            return new Point5d(currentPosition.get());
         }
     }
     
@@ -479,7 +482,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public boolean getMachineStatus() {
+    public boolean getMachineReady() {
         return machine.getMachineReady();
     }
 
@@ -550,17 +553,12 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String gcodeTransfer(File gcode, String estimatedTime, int nLines, PrintSplashAutonomous psAutonomous) {
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void getPrintSessionsVariables() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public double getTransferPercentage() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -586,11 +584,6 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void readLastLineNumber() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

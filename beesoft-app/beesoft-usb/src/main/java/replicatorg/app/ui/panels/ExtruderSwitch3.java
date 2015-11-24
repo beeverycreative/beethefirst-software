@@ -32,7 +32,6 @@ public class ExtruderSwitch3 extends BaseDialog {
     private final MachineInterface machine;
 
     private final ExtruderSwitchDisposeFeedbackThread disposeThread;
-    private String previousColor = "";
     private int temperatureGoal;
 
     public ExtruderSwitch3() {
@@ -47,7 +46,6 @@ public class ExtruderSwitch3 extends BaseDialog {
         Base.getMainWindow().setEnabled(false);
         
         moveToPosition();
-        previousColor = machine.getModel().getCoilText();
         disposeThread = new ExtruderSwitchDisposeFeedbackThread(this, machine);
         disposeThread.start();
         Base.systemThreads.add(disposeThread);
@@ -182,7 +180,6 @@ public class ExtruderSwitch3 extends BaseDialog {
             Base.bringAllWindowsToFront();
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.maintenanceWizardOpen = false;
             disposeThread.stop();
             Base.enableAllOpenWindows();
             Point5d b = machine.getTablePoints("safe");
@@ -724,7 +721,7 @@ class ExtruderSwitchDisposeFeedbackThread extends Thread {
                 Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (!machine.getDriver().getMachineStatus()) {
+            if (!machine.getDriver().getMachineReady()) {
                 filamentPanel.showMessage();
                 try {
                     Thread.sleep(1000);
@@ -733,7 +730,7 @@ class ExtruderSwitchDisposeFeedbackThread extends Thread {
                 }
             }
 
-            if (machine.getDriver().getMachineStatus()
+            if (machine.getDriver().getMachineReady()
                     && !machine.getDriver().isBusy()) {
                 filamentPanel.resetFeedbackComponents();
             }
