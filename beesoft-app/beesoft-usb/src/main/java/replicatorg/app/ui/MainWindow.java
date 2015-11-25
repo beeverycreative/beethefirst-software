@@ -618,15 +618,18 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                                 handleSaveAs();
                                 bed.setSceneDifferent(false);
                                 updateModelsOperationCenter(new ModelsOperationCenter());
+                              
                             }
                         } else if (answer == JOptionPane.NO_OPTION) {
                             handleNew(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
+                            
                         }
 
                     } else {
                         handleNew(false);
                         updateModelsOperationCenter(new ModelsOperationCenter());
+                       
                     }
                 }
             }
@@ -655,15 +658,18 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                                 handleOpenScene(null);
                                 bed.setSceneDifferent(false);
                                 updateModelsOperationCenter(new ModelsOperationCenter());
+                                
                             }
                         } else if (answer == JOptionPane.NO_OPTION) {
                             handleOpenScene(null);
                             updateModelsOperationCenter(new ModelsOperationCenter());
+                            
                         }
 
                     } else {
                         handleOpenScene(null);
                         updateModelsOperationCenter(new ModelsOperationCenter());
+                        
                     }
                 }
 
@@ -1344,6 +1350,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             updateDetailsCenter(sceneDP);
             Base.getMainWindow().getBed().setGcodeOK(false);
             updateModelsOperationCenter(new ModelsOperationCenter());
+            
         }
     }
 
@@ -2042,6 +2049,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                         } else {
                             updateModelsOperationCenter(new ModelsOperationCenter());
+                            
                             sceneDP = new SceneDetailsPanel();
                             sceneDP.updateBed(bed);
                             updateDetailsCenter(sceneDP);

@@ -14,51 +14,52 @@ import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
  * @author Dev
  */
 public class RSMonitor extends Thread implements Runnable {
-    
+
     private RSProcessor processorThread = null;
-    
+
     public RSProcessor getRSProcessor() {
         return this.processorThread;
     }
-    
+
     public RSMonitor() {
         super();
     }
-    
+
     @Override
     public void run() {
         // Starts the first time
         this.processorThread = new RSProcessor();
         this.processorThread.start();
-        
-        while(true) {
+
+        while (true) {
             // Checks for running status
             if (this.processorThread.isReadyToRunAgain()) {
-                
+
                 // Tries to load the generated STL
                 File f = new File(System.getProperty("user.dir") + "/3dfscan/BEESOFT_3DScan.stl");
-                if(f.exists() && !f.isDirectory()) { 
+                if (f.exists() && !f.isDirectory()) {
                     MainWindow mainWindow = Base.getMainWindow();
-                                
+
                     mainWindow.updateModelsOperationCenter(new ModelsOperationCenter());
                     SceneDetailsPanel sceneDP = new SceneDetailsPanel();
                     sceneDP.updateBed(Base.getMainWindow().getBed());
                     mainWindow.updateDetailsCenter(sceneDP);
                     mainWindow.getCanvas().unPickAll();
-                    
+
                     mainWindow.loadNewModel(f.getPath());
-                    
+
                     // Scales the model to the medium size
                     if (mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                         mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
                     }
+                    mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
                     mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
                 }
-                
-               this.processorThread = new RSProcessor();
-               this.processorThread.start();
-            } 
-            
+
+                this.processorThread = new RSProcessor();
+                this.processorThread.start();
+            }
+
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException ex) {
@@ -66,5 +67,5 @@ public class RSMonitor extends Thread implements Runnable {
             }
         }
     }
-    
+
 }
