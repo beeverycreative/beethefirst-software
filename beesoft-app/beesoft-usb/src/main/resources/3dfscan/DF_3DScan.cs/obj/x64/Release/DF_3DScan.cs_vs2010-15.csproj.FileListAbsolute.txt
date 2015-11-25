@@ -7,22 +7,3 @@ C:\Users\Dev\Desktop\beethefirst-software\beesoft-app\beesoft-usb\src\main\resou
 C:\Users\Dev\Desktop\beethefirst-software\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs_vs2010-15.csproj.GenerateResource.Cache
 C:\Users\Dev\Desktop\beethefirst-software\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs.exe
 C:\Users\Dev\Desktop\beethefirst-software\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs.pdb
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs.exe
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs.pdb
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\DF_3DScan.cs.exe
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\DF_3DScan.cs.pdb
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\libpxcclr.cs.dll
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\libsampledx.dll
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\sample3dscan.cs.MainForm.resources
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\sample3dscan.cs.Properties.Resources.resources
-C:\Users\Dev\Desktop\bdep\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs_vs2010-15.csproj.GenerateResource.Cache
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs.exe
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs.pdb
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\DF_3DScan.cs.exe
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\DF_3DScan.cs.pdb
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\libpxcclr.cs.dll
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\bin\x64\Release\libsampledx.dll
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs_vs2010-15.csprojResolveAssemblyReference.cache
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\sample3dscan.cs.MainForm.resources
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\sample3dscan.cs.Properties.Resources.resources
-C:\Users\Dev\Desktop\New folder\beethefirst-software - Copy\beesoft-app\beesoft-usb\src\main\resources\3dfscan\DF_3DScan.cs\obj\x64\Release\DF_3DScan.cs_vs2010-15.csproj.GenerateResource.Cache

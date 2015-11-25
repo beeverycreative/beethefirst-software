@@ -1058,13 +1058,9 @@ public class Base {
         };
         MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
         
-    
-        //new Base();
-       // Base.rsm = new RSMonitor();
-       // rsm.start();
-        
         Base.rsm = new RSMonitor();
         rsm.start();
+        
         // Create the new application "Base" class.
         new Base();
     }
@@ -1098,7 +1094,7 @@ public class Base {
     public Base() {
         // Log autonomous statistics file
         // statistics = openStatsFile();
-        
+
         writeLogHeader();
 
         // Properties file init
