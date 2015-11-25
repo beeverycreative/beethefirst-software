@@ -52,6 +52,7 @@ public class RSMonitor extends Thread implements Runnable {
                     if (mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                         mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
                     }
+                     mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
                     mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
                 }
                 

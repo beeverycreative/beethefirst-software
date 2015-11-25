@@ -689,18 +689,20 @@ namespace sample3dscan.cs
 
         internal void ShowTooClose()
         {
-            tooClose.Visible = true;
+            tooClose.BackColor = Color.Red;
         }
 
         internal void ShowTooFar()
         {
-            tooFar.Visible = true;
+            tooFar.BackColor = Color.Red;
         }
 
         internal void HideRangeAlerts()
         {
-            tooClose.Visible = false;
-            tooFar.Visible = false;
+            tooFar.BackColor = Color.DarkGray;
+            tooClose.BackColor = Color.DarkGray;
+            //tooClose.Visible = false;
+           // tooFar.Visible = false;
         }
 
         internal void ShowTrackingAlert()
@@ -730,6 +732,11 @@ namespace sample3dscan.cs
                 }
             }
             catch { };
+        }
+
+        private void tooFar_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
