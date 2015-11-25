@@ -34,7 +34,11 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         Base.getMainWindow().getCanvas().setControlTool(2);
         setFont();
         setTextLanguage();
-        Base.getMainWindow().getCanvas().setModelationType("rotate");
+        Base.getMainWindow().getCanvas().setModelationType("rotate");        
+
+        if (Base.isRSDetected()) {
+            rsRotateHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/rotate_gestures.png")));
+        }        
     }
 
     private void setFont() {
@@ -158,6 +162,7 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jLabel23 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        rsRotateHelp = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(254, 254, 254));
         setMaximumSize(new java.awt.Dimension(190, 375));
@@ -262,7 +267,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jRadioButton1.setBackground(new java.awt.Color(240, 243, 244));
         jRadioButton1.setText("X");
         jRadioButton1.setName("xRotate"); // NOI18N
-        jRadioButton1.setRolloverEnabled(false);
         jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton1ActionPerformed(evt);
@@ -272,7 +276,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jRadioButton2.setBackground(new java.awt.Color(240, 243, 244));
         jRadioButton2.setText("Y");
         jRadioButton2.setName("zRotate"); // NOI18N
-        jRadioButton2.setRolloverEnabled(false);
         jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton2ActionPerformed(evt);
@@ -286,7 +289,6 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
         jRadioButton3.setBackground(new java.awt.Color(240, 243, 244));
         jRadioButton3.setText("Z");
         jRadioButton3.setName("yRotate"); // NOI18N
-        jRadioButton3.setRolloverEnabled(false);
         jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton3ActionPerformed(evt);
@@ -473,6 +475,9 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        rsRotateHelp.setPreferredSize(new java.awt.Dimension(24, 24));
+        rsRotateHelp.setSize(new java.awt.Dimension(24, 24));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -490,16 +495,18 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel3)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel18)))
-                            .addGap(68, 68, 68))))
-                .addContainerGap(15, Short.MAX_VALUE))
+                                .addComponent(jLabel6)
+                                .addComponent(jLabel18))
+                            .addGap(68, 68, 68)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(rsRotateHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(11, 11, 11)))
+                .addContainerGap(33, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(114, 114, 114)
                     .addComponent(jLabel17)
-                    .addContainerGap(76, Short.MAX_VALUE)))
+                    .addContainerGap(90, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -522,12 +529,14 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
                 .addComponent(jLabel18)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rsRotateHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(28, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(240, 240, 240)
                     .addComponent(jLabel17)
-                    .addContainerGap(264, Short.MAX_VALUE)))
+                    .addContainerGap(443, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -734,6 +743,7 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JLabel rsRotateHelp;
     // End of variables declaration//GEN-END:variables
 
     private void handleAdvancedOption() {
