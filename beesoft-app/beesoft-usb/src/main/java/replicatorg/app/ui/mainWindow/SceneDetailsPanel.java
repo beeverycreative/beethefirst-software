@@ -2,7 +2,6 @@ package replicatorg.app.ui.mainWindow;
 
 import java.awt.Color;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;

@@ -48,7 +48,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
@@ -419,7 +418,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             canvas = new CAMPanel(cardPanel, bed);
             canvas.updateBed(bed);
             sceneDP = new SceneDetailsPanel();
-            cardPanel.add(new SceneDetailsPanel(), BorderLayout.EAST);
+            cardPanel.add(new SceneDetailsPanel(), BorderLayout.EAST);           
             cardPanel.add(new ModelsOperationCenter(), BorderLayout.WEST);
             cardPanel.add(canvas.getPanel(), BorderLayout.CENTER);
             sceneDP.updateBed(bed);
