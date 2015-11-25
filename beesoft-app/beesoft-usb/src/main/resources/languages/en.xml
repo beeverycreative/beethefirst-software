@@ -184,6 +184,7 @@
             <Inches value="inches"/>
             <Percentage value="percentage"/>
             <LockRatio value="Lock aspect ratio"/>
+            <ScanModel value="SCAN MODEL" />
         </MainWindowButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no painel de informação da Cena -->

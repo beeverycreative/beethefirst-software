@@ -27,9 +27,18 @@ public class RSMonitor extends Thread implements Runnable {
     
     @Override
     public void run() {
-        // Starts the first time
-        this.processorThread = new RSProcessor();
-        this.processorThread.start();
+        try {
+            // Starts the first time
+            this.processorThread = new RSProcessor();
+            
+            this.processorThread.start();
+        } catch (Exception ex) {
+            
+            Logger.getLogger(RSMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+                    
+        Base.setRSDetected(true);
         
         while(true) {
             // Checks for running status
@@ -55,8 +64,15 @@ public class RSMonitor extends Thread implements Runnable {
                     mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
                 }
                 
-               this.processorThread = new RSProcessor();
-               this.processorThread.start();
+                try {
+                    // restarts the processor thread
+                    this.processorThread = new RSProcessor();
+
+                    this.processorThread.start();
+                } catch (Exception ex) {
+
+                    Logger.getLogger(RSMonitor.class.getName()).log(Level.SEVERE, null, ex);                    
+                }
             } 
             
             try {

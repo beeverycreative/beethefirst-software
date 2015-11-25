@@ -163,7 +163,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        rsScan = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
 
@@ -258,21 +257,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jTextArea1);
 
-        rsScan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_8.png"))); // NOI18N
-        rsScan.setText("RealSense Scan");
-        rsScan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        rsScan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                rsScanMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                rsScanMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                rsScanMousePressed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -291,20 +275,17 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
                             .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(63, 64, Short.MAX_VALUE))
+                        .addGap(60, 60, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(9, 9, 9))
-                    .addComponent(rsScan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(9, 9, 9))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rsScan)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
@@ -326,7 +307,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel7)
                 .addGap(1, 1, 1)
                 .addComponent(jLabel10)
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addContainerGap(168, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -385,19 +366,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jTextField1FocusLost
 
-    private void rsScanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMouseEntered
-        rsScan.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_8.png")));
-    }//GEN-LAST:event_rsScanMouseEntered
-
-    private void rsScanMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMouseExited
-        rsScan.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_8.png")));
-    }//GEN-LAST:event_rsScanMouseExited
-
-    private void rsScanMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMousePressed
-
-        Base.getRSMonitor().getRSProcessor().requestExternalRSScan();
-    }//GEN-LAST:event_rsScanMousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -413,6 +381,5 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel rsScan;
     // End of variables declaration//GEN-END:variables
 }

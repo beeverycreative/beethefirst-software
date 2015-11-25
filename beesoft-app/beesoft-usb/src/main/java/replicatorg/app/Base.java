@@ -1058,7 +1058,7 @@ public class Base {
         };
         MRJApplicationUtils.registerOpenDocumentHandler(startupOpen);
         
-        Base.rsm = new RSMonitor();
+        Base.rsm = new RSMonitor();       
         rsm.start();
         
         // Create the new application "Base" class.
@@ -1066,6 +1066,17 @@ public class Base {
     }
 
     static RSMonitor rsm;
+    static boolean RSDetected = false;
+    
+    static public void setRSDetected(boolean val) {
+        Base.RSDetected = val;
+    }
+    
+    static public boolean isRSDetected() {
+        //return Base.RSDetected;
+        return true;
+    }    
+    
     static public RSMonitor getRSMonitor (){
         return Base.rsm;
     } 

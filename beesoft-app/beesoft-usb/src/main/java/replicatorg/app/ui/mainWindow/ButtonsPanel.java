@@ -42,6 +42,20 @@ public class ButtonsPanel extends javax.swing.JPanel {
         models_pressed = false;
         maintenance_pressed = false;
         print_pressed = false;
+        
+        loadRSComponents();
+    }
+    
+    private void loadRSComponents() {
+                
+        if (Base.isRSDetected()) {
+            intelIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/intel.png")));
+            rsScan.setVisible(true);
+            rsScan.setText(Languager.getTagValue(1, "MainWindowButtons", "ScanModel"));
+            rsScan.setFont(getSSProLight("13"));
+        } else {
+            rsScan.setVisible(false);
+        }
     }
 
     private void setTextLanguage() {
@@ -52,7 +66,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     public void setLogo(String iconPath) {
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/"+iconPath)));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/"+iconPath)));        
     }
     
     public void setMessage(String message) {
@@ -205,11 +219,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        intelIcon = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        rsScan = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -220,26 +236,33 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
         jLabel3.setText("default: not connected");
 
+        intelIcon.setPreferredSize(new java.awt.Dimension(24, 24));
+        intelIcon.setSize(new java.awt.Dimension(24, 24));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                .addGap(18, 18, 18))
+                .addGap(14, 14, 14)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(intelIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(132, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(25, Short.MAX_VALUE)
-                .addComponent(jLabel2)
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(intelIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -307,12 +330,32 @@ public class ButtonsPanel extends javax.swing.JPanel {
             }
         });
 
+        rsScan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
+        rsScan.setText("Scan Model");
+        rsScan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        rsScan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                rsScanMousePressed(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rsScanMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                rsScanMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                rsScanMouseEntered(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(56, Short.MAX_VALUE)
+                .addContainerGap(44, Short.MAX_VALUE)
+                .addComponent(rsScan)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
@@ -324,13 +367,16 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(0, 24, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel5)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel6)))
+                    .addComponent(jLabel6)
+                    .addComponent(rsScan)))
         );
+
+        rsScan.getAccessibleContext().setAccessibleName("Scan Model");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -339,7 +385,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 816, Short.MAX_VALUE)
                 .addGap(15, 15, 15))
         );
         jPanel1Layout.setVerticalGroup(
@@ -347,7 +393,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
 
@@ -496,7 +542,31 @@ public class ButtonsPanel extends javax.swing.JPanel {
         this.startPrint();
     }//GEN-LAST:event_jLabel1MousePressed
 
+    private void rsScanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMouseEntered
+        if (rsScan.isVisible()) {
+            rsScan.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
+        } 
+    }//GEN-LAST:event_rsScanMouseEntered
+
+    private void rsScanMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMouseExited
+        if (rsScan.isVisible()) {
+            rsScan.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+        } 
+    }//GEN-LAST:event_rsScanMouseExited
+
+    private void rsScanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMouseClicked
+        
+    }//GEN-LAST:event_rsScanMouseClicked
+
+    private void rsScanMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMousePressed
+        if (rsScan.isVisible()) {
+            rsScan.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+            Base.getRSMonitor().getRSProcessor().requestExternalRSScan();
+        }        
+    }//GEN-LAST:event_rsScanMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel intelIcon;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -506,5 +576,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel rsScan;
     // End of variables declaration//GEN-END:variables
 }
