@@ -54,6 +54,9 @@ public class RSMonitor extends Thread implements Runnable {
                     // Scales the model to the medium size
                     if (mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                         mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
+                        
+                        Base.setRSRotateActive(false);
+                        Base.setRSScaleActive(true);
                     }
                     mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
                 }

@@ -578,7 +578,11 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private void rsScanMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rsScanMousePressed
         if (rsScan.isVisible()) {
             rsScan.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-            Base.getRSMonitor().getRSProcessor().requestExternalRSScan();
+            
+            if (null != Base.getRSMonitor().getRSProcessor()) {
+                Base.getRSMonitor().getRSProcessor().requestExternalRSScan();
+            }
+            
         }        
     }//GEN-LAST:event_rsScanMousePressed
 
