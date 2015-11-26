@@ -9,15 +9,15 @@
     </parent>
     <groupId>pt.bitbox</groupId>
     <artifactId>beesoft-usb</artifactId>
-    <version>3.12.0</version>
+    <version>3.13.0</version>
     <name>beesoft-usb</name>
     <properties>
         
         <!-- BEESOFT software / firmware versions -->
         <!-- if release.type = 'alpha' the app internally will append the 
         current Date to the version -->
-        <release.type>alpha</release.type>
-        <project.release.version>3.12.0</project.release.version>
+        <release.type>beta.1</release.type>
+        <project.release.version>3.13.0</project.release.version>
         <maven.build.timestamp.format>yyyy.MM.dd_HH'h'mm</maven.build.timestamp.format>
         <build.number>${maven.build.timestamp}</build.number>
         <!-- #################################### -->

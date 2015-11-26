@@ -92,6 +92,10 @@ public class PrintPanel extends BaseDialog {
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         selectedPrinter = PrinterInfo.BEETHEFIRST;
+        
+        if (Base.isRSDetected()) {
+            rsPrintHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/print_panel_gestures.png")));
+        }           
     }
 
     /**
@@ -711,7 +715,7 @@ public class PrintPanel extends BaseDialog {
     /**
      * Cancel event.
      */
-    private void doCancel() {
+    public void doCancel() {
         dispose();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
@@ -872,6 +876,7 @@ public class PrintPanel extends BaseDialog {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        rsPrintHelp = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         bPrint = new javax.swing.JLabel();
@@ -904,7 +909,7 @@ public class PrintPanel extends BaseDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 13, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -1157,8 +1162,11 @@ public class PrintPanel extends BaseDialog {
                     .addComponent(jLabel9))
                 .addGap(6, 6, 6)
                 .addComponent(jLabel10)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        rsPrintHelp.setPreferredSize(new java.awt.Dimension(24, 24));
+        rsPrintHelp.setSize(new java.awt.Dimension(24, 24));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1242,19 +1250,23 @@ public class PrintPanel extends BaseDialog {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(25, 25, 25)
                                 .addComponent(highPlusHeightLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 26, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(7, 7, 7)
                                 .addComponent(bHighPlusRes, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(154, 154, 154)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(149, 149, 149))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(99, 99, 99)
+                .addComponent(rsPrintHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1285,7 +1297,7 @@ public class PrintPanel extends BaseDialog {
                     .addComponent(tfDensity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lDensity))
                 .addGap(16, 16, 16)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1317,7 +1329,8 @@ public class PrintPanel extends BaseDialog {
                     .addComponent(bEstimate, javax.swing.GroupLayout.Alignment.LEADING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(rsPrintHelp, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -1347,14 +1360,14 @@ public class PrintPanel extends BaseDialog {
         bPrint.setEnabled(false);
         bPrint.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bPrint.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPrintMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bPrintMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bPrintMouseExited(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPrintMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bPrintMousePressed(evt);
             }
         });
 
@@ -1411,8 +1424,8 @@ public class PrintPanel extends BaseDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 633, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -1819,6 +1832,7 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel materialCost;
     private javax.swing.JLabel medHeightLabel;
     private javax.swing.JLabel printTime;
+    private javax.swing.JLabel rsPrintHelp;
     private javax.swing.JTextField tfDensity;
     // End of variables declaration//GEN-END:variables
 

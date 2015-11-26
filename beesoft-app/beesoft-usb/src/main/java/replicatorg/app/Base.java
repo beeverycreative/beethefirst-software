@@ -1073,8 +1073,7 @@ public class Base {
     }
     
     static public boolean isRSDetected() {
-        //return Base.RSDetected;
-        return true;
+        return Base.RSDetected;        
     }    
     
     static public RSMonitor getRSMonitor (){

@@ -287,8 +287,13 @@ public class RSProcessor extends Thread implements Runnable {
 
                     if (handData.IsGestureFired("thumb_down", gestData)) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
-                            Base.getMainWindow().showCustomMessage("THUMB DOWM detected! Rotating model.");
-
+                            Base.getMainWindow().showCustomMessage("THUMB DOWM detected! Canceling print.");
+                                                        
+                            if (this.tempPrintPanel != null) {
+                                
+                                this.tempPrintPanel.doCancel();
+                                this.tempPrintPanel = null;
+                            }
                         }
 
                         gestureStartTime = System.currentTimeMillis();
@@ -300,12 +305,11 @@ public class RSProcessor extends Thread implements Runnable {
                             Base.getMainWindow().handleNew(true);
                             session.close();
                             senseMgr.close();
-                            this.startScannerApp();
-                            gestureStartTime = System.currentTimeMillis();
+                            this.startScannerApp();                            
                             this.readyToRunAgain = true;
                             break;
-
                         }
+                        gestureStartTime = System.currentTimeMillis();
                     }
 
                     if (this.externalRsScanRequest) {
