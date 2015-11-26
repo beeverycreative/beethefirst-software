@@ -15,11 +15,7 @@ import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
  */
 public class RSMonitor extends Thread implements Runnable {
     
-    private RSProcessor processorThread = null;
-    
-    public RSProcessor getRSProcessor() {
-        return this.processorThread;
-    }
+    private RSProcessor processorThread = null;   
     
     public RSMonitor() {
         super();
@@ -33,12 +29,10 @@ public class RSMonitor extends Thread implements Runnable {
             
             this.processorThread.start();
         } catch (Exception ex) {
-            
+                        
             Logger.getLogger(RSMonitor.class.getName()).log(Level.SEVERE, null, ex);
             return;
-        }
-                    
-        Base.setRSDetected(true);
+        }                            
         
         while(true) {
             // Checks for running status
@@ -82,5 +76,9 @@ public class RSMonitor extends Thread implements Runnable {
             }
         }
     }
+    
+    public RSProcessor getRSProcessor() {
+        return this.processorThread;
+    }    
     
 }

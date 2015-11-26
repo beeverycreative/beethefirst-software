@@ -1066,7 +1066,15 @@ public class Base {
     }
 
     static RSMonitor rsm;
+        
+    static public RSMonitor getRSMonitor (){
+        return Base.rsm;
+    } 
+    
     static boolean RSDetected = false;
+    
+    static boolean RSScaleActive = false;
+    static boolean RSRotateActive = false;
     
     static public void setRSDetected(boolean val) {
         Base.RSDetected = val;
@@ -1076,9 +1084,21 @@ public class Base {
         return Base.RSDetected;        
     }    
     
-    static public RSMonitor getRSMonitor (){
-        return Base.rsm;
+    static public void setRSScaleActive(boolean val) {
+        Base.RSScaleActive = val;
+    }
+    
+    static public boolean isRSScaleActive() {
+        return Base.RSScaleActive;        
     } 
+    
+    static public void setRSRotateActive(boolean val) {
+        Base.RSRotateActive = val;
+    }
+    
+    static public boolean isRSRotateActive() {
+        return Base.RSRotateActive;        
+    }     
     
     private File openStatsFile() {
         /**

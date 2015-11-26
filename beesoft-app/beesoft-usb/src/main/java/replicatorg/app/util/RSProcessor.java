@@ -50,6 +50,8 @@ public class RSProcessor extends Thread implements Runnable {
         this.frame.add(JView);
         this.frame.setSize(200, 200);
         this.frame.setResizable(false);
+        this.frame.setAlwaysOnTop(false);
+        this.frame.setFocusable(false);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
@@ -79,7 +81,7 @@ public class RSProcessor extends Thread implements Runnable {
             System.out.print("Failed to create a SenseManager instance\n");
             return;
         }
-
+        
         PXCMCaptureManager captureMgr = senseMgr.QueryCaptureManager();
         captureMgr.FilterByDeviceInfo("RealSense", null, 0);
 
@@ -88,6 +90,9 @@ public class RSProcessor extends Thread implements Runnable {
             System.out.print("Failed to enable HandAnalysis\n");
             return;
         }
+                        
+        // Confirms that the RealSense sensor was detected
+        Base.setRSDetected(true);
 
         /*
         PXCMHandModule handModule = senseMgr.QueryHand(); 
@@ -225,18 +230,18 @@ public class RSProcessor extends Thread implements Runnable {
                 try {
                     PXCMHandData.GestureData gestData = new PXCMHandData.GestureData();
 
-                    if (handData.IsGestureFired("tap", gestData)) {
+                    if (handData.IsGestureFired("tap", gestData) && Base.isRSScaleActive()) {
                         // handle tap gesture
                         Base.getMainWindow().showCustomMessage("TAP detected! Scaling the model to maximum size.");
 
                         if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
                         }
-                        Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
+                        Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter().scaleToMax();
 
                     }
 
-                    if (handData.IsGestureFired("click", gestData)) {
+                    if (handData.IsGestureFired("click", gestData) && Base.isRSScaleActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("CLICK detected! Reducing model size.");
 
@@ -250,7 +255,7 @@ public class RSProcessor extends Thread implements Runnable {
                         gestureStartTime = System.currentTimeMillis();
                     }
 
-                    if (handData.IsGestureFired("swipe_right", gestData)) {
+                    if (handData.IsGestureFired("swipe_right", gestData) && Base.isRSRotateActive()) {
 
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
 
@@ -268,7 +273,7 @@ public class RSProcessor extends Thread implements Runnable {
                         gestureStartTime = System.currentTimeMillis();
                     }
 
-                    if (handData.IsGestureFired("swipe_left", gestData)) {
+                    if (handData.IsGestureFired("swipe_left", gestData) && Base.isRSRotateActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("SWIPE LEFT detected! Rotating model.");
 
@@ -285,7 +290,7 @@ public class RSProcessor extends Thread implements Runnable {
                         gestureStartTime = System.currentTimeMillis();
                     }
 
-                    if (handData.IsGestureFired("thumb_down", gestData)) {
+                    if (handData.IsGestureFired("thumb_down", gestData) && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("THUMB DOWM detected! Canceling print.");
                                                         
@@ -299,7 +304,7 @@ public class RSProcessor extends Thread implements Runnable {
                         gestureStartTime = System.currentTimeMillis();
                     }
 
-                    if (handData.IsGestureFired("two_fingers_pinch_open", gestData)) {
+                    if (handData.IsGestureFired("two_fingers_pinch_open", gestData) && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) {
                             Base.getMainWindow().showCustomMessage("TWO FINGERS PINCH! Starting 3D scan...");
                             Base.getMainWindow().handleNew(true);
@@ -321,7 +326,7 @@ public class RSProcessor extends Thread implements Runnable {
                         break;
                     }
 
-                    if (handData.IsGestureFired("thumb_up", gestData)) {
+                    if (handData.IsGestureFired("thumb_up", gestData) && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 1000) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
 

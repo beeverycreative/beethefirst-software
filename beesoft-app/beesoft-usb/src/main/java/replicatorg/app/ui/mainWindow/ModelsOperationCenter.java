@@ -234,6 +234,9 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
 //      Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMoveSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMove());
+                        
+            Base.setRSRotateActive(false);
+            Base.setRSScaleActive(false);
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -243,6 +246,9 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotateSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotate());
+            
+            Base.setRSRotateActive(true);
+            Base.setRSScaleActive(false);
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -252,6 +258,9 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScaleSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
+            
+            Base.setRSRotateActive(false);
+            Base.setRSScaleActive(true);
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -261,6 +270,9 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirrorSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirror());
+            
+            Base.setRSRotateActive(false);
+            Base.setRSScaleActive(false);            
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
