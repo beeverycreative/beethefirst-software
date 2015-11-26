@@ -196,9 +196,9 @@ public class Maintenance extends BaseDialog {
         bCancel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(747, 601));
+        setMinimumSize(new java.awt.Dimension(747, 610));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(747, 558));
+        setPreferredSize(new java.awt.Dimension(747, 610));
         setResizable(false);
         setSize(new java.awt.Dimension(747, 595));
 
@@ -371,7 +371,7 @@ public class Maintenance extends BaseDialog {
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
                         .addComponent(bExtruderMaintenance)
                         .addGap(575, 575, 575))
-                    .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
                         .addComponent(lExtruderMaintenance)
                         .addGap(0, 0, Short.MAX_VALUE))))
@@ -427,14 +427,14 @@ public class Maintenance extends BaseDialog {
         );
         pNozzleSwitchLayout.setVerticalGroup(
             pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pNozzleSwitchLayout.createSequentialGroup()
-                .addGap(41, 41, 41)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pNozzleSwitchLayout.createSequentialGroup()
+                .addContainerGap(30, Short.MAX_VALUE)
                 .addComponent(lNozzleSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNozzleSwitch)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addGap(28, 28, 28))
         );
 
         javax.swing.GroupLayout pChangeFilamentLayout = new javax.swing.GroupLayout(pChangeFilament);
@@ -482,17 +482,14 @@ public class Maintenance extends BaseDialog {
                 .addContainerGap())
         );
 
-        jSeparator1.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator1.setForeground(new java.awt.Color(222, 222, 222));
         jSeparator1.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator1.setPreferredSize(new java.awt.Dimension(1, 1));
 
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(1, 1));
 
-        jSeparator3.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator3.setForeground(new java.awt.Color(222, 222, 222));
         jSeparator3.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator3.setPreferredSize(new java.awt.Dimension(1, 1));
@@ -552,14 +549,11 @@ public class Maintenance extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pBottomLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bCancel)
-                .addGap(29, 29, 29))
+                .addGap(28, 28, 28))
         );
         pBottomLayout.setVerticalGroup(
             pBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pBottomLayout.createSequentialGroup()
-                .addContainerGap(8, Short.MAX_VALUE)
-                .addComponent(bCancel)
-                .addContainerGap())
+            .addComponent(bCancel, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -570,7 +564,7 @@ public class Maintenance extends BaseDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 6, Short.MAX_VALUE))
                     .addComponent(pBottom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
