@@ -32,7 +32,8 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private boolean jLabel6Bool = false;
     private final int NUMBER_PRINTS_LIMIT = 15;
     private boolean mainWindowEnabled;
-
+    private PrintPanel activePrintPanel = null;
+    
     public ButtonsPanel(replicatorg.app.ui.MainWindow mainWindow) {
         initComponents();
         setFont();
@@ -546,11 +547,12 @@ public class ButtonsPanel extends javax.swing.JPanel {
                 jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
                 jLabel1Bool = false;
                 print_pressed = true;
-                return editor.handlePrintPanel();
+                this.activePrintPanel = editor.handlePrintPanel();
+                return this.activePrintPanel;
             }
         } 
         
-        return null;
+        return this.activePrintPanel;
     }
     
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed

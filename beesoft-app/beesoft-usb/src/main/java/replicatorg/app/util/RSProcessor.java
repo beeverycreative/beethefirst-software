@@ -58,7 +58,8 @@ public class RSProcessor extends Thread implements Runnable {
         Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
 
         int y = (int) rect.getMaxY() - this.frame.getHeight() - 100;
-        frame.setLocation(0, y);
+        int x = (int) rect.getMaxX() - this.frame.getWidth();
+        frame.setLocation(x, y);
         
     }
 
@@ -299,6 +300,10 @@ public class RSProcessor extends Thread implements Runnable {
                                 
                                 this.tempPrintPanel.doCancel();
                                 this.tempPrintPanel = null;
+                            } else {
+                                // gets the current print panel called with click
+                                this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
+                                this.tempPrintPanel.doCancel();
                             }
                         }
 
@@ -332,16 +337,23 @@ public class RSProcessor extends Thread implements Runnable {
                         
                         if ((System.currentTimeMillis() - gestureStartTime) > 2000) { //Prevents double gestures
                             
+                            Base.getMainWindow().showCustomMessage("THUMBS UP detected! Let's print!");
+                            
                             // If the machine is not printing processes the print gesture
                             if (!Base.getMainWindow().getMachine().getMachineState().isPrinting()) {
                                                             
-                                Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
-                                if (this.tempPrintPanel == null) {
-                                this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
-                                
-                                } else if (this.tempPrintPanel.printIsEnabled()) {
+                                if (!Base.isRSPrintPanelActive()) { 
+                                    this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
+                                    
+                                } else if (this.tempPrintPanel != null && 
+                                        this.tempPrintPanel.printIsEnabled()) {
                                     this.tempPrintPanel.startPrint();
-                                    this.tempPrintPanel = null;
+                                    
+                                } else if (this.tempPrintPanel == null ) {
+                                    this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
+                                    
+                                    if (this.tempPrintPanel.printIsEnabled())
+                                        this.tempPrintPanel.startPrint();
                                 }
                             }
                         }

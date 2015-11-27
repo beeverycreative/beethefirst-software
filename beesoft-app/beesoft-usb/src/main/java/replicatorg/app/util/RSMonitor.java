@@ -51,18 +51,16 @@ public class RSMonitor extends Thread implements Runnable {
                     
                     mainWindow.loadNewModel(f.getPath());
                     
+                    // switches the RS context 
+                    Base.switchRSContextToMain();
                     // Scales the model to the medium size
-                    if (mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
-                        mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());
-                        
-                        Base.setRSRotateActive(false);
-                        Base.setRSScaleActive(false);
-                        Base.setRSPrintPanelActive(false);
-                        
-                        mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
-                        mainWindow.updateModelsOperationCenter(new ModelsOperationCenter());
-                    }
-                    
+                    //if (mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter() == null) {                     
+                    //}
+                           
+                    mainWindow.updateModelsOperationCenter(new ModelsOperationCenterScale());                                            
+                    mainWindow.getCanvas().getControlTool(3).getModelsScaleCenter().scaleToHalf();
+                    //Closes the operations scale panel
+                    mainWindow.updateModelsOperationCenter(new ModelsOperationCenter());        
                 }
                 
                 try {

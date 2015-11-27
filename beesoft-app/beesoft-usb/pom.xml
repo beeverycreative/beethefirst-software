@@ -499,7 +499,7 @@
                         </executions>
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
-                            <workingDirectory>${project.basedir}/src/main/resources/</workingDirectory>
+                            <workingDirectory>${project.basedir}/src/main/resources</workingDirectory>
                             <!-- optional -->
                             <systemProperties>
                                 <systemProperty>

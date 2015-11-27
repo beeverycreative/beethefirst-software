@@ -1085,25 +1085,37 @@ public class Base {
         return Base.RSDetected;        
     }    
     
-    static public void setRSScaleActive(boolean val) {
-        Base.RSScaleActive = val;
-    }
+    static public void switchRSContextToScale() {
+        Base.RSScaleActive =  true;
+        Base.RSRotateActive = false;
+        Base.RSPrintPanelActive = false;
+    } 
     
+    static public void switchRSContextToRotate() {
+        Base.RSScaleActive =  false;
+        Base.RSRotateActive = true;
+        Base.RSPrintPanelActive = false;
+    } 
+    
+    static public void switchRSContextToPrint() {
+        Base.RSScaleActive =  false;
+        Base.RSRotateActive = false;
+        Base.RSPrintPanelActive = true;
+    } 
+    
+    static public void switchRSContextToMain() {
+        Base.RSScaleActive =  false;
+        Base.RSRotateActive = false;
+        Base.RSPrintPanelActive = false;
+    } 
+        
     static public boolean isRSScaleActive() {
         return Base.RSScaleActive;        
     } 
     
-    static public void setRSRotateActive(boolean val) {
-        Base.RSRotateActive = val;
-    }
-    
     static public boolean isRSRotateActive() {
         return Base.RSRotateActive;        
     }     
-    
-    static public void setRSPrintPanelActive(boolean val) {
-        Base.RSPrintPanelActive = val;
-    }
     
     static public boolean isRSPrintPanelActive() {
         return Base.RSPrintPanelActive;        

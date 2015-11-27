@@ -235,8 +235,7 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMove());
                         
-            Base.setRSRotateActive(false);
-            Base.setRSScaleActive(false);
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -247,8 +246,7 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotate());
             
-            Base.setRSRotateActive(true);
-            Base.setRSScaleActive(false);
+            Base.switchRSContextToRotate();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -259,8 +257,7 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
             
-            Base.setRSRotateActive(false);
-            Base.setRSScaleActive(true);
+            Base.switchRSContextToScale();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -271,8 +268,7 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirror());
             
-            Base.setRSRotateActive(false);
-            Base.setRSScaleActive(false);            
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }

@@ -519,6 +519,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenter());
+            
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -528,6 +530,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMoveSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMove());
+            
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -537,6 +541,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotateSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotate());
+            
+            Base.switchRSContextToRotate();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -546,6 +552,8 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirrorSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMirror());
+            
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }

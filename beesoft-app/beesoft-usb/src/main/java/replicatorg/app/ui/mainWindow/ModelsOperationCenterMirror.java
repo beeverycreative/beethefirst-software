@@ -352,6 +352,8 @@ public class ModelsOperationCenterMirror extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMoveSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterMove());
+            
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -361,6 +363,8 @@ public class ModelsOperationCenterMirror extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotateSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterRotate());
+            
+            Base.switchRSContextToRotate();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -370,6 +374,8 @@ public class ModelsOperationCenterMirror extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScaleSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());
+            
+            Base.switchRSContextToScale();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
@@ -379,6 +385,8 @@ public class ModelsOperationCenterMirror extends javax.swing.JPanel {
 //        Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScaleSimple());
         if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenter());
+            
+            Base.switchRSContextToMain();
         } else {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }

@@ -96,9 +96,7 @@ public class PrintPanel extends BaseDialog {
         
         if (Base.isRSDetected()) {
             rsPrintHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/print_panel_gestures_wide.png")));
-            Base.setRSRotateActive(false);
-            Base.setRSScaleActive(false);
-            Base.setRSPrintPanelActive(true);
+            Base.switchRSContextToPrint();
             
             // Closes the model operations panel
             Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenter());
@@ -733,6 +731,9 @@ public class PrintPanel extends BaseDialog {
             t.stop();
         }
 
+        if (Base.isRSDetected()) {
+            Base.switchRSContextToMain();
+        }
     }
 
     /**
@@ -1512,9 +1513,7 @@ public class PrintPanel extends BaseDialog {
         // Resets the control flags to false after the print started 
         if (Base.isRSDetected()) {
             
-            Base.setRSRotateActive(false);
-            Base.setRSScaleActive(false);
-            Base.setRSPrintPanelActive(false);
+            Base.switchRSContextToMain();
          }
     }
     
@@ -1560,7 +1559,7 @@ public class PrintPanel extends BaseDialog {
         doCancel();
         
         if (Base.isRSDetected()) {
-            Base.setRSPrintPanelActive(false);
+            Base.switchRSContextToMain();
         }
     }//GEN-LAST:event_bCancelMousePressed
 
