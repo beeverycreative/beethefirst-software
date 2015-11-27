@@ -340,16 +340,16 @@ public class RSProcessor extends Thread implements Runnable {
                             Base.getMainWindow().showCustomMessage("THUMBS UP detected! Let's print!");
                             
                             // If the machine is not printing processes the print gesture
-                            if (!Base.getMainWindow().getMachine().getMachineState().isPrinting()) {
+                            if (!Base.isPrinting) {
                                                             
                                 if (!Base.isRSPrintPanelActive()) { 
                                     this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
                                     
-                                } else if (this.tempPrintPanel != null && 
+                                } else if (Base.isRSPrintPanelActive() && 
                                         this.tempPrintPanel.printIsEnabled()) {
                                     this.tempPrintPanel.startPrint();
                                     
-                                } else if (this.tempPrintPanel == null ) {
+                                } else {
                                     this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
                                     
                                     if (this.tempPrintPanel.printIsEnabled())

@@ -519,6 +519,8 @@
                                 <argument>-ea</argument>
                                 <argument>-Xmx2048m</argument>
                                 <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                                <argument>-classpath</argument>
+                                <argument>libpxcclr-1.0.0.jar</argument>
                             </arguments>
                         </configuration>
                     </plugin>                  
@@ -687,8 +689,8 @@
             <groupId>intel.rssdk</groupId>
             <artifactId>libpxcclr</artifactId>
             <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/external_libs/libpxcclr-1.0.0.jar</systemPath>
+            <!--<scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/external_libs/libpxcclr-1.0.0.jar</systemPath> -->
         </dependency>
         <dependency>
             <groupId>net.sourceforge.jarbundler</groupId>
