@@ -290,7 +290,8 @@ public class RSProcessor extends Thread implements Runnable {
                         gestureStartTime = System.currentTimeMillis();
                     }
 
-                    if (handData.IsGestureFired("thumb_down", gestData) && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
+                    if (handData.IsGestureFired("thumb_down", gestData) && Base.isRSPrintPanelActive()
+                            && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("THUMB DOWM detected! Canceling print.");
                                                         
@@ -304,7 +305,8 @@ public class RSProcessor extends Thread implements Runnable {
                         gestureStartTime = System.currentTimeMillis();
                     }
 
-                    if (handData.IsGestureFired("two_fingers_pinch_open", gestData) && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
+                    if (handData.IsGestureFired("two_fingers_pinch_open", gestData) && !Base.isRSPrintPanelActive()
+                            && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) {
                             Base.getMainWindow().showCustomMessage("TWO FINGERS PINCH! Starting 3D scan...");
                             Base.getMainWindow().handleNew(true);
@@ -326,13 +328,14 @@ public class RSProcessor extends Thread implements Runnable {
                         break;
                     }
 
-                    if (handData.IsGestureFired("thumb_up", gestData) && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
-                        if ((System.currentTimeMillis() - gestureStartTime) > 1000) { //Prevents double gestures
+                    if (handData.IsGestureFired("thumb_up", gestData) ) {
+                        if ((System.currentTimeMillis() - gestureStartTime) > 2000) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
 
                             if (this.tempPrintPanel == null) {
                                 this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
-                            } else {
+                                
+                            } else if (this.tempPrintPanel.printIsEnabled()) {
                                 this.tempPrintPanel.startPrint();
                                 this.tempPrintPanel = null;
                             }

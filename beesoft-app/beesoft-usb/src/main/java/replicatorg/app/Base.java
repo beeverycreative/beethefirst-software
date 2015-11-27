@@ -1075,6 +1075,7 @@ public class Base {
     
     static boolean RSScaleActive = false;
     static boolean RSRotateActive = false;
+    static boolean RSPrintPanelActive = false;
     
     static public void setRSDetected(boolean val) {
         Base.RSDetected = val;
@@ -1098,6 +1099,14 @@ public class Base {
     
     static public boolean isRSRotateActive() {
         return Base.RSRotateActive;        
+    }     
+    
+    static public void setRSPrintPanelActive(boolean val) {
+        Base.RSPrintPanelActive = val;
+    }
+    
+    static public boolean isRSPrintPanelActive() {
+        return Base.RSPrintPanelActive;        
     }     
     
     private File openStatsFile() {

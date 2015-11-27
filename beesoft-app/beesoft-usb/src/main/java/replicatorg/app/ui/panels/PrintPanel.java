@@ -31,6 +31,7 @@ import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.mainWindow.ModelsOperationCenter;
 import replicatorg.app.util.ExtensionFilter;
 
 /**
@@ -95,6 +96,12 @@ public class PrintPanel extends BaseDialog {
         
         if (Base.isRSDetected()) {
             rsPrintHelp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/print_panel_gestures_wide.png")));
+            Base.setRSRotateActive(false);
+            Base.setRSScaleActive(false);
+            Base.setRSPrintPanelActive(true);
+            
+            // Closes the model operations panel
+            Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenter());
         }           
     }
 
@@ -1449,6 +1456,10 @@ public class PrintPanel extends BaseDialog {
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bCancelMouseExited
 
+    public boolean printIsEnabled() {
+        return bPrint.isEnabled();
+    }
+    
     public void startPrint() {
         if (!checkChanges()) {
             Base.getMainWindow().getBed().setGcodeOK(false);
@@ -1534,6 +1545,10 @@ public class PrintPanel extends BaseDialog {
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         doCancel();
+        
+        if (Base.isRSDetected()) {
+            Base.setRSPrintPanelActive(false);
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bExportMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMousePressed
