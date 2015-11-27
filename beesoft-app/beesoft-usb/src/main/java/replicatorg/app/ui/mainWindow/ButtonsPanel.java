@@ -244,10 +244,8 @@ public class ButtonsPanel extends javax.swing.JPanel {
         intelIcon.setSize(new java.awt.Dimension(24, 24));
 
         rsHelp2.setPreferredSize(new java.awt.Dimension(24, 24));
-        rsHelp2.setSize(new java.awt.Dimension(24, 24));
 
         rsHelp1.setPreferredSize(new java.awt.Dimension(24, 24));
-        rsHelp1.setSize(new java.awt.Dimension(24, 24));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

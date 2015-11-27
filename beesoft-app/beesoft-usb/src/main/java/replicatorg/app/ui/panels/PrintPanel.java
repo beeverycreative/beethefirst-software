@@ -770,12 +770,18 @@ public class PrintPanel extends BaseDialog {
         labelTable2.get(20).setForeground(Color.BLACK);
         labelTable2.get(40).setForeground(Color.BLACK);
 
-        if (val == 5) {
-            labelTable2.get(5).setForeground(new Color(255, 203, 5));
-        } else if (val == 20) {
-            labelTable2.get(20).setForeground(new Color(255, 203, 5));
-        } else if (val == 40) {
-            labelTable2.get(40).setForeground(new Color(255, 203, 5));
+        switch (val) {
+            case 5:
+                labelTable2.get(5).setForeground(new Color(255, 203, 5));
+                break;
+            case 20:
+                labelTable2.get(20).setForeground(new Color(255, 203, 5));
+                break;
+            case 40:
+                labelTable2.get(40).setForeground(new Color(255, 203, 5));
+                break;
+            default:
+                break;
         }
     }
 
@@ -1173,7 +1179,6 @@ public class PrintPanel extends BaseDialog {
         );
 
         rsPrintHelp.setPreferredSize(new java.awt.Dimension(24, 24));
-        rsPrintHelp.setSize(new java.awt.Dimension(24, 24));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1503,6 +1508,14 @@ public class PrintPanel extends BaseDialog {
                 p.startConditions();
             }
         });
+        
+        // Resets the control flags to false after the print started 
+        if (Base.isRSDetected()) {
+            
+            Base.setRSRotateActive(false);
+            Base.setRSScaleActive(false);
+            Base.setRSPrintPanelActive(false);
+         }
     }
     
     private void bPrintMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMousePressed

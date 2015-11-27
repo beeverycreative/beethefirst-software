@@ -371,7 +371,7 @@ public class Maintenance extends BaseDialog {
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
                         .addComponent(bExtruderMaintenance)
                         .addGap(575, 575, 575))
-                    .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
+                    .addComponent(lExtruderMaintenanceDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pExtruderMaintenanceLayout.createSequentialGroup()
                         .addComponent(lExtruderMaintenance)
                         .addGap(0, 0, Short.MAX_VALUE))))

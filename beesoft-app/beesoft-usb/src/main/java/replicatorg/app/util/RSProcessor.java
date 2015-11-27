@@ -329,15 +329,20 @@ public class RSProcessor extends Thread implements Runnable {
                     }
 
                     if (handData.IsGestureFired("thumb_up", gestData) ) {
+                        
                         if ((System.currentTimeMillis() - gestureStartTime) > 2000) { //Prevents double gestures
-                            Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
-
-                            if (this.tempPrintPanel == null) {
+                            
+                            // If the machine is not printing processes the print gesture
+                            if (!Base.getMainWindow().getMachine().getMachineState().isPrinting()) {
+                                                            
+                                Base.getMainWindow().showCustomMessage("THUMBS UP detected! Starting to print...");
+                                if (this.tempPrintPanel == null) {
                                 this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
                                 
-                            } else if (this.tempPrintPanel.printIsEnabled()) {
-                                this.tempPrintPanel.startPrint();
-                                this.tempPrintPanel = null;
+                                } else if (this.tempPrintPanel.printIsEnabled()) {
+                                    this.tempPrintPanel.startPrint();
+                                    this.tempPrintPanel = null;
+                                }
                             }
                         }
                         gestureStartTime = System.currentTimeMillis();
