@@ -247,7 +247,7 @@ public class RSProcessor extends Thread implements Runnable {
 
                     if (handData.IsGestureFired("full_pinch", gestData) && Base.isRSScaleActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 2000) { //Prevents double gestures
-                            Base.getMainWindow().showCustomMessage("CLICK detected! Reducing model size.");
+                            Base.getMainWindow().showCustomMessage("FULL PINCH detected! Reducing model size.");
 
                             if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
                                 Base.getMainWindow().updateModelsOperationCenter(new ModelsOperationCenterScale());

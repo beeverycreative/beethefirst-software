@@ -53,6 +53,9 @@ public class ButtonsPanel extends javax.swing.JPanel {
             intelIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/intel.png")));
             rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/scan_model_gesture.png")));
             rsHelp1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/start_print_gesture.png")));
+            rsHelp1.setVisible(true);
+            rsHelp2.setVisible(true);
+            
             rsScan.setVisible(true);
             rsScan.setText(Languager.getTagValue(1, "MainWindowButtons", "ScanModel"));
             rsScan.setFont(getSSProLight("13"));
@@ -60,7 +63,26 @@ public class ButtonsPanel extends javax.swing.JPanel {
             rsScan.setVisible(false);
         }
     }
+    
+    public void hideScanGesture() {
+        rsHelp1.setVisible(false);
+        rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/start_print_gesture.png")));        
+    }
 
+    public void hidePrintGesture() {
+        rsHelp1.setVisible(false);
+        rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/scan_model_gesture.png"))); 
+    }
+    
+    public void hideAllGestures() {
+        rsHelp1.setVisible(false);
+        rsHelp2.setVisible(false);
+    }
+    
+    public void showAllGestures() {
+        this.loadRSComponents();
+    }
+        
     private void setTextLanguage() {
         jLabel6.setText(Languager.getTagValue(1, "MainWindowButtons", "Models"));
         jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Maintenance"));

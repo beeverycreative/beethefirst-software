@@ -1089,24 +1089,32 @@ public class Base {
         Base.RSScaleActive =  true;
         Base.RSRotateActive = false;
         Base.RSPrintPanelActive = false;
+        
+        Base.getMainWindow().getButtons().hideScanGesture();
     } 
     
     static public void switchRSContextToRotate() {
         Base.RSScaleActive =  false;
         Base.RSRotateActive = true;
         Base.RSPrintPanelActive = false;
+        
+        Base.getMainWindow().getButtons().hideScanGesture();
     } 
     
     static public void switchRSContextToPrint() {
         Base.RSScaleActive =  false;
         Base.RSRotateActive = false;
         Base.RSPrintPanelActive = true;
+        
+        Base.getMainWindow().getButtons().hideAllGestures();
     } 
     
     static public void switchRSContextToMain() {
         Base.RSScaleActive =  false;
         Base.RSRotateActive = false;
         Base.RSPrintPanelActive = false;
+        
+        Base.getMainWindow().getButtons().showAllGestures();
     } 
         
     static public boolean isRSScaleActive() {
