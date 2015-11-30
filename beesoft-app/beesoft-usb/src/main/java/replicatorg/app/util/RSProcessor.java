@@ -16,6 +16,8 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import replicatorg.app.Base;
 
@@ -29,7 +31,7 @@ import replicatorg.app.ui.panels.PrintPanel;
  */
 public class RSProcessor extends Thread implements Runnable {
 
-    private final JFrame frame = new JFrame();
+    private final JDialog frame = new JDialog();
     private final RSJointView JView = new RSJointView();
 
     private Process scannerExe = null;
@@ -52,15 +54,16 @@ public class RSProcessor extends Thread implements Runnable {
         this.frame.setResizable(false);
         this.frame.setAlwaysOnTop(false);
         this.frame.setFocusable(false);
+        this.frame.setIconImage(new ImageIcon(getClass().getResource(
+                        "/replicatorg/app/ui/mainWindow/intel.png")).getImage());
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
         Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
 
         int y = (int) rect.getMaxY() - this.frame.getHeight() - 100;
-        int x = (int) rect.getMaxX() - this.frame.getWidth();
+        int x = (int) rect.getMaxX() - this.frame.getWidth() - 15;
         frame.setLocation(x, y);
-        
     }
 
     public boolean isReadyToRunAgain() {
@@ -242,8 +245,8 @@ public class RSProcessor extends Thread implements Runnable {
 
                     }
 
-                    if (handData.IsGestureFired("click", gestData) && Base.isRSScaleActive()) {
-                        if ((System.currentTimeMillis() - gestureStartTime) > 500) { //Prevents double gestures
+                    if (handData.IsGestureFired("full_pinch", gestData) && Base.isRSScaleActive()) {
+                        if ((System.currentTimeMillis() - gestureStartTime) > 2000) { //Prevents double gestures
                             Base.getMainWindow().showCustomMessage("CLICK detected! Reducing model size.");
 
                             if (Base.getMainWindow().getCanvas().getControlTool(3).getModelsScaleCenter() == null) {
@@ -311,7 +314,7 @@ public class RSProcessor extends Thread implements Runnable {
                     }
 
                     if (handData.IsGestureFired("two_fingers_pinch_open", gestData) && !Base.isRSPrintPanelActive()
-                            && !Base.isRSRotateActive() && !Base.isRSRotateActive()) {
+                            && !Base.isRSRotateActive() && !Base.isRSScaleActive()) {
                         if ((System.currentTimeMillis() - gestureStartTime) > 500) {
                             Base.getMainWindow().showCustomMessage("TWO FINGERS PINCH! Starting 3D scan...");
                             Base.getMainWindow().handleNew(true);
