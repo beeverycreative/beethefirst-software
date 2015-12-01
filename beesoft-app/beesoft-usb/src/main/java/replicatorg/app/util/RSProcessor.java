@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import replicatorg.app.Base;
 
 import replicatorg.app.ui.mainWindow.ModelsOperationCenterRotate;
@@ -304,7 +303,7 @@ public class RSProcessor extends Thread implements Runnable {
                                 this.tempPrintPanel.doCancel();
                                 this.tempPrintPanel = null;
                             } else {
-                                // gets the current print panel called with click
+                                // when the print panel is called with click
                                 this.tempPrintPanel = Base.getMainWindow().getButtons().startPrint();
                                 this.tempPrintPanel.doCancel();
                             }
