@@ -65,22 +65,31 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
     
     public void hideScanGesture() {
-        rsHelp1.setVisible(false);
-        rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/start_print_gesture.png")));        
+        if (Base.isRSDetected()) {
+            rsHelp1.setVisible(false);
+            rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/start_print_gesture.png")));
+        }
     }
 
     public void hidePrintGesture() {
-        rsHelp1.setVisible(false);
-        rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/scan_model_gesture.png"))); 
+        if (Base.isRSDetected()) {
+            rsHelp1.setVisible(false);
+            rsHelp2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/scan_model_gesture.png"))); 
+        }
     }
     
     public void hideAllGestures() {
-        rsHelp1.setVisible(false);
-        rsHelp2.setVisible(false);
+        
+        if (Base.isRSDetected()) {
+            rsHelp1.setVisible(false);
+            rsHelp2.setVisible(false);
+        }
     }
     
     public void showAllGestures() {
-        this.loadRSComponents();
+        if (Base.isRSDetected()) {
+            this.loadRSComponents();
+        }
     }
         
     private void setTextLanguage() {
