@@ -761,13 +761,6 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
         <Help>
             <FAQ value="FAQ"/>
             <Troubleshooting value="Fehlerbehebung"/>
-            <Support value="Support"/>
-            <FAQ_Link_PT value="https://www.beeverycreative.com/pt/PF/"/>
-            <Troubleshooting_Link_PT value="https://www.beeverycreative.com/pt/resolucao-de-problemas/"/>
-            <Support_Link_PT value="https://www.beeverycreative.com/customerservice/"/>
-            <FAQ_Link_EN value="https://www.beeverycreative.com/en/FAQ/"/>
-            <Troubleshooting_Link_EN value="https://www.beeverycreative.com/en/resolucao-de-problemas/"/>
-            <Support_Link_EN value="https://www.beeverycreative.com/customerservice/"/>            
         </Help>
         
         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->
