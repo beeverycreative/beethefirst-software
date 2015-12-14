@@ -94,6 +94,7 @@ public class RSProcessor extends Thread implements Runnable {
             return;
         }
 
+
         /*
         PXCMHandModule handModule = senseMgr.QueryHand(); 
         PXCMHandConfiguration handConfig = handModule.CreateActiveConfiguration(); 
@@ -106,6 +107,10 @@ public class RSProcessor extends Thread implements Runnable {
         //if(sts.isError())
         //System.out.println("Init failed and we get " + sts.toString());
         if (sts.compareTo(pxcmStatus.PXCM_STATUS_NO_ERROR) >= 0) {
+            
+            // Confirms that the RealSense sensor was detected
+            Base.setRSDetected(true);
+            System.out.println("Intel RealSense sensor detected!");
 
             PXCMHandModule handModule = senseMgr.QueryHand();
             PXCMHandConfiguration handConfig = handModule.CreateActiveConfiguration();
@@ -117,10 +122,7 @@ public class RSProcessor extends Thread implements Runnable {
             handConfig.Update();
 
             PXCMHandData handData = handModule.CreateOutput();
-                                                            
-            // Confirms that the RealSense sensor was detected
-            Base.setRSDetected(true);
-
+            
             int nframes = 0;
             double gestureStartTime = 0;
 
