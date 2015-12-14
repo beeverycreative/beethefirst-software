@@ -93,9 +93,6 @@ public class RSProcessor extends Thread implements Runnable {
             System.out.print("Failed to enable HandAnalysis\n");
             return;
         }
-                        
-        // Confirms that the RealSense sensor was detected
-        Base.setRSDetected(true);
 
         /*
         PXCMHandModule handModule = senseMgr.QueryHand(); 
@@ -109,6 +106,7 @@ public class RSProcessor extends Thread implements Runnable {
         //if(sts.isError())
         //System.out.println("Init failed and we get " + sts.toString());
         if (sts.compareTo(pxcmStatus.PXCM_STATUS_NO_ERROR) >= 0) {
+
             PXCMHandModule handModule = senseMgr.QueryHand();
             PXCMHandConfiguration handConfig = handModule.CreateActiveConfiguration();
             handConfig.EnableAllGestures();
@@ -119,6 +117,9 @@ public class RSProcessor extends Thread implements Runnable {
             handConfig.Update();
 
             PXCMHandData handData = handModule.CreateOutput();
+                                                            
+            // Confirms that the RealSense sensor was detected
+            Base.setRSDetected(true);
 
             int nframes = 0;
             double gestureStartTime = 0;
