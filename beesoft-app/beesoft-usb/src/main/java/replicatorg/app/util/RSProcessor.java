@@ -10,12 +10,14 @@ import intel.rssdk.PXCMPointF32;
 import intel.rssdk.PXCMSenseManager;
 import intel.rssdk.PXCMSession;
 import intel.rssdk.pxcmStatus;
+import java.awt.Color;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import replicatorg.app.Base;
@@ -30,39 +32,44 @@ import replicatorg.app.ui.panels.PrintPanel;
  */
 public class RSProcessor extends Thread implements Runnable {
 
-    private final JDialog frame = new JDialog();
-    private final RSJointView JView = new RSJointView();
+    private final JDialog handTrackingWindow = new JDialog();
+    private final RSJointView handJointView = new RSJointView();
 
     private Process scannerExe = null;
 
     private boolean rsSessionActive;
     private boolean externalRsScanRequest;
     private boolean readyToRunAgain;
-    private final boolean scanFirst;
 
     private PrintPanel tempPrintPanel;
 
     public RSProcessor() throws Exception {
         super();
         this.rsSessionActive = true;
-        this.scanFirst = false;
         this.externalRsScanRequest = false;
         this.readyToRunAgain = false;
-        this.frame.add(JView);
-        this.frame.setSize(200, 200);
-        this.frame.setResizable(false);
-        this.frame.setAlwaysOnTop(false);
-        this.frame.setFocusable(false);
-        this.frame.setIconImage(new ImageIcon(getClass().getResource(
+        
+        this.handTrackingWindow.getRootPane().setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+        this.handTrackingWindow.add(handJointView);
+        this.handTrackingWindow.setSize(200, 200);
+        this.handTrackingWindow.setResizable(false);
+        this.handTrackingWindow.setUndecorated(true);
+        this.handTrackingWindow.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        this.handTrackingWindow.setAlwaysOnTop(false);
+        this.handTrackingWindow.setFocusable(false);
+        this.handTrackingWindow.setVisible(true);
+        
+        
+        this.handTrackingWindow.setIconImage(new ImageIcon(getClass().getResource(
                         "/replicatorg/app/ui/mainWindow/intel.png")).getImage());
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
         Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
 
-        int y = (int) rect.getMaxY() - this.frame.getHeight() - 100;
-        int x = (int) rect.getMaxX() - this.frame.getWidth() - 15;
-        frame.setLocation(x, y);
+        int y = (int) rect.getMaxY() - this.handTrackingWindow.getHeight() - 100;
+        int x = (int) rect.getMaxX() - this.handTrackingWindow.getWidth() - 15;
+        handTrackingWindow.setLocation(x, y);
     }
 
     public boolean isReadyToRunAgain() {
@@ -94,15 +101,6 @@ public class RSProcessor extends Thread implements Runnable {
             return;
         }
 
-
-        /*
-        PXCMHandModule handModule = senseMgr.QueryHand(); 
-        PXCMHandConfiguration handConfig = handModule.CreateActiveConfiguration(); 
-        handConfig.EnableAllGestures();
-        handConfig.EnableAllAlerts();
-        handConfig.ApplyChanges();
-        handConfig.Update();
-         */
         sts = senseMgr.Init();
         //if(sts.isError())
         //System.out.println("Init failed and we get " + sts.toString());
@@ -125,13 +123,11 @@ public class RSProcessor extends Thread implements Runnable {
             
             int nframes = 0;
             double gestureStartTime = 0;
-
-            boolean modelScaledToMax = false;
-
-            //frame.setVisible(true);
+            
             while (rsSessionActive) {
-                if (!frame.isActive()) {
-                    frame.setVisible(true);
+                if (!handTrackingWindow.isVisible()) {
+                    handTrackingWindow.setVisible(true);
+                    handTrackingWindow.setAlwaysOnTop(true);
                 }
                 nframes++;
                 sts = senseMgr.AcquireFrame(true);
@@ -146,7 +142,7 @@ public class RSProcessor extends Thread implements Runnable {
 
                 PXCMHandData.JointData[][] nodes = new PXCMHandData.JointData[][]{new PXCMHandData.JointData[0x20], new PXCMHandData.JointData[0x20]};
                 PXCMHandData.IHand handJoin = new PXCMHandData.IHand();
-                PXCMHandData.JointData joint = new PXCMHandData.JointData();
+                PXCMHandData.JointData joint;
 
                 try {
 
@@ -227,7 +223,7 @@ public class RSProcessor extends Thread implements Runnable {
 
                 }
                 //if(handData.QueryNumberOfHands() > 0){
-                JView.SetCoordJoint(nodes, handData.QueryNumberOfHands());
+                handJointView.SetCoordJoint(nodes, handData.QueryNumberOfHands());
                 //}
                 PXCMCapture.Sample sample = senseMgr.QueryHandSample();
 
@@ -397,14 +393,14 @@ public class RSProcessor extends Thread implements Runnable {
 
                 senseMgr.ReleaseFrame();
             }
-            this.frame.setVisible(false);
+            //this.frame.setVisible(false);
             session.close();
             senseMgr.close();
         }
     }
 
     /**
-     * Stops the session with the Realsense hardware
+     * Stops the session with the RealSense hardware
      */
     public void stopRSSession() {
 
@@ -451,5 +447,4 @@ public class RSProcessor extends Thread implements Runnable {
             }
         }
     }
-
 }
