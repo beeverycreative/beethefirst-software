@@ -27,8 +27,8 @@
 		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
-          <parameter name="infill_speed" value="0"/>
-          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
           <parameter name="retraction_speed" value="125"/>
           <parameter name="print_temperature" value="210"/>
           <parameter name="solid_layer_thickness" value="0.9"/>
@@ -99,8 +99,8 @@
 		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
-          <parameter name="infill_speed" value="0"/>
-          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
           <parameter name="retraction_speed" value="125"/>
           <parameter name="print_temperature" value="210"/>
           <parameter name="solid_layer_thickness" value="0.9"/>
@@ -171,8 +171,8 @@
 		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
-          <parameter name="infill_speed" value="0"/>
-          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
           <parameter name="retraction_speed" value="125"/>
           <parameter name="print_temperature" value="210"/>
           <parameter name="solid_layer_thickness" value="0.9"/>
@@ -243,8 +243,8 @@
 		  <parameter name="layer_height" value="0.2" />
           <parameter name="retraction_amount" value="1.5"/>
           <parameter name="wall_thickness" value="0.8"/>
-          <parameter name="infill_speed" value="0"/>
-          <parameter name="cool_min_layer_time" value="30"/>
+          <parameter name="infill_speed" value="60"/>
+          <parameter name="cool_min_layer_time" value="5"/>
           <parameter name="retraction_speed" value="125"/>
           <parameter name="print_temperature" value="210"/>
           <parameter name="solid_layer_thickness" value="0.9"/>
