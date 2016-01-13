@@ -216,7 +216,6 @@ public class Base {
     public static String FIRMWARE_IN_USE;
     private final static String VERSION_JAVA = System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
-    public static String language = "en";
     public static String MACHINE_NAME = "BEETHEFIRST";
     public static final String GCODE_DELIMITER = "--";
     public static final String GCODE_TEMP_FILENAME = "temp.gcode";
@@ -1093,9 +1092,6 @@ public class Base {
 
         // Loads properties at the beginning
         loadProperties();
-
-        // Loads language
-        language = ProperDefault.get("language").toLowerCase();
 
         systemThreads = new ArrayList<Thread>();
 

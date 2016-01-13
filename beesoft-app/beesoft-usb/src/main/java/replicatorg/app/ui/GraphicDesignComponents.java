@@ -27,9 +27,8 @@ public class GraphicDesignComponents {
     
     /** Paths **/
     private static final String RESOURCES_PATH = Base.getApplicationDirectory()+"/resources/mainWindow/";
-    private static final String FONT_PATH = Base.getApplicationDirectory()+"/resources/Source_Sans_Pro/";
     private static final GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    private static final boolean isHebrew = Base.language.equals("he");
+    private static final boolean isHebrew = false;  // remove this, unnecessary
     
     private static final Color machineTextColor = Base.getColorPref("", "#231f20");
     private static final Color buttonsTextColor = Base.getColorPref("", "#231f20");

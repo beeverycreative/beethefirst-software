@@ -307,9 +307,7 @@ public class UpdateChecker extends BaseDialog {
                         }
                     }
                 }
-            } else {
-                Base.writeLog("Permission denied over " + "languages/".concat(Base.language.toString()).concat(".xml"), this.getClass());
-            }
+            } 
         } catch (ParserConfigurationException pce) {
             Base.writeLog(pce.getMessage(), this.getClass());
         } catch (SAXException se) {
