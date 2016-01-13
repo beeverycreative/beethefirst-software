@@ -1269,6 +1269,9 @@ class UpdateThread4 extends Thread {
                 finished = true;
                 break;
             }
+            
+            Base.hiccup(100);
+            machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
 
             Base.hiccup(3000);
         }

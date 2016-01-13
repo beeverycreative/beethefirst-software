@@ -73,7 +73,7 @@ public class ControlPanel extends BaseDialog {
     private final TemperatureThread disposeThread = new TemperatureThread(this, machine);
     private final InputValidationThread inputValidationThread = new InputValidationThread(this);
     private final GetInitialValuesThread getInitialValuesThread = new GetInitialValuesThread(this, machine);
-    private boolean loggingTemperature;
+    private static boolean loggingTemperature = false;
     private File file;
     private FileWriter fw;
     private BufferedWriter bw;
@@ -146,7 +146,9 @@ public class ControlPanel extends BaseDialog {
                 }
                 machine.getDriver().dispatchCommand("M1110 S0", COM.DEFAULT);
 
-                disposeThread.cancel();
+                if (loggingTemperature == false) {
+                    disposeThread.cancel();
+                }
                 inputValidationThread.cancel();
                 getInitialValuesThread.cancel();
             }
@@ -231,7 +233,6 @@ public class ControlPanel extends BaseDialog {
 
         extrudeCombo.setModel(comboModel2);
         extrudeCombo.setSelectedIndex(0);
-        loggingTemperature = false;
 
     }
 
@@ -434,19 +435,21 @@ public class ControlPanel extends BaseDialog {
     private void doCancel() {
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        disposeThread.cancel();
+        if (loggingTemperature == false) {
+            disposeThread.cancel();
+            cleanLogFiles();
+
+            try {
+                if (bw != null) {
+                    bw.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         inputValidationThread.cancel();
         getInitialValuesThread.cancel();
         Base.getMainWindow().setEnabled(true);
-        cleanLogFiles();
-
-        try {
-            if (bw != null) {
-                bw.close();
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         machine.runCommand(new replicatorg.drivers.commands.SendHome());
         dispose();
@@ -1770,7 +1773,7 @@ class TemperatureThread extends Thread {
     private boolean stop = false;
 
     public TemperatureThread(ControlPanel cPanel, MachineInterface mach) {
-        super("Cleanup Thread");
+        super("Temperature Thread");
         this.machine = mach;
         this.controlPanel = cPanel;
     }
@@ -1779,9 +1782,11 @@ class TemperatureThread extends Thread {
     public void run() {
 
         while (stop == false) {
-            if (controlPanel.canPollData) {
+            if (controlPanel.canPollData && machine.getDriver().isTransferMode() == false) {
 
-                machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
+                if(Base.isPrinting == false) {
+                    machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
+                }
                 controlPanel.updateTemperature();
 
                 try {
@@ -1789,7 +1794,6 @@ class TemperatureThread extends Thread {
                 } catch (InterruptedException ex) {
                     Logger.getLogger(TemperatureThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
         }
     }

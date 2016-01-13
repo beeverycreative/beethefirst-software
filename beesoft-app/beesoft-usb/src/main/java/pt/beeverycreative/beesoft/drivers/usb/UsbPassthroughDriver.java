@@ -816,14 +816,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         String ans = readResponse();
 
-        if (!ans.contains("ok") && !ans.contains("\n")) {
-            return NOK;
-        } else {
+        //if (!ans.contains("ok") && !ans.contains("\n")) {
+        //    return NOK;
+        //} else {
             if (temp != null) {
                 resendQueue.remove(temp);
             }
             return ans;
-        }
+        //}
 
     }
 
@@ -2497,6 +2497,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void readTemperature() {
         //sendCommand(_getToolCode() + "M105");
         String temp = dispatchCommand("M105");
+        System.out.println(temp);
         double extruderTemperature, blockTemperature;
 
         String re1 = "(T)";	// Variable Name 1
