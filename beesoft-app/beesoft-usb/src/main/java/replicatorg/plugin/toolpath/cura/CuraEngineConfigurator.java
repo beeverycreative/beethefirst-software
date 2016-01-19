@@ -50,73 +50,59 @@ public class CuraEngineConfigurator {
     private HashMap<String, String> createCfg() {
         HashMap<String, String> result = new HashMap<String, String>();
 
-        result.put("layerThickness", "100");
-        result.put("initialLayerThickness", "300");
-        result.put("filamentDiameter", "2890");
-        result.put("filamentFlow", "100");
-        result.put("layer0extrusionWidth", "600");
-        result.put("extrusionWidth", "400");
-        result.put("insetCount", "2");
-        result.put("downSkinCount", "6");
-        result.put("upSkinCount", "6");
-        result.put("sparseInfillLineDistance", "2000"); //100 * extrusionWidth / 20
-        result.put("infillOverlap", "15");
-        result.put("skirtDistance", "6000");
-        result.put("skirtLineCount", "1");
-        result.put("skirtMinLength", "0");
         result.put("initialSpeedupLayers", "4");
-        result.put("initialLayerSpeed", "20");
-        result.put("printSpeed", "50");
-        result.put("infillSpeed", "50");
-        result.put("inset0Speed", "50");
-//        result.put("pointsClipDistance", "440");
-        result.put("insetXSpeed", "50");
-        result.put("moveSpeed", "150");
-        result.put("fanFullOnLayerNr", "2");
-        result.put("supportType", "1");
-        result.put("supportAngle", "-1");
-        result.put("supportEverywhere", "0");
-        result.put("supportLineDistance", "2000");
-        result.put("supportXYDistance", "700");
-        result.put("supportZDistance", "150");
-        result.put("supportExtruder", "-1");
-        result.put("retractionAmount", "500");
-        result.put("retractionAmountPrime", "0");
-        result.put("retractionSpeed", "45");
-        result.put("retractionAmountExtruderSwitch", "14500");
-        result.put("retractionMinimalDistance", "1500");
-        result.put("minimalExtrusionBeforeRetraction", "100");
-        result.put("retractionZHop", "0");
-        result.put("enableCombing", "1");
-        result.put("enableOozeShield", "0");
-        result.put("wipeTowerSize", "0");
-        result.put("multiVolumeOverlap", "0");
-        result.put("raftMargin", "5000");
-        result.put("raftLineSpacing", "1000.0");
-        result.put("raftBaseThickness", "0");
-        result.put("raftBaseLinewidth", "0");
-        result.put("raftInterfaceThickness", "0");
-        result.put("raftInterfaceLinewidth", "0");
-        result.put("raftInterfaceLineSpacing", "250");
-        result.put("raftAirGap", "0");
-        result.put("raftBaseSpeed", "0");
-        result.put("raftFanSpeed", "0");
-        result.put("raftSurfaceThickness", "0");
-        result.put("raftSurfaceLinewidth", "0");
-        result.put("raftSurfaceLineSpacing", "0");
-        result.put("raftSurfaceLayers", "0");
-        result.put("raftSurfaceSpeed", "0");
-        result.put("minimalLayerTime", "5");
         result.put("minimalFeedrate", "10");
+        result.put("supportXYDistance", "700");
+        result.put("insetXSpeed", "40");
+        result.put("retractionZHop", "0");
+        result.put("extruderOffset[3].X", "0");
+        result.put("extruderOffset[3].Y", "0");
+        result.put("retractionSpeed", "125");
+        result.put("filamentFlow", "100");
+        result.put("infillOverlap", "15");
+        result.put("skinSpeed", "40");
+        result.put("inset0Speed", "40");
         result.put("coolHeadLift", "0");
-        result.put("fanSpeedMin", "100");
+        result.put("extrusionWidth", "400");
+        result.put("upSkinCount", "10");
+        result.put("initialLayerSpeed", "20");
+        result.put("minimalLayerTime", "5");
+        result.put("infillSpeed", "60");
+        result.put("supportExtruder", "-1");
         result.put("fanSpeedMax", "100");
-        result.put("fixHorrible", "0");
-        result.put("spiralizeMode", "0");
-        result.put("gcodeFlavor", "GCODE_FLAVOR_REPRAP");
+        result.put("supportType", "1");
+        result.put("enableCombing", "1");
+        result.put("fanSpeedMin", "100");
+        result.put("supportZDistance", "150");
+        result.put("supportEverywhere", "0");
+        result.put("filamentDiameter", "1750");
+        result.put("initialLayerThickness", "300");
+        result.put("supportAngle", "-1");
+        result.put("fanFullOnLayerNr", "2");
+        result.put("extruderOffset[1].X", "0");
+        result.put("extruderOffset[1].Y", "21600");
+        result.put("layerThickness", "100");
+        result.put("minimalExtrusionBeforeRetraction", "20");
+        result.put("retractionMinimalDistance", "1500");
+        result.put("skirtMinLength", "150000");
         result.put("objectSink", "0");
-        result.put("posx", "0");
-        result.put("posy", "0");
+        result.put("retractionAmount", "750");
+        result.put("nozzleSize", "400");
+        result.put("skirtLineCount", "0");
+        result.put("skirtDistance", "3000");
+        result.put("extruderOffset[2].Y", "0");
+        result.put("extruderOffset[2].X", "0");
+        result.put("perimeterBeforeInfill", "0");
+        result.put("printSpeed", "40");
+        result.put("fixHorrible", "1");
+        result.put("layer0extrusionWidth", "400");
+        result.put("moveSpeed", "100");
+        result.put("supportLineDistance", "2666");
+        result.put("retractionAmountExtruderSwitch", "16500");
+        result.put("sparseInfillLineDistance", "8000");
+        result.put("insetCount", "2");
+        result.put("downSkinCount", "10");
+        result.put("multiVolumeOverlap", "150");
 
         /**
          * Do not use START and END GCODE It will be printed on PSSW
@@ -145,37 +131,28 @@ public class CuraEngineConfigurator {
         result.put("retraction_enable", "True");
         result.put("solid_layer_thickness", "0.9");
         result.put("fill_density", "5");
-        result.put("clip_distance", "0.440");
         result.put("nozzle_size", "0.4");
         result.put("print_speed", "60");
         result.put("print_temperature", "220");
-        result.put("print_temperature2", "220"); //100 * extrusionWidth / 20
-        result.put("print_temperature3", "220");
-        result.put("print_temperature4", "220");
-        result.put("print_bed_temperature", "70");
+        result.put("support", "None");
         result.put("platform_adhesion", "None");
-        result.put("support_dual_extrusion", "Both");
-        result.put("wipe_tower", "False");
-        result.put("wipe_tower_volume", "15");
-        result.put("ooze_shield", "False");
         result.put("filament_diameter", "1.75");
-        result.put("filament_diameter2", "0");
-        result.put("filament_diameter3", "0");
-        result.put("filament_diameter4", "0");
-        result.put("filament_flow", "88.0");
-        result.put("retraction_speed", "100");
-        result.put("retraction_amount", "0.5");
+        result.put("filament_flow", "100.0");
+        result.put("retraction_speed", "125");
+        result.put("retraction_amount", "0.75");
         result.put("retraction_dual_amount", "16.5");
         result.put("retraction_min_travel", "1.0");
-        result.put("retraction_combing", "True");
-        result.put("retraction_minimal_extrusion", "0.2");
+        result.put("retraction_combing", "All");
+        result.put("retraction_minimal_extrusion", "0.02");
         result.put("retraction_hop", "0.0");
         result.put("bottom_thickness", "0.3");
+        result.put("layer0_width_factor", "100.0");
         result.put("object_sink", "0.0");
         result.put("overlap_dual", "0.15");
         result.put("travel_speed", "100");
-        result.put("bottom_layer_speed", "15");
+        result.put("bottom_layer_speed", "20");
         result.put("infill_speed", "60");
+        result.put("solidarea_speed", "60");
         result.put("inset0_speed", "60");
         result.put("insetx_speed", "60");
         result.put("cool_min_layer_time", "5");
@@ -186,22 +163,31 @@ public class CuraEngineConfigurator {
         result.put("fan_full_height", "0.5");
         result.put("fan_speed", "100");
         result.put("fan_speed_max", "100");
-        result.put("cool_min_feedrate", "15");
-        result.put("cool_head_lift", "False");
+        result.put("cool_min_feedrate", "10");
+        result.put("cool_head_lift", "0");
         result.put("solid_top", "True");
         result.put("solid_bottom", "True");
         result.put("fill_overlap", "15");
+        result.put("perimeter_before_infill", "False");
         result.put("support_type", "Lines");
+        result.put("support_angle", "60");
         result.put("support_fill_rate", "10");
         result.put("support_xy_distance", "0.7");
         result.put("support_z_distance", "0.15");
         result.put("spiralize", "False");
+        result.put("simple_mode", "False");
         result.put("brim_line_count", "20");
         result.put("raft_margin", "5");
-        result.put("raft_line_spacing", "1.0");
+        result.put("raft_line_spacing", "3.0");
         result.put("raft_base_thickness", "0.3");
-        result.put("raft_base_linewidth", "0.7");
-        result.put("raft_interface_linewidth", "0.2");
+        result.put("raft_base_linewidth", "1");
+        result.put("raft_interface_thickness", "0.27");
+        result.put("raft_interface_linewidth", "0.4");
+        result.put("raft_airgap_all", "0");
+        result.put("raft_airgap", "0.22");
+        result.put("raft_surface_layers", "2");
+        result.put("raft_surface_thickness", "0.27");
+        result.put("raft_surface_linewidth", "0.4");
         result.put("fix_horrible_union_all_type_a", "True");
         result.put("fix_horrible_union_all_type_b", "False");
         result.put("fix_horrible_use_open_bits", "False");
@@ -579,7 +565,8 @@ public class CuraEngineConfigurator {
 
             //always use defaul, GCODE_FLAVOR_REPRAP
             if (key.equals("gcodeFlavor")) {
-                return "GCODE_FLAVOR_REPRAP";
+                //return "GCODE_FLAVOR_REPRAP";
+                return "RepRap (Marlin/Sprinter)";
             }
 
             //<not_in_Cura>        
@@ -704,7 +691,7 @@ public class CuraEngineConfigurator {
 
             if (key.equals("minimalExtrusionBeforeRetraction")) {
 
-                return String.valueOf((int) (Float.parseFloat(curaIni.get("retraction_minimal_extrusion")) * 1000.0));
+                return String.valueOf((int) (Float.parseFloat(curaIni.get("retraction_minimal_extrusion")) * 1000.0)+1);
             }
 
             if (key.equals("enableCombing")) {
@@ -842,7 +829,7 @@ public class CuraEngineConfigurator {
         if (0.0 > layerHeight && layerHeight < 0.001) {
             return 1;
         } else {
-            return (int) (Math.ceil(Math.max(solidThickness / (layerHeight - 0.0001), 0)));
+            return (int) (Math.ceil(Math.max(solidThickness / (layerHeight - 0.0001), 0))) - 1;
         }
 
     }
@@ -895,16 +882,16 @@ public class CuraEngineConfigurator {
         int fixHorrible = 0x0000;
 
         if (curaIni.get("fix_horrible_union_all_type_a").contains("True")) {
-            fixHorrible = fixHorrible & 0x0001;
+            fixHorrible = fixHorrible | 0x0001;
         }
         if (curaIni.get("fix_horrible_union_all_type_b").contains("True")) {
-            fixHorrible = fixHorrible & 0x0002;
+            fixHorrible = fixHorrible | 0x0002;
         }
         if (curaIni.get("fix_horrible_use_open_bits").contains("True")) {
-            fixHorrible = fixHorrible & 0x0010;
+            fixHorrible = fixHorrible | 0x0010;
         }
         if (curaIni.get("fix_horrible_extensive_stitching").contains("True")) {
-            fixHorrible = fixHorrible & 0x0004;
+            fixHorrible = fixHorrible | 0x0004;
         }
         return String.valueOf(fixHorrible);
     }

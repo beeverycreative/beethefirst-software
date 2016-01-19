@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+﻿<?xml version='1.0' encoding='UTF-8'?>
 <filament>
   <version>1.0.0</version>
   <name>A021 - Transparent</name>
@@ -39,17 +39,16 @@
 			<parameter name="bottom_layer_speed" value="20"/>
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
-			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
+			<parameter name="skirt_gap" value="0.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0" />
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -115,16 +114,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -190,16 +188,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -219,8 +216,8 @@
 			<parameter name="raft_airgap_all" value="0.0"/>
 			<parameter name="raft_airgap" value="0.22"/>
 			<parameter name="raft_surface_layers" value="2"/>
-			<parameter name="raft_surface_thickness" value="2"/>
-			<parameter name="raft_surface_linewidth" value="2"/>
+			<parameter name="raft_surface_thickness" value="0.27"/>
+			<parameter name="raft_surface_linewidth" value="0.4"/>
 			
 			<parameter name="perimeter_before_infill" value="False"/>
 			<parameter name="fix_horrible_union_all_type_a" value="True"/>
@@ -265,16 +262,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -344,16 +340,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -419,16 +414,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -494,16 +488,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -569,16 +562,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -648,16 +640,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -723,16 +714,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -798,16 +788,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -873,16 +862,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -952,16 +940,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -1027,16 +1014,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -1102,16 +1088,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>
@@ -1177,16 +1162,15 @@
 			<!-- Skirt -->
 			<parameter name="skirt_line_count" value="0"/>
 			<parameter name="skirt_gap" value="3.0"/>
-			<parameter name="skirt_minimal_length" value="150.0"/>
 			<!-- Fan -->
 			<parameter name="fan_enabled" value="True"/>
 			<parameter name="fan_full_height" value="0.5"/>
 			<parameter name="fan_speed" value="100"/>
 			<parameter name="fan_speed_max" value="100"/>
 			<!-- Cool -->
-			<parameter name="cool_min_layer_time" value="25"/>
+			<parameter name="cool_min_layer_time" value="5"/>
 			<parameter name="cool_min_feedrate" value="10"/>
-			<parameter name="cool_head_lift" value="False"/>
+			<parameter name="cool_head_lift" value="0"/>
 			<!-- Suport -->
 			<parameter name="support_type" value="Lines"/>	
 			<parameter name="support_angle" value="60"/>

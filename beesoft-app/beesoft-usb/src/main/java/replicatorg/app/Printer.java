@@ -74,6 +74,12 @@ public class Printer {
         Base.writeLog("STL generated with success", this.getClass());
 
         options = parseParameters();
+        
+        for (Object option : options) {
+                
+                System.out.println(((CuraGenerator.CuraEngineOption) option).getArgument());
+            }
+        
         appendStartAndEndGCode();
         gcode = runToolpathGenerator(mainWindow, options);
 
@@ -338,20 +344,46 @@ public class Printer {
          * Raft and Support
          */
         if (params.isRaftPressed()) {
-            opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "1500"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "1000"));
+            /*opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "5000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "3000"));
             opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "700"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "200"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "1000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "270"));
             opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLinewidth", "400"));
+*/
+            opts.add(new CuraGenerator.CuraEngineOption("raftAirGapLayer0", "220"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "3000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "1000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceLayers", "2"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceLinewidth", "400"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLinewidth", "400"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "270"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftAirGap", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "5000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceLineSpacing", "400"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLineSpacing", "800"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseSpeed", "20"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceSpeed", "20"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftFanSpeed", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceThickness", "270"));
         } else {
             opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "0"));
             opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "0"));
         }
 
         if (params.isSupportPressed()) {
+            /*
             opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "20"));
             opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
+*/
+            opts.add(new CuraGenerator.CuraEngineOption("supportXYDistance", "700"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportExtruder", "-1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportType", "1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportZDistance", "150"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "60"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportLineDistance", "2666"));
         } else {
             opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "-1"));
             opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "0"));
@@ -365,6 +397,8 @@ public class Printer {
 
         opts.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", "125"));
         opts.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", "2500"));
+        
+        
 
         return opts;
     }

@@ -3,7 +3,9 @@ package replicatorg.plugin.toolpath.cura;
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems
  */
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -145,12 +147,39 @@ public class CuraGenerator extends ToolpathGenerator {
          * /home/jb/CuraEngine/ultifoot.stl
          *
          */
-        String[] baseArguments = {CURA_BIN_PATH, "-v", "-c", cfgFilePath};
+        //String[] baseArguments = {CURA_BIN_PATH, "-v", "-c", cfgFilePath};
+        String[] baseArguments = {CURA_BIN_PATH, "-v", "-p"};
         String[] filesArguments = {"-o", gcodePath, path};
 
         // Adds base arguments to the process
         arguments.addAll(Arrays.asList(baseArguments));
-
+        
+        //Open cfg file
+        String content = null;
+        File file = new File(cfgFilePath); //for ex foo.txt
+        FileReader reader = null;
+        try {
+            reader = new FileReader(file);
+            char[] chars = new char[(int) file.length()];
+            reader.read(chars);
+            content = new String(chars);
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try{
+                    reader.close();
+                } catch (IOException e2) {
+                    
+                }
+            }
+        }
+        String[] cfgConfs = content.split("\n");
+        for (String cfgConf : cfgConfs) {
+            arguments.add("-s");
+            arguments.add(cfgConf);
+        }
         /**
          * Adds overload parameters: - resolution - density- raft - support
          */
@@ -168,10 +197,10 @@ public class CuraGenerator extends ToolpathGenerator {
 //        // Prints arguments
         Base.writeLog("Cura Path " + CURA_BIN_PATH, this.getClass());
         Base.writeLog("Cura prefs path " + CURA_CONFIGURATION_FILE_PATH, this.getClass());
-//        for (String arg : arguments) {
-//            Base.writeLog(arg+" ");
-//        }
-//        System.out.println("********************");
+        for (String arg : arguments) {
+            System.out.println(arg);
+        }
+        System.out.println("********************");
 
         ProcessBuilder pb = new ProcessBuilder(arguments);
         pb.directory(new File(gallery));
