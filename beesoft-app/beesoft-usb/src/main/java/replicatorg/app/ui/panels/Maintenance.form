@@ -32,7 +32,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="pMaintenance" max="-2" attributes="0"/>
-          <Component id="pBottom" pref="772" max="32767" attributes="0"/>
+          <Component id="pBottom" pref="796" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">

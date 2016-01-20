@@ -14,8 +14,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import replicatorg.app.Base;
+import replicatorg.plugin.toolpath.cura.CuraGenerator.CuraEngineOption;
 
 /**
  *
@@ -23,16 +27,13 @@ import replicatorg.app.Base;
  */
 public class CuraEngineConfigurator {
 
-    private HashMap<String, String> curaIni = new HashMap<String, String>();
-    private HashMap<String, String> curaCfg = createCfg();
+    private final Map<String, String> curaIni = new HashMap<String, String>();
+    private final Map<String, String> curaCfg = createCfg();
     private final String ON_ALTERATIONS = "[alterations]";
     private String CURA_CONFIG_DIR = Base.getAppDataDirectory() + "/configs/";
-    private String CURA_CONFIG_PATH = "";
     private String CURA_INI_PATH = "";
-    private String CFG_FILENAME = "";
     private String INI_FILENAME = "";
-    private String CFG_EXTENSION = ".cfg";
-    private String INI_EXTENSION = ".ini";
+    private static final String INI_EXTENSION = ".ini";
     private final String NO_ATTRIBUTE = "Error: Value not existent";
 
     public CuraEngineConfigurator() {
@@ -47,8 +48,8 @@ public class CuraEngineConfigurator {
     /**
      * Builds CFG map with default values.
      */
-    private HashMap<String, String> createCfg() {
-        HashMap<String, String> result = new HashMap<String, String>();
+    private Map<String, String> createCfg() {
+        Map<String, String> result = new LinkedHashMap<String, String>();
 
         result.put("initialSpeedupLayers", "4");
         result.put("minimalFeedrate", "10");
@@ -103,17 +104,6 @@ public class CuraEngineConfigurator {
         result.put("insetCount", "2");
         result.put("downSkinCount", "10");
         result.put("multiVolumeOverlap", "150");
-
-        /**
-         * Do not use START and END GCODE It will be printed on PSSW
-         *
-         * NOTE: This supresses the code
-         */
-        result.put("startCode", ";startCode");
-        result.put("endCode", ";endCode");
-
-//        result.put("cfg_debug", "False");
-
         return result;
     }
 
@@ -255,16 +245,24 @@ public class CuraEngineConfigurator {
 
     /**
      * Maps INI attributes to a CFG file to be passed to CuraEngine.
+     * 
+     * @param prefs Overrides in relation to a possible raft or support choice
+     * @return map containing CFG settings
      */
-    public void mapIniToCFG() {
-        // Reads CURA CFG Map to map parameter
+    public Map mapIniToCFG(List<CuraEngineOption> prefs) {
         
-        for (Map.Entry pairs : curaCfg.entrySet()) {
+        for (Entry pairs : curaCfg.entrySet()) {
             String cfgKey = pairs.getKey().toString();
-            //(pairs.getKey() + "=" + pairs.getValue());
-
             curaCfg.put(cfgKey, getTranslatedValue(cfgKey));
         }
+        
+        // overriding, put method replaces old value
+        for(CuraEngineOption opt : prefs) {
+            curaCfg.put(opt.getParameter(), opt.getValue());
+        }
+        
+        createCfgFile();
+        return curaCfg;
     }
 
     private void printINI() {
@@ -320,61 +318,57 @@ public class CuraEngineConfigurator {
     }
 
     /**
-     * Maps INI file to CFG file
+     * Maps INI file to CFG format
      *
      * @param profile path for the INI file
-     * @return CFG file
+     * @return map containing CFG values
      */
+    /*
     public File dotheWork(File profile) {
         CFG_FILENAME = profile.getName().split(".ini")[0] + CFG_EXTENSION;
         CURA_CONFIG_PATH = CURA_CONFIG_DIR + CFG_FILENAME;
         mapIniToCFG();
         return createCfgFile();
     }
+    */
 
     /**
-     * Creates the CFG file based on the internal MAP
+     * Creates the CFG file (last.cfg) based on the internal curaCfg map. 
+     * For debugging purposes.
      *
      * @return CFG file
      */
-    public File createCfgFile() {
+    private void createCfgFile() {
 
-        File cfgFile = null;
+        File cfgFile, cfgDir = new File(CURA_CONFIG_DIR);
+        BufferedWriter bw;
+        
         try {
-
-            // Creates CFG file with the same name as the INI
-            cfgFile = new File(CURA_CONFIG_PATH);
-            // CFG dir        
-            File config_dir = new File(CURA_CONFIG_DIR);
-
             // If config dir does not exist, create it
-            if (!config_dir.exists()) {
-                config_dir.mkdir();
+            if (!cfgDir.exists()) {
+                cfgDir.mkdir();
             }
+            
+            // Creates CFG file with the same name as the INI
+            cfgFile = new File(CURA_CONFIG_DIR + INI_FILENAME + ".cfg");
+            
             // if file exists, delete it first
             if (cfgFile.exists()) {
                 cfgFile.delete();
             }
-//            System.out.println(cfgFile.getAbsolutePath());
 
-            FileWriter fw = new FileWriter(cfgFile.getAbsolutePath());
-            BufferedWriter bw = new BufferedWriter(fw);
-            Iterator it = curaCfg.entrySet().iterator();
-
-            // Reads CURA CFG Map to write to file
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry) it.next();
-                bw.write(pairs.getKey() + "=" + pairs.getValue());
-                bw.write("\n");
+            bw = new BufferedWriter(new FileWriter(cfgFile));
+            
+            for(Entry<String,String> opt : curaCfg.entrySet()) {
+                bw.write(opt.getKey() + "=" + opt.getValue() + "\n");
             }
-
             bw.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Base.writeLog("IOException when creating last.cfg file", this.getClass());
         }
-        return cfgFile;
     }
+    
 
     /**
      * Creates the INI file based on a MAP.

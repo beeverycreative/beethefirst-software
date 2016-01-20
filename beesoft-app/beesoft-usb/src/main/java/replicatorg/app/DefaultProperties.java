@@ -97,8 +97,8 @@ public class DefaultProperties {
         defaultHash.put("editor.ymax", String.valueOf("135"));
         defaultHash.put("editor.zmax", String.valueOf("125"));
         
-        defaultHash.put("languagesCodes", "EN,PT,ES,DE");
-        defaultHash.put("languagesList", "English,Português,Español,Deutsch");
+        defaultHash.put("languagesCodes", "EN,PT,ES,DE,FR");
+        defaultHash.put("languagesList", "English,Português,Español,Deutsch,Français");
     }
 
     /**

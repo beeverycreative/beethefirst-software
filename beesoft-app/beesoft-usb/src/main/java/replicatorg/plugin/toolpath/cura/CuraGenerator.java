@@ -3,14 +3,13 @@ package replicatorg.plugin.toolpath.cura;
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems
  */
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
@@ -18,7 +17,6 @@ import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Base;
 import replicatorg.app.Oracle;
 import replicatorg.app.PrintEstimator;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.util.StreamLoggerThread;
 import replicatorg.plugin.toolpath.ToolpathGenerator;
 
@@ -119,6 +117,11 @@ public class CuraGenerator extends ToolpathGenerator {
     @Override
     public File generateToolpath(File stl, List<CuraEngineOption> prefs) {
 
+        StringBuilder curaEngineCmd = new StringBuilder("CuraEngine");
+        String stlPath, gcodePath;
+        List<String> arguments;
+        Map cfgMap;
+        
         //Tests if CuraEngine has +x permissions or if it does exist
         File curaBin = new File(CURA_BIN_PATH);
         if (curaBin.canExecute() == false || curaBin.exists() == false) {
@@ -128,80 +131,40 @@ public class CuraGenerator extends ToolpathGenerator {
         }
 
         // Builds files paths
-        String path = stl.getAbsolutePath();
+        stlPath = stl.getAbsolutePath();
 //        String fileName = stl.getAbsolutePath().substring(0, stl.getAbsolutePath().lastIndexOf("."));
-        String gcodePath = path.replaceAll(".stl", ".gcode");
-        String cfgFilePath = curaGenerator.dotheWork(new File(profile)).getAbsolutePath();
-
-        // Signals Oracle that GCode generation has started
-        Oracle.setTic();
+        gcodePath = stlPath.replaceAll(".stl", ".gcode");
+        cfgMap = curaGenerator.mapIniToCFG(prefs);
 
         //Process parameters for session
-        List<String> arguments = new LinkedList<String>();
-
-        // The -u makes python output unbuffered. Oh joyous day.
-        /**
-         *
-         * ./CuraEngine -v -s print-temperature=220 layer-height=0.1 -o
-         * ultifoot.gcode ultifoot.stl /cura.py -i /home/jb/curaProfile.ini -s
-         * /home/jb/CuraEngine/ultifoot.stl
-         *
-         */
-        //String[] baseArguments = {CURA_BIN_PATH, "-v", "-c", cfgFilePath};
+        arguments = new LinkedList<String>();
+        
         String[] baseArguments = {CURA_BIN_PATH, "-v", "-p"};
-        String[] filesArguments = {"-o", gcodePath, path};
+        String[] filesArguments = {"-o", gcodePath, stlPath};
 
         // Adds base arguments to the process
         arguments.addAll(Arrays.asList(baseArguments));
-        
-        //Open cfg file
-        String content = null;
-        File file = new File(cfgFilePath); //for ex foo.txt
-        FileReader reader = null;
-        try {
-            reader = new FileReader(file);
-            char[] chars = new char[(int) file.length()];
-            reader.read(chars);
-            content = new String(chars);
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try{
-                    reader.close();
-                } catch (IOException e2) {
-                    
-                }
-            }
-        }
-        String[] cfgConfs = content.split("\n");
-        for (String cfgConf : cfgConfs) {
-            arguments.add("-s");
-            arguments.add(cfgConf);
-        }
-        /**
-         * Adds overload parameters: - resolution - density- raft - support
-         */
-        if (prefs != null && ProperDefault.get("curaFile").contains("none")) {
-            //Flag for overload
-            for (Object option : prefs) {
-                arguments.add("-s");
-                arguments.add(((CuraEngineOption) option).getArgument());
-            }
-        }
-
         // Adds files arguments to the process
         arguments.addAll(Arrays.asList(filesArguments));
-//        System.out.println("********************");
-//        // Prints arguments
-        Base.writeLog("Cura Path " + CURA_BIN_PATH, this.getClass());
-        Base.writeLog("Cura prefs path " + CURA_CONFIGURATION_FILE_PATH, this.getClass());
-        for (String arg : arguments) {
-            System.out.println(arg);
+        
+        for(Object key : cfgMap.keySet()) {
+            arguments.add("-s");
+            arguments.add(key + "=" + cfgMap.get(key));
         }
-        System.out.println("********************");
 
+        // Prints arguments
+        Base.writeLog("Cura binary path: " + CURA_BIN_PATH, this.getClass());
+        
+        for(int i = 1; i < arguments.size(); ++i) {
+            curaEngineCmd.append(" ");
+            curaEngineCmd.append(arguments.get(i));
+        }
+        
+        Base.writeLog(curaEngineCmd.toString(), this.getClass());
+
+        // Signals Oracle that GCode generation has started
+        Oracle.setTic();
+        
         ProcessBuilder pb = new ProcessBuilder(arguments);
         pb.directory(new File(gallery));
         process = null;
@@ -247,8 +210,8 @@ public class CuraGenerator extends ToolpathGenerator {
             return null;
         }
 
-        int lastIdx = path.lastIndexOf('.');
-        String root = (lastIdx >= 0) ? path.substring(0, lastIdx) : path;
+        int lastIdx = stlPath.lastIndexOf('.');
+        String root = (lastIdx >= 0) ? stlPath.substring(0, lastIdx) : stlPath;
 
         // Signals Oracle that GCode generation has finished
         Oracle.setToc();

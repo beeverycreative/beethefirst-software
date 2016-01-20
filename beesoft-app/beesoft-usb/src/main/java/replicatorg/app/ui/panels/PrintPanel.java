@@ -590,7 +590,7 @@ public class PrintPanel extends BaseDialog {
     }
 
     public void showLoadingIcon(boolean show) {
-        loading.setVisible(show);
+        loading.setEnabled(show);
 
         if (show) {
             materialCost.setText("N/A");
@@ -603,7 +603,7 @@ public class PrintPanel extends BaseDialog {
     }
 
     public void showLoadingIconExport(boolean show) {
-        loading.setVisible(show);
+        loading.setEnabled(show);
 
         if (show) {
             materialCost.setText("N/A");
@@ -939,7 +939,10 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        filamentType.setFont(new java.awt.Font("Inconsolata Medium", 0, 10)); // NOI18N
         filamentType.setText("Filament Type");
+        filamentType.setMaximumSize(new java.awt.Dimension(100, 13));
+        filamentType.setMinimumSize(new java.awt.Dimension(100, 13));
 
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
@@ -949,17 +952,31 @@ public class PrintPanel extends BaseDialog {
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
+        estimatedPrintTime.setFont(new java.awt.Font("Inconsolata Medium", 0, 10)); // NOI18N
         estimatedPrintTime.setText("Print time:");
+        estimatedPrintTime.setMaximumSize(new java.awt.Dimension(100, 18));
+        estimatedPrintTime.setMinimumSize(new java.awt.Dimension(100, 18));
+        estimatedPrintTime.setPreferredSize(new java.awt.Dimension(70, 18));
 
         jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
+        estimatedMaterial.setFont(new java.awt.Font("Inconsolata Medium", 0, 10)); // NOI18N
         estimatedMaterial.setText("Material cost:");
+        estimatedMaterial.setMaximumSize(new java.awt.Dimension(100, 13));
+        estimatedMaterial.setMinimumSize(new java.awt.Dimension(100, 13));
+        estimatedMaterial.setPreferredSize(new java.awt.Dimension(100, 13));
 
         printTime.setText("N/A");
 
         materialCost.setText("N/A");
 
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
+        loading.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading-disabled.gif"))); // NOI18N
+        loading.setEnabled(false);
+        loading.setFocusable(false);
+        loading.setIconTextGap(0);
+        loading.setRequestFocusEnabled(false);
+        loading.setVerifyInputWhenFocusTarget(false);
 
         bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
         bEstimate.setText("Estimate");
@@ -1177,8 +1194,8 @@ public class PrintPanel extends BaseDialog {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(filamentType)
-                                .addGap(17, 17, 17)
+                                .addComponent(filamentType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(15, 15, 15)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel23)
@@ -1196,7 +1213,7 @@ public class PrintPanel extends BaseDialog {
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
+                                        .addComponent(estimatedPrintTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addGap(15, 15, 15)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(printTime)
@@ -1303,14 +1320,14 @@ public class PrintPanel extends BaseDialog {
                         .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(estimatedPrintTime)
+                                .addComponent(estimatedPrintTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(printTime))
                             .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(estimatedMaterial)
+                                .addComponent(estimatedMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(materialCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(12, 12, 12)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE))
