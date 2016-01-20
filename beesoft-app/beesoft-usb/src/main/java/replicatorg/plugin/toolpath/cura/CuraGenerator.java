@@ -3,7 +3,9 @@ package replicatorg.plugin.toolpath.cura;
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems
  */
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -159,9 +161,8 @@ public class CuraGenerator extends ToolpathGenerator {
             curaEngineCmd.append(" ");
             curaEngineCmd.append(arguments.get(i));
         }
-        
         Base.writeLog(curaEngineCmd.toString(), this.getClass());
-
+        
         // Signals Oracle that GCode generation has started
         Oracle.setTic();
         
