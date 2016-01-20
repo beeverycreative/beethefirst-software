@@ -3,9 +3,7 @@ package replicatorg.plugin.toolpath.cura;
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems
  */
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -119,10 +117,10 @@ public class CuraGenerator extends ToolpathGenerator {
     @Override
     public File generateToolpath(File stl, List<CuraEngineOption> prefs) {
 
-        StringBuilder curaEngineCmd = new StringBuilder("CuraEngine");
+        StringBuilder curaEngineCmd = new StringBuilder();
         String stlPath, gcodePath;
         List<String> arguments;
-        Map cfgMap;
+        Map<String,String> cfgMap;
         
         //Tests if CuraEngine has +x permissions or if it does exist
         File curaBin = new File(CURA_BIN_PATH);
@@ -145,22 +143,28 @@ public class CuraGenerator extends ToolpathGenerator {
         String[] filesArguments = {"-o", gcodePath, stlPath};
 
         // Adds base arguments to the process
-        arguments.addAll(Arrays.asList(baseArguments));
+        for (String s : baseArguments) {
+            arguments.add(s);
+            curaEngineCmd.append(" ");
+            curaEngineCmd.append(s);
+        }
         // Adds files arguments to the process
-        arguments.addAll(Arrays.asList(filesArguments));
+        for (String s: filesArguments) {
+            arguments.add(s);
+            curaEngineCmd.append(" ");
+            curaEngineCmd.append(s);
+        }
         
-        for(Object key : cfgMap.keySet()) {
+        for(Map.Entry arg : cfgMap.entrySet()) {
             arguments.add("-s");
-            arguments.add(key + "=" + cfgMap.get(key));
+            arguments.add(arg.getKey() + "=" + arg.getValue());
+            curaEngineCmd.append(" -s ");
+            curaEngineCmd.append(arg.getKey());
+            curaEngineCmd.append("=");
+            curaEngineCmd.append(arg.getValue());
         }
 
         // Prints arguments
-        Base.writeLog("Cura binary path: " + CURA_BIN_PATH, this.getClass());
-        
-        for(int i = 1; i < arguments.size(); ++i) {
-            curaEngineCmd.append(" ");
-            curaEngineCmd.append(arguments.get(i));
-        }
         Base.writeLog(curaEngineCmd.toString(), this.getClass());
         
         // Signals Oracle that GCode generation has started

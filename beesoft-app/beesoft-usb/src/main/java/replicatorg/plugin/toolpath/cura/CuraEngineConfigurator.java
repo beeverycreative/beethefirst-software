@@ -249,7 +249,7 @@ public class CuraEngineConfigurator {
      * @param prefs Overrides in relation to a possible raft or support choice
      * @return map containing CFG settings
      */
-    public Map mapIniToCFG(List<CuraEngineOption> prefs) {
+    public Map<String, String> mapIniToCFG(List<CuraEngineOption> prefs) {
         
         for (Entry pairs : curaCfg.entrySet()) {
             String cfgKey = pairs.getKey().toString();
