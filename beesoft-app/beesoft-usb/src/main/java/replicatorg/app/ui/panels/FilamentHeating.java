@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -71,6 +72,7 @@ public class FilamentHeating extends BaseDialog {
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Heating_Info_Title"));
         jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Heating_Info") + warning));
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
         bPrevious.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
@@ -308,7 +310,7 @@ public class FilamentHeating extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(bPrevious)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)

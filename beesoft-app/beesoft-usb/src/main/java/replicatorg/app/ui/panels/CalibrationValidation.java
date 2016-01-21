@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -101,6 +102,7 @@ public class CalibrationValidation extends BaseDialog {
         
         enableMessageDisplay();
         jLabel9.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel9.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     @Override

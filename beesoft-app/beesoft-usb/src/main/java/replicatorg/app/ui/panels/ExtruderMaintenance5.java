@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
@@ -86,12 +87,14 @@ public class ExtruderMaintenance5 extends BaseDialog {
         bLoad.setText(Languager.getTagValue(1, "FilamentWizard", "LoadButton"));
         bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
         pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        pWarning.setHorizontalAlignment(SwingConstants.CENTER);
         bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
@@ -353,7 +356,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                .addComponent(pWarning, javax.swing.GroupLayout.PREFERRED_SIZE, 137, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -398,7 +401,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
                 .addComponent(pText1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 8, Short.MAX_VALUE))
+                .addGap(0, 7, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -459,7 +462,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)

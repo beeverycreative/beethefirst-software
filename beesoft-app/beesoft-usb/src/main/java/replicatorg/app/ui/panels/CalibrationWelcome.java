@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -60,6 +61,7 @@ public class CalibrationWelcome extends BaseDialog {
         jLabel3.setText(splitString(Languager.getTagValue(fileKey, "CalibrationWizard", "Info") + warning));
         jLabel4.setText(Languager.getTagValue(fileKey, "CalibrationWizard", "Buttons_Info"));
         jLabel5.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
+        jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
         bMinus005.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
         bPlus005.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
         bMinus05.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());

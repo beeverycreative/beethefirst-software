@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -55,6 +56,7 @@ public class CalibrationScrew2 extends BaseDialog {
         jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "RightScrew_title"));
         jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "RightScrew_Info")));
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 

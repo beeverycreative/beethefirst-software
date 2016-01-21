@@ -87,11 +87,11 @@
         <GCodePanel>
             <LoadFile value="Charger à partir d'un fichier"/>
             <GenerateFile value="Générer f/ STL"/>
-            <RunGCode value="Exécuter code G"/>
-            <TransferGCode value="Transférer code G"/>
-            <ClearGCode value="Effacer code G"/>
-            <SaveGCode value="Enregistrer code G"/>
-            <LoadGCode value="Charger code G"/>
+            <RunGCode value="Exécuter GCode"/>
+            <TransferGCode value="Transférer GCode"/>
+            <ClearGCode value="Effacer GCode"/>
+            <SaveGCode value="Enregistrer GCode"/>
+            <LoadGCode value="Charger GCode"/>
             <RefreshGCodeList value="Actualiser la liste"/>
             <Info value="Notes:"/>
         </GCodePanel>
@@ -297,7 +297,7 @@
             <Line15 value="Estimation"/> 
             <Line17 value="Arrêter"/>  
             <Line16 value="Arrêter"/>
-            <Export value="Exporter code G"/>
+            <Export value="Exporter GCode"/>
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -340,7 +340,7 @@
             <Line17 value="Un générateur de toolpath"/>
             <Line18 value="Profil de base"/>
             <Line19 value="Imprimer modèle"/>
-            <Line20 value="Générant code G"/>
+            <Line20 value="Générant GCode"/>
             <Line21 value="Imprimer"/>
         </ToolPath>
 
@@ -377,7 +377,7 @@
             <PrinterStatusDisconnected value="est déconnecté"/>
             <PrinterStatusReady value="est prêt"/>
             <PrinterStatusPowerSaving value="est prêt (économie d'énergie)" />
-            <MovingMessage value="En déplacement... Patientez."/> 
+            <MovingMessage value="En déplacement..."/> 
             <MovingMessage2 value="Patientez. En préparation..."/>
             <HeatingMessage value="Chauffage... Patientez."/>
             <HeatingMessage2 value="Chauffage..."/>
@@ -428,7 +428,7 @@
             <Print_Raft value="Raft"/>	
             <Print_Support value="Support"/>	
             <Print_Autonomy value="Autonomie"/>
-            <Print_GCode value="Enregistrer code G"/>
+            <Print_GCode value="Enregistrer GCode"/>
             <Print_GramsTag value="gramme(s)"/>
             <Print_ChooseGCodeFile value="Sélectionnez un fichier pour imprimer"/>
             <Print_EstimationPrintTime value="Temps d'impression:"/>
@@ -436,9 +436,9 @@
             <Print_Raft_Info value="Cette option crée une base que permettra au modèle d'adhérer à la table et aidera à éviter la déformation. Le raft peut être difficile d'enlever du modèle, donc utilisez seulement quand c'est nécessaire."/>	
             <Print_Support_Info value="Cette option crée automatiquement une structure amovible dessous les espaces surplombés ou très inclinés, pour rendre l'impression du modèle possible."/>	
             <Print_Autonomy_Info value="Cette option permet imprimer sans une connexion avec l'ordinateur. Vous serez informé quand vous pouvez déconnecter de l'ordinateur."/>
-            <Print_GCode_Info value="Cette option permet enregistrer le code G et l'imprimer dans le future."/>
-            <Print_ChangeFilament value="Changez filament maintenant"/>
-            <Print_SelectGCode value="Sélectionnez code G pour imprimer"/>
+            <Print_GCode_Info value="Cette option permet enregistrer le GCode et l'imprimer dans le future."/>
+            <Print_ChangeFilament value="Changez filament"/>
+            <Print_SelectGCode value="Sélectionnez GCode pour imprimer"/>
             <Print_TimeLeft value="Environ x minutes restantes"/>
             <Print_GCode2 value="Les paramètres seront mis à jour. Ce processus peut durer un certain temps."/>
             <Print_Filament value="Le filament restant peut être insuffisant pour cette session d'impression. Êtes-vous sûr que vous aviez choisi la couleur correcte de filament?"/>
@@ -630,7 +630,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <Filament_Title value="Changer filament"/>
             <Filament_Type value="Type de filament: "/>
             <Filament_Intro value="Cette opération est nécessaire si vous voulez imprimer avec une couleur diffèrent ou si le filament disponible dans la bobine n'est pas suffisant."/>
-            <FilamentChange_button value="Changez filament maintenant"/>
+            <FilamentChange_button value="Changez filament"/>
             <Filament_Info value="Vous avez x grammes de filament (estimée)  "/>  
             <Filament_Info_None value="Le filament restant peut être insuffisant pour la prochaine session d'impression."/>
             <Calibration_Title value="Étalonnage"/>
@@ -640,13 +640,12 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <ExtruderClean_Title value="Nettoyez la buse de l'extrudeur"/>
             <ExtruderClean_button value="Nettoyez la buse maintenant"/>
             <ExtruderClean_Intro value="Cette opération est importante pour éviter l'obtention de morceaux des restes de filament en ce que vous imprimer."/>
-
             <ExtruderMaintenance_Title value="Maintenance de l'extrudeur"/>
-            <ExtruderMaintenance_button value="Commencez maintenance de l'extrudeur"/>
+            <ExtruderMaintenance_button value="Maintenance de l'extrudeur"/>
             <ExtruderMaintenance_Intro value="Cette opération vous permet désobstruer la buse en utilisant le Kit de Maintenance."/>
 
             <NozzleSwitch_Title value="Remplacez la buse "/>
-            <NozzleSwitch_button value="Remplacez la buse maintenant"/>
+            <NozzleSwitch_button value="Remplacez la buse"/>
             <NozzleSwitch_Intro value="Cette opération existe pour remplacer la buse de l'extrudeur par un de rechange qui est dans le Kit de Maintenance."/>
         </MaintenancePanel>
 
@@ -655,19 +654,19 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <SubTitle value="Vous pouvez reprendre ou annuler votre impression." />
             <FilamentTitle value="Changement de filament"/>
             <FilamentIntro value="Cette opération est nécessaire si vous voulez imprimer avec une couleur diffèrent ou si le filament disponible dans la bobine n'est pas suffisant."/>
-            <bFilamentChange value="Changez filament maintenant"/>
+            <bFilamentChange value="Changez filament"/>
             <bShutdown value="Arrêter maintenant"/>
             <ShutdownIntro value="Cette opération enregistre l'état de l'impression. Vous pouvez éteindre votre imprimante et reprendre l'impression après."/>
-            <ShutdownTitle value="Arrêter"/>
+            <ShutdownTitle value="Shutdown"/>
             <NoFilament value="Aucun ensemble de filament"/>
         </PausePanel>
 
         <ShutdownPanel>
-            <Title value="Arrêter"/>
+            <Title value="Shutdown"/>
             <SubTitle value="Vous pouvez éteindre votre imprimante. Alternativement, vous pouvez reprendre ou annuler votre impression."/>
             <FilamentTitle value="Changement de filament"/>
             <FilamentIntro value="Cette opération est nécessaire si vous voulez imprimer avec une couleur diffèrent ou si le filament disponible dans la bobine n'est pas suffisant."/>
-            <bFilamentChange value="Changez filament maintenant"/>
+            <bFilamentChange value="Changez filament"/>
             <NoFilament value = "Aucun ensemble de filament" />
         </ShutdownPanel>
 

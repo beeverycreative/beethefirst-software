@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -64,6 +65,7 @@ public class ExtruderMaintenance1 extends BaseDialog {
     private void setTextLanguage() {
         lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title1"));
         pWarning.setText(Languager.getTagValue(1, "ExtruderMaintenance", "HeatingMessage1"));
+        pWarning.setHorizontalAlignment(SwingConstants.CENTER);
         
         String text1 = "<html>"
                 + "<br>"
@@ -126,9 +128,11 @@ public class ExtruderMaintenance1 extends BaseDialog {
         pWarning.setForeground(new Color(248, 248, 248));
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
+
     }
 
     private void moveToPosition() {
@@ -280,7 +284,7 @@ public class ExtruderMaintenance1 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)

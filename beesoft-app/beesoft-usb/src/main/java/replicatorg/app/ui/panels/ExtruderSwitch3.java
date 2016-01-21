@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -81,6 +82,7 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void setTextLanguage() {
         lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title3"));
         pWarning.setText(Languager.getTagValue(1, "ExtruderSwitch", "HeatingMessage3"));
+        pWarning.setHorizontalAlignment(SwingConstants.CENTER);
 
         String text1 = "<html>"
                 + "<br>"
