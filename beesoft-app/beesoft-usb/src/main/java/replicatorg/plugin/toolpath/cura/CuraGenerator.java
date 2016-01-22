@@ -5,15 +5,12 @@ package replicatorg.plugin.toolpath.cura;
  */
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
-
 import replicatorg.app.Base;
 import replicatorg.app.Oracle;
 import replicatorg.app.PrintEstimator;
@@ -23,11 +20,9 @@ import replicatorg.plugin.toolpath.ToolpathGenerator;
 public class CuraGenerator extends ToolpathGenerator {
 
     private static String CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
-    private static String CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "/configs/";
     private static String ERROR_MESSAGE = "Can't run Cura!";
     private static final String gallery = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
-    private CuraEngineConfigurator curaGenerator = new CuraEngineConfigurator();
-    private String profile = null;
+    private final CuraEngineConfigurator curaEngineConfigurator;
     private Process process;
     private StreamLoggerThread ist;
     private StreamLoggerThread est;
@@ -35,12 +30,14 @@ public class CuraGenerator extends ToolpathGenerator {
 
     /**
      * Sets Cura generator paths for bin and gcode export.
+     *
      * @param prefs printing preferences
      */
     public CuraGenerator(PrintPreferences prefs) {
+        this.prefs = prefs;
+
         if (Base.isLinux() || Base.isMacOS()) {
             CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
-            CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "/configs/";
         } else {
             /**
              * Different call depending on windows arch. CuraEngine is compiled
@@ -51,10 +48,9 @@ public class CuraGenerator extends ToolpathGenerator {
             } else {
                 CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x86\\CuraEngine.exe");
             }
-            CURA_CONFIGURATION_FILE_PATH = Base.getAppDataDirectory() + "\\configs\\";
         }
-        
-        this.prefs = prefs;
+
+        curaEngineConfigurator = new CuraEngineConfigurator(prefs, getParameterMap());
     }
 
     /**
@@ -76,35 +72,38 @@ public class CuraGenerator extends ToolpathGenerator {
      * @return Sparse line distance for CFG file.
      */
     public String getSparseLineDistance(int densityPercentage) {
-        return curaGenerator.getDensity(densityPercentage);
+        return curaEngineConfigurator.getDensity(densityPercentage);
     }
 
     public String getValue(String key) {
-        return curaGenerator.getValue(key);
+        return curaEngineConfigurator.getINIValue(key);
     }
 
     /**
-     * Pre gcode generation setup. Creates the INI file to be passed for the CFG
-     * creator.
+     * Pre gcode generation setup. Creates the INI map values to be passed for
+     * the CFG creator.
+     *
+     * @return map with values, or null if it wasn't possible to obtain
      *
      */
-    public boolean preparePrint() {
+    private Map<String, String> getParameterMap() {
 
-        HashMap<String, String> overload_values
-                = FilamentControler.getFilamentSettings(prefs.getCoilText(), 
-                        prefs.getResolution(), prefs.getPrinter().filamentCode());
+        Map<String, String> defaultValues, overloadValues;
 
-        if (overload_values == null) {
-            Base.getMainWindow().showFeedBackMessage("unknownColor");
-            return false;
+        defaultValues = FilamentControler.getFilamentDefaults(prefs.getCoilText());
+        overloadValues
+                = FilamentControler.getFilamentSettings(prefs.getCoilText(),
+                        prefs.getResolution(), prefs.getNozzleSize(),
+                        prefs.getPrinter().filamentCode());
+
+        if (defaultValues == null || overloadValues == null) {
+            return null;
+        } else {
+            defaultValues.putAll(overloadValues);
+            return defaultValues;
         }
-
-        this.profile = CURA_CONFIGURATION_FILE_PATH 
-                + curaGenerator.setupINI(overload_values, prefs.getCoilText(), 
-                        prefs.getResolution());
-        curaGenerator.processINI(profile);
-        
-        return true;
+        //curaEngineConfigurator.createINIFile(defaultValues);        
+        //return true;
     }
 
     /**
@@ -116,12 +115,11 @@ public class CuraGenerator extends ToolpathGenerator {
      */
     @Override
     public File generateToolpath(File stl, List<CuraEngineOption> prefs) {
-
         StringBuilder curaEngineCmd = new StringBuilder();
         String stlPath, gcodePath;
         List<String> arguments;
-        Map<String,String> cfgMap;
-        
+        Map<String, String> cfgMap;
+
         //Tests if CuraEngine has +x permissions or if it does exist
         File curaBin = new File(CURA_BIN_PATH);
         if (curaBin.canExecute() == false || curaBin.exists() == false) {
@@ -132,13 +130,12 @@ public class CuraGenerator extends ToolpathGenerator {
 
         // Builds files paths
         stlPath = stl.getAbsolutePath();
-//        String fileName = stl.getAbsolutePath().substring(0, stl.getAbsolutePath().lastIndexOf("."));
         gcodePath = stlPath.replaceAll(".stl", ".gcode");
-        cfgMap = curaGenerator.mapIniToCFG(prefs);
+        cfgMap = curaEngineConfigurator.mapIniToCFG(prefs);
 
         //Process parameters for session
         arguments = new LinkedList<String>();
-        
+
         String[] baseArguments = {CURA_BIN_PATH, "-v", "-p"};
         String[] filesArguments = {"-o", gcodePath, stlPath};
 
@@ -149,13 +146,13 @@ public class CuraGenerator extends ToolpathGenerator {
             curaEngineCmd.append(s);
         }
         // Adds files arguments to the process
-        for (String s: filesArguments) {
+        for (String s : filesArguments) {
             arguments.add(s);
             curaEngineCmd.append(" ");
             curaEngineCmd.append(s);
         }
-        
-        for(Map.Entry arg : cfgMap.entrySet()) {
+
+        for (Map.Entry arg : cfgMap.entrySet()) {
             arguments.add("-s");
             arguments.add(arg.getKey() + "=" + arg.getValue());
             curaEngineCmd.append(" -s ");
@@ -166,10 +163,10 @@ public class CuraGenerator extends ToolpathGenerator {
 
         // Prints arguments
         Base.writeLog(curaEngineCmd.toString(), this.getClass());
-        
+
         // Signals Oracle that GCode generation has started
         Oracle.setTic();
-        
+
         ProcessBuilder pb = new ProcessBuilder(arguments);
         pb.directory(new File(gallery));
         process = null;
@@ -231,6 +228,10 @@ public class CuraGenerator extends ToolpathGenerator {
         PrintEstimator.estimateTime(gcode);
 
         return gcode;
+    }
+
+    public boolean isReadyToGenerateGCode() {
+        return curaEngineConfigurator.isReadyToGenerateGCode();
     }
 
     @Override

@@ -167,6 +167,7 @@ public class FilamentHeating extends BaseDialog {
         jLabel7.setForeground(new Color(248, 248, 248));
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
@@ -187,7 +188,7 @@ public class FilamentHeating extends BaseDialog {
         achievement = false;
         temperatureGoal = FilamentControler.getColorTemperature(
                 machine.getDriver().getCoilText(),
-                "medium",
+                "medium", 0.4,
                 Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
         );
 

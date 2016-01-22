@@ -26,7 +26,7 @@ public class Resolution {
      *
      * @return
      */
-    public HashMap<String, String> getSlicerParameters() {
+    public HashMap<String, String> getParametersMap() {
 
         HashMap<String, String> result = new HashMap<String, String>();
 

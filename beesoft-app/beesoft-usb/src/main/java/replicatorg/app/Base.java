@@ -191,7 +191,6 @@ public class Base {
     public static boolean printPaused = false;
     public static boolean isPrinting = false;
     public static boolean welcomeSplashVisible = false;
-    public static double originalColorRatio = 1;
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
