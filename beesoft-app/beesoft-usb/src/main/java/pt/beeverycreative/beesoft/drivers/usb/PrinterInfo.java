@@ -14,6 +14,7 @@ public enum PrinterInfo {
     BEEME("BEEME", (short) 0x29c9, (short) 0x0003, Base.configProperties.getFirmwareProperty("firmware.beeme"), "logo_beeme.png"),
     BEEINSCHOOL("BEEINSCHOOL", (short) 0x29c9, (short) 0x0004, Base.configProperties.getFirmwareProperty("firmware.beeinschool"), "logo_beeinschool.png"),
     BEETHEFIRST_PLUS_A("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0005, Base.configProperties.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plusA.png"),
+    BEEINSCHOOL_A("BEEINSCHOOL", (short) 0x29c9, (short) 0x0006, Base.configProperties.getFirmwareProperty("firmware.beeinschoola"), "logo_beeinschool_A.png"),
     UNKNOWN("BEETHEFIRST", (short) 0x0000, (short) 0x0000, "", "");
 
     private final String filamentCode, firmwareFilename, iconFilename, presentationName;
