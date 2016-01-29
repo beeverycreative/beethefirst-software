@@ -737,7 +737,7 @@ public class PrintPanel extends BaseDialog {
 
         resolution = parseSlider1();
         density = parseSlider2();
-        nozzleSize = 0.6;           // TODO: add this option on the PrintPanel
+        nozzleSize = 0.4;           // TODO: add this option on the PrintPanel
 
         if (gcodeToPrint != null && printerAvailable == false) {
             preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
