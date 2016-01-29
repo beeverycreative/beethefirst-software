@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  *
@@ -18,12 +17,11 @@ public class SlicerConfig {
     @XmlAttribute(name="type")
     private String printerName;
     
-    @XmlElementWrapper(name="resolutions")
-    @XmlElement(name="resolution")    
-    private List<Resolution> resolutions;
+    @XmlElement(name="nozzle")    
+    private List<Nozzle> nozzles;
 
     public SlicerConfig() {
-        this.resolutions = new ArrayList<Resolution>();
+        this.nozzles = new ArrayList<Nozzle>();
     }   
     
     public String getPrinterName() {
@@ -34,11 +32,11 @@ public class SlicerConfig {
         this.printerName = printerName;
     }
 
-    public List<Resolution> getResolutions() {
-        return resolutions;
+    public List<Nozzle> getNozzles() {
+        return nozzles;
     }
 
-    public void setResolutions(List<Resolution> resolutions) {
-        this.resolutions = resolutions;
+    public void setResolutions(List<Nozzle> resolutions) {
+        this.nozzles = resolutions;
     }        
 }

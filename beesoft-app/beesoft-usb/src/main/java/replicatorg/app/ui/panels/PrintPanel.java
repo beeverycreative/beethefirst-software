@@ -733,18 +733,20 @@ public class PrintPanel extends BaseDialog {
         PrintPreferences preferences;
         String resolution;
         int density;
+        double nozzleSize;
 
         resolution = parseSlider1();
         density = parseSlider2();
+        nozzleSize = 0.4;           // TODO: add this option on the PrintPanel
 
         if (gcodeToPrint != null && printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
         } else if (gcodeToPrint != null) {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, gcodeToPrint);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, gcodeToPrint);
         } else if (printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, selectedPrinter);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, selectedPrinter);
         } else {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed);
         }
 
         return preferences;
@@ -1843,14 +1845,18 @@ class PrintEstimationThread extends Thread {
      * Runs GCode generator process. Updates window fields to display print
      * model cost estimation.
      */
-    public void runEstimator() {
+    private void runEstimator() {
         Printer prt;
         prt = new Printer(printPanel.getPreferences());
-        prt.generateGCode();
-        File gcode = prt.getGCode();
-        //Estimate time and cost
-        PrintEstimator.estimateTime(gcode);
-        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+        if (prt.isReadyToGenerateGCode()) {
+            prt.generateGCode();
+            File gcode = prt.getGCode();
+            //Estimate time and cost
+            PrintEstimator.estimateTime(gcode);
+            printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+        } else {
+            Base.writeLog("runEstimator(): failed estimation", this.getClass());
+        }
     }
 
     @Override
@@ -1905,6 +1911,12 @@ class GCodeExportThread extends Thread {
      */
     public void runExport() {
         Printer prt = new Printer(printPanel.getPreferences());
+        
+        if(prt.isReadyToGenerateGCode() == false) {
+            Base.writeLog("runEstimator(): failed export", this.getClass());
+            return;
+        }
+        
         prt.generateGCode();
         File gcode = prt.getGCode();
         //Estimate time and cost

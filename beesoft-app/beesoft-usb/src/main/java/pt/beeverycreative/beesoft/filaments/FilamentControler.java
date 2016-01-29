@@ -244,30 +244,40 @@ public class FilamentControler {
      *
      * @param coilCode coil code.
      * @param resolution resolution
+     * @param nozzleSize nozzle size
      * @param printerId printer identification
      *
      * @return ratio for each color.
      */
-    public static double getColorRatio(String coilCode, String resolution, String printerId) {
+    public static double getColorRatio(String coilCode, String resolution, double nozzleSize, String printerId) {
 
-        double result = 1.00; //Default
+        double result;
+        String logStrHeader;
+
+        result = 1.00; //Default 
+        logStrHeader = "getColorRatio(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printerId + ") ";
 
         if (filamentList == null) {
             fetchFilaments();
         }
 
-        if (!filamentList.isEmpty()) {
-            for (Filament fil : filamentList) {
-                if (fil.getName().equals(coilCode)) {
-
-                    for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                        if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-
-                            for (Resolution res : sc.getResolutions()) {
-                                if (res.getType().equals(resolution)) {
-                                    for (SlicerParameter parameter : res.getParameters()) {
-                                        if (parameter.getName().equals("filament_flow")) {
-                                            return Double.parseDouble(parameter.getValue()) / 100.0;
+        try {
+            if (!filamentList.isEmpty()) {
+                for (Filament fil : filamentList) {
+                    if (fil.getName().equals(coilCode)) {
+                        for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                            if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
+                                for (Nozzle nozzle : sc.getNozzles()) {
+                                    if (nozzle.getType().equals(Double.toString(nozzleSize))) {
+                                        for (Resolution res : nozzle.getResolutions()) {
+                                            if (res.getType().equalsIgnoreCase(resolution)) {
+                                                for (SlicerParameter parameter : res.getParameters()) {
+                                                    if (parameter.getName().equals("filament_flow")) {
+                                                        Base.writeLog(logStrHeader + "=" + result, FilamentControler.class);
+                                                        return Double.parseDouble(parameter.getValue()) / 100.0;
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -276,30 +286,44 @@ public class FilamentControler {
                     }
                 }
             }
+
+        } catch (NumberFormatException ex) {
+            Base.writeLog("NumberFormatException, " + logStrHeader + "=" + result, FilamentControler.class);
         }
 
+        Base.writeLog("Reached end of method, " + logStrHeader + "=" + result, FilamentControler.class);
         return result;
     }
 
-    public static double getColorTemperature(String coilCode, String resolution, String printerId) {
-        double result = 220; //Default
+    public static double getColorTemperature(String coilCode, String resolution, double nozzleSize, String printerId) {
+        double result;
+        String logStrHeader;
+
+        result = 220;   //  Default
+        logStrHeader = "getColorTemperature(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printerId + ") ";
 
         if (filamentList == null) {
             fetchFilaments();
         }
 
-        if (!filamentList.isEmpty()) {
-            for (Filament fil : filamentList) {
-                if (fil.getName().equals(coilCode)) {
+        try {
+            if (!filamentList.isEmpty()) {
+                for (Filament fil : filamentList) {
+                    if (fil.getName().equals(coilCode)) {
 
-                    for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                        if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-
-                            for (Resolution res : sc.getResolutions()) {
-                                if (res.getType().equals(resolution)) {
-                                    for (SlicerParameter parameter : res.getParameters()) {
-                                        if (parameter.getName().equals("print_temperature")) {
-                                            return Double.parseDouble(parameter.getValue());
+                        for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                            if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
+                                for (Nozzle nozzle : sc.getNozzles()) {
+                                    if (nozzle.getType().equals(Double.toString(nozzleSize))) {
+                                        for (Resolution res : nozzle.getResolutions()) {
+                                            if (res.getType().equalsIgnoreCase(resolution)) {
+                                                for (SlicerParameter parameter : res.getParameters()) {
+                                                    if (parameter.getName().equals("print_temperature")) {
+                                                        Base.writeLog(logStrHeader + "=" + result, FilamentControler.class);
+                                                        return Double.parseDouble(parameter.getValue());
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -308,23 +332,55 @@ public class FilamentControler {
                     }
                 }
             }
+
+        } catch (NumberFormatException ex) {
+            Base.writeLog("NumberFormatException, " + logStrHeader + "=" + result, FilamentControler.class);
         }
 
+        Base.writeLog("Reached end of method, " + logStrHeader + "=" + result, FilamentControler.class);
         return result;
+
+    }
+
+    public static Map<String, String> getFilamentDefaults(String coilCode) {
+        String logStrHeader;
+
+        logStrHeader = "getFilamentDefaults(coilCode=" + coilCode + ") ";
+
+        if (filamentList == null) {
+            fetchFilaments();
+        }
+
+        if (!filamentList.isEmpty()) {
+            for (Filament fil : filamentList) {
+                if (fil.getName().equalsIgnoreCase(coilCode)) {
+                    Base.writeLog(logStrHeader + " returned a list of slicer parameters", FilamentControler.class);
+                    return fil.getDefaultParametersMap();
+                }
+            }
+        }
+
+        Base.writeLog(logStrHeader + " returned an empty list", FilamentControler.class);
+        return null;
     }
 
     /**
-     * Get the Hash map with the filament settings for a specific resolution and
-     * printer
+     * Get the Hash map with the filament settings for a specific nozzle size,
+     * resolution and printer
      *
      * @param coilCode coil code.
      * @param resolution resolution
+     * @param nozzleSize nozzle size
      * @param printerId printer identification
      *
      * @return ratio for each color.
      */
-    public static HashMap<String, String> getFilamentSettings(String coilCode,
-            String resolution, String printerId) {
+    public static Map<String, String> getFilamentSettings(String coilCode,
+            String resolution, double nozzleSize, String printerId) {
+
+        String logStrHeader;
+
+        logStrHeader = "getFilamentSettings(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printerId + ") ";
 
         if (filamentList == null) {
             fetchFilaments();
@@ -332,14 +388,18 @@ public class FilamentControler {
 
         if (!filamentList.isEmpty()) {
             for (Filament fil : filamentList) {
-                if (fil.getName().toLowerCase().equals(coilCode.toLowerCase())) {
+                if (fil.getName().equalsIgnoreCase(coilCode)) {
 
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
                         if (printerId.equals(sc.getPrinterName())) {
-                            for (Resolution res : sc.getResolutions()) {
-                                if (res.getType().toLowerCase().equals(resolution.toLowerCase())) {
-
-                                    return res.getSlicerParameters();
+                            for (Nozzle nozzle : sc.getNozzles()) {
+                                if (nozzle.getType().equals(Double.toString(nozzleSize))) {
+                                    for (Resolution res : nozzle.getResolutions()) {
+                                        if (res.getType().equalsIgnoreCase(resolution)) {
+                                            Base.writeLog(logStrHeader + " returned a list of slicer parameters", FilamentControler.class);
+                                            return res.getParametersMap();
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -348,7 +408,8 @@ public class FilamentControler {
             }
         }
         // Defaults to an empty map
-        return new HashMap<String, String>();
+        Base.writeLog(logStrHeader + " returned an empty list", FilamentControler.class);
+        return null;
     }
 
     /**

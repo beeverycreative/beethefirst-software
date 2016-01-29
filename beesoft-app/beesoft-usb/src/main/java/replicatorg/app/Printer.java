@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.model.PrintBed;
@@ -46,7 +45,6 @@ public class Printer {
     private ArrayList<CuraGenerator.CuraEngineOption> options;
     private File stl;
     private final CuraGenerator generator;
-    private final boolean printPrepared;
 
     public Printer(PrintPreferences printParams) {
         this.mainWindow = Base.getMainWindow();
@@ -54,13 +52,15 @@ public class Printer {
         this.gcode = null;
         this.params = printParams;
         this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
-        generator = new CuraGenerator(params);
+        this.generator = new CuraGenerator(params);
 
-        if (params != null) {
-            printPrepared = generator.preparePrint();
-        } else {
-            printPrepared = false;
-        }
+        /*
+         if (params != null) {
+         printPrepared = generator.preparePrint();
+         } else {
+         printPrepared = false;
+         }
+         */
     }
 
     /**
@@ -73,15 +73,14 @@ public class Printer {
         stl = generateSTL();
         Base.writeLog("STL generated with success", this.getClass());
 
-        options = parseParameters();
-        
+        options = getRaftAndSupportParameters();
+
         for (Object option : options) {
-                
-                System.out.println(((CuraGenerator.CuraEngineOption) option).getArgument());
-            }
-        
+            System.out.println(((CuraGenerator.CuraEngineOption) option).getArgument());
+        }
+
         appendStartAndEndGCode();
-        gcode = runToolpathGenerator(mainWindow, options);
+        gcode = generator.generateToolpath(stl, options);
 
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
@@ -274,18 +273,6 @@ public class Printer {
     }
 
     /**
-     * Run GCode generator.
-     *
-     * @param mw MainWindow object
-     * @param options CuraEngine options
-     * @return path for gcode file
-     */
-    private File runToolpathGenerator(MainWindow mw, ArrayList<CuraGenerator.CuraEngineOption> options) {
-
-        return generator.generateToolpath(stl, options);
-    }
-
-    /**
      * Get generated GCode.
      *
      * @return
@@ -329,7 +316,7 @@ public class Printer {
      *
      * @return list of CuraEngine options to be passed to CuraEngine bin.
      */
-    private ArrayList<CuraGenerator.CuraEngineOption> parseParameters() {
+    private ArrayList<CuraGenerator.CuraEngineOption> getRaftAndSupportParameters() {
 
         ArrayList<CuraGenerator.CuraEngineOption> opts;
         opts = new ArrayList<CuraGenerator.CuraEngineOption>();
@@ -344,13 +331,6 @@ public class Printer {
          * Raft and Support
          */
         if (params.isRaftPressed()) {
-            /*opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "5000"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "3000"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "1000"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "270"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLinewidth", "400"));
-*/
             opts.add(new CuraGenerator.CuraEngineOption("raftAirGapLayer0", "220"));
             opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "3000"));
             opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "1000"));
@@ -373,10 +353,6 @@ public class Printer {
         }
 
         if (params.isSupportPressed()) {
-            /*
-            opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "20"));
-            opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
-*/
             opts.add(new CuraGenerator.CuraEngineOption("supportXYDistance", "700"));
             opts.add(new CuraGenerator.CuraEngineOption("supportExtruder", "-1"));
             opts.add(new CuraGenerator.CuraEngineOption("supportType", "1"));
@@ -394,24 +370,24 @@ public class Printer {
         Tuple center = ptrBed.getBedCenter();
         opts.add(new CuraGenerator.CuraEngineOption("posx", center.x.toString()));
         opts.add(new CuraGenerator.CuraEngineOption("posY", center.y.toString()));
-
         opts.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", "125"));
         opts.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", "2500"));
-        
-        
-
         return opts;
     }
 
     public double getFilamentTemperature() {
-        if (printPrepared) {
-            return Double.parseDouble(generator.getValue("print_temperature"));
-        } else {
-            return FilamentControler.getColorTemperature(
-                    Base.getMainWindow().getMachine().getDriver().getCoilText(),
-                    "medium",
-                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-            );
-        }
+//        if (printPrepared) {
+        return Double.parseDouble(generator.getValue("print_temperature"));
+//        } else {
+//            return FilamentControler.getColorTemperature(
+//                    Base.getMainWindow().getMachine().getDriver().getCoilText(),
+//                    "medium", 0.4,
+//                   Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
+//            );
+//        }
+    }
+    
+    public boolean isReadyToGenerateGCode() {
+        return generator.isReadyToGenerateGCode();
     }
 }

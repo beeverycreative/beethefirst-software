@@ -16,7 +16,6 @@ import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.Base;
 import replicatorg.app.DoNotSleep;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
@@ -233,14 +232,16 @@ public class PrintSplashAutonomous extends BaseDialog {
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Resuming"));
         tInfo3.setVisible(false);
 
-        final double colorRatio = FilamentControler.getColorRatio(
-                machine.getModel().getCoilText(),
-                machine.getModel().getResolution(),
-                machine.getDriver().getConnectedDevice().filamentCode()
-        );
+        /*
+         final double colorRatio = FilamentControler.getColorRatio(
+         machine.getModel().getCoilText(),
+         machine.getModel().getResolution(),
+         machine.getDriver().getConnectedDevice().filamentCode()
+         );
+         */
         final double filamentTemperature = getFilamentTemperature();
 
-        PauseAssistantThread pauseThread = new PauseAssistantThread(colorRatio,
+        PauseAssistantThread pauseThread = new PauseAssistantThread(
                 filamentTemperature, this, machine);
 
         pauseThread.start();
@@ -340,7 +341,12 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     public String generateGCode() {
-        return prt.generateGCode();
+        if (prt.isReadyToGenerateGCode()) {
+            return prt.generateGCode();
+        } else {
+            Base.writeLog("generateGCode(): failed GCode generation", this.getClass());
+            return "-1";
+        }
     }
 
     protected void updatePrintTimes(int estimatedTime, int remainingTime) {
@@ -1269,7 +1275,7 @@ class UpdateThread4 extends Thread {
                 finished = true;
                 break;
             }
-            
+
             Base.hiccup(100);
             machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
 
@@ -1405,7 +1411,6 @@ class UpdateThread4 extends Thread {
             transferGCode();
             machine.runCommand(new replicatorg.drivers.commands.SetTemperatureBlocking(window.temperatureGoal + 5));
 
-
             /**
              * Controls temperature for proper print
              */
@@ -1490,10 +1495,6 @@ class TransferControlThread extends Thread {
     @Override
     public void run() {
         gCodeDone = estimate(Base.isPrintingFromGCode);
-        Base.originalColorRatio = FilamentControler.getColorRatio(Base.getMainWindow().getMachine().getModel().getCoilText(),
-                Base.getMainWindow().getMachine().getModel().getResolution(),
-                Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode());
-
     }
 
     private boolean estimate(boolean printingFromGCode) {
@@ -1546,13 +1547,12 @@ class TransferControlThread extends Thread {
 
 class PauseAssistantThread extends Thread {
 
-    private final double colorRatio, temperatureGoal;
+    private final double temperatureGoal;
     private final PrintSplashAutonomous printPanel;
     private final MachineInterface machine;
 
-    public PauseAssistantThread(double colorRatio, double temperatureGoal,
+    public PauseAssistantThread(double temperatureGoal,
             PrintSplashAutonomous printPanel, MachineInterface machine) {
-        this.colorRatio = colorRatio;
         this.temperatureGoal = temperatureGoal;
         this.printPanel = printPanel;
         this.machine = machine;
@@ -1577,7 +1577,7 @@ class PauseAssistantThread extends Thread {
         //Resume printing
         machine.runCommand(
                 new replicatorg.drivers.commands.ResumePause(
-                        colorRatio, temperatureGoal
+                        -1.0, temperatureGoal
                 )
         );
 

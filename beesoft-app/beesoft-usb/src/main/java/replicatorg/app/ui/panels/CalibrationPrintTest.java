@@ -205,7 +205,7 @@ public class CalibrationPrintTest extends BaseDialog {
         achievement = false;
         temperatureGoal = FilamentControler.getColorTemperature(
                 machine.getDriver().getCoilText(),
-                "medium",
+                "medium", 0.4,
                 Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
         ) + 5;
         okEnabled = false;

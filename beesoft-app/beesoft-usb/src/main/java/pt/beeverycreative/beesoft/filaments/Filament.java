@@ -1,7 +1,9 @@
 package pt.beeverycreative.beesoft.filaments;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,24 +13,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  *
  * @author dpacheco
- */    
-@XmlRootElement(name="filament")
+ */
+@XmlRootElement(name = "filament")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Filament implements Comparable {
-    
-    @XmlElement(name="version")
+
+    @XmlElement(name = "version")
     private String version;
-    
-    @XmlElementWrapper(name="printers")
-    @XmlElement(name="printer")    
+
+    @XmlElementWrapper(name = "defaults")
+    @XmlElement(name = "parameter")
+    private List<SlicerParameter> defaultParameters;
+
+    @XmlElement(name = "printer")
     private List<SlicerConfig> supportedPrinters;
-    
-    @XmlElement(name="name")
+
+    @XmlElement(name = "name")
     private String name;
 
     public Filament() {
         this.supportedPrinters = new ArrayList<SlicerConfig>();
-    }        
+    }
 
     public String getVersion() {
         return version;
@@ -36,6 +41,22 @@ public class Filament implements Comparable {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public Map<String, String> getDefaultParametersMap() {
+        HashMap<String, String> result = new HashMap<String, String>();
+
+        if (defaultParameters.isEmpty() == false) {
+            for (SlicerParameter parameter : defaultParameters) {
+                result.put(parameter.getName(), parameter.getValue());
+            }
+        }
+
+        return result;
+    }
+
+    public List<SlicerParameter> getDefaultParameters() {
+        return defaultParameters;
     }
 
     public List<SlicerConfig> getSupportedPrinters() {
@@ -52,8 +73,8 @@ public class Filament implements Comparable {
 
     public void setName(String name) {
         this.name = name;
-    } 
-    
+    }
+
     @Override
     public int compareTo(Object o) {
         Filament f = (Filament) o;

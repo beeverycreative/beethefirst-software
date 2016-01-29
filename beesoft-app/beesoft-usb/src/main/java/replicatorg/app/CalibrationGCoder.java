@@ -14,6 +14,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import replicatorg.app.tools.XML;
+import replicatorg.drivers.Driver;
+import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -130,16 +132,23 @@ public class CalibrationGCoder {
                 Base.writeLog("Filament controler coil code: " + code, CalibrationGCoder.class);
 
                 if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
-                    //no_Filament = true;
                     return ("gcode: " + eElement.getAttribute("value"));
                 } else {
+                    MachineModel model;
+                    Driver driver;
+                    String coilText, resolution, filamentCode;
+                    double nozzleSize;
+                    
+                    model = Base.getMainWindow().getMachine().getModel();
+                    driver = Base.getMainWindow().getMachine().getDriver();
+                    coilText = model.getCoilText();
+                    //resolution = model.getResolution();     // always low?
+                    resolution = "medium";
+                    nozzleSize = 0.4;
+                    filamentCode = driver.getConnectedDevice().filamentCode();
+                    
                     String w_val = Double.toString(
-                            FilamentControler.getColorRatio(
-                                    Base.getMainWindow().getMachine().getModel().getCoilText(),
-                                    Base.getMainWindow().getMachine().getModel().getResolution(),
-                                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-                                    
-                            ));
+                            FilamentControler.getColorRatio(coilText, resolution, nozzleSize, filamentCode));
                     return ("gcode: " + "M642 w"+w_val+", "+ eElement.getAttribute("value"));
                     
                 }
