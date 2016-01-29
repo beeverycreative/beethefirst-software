@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <filament>
   <version>2.0.0</version>
-  <name>A106 - Traffic Red</name>
+  <name>A119 - Signal Black</name>
   <defaults>
     <parameter name="ooze_shield" value="False"/>
     <parameter name="layer_height" value="0.3"/>
@@ -15,7 +15,7 @@
     <parameter name="support" value="None"/>
     <parameter name="platform_adhesion" value="None"/>
     <parameter name="filament_diameter" value="1.75"/>
-    <parameter name="filament_flow" value="105.9"/>
+    <parameter name="filament_flow" value="104.7"/>
     <parameter name="retraction_speed" value="125"/>
     <parameter name="retraction_amount" value="1.5"/>
     <parameter name="retraction_dual_amount" value="16.5"/>

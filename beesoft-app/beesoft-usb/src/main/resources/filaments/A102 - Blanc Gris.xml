@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <filament>
   <version>2.0.0</version>
-  <name>A106 - Traffic Red</name>
+  <name>A102 - Blanc Gris</name>
   <defaults>
     <parameter name="ooze_shield" value="False"/>
     <parameter name="layer_height" value="0.3"/>
@@ -15,7 +15,7 @@
     <parameter name="support" value="None"/>
     <parameter name="platform_adhesion" value="None"/>
     <parameter name="filament_diameter" value="1.75"/>
-    <parameter name="filament_flow" value="105.9"/>
+    <parameter name="filament_flow" value="104.2"/>
     <parameter name="retraction_speed" value="125"/>
     <parameter name="retraction_amount" value="1.5"/>
     <parameter name="retraction_dual_amount" value="16.5"/>
@@ -87,9 +87,9 @@
         <parameter name="layer_height" value="0.1"/>
       </resolution>
       <resolution type="high+">
+        <parameter name="layer_height" value="0.05"/>
         <parameter name="solid_layer_thickness" value="1.1"/>
         <parameter name="inset0_speed" value="30"/>
-        <parameter name="layer_height" value="0.05"/>
       </resolution>
     </nozzle>
   </printer>
