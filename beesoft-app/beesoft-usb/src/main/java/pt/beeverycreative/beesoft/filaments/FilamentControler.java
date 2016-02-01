@@ -3,6 +3,7 @@ package pt.beeverycreative.beesoft.filaments;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +30,7 @@ import replicatorg.app.Base;
 public class FilamentControler {
 
     private static Set<Filament> filamentList;
+    private static Set<String> nozzleList;
     private static PrinterInfo currentPrinterFilamentList = null;
 
     public static String NO_FILAMENT = "none";
@@ -81,6 +83,7 @@ public class FilamentControler {
             }
 
             Set<Filament> availableFilaments = new TreeSet<Filament>();
+            Set<String> availableNozzles = new HashSet<String>();
 
             JAXBContext jc;
             Unmarshaller unmarshaller;
@@ -98,6 +101,11 @@ public class FilamentControler {
                         // only add to available filaments if it is supported by
                         // the printer, or if no printer is connected
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                            
+                            for(Nozzle noz : sc.getNozzles()) {
+                                availableNozzles.add(noz.getType());
+                            }
+                            
                             if (connectedPrinter.equals(sc.getPrinterName())
                                     || connectedPrinter.equals("UNKNOWN")) {
                                 availableFilaments.add(fil);
@@ -121,7 +129,13 @@ public class FilamentControler {
                 filamentList = null;
             }
 
+            if (nozzleList != null) {
+                nozzleList.clear();
+                nozzleList = availableNozzles;
+            }
+            
             filamentList = availableFilaments;
+            nozzleList = availableNozzles;
         }
     }
 
@@ -187,6 +201,14 @@ public class FilamentControler {
         }
 
         return colors;
+    }
+    
+    public static String[] getNozzles() {
+        if(nozzleList != null) {
+            return nozzleList.toArray(new String[nozzleList.size()]);
+        } else {
+            return new String[0];
+        }
     }
 
     public static String[] forceFetch() {
