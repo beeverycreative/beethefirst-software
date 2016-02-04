@@ -30,7 +30,7 @@ public class ExtruderMaintenance1 extends BaseDialog {
     private final MachineInterface machine;
     private boolean quickGuide;
 
-    private double temperatureGoal;
+    private int temperatureGoal;
 
     public ExtruderMaintenance1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -39,7 +39,6 @@ public class ExtruderMaintenance1 extends BaseDialog {
         evaluateInitialConditions();
         setTextLanguage();
         enableDrag();
-        Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
 
@@ -176,7 +175,6 @@ public class ExtruderMaintenance1 extends BaseDialog {
 
     private void doCancel() {
         dispose();
-        Base.THREAD_KEEP_ALIVE = true;
         finalizeHeat();
         Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");

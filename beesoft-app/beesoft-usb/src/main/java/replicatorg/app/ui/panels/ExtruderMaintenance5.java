@@ -50,7 +50,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
         previousColor = machine.getModel().getCoilText();
         disposeThread = new ExtruderMaintenanceDisposeFeedbackThread(this, machine);
         disposeThread.start();
-        Base.systemThreads.add(disposeThread);
         bBack.setVisible(false);
         if (Base.printPaused == true) {
             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
@@ -568,7 +567,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
+                    machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
 
                     machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
@@ -693,7 +692,6 @@ class ExtruderMaintenanceDisposeFeedbackThread extends Thread {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 filamentPanel.resetFeedbackComponents();

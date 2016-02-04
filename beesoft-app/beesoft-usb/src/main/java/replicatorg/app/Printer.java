@@ -374,9 +374,9 @@ public class Printer {
         return opts;
     }
 
-    public double getFilamentTemperature() {
+    public int getFilamentTemperature() {
 //        if (printPrepared) {
-        return Double.parseDouble(generator.getValue("print_temperature"));
+        return Integer.parseInt(generator.getValue("print_temperature"));
 //        } else {
 //            return FilamentControler.getColorTemperature(
 //                    Base.getMainWindow().getMachine().getDriver().getCoilText(),

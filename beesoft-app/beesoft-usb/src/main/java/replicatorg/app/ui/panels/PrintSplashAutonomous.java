@@ -55,7 +55,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private boolean isShutdown = false;
     private boolean userDecision;
     private int machinePrintingCount = 0;
-    protected final double temperatureGoal;
+    protected final int temperatureGoal;
 
     public PrintSplashAutonomous(boolean printingState, PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
@@ -78,7 +78,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         //addWindowListener(this);
         gcodeGenerator = new TransferControlThread(this);
         ut = new UpdateThread4(this, gcodeGenerator);
-        Base.systemThreads.add(ut);
 //        Base.getMainWindow().setEnabled(false);
 //        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.setName("Autonomous");
@@ -106,7 +105,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         //addWindowListener(this);
         gcodeGenerator = new TransferControlThread(this);
         ut = new UpdateThread4(this, gcodeGenerator);
-        Base.systemThreads.add(ut);
 //        Base.getMainWindow().setEnabled(false);
 //        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.setName("Autonomous");
@@ -239,7 +237,7 @@ public class PrintSplashAutonomous extends BaseDialog {
          machine.getDriver().getConnectedDevice().filamentCode()
          );
          */
-        final double filamentTemperature = getFilamentTemperature();
+        final int filamentTemperature = getFilamentTemperature();
 
         PauseAssistantThread pauseThread = new PauseAssistantThread(
                 filamentTemperature, this, machine);
@@ -326,7 +324,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         return prt.getGCodeNLines();
     }
 
-    private double getFilamentTemperature() {
+    private int getFilamentTemperature() {
         return prt.getFilamentTemperature();
     }
 
@@ -688,7 +686,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
+                machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
                 tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
                 bOk.setVisible(true);
                 firstUnloadStep = true;
@@ -1547,11 +1545,11 @@ class TransferControlThread extends Thread {
 
 class PauseAssistantThread extends Thread {
 
-    private final double temperatureGoal;
+    private final int temperatureGoal;
     private final PrintSplashAutonomous printPanel;
     private final MachineInterface machine;
 
-    public PauseAssistantThread(double temperatureGoal,
+    public PauseAssistantThread(int temperatureGoal,
             PrintSplashAutonomous printPanel, MachineInterface machine) {
         this.temperatureGoal = temperatureGoal;
         this.printPanel = printPanel;

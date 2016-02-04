@@ -151,11 +151,15 @@ public interface Driver {
      */
     public void setCoilText(String coilText);
 
+    public void setInstalledNozzleSize(int microns);
+    
     /**
      * Return the BEECODE/COILCODE/Filament Code in the printer. coilCode is
      * AXXX printer stores return AXXX.
      */
     public void updateCoilText();
+    
+    public void updateNozzleType();
 
     /**
      * Read data from the read endpoint.
@@ -420,8 +424,8 @@ public interface Driver {
      * @param temperature Goal temperature
      * @throws RetryException
      */
-    public void setTemperature(double temperature) throws RetryException;
-    public void setTemperatureBlocking(double temperature) throws RetryException;
+    public void setTemperature(int temperature) throws RetryException;
+    public void setTemperatureBlocking(int temperature) throws RetryException;
 
     /**
      * Read temperature from machine and updates internal variable.

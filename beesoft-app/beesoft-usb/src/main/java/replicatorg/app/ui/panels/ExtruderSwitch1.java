@@ -3,14 +3,12 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
-import replicatorg.util.Point5d;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -24,8 +22,6 @@ import replicatorg.util.Point5d;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class ExtruderSwitch1 extends BaseDialog {
-
-    private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
 
     public ExtruderSwitch1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -58,24 +54,14 @@ public class ExtruderSwitch1 extends BaseDialog {
     private void evaluateInitialConditions() {
         Base.getMainWindow().setEnabled(false);
         populateComboBoxes();
-        
-        if (ProperDefault.get("maintenance").equals("1")) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        }
-
-        if (Base.printPaused == true) {
-            bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        }
-
     }
 
     private void populateComboBoxes() {
-        DefaultComboBoxModel nozzleComboModel, filamentComboModel;
-        
-        nozzleComboModel = new DefaultComboBoxModel(FilamentControler.getNozzles());
+        DefaultComboBoxModel nozzleComboModel;
+
+        nozzleComboModel = new DefaultComboBoxModel<Nozzle>(FilamentControler.getNozzleArray());
         nozzleComboBox.setModel(nozzleComboModel);
-        
+        nozzleComboBox.setSelectedIndex(0);
     }
 
     private void doCancel() {
@@ -212,6 +198,11 @@ public class ExtruderSwitch1 extends BaseDialog {
 
         nozzleComboBox.setBackground(new java.awt.Color(248, 248, 248));
         nozzleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        nozzleComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nozzleComboBoxActionPerformed(evt);
+            }
+        });
 
         filamentComboBox.setBackground(new java.awt.Color(248, 248, 248));
         filamentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -300,19 +291,11 @@ public class ExtruderSwitch1 extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-        if (ProperDefault.get("maintenance").equals("1")) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-        } else {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
-        if (ProperDefault.get("maintenance").equals("1")) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-        } else {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
@@ -324,7 +307,7 @@ public class ExtruderSwitch1 extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        ExtruderSwitch2 p = new ExtruderSwitch2();
+        ExtruderSwitch2 p = new ExtruderSwitch2((Nozzle) nozzleComboBox.getSelectedItem(), (Filament) filamentComboBox.getSelectedItem());
         dispose();
         p.setVisible(true);
     }//GEN-LAST:event_bNextMousePressed
@@ -336,6 +319,19 @@ public class ExtruderSwitch1 extends BaseDialog {
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         doCancel();
     }//GEN-LAST:event_jLabel15MousePressed
+
+    private void nozzleComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nozzleComboBoxActionPerformed
+        DefaultComboBoxModel filamentComboModel;
+
+        filamentComboModel = new DefaultComboBoxModel<Filament>(FilamentControler.getCompatibleFilaments((Nozzle) nozzleComboBox.getSelectedItem()));
+        filamentComboBox.setModel(filamentComboModel);
+
+        if (filamentComboModel.getSize() > 0) {
+            filamentComboBox.setEnabled(true);
+        } else {
+            filamentComboBox.setEnabled(false);
+        }
+    }//GEN-LAST:event_nozzleComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;

@@ -96,7 +96,6 @@ class BusyFeedbackThread extends Thread {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

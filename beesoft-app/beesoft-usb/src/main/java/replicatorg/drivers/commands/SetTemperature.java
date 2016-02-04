@@ -5,9 +5,9 @@ import replicatorg.drivers.RetryException;
 
 public class SetTemperature implements DriverCommand {
 
-    double temperature;
+    private final int temperature;
 
-    public SetTemperature(double temperature) {
+    public SetTemperature(int temperature) {
         this.temperature = temperature;
     }
 

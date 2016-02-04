@@ -40,7 +40,7 @@ public class CalibrationPrintTest extends BaseDialog {
     private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
     private boolean achievement;
 
-    private double temperatureGoal;
+    private int temperatureGoal;
     private final PrintThread printThread = new PrintThread(this, machine);
     private BufferedReader reader = null;
     public boolean okEnabled;

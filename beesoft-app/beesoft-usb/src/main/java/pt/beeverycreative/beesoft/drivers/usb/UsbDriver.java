@@ -27,7 +27,6 @@ import javax.usb.UsbNotClaimedException;
 import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.Base;
 
 import replicatorg.drivers.DriverBaseImplementation;
@@ -72,8 +71,6 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Variables for extruded material management
      */
-    private double extrudedDistance = 0;
-    private double totalExtrudedDistance = 0;
     protected boolean transferMode = false;
     protected boolean isONShutdown = false;
 
@@ -112,72 +109,6 @@ public class UsbDriver extends DriverBaseImplementation {
     @Override
     public PrinterInfo getConnectedDevice() {
         return connectedDevice;
-    }
-
-    /**
-     * Reads E value form each G1 and G92 command Calculates extrudedDistance
-     * and totalExtrudedDistance
-     *
-     * @param command command sent to machine
-     */
-    protected void getEValue(String command) {
-        double c_Value;
-
-        /**
-         * It can consider two possible switch cases: G1 X-100.0 Y-20.0 Z5.0
-         * F3000 - G1 X31.8854 Y-38.825 E194.37539
-         */
-        if (command.contains("G1") && command.contains("E")) // Movement and extrusion command
-        {
-            int indexDot = command.indexOf(";");
-            if (indexDot > 0) {
-                command = command.substring(0, indexDot);
-            }
-
-            c_Value = Double.parseDouble(command.split("E")[1].split("N")[0]); // Gets E value  
-            if (c_Value > extrudedDistance) // Compares E value with previous stored for update 
-            {
-                extrudedDistance = c_Value; // Updates local and parcial variable with current extruded value
-            }
-        } else if ((command.contains("G92") && command.contains("E")) || command.contains("G92")) {
-            // Updates local and total variable with current extruded value
-            totalExtrudedDistance += extrudedDistance;
-
-            /**
-             * Stores totalExtruded for this print session
-             */
-            ProperDefault.put("lastSession_totalExtruded", String.valueOf(totalExtrudedDistance));
-            /**
-             * Stores filamentRemaing in coil after this print session
-             * ATTENTION: It uses the value inserted from the user, with the PLA
-             * remaining
-             */
-            ProperDefault.put("filamentCoilRemaining", String.valueOf(Double.valueOf(ProperDefault.get("filamentCoilRemaining")) - totalExtrudedDistance));
-            /**
-             * Stores total extruded after this print session
-             */
-            ProperDefault.put("totalExtruded", String.valueOf(Double.valueOf(ProperDefault.get("totalExtruded")) + totalExtrudedDistance));
-        }
-
-    }
-
-    /**
-     * Resets extrusion variables.
-     */
-    @Override
-    public void resetExtrudeSession() {
-        totalExtrudedDistance = 0;
-        extrudedDistance = 0;
-    }
-
-    /**
-     * Returns totalExtrudedValue.
-     *
-     * @return extrudedValue
-     */
-    @Override
-    public double getTotalExtrudedValue() {
-        return totalExtrudedDistance;
     }
 
     /**

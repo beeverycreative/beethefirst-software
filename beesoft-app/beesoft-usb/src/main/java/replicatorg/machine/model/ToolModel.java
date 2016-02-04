@@ -73,10 +73,10 @@ public class ToolModel {
     protected int spindleEncoderPPR;
 
     //temperature variables
-    protected final AtomicReference<Double> extruderTemperature
-            = new AtomicReference<Double>(0.0);
-    protected final AtomicReference<Double> blockTemperature
-            = new AtomicReference<Double>(0.0);
+    protected final AtomicReference<Integer> extruderTemperature
+            = new AtomicReference<Integer>(0);
+    protected final AtomicReference<Integer> blockTemperature
+            = new AtomicReference<Integer>(0);
     protected double targetTemperature;
 
     //platform temperature variables
@@ -521,7 +521,7 @@ public class ToolModel {
      * ***********************************
      * Heater interface functions ***********************************
      */
-    public void setTargetTemperature(double temperature) {
+    public void setTargetTemperature(int temperature) {
         targetTemperature = temperature;
     }
 
@@ -529,7 +529,7 @@ public class ToolModel {
         return targetTemperature;
     }
 
-    public void setCurrentTemperature(double extruderTemperature, double blockTemperature) {
+    public void setCurrentTemperature(int extruderTemperature, int blockTemperature) {
         synchronized (this.extruderTemperature) {
             this.extruderTemperature.set(extruderTemperature);
             extruderTemperatureAvailable = true;
@@ -543,7 +543,7 @@ public class ToolModel {
         }
     }
 
-    public double getExtruderTemperature() {
+    public int getExtruderTemperature() {
         synchronized (extruderTemperature) {
             if (extruderTemperatureAvailable == false) {
                 try {
@@ -557,7 +557,7 @@ public class ToolModel {
         }
     }
 
-    public double getBlockTemperature() {
+    public int getBlockTemperature() {
         synchronized (blockTemperature) {
             if (blockTemperatureAvailable == false) {
                 try {

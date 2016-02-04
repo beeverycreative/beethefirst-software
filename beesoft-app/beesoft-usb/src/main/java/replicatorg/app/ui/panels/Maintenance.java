@@ -728,7 +728,6 @@ class ControlStatus extends Thread {
             try {
                 Thread.sleep(250);
             } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             if (machine.getModel().getMachineBusy()) {
@@ -736,7 +735,6 @@ class ControlStatus extends Thread {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             //!machine.getDriver().isBusy()

@@ -334,10 +334,6 @@ public class Machine implements MachineInterface {
         return machineThread.getFeedrate(speedTag);
     }
 
-    protected double getTotalExtrudedValue() {
-        return machineThread.getDriver().getTotalExtrudedValue();
-    }
-
     @Override
     public String getZValue() {
         return String.valueOf(machineThread.getModel().getzValue());

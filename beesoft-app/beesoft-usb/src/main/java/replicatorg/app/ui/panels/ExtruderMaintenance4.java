@@ -32,7 +32,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
     private final MachineInterface machine;
     private boolean achievement;
     private boolean quickGuide;
-    private double temperatureGoal;
+    private int temperatureGoal;
     private final ExtruderMaintenanceUpdateThread updateThread;
 
     public ExtruderMaintenance4() {
@@ -40,7 +40,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
@@ -50,7 +49,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
         //moveToPosition();
         updateThread = new ExtruderMaintenanceUpdateThread(this);
         updateThread.start();
-        Base.systemThreads.add(updateThread);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -229,7 +227,6 @@ public class ExtruderMaintenance4 extends BaseDialog {
 
     private void doCancel() {
         dispose();
-        Base.THREAD_KEEP_ALIVE = true;
         finalizeHeat();
         updateThread.stop();
         Base.bringAllWindowsToFront();
@@ -600,7 +597,7 @@ ExtruderMaintenance4 window;
 
         boolean temperatureAchieved = false;
         // we'll break on interrupts
-        while (!temperatureAchieved && !Base.THREAD_KEEP_ALIVE) {
+        while (!temperatureAchieved) {
 //            System.out.println("Thread Alive "+this.getName());
             try {
                 window.updateHeatBar();

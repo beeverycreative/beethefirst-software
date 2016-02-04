@@ -3,7 +3,6 @@ package pt.beeverycreative.beesoft.filaments;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,14 +28,14 @@ import replicatorg.app.Base;
  */
 public class FilamentControler {
 
-    private static Set<Filament> filamentList;
-    private static Set<String> nozzleList;
+    public static final String NO_FILAMENT = "none";
+    public static final String NO_FILAMENT_2 = "no_file";
+    public static final String NO_FILAMENT_CODE = "A000";
+    public static final String NO_NOZZLE = "0";
+
+    private static final Set<Filament> filamentList = new TreeSet<Filament>();
+    private static final Set<Nozzle> nozzleList = new TreeSet<Nozzle>();
     private static PrinterInfo currentPrinterFilamentList = null;
-
-    public static String NO_FILAMENT = "none";
-    public static String NO_FILAMENT_2 = "no_file";
-    public static String NO_FILAMENT_CODE = "A000";
-
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
 
     /**
@@ -82,8 +81,8 @@ public class FilamentControler {
                 }
             }
 
-            Set<Filament> availableFilaments = new TreeSet<Filament>();
-            Set<String> availableNozzles = new HashSet<String>();
+            filamentList.clear();
+            nozzleList.clear();
 
             JAXBContext jc;
             Unmarshaller unmarshaller;
@@ -101,14 +100,14 @@ public class FilamentControler {
                         // only add to available filaments if it is supported by
                         // the printer, or if no printer is connected
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                            
-                            for(Nozzle noz : sc.getNozzles()) {
-                                availableNozzles.add(noz.getType());
+
+                            for (Nozzle noz : sc.getNozzles()) {
+                                nozzleList.add(noz);
                             }
-                            
+
                             if (connectedPrinter.equals(sc.getPrinterName())
                                     || connectedPrinter.equals("UNKNOWN")) {
-                                availableFilaments.add(fil);
+                                filamentList.add(fil);
                                 break;
                             }
                         }
@@ -122,20 +121,7 @@ public class FilamentControler {
                 Logger.getLogger(FilamentControler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            Base.writeLog("Acquired " + availableFilaments.size() + " filaments", FilamentControler.class);
-
-            if (filamentList != null) {
-                filamentList.clear();
-                filamentList = null;
-            }
-
-            if (nozzleList != null) {
-                nozzleList.clear();
-                nozzleList = availableNozzles;
-            }
-            
-            filamentList = availableFilaments;
-            nozzleList = availableNozzles;
+            Base.writeLog("Acquired " + filamentList.size() + " filaments", FilamentControler.class);
         }
     }
 
@@ -202,12 +188,65 @@ public class FilamentControler {
 
         return colors;
     }
-    
-    public static String[] getNozzles() {
-        if(nozzleList != null) {
-            return nozzleList.toArray(new String[nozzleList.size()]);
+
+    /**
+     * Return the set of nozzles found in the filament files.
+     *
+     * @return a set of Nozzle objects
+     */
+    public static Set<Nozzle> getNozzleSet() {
+        return nozzleList;
+    }
+
+    /**
+     * Return an array of nozzles found in the filament files.
+     *
+     * @return array of nozzle objects
+     */
+    public static Nozzle[] getNozzleArray() {
+        if (nozzleList != null) {
+            return nozzleList.toArray(new Nozzle[nozzleList.size()]);
         } else {
-            return new String[0];
+            return new Nozzle[0];
+        }
+    }
+
+    /**
+     * Return the filaments that are compatible with a given nozzle
+     * configuration, on the currently connected printer.
+     *
+     * @param nozzle the Nozzle object for which to obtain compatible filaments
+     * @return array of compatible filament objects
+     */
+    public static Filament[] getCompatibleFilaments(Nozzle nozzle) {
+        String connectedPrinter;
+        List<Filament> filaments;
+
+        connectedPrinter = Base.getMainWindow().getMachine()
+                .getDriver().getConnectedDevice().filamentCode();
+
+        if (filamentList == null) {
+            fetchFilaments();
+        }
+
+        if (filamentList.isEmpty() == false) {
+            filaments = new ArrayList<Filament>();
+            for (Filament fil : filamentList) {
+                for (SlicerConfig sc : fil.getSupportedPrinters()) {
+                    if (sc.getPrinterName().equalsIgnoreCase(connectedPrinter)) {
+                        for (Nozzle noz : sc.getNozzles()) {
+                            if (noz.equals(nozzle)) {
+                                filaments.add(fil);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return filaments.toArray(new Filament[filaments.size()]);
+        } else {
+            return new Filament[0];
         }
     }
 
@@ -317,8 +356,8 @@ public class FilamentControler {
         return result;
     }
 
-    public static double getColorTemperature(String coilCode, String resolution, double nozzleSize, String printerId) {
-        double result;
+    public static int getColorTemperature(String coilCode, String resolution, double nozzleSize, String printerId) {
+        int result;
         String logStrHeader;
 
         result = 220;   //  Default
@@ -342,7 +381,7 @@ public class FilamentControler {
                                                 for (SlicerParameter parameter : res.getParameters()) {
                                                     if (parameter.getName().equals("print_temperature")) {
                                                         Base.writeLog(logStrHeader + "=" + result, FilamentControler.class);
-                                                        return Double.parseDouble(parameter.getValue());
+                                                        return Integer.parseInt(parameter.getValue());
                                                     }
                                                 }
                                             }

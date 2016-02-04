@@ -80,4 +80,29 @@ public class Filament implements Comparable {
         Filament f = (Filament) o;
         return this.name.compareTo(f.name);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        Filament f;
+                
+        if(o == null || o instanceof Filament == false) {
+            return false;
+        }
+        
+        f = (Filament) o;
+        return this.name.equalsIgnoreCase(f.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

@@ -1569,7 +1569,6 @@ public class PrintPanel extends BaseDialog {
                     @Override
                     public void run() {
                         exportThread.start();
-                        Base.systemThreads.add(exportThread);
                     }
                 });
             }
@@ -1723,7 +1722,6 @@ public class PrintPanel extends BaseDialog {
                 @Override
                 public void run() {
                     estimationThread.start();
-                    Base.systemThreads.add(estimationThread);
                 }
             });
         } else if (bEstimate.isEnabled() == false) { // otherwise warn the user that there are no models loaded

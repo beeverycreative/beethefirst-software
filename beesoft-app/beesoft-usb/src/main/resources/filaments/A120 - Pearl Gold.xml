@@ -112,6 +112,11 @@
         <parameter name="layer_height" value="0.05"/>
       </resolution>
     </nozzle>
+    <nozzle type="0.6">
+        <resolution type="medium">
+            <parameter name="layer_height" value="0.2"/>
+        </resolution>
+    </nozzle>
   </printer>
   <printer type="BEEME">
     <nozzle type="0.4">

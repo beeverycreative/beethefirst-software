@@ -85,6 +85,7 @@ public class MachineModel {
 
     // Filament code currently on the printer
     private String coilText = "";
+    private String nozzleType = "";
     private String resolution = "lowRes";
 
     private AutonomousData autonomousData;
@@ -596,6 +597,14 @@ public class MachineModel {
 
     public void setCoilText(String coilText) {
         this.coilText = coilText;
+    }
+    
+    public void setNozzleType(String nozzleType) {
+        this.nozzleType = nozzleType;
+    }
+    
+    public String getNozzleType() {
+        return nozzleType;
     }
 
     /* Get and Setter Resolution/BEECODE */

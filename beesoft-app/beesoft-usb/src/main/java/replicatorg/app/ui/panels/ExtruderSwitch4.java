@@ -29,7 +29,7 @@ public class ExtruderSwitch4 extends BaseDialog {
 
     private final MachineInterface machine;
     private boolean quickGuide;
-    private double temperatureGoal;
+    private int temperatureGoal;
 
     public ExtruderSwitch4() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -38,7 +38,6 @@ public class ExtruderSwitch4 extends BaseDialog {
         evaluateInitialConditions();
         setTextLanguage();
         enableDrag();
-        Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
 
@@ -172,7 +171,6 @@ public class ExtruderSwitch4 extends BaseDialog {
 
     private void doCancel() {
         dispose();
-        Base.THREAD_KEEP_ALIVE = true;
         finalizeHeat();
         Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
@@ -454,10 +452,9 @@ public class ExtruderSwitch4 extends BaseDialog {
     }//GEN-LAST:event_bBackMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-
             dispose();
-            ExtruderSwitch2 p = new ExtruderSwitch2();
-            p.setVisible(true);
+            //ExtruderSwitch2 p = new ExtruderSwitch2();
+            //p.setVisible(true);
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed

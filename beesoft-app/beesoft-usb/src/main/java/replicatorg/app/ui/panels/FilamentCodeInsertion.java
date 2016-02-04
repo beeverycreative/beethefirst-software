@@ -223,7 +223,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
                 .addComponent(bPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -418,8 +418,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         Window p;
         if (prevWindow instanceof FilamentInsertion) {
             p = new FilamentInsertion();
-        } else if (prevWindow instanceof ExtruderSwitch3) {
-            p = new ExtruderSwitch3();
         } else {//if(prevWindow instanceof ExtruderMaintenance5) {
             p = new ExtruderMaintenance5();
         }

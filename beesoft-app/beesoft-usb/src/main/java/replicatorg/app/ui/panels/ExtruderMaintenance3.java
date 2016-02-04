@@ -28,7 +28,7 @@ import replicatorg.util.Point5d;
 public class ExtruderMaintenance3 extends BaseDialog {
 
     private final MachineInterface machine;
-    private double temperatureGoal;
+    private int temperatureGoal;
 
     public ExtruderMaintenance3() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -37,7 +37,6 @@ public class ExtruderMaintenance3 extends BaseDialog {
         enableDrag();
         evaluateInitialConditions();
         setTextLanguage();
-        Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
 
@@ -171,7 +170,6 @@ public class ExtruderMaintenance3 extends BaseDialog {
 
     private void doCancel() {
         dispose();
-        Base.THREAD_KEEP_ALIVE = true;
         finalizeHeat();
         Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");

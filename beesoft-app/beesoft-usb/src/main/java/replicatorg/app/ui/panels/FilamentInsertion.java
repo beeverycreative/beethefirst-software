@@ -47,10 +47,8 @@ public class FilamentInsertion extends BaseDialog {
         machine = Base.getMachineLoader().getMachineInterface();
         moveToPosition();
         enableDrag();
-
         disposeThread = new DisposeFeedbackThread(this, machine);
         disposeThread.start();
-        Base.systemThreads.add(disposeThread);
         bPrevious.setVisible(false);
     }
 
@@ -60,18 +58,6 @@ public class FilamentInsertion extends BaseDialog {
         if (!bLoadMouseClickedReady) {
             bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
             bLoadMouseClickedReady = true;
-            /*
-             if (unloadPressed == false) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             } else {
-             if (Base.printPaused == true) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             } else {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             }
-             }
-             */
             jLabel18MouseClickedReady = true;
         }
 
@@ -82,18 +68,6 @@ public class FilamentInsertion extends BaseDialog {
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-04.png")));
             bUnloadMouseClickedReady = true;
-            /*
-             if (unloadPressed == false) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             } else {
-             if (Base.printPaused == true) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             } else {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             }
-             }
-             */
             jLabel18MouseClickedReady = true;
 //            jLabel5.setVisible(false);
         }
@@ -674,7 +648,7 @@ public class FilamentInsertion extends BaseDialog {
             });
 
             //Set filament as NONE
-            machine.runCommand(new replicatorg.drivers.commands.SetCoilText());
+            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
         }
     }//GEN-LAST:event_bUnloadMousePressed
 
@@ -700,36 +674,29 @@ public class FilamentInsertion extends BaseDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-}
+    private class DisposeFeedbackThread extends Thread {
+        public DisposeFeedbackThread(FilamentInsertion filIns, MachineInterface mach) {
+            super("Filament Insertion Thread");
+        }
 
-class DisposeFeedbackThread extends Thread {
+        @Override
+        public void run() {
 
-    private final MachineInterface machine;
-    private final FilamentInsertion filamentPanel;
+            while (true) {
+                machine.getModel().setMachineReady(false);
+                machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
-    public DisposeFeedbackThread(FilamentInsertion filIns, MachineInterface mach) {
-        super("Filament Insertion Thread");
-        this.machine = mach;
-        this.filamentPanel = filIns;
-    }
-
-    @Override
-    public void run() {
-
-        while (true) {
-            machine.getModel().setMachineReady(false);
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (machine.getModel().getMachineReady()
-                    && machine.getDriver().isBusy() == false) {
-                filamentPanel.resetFeedbackComponents();
-            } else {
-                filamentPanel.showMessage();
+                if (machine.getModel().getMachineReady()
+                        && machine.getDriver().isBusy() == false) {
+                    resetFeedbackComponents();
+                } else {
+                    showMessage();
+                }
             }
         }
     }

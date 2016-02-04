@@ -66,7 +66,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -195,6 +194,7 @@ public class Base {
     public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
     public static boolean rebootingIntoFirmware = false;
+    public static final short HEATING_POLL_TIME_MS = 500;
 
     public enum InitialOpenBehavior {
 
@@ -226,7 +226,6 @@ public class Base {
      */
     //public static final String VERSION_NAME = String.format("%deta",VERSION);
     public static final String VERSION_NAME = VERSION_BEESOFT;
-    public static boolean THREAD_KEEP_ALIVE = false;
     /**
      * The machine controller in use.
      */
@@ -244,8 +243,6 @@ public class Base {
     private static Properties propertiesFile = null;
     /* Date time instance variables */
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    public static ArrayList<Thread> systemThreads;
-
     private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
     private static final File comLogFile = new File(getAppDataDirectory().toString() + "/comLog.txt");
     private static final BufferedWriter logBW = initLog(BEELOGfile);
@@ -772,11 +769,6 @@ public class Base {
         }
         editor.setEnabled(true);
         editor.getButtons().resetVariables();
-        THREAD_KEEP_ALIVE = false;
-
-        for (Thread systemThread : systemThreads) {
-            systemThread.stop();
-        }
 
     }
 
@@ -1091,8 +1083,6 @@ public class Base {
 
         // Loads properties at the beginning
         loadProperties();
-
-        systemThreads = new ArrayList<Thread>();
 
         /*
          try {

@@ -41,7 +41,6 @@ public class FilamentHeating extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        Base.THREAD_KEEP_ALIVE = false;
         machine = Base.getMachineLoader().getMachineInterface();
         machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
@@ -51,7 +50,6 @@ public class FilamentHeating extends BaseDialog {
         enableDrag();
         updateThread = new UpdateThread(this);
         updateThread.start();
-        Base.systemThreads.add(updateThread);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -212,7 +210,6 @@ public class FilamentHeating extends BaseDialog {
         if (Base.printPaused == false) {
             Base.writeLog("Filament heating canceled", this.getClass());
             dispose();
-            Base.THREAD_KEEP_ALIVE = true;
             finalizeHeat();
             updateThread.stop();
             Base.bringAllWindowsToFront();
@@ -569,10 +566,9 @@ class UpdateThread extends Thread {
 
     @Override
     public void run() {
-
         boolean temperatureAchieved = false;
         // we'll break on interrupts
-        while (!temperatureAchieved && !Base.THREAD_KEEP_ALIVE) {
+        while (!temperatureAchieved) {
 //            System.out.println("Thread Alive "+this.getName());
             try {
                 window.updateHeatBar();
@@ -585,6 +581,5 @@ class UpdateThread extends Thread {
             }
         }
         this.stop();
-
     }
 }

@@ -29,7 +29,7 @@ public class NozzleClean extends BaseDialog {
     private final MachineInterface machine;
 
     private boolean achievement;
-    private final double heatTemperature = 120;
+    private final int heatTemperature = 120;
     private final DisposeFeedbackThread6 disposeThread;
 
     public NozzleClean() {
@@ -46,7 +46,6 @@ public class NozzleClean extends BaseDialog {
         initializeHeatNClean();
         disposeThread = new DisposeFeedbackThread6(this, machine);
         disposeThread.start();
-        Base.systemThreads.add(disposeThread);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
     }
@@ -407,7 +406,7 @@ public class NozzleClean extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 327, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 315, Short.MAX_VALUE)
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)

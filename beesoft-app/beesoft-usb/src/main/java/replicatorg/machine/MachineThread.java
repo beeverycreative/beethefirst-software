@@ -87,10 +87,10 @@ class MachineThread extends Thread {
                     checkedForUpdates = true;
 
                     /*
-                    if (advise.isUpdateBetaAvailable()) {
-                        advise.setMessage("AvailableBeta");
-                        advise.setVisible(true);
-                    }*/ 
+                     if (advise.isUpdateBetaAvailable()) {
+                     advise.setMessage("AvailableBeta");
+                     advise.setVisible(true);
+                     }*/
                     if (advise.isUpdateStableAvailable()) {
                         advise.setMessage("AvailableStable");
                         advise.setVisible(true);
@@ -100,25 +100,22 @@ class MachineThread extends Thread {
                 }
             }
 
-            int counter = 0;
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-                    if (counter++ == 4) {
-                        if (driver.isTransferMode() == false) {
-                            driver.readStatus();
-                            if (machineThread.getModel().getMachinePowerSaving()) {
-                                Base.getMainWindow().getButtons().setMessage("power saving");
-                            } else if(getModel().getMachineReady()) {
-                                Base.getMainWindow().getButtons().setMessage("is connected");
-                            }
+                    
+                    if (driver.isTransferMode() == false) {
+                        driver.readStatus();
+                        if (machineThread.getModel().getMachinePowerSaving()) {
+                            Base.getMainWindow().getButtons().setMessage("power saving");
+                        } else if (getModel().getMachineReady()) {
+                            Base.getMainWindow().getButtons().setMessage("is connected");
                         }
-                        counter = 0;
                     }
-
-                    sleep(500, 1);
+                    
+                    sleep(200, 1);
 
                     // these catches are VERY important
                 } catch (InterruptedException e) {
@@ -438,7 +435,7 @@ class MachineThread extends Thread {
                     double printDuration = System.currentTimeMillis() - startTimeMillis;
                     Base.getMainWindow().setBuildTime(String.valueOf(printDuration));
 
-                    Base.getMachineLoader().getDriver().resetExtrudeSession();
+                    //Base.getMachineLoader().getDriver().resetExtrudeSession();
                     Base.writeConfig();
                     Base.loadProperties();
 

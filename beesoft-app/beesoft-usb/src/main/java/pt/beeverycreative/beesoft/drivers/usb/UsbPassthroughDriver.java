@@ -18,10 +18,8 @@ import javax.usb.UsbDisconnectedException;
 import javax.usb.UsbException;
 import javax.usb.UsbNotActiveException;
 import javax.usb.UsbNotOpenException;
-
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
-
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.panels.Feedback;
@@ -50,12 +48,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String GET_STATUS = "M625";
     private static final String GET_STATUS_FROM_ERROR = GET_STATUS + new String(new char[507]).replace("\0", "A");
     private static final String GET_POSITION = "M121";
-    private static final String GET_SHUTDOWN_POSITION = "M122";
     private static final String LAUNCH_FIRMWARE = "M630";
     private static final String SET_FIRMWARE_VERSION = "M114 A";
     private static final String INVALID_FIRMWARE_VERSION = "0.0.0";
     private static final String GET_FIRMWARE_VERSION = "M115";
-    private static final String GET_BOOTLOADER_VERSION = "M116";
     private static final String GET_FIRMWARE_OK = "M651";
     private static final String DUMMY = "M637";
     private static final String GET_LINE_NUMBER = "M638";
@@ -81,8 +77,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final int MAX_BLOCK_SIZE = MESSAGE_SIZE * MESSAGES_IN_BLOCK;
     //private static final String GET_SERIAL = "M117";
     private static final String SET_SERIAL = "M118 T";
-    private static final String SETCOILTEXT = "M1000 ";
-    private static final String GETCOILTEXT = "M1001";
+    private static final String SET_COIL_TEXT = "M1000 ";
+    private static final String GET_COIL_TEXT = "M1001";
+    private static final String GET_NOZZLE_TYPE = "M1025";
     private static final String SAVE_CONFIG = "M601 ";
     private static final String NOK = "NOK";
     private static final int QUEUE_LIMIT = 85;
@@ -100,22 +97,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean machinePowerSaving;
     private boolean machinePrinting;
     private long startTS;
-    private int ID = 0;
-    private boolean isAutonomous;
     private boolean driverError = false;
     private String driverErrorDescription;
     private boolean stopTransfer = false;
+    private boolean isBusy = true;
+    private int readyCount = 0;
     private static boolean bootedFromBootloader = false;
     private static boolean backupConfig = false;
     private static String backupCoilText = "";
     private static double backupZVal = 123.495;
-
+    private static final Object dispatchCommandMutex = new Object();
     private static final Feedback feedbackWindow = new Feedback();
-    private static FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
+    private FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
 
     public enum COM {
 
-        DEFAULT, WAIT, NONBLOCK, BLOCK, NO_RESPONSE, COM_LOST, TRANSFER
+        DEFAULT, BLOCK, TRANSFER, NO_RESPONSE
     }
 
     class QueueCommand {
@@ -143,10 +140,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     /**
-     * the amount of data we've sent and is in the buffer.
-     */
-    private int bufferSize = 0;
-    /**
      * What did we get back from serial?
      */
     private String result = "";
@@ -160,7 +153,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         super();
 
         // init our variables.
-        bufferSize = 0;
         setInitialized(false);
 
         //Thank you Alexey (http://replicatorg.lighthouseapp.com/users/166956)
@@ -209,6 +201,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return queue_size;
     }
 
+    @Override
+    public boolean isBusy() {
+        return isBusy;
+    }
+
     /**
      * Send any gcode needed to synchronize the driver type and the firmware
      * type. Sent on startup and if we see "start" indicating an uncommanded
@@ -241,7 +238,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Launching firmware!", this.getClass());
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
-                sendCommand(LAUNCH_FIRMWARE); // Launch firmware
+                dispatchCommand(LAUNCH_FIRMWARE); // Launch firmware
                 hiccup(100, 0);
                 closePipe(pipes);
                 return;
@@ -253,7 +250,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (status.contains("autonomous")) {
             lastDispatchTime = System.currentTimeMillis();
             super.isBootloader = false;
-            this.isAutonomous = true;
 
             Base.getMainWindow().setEnabled(true);
             Base.bringAllWindowsToFront();
@@ -368,16 +364,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             setBusy(true);
             setInitialized(false);
             int tries = 0;
-            sendCommand(GET_STATUS_FROM_ERROR);
-            String response = readResponse();
+            String response = dispatchCommand(GET_STATUS_FROM_ERROR);
 
             while (response.contains(NOK) && (tries < MESSAGES_IN_BLOCK)) {
                 tries++;
-                sendCommand(GET_STATUS_FROM_ERROR);
-                response = readResponse();
+                response = dispatchCommand(GET_STATUS_FROM_ERROR);
             }
-
-            isAutonomous = response.contains(STATUS_SDCARD);
 
             if (response.contains(RESPONSE_TRANSFER_ON_GOING)) {
 
@@ -418,59 +410,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (!isInitialized()) {
             Base.writeLog("Initializing search for printer.", this.getClass());
             establishConnection();
-            /*
-             while (!isInitialized()) {
-             try {
-             if (m_usbDevice != null) {
-                        
-             feedbackWindow.setFeedback1("Printer detected");
-             feedbackWindow.setFeedback2("Establishing connection with printer...");
-             feedbackThread = new FeedbackThread(feedbackWindow);
-
-             if (feedbackThread.isAlive() == false) {
-             feedbackThread.start();
-             }
-
-             Base.writeLog("Device ready to be used, creating pipes...", this.getClass());
-             pipes = GetPipe(m_usbDevice);
-
-             if (pipes != null) {
-             Base.writeLog("Pipes have been created. Opening pipes...", this.getClass());
-             openPipe(pipes);
-             } else {
-             Base.writeLog("Pipes were null, initiating USB device again", this.getClass());
-             m_usbDevice = null;
-             }
-
-             } else {
-             //Base.writeLog("No printer found. Waiting 100 ms before trying again...", this.getClass());
-
-             if (pipes != null) {
-             if (pipes.isOpen()) {
-             closePipe(pipes);
-             pipes = null;
-             }
-             }
-
-             InitUsbDevice();
-             try {
-             Thread.sleep(100); // sleep 100 ms
-             } catch (InterruptedException ex) {
-             Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-             }
-             }
-             } catch (Exception e) {
-             try {
-             Base.writeLog("Unknown exception on initialize()", this.getClass());
-             e.printStackTrace();
-             Thread.sleep(1000); // sleep 1 second
-             } catch (InterruptedException ex) {
-
-             }
-             }
-
-             }
-             */
             Base.writeLog("USB Driver initialized", this.getClass());
         }
 
@@ -479,21 +418,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         sendInitializationGcode();
-    }
-
-    @Override
-    public boolean isPassthroughDriver() {
-        return true;
-    }
-
-    /**
-     * Actually execute the GCode we just parsed.
-     *
-     * @param code
-     */
-    @Override
-    public void executeGCodeLine(String code) {
-        dispatchCommand(code);
     }
 
     private int getQfromReverse(String txt) {
@@ -517,7 +441,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private void recoverFromSDCardTransfer() {
-        String out = "";;
+        String out = "";
 
         //Waits for a Status OK to unlock Transfer
         while (!out.toLowerCase().contains(STATUS_OK)
@@ -557,13 +481,37 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return QUEUE_LIMIT;
     }
 
-    private String blindDispatchCommand(String next) {
+    @Override
+    public String dispatchCommand(String next) {
 
-        // blind tag - no tempresponse expected.
-        sendCommandWOTest(next);
-        queue_size += 1;
+        //QueueCommand temp = null;
+        if (next != null && !next.equals(DUMMY)) {
+            sendCommand(next);
 
-        return "ok";
+            /**
+             * Avoid double home
+             */
+            /*
+             if (!next.contains("G28")) {
+             temp = new QueueCommand(next, ++ID);
+             resendQueue.add(temp);
+             }
+             */
+        } else {
+            // Dummy command - no answer expected
+            sendCommand(DUMMY);
+        }
+
+        String ans = readResponse();
+
+        /*
+         if (temp != null) {
+         resendQueue.remove(temp);
+         }
+         */
+        queue_size = getQfromStatus(ans);
+        return ans;
+        //}
     }
 
     @Override
@@ -586,7 +534,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         while (queue_size >= QUEUE_LIMIT) {
             hiccup(QUEUE_WAIT, 0);
 
-            tResponse = _dispatchCommand(GET_STATUS);
+            tResponse = dispatchCommand(GET_STATUS);
             tExpected = STATUS_X;
 
             // Necessary to handle disconnect during readResponse
@@ -616,22 +564,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (next.startsWith(";")) {
             return next + " did not send";
         }
-        /*
-         if (next.length() < 3 || BlackListGCodes.contains(next)) {
-         return next + " did not send";
-         } else if (next.contains(RESET_AXIS)) {
-         COMTYPE = COM.BLOCK;
-         }
-         */
 
         String answer = "";
         switch (COMTYPE) {
             case NO_RESPONSE:
-                answer = blindDispatchCommand(next);
-                break;
             case DEFAULT:
-                answer = dispatchCommand(next);
-                break;
             case TRANSFER:
                 answer = dispatchCommand(next);
                 break;
@@ -648,57 +585,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 //Sends blocked command
-                if (next.contains("G28")) {
-                    sendCommand(next);
-                } else {
-                    answer = dispatchCommand(next);
-                }
+                //if (next.contains("G28")) {
+                //    sendCommand(next);
+                //} else {
+                answer = dispatchCommand(next);
+                //}
 
                 break;
 
         }
 
         if (answer.contains(NOK) == false) {
-
             return answer;
-            // tests COMMS and resends all the missing commands
-
         } else {
             return recoverCOM();
         }
-
-    }
-
-    private boolean recoverEcho() {
-        int id = (int) (Math.random() * 1000.0), tries = 10;
-        String message = ECHO + " E" + id;
-        String expected = "E" + id;
-        String response;
-        Base.writeLog("recoverEcho() invoked", this.getClass());
-        Base.writeLog("expected: " + expected, this.getClass());
-        sendCommand(message);
-
-        do {
-            try {
-                Thread.sleep(100, 0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            response = readResponse();
-
-            tries--;
-            if (response.contains(expected)) {
-                Base.writeLog("recoverEcho() successful after " + (10 - tries) + " tries", this.getClass());
-                return true;
-            } else {
-                Base.writeLog("response: " + response, this.getClass());
-            }
-
-        } while (tries > 0);
-
-        Base.writeLog("recoverEcho() failed!", this.getClass());
-        return false;
     }
 
     private String recoverCOM() {
@@ -714,7 +615,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             String response;
 
             while (true) {
-                response = _dispatchCommand(message);
+                response = dispatchCommand(message);
                 if (comLog) {
                     Base.writeComLog(System.currentTimeMillis() - startTS, "Trying to recover COM. R: " + response + " E: " + expected);
                 }
@@ -743,7 +644,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             comLost = false;
-            ans = _dispatchCommand(GET_LINE_NUMBER);
+            ans = dispatchCommand(GET_LINE_NUMBER);
 
             String re1 = "(last)";	// Variable Name 1
             String re2 = "(\\s+)";	// White Space 1
@@ -791,59 +692,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         //queue_size = QUEUE_LIMIT;
         return "ok";
-
-    }
-
-    private String _dispatchCommand(String next) {
-
-        QueueCommand temp = null;
-
-        if (next != null && !next.equals(DUMMY)) {
-            sendCommand(next);
-
-            /**
-             * Avoid double home
-             */
-            if (!next.contains("G28")) {
-                temp = new QueueCommand(next, ++ID);
-                resendQueue.add(temp);
-            }
-
-        } else {
-            // Dummy command - no answer expected
-            sendCommand(DUMMY);
-        }
-
-        String ans = readResponse();
-
-        //if (!ans.contains("ok") && !ans.contains("\n")) {
-        //    return NOK;
-        //} else {
-            if (temp != null) {
-                resendQueue.remove(temp);
-            }
-            return ans;
-        //}
-
-    }
-
-    @Override
-    public String dispatchCommand(String next) {
-
-        if (next.contains("G")) {
-            setBusy(true);
-        }
-
-        String ans = _dispatchCommand(next);
-        queue_size = getQfromStatus(ans);
-
-        return ans;
     }
 
     @Override
     public void setBusy(boolean busy) {
-        machine.setMachineBusy(busy);
-
+        isBusy = busy;
     }
 
     @Override
@@ -862,39 +715,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    @Deprecated
-    public double read() {
-
-        String temp = dispatchCommand("M105");
-
-//       T:215.0 B:1.0 ok
-        String re1 = "(T)";	// Variable Name 1
-        String re2 = "(:)";	// Any Single Character 1
-        String re3 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
-        String re4 = "(\\s+)";	// White Space 1
-        String re5 = "((?:[a-z][a-z0-9_]*))";	// Variable Name 2
-        String re6 = "(.)";	// Any Single Character 2
-        String re7 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(temp);
-        if (m.find()) {
-            String var1 = m.group(1);
-            String c1 = m.group(2);
-            String float1 = m.group(3);
-            String ws1 = m.group(4);
-            String var2 = m.group(5);
-            String c2 = m.group(6);
-            String float2 = m.group(7);
-            return Double.valueOf(float1);
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
     public void setCoilText(String coilText) {
-        String response = dispatchCommand(SETCOILTEXT + coilText, COM.BLOCK);
+        String response = dispatchCommand(SET_COIL_TEXT + coilText, COM.BLOCK);
 
         if (response.toLowerCase().contains("ok")) {
             machine.setCoilText(coilText);
@@ -908,6 +730,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommand(SAVE_CONFIG, COM.BLOCK);
     }
 
+    @Override
+    public void setInstalledNozzleSize(int microns) {
+        String response;
+
+        response = dispatchCommand("M1024 S" + microns, COM.BLOCK);
+
+        if (response.toLowerCase().contains("ok")) {
+            dispatchCommand(SAVE_CONFIG, COM.BLOCK);
+        }
+    }
+
     /**
      * Gets the CoilCode from printer AXXX for code, A000 for none NOK for error
      *
@@ -916,7 +749,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void updateCoilText() {
         String coilText, coilTextLowerCase;
 
-        coilText = dispatchCommand(GETCOILTEXT, COM.DEFAULT);
+        coilText = dispatchCommand(GET_COIL_TEXT, COM.DEFAULT);
         coilTextLowerCase = coilText.toLowerCase();
 
         try {
@@ -935,20 +768,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeLog("Coil text: " + coilText, this.getClass());
         machine.setCoilText(coilText);
     }
-
+    
     @Override
-    public boolean isAutonomous() {
-        return isAutonomous;
+    public void updateNozzleType() {
+        String nozzleType;
+        String[] splitted;
+        
+        nozzleType = dispatchCommand(GET_NOZZLE_TYPE);
+        splitted = nozzleType.split("\n")[0].split(":");
+        
+        Base.writeLog("Nozzle type: " + splitted[1], this.getClass());
+        machine.setNozzleType(splitted[1]);
     }
 
     @Override
     public boolean isONShutdown() {
         return isONShutdown;
-    }
-
-    @Override
-    public void setAutonomous(boolean auto) {
-        isAutonomous = auto;
     }
 
     @Override
@@ -966,15 +801,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public void readZValue() {
         String temp = "", response, home_pos_z = "123.495";
-        sendCommand("M600");
-        
+        //sendCommand("M600");
+        dispatchCommand("M600");
+
         hiccup(100, 0);
-        
-        while((response = readResponse()).equals("") == false) {
+
+        while ((response = readResponse()).equals("") == false) {
             temp += response;
             hiccup(10, 0);
         }
-        
+
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "(home_pos_z)";	// Variable Name 1
         String re3 = "(\\s+)";	// White Space 1
@@ -1015,21 +851,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
         int message = 0;
         int totalBytes = 0;
         double transferPercentage;
-        String logTransfer = "";
 
         file_size = (int) gcode.length();
         totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
         totalBlocks = (int) Math.ceil((double) file_size / (double) (MESSAGES_IN_BLOCK * MESSAGE_SIZE));
 
         String fileSizeInfo = "File size: " + file_size + " bytes";
-        logTransfer += fileSizeInfo + "\n";
         System.out.println(fileSizeInfo);
         String s_totalMessages = "Number of messages to Transfer: " + totalMessages;
         System.out.println(s_totalMessages);
-        logTransfer += s_totalMessages + "\n";
         String s_totalBlocks = "Number of blocks to Transfer: " + totalBlocks;
         System.out.println(s_totalBlocks);
-        logTransfer += s_totalBlocks + "\n";
 
         transferMode = true;
 
@@ -1068,7 +900,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 driverErrorDescription = ERROR + ":Transfer canceled.";
                 //dispatchCommand("G28");
                 transferMode = false;
-                isAutonomous = false;
                 stopTransfer = false;
                 return driverErrorDescription;
             }
@@ -1128,7 +959,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             driverErrorDescription = ERROR + ":Transfer canceled.";
             //dispatchCommand("G28");
             transferMode = false;
-            isAutonomous = false;
             stopTransfer = false;
             return driverErrorDescription;
         }
@@ -1167,190 +997,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
             transferPercentage = ((double) message / totalMessages) * 100;
             psAutonomous.updatePrintBar((int) transferPercentage);
         }
-        System.out.println("Block " + totalBlocks + "/" + totalBlocks);
 
-//        System.out.println("Message " + totalMessages + "/" + totalMessages + " with " + lastMessage.length + " bytes transfered with success");
         loop = System.currentTimeMillis() - loop;
         double transferSpeed = totalBytes / (loop / 1000.0);
-        String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
-                + "s : " + transferSpeed + "kbps\n";
-        logTransfer += statistics;
-        //Base.writeStatistics(logTransfer);
-        System.out.println(statistics);
-
-        double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
-        ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
+        Base.writeLog("Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
+                + "s : " + transferSpeed + "kbps\n", this.getClass());
 
         transferMode = false;
 
         return RESPONSE_OK;
     }
 
-    /*
-     @Override
-     public String gcodeSimpleTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
-
-     long loop = System.currentTimeMillis();
-     long time;
-     int file_size;
-     byte[] gcodeBytes;
-     int srcPos;
-     int offset = MESSAGE_SIZE;
-     int destPos = 0;
-     int totalMessages;
-     int message = 0;
-     int totalBytes = 0;
-     int totalBlocks;
-     int transferPercentage;
-     String logTransfer = "";
-
-     file_size = (int) gcode.length();
-     totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
-     totalBlocks = (int) Math.ceil((double) file_size / (double) (MESSAGES_IN_BLOCK * MESSAGE_SIZE));
-
-     String fileSizeInfo = "File size: " + file_size + " bytes";
-     logTransfer += fileSizeInfo + "\n";
-     System.out.println(fileSizeInfo);
-     String s_totalMessages = "Number of messages to Transfer: " + totalMessages;
-     System.out.println(s_totalMessages);
-     logTransfer += s_totalMessages + "\n";
-     String s_totalBlocks = "Number of blocks to Transfer: " + totalBlocks;
-     System.out.println(s_totalBlocks);
-     logTransfer += s_totalBlocks + "\n";
-
-     transferMode = true;
-
-     //Stores file in byte array
-     gcodeBytes = getBytesFromFile(gcode);
-     byte[] iMessage;
-
-     //Send the file 1 block at a time, only send full blocks
-     //Each block is MESSAGES_IN_BLOCK messages long        
-     for (int block = 1; block < totalBlocks; block++) {
-
-     //check if the transfer was canceled
-     if (stopTransfer == true) {
-     Base.writeLog("Transfer canceled.", this.getClass());
-     driverErrorDescription = ERROR + ":Transfer canceled.";
-     //dispatchCommand("G28");
-     transferMode = false;
-     isAutonomous = false;
-     stopTransfer = false;
-     return driverErrorDescription;
-     }
-
-     // size is MAX_BLOCK_SIZE of file_size
-     if (setTransferSize(destPos, (destPos + MAX_BLOCK_SIZE) - 1).contains(ERROR)) {
-     driverError = true;
-     driverErrorDescription = ERROR + ":setTransferSize failed";
-     transferMode = false;
-
-     return driverErrorDescription;
-     } else {
-     Base.writeLog("SDCard space allocated with success", this.getClass());
-     }
-     //            System.out.println("block:" + block + "M28 A" + srcPos + " D" + ((srcPos + MAX_BLOCK_SIZE) - 1));
-     for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
-
-     message++;
-     //Get byte array with MESSAGE_SIZE
-     time = System.currentTimeMillis();
-
-     // Updates variables
-     srcPos = destPos;
-     destPos = srcPos + offset;
-     iMessage = subbytes(gcodeBytes, srcPos, destPos);
-     //Transfer each Block
-     if (transferMessage(iMessage).contains(ERROR)) {
-     driverError = true;
-     driverErrorDescription = ERROR + ":512B message transfer failed";
-     transferMode = false;
-
-     return driverErrorDescription;
-     } else {
-     totalBytes += iMessage.length;
-     //                Base.writeLog("512B block transfered with success");
-     }
-
-     System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-     transferPercentage = (message / totalMessages) * 100;
-     psAutonomous.updatePrintBar(transferPercentage);
-     //                System.out.println("\tmessage: "+message);
-     //                System.out.println("\tsrc: "+srcPos+"\tdst: "+destPos);
-
-     }
-     System.out.println("Block " + block + "/" + totalBlocks);
-     }
-
-     //Do the last Block!
-     // Updates variables
-     srcPos = destPos;
-
-     //        System.out.println("last block; src: "+srcPos+"\tdst: "+destPos);
-     //check if the transfer was canceled
-     if (stopTransfer == true) {
-     Base.writeLog("Transfer canceled.", this.getClass());
-     driverErrorDescription = ERROR + ":Transfer canceled.";
-     //dispatchCommand("G28");
-     transferMode = false;
-     isAutonomous = false;
-     stopTransfer = false;
-     return driverErrorDescription;
-     }
-
-     // last block is special
-     //destpos is MAX_BLOCK_SIZE+src or file_size
-     if (setTransferSize(srcPos, Math.min(srcPos + MAX_BLOCK_SIZE, file_size) - 1).contains(ERROR)) {
-     driverError = true;
-     driverErrorDescription = ERROR + ":setTransferSize failed";
-     transferMode = false;
-
-     return driverErrorDescription;
-     } else {
-     Base.writeLog("SDCard space allocated with success", this.getClass());
-     }
-
-     for (; srcPos < file_size; srcPos += offset) {
-     message++;
-     //Get byte array with MESSAGE_SIZE
-     time = System.currentTimeMillis();
-
-     iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
-     //Transfer each Block
-     if (transferMessage(iMessage).contains(ERROR)) {
-     driverError = true;
-     driverErrorDescription = ERROR + ":512B message transfer failed";
-     transferMode = false;
-
-     return driverErrorDescription;
-     } else {
-     totalBytes += iMessage.length;
-     //                Base.writeLog("512B block transfered with success");
-     }
-
-     System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-     transferPercentage = (message / totalMessages) * 100;
-     psAutonomous.updatePrintBar(transferPercentage);
-     }
-     System.out.println("Block " + totalBlocks + "/" + totalBlocks);
-
-     //        System.out.println("Message " + totalMessages + "/" + totalMessages + " with " + lastMessage.length + " bytes transfered with success");
-     loop = System.currentTimeMillis() - loop;
-     double transferSpeed = totalBytes / (loop / 1000.0);
-     String statistics = "Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
-     + "s : " + transferSpeed + "kbps\n";
-     logTransfer += statistics;
-     //Base.writeStatistics(logTransfer);
-     System.out.println(statistics);
-
-     double meanSpeed = Double.valueOf(ProperDefault.get("transferSpeed"));
-     ProperDefault.put("transferSpeed", String.valueOf(((transferSpeed / 1000) + meanSpeed) / 2));
-
-     transferMode = false;
-
-     return RESPONSE_OK;
-     }
-     */
     @Override
     public void startPrintAutonomous() {
         dispatchCommand(BEGIN_PRINT, COM.DEFAULT);
@@ -1401,15 +1058,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String cValue = "0";
         String dValue = "0";
 
-        for (int i = 0; i < res.length; i++) {
-            if (res[i].contains(aTag)) {
-                aValue = res[i].substring(1);
-            } else if (res[i].contains(bTag)) {
-                bValue = res[i].substring(1);
-            } else if (res[i].contains(cTag)) {
-                cValue = res[i].substring(1);
-            } else if (res[i].contains(dTag) && !res[i].equalsIgnoreCase("Done")) {
-                dValue = res[i].substring(1);
+        for (String re : res) {
+            if (re.contains(aTag)) {
+                aValue = re.substring(1);
+            } else if (re.contains(bTag)) {
+                bValue = re.substring(1);
+            } else if (re.contains(cTag)) {
+                cValue = re.substring(1);
+            } else if (re.contains(dTag) && !re.equalsIgnoreCase("Done")) {
+                dValue = re.substring(1);
             }
         }
 
@@ -1417,40 +1074,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         variables[1] = bValue;
         variables[2] = cValue;
         variables[3] = dValue;
-
-//        String re1 = ".*?";	// Non-greedy match on filler
-//        String re2 = "(\\d+)";	// Integer Number 1
-//        String re3 = ".*?";	// Non-greedy match on filler
-//        String re4 = "(\\d+)";	// Integer Number 2
-//        String re5 = ".*?";	// Non-greedy match on filler
-//        String re6 = "(\\d+)";	// Integer Number 3
-//        String re7 = ".*?";	// Non-greedy match on filler
-//        String re8 = "(\\d+)";	// Integer Number 4
-//        String re9 = ".*?";	// Non-greedy match on filler
-//        String re10 = "(ok)";	// Word 1
-//
-////        System.out.println("printSession: "+printSession);
-//
-//        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-//        Matcher m = p.matcher(printSession);
-//        if (m.find()) {
-//            String int1 = m.group(1);
-//            String int2 = m.group(2);
-//            String int3 = m.group(3);
-//            String int4 = m.group(4);
-//            String word1 = m.group(5);
-//
-//            variables[0] = int1;
-//            variables[1] = int2;
-//            variables[2] = int3;
-//            variables[3] = int4;
-//        } else {
-//            //Matcher failed
-//            variables[0] = "0";
-//            variables[1] = "0";
-//            variables[2] = "0";
-//            variables[3] = "0";
-//        }
         return variables;
     }
 
@@ -1570,12 +1193,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         command = TRANSFER_BLOCK + "A" + srcPos + " D" + destPos;
         out += command + "\n";
 
-        //out = dispatchCommand(command);
-        sendCommand(command);
-
-        hiccup(100, 0);
-
-        out = readResponse();
+        out = dispatchCommand(command);
+        //sendCommand(command);
+        //hiccup(100, 0);
+        //out = readResponse();
 
 //        System.err.println("Source Pos = " + srcPos);
 //        System.err.println("Destination Pos = " + destPos);
@@ -1652,7 +1273,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      *
      * @return The new, populated byte array
      */
-    public byte[] subbytes(byte[] source, int srcBegin, int srcEnd) {
+    private byte[] subbytes(byte[] source, int srcBegin, int srcEnd) {
         byte destination[];
 
         destination = new byte[srcEnd - srcBegin];
@@ -1670,74 +1291,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * @param destination The destination array
      * @param dstBegin The starting offset in the destination array
      */
-    public void getBytes(byte[] source, int srcBegin, int srcEnd, byte[] destination,
+    private void getBytes(byte[] source, int srcBegin, int srcEnd, byte[] destination,
             int dstBegin) {
         System.arraycopy(source, srcBegin, destination, dstBegin, srcEnd - srcBegin);
-    }
-
-    protected int sendCommandWOTest(String next) {
-
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
-            try {
-                Thread.sleep(1, 1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        lastDispatchTime = System.currentTimeMillis();
-
-        //next = clean(next);
-        int cmdlen = 0;
-        int i = 0;
-        // skip empty commands.
-        if (next.length() == 0) {
-            return 0;
-        }
-        //pipes = GetPipe(m_usbDevice);
-
-        // do the actual send.
-        String message;
-
-        getEValue(next); // Process each command for extruded material calculation
-
-        message = next + " B N:" + (++ID) + "\n";
-
-        resendQueue.add(new QueueCommand(message, ID));
-
-        try {
-            if (m_usbDevice != null) {
-                synchronized (m_usbDevice) {
-                    if (!pipes.isOpen()) {
-                        openPipe(pipes);
-                    }
-                    pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
-                    cmdlen = next.length() + 1;
-                    //                System.out.println("SENTWO: " + message.trim())
-                }
-            }
-        } catch (UsbException ex) {
-            Base.writeLog("*sendCommandWOTest* <UsbException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage(), this.getClass());
-        } catch (UsbNotActiveException ex) {
-            Base.writeLog("*sendCommandWOTest* <UsbNotActiveException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage(), this.getClass());
-        } catch (UsbNotOpenException ex) {
-            Base.writeLog("*sendCommandWOTest* <UsbNotOpenException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage(), this.getClass());
-        } catch (IllegalArgumentException ex) {
-            Base.writeLog("*sendCommandWOTest* <IllegalArgumentException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage(), this.getClass());
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("*sendCommandWOTest* <UsbDisconnectedException> Error while sending command " + next + " : " + ex.getMessage() + " : " + ex.getLocalizedMessage(), this.getClass());
-        }
-
-        if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
-            Base.writeLog("SENT: " + message.trim(), this.getClass());
-//            
-        }
-
-        if (comLog) {
-            Base.writeComLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
-        }
-
-        return cmdlen;
     }
 
     /**
@@ -1746,15 +1302,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * @param next
      * @return
      */
-    protected int sendCommand(String next) {
-
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
-            try {
-                Thread.sleep(1, 1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+    private int sendCommand(String next) {
 
         lastDispatchTime = System.currentTimeMillis();
         //next = clean(next);
@@ -1768,16 +1316,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         // do the actual send.
         String message = next + "\n";
-        getEValue(next); // Process each command for extruded material calculation
-
-        if (comLog) {
-            long time = (System.currentTimeMillis() - startTS);
-            //Base.writecomLog(time,"Error while sending command to BEETHEFIRST: " + ex.getMessage());
-        }
 
         try {
             if (m_usbDevice != null) {
-                synchronized (m_usbDevice) {
+                synchronized (dispatchCommandMutex) {
                     try {
                         if (!pipes.isOpen()) {
                             openPipe(pipes);
@@ -1802,11 +1344,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("*sendCommand* <UsbDisconnectedException> Error while sending command " + next + " : " + ex.getMessage(), this.getClass());
         }
 
-        if (ProperDefault.get("debugMode").contains("true") && !message.contains("M625")) {
-            Base.writeLog("SENT: " + message.trim(), this.getClass());
-        }
-
-        if (comLog) {
+        if (comLog && message.contains("M625") == false) {
             Base.writeComLog((System.currentTimeMillis() - startTS), "SENT: " + message.trim());
         }
 
@@ -1931,71 +1469,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
         } else {
             try {
                 result = new String(readBuffer, 0, nBits, "US-ASCII").trim();
-//                System.out.println("nBits -> "+nBits + " result -> "+result);
-                //System.out.println(new String(result).trim());
             } catch (UnsupportedEncodingException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
-        if (ProperDefault.get("debugMode").contains("true") && !result.contains("S:")) {
-            Base.writeLog("RECEIVE: " + result.trim() + "\n", this.getClass());
-//           System.err.println("RECEIVE: " + result.trim() + "\n");
-
-        }
-
-//        System.out.println("RECEIVE: " + result.trim()+ "\n");
-        if (comLog) {
-
+        if (comLog && result.equals("") == false && result.contains("S:") == false) {
             Base.writeComLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
-            //   Base.writecomLog((System.currentTimeMillis() - startTS), "\n");
         }
 
         return result;
     }
 
     @Override
-    public void setDriverError(boolean errorOccured) {
-        this.transferMode = false;
-        this.driverError = errorOccured;
-    }
-
-    @Override
-    public boolean isDriverError() {
-        return driverError;
-    }
-
-    @Override
     public boolean isTransferMode() {
         return this.transferMode;
-    }
-
-    public String clean(String str) {
-        String clean = str;
-
-        // trim whitespace
-        clean = clean.trim();
-
-        // remove spaces
-        clean = clean.replaceAll(" ", "");
-
-        return clean;
-    }
-
-    @Override
-    public boolean isFinished() {
-        return isBufferEmpty();
-    }
-
-    /**
-     * Is our buffer empty? If don't have a buffer, its always true.
-     *
-     * @return
-     */
-    @Override
-    public boolean isBufferEmpty() {
-
-        return (bufferSize == 0);
     }
 
     @Override
@@ -2021,27 +1509,27 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // Redundant feedrate send added in Ultimaker merge. TODO: ask Erik, D1plo1d about this. 
         String cmd = "G1 F" + df.format(getCurrentFeedrate());
 
-        sendCommand(cmd);
+        dispatchCommand(cmd);
 
         cmd = "G1 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
                 + df.format(p.z()) + " F" + df.format(getCurrentFeedrate());
 
-        sendCommand(cmd);
+        dispatchCommand(cmd);
         try {
             super.queuePoint(p);
         } catch (RetryException ex) {
             //Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-//        System.out.println("QP: "+readResponse()+" qp");
-        readResponse();
-
+        //readResponse();
     }
 
     // FIXME: 5D port
     @Override
     public void setCurrentPosition(Point5d p) throws RetryException {
-        sendCommand("G92 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
+        //sendCommand("G92 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
+        //        + df.format(p.z()));
+        dispatchCommand("G92 X" + df.format(p.x()) + " Y" + df.format(p.y()) + " Z"
                 + df.format(p.z()));
 
         super.setCurrentPosition(p);
@@ -2056,15 +1544,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * ************************************************************************
      */
     @Override
-    public void setTemperature(double temperature) throws RetryException {
-        //sendCommand("M104 S" + df.format(temperature));        
-        dispatchCommand("M104 S" + df.format(temperature));
+    public void setTemperature(int temperature) throws RetryException {
+        dispatchCommand("M104 S" + temperature);
         super.setTemperature(temperature);
     }
 
     @Override
-    public void setTemperatureBlocking(double temperature) throws RetryException {
-        dispatchCommand("M109 S" + df.format(temperature));
+    public void setTemperatureBlocking(int temperature) throws RetryException {
+        dispatchCommand("M109 S" + temperature);
         super.setTemperature(temperature);
     }
 
@@ -2075,7 +1562,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         status = dispatchCommand(GET_STATUS);
 
         if (status.contains("S:") == false) {
+            isBusy = true;
             return;
+        } else {
+            if (readyCount == 5) {
+                isBusy = false;
+                readyCount = 0;
+            } else {
+                readyCount++;
+                return;
+            }
         }
 
         if (status.contains(STATUS_OK)) {
@@ -2086,7 +1582,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         } else {
             machineReady = false;
         }
-        
+
         machinePowerSaving = status.contains("Power_Saving");
         machineShutdown = status.toLowerCase().contains(STATUS_SHUTDOWN) || status.toLowerCase().contains("shutdown");
         machinePrinting = status.toLowerCase().contains(STATUS_SDCARD);
@@ -2105,28 +1601,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machine.setMachinePowerSaving(machinePowerSaving);
         machine.setMachineShutdown(machineShutdown);
         machine.setMachinePrinting(machinePrinting);
-    }
-
-    @Override
-    public void readLastLineNumber() {
-
-        String res = dispatchCommand(GET_LINE_NUMBER, COM.DEFAULT);
-        //parse value
-        String txt = "* last N:0 SDPOS:0 ok Q:0";
-
-        String re1 = ".*?";	// Non-greedy match on filler
-        String re2 = "(sdpos)";	// Word 1
-        String re3 = "(:)";	// Any Single Character 1
-        String re4 = "(\\d+)";	// Integer Number 1
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(res);
-        if (m.find()) {
-            String word1 = m.group(1);
-            String c1 = m.group(2);
-            String int1 = m.group(3);
-        }
-
     }
 
     @Override
@@ -2181,365 +1655,32 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public String setElapsedTime(long time) {
-        sendCommand("M32 A" + time);
-        try {
-            Thread.sleep(5, 0);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return readResponse();
-    }
-
-    @Override
-    public Point5d getActualPosition() {
-
-        Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
-        int tries = 10;
-        String position = "n/a";
-        String old;
-        while (true) {
-            try {
-                Thread.sleep(10, 0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            sendCommand(GET_POSITION);
-            try {
-                Thread.sleep(10, 0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            old = position;
-            position = readResponse();
-            tries--;
-            if (old.contains(position)) {
-                break;
-            }
-            if (tries < 0) {
-                return myCurrentPosition;
-            }
-        }
-        System.out.println("position1: " + position);
-
-        /**
-         * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok
-         * Q:0";
-         */
-        String re1 = "([a-z])";	// Any Single Word Character (Not Whitespace) 1
-        String re2 = "(.)";	// Any Single Character 1
-        String re3 = "(\\s+)";	// White Space 1
-        String re4 = "([a-z])";	// Any Single Word Character (Not Whitespace) 2
-        String re5 = "(.)";	// Any Single Character 2
-        String re6 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
-        String re7 = "(\\s+)";	// White Space 2
-        String re8 = "([a-z])";	// Any Single Word Character (Not Whitespace) 3
-        String re9 = "(.)";	// Any Single Character 3
-        String re10 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
-        String re11 = "(\\s+)";	// White Space 3
-        String re12 = "([a-z])";	// Any Single Word Character (Not Whitespace) 4
-        String re13 = "(.)";	// Any Single Character 4
-        String re14 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 3
-        String re15 = "(\\s+)";	// White Space 4
-        String re16 = "([a-z])";	// Any Single Word Character (Not Whitespace) 5
-        String re17 = ".*?";	// Non-greedy match on filler
-        String re18 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 4
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14 + re15 + re16 + re17 + re18, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(position);
-        if (m.find()) {
-//            System.out.println("Matcher find");
-            String w1 = m.group(1);
-            String c1 = m.group(2);
-            String ws1 = m.group(3);
-            String w2 = m.group(4);
-            String c2 = m.group(5);
-            String float1 = m.group(6);
-            String ws2 = m.group(7);
-            String w3 = m.group(8);
-            String c3 = m.group(9);
-            String float2 = m.group(10);
-            String ws3 = m.group(11);
-            String w4 = m.group(12);
-            String c4 = m.group(13);
-            String float3 = m.group(14);
-            String ws4 = m.group(15);
-            String w5 = m.group(16);
-            String float4 = m.group(17);
-            myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
-            Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
-        } else {
-            //C: X:0.0000 Y:0.0000 Z:0.0000 E:0.0000 ok Q:0
-
-            if (position.contains("X")) {
-                int indexX = position.indexOf("X");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setX(Double.valueOf(aux));
-            }
-            if (position.contains("Y")) {
-                int indexX = position.indexOf("Y");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setY(Double.valueOf(aux));
-            }
-            if (position.contains("Z")) {
-                int indexX = position.indexOf("Z");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setZ(Double.valueOf(aux));
-            }
-            if (position.contains("E")) {
-                int indexX = position.indexOf("E");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setA(Double.valueOf(aux));
-            }
-            if (!position.contains("X") && !position.contains("Y") && !position.contains("Z") && !position.contains("E")) {
-                sendCommand(GET_POSITION);
-                try {
-                    Thread.sleep(5, 0);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                position = readResponse();
-                System.out.println("position2: " + position);
-                boolean answerOK = false;
-
-                while (!answerOK || (tries > 0)) {
-                    sendCommand(GET_POSITION);
-                    try {
-                        Thread.sleep(25, 0);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    position += readResponse();
-                    tries--;
-
-                    if (position.contains("X") && position.contains("Y") && position.contains("Z") && position.contains("E")) {
-                        answerOK = true;
-                        myCurrentPosition = readPoint5DFromPosition(position);
-                        break;
-                    }
-
-                }
-            }
-        }
-//        synchronized (currentPosition) {
-        currentPosition.set(myCurrentPosition);
-//        }
-
-        return myCurrentPosition;
-    }
-
-    @Override
-    public Point5d getShutdownPosition() {
-
-        Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
-        int tries = 10;
-        sendCommand(GET_SHUTDOWN_POSITION);
-        try {
-            Thread.sleep(10, 0);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String position = readResponse();
-
-        System.out.println("shutdown position: " + position);
-
-        /**
-         * Example_ String txt="C: X:-96.000 Y:-74.500 Z:123.845 E:0.000 ok
-         * Q:0";
-         */
-        String re1 = "([a-z])";	// Any Single Word Character (Not Whitespace) 1
-        String re2 = "(.)";	// Any Single Character 1
-        String re3 = "(\\s+)";	// White Space 1
-        String re4 = "([a-z])";	// Any Single Word Character (Not Whitespace) 2
-        String re5 = "(.)";	// Any Single Character 2
-        String re6 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
-        String re7 = "(\\s+)";	// White Space 2
-        String re8 = "([a-z])";	// Any Single Word Character (Not Whitespace) 3
-        String re9 = "(.)";	// Any Single Character 3
-        String re10 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
-        String re11 = "(\\s+)";	// White Space 3
-        String re12 = "([a-z])";	// Any Single Word Character (Not Whitespace) 4
-        String re13 = "(.)";	// Any Single Character 4
-        String re14 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 3
-        String re15 = "(\\s+)";	// White Space 4
-        String re16 = "([a-z])";	// Any Single Word Character (Not Whitespace) 5
-        String re17 = ".*?";	// Non-greedy match on filler
-        String re18 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 4
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14 + re15 + re16 + re17 + re18, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(position);
-        if (m.find()) {
-//            System.out.println("Matcher find");
-            String w1 = m.group(1);
-            String c1 = m.group(2);
-            String ws1 = m.group(3);
-            String w2 = m.group(4);
-            String c2 = m.group(5);
-            String float1 = m.group(6);
-            String ws2 = m.group(7);
-            String w3 = m.group(8);
-            String c3 = m.group(9);
-            String float2 = m.group(10);
-            String ws3 = m.group(11);
-            String w4 = m.group(12);
-            String c4 = m.group(13);
-            String float3 = m.group(14);
-            String ws4 = m.group(15);
-            String w5 = m.group(16);
-            String float4 = m.group(17);
-            myCurrentPosition = new Point5d(Double.valueOf(float1), Double.valueOf(float2), Double.valueOf(float3), Double.valueOf(float4), 0);
-            Base.getMachineLoader().getMachineInterface().setLastPrintedPoint(myCurrentPosition);
-        } else {
-            //C: X:0.0000 Y:0.0000 Z:0.0000 E:0.0000 ok Q:0
-
-            if (position.contains("X")) {
-                int indexX = position.indexOf("X");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setX(Double.valueOf(aux));
-            }
-            if (position.contains("Y")) {
-                int indexX = position.indexOf("Y");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setY(Double.valueOf(aux));
-            }
-            if (position.contains("Z")) {
-                int indexX = position.indexOf("Z");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setZ(Double.valueOf(aux));
-            }
-            if (position.contains("E")) {
-                int indexX = position.indexOf("E");
-                int commandLenght = position.length();
-                String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-                myCurrentPosition.setA(Double.valueOf(aux));
-            }
-            if (!position.contains("X") && !position.contains("Y") && !position.contains("Z") && !position.contains("E")) {
-                sendCommand(GET_POSITION);
-                try {
-                    Thread.sleep(5, 0);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                position = readResponse();
-                System.out.println("position2: " + position);
-                boolean answerOK = false;
-
-                while (!answerOK || (tries > 0)) {
-                    sendCommand(GET_POSITION);
-                    try {
-                        Thread.sleep(25, 0);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    position += readResponse();
-                    tries--;
-
-                    if (position.contains("X") && position.contains("Y") && position.contains("Z") && position.contains("E")) {
-                        answerOK = true;
-                        myCurrentPosition = readPoint5DFromPosition(position);
-                        break;
-                    }
-
-                }
-            }
-        }
-//        synchronized (currentPosition) {
-        currentPosition.set(myCurrentPosition);
-//        }
-
-        return myCurrentPosition;
-    }
-
-    private Point5d readPoint5DFromPosition(String position) {
-        Point5d myCurrentPosition = new Point5d(0, 0, 100, 0, 0);
-
-        if (position.contains("X")) {
-            int indexX = position.indexOf("X");
-            int commandLenght = position.length();
-            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-            myCurrentPosition.setX(Double.valueOf(aux));
-        }
-        if (position.contains("Y")) {
-            int indexX = position.indexOf("Y");
-            int commandLenght = position.length();
-            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-            myCurrentPosition.setY(Double.valueOf(aux));
-        }
-        if (position.contains("Z")) {
-            int indexX = position.indexOf("Z");
-            int commandLenght = position.length();
-            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-            myCurrentPosition.setZ(Double.valueOf(aux));
-        }
-        if (position.contains("E")) {
-            int indexX = position.indexOf("E");
-            int commandLenght = position.length();
-            String aux = position.substring(indexX + 2, commandLenght).split(" ")[0];
-            myCurrentPosition.setA(Double.valueOf(aux));
-        }
-
-        return myCurrentPosition;
-    }
-
-    @Override
     public void readTemperature() {
-        //sendCommand(_getToolCode() + "M105");
-        String temp = dispatchCommand("M105");
-        System.out.println(temp);
-        double extruderTemperature, blockTemperature;
+        int extruderTemperature, blockTemperature;
+        String temp, re1, re2, re3, re4, re5, re6, re7;
+        Pattern p;
+        Matcher m;
 
-        String re1 = "(T)";	// Variable Name 1
-        String re2 = "(:)";	// Any Single Character 1
-        String re3 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
-        String re4 = "(\\s+)";	// White Space 1
-        String re5 = "(B)";	// Variable Name 2
-        String re6 = "(:)";	// Any Single Character 2
-        String re7 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
+        temp = dispatchCommand("M105");
+        re1 = "(T)";	// Variable Name 1
+        re2 = "(:)";	// Any Single Character 1
+        re3 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
+        re4 = "(\\s+)";	// White Space 1
+        re5 = "(B)";	// Variable Name 2
+        re6 = "(:)";	// Any Single Character 2
+        re7 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 2
+        p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        m = p.matcher(temp);
 
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(temp);
         if (m.find()) {
-            String var1 = m.group(1);
-            String c1 = m.group(2);
-            String float1 = m.group(3);
-            String ws1 = m.group(4);
-            String var2 = m.group(5);
-            String c2 = m.group(6);
-            String float2 = m.group(7);
-
-            extruderTemperature = Double.valueOf(float1);
-            blockTemperature = Double.valueOf(float2);
+            extruderTemperature = Double.valueOf(m.group(3)).intValue();
+            blockTemperature = Double.valueOf(m.group(7)).intValue();
         } else {
-            extruderTemperature = -1.0;
-            blockTemperature = -1.0;
+            extruderTemperature = -1;
+            blockTemperature = -1;
         }
 
         machine.currentTool().setCurrentTemperature(extruderTemperature, blockTemperature);
-
-    }
-
-    @Override
-    public void reset() {
-        Base.logger.info("Reset.");
-        setInitialized(false);
-        initialize();
-    }
-
-    @Override
-    protected Point5d reconcilePosition() {
-        return new Point5d();
     }
 
     @Override
@@ -2555,12 +1696,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeLog("Verifying what is the current status of the printer", this.getClass());
 
         //recoverEcho();
-        sendCommand(GET_STATUS);
-
+        //sendCommand(GET_STATUS)
         do {
-            hiccup(100, 0);
-            res = readResponse();
-
+            res = dispatchCommand(GET_STATUS);
             Base.writeLog("Attempt " + ++tries, this.getClass());
             Base.writeLog("Response: " + res, this.getClass());
 
@@ -2592,11 +1730,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         if (possibleBootloader) {
             Base.writeLog("Requesting bootloader version", this.getClass());
-            sendCommand("M116");
 
             do {
                 hiccup(100, 0);
-                res = readResponse();
+                res = dispatchCommand("M116");
                 Base.writeLog("Attempt " + ++tries, this.getClass());
                 Base.writeLog("Response: " + res, this.getClass());
 
@@ -2618,7 +1755,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         FileInputStream in = null;
         int file_size;
-        int c = 0;
         int sent;
         ByteRead res;
         boolean state;
@@ -2785,10 +1921,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
     //dispacher does not work in bootloader!!!
     private void updateBootloaderInfo() {
 
-        //get bootloader version
-        sendCommand(GET_BOOTLOADER_VERSION);
-        hiccup(QUEUE_WAIT, 0);
-        String bootloader = readResponse();
+        String bootloader, firmware;
+        //sendCommand(GET_BOOTLOADER_VERSION);
+        //hiccup(QUEUE_WAIT, 0);
+        //String bootloader = readResponse();
+        bootloader = dispatchCommand("GET_BOOTLOADER_VERSION");
 
         bootloaderVersion = Version.bootloaderVersion(bootloader);
 
@@ -2810,9 +1947,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //get firmware version
         //check first for un-initialized serial or firmware version
         if (!serialNumberString.contains("0000000000")) {
-            sendCommand(GET_FIRMWARE_VERSION);
-            hiccup(10, 0);
-            String firmware = readResponse();
+            //sendCommand(GET_FIRMWARE_VERSION);
+            //hiccup(10, 0);
+            //String firmware = readResponse();
+            firmware = dispatchCommand(GET_FIRMWARE_VERSION);
 
             if (isNewVendorID) {
                 firmwareVersion = Version.fromMachine(firmware);
@@ -2831,12 +1969,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private boolean _checkFirmwareIntegrity() {
+        String firmware_is_ok;
         int tries = 3;
         //check if the firmware is properly installed
         do {
-            sendCommand(GET_FIRMWARE_OK);
-            hiccup(QUEUE_WAIT, 0);
-            String firmware_is_ok = readResponse();
+            //sendCommand(GET_FIRMWARE_OK);
+            //hiccup(QUEUE_WAIT, 0);
+            //String firmware_is_ok = readResponse();
+            firmware_is_ok = dispatchCommand(GET_FIRMWARE_OK);
 
             Base.writeLog("Checking firmware integrity: " + result, this.getClass());
             if ((firmware_is_ok.contains("ok"))) {
@@ -2858,6 +1998,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private void updateMachineInfo() {
+        String firmware;
         serialNumberString = "0000000000";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
@@ -2872,9 +2013,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //get firmware version
         //check first for un-initialized serial or firmware version
         if (!serialNumberString.contains("0000000000")) {
-            sendCommand(GET_FIRMWARE_VERSION);
-            hiccup(10, 0);
-            String firmware = readResponse();
+            //sendCommand(GET_FIRMWARE_VERSION);
+            //hiccup(10, 0);
+            //String firmware = readResponse();
+            firmware = dispatchCommand(GET_FIRMWARE_VERSION);
             firmwareVersion = Version.fromMachineAtFirmware(firmware);
             System.out.println("firmware_version: " + firmwareVersion);
 
@@ -2933,16 +2075,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             feedbackWindow.setFeedback1(Feedback.FLASHING_MAIN_MESSAGE);
-            
-            if(firmwareVersion.equals(new Version()) == false) {
+
+            if (firmwareVersion.equals(new Version()) == false) {
                 backupConfig();
             }
-            
+
             Base.writeLog("Carrying on with firmware flash", this.getClass());
 
-            sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
-            hiccup(QUEUE_WAIT, 0);
-            readResponse();
+            //sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
+            //hiccup(QUEUE_WAIT, 0);
+            //readResponse();
+            dispatchCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
 
             //if (firmwareFile.getName().length() > 45) {
             if (backupConfig) {
@@ -2971,9 +2114,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 Base.writeLog("Setting firmware version to: " + versionToCompare, this.getClass());
-                sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
-                hiccup(QUEUE_WAIT, 0);
-                readResponse();
+                //sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
+                //hiccup(QUEUE_WAIT, 0);
+                //readResponse();
+                dispatchCommand(SET_FIRMWARE_VERSION + versionToCompare);
 
             } else {
                 Base.writeLog("Firmware update failed", this.getClass());
@@ -3141,9 +2285,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         hiccup(10, 0);
                     }
 
-                    sendCommand("M116");
-                    hiccup(100, 0);
-                    response = readResponse().toLowerCase();
+                    //sendCommand("M116");
+                    //hiccup(100, 0);
+                    //response = readResponse().toLowerCase();
+                    response = dispatchCommand("M116").toLowerCase();
 
                     if (response.equals("") == false
                             && response.contains("bad") == false) {
@@ -3169,7 +2314,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (serial.length() == SERIAL_NUMBER_SIZE) {
             try {
                 Integer.parseInt(serial);
-                sendCommand(SET_SERIAL + serial);
+                dispatchCommand(SET_SERIAL + serial);
                 hiccup(10, 0);
                 readResponse();
             } catch (Exception ex) {
@@ -3177,35 +2322,35 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
     }
 
-}
+    private class FeedbackThread extends Thread {
 
-class FeedbackThread extends Thread {
+        private final Feedback feedbackWindow;
+        private boolean stop = false;
 
-    private final Feedback feedbackWindow;
-    private boolean stop = false;
+        public FeedbackThread(Feedback feedbackWindow) {
+            super("FeedbackThread");
+            this.feedbackWindow = feedbackWindow;
+        }
 
-    public FeedbackThread(Feedback feedbackWindow) {
-        super("FeedbackThread");
-        this.feedbackWindow = feedbackWindow;
-    }
+        @Override
+        public void run() {
+            while (feedbackWindow.isVisible() == false && stop == false) {
 
-    @Override
-    public void run() {
-        while (feedbackWindow.isVisible() == false && stop == false) {
+                if (Base.welcomeSplashVisible == false) {
+                    feedbackWindow.setVisible(true);
+                }
 
-            if (Base.welcomeSplashVisible == false) {
-                feedbackWindow.setVisible(true);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(FeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+        }
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(FeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        public void cancel() {
+            stop = true;
         }
     }
 
-    public void cancel() {
-        stop = true;
-    }
 }

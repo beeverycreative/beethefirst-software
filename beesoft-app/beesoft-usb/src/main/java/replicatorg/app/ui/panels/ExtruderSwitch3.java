@@ -2,20 +2,16 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.EventQueue;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.MachineInterface;
-import replicatorg.util.Point5d;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -30,40 +26,36 @@ import replicatorg.util.Point5d;
  */
 public class ExtruderSwitch3 extends BaseDialog {
 
-    private final MachineInterface machine;
+    private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final ExtruderSwitchDisposeFeedbackThread disposeThread = new ExtruderSwitchDisposeFeedbackThread();
+    private final Nozzle selectedNozzle;
+    private final Filament selectedFilament;
+    private boolean newFilamentIsLoaded = false;
 
-    private final ExtruderSwitchDisposeFeedbackThread disposeThread;
-    private int temperatureGoal;
-
-    public ExtruderSwitch3() {
+    public ExtruderSwitch3(Nozzle selectedNozzle, Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
-        machine = Base.getMachineLoader().getMachineInterface();
         initComponents();
         setFont();
         evaluateInitialConditions();
         enableDrag();
         setTextLanguage();
         centerOnScreen();
-        Base.getMainWindow().setEnabled(false);
-        
-        moveToPosition();
-        disposeThread = new ExtruderSwitchDisposeFeedbackThread(this, machine);
-        disposeThread.start();
-        Base.systemThreads.add(disposeThread);
-        bBack.setVisible(false);
-        if (Base.printPaused == true) {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-        }
+        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep());
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        this.selectedNozzle = selectedNozzle;
+        this.selectedFilament = selectedFilament;
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                disposeThread.kill();
+                Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+            }
+        });
     }
 
-    public void resetFeedbackComponents() {
-
-        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-
-        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-
-        disableMessageDisplay();
+    private void evaluateInitialConditions() {
+        disposeThread.start();
     }
 
     private void setFont() {
@@ -73,40 +65,28 @@ public class ExtruderSwitch3 extends BaseDialog {
         bLoad.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bUnload.setFont(GraphicDesignComponents.getSSProRegular("12"));
         pWarning.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bBack.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title3"));
-        pWarning.setText(Languager.getTagValue(1, "ExtruderSwitch", "HeatingMessage3"));
-        pWarning.setHorizontalAlignment(SwingConstants.CENTER);
+        String text1, warning;
 
-        String text1 = "<html>"
+        text1 = "<html>"
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info3a")
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info3b")
                 + "</html>";
-        pText1.setText(splitString(text1));
+        warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning3") + "</b></html>";
 
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning3") + "</b></html>";
-
-        pText2.setText(splitString(warning));
-
-        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7")); // next
-        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
-    }
-
-    public void showMessage() {
-        // Active during movement
-        // REDSOFT: Implement This timer
-        enableMessageDisplay();
+        pText1.setText(text1);
+        pText2.setText(warning);
+        lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title3"));
         pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        pWarning.setHorizontalAlignment(SwingConstants.CENTER);
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
     }
 
     private void enableMessageDisplay() {
@@ -119,98 +99,13 @@ public class ExtruderSwitch3 extends BaseDialog {
         pWarning.setForeground(new Color(248, 248, 248));
     }
 
-    private void moveToPosition() {
-        Point5d nozzle = machine.getTablePoints("nozzle");
-
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(nozzle));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-    }
-
-    private void finalizeHeat() {
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
-    }
-
     private void doCancel() {
-
-        if (Base.printPaused) {
-            return;
-        } else {
-            dispose();
-            Base.getMainWindow().handleStop();
-            Base.bringAllWindowsToFront();
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            disposeThread.stop();
-            Base.enableAllOpenWindows();
-            Point5d b = machine.getTablePoints("safe");
-            double acLow = machine.getAcceleration("acLow");
-            double acHigh = machine.getAcceleration("acHigh");
-            double spHigh = machine.getFeedrate("spHigh");
-
-            if (Base.printPaused == false) {
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                finalizeHeat();
-            } else {
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 X-85 Y-60"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-                machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-            }
-        }
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
+        dispose();
+        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28"));
+        Base.bringAllWindowsToFront();
+        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        Base.getMainWindow().setEnabled(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -218,49 +113,88 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        pText2 = new javax.swing.JLabel();
-        lTitle = new javax.swing.JLabel();
-        pText1 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        pWarning = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         bLoad = new javax.swing.JLabel();
         bUnload = new javax.swing.JLabel();
         iInfographic = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        pWarning = new javax.swing.JLabel();
+        pText2 = new javax.swing.JLabel();
+        lTitle = new javax.swing.JLabel();
+        pText1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        bBack = new javax.swing.JLabel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(248, 248, 248));
-        setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setMaximumSize(new java.awt.Dimension(567, 501));
+        jPanel1.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jPanel1.setMinimumSize(new java.awt.Dimension(567, 501));
         jPanel1.setPreferredSize(new java.awt.Dimension(567, 501));
         jPanel1.setRequestFocusEnabled(false);
 
-        pText2.setBackground(new java.awt.Color(248, 248, 248));
-        pText2.setText("Suspendisse potenti. ");
-        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        lTitle.setBackground(new java.awt.Color(248, 248, 248));
-        lTitle.setText("INSERIR FILAMENTO");
-        lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        pWarning.setText("Moving...Please wait.");
 
-        pText1.setBackground(new java.awt.Color(248, 248, 248));
-        pText1.setText("Como descarregar ou carregar o filamento");
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(pWarning, javax.swing.GroupLayout.PREFERRED_SIZE, 137, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(pWarning))
+        );
+
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
+        jPanel4.setRequestFocusEnabled(false);
+
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel15MousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(51, 51, 51)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
         bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
         bLoad.setText("Load");
+        bLoad.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3.png"))); // NOI18N
+        bLoad.setEnabled(false);
         bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -276,6 +210,8 @@ public class ExtruderSwitch3 extends BaseDialog {
 
         bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
         bUnload.setText("Unload");
+        bUnload.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3_inverted.png"))); // NOI18N
+        bUnload.setEnabled(false);
         bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bUnload.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -325,54 +261,16 @@ public class ExtruderSwitch3 extends BaseDialog {
                 .addGap(0, 15, Short.MAX_VALUE))
         );
 
-        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
-        jPanel4.setRequestFocusEnabled(false);
+        pText2.setBackground(new java.awt.Color(248, 248, 248));
+        pText2.setText("Suspendisse potenti. ");
+        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel15MousePressed(evt);
-            }
-        });
+        lTitle.setBackground(new java.awt.Color(248, 248, 248));
+        lTitle.setText("INSERIR FILAMENTO");
+        lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
-
-        pWarning.setText("Moving...Please wait.");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(pWarning))
-        );
+        pText1.setBackground(new java.awt.Color(248, 248, 248));
+        pText1.setText("Como descarregar ou carregar o filamento");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -409,40 +307,27 @@ public class ExtruderSwitch3 extends BaseDialog {
                 .addComponent(pText1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 23, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bBack.setText("ANTERIOR");
-        bBack.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bBack.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bBackMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bBackMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bBackMousePressed(evt);
-            }
-        });
-
-        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        bNext.setText("SEGUINTE");
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("Ok");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bNextMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNextMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bNextMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bNextMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNextMouseEntered(evt);
             }
         });
 
@@ -468,9 +353,7 @@ public class ExtruderSwitch3 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
-                .addComponent(bBack)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 411, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -479,7 +362,6 @@ public class ExtruderSwitch3 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bBack)
                     .addComponent(bNext)
                     .addComponent(bExit))
                 .addGap(20, 20, 20))
@@ -504,53 +386,31 @@ public class ExtruderSwitch3 extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
-        if (Base.printPaused) {
-        } else {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bExitMouseEntered
 
     private void bExitMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseExited
-        if (Base.printPaused) {
-        } else {
-            bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bExitMouseExited
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-
     }//GEN-LAST:event_bNextMouseExited
 
-    private void bBackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseEntered
-        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bBackMouseEntered
-
-    private void bBackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseExited
-        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bBackMouseExited
-
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (!machine.getDriver().isBusy()) {
-
-                dispose();
-                disposeThread.stop();
-                //ExtruderSwitch4 p = new ExtruderSwitch4(previousColor);
-                FilamentCodeInsertion p = new FilamentCodeInsertion(this);
-                p.setVisible(true);
+        if (bNext.isEnabled()) {
+            dispose();
+            if (newFilamentIsLoaded) {
+                machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament(selectedFilament));
+                machine.runCommand(new replicatorg.drivers.commands.SetInstalledNozzle(selectedNozzle));
             }
+            machine.runCommand(new replicatorg.drivers.commands.SendHome());
+        }
     }//GEN-LAST:event_bNextMousePressed
-
-    private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
-
-    }//GEN-LAST:event_bBackMousePressed
 
     private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
         doCancel();
@@ -561,99 +421,29 @@ public class ExtruderSwitch3 extends BaseDialog {
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
-        if (!machine.getDriver().isBusy()) {
+        if (bUnload.isEnabled()) {
             Base.writeLog("Unload filament pressed", this.getClass());
-            machine.getDriver().setBusy(true);
-            showMessage();
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
-
-            ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
-            ProperDefault.put("coilCode", String.valueOf("N/A"));
-
-            Base.writeLog("Unloading Filament", this.getClass());
-
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-
-                    //Set fillament as NONE
-                    machine.runCommand(new replicatorg.drivers.commands.SetCoilText("none"));
-
-                    machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 S0 P500", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 S0 P500", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 S0 P500", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F250 E50", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F1000 E-23", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F800 E2", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F2000 E-23", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F200 E-50", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
-
-                    machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                    //                    unloadPressed = true;
-
-                }
-            });
-
-            if (Base.printPaused == true) {
-                bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-            }
+            //bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
+            newFilamentIsLoaded = false;
+            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
+            machine.runCommand(new replicatorg.drivers.commands.UnloadFilament());
         }
     }//GEN-LAST:event_bUnloadMousePressed
 
     private void bUnloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseExited
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-
     }//GEN-LAST:event_bUnloadMouseExited
 
     private void bUnloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseEntered
-
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_inverted.png")));
-
     }//GEN-LAST:event_bUnloadMouseEntered
 
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
-        if (!machine.getDriver().isBusy()) {
-
-            //iInfographic.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
-            //pText2.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
-
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Base.writeLog("Load filament pressed", this.getClass());
-                        machine.getDriver().setBusy(true);
-                        showMessage();
-                        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
-
-                        Base.writeLog("Loading Filament", this.getClass());
-
-                        //machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE));
-                        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E"));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 S0 P500", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 S0 P500", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 P500", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300 S0 P500", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F300 E100", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
-                        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
+        if (bLoad.isEnabled()) {
+            Base.writeLog("Load filament pressed", this.getClass());
+            newFilamentIsLoaded = true;
+            machine.getDriver().setBusy(true);
+            machine.runCommand(new replicatorg.drivers.commands.LoadFilament());
         }
     }//GEN-LAST:event_bLoadMousePressed
 
@@ -666,7 +456,6 @@ public class ExtruderSwitch3 extends BaseDialog {
     }//GEN-LAST:event_bLoadMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel bBack;
     private javax.swing.JLabel bExit;
     private javax.swing.JLabel bLoad;
     private javax.swing.JLabel bNext;
@@ -685,58 +474,59 @@ public class ExtruderSwitch3 extends BaseDialog {
     private javax.swing.JLabel pWarning;
     // End of variables declaration//GEN-END:variables
 
-    private void evaluateInitialConditions() {
-        temperatureGoal = 220;
-
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-
-        Base.getMainWindow().setEnabled(false);
-        //disableMessageDisplay();
-
-        bBack.setVisible(false);
-        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-
-    }
-}
-
-class ExtruderSwitchDisposeFeedbackThread extends Thread {
-
-    private final MachineInterface machine;
-    private final ExtruderSwitch3 filamentPanel;
-
-
-    public ExtruderSwitchDisposeFeedbackThread(ExtruderSwitch3 filIns, MachineInterface mach) {
-        super("Filament Insertion Thread");
-        this.machine = mach;
-        this.filamentPanel = filIns;
+    @Override
+    public void showMessage() {
+        enableMessageDisplay();
+        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        bLoad.setEnabled(false);
+        bUnload.setEnabled(false);
+        bNext.setEnabled(false);
     }
 
     @Override
-    public void run() {
+    public void resetFeedbackComponents() {
+        bLoad.setEnabled(true);
+        bUnload.setEnabled(true);
+        bNext.setEnabled(true);
+        disableMessageDisplay();
+    }
 
-        while (true) {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
+    private class ExtruderSwitchDisposeFeedbackThread extends Thread {
+
+        private boolean stop = false;
+
+        public ExtruderSwitchDisposeFeedbackThread() {
+            super("Filament Insertion Thread");
+        }
+
+        @Override
+        public void run() {
+
             try {
-                Thread.sleep(250);
+                // Initial wait
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
+
             }
 
-            if (!machine.getDriver().getMachineReady()) {
-                filamentPanel.showMessage();
+            while (stop == false) {
+                if (machine.getDriver().isBusy()) {
+                    showMessage();
+                } else {
+                    resetFeedbackComponents();
+                }
+
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
-            if (machine.getDriver().getMachineReady()
-                    && !machine.getDriver().isBusy()) {
-                filamentPanel.resetFeedbackComponents();
-            }
+        }
 
+        public void kill() {
+            stop = true;
+            this.interrupt();
         }
     }
 }

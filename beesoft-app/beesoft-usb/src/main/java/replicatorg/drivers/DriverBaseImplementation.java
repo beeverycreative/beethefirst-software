@@ -100,7 +100,7 @@ public abstract class DriverBaseImplementation implements Driver {
         // The truth is that the name come from the xml
         driverName = "virtualprinter";
     }
-    
+
     @Override
     public int getQueueSize() {
         return -1;
@@ -350,17 +350,17 @@ public abstract class DriverBaseImplementation implements Driver {
             }
         }
     }
-    
+
     @Override
     public Point5d getCurrentPosition2() {
-        synchronized(currentPosition) {
-            if(currentPosition.get() == null) {
+        synchronized (currentPosition) {
+            if (currentPosition.get() == null) {
                 try {
                     currentPosition.wait(5000);
                 } catch (InterruptedException ex) {
                 }
             }
-            
+
             return currentPosition.get();
         }
     }
@@ -369,10 +369,10 @@ public abstract class DriverBaseImplementation implements Driver {
     public Point5d getPosition() {
         return getCurrentPosition(false);
     }
-    
+
     @Override
     public void getPosition2() {
-        
+
     }
 
     @Override
@@ -423,12 +423,12 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public void setTemperature(double temperature) throws RetryException {
+    public void setTemperature(int temperature) throws RetryException {
         machine.currentTool().setTargetTemperature(temperature);
     }
 
     @Override
-    public void setTemperatureBlocking(double temperature) throws RetryException {
+    public void setTemperatureBlocking(int temperature) throws RetryException {
         machine.currentTool().setTargetTemperature(temperature);
     }
 
@@ -499,7 +499,6 @@ public abstract class DriverBaseImplementation implements Driver {
     @Override
     public boolean isBusy() {
         return machine.getMachineBusy();
-
     }
 
     @Override
@@ -523,12 +522,22 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
+    public void setInstalledNozzleSize(int microns) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public String getCoilText() {
         return machine.getCoilText();
     }
 
     @Override
     public void updateCoilText() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateNozzleType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -606,9 +615,9 @@ public abstract class DriverBaseImplementation implements Driver {
     public void resetBootloaderAndFirmwareVersion() {
 
     }
-    
+
     @Override
     public void closeFeedback() {
-        
+
     }
 }

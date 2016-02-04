@@ -248,9 +248,9 @@ public class ControlPanel extends BaseDialog {
         textFieldLastPrintTime.setText(val);
     }
 
-    protected double getTargetTemperature() {
+    protected int getTargetTemperature() {
         try {
-            return Double.valueOf(targetTemperatureVal.getText());
+            return Integer.valueOf(targetTemperatureVal.getText());
         } catch (IllegalArgumentException ex) {
             return -1;
         }
@@ -1685,7 +1685,7 @@ public class ControlPanel extends BaseDialog {
 
     private void targetTemperatureValKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_targetTemperatureValKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            double targetTemperature;
+            int targetTemperature;
 
             targetTemperature = getTargetTemperature();
 
