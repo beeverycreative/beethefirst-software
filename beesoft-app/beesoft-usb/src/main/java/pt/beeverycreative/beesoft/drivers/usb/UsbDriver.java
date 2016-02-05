@@ -140,7 +140,7 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("*initUsbDevice(device)* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
     }
-    
+
     public boolean addIfCompatible(UsbDevice device) throws UsbException, UnsupportedEncodingException {
 
         UsbDeviceDescriptor descriptor;
@@ -340,6 +340,8 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     protected boolean testPipes(UsbPipes pipes) {
 
+        byte[] readBuffer = new byte[1024];
+
 //        // Confirm the USB device it's ok and working properly
         if (pipes.getUsbPipeWrite() == null || pipes.getUsbPipeRead() == null) {
             try {
@@ -378,13 +380,10 @@ public class UsbDriver extends DriverBaseImplementation {
 
             //if (!isBootloader) {
             if (!transferMode) {
-                if (pipes != null) {
-                    UsbPipe pipeWrite = pipes.getUsbPipeWrite();
-                    if (pipeWrite != null) {
-                        if (usbIrp != null) {
-                            pipeWrite.syncSubmit(usbIrp);
-                        }
-                    }
+                UsbPipe pipeWrite = pipes.getUsbPipeWrite();
+                if (pipeWrite != null) {
+                    pipeWrite.syncSubmit(usbIrp);
+                    pipes.getUsbPipeRead().syncSubmit(readBuffer);
                 }
             }
             //}

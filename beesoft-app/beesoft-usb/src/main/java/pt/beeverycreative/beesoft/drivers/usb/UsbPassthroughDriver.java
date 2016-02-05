@@ -1425,8 +1425,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         // 0 is now an acceptable value; it merely means that we timed out
         // waiting for input
-        if (nBits < 0) {
-        } else {
+        if (nBits >= 0) {
             try {
                 result = new String(readBuffer, 0, nBits, "US-ASCII").trim();
             } catch (UnsupportedEncodingException ex) {
