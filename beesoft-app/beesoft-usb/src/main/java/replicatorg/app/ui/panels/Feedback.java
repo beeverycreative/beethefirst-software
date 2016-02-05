@@ -29,7 +29,7 @@ public class Feedback extends BaseDialog {
     private static final String ROOT_TAG = "FeedbackPanel";
 
     public Feedback() {
-        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         setName("FeedbackDialog");
         initComponents();
         setFont();
