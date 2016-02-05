@@ -85,7 +85,7 @@ public class MachineModel {
 
     // Filament code currently on the printer
     private String coilText = "";
-    private String nozzleType = "";
+    private int nozzleType = 0;
     private String resolution = "lowRes";
 
     private AutonomousData autonomousData;
@@ -599,11 +599,11 @@ public class MachineModel {
         this.coilText = coilText;
     }
     
-    public void setNozzleType(String nozzleType) {
+    public void setNozzleType(int nozzleType) {
         this.nozzleType = nozzleType;
     }
     
-    public String getNozzleType() {
+    public int getNozzleType() {
         return nozzleType;
     }
 

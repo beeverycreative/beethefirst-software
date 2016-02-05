@@ -168,7 +168,7 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                   <Component id="highPlusHeightLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="28" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
@@ -400,7 +400,7 @@
         <Component class="javax.swing.JLabel" name="jLabel23">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;10&quot;)" type="code"/>
             </Property>
             <Property name="text" type="java.lang.String" value="change filament"/>
           </Properties>

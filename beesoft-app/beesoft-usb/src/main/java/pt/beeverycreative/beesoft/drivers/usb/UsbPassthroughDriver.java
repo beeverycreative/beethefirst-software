@@ -768,17 +768,30 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeLog("Coil text: " + coilText, this.getClass());
         machine.setCoilText(coilText);
     }
-    
+
     @Override
     public void updateNozzleType() {
-        String nozzleType;
-        String[] splitted;
-        
+        Pattern p;
+        Matcher m;
+        String nozzleType, re1, re2, re3, re4, re5;
+        int nozzleSizeMicrons;
+
         nozzleType = dispatchCommand(GET_NOZZLE_TYPE);
-        splitted = nozzleType.split("\n")[0].split(":");
-        
-        Base.writeLog("Nozzle type: " + splitted[1], this.getClass());
-        machine.setNozzleType(splitted[1]);
+        re1 = "(Nozzle)";	
+        re2 = "(\\s+)";	
+        re3 = "(Size)";	
+        re4 = "(:)";	
+        re5 = "(\\d+)";
+        p = Pattern.compile(re1 + re2 + re3 + re4 + re5, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        m = p.matcher(nozzleType);
+        if (m.find()) {
+            nozzleSizeMicrons = Integer.parseInt(m.group(5));
+        } else {
+            nozzleSizeMicrons = 0;
+        }
+
+        Base.writeLog("Nozzle type: " + nozzleSizeMicrons, this.getClass());
+        machine.setNozzleType(nozzleSizeMicrons);
     }
 
     @Override

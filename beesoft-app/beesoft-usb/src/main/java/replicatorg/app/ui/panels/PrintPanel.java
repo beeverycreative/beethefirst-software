@@ -223,8 +223,7 @@ public class PrintPanel extends BaseDialog {
     }
     
     private float getNozzleType() {
-        String nozzle;
-        float nozzleVal;
+        int nozzle;
         
         nozzle = FilamentControler.NO_NOZZLE;
         
@@ -235,17 +234,15 @@ public class PrintPanel extends BaseDialog {
         
         Base.writeLog("Nozzle type: " + nozzle, this.getClass());
         
-        if(nozzle.equals(FilamentControler.NO_NOZZLE)) {
+        if(nozzle == 0) {
             noNozzle = true;
-            nozzleTypeValue.setFont(GraphicDesignComponents.getSSProBold("10"));
-            nozzleTypeValue.setText(nozzle);
-            nozzleVal = 0;
+            nozzleTypeValue.setFont(GraphicDesignComponents.getSSProBold("12"));
+            nozzleTypeValue.setText("0");
         } else {
-            nozzleVal = Float.parseFloat(nozzle);
-            nozzleTypeValue.setText(Float.toString(nozzleVal / 1000));
+            nozzleTypeValue.setText(Float.toString(nozzle / 1000.0f)); // from microns to mm
         }
         
-        return nozzleVal;
+        return nozzle;
     }
 
     /**
@@ -972,7 +969,7 @@ public class PrintPanel extends BaseDialog {
         jLabel22.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel22.setText("NO_FILAMENT");
 
-        jLabel23.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLabel23.setFont(GraphicDesignComponents.getSSProRegular("10"));
         jLabel23.setText("change filament");
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
@@ -1370,7 +1367,7 @@ public class PrintPanel extends BaseDialog {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(25, 25, 25)
                                 .addComponent(highPlusHeightLabel)
-                                .addGap(0, 28, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(7, 7, 7)
                                 .addComponent(bHighPlusRes, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)

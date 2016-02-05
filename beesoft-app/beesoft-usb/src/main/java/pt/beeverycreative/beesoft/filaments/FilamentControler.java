@@ -31,7 +31,7 @@ public class FilamentControler {
     public static final String NO_FILAMENT = "none";
     public static final String NO_FILAMENT_2 = "no_file";
     public static final String NO_FILAMENT_CODE = "A000";
-    public static final String NO_NOZZLE = "0";
+    public static final int NO_NOZZLE = 0;
 
     private static final Set<Filament> filamentList = new TreeSet<Filament>();
     private static final Set<Nozzle> nozzleList = new TreeSet<Nozzle>();
