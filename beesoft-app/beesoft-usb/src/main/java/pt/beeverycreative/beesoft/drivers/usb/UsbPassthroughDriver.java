@@ -107,6 +107,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static String backupCoilText = "";
     private static double backupZVal = 123.495;
     private static final Object dispatchCommandMutex = new Object();
+    private static final Object readResponseMutex = new Object();
     private static final Feedback feedbackWindow = new Feedback();
     private FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
 
@@ -416,7 +417,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (Base.welcomeSplashVisible == false) {
             Base.disposeAllOpenWindows();
         }
-
+        
+        String m600 = dispatchCommand("M600");
         sendInitializationGcode();
     }
 
@@ -462,56 +464,32 @@ public final class UsbPassthroughDriver extends UsbDriver {
         transferMode = false;
     }
 
-    private int getQfromStatus(String txt) {
-
-        String re1 = ".*?";	// Non-greedy match on filler
-        String re2 = "(Q)";	// Variable Name 1
-        String re3 = "(:)";	// Any Single Character 1
-        String re4 = "(\\d+)$";	// Integer Number 1
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(txt);
-        if (m.find()) {
-            String var1 = m.group(1);
-            String c1 = m.group(2);
-            String int1 = m.group(3);
-
-            return Integer.parseInt(int1);
-        }
-        return QUEUE_LIMIT;
-    }
-
     @Override
     public String dispatchCommand(String next) {
 
-        //QueueCommand temp = null;
-        if (next != null && !next.equals(DUMMY)) {
-            sendCommand(next);
+        String temp;
+        StringBuilder ans;
 
-            /**
-             * Avoid double home
-             */
+        ans = new StringBuilder();
+
+        synchronized (dispatchCommandMutex) {
+            if (next != null) {
+                sendCommand(next);
+            } else {
+                sendCommand(DUMMY);
+            }
+
             /*
-             if (!next.contains("G28")) {
-             temp = new QueueCommand(next, ++ID);
-             resendQueue.add(temp);
-             }
-             */
-        } else {
-            // Dummy command - no answer expected
-            sendCommand(DUMMY);
+            hiccup(100, 0);
+            while ((temp = readResponse()).equals("") == false) {
+                ans.append(temp);
+            }
+            */
+            ans.append(readResponse());
+
+            //queue_size = getQfromStatus(ans);
         }
-
-        String ans = readResponse();
-
-        /*
-         if (temp != null) {
-         resendQueue.remove(temp);
-         }
-         */
-        queue_size = getQfromStatus(ans);
-        return ans;
-        //}
+        return ans.toString();
     }
 
     @Override
@@ -777,10 +755,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         int nozzleSizeMicrons;
 
         nozzleType = dispatchCommand(GET_NOZZLE_TYPE);
-        re1 = "(Nozzle)";	
-        re2 = "(\\s+)";	
-        re3 = "(Size)";	
-        re4 = "(:)";	
+        re1 = "(Nozzle)";
+        re2 = "(\\s+)";
+        re3 = "(Size)";
+        re4 = "(:)";
         re5 = "(\\d+)";
         p = Pattern.compile(re1 + re2 + re3 + re4 + re5, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         m = p.matcher(nozzleType);
@@ -813,43 +791,27 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void readZValue() {
-        String temp = "", response, home_pos_z = "123.495";
-        //sendCommand("M600");
-        dispatchCommand("M600");
+        String response, home_pos_z, re1, re2, re3, re4, re5, re6;
+        Pattern p;
+        Matcher m;
 
-        hiccup(100, 0);
+        response = dispatchCommand("M600");
+        re1 = ".*?";	// Non-greedy match on filler
+        re2 = "(home_pos_z)";	// Variable Name 1
+        re3 = "(\\s+)";	// White Space 1
+        re4 = "(=)";	// Any Single Character 1
+        re5 = "(\\s+)";	// White Space 2
+        re6 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
 
-        while ((response = readResponse()).equals("") == false) {
-            temp += response;
-            hiccup(10, 0);
-        }
-
-        String re1 = ".*?";	// Non-greedy match on filler
-        String re2 = "(home_pos_z)";	// Variable Name 1
-        String re3 = "(\\s+)";	// White Space 1
-        String re4 = "(=)";	// Any Single Character 1
-        String re5 = "(\\s+)";	// White Space 2
-        String re6 = "([+-]?\\d*\\.\\d+)(?![-+0-9\\.])";	// Float 1
-
-        Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(temp);
+        p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        m = p.matcher(response);
         if (m.find()) {
-            String var1 = m.group(1);
-            String ws1 = m.group(2);
-            String c1 = m.group(3);
-            String ws2 = m.group(4);
-            String float1 = m.group(5);
-
-            home_pos_z = float1;
+            home_pos_z = m.group(5);
+        } else {
+            home_pos_z = "123.495";
         }
 
         machine.setzValue(Double.valueOf(home_pos_z));
-        try {
-            Thread.sleep(1, 1);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
     }
 
     @Override
@@ -1029,29 +991,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public void getPrintSessionsVariables() {
 //        Data:
-//        
 //        estimatedTime - [0];
 //        elapsedTime - [1];
 //        nLines - [2];
 //        currentNumberLines - [3];
         String printSession;
         String[] data;
-        int tries;
 
         printSession = dispatchCommand(READ_VARIABLES);
-
-        tries = 0;
-        while (printSession.contains("A") == false
-                || printSession.contains("B") == false
-                || printSession.contains("C") == false
-                || printSession.contains("D") == false) {
-            printSession = readResponse();
-
-            if (tries++ >= 3) {
-                break;
-            }
-        }
-
         data = parseData(printSession);
 
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
@@ -1382,7 +1329,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         int nBits = 0;
         try {
             if (m_usbDevice != null) {
-                synchronized (m_usbDevice) {
+                synchronized (readResponseMutex) {
 
                     if (pipes != null) {
                         nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
@@ -1487,9 +1434,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
         }
 
-        if (comLog && result.equals("") == false && result.contains("S:") == false) {
-            Base.writeComLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
-        }
+        //if (comLog && result.equals("") == false && result.contains("S:") == false) {
+        Base.writeComLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
+        //}
 
         return result;
     }
@@ -1789,21 +1736,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return -1;
         }
 
-//        System.out.println("M650 A" + file_size);
         command = "M650 A" + file_size;
-//        System.out.println("File: " + filename + "; size:" + file_size);
-//        System.out.println("Sending: " + command);
-
-        sendCommand(command);
-
-        //sleep for a nano second just for luck
-        try {
-            Thread.sleep(0, 1);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String response = readResponse();
+        //sendCommand(command);
+        String response = dispatchCommand(command);
         if (response.toLowerCase().contains("ok") == false) {
             return -1;
         }
@@ -2290,13 +2225,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 if (isInitialized() && testPipes(pipes)) {
-
                     hiccup(100, 0);
-
-                    int i = 100;
-                    while (readResponse().equals("") == false) {
-                        hiccup(10, 0);
-                    }
+                    //while (readResponse().equals("") == false) {
+                    //    hiccup(10, 0);
+                    //}
 
                     //sendCommand("M116");
                     //hiccup(100, 0);
@@ -2329,7 +2261,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Integer.parseInt(serial);
                 dispatchCommand(SET_SERIAL + serial);
                 hiccup(10, 0);
-                readResponse();
             } catch (Exception ex) {
             }
         }
