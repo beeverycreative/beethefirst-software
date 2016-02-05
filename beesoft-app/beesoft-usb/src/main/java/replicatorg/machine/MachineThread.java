@@ -107,7 +107,6 @@ class MachineThread extends Thread {
                     }
                     
                     if (driver.isTransferMode() == false) {
-                        driver.readStatus();
                         if (machineThread.getModel().getMachinePowerSaving()) {
                             Base.getMainWindow().getButtons().setMessage("power saving");
                         } else if (getModel().getMachineReady()) {

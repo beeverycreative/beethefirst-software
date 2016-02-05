@@ -74,6 +74,10 @@ public class UsbDriver extends DriverBaseImplementation {
     protected boolean transferMode = false;
     protected boolean isONShutdown = false;
 
+    private boolean isBusy = true;
+    private int readyCount = 0;
+    protected static final Object dispatchCommandMutex = new Object();
+
     /**
      * USBDriver high level definition.
      *
@@ -341,6 +345,10 @@ public class UsbDriver extends DriverBaseImplementation {
     protected boolean testPipes(UsbPipes pipes) {
 
         byte[] readBuffer = new byte[1024];
+        UsbPipe pipeRead, pipeWrite;
+        UsbIrp irpWrite;
+        int ansBytes;
+        String status;
 
 //        // Confirm the USB device it's ok and working properly
         if (pipes.getUsbPipeWrite() == null || pipes.getUsbPipeRead() == null) {
@@ -360,61 +368,112 @@ public class UsbDriver extends DriverBaseImplementation {
                 Base.writeLog("*testPipes1* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
                 return false;
             }
-
         }
 
-        UsbIrp usbIrp = pipes.getUsbPipeWrite().createUsbIrp();
-        //DUMMY COMMAND
-        usbIrp.setData("M637\n".getBytes());
-        UsbIrp readUsbIrp = pipes.getUsbPipeRead().createUsbIrp();
-        readUsbIrp.setAcceptShortPacket(true);
+        pipeRead = pipes.getUsbPipeRead();
+        pipeWrite = pipes.getUsbPipeWrite();
+        irpWrite = pipes.getUsbPipeWrite().createUsbIrp();
+        irpWrite.setData("M625\n".getBytes());
 
-        try {
-
-            if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
-                pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
-            }
-            if (!pipes.isOpen()) {
-                pipes.open();
-            }
-
-            //if (!isBootloader) {
-            if (!transferMode) {
-                UsbPipe pipeWrite = pipes.getUsbPipeWrite();
-                if (pipeWrite != null) {
-                    pipeWrite.syncSubmit(usbIrp);
-                    pipes.getUsbPipeRead().syncSubmit(readBuffer);
+        synchronized (dispatchCommandMutex) {
+            try {
+                if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
+                    pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
                 }
-            }
-            //}
+                if (!pipes.isOpen()) {
+                    pipes.open();
+                }
 
-        } catch (UsbException ex) {
-            Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-            return false;
-        } catch (UsbNotActiveException ex) {
-            Base.writeLog("*testPipes2* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-            return false;
-        } catch (UsbNotOpenException ex) {
-            Base.writeLog("*testPipes2* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-            return false;
-        } catch (IllegalArgumentException ex) {
-            Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
-            //setInitialized(false);
-            //return false;
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-            return false;
-        } catch (UsbNotClaimedException ex) {
-            Base.writeLog("*testPipes2* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-            return false;
+                if (!transferMode) {
+                    pipeWrite.syncSubmit(irpWrite);
+                }
+
+            } catch (UsbException ex) {
+                Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());
+                setInitialized(false);
+                return false;
+            } catch (UsbNotActiveException ex) {
+                Base.writeLog("*testPipes2* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
+                setInitialized(false);
+                return false;
+            } catch (UsbNotOpenException ex) {
+                Base.writeLog("*testPipes2* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
+                setInitialized(false);
+                return false;
+            } catch (IllegalArgumentException ex) {
+                Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
+                //setInitialized(false);
+                //return false;
+            } catch (UsbDisconnectedException ex) {
+                Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+                setInitialized(false);
+                return false;
+            } catch (UsbNotClaimedException ex) {
+                Base.writeLog("*testPipes2* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
+                setInitialized(false);
+                return false;
+            }
+
+            // clean up
+            try {
+                ansBytes = pipeRead.syncSubmit(readBuffer);
+                if (ansBytes > 0) {
+                    try {
+                        status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+                        processStatus(status);
+                    } catch (UnsupportedEncodingException ex) {
+                    }
+
+                }
+            } catch (UsbException ex) {
+            } catch (UsbNotActiveException ex) {
+            } catch (UsbNotOpenException ex) {
+            } catch (IllegalArgumentException ex) {
+            } catch (UsbDisconnectedException ex) {
+            }
+        }
+        return true;
+    }
+
+    private void processStatus(String status) {
+
+        boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving;
+
+        if (status.contains("S:") == false) {
+            isBusy = true;
+            return;
+        } else {
+            if (readyCount == 5) {
+                isBusy = false;
+                readyCount = 0;
+            } else {
+                readyCount++;
+                return;
+            }
         }
 
-        return true;
+        machineReady = status.contains("S:3");
+        machinePowerSaving = status.contains("Power_Saving");
+        machineShutdown = status.contains("S:9") || status.toLowerCase().contains("shutdown");
+        machinePrinting = status.contains("S:5");
+        machinePaused = status.contains("Pause");
+
+        machine.setLastStatusString(status);
+        machine.setMachineReady(machineReady);
+        machine.setMachinePaused(machinePaused);
+        machine.setMachinePowerSaving(machinePowerSaving);
+        machine.setMachineShutdown(machineShutdown);
+        machine.setMachinePrinting(machinePrinting);
+    }
+
+    @Override
+    public boolean isBusy() {
+        return isBusy;
+    }
+
+    @Override
+    public void setBusy(boolean busy) {
+        isBusy = busy;
     }
 
     /**

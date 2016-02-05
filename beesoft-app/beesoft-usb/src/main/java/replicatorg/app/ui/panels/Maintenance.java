@@ -724,18 +724,9 @@ class ControlStatus extends Thread {
     public void run() {
 
         while (true) {
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException ex) {
-            }
-
-            if (machine.getModel().getMachineBusy()) {
+            if (machine.getDriver().isBusy()) {
                 maintenancePanel.setBusy();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                }
+                Base.hiccup(100);
             }
             //!machine.getDriver().isBusy()
             if (!machine.getModel().getMachineBusy()) {

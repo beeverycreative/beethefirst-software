@@ -1063,7 +1063,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             public void actionPerformed(ActionEvent e) {
 //                if (Base.isPrinting == false) {
                 MachineInterface machine = getMachineInterface();
-                machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
                 try {
                     Thread.sleep(250, 0);

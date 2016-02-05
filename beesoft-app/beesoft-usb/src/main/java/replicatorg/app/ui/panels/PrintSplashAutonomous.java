@@ -672,7 +672,6 @@ public class PrintSplashAutonomous extends BaseDialog {
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F2000 E-23", COM.BLOCK));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F200 E-50", COM.BLOCK));
                     machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E", COM.BLOCK));
-                    machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
 
                     machine.getModel().setMachineReady(false);
                     machine.getDriver().setBusy(true);
@@ -1142,15 +1141,10 @@ public class PrintSplashAutonomous extends BaseDialog {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-
-                    do {
-                        machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-                        try {
-                            Thread.sleep(500, 0);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    } while (machine.getDriver().getMachineReady() == false);
+                    
+                    while(machine.getDriver().getMachineReady() == false) {
+                        Base.hiccup(500);
+                    }
 
                     machine.getDriver().setBusy(false);
                     bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
@@ -1582,11 +1576,10 @@ class PauseAssistantThread extends Thread {
         if (printPanel.isShutdown()) {
             printPanel.activateLoadingIcons();
         }
-
-        do {
-            machine.getDriver().readStatus();
+        
+        while(machine.getDriver().getMachinePaused()) {
             Base.hiccup(100);
-        } while (machine.getDriver().getMachinePaused());
+        }
 
         printPanel.restoreAfterPauseResume();
     }

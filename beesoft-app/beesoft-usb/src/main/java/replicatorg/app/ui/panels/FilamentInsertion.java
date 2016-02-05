@@ -684,7 +684,6 @@ public class FilamentInsertion extends BaseDialog {
 
             while (true) {
                 machine.getModel().setMachineReady(false);
-                machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
