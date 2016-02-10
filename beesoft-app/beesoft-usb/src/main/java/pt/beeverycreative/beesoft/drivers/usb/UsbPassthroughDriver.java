@@ -447,6 +447,21 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //End transfer mode
         transferMode = false;
     }
+    
+    private String dispatchCommand(byte[] byteArray) {
+        String ans;
+        
+        if(byteArray == null) {
+            return "";
+        }
+        
+        synchronized(dispatchCommandMutex) {
+            sendCommandBytes(byteArray);
+            ans = readResponse();
+        }
+        
+        return ans;
+    }
 
     @Override
     public String dispatchCommand(String next) {
@@ -461,7 +476,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             sendCommand(next);
 
             if (next.contains("M630") || next.contains("M609")) {
-                System.out.println("derp");
                 ans = "";
             } else {
                 ans = readResponse();
@@ -871,23 +885,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     srcPos = destPos;
                     destPos = srcPos + offset;
                     iMessage = subbytes(gcodeBytes, srcPos, destPos);
-                    //Transfer each Block
-                    /*
-                     if (transferMessage(iMessage).contains(ERROR)) {
-                     driverErrorDescription = ERROR + ":512B message transfer failed";
-                     transferMode = false;
-
-                     return driverErrorDescription;
-                     } else {
-                     totalBytes += iMessage.length;
-
-                     Base.hiccup(50);
-                     //                Base.writeLog("512B block transfered with success");
-                     }
-                     */
-
-                    sendCommandBytes(iMessage);
-                    if (readResponse().contains("tog") == false) {
+                    //sendCommandBytes(iMessage);
+                    if (dispatchCommand(iMessage).contains("tog") == false) {
                         Base.writeLog("Transfer failure, 0 bytes sent.", this.getClass());
                         return driverErrorDescription;
                     }
@@ -941,8 +940,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
 
-                sendCommandBytes(iMessage);
-                if (readResponse().contains("tog") == false) {
+                //sendCommandBytes(iMessage);
+                if (dispatchCommand(iMessage).contains("tog") == false) {
                     Base.writeLog("Transfer failure, 0 bytes sent.", this.getClass());
                     return driverErrorDescription;
                 }
@@ -1646,7 +1645,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
         return cmdlen;
     }
-
+    
     public ByteRead readBytes() throws UsbException {
 
         int indexRead, nBits;
