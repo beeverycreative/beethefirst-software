@@ -437,12 +437,14 @@ public class FilamentControler {
      * @return ratio for each color.
      */
     public static Map<String, String> getFilamentSettings(String coilCode,
-            String resolution, double nozzleSize, String printerId) {
+            String resolution, int nozzleSize, String printerId) {
 
         String logStrHeader;
+        float nozzleSizeInMM;
 
         logStrHeader = "getFilamentSettings(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printerId + ") ";
-
+        nozzleSizeInMM = nozzleSize / 1000.0f;
+        
         if (filamentList == null) {
             fetchFilaments();
         }
@@ -454,7 +456,7 @@ public class FilamentControler {
                     for (SlicerConfig sc : fil.getSupportedPrinters()) {
                         if (printerId.equals(sc.getPrinterName())) {
                             for (Nozzle nozzle : sc.getNozzles()) {
-                                if (nozzle.getType().equals(Double.toString(nozzleSize))) {
+                                if (nozzle.getType().equals(Float.toString(nozzleSizeInMM))) {
                                     for (Resolution res : nozzle.getResolutions()) {
                                         if (res.getType().equalsIgnoreCase(resolution)) {
                                             Base.writeLog(logStrHeader + " returned a list of slicer parameters", FilamentControler.class);

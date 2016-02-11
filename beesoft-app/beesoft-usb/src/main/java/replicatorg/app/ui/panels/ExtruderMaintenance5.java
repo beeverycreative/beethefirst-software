@@ -5,13 +5,10 @@ import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -535,7 +532,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
             dispose();
             disposeThread.stop();
             //ExtruderMaintenance6 p = new ExtruderMaintenance6(previousColor);
-            FilamentCodeInsertion p = new FilamentCodeInsertion(this);
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed

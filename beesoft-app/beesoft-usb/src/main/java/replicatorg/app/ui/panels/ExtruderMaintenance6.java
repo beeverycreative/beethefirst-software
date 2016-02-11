@@ -453,14 +453,13 @@ public class ExtruderMaintenance6 extends BaseDialog {
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
             machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
             machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-            //            ProperDefault.remove("maintenance");
         }
 
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
-        FilamentInsertion p = new FilamentInsertion();
-        p.setVisible(true);
+        //FilamentInsertion p = new FilamentInsertion();
+        //p.setVisible(true);
         dispose();
 
     }//GEN-LAST:event_bBackMousePressed

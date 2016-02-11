@@ -16,7 +16,16 @@ public class Nozzle implements Comparable {
 
     @XmlElement(name = "resolution")
     private List<Resolution> resolutions;
-
+    
+    public Nozzle() {
+        
+    }
+    
+    public Nozzle(int type) {
+        this.type = String.valueOf((type / 1000.0f));
+        sizeInMicrons = type;
+    }
+    
     public String getType() {
         return type;
     }

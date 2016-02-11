@@ -11,7 +11,7 @@ public class PrintPreferences {
     private final String resolution;
     private final String coilText;
     private final int density;
-    private final double nozzleSize;
+    private final int nozzleSize;
     private final boolean raftPressed;
     private final boolean supportPressed;
     private String gcodeToPrint = "";
@@ -23,13 +23,13 @@ public class PrintPreferences {
         resolution = "medium";
         coilText = Base.getMainWindow().getMachine().getDriver().getCoilText();
         density = 5;
-        nozzleSize = 0.4;
+        nozzleSize = 400;
         raftPressed = false;
         supportPressed = false;
     }
     
     public PrintPreferences(String resolution, String coilText, int density, 
-            double nozzleSize, boolean raftPressed, boolean supportPressed) {
+            int nozzleSize, boolean raftPressed, boolean supportPressed) {
         this.resolution = resolution;
         this.coilText = coilText;
         this.density = density;
@@ -39,7 +39,7 @@ public class PrintPreferences {
     }
     
     public PrintPreferences(String resolution, String coilText, int density, 
-            double nozzleSize, boolean raftPressed, boolean supportPressed, 
+            int nozzleSize, boolean raftPressed, boolean supportPressed, 
             String gcodeToPrint) {
         this.resolution = resolution;
         this.coilText = coilText;
@@ -51,7 +51,7 @@ public class PrintPreferences {
     }
     
     public PrintPreferences(String resolution, String coilText, int density, 
-            double nozzleSize, boolean raftPressed, boolean supportPressed, 
+            int nozzleSize, boolean raftPressed, boolean supportPressed, 
             PrinterInfo printer) {
         this.resolution = resolution;
         this.coilText = coilText;
@@ -63,7 +63,7 @@ public class PrintPreferences {
     }
     
     public PrintPreferences(String resolution, String coilText, int density, 
-            double nozzleSize, boolean raftPressed, boolean supportPressed, 
+            int nozzleSize, boolean raftPressed, boolean supportPressed, 
             String gcodeToPrint, PrinterInfo printer) {
         this.resolution = resolution;
         this.coilText = coilText;
@@ -87,7 +87,7 @@ public class PrintPreferences {
         return density;
     }
     
-    public double getNozzleSize() {
+    public int getNozzleSize() {
         return nozzleSize;
     }
 

@@ -19,6 +19,9 @@ import javax.usb.UsbInterface;
 import javax.usb.UsbNotActiveException;
 import javax.usb.UsbServices;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.usb.UsbDeviceDescriptor;
@@ -76,7 +79,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
     private boolean isBusy = true;
     private int readyCount = 0;
-    protected static final Object dispatchCommandMutex = new Object();
+    protected static final Lock dispatchCommandLock = new ReentrantLock();
 
     /**
      * USBDriver high level definition.
@@ -375,63 +378,73 @@ public class UsbDriver extends DriverBaseImplementation {
         irpWrite = pipes.getUsbPipeWrite().createUsbIrp();
         irpWrite.setData("M625\n".getBytes());
 
-        synchronized (dispatchCommandMutex) {
-            try {
-                if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
-                    pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
-                }
-                if (!pipes.isOpen()) {
-                    pipes.open();
-                }
-
-                if (!transferMode) {
-                    pipeWrite.syncSubmit(irpWrite);
-                }
-
-            } catch (UsbException ex) {
-                Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());
-                setInitialized(false);
-                return false;
-            } catch (UsbNotActiveException ex) {
-                Base.writeLog("*testPipes2* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
-                setInitialized(false);
-                return false;
-            } catch (UsbNotOpenException ex) {
-                Base.writeLog("*testPipes2* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
-                setInitialized(false);
-                return false;
-            } catch (IllegalArgumentException ex) {
-                Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
-                //setInitialized(false);
-                //return false;
-            } catch (UsbDisconnectedException ex) {
-                Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-                setInitialized(false);
-                return false;
-            } catch (UsbNotClaimedException ex) {
-                Base.writeLog("*testPipes2* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
-                setInitialized(false);
-                return false;
-            }
-
-            // clean up
-            try {
-                ansBytes = pipeRead.syncSubmit(readBuffer);
-                if (ansBytes > 0) {
+        try {
+            if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
+                try {
                     try {
-                        status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
-                        processStatus(status);
-                    } catch (UnsupportedEncodingException ex) {
+                        if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
+                            pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
+                        }
+                        if (!pipes.isOpen()) {
+                            pipes.open();
+                        }
+
+                        if (!transferMode) {
+                            pipeWrite.syncSubmit(irpWrite);
+                        }
+
+                    } catch (UsbException ex) {
+                        Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());
+                        setInitialized(false);
+                        return false;
+                    } catch (UsbNotActiveException ex) {
+                        Base.writeLog("*testPipes2* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
+                        setInitialized(false);
+                        return false;
+                    } catch (UsbNotOpenException ex) {
+                        Base.writeLog("*testPipes2* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
+                        setInitialized(false);
+                        return false;
+                    } catch (IllegalArgumentException ex) {
+                        Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
+                        //setInitialized(false);
+                        //return false;
+                    } catch (UsbDisconnectedException ex) {
+                        Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+                        setInitialized(false);
+                        return false;
+                    } catch (UsbNotClaimedException ex) {
+                        Base.writeLog("*testPipes2* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
+                        setInitialized(false);
+                        return false;
                     }
 
+                    // clean up
+                    try {
+                        ansBytes = pipeRead.syncSubmit(readBuffer);
+                        if (ansBytes > 0) {
+                            try {
+                                status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+                                processStatus(status);
+                            } catch (UnsupportedEncodingException ex) {
+                            }
+                        }
+                    } catch (UsbException ex) {
+                    } catch (UsbNotActiveException ex) {
+                    } catch (UsbNotOpenException ex) {
+                    } catch (IllegalArgumentException ex) {
+                    } catch (UsbDisconnectedException ex) {
+                    }
+
+                } finally {
+                    dispatchCommandLock.unlock();
                 }
-            } catch (UsbException ex) {
-            } catch (UsbNotActiveException ex) {
-            } catch (UsbNotOpenException ex) {
-            } catch (IllegalArgumentException ex) {
-            } catch (UsbDisconnectedException ex) {
+            } else {
+                isBusy = true;
             }
+        } catch (InterruptedException ex) {
         }
+
         return true;
     }
 

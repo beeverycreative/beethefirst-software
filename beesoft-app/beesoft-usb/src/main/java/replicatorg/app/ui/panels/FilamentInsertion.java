@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -28,28 +29,25 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentInsertion extends BaseDialog {
 
-    private final MachineInterface machine;
+    private static final MachineInterface machine = Base.getMainWindow().getMachineInterface();
+    private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private boolean bLoadMouseClickedReady = true;
     private boolean bUnloadMouseClickedReady = true;
-    private final boolean jLabel17GoBack = false;
-    private final DisposeFeedbackThread disposeThread;
     private boolean jLabel18MouseClickedReady;
     private boolean unloadPressed;
+    private final Filament selectedFilament;
 
-    public FilamentInsertion() {
+    public FilamentInsertion(Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
-        Base.writeLog("Ongoing filament change operation", this.getClass());
+        Base.writeLog("Last step of filament change operation", this.getClass());
         initComponents();
         setFont();
         setTextLanguage();
         centerOnScreen();
+        this.selectedFilament = selectedFilament;
         Base.getMainWindow().setEnabled(false);
-        machine = Base.getMachineLoader().getMachineInterface();
         moveToPosition();
         enableDrag();
-        disposeThread = new DisposeFeedbackThread(this, machine);
-        disposeThread.start();
-        bPrevious.setVisible(false);
     }
 
     @Override
@@ -96,10 +94,8 @@ public class FilamentInsertion extends BaseDialog {
         bLoad.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bUnload.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel7.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bPrevious.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     private void setTextLanguage() {
@@ -110,7 +106,6 @@ public class FilamentInsertion extends BaseDialog {
         bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
-        bPrevious.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
@@ -136,6 +131,7 @@ public class FilamentInsertion extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Moving to load/unload position", this.getClass());
         machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep());
+        disposeThread.start();
     }
 
     private void finalizeHeat() {
@@ -217,7 +213,6 @@ public class FilamentInsertion extends BaseDialog {
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        bPrevious = new javax.swing.JLabel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
 
@@ -245,16 +240,17 @@ public class FilamentInsertion extends BaseDialog {
 
         bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
         bLoad.setText("Load");
+        bLoad.setDisabledIcon(null);
         bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bLoadMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bLoadMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bLoadMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bLoadMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bLoadMouseEntered(evt);
             }
         });
 
@@ -395,21 +391,6 @@ public class FilamentInsertion extends BaseDialog {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bPrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bPrevious.setText("ANTERIOR");
-        bPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bPrevious.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPreviousMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bPreviousMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPreviousMousePressed(evt);
-            }
-        });
-
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -447,9 +428,7 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
-                .addComponent(bPrevious)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 405, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -458,7 +437,6 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bPrevious)
                     .addComponent(bNext)
                     .addComponent(bExit))
                 .addGap(20, 20, 20))
@@ -520,21 +498,13 @@ public class FilamentInsertion extends BaseDialog {
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
-    private void bPreviousMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseEntered
-        bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bPreviousMouseEntered
-
-    private void bPreviousMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseExited
-        bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bPreviousMouseExited
-
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (!machine.getDriver().isBusy()) {
+        if (bNext.isEnabled()) {
 
             if (unloadPressed == false) {
                 Base.writeLog("Next button pressed, transitioning to next panel", this.getClass());
                 disposeThread.stop();
-                FilamentCodeInsertion p = new FilamentCodeInsertion(this);
+                FilamentCodeInsertion p = new FilamentCodeInsertion();
                 dispose();
                 p.setVisible(true);
             } else {
@@ -557,22 +527,14 @@ public class FilamentInsertion extends BaseDialog {
         }
     }//GEN-LAST:event_bNextMousePressed
 
-    private void bPreviousMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMousePressed
-        if (jLabel17GoBack) {
-            Base.writeLog("Previous button pressed", this.getClass());
-            dispose();
-            FilamentHeating p = new FilamentHeating();
-            p.setVisible(true);
-        }
-
-    }//GEN-LAST:event_bPreviousMousePressed
-
     private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
-        doCancel();
+        if (bExit.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bExitMousePressed
 
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
-        if (!machine.getDriver().isBusy()) {
+        if (bLoad.isEnabled()) {
             Base.writeLog("Load button pressed", this.getClass());
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
             jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
@@ -610,7 +572,7 @@ public class FilamentInsertion extends BaseDialog {
     }//GEN-LAST:event_bLoadMousePressed
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
-        if (!machine.getDriver().isBusy()) {
+        if (bUnload.isEnabled()) {
             Base.writeLog("Unload button pressed", this.getClass());
             showMessage();
             bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
@@ -653,13 +615,14 @@ public class FilamentInsertion extends BaseDialog {
     }//GEN-LAST:event_bUnloadMousePressed
 
     private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
-        doCancel();
+        if (bX.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bXMousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bExit;
     private javax.swing.JLabel bLoad;
     private javax.swing.JLabel bNext;
-    private javax.swing.JLabel bPrevious;
     private javax.swing.JLabel bUnload;
     private javax.swing.JLabel bX;
     private javax.swing.JLabel jLabel1;
@@ -674,29 +637,4 @@ public class FilamentInsertion extends BaseDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-    private class DisposeFeedbackThread extends Thread {
-        public DisposeFeedbackThread(FilamentInsertion filIns, MachineInterface mach) {
-            super("Filament Insertion Thread");
-        }
-
-        @Override
-        public void run() {
-
-            while (true) {
-                machine.getModel().setMachineReady(false);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (machine.getModel().getMachineReady()
-                        && machine.getDriver().isBusy() == false) {
-                    resetFeedbackComponents();
-                } else {
-                    showMessage();
-                }
-            }
-        }
-    }
 }

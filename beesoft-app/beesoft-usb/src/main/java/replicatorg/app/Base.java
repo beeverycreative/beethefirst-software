@@ -1517,11 +1517,15 @@ public class Base {
         }
     }
     
+    /**
+     * To be used when catch isn't supposed to do anything
+     * @param ms time in ms to wait
+     */
     public static void hiccup(int ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException ex) {
-            Base.writeLog("Interrupted during hiccup", Base.class);
+            System.out.println("interrupt");
         }
     }
 }

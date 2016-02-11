@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import replicatorg.app.Base;
@@ -26,7 +28,7 @@ import replicatorg.machine.MachineInterface;
 public class CalibrationWelcome extends BaseDialog {
 
     private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread();
     private boolean repeatCalibration;
 
     public CalibrationWelcome(boolean repeatCalibration) {
@@ -39,6 +41,12 @@ public class CalibrationWelcome extends BaseDialog {
         moveToA();
         centerOnScreen();
         evaluateInitialConditions();
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                busyThread.kill();
+            }
+        });
     }
 
     private void setFont() {
@@ -162,7 +170,6 @@ public class CalibrationWelcome extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -633,7 +640,6 @@ public class CalibrationWelcome extends BaseDialog {
             machine.runCommand(new replicatorg.drivers.commands.AbsolutePositioning());
             CalibrationScrew1 p = new CalibrationScrew1();
             dispose();
-            busyThread.terminate();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed

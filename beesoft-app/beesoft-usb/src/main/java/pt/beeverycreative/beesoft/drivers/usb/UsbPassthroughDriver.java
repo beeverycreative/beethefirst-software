@@ -447,19 +447,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //End transfer mode
         transferMode = false;
     }
-    
+
     private String dispatchCommand(byte[] byteArray) {
         String ans;
-        
-        if(byteArray == null) {
+
+        if (byteArray == null) {
             return "";
         }
-        
-        synchronized(dispatchCommandMutex) {
+
+        dispatchCommandLock.lock();
+        try {
             sendCommandBytes(byteArray);
             ans = readResponse();
+        } finally {
+            dispatchCommandLock.unlock();
         }
-        
+
         return ans;
     }
 
@@ -472,7 +475,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return "";
         }
 
-        synchronized (dispatchCommandMutex) {
+        dispatchCommandLock.lock();
+        try {
             sendCommand(next);
 
             if (next.contains("M630") || next.contains("M609")) {
@@ -482,6 +486,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             //queue_size = getQfromStatus(ans);
+        } finally {
+            dispatchCommandLock.unlock();
         }
         return ans;
     }
@@ -829,7 +835,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         transferMode = true;
 
-        synchronized (dispatchCommandMutex) {
+        dispatchCommandLock.lock();
+        try {
             if (dispatchCommand(INIT_SDCARD, COM.TRANSFER).contains(ERROR)) {
                 driverErrorDescription = ERROR + ":INIT_SDCARD failed";
                 transferMode = false;
@@ -969,6 +976,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     + "s : " + transferSpeed + "kbps\n", this.getClass());
 
             transferMode = false;
+        } finally {
+            dispatchCommandLock.unlock();
         }
 
         return RESPONSE_OK;
@@ -1164,18 +1173,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         try {
             if (m_usbDevice != null) {
-                synchronized (dispatchCommandMutex) {
-                    try {
-                        if (!pipes.isOpen()) {
-                            openPipe(pipes);
-                        }
-                    } catch (NullPointerException ex) {
-                        return -1;
+                try {
+                    if (!pipes.isOpen()) {
+                        openPipe(pipes);
                     }
-                    pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
-                    cmdlen = next.length() + 1;
-
+                } catch (NullPointerException ex) {
+                    return -1;
                 }
+                pipes.getUsbPipeWrite().syncSubmit(message.getBytes());
+                cmdlen = next.length() + 1;
             }
         } catch (UsbException ex) {
             Base.writeLog("*sendCommand* <UsbException> Error while sending command " + next + " : " + ex.getMessage(), this.getClass());
@@ -1580,7 +1586,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         byte[] byteTemp = new byte[64];
         ByteRead byteMessage;
         byteMessage = new ByteRead(64, new byte[0]);
-        synchronized (dispatchCommandMutex) {
+        dispatchCommandLock.lock();
+        try {
             try {
                 while (((byteMessage.size = in.read(byteTemp)) != -1)
                         && (nBytes == -1 || (bytesRead < nBytes))) {
@@ -1616,6 +1623,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             return 1;
+        } finally {
+            dispatchCommandLock.unlock();
         }
     }
 
@@ -1630,7 +1639,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         int cmdlen = 0;
 
-        synchronized (dispatchCommandMutex) {
+        synchronized (dispatchCommandLock) {
             try {
                 if (!pipes.isOpen()) {
                     openPipe(pipes);
@@ -1645,7 +1654,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
         return cmdlen;
     }
-    
+
     public ByteRead readBytes() throws UsbException {
 
         int indexRead, nBits;

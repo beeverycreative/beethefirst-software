@@ -62,7 +62,7 @@ public class PrintPanel extends BaseDialog {
     private boolean noNozzle = false;
     private static final String FORMAT = "%2d:%2d";
     private String coilText = FilamentControler.NO_FILAMENT;
-    private float nozzleType;
+    private int nozzleType;
     private PrintEstimationThread estimationThread;
     private GCodeExportThread exportThread;
     private boolean lastUsedRaft;
@@ -222,7 +222,7 @@ public class PrintPanel extends BaseDialog {
         return code;
     }
     
-    private float getNozzleType() {
+    private int getNozzleType() {
         int nozzle;
         
         nozzle = FilamentControler.NO_NOZZLE;
@@ -751,20 +751,18 @@ public class PrintPanel extends BaseDialog {
         PrintPreferences preferences;
         String resolution;
         int density;
-        double nozzleSize;
 
         resolution = parseSlider1();
         density = parseSlider2();
-        nozzleSize = 0.4;           // TODO: add this option on the PrintPanel
 
         if (gcodeToPrint != null && printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
         } else if (gcodeToPrint != null) {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, gcodeToPrint);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed, gcodeToPrint);
         } else if (printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed, selectedPrinter);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed, selectedPrinter);
         } else {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleSize, raftPressed, supportPressed);
+            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed);
         }
 
         return preferences;
@@ -1495,8 +1493,6 @@ public class PrintPanel extends BaseDialog {
                 Base.getMainWindow().getBed().setGcodeOK(false);
             }
 
-            PrintPreferences prefs = getPreferences();
-
             Base.getMainWindow().getBed().setLastRaft(raftPressed);
             Base.getMainWindow().getBed().setLastDensity(parseSlider2());
             Base.getMainWindow().getBed().setLastResolution(parseSlider1());
@@ -1510,7 +1506,7 @@ public class PrintPanel extends BaseDialog {
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
             Base.turnOnPowerSaving(false);
 
-            final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
+            final PrintSplashAutonomous p = new PrintSplashAutonomous(false, getPreferences());
             p.setVisible(true);
 
             EventQueue.invokeLater(new Runnable() {

@@ -70,9 +70,9 @@ public class ControlPanel extends BaseDialog {
     protected double zHome = -1;
     private DefaultComboBoxModel comboModel2;
     private String[] categories2;
-    private final TemperatureThread disposeThread = new TemperatureThread(this, machine);
-    private final InputValidationThread inputValidationThread = new InputValidationThread(this);
-    private final GetInitialValuesThread getInitialValuesThread = new GetInitialValuesThread(this, machine);
+    private final CPTempThread disposeThread = new CPTempThread();
+    private final InputValidationThread inputValidationThread = new InputValidationThread();
+    private final GetInitialValuesThread getInitialValuesThread = new GetInitialValuesThread();
     private static boolean loggingTemperature = false;
     private File file;
     private FileWriter fw;
@@ -81,15 +81,11 @@ public class ControlPanel extends BaseDialog {
 
     private final TimeTableXYDataset t0MeasuredDataset = new TimeTableXYDataset();
     private final TimeTableXYDataset t0TargetDataset = new TimeTableXYDataset();
-    private final TimeTableXYDataset t1MeasuredDataset = new TimeTableXYDataset();
-    private final TimeTableXYDataset t1TargetDataset = new TimeTableXYDataset();
     private final TimeTableXYDataset pMeasuredDataset = new TimeTableXYDataset();
     private final TimeTableXYDataset pTargetDataset = new TimeTableXYDataset();
 
     final private static Color t0TargetColor = Color.MAGENTA;
     final private static Color t0MeasuredColor = Color.RED;
-    final private static Color t1TargetColor = Color.CYAN;
-    final private static Color t1MeasuredColor = Color.BLUE;
     final private static Color pTargetColor = Color.YELLOW;
     final private static Color pMeasuredColor = Color.GREEN;
 
@@ -98,8 +94,8 @@ public class ControlPanel extends BaseDialog {
     private Timer setPollDataTrue;
     private Timer showBeepLabel;
     protected Timer movButtonHoldDown;
-    private static final int movCommandInterval = 25;
-    private static final double movCommandStep = 0.6;
+    private static final int movCommandInterval = 5;
+    private static final double movCommandStep = 0.1;
     protected volatile boolean canPollData = true;
     protected volatile boolean canMove = true;
 
@@ -1764,155 +1760,135 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JLabel zUP;
     // End of variables declaration//GEN-END:variables
 
-}
+    private class CPTempThread extends Thread {
 
-class TemperatureThread extends Thread {
+        private boolean stop = false;
 
-    private final MachineInterface machine;
-    private final ControlPanel controlPanel;
-    private boolean stop = false;
+        public CPTempThread() {
+            super(CPTempThread.class.getSimpleName());
+        }
 
-    public TemperatureThread(ControlPanel cPanel, MachineInterface mach) {
-        super("Temperature Thread");
-        this.machine = mach;
-        this.controlPanel = cPanel;
-    }
+        @Override
+        public void run() {
 
-    @Override
-    public void run() {
-
-        while (stop == false) {
-            if (controlPanel.canPollData && machine.getDriver().isTransferMode() == false) {
-
-                if(Base.isPrinting == false) {
-                    machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-                }
-                controlPanel.updateTemperature();
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(TemperatureThread.class.getName()).log(Level.SEVERE, null, ex);
+            while (stop == false) {
+                if (canPollData && machine.getDriver().isTransferMode() == false) {
+                    if (Base.isPrinting == false) {
+                        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
+                    }
+                    updateTemperature();
+                    Base.hiccup(3000);
                 }
             }
         }
-    }
 
-    public void cancel() {
-        stop = true;
-    }
-}
-
-class InputValidationThread extends Thread {
-
-    private final ControlPanel controlPanel;
-    private boolean stop = false;
-
-    public InputValidationThread(ControlPanel controlPanel) {
-        this.controlPanel = controlPanel;
-    }
-
-    @Override
-    public void run() {
-        long currentTime;
-        double val;
-        boolean changed;
-
-        while (stop == false) {
-            changed = false;
-            currentTime = System.nanoTime();
-
-            // 1/2 sec
-            if (currentTime - controlPanel.mSpeedLastClicked
-                    > 500000000) {
-                try {
-                    val = Double.parseDouble(controlPanel.mSpeedGetText());
-
-                    if (val < 0) {
-                        val = -val;
-                        changed = true;
-                    }
-
-                    if (val > 2000) {
-                        val = 2000;
-                        changed = true;
-                    }
-
-                    if (changed) {
-                        controlPanel.mSpeedSetText(String.valueOf(val));
-                    }
-
-                } catch (IllegalArgumentException ex) {
-
-                }
-            }
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-                break;
-            }
+        public void cancel() {
+            stop = true;
+            this.interrupt();
         }
     }
 
-    public void cancel() {
-        stop = true;
-    }
-}
+    private class InputValidationThread extends Thread {
 
-class GetInitialValuesThread extends Thread {
+        private boolean stop = false;
 
-    private final ControlPanel controlPanel;
-    private final MachineInterface machine;
-    private boolean stop = false;
+        public InputValidationThread() {
+            super(InputValidationThread.class.getSimpleName());
+        }
 
-    public GetInitialValuesThread(ControlPanel controlPanel, MachineInterface machine) {
-        this.controlPanel = controlPanel;
-        this.machine = machine;
-    }
+        @Override
+        public void run() {
+            long currentTime;
+            double val;
+            boolean changed;
 
-    @Override
-    public void run() {
-        String answer;
-        int beginIndex, endIndex;
-        long ms, hours, mins, secs;
+            while (stop == false) {
+                changed = false;
+                currentTime = System.nanoTime();
 
-        while (stop == false) {
-            answer = machine.getDriver().dispatchCommand("M1002", COM.DEFAULT);
-            beginIndex = answer.lastIndexOf("Time: ");
-            endIndex = answer.lastIndexOf("\nok");
+                // 1/2 sec
+                if (currentTime - mSpeedLastClicked
+                        > 500000000) {
+                    try {
+                        val = Double.parseDouble(mSpeedGetText());
 
-            if (beginIndex > -1 && endIndex > -1) {
-                beginIndex += 6;
-                answer = answer.substring(beginIndex, endIndex);
-                try {
-                    ms = Long.parseLong(answer);
+                        if (val < 0) {
+                            val = -val;
+                            changed = true;
+                        }
 
-                    hours = TimeUnit.MILLISECONDS.toHours(ms);
-                    ms -= TimeUnit.HOURS.toMillis(hours);
-                    mins = TimeUnit.MILLISECONDS.toMinutes(ms);
-                    ms -= TimeUnit.MINUTES.toMillis(mins);
-                    secs = TimeUnit.MILLISECONDS.toSeconds(ms);
+                        if (val > 2000) {
+                            val = 2000;
+                            changed = true;
+                        }
 
-                    answer = String.format("%02d:%02d:%02d", hours, mins, secs);
-                    controlPanel.textFieldLastPrintTimeSetText(answer);
-                    break;
-                } catch (IllegalArgumentException ex) {
-                    answer = "-1";
-                    controlPanel.textFieldLastPrintTimeSetText(answer);
+                        if (changed) {
+                            mSpeedSetText(String.valueOf(val));
+                        }
+
+                    } catch (IllegalArgumentException ex) {
+
+                    }
                 }
 
+                Base.hiccup(500);
             }
+        }
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                break;
-            }
+        public void cancel() {
+            stop = true;
+            this.interrupt();
         }
     }
 
-    public void cancel() {
-        stop = true;
+    private class GetInitialValuesThread extends Thread {
+
+        private boolean stop = false;
+
+        public GetInitialValuesThread() {
+            super(GetInitialValuesThread.class.getSimpleName());
+        }
+
+        @Override
+        public void run() {
+            String answer;
+            int beginIndex, endIndex;
+            long ms, hours, mins, secs;
+
+            while (stop == false) {
+                answer = machine.getDriver().dispatchCommand("M1002", COM.DEFAULT);
+                beginIndex = answer.lastIndexOf("Time: ");
+                endIndex = answer.lastIndexOf("\nok");
+
+                if (beginIndex > -1 && endIndex > -1) {
+                    beginIndex += 6;
+                    answer = answer.substring(beginIndex, endIndex);
+                    try {
+                        ms = Long.parseLong(answer);
+
+                        hours = TimeUnit.MILLISECONDS.toHours(ms);
+                        ms -= TimeUnit.HOURS.toMillis(hours);
+                        mins = TimeUnit.MILLISECONDS.toMinutes(ms);
+                        ms -= TimeUnit.MINUTES.toMillis(mins);
+                        secs = TimeUnit.MILLISECONDS.toSeconds(ms);
+
+                        answer = String.format("%02d:%02d:%02d", hours, mins, secs);
+                        textFieldLastPrintTimeSetText(answer);
+                        break;
+                    } catch (IllegalArgumentException ex) {
+                        answer = "-1";
+                        textFieldLastPrintTimeSetText(answer);
+                    }
+
+                }
+
+                Base.hiccup(2000);
+            }
+        }
+
+        public void cancel() {
+            stop = true;
+            this.interrupt();
+        }
     }
 }

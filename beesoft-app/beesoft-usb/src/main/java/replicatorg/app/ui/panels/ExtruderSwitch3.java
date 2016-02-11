@@ -27,10 +27,9 @@ import replicatorg.machine.MachineInterface;
 public class ExtruderSwitch3 extends BaseDialog {
 
     private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final ExtruderSwitchDisposeFeedbackThread disposeThread = new ExtruderSwitchDisposeFeedbackThread();
+    private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private final Nozzle selectedNozzle;
     private final Filament selectedFilament;
-    private boolean newFilamentIsLoaded = false;
 
     public ExtruderSwitch3(Nozzle selectedNozzle, Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -404,27 +403,28 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            if (newFilamentIsLoaded) {
-                machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament(selectedFilament));
-                machine.runCommand(new replicatorg.drivers.commands.SetInstalledNozzle(selectedNozzle));
-            }
+            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament(selectedFilament));
+            machine.runCommand(new replicatorg.drivers.commands.SetInstalledNozzle(selectedNozzle));
             machine.runCommand(new replicatorg.drivers.commands.SendHome());
         }
     }//GEN-LAST:event_bNextMousePressed
 
     private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
-        doCancel();
+        if (bExit.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bExitMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doCancel();
+        if (jLabel15.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unload filament pressed", this.getClass());
             //bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
-            newFilamentIsLoaded = false;
             machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
             machine.runCommand(new replicatorg.drivers.commands.UnloadFilament());
         }
@@ -441,7 +441,6 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
         if (bLoad.isEnabled()) {
             Base.writeLog("Load filament pressed", this.getClass());
-            newFilamentIsLoaded = true;
             machine.getDriver().setBusy(true);
             machine.runCommand(new replicatorg.drivers.commands.LoadFilament());
         }
@@ -489,44 +488,5 @@ public class ExtruderSwitch3 extends BaseDialog {
         bUnload.setEnabled(true);
         bNext.setEnabled(true);
         disableMessageDisplay();
-    }
-
-    private class ExtruderSwitchDisposeFeedbackThread extends Thread {
-
-        private boolean stop = false;
-
-        public ExtruderSwitchDisposeFeedbackThread() {
-            super("Filament Insertion Thread");
-        }
-
-        @Override
-        public void run() {
-
-            try {
-                // Initial wait
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-
-            }
-
-            while (stop == false) {
-                if (machine.getDriver().isBusy()) {
-                    showMessage();
-                } else {
-                    resetFeedbackComponents();
-                }
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                }
-            }
-
-        }
-
-        public void kill() {
-            stop = true;
-            this.interrupt();
-        }
     }
 }

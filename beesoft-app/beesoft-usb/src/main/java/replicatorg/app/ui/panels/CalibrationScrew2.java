@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import replicatorg.app.Base;
@@ -26,7 +28,7 @@ import replicatorg.machine.MachineInterface;
 public class CalibrationScrew2 extends BaseDialog {
 
     private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread();
 
     public CalibrationScrew2() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -38,6 +40,12 @@ public class CalibrationScrew2 extends BaseDialog {
         centerOnScreen();
         Base.getMainWindow().setEnabled(false);
         moveToC();
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                busyThread.kill();
+            }
+        });
         //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -133,7 +141,6 @@ public class CalibrationScrew2 extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -370,7 +377,6 @@ public class CalibrationScrew2 extends BaseDialog {
         if (bNext.isEnabled()) {
             CalibrationFinish p = new CalibrationFinish();
             dispose();
-            busyThread.terminate();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed

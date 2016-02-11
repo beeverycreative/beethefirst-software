@@ -307,17 +307,23 @@ public class ExtruderSwitch1 extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        ExtruderSwitch2 p = new ExtruderSwitch2((Nozzle) nozzleComboBox.getSelectedItem(), (Filament) filamentComboBox.getSelectedItem());
-        dispose();
-        p.setVisible(true);
+        if (bNext.isEnabled()) {
+            ExtruderSwitch2 p = new ExtruderSwitch2((Nozzle) nozzleComboBox.getSelectedItem(), (Filament) filamentComboBox.getSelectedItem());
+            dispose();
+            p.setVisible(true);
+        }
     }//GEN-LAST:event_bNextMousePressed
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        doCancel();
+        if (bCancel.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doCancel();
+        if (jLabel15.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void nozzleComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nozzleComboBoxActionPerformed

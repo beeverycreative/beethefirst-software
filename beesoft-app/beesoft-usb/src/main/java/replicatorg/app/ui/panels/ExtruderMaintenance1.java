@@ -456,7 +456,6 @@ public class ExtruderMaintenance1 extends BaseDialog {
     }//GEN-LAST:event_bBackMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-
             dispose();
             ExtruderMaintenance2 p = new ExtruderMaintenance2();
             p.setVisible(true);
@@ -468,7 +467,6 @@ public class ExtruderMaintenance1 extends BaseDialog {
             WelcomeQuickguide p = new WelcomeQuickguide();
             p.setVisible(true);
             finalizeHeat();
-
         }
     }//GEN-LAST:event_bBackMousePressed
 

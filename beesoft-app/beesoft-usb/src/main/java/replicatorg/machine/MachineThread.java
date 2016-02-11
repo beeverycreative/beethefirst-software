@@ -105,23 +105,16 @@ class MachineThread extends Thread {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
-                    
-                    if (driver.isTransferMode() == false) {
-                        if (machineThread.getModel().getMachinePowerSaving()) {
-                            Base.getMainWindow().getButtons().setMessage("power saving");
-                        } else if (getModel().getMachineReady()) {
-                            Base.getMainWindow().getButtons().setMessage("is connected");
-                        }
+
+                    if (machineThread.getModel().getMachinePowerSaving()) {
+                        Base.getMainWindow().getButtons().setMessage("power saving");
+                    } else if (getModel().getMachineReady()) {
+                        Base.getMainWindow().getButtons().setMessage("is connected");
                     }
-                    
-                    sleep(200, 1);
+
+                    Base.hiccup(200);
 
                     // these catches are VERY important
-                } catch (InterruptedException e) {
-                    Base.statusThreadDied = true;
-                    Base.writeLog("taking assess status thread down", this.getClass());
-                    machineThread.interrupt();
-                    break;
                 } catch (VersionException E) {
                     Base.statusThreadDied = true;
                     Base.writeLog("Initialize, probably failed.", this.getClass());

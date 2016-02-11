@@ -27,8 +27,8 @@ import replicatorg.machine.MachineInterface;
 public class ExtruderSwitch2 extends BaseDialog {
 
     private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final int goalTemperature = 200;
-    private final ExtruderSwitchUpdateThread updateThread = new ExtruderSwitchUpdateThread();
+    private static final int GOAL_TEMPERATURE = 200;
+    private final TemperatureThread updateThread = new TemperatureThread();
     private final Nozzle selectedNozzle;
     private final Filament selectedFilament;
 
@@ -83,15 +83,18 @@ public class ExtruderSwitch2 extends BaseDialog {
         bQuit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
     }
 
-    private void sinalizeHeatSuccess() {
-        disableMessageDisplay();
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300"));
-        bNext.setEnabled(true);
-    }
-
-    private void updateHeatBar(int nozzleTemperature) {
+    @Override
+    protected void updateHeatBar(int nozzleTemperature) {
         if (nozzleTemperature > jProgressBar1.getValue()) {
             jProgressBar1.setValue(nozzleTemperature);
+        }
+
+        if (nozzleTemperature >= GOAL_TEMPERATURE) {
+            Base.writeLog("Temperature achieved...", this.getClass());
+            updateThread.kill();
+            disableMessageDisplay();
+            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300"));
+            bNext.setEnabled(true);
         }
     }
 
@@ -107,14 +110,14 @@ public class ExtruderSwitch2 extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(goalTemperature + 5));
+        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(GOAL_TEMPERATURE + 5));
     }
 
     private void evaluateInitialConditions() {
         disableMessageDisplay();
         updateThread.start();
         jProgressBar1.setForeground(new Color(255, 203, 5));
-        jProgressBar1.setMaximum(goalTemperature);
+        jProgressBar1.setMaximum(GOAL_TEMPERATURE);
     }
 
     private void doCancel() {
@@ -403,42 +406,4 @@ public class ExtruderSwitch2 extends BaseDialog {
     private javax.swing.JLabel pText2;
     private javax.swing.JLabel pWarning;
     // End of variables declaration//GEN-END:variables
-
-    private class ExtruderSwitchUpdateThread extends Thread {
-
-        private boolean stop = false;
-
-        public ExtruderSwitchUpdateThread() {
-            super("Filament Heating Thread");
-            Base.writeLog("Reading Temperature ...", this.getClass());
-        }
-
-        @Override
-        public void run() {
-            int currentTemperature;
-
-            showMessage();
-            while (stop == false) {
-                try {
-                    machine.getDriver().readTemperature();
-                    currentTemperature = machine.getModel().currentTool().getExtruderTemperature();
-                    updateHeatBar(currentTemperature);
-
-                    if (currentTemperature >= goalTemperature) {
-                        Base.writeLog("Temperature achieved...", this.getClass());
-                        sinalizeHeatSuccess();
-                        stop = true;
-                    } else {
-                        Thread.sleep(Base.HEATING_POLL_TIME_MS);
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-
-        public void kill() {
-            stop = true;
-            this.interrupt();
-        }
-    }
 }

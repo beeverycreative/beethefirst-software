@@ -4,11 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import replicatorg.app.Base;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
+import replicatorg.machine.model.ToolModel;
 
 /**
  *
@@ -58,49 +57,76 @@ public abstract class BaseDialog extends javax.swing.JDialog {
         this.setLocation(x, y);
         this.setLocationRelativeTo(Base.getMainWindow());
     }
-    
+
     protected void resetFeedbackComponents() {
-        
+
     }
-    
+
     protected void showMessage() {
-        
     }
 
-}
+    protected void updateHeatBar(int currentTemperature) {
 
-class BusyFeedbackThread extends Thread {
-
-    private final MachineInterface machine;
-    private final BaseDialog dialog;
-    private boolean stop = false;
-
-    public BusyFeedbackThread(BaseDialog child, MachineInterface mach) {
-        super("BusyFeedbackThread");
-        this.machine = mach;
-        this.dialog = child;
     }
 
-    @Override
-    public void run() {
+    protected class BusyFeedbackThread extends Thread {
 
-        while (stop == false) {
+        private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+        private boolean stop = false;
 
-            if (machine.getDriver().isBusy() == false) {
-                dialog.resetFeedbackComponents();
-                break;
-            } else {
-                dialog.showMessage();
+        public BusyFeedbackThread() {
+            super(BusyFeedbackThread.class.getSimpleName());
+        }
+
+        @Override
+        public void run() {
+            Base.hiccup(1000); // initial wait
+            while (stop == false) {
+                if (driver.isBusy()) {
+                    showMessage();
+                } else {
+                    resetFeedbackComponents();
+                }
+
+                Base.hiccup(100);
             }
+        }
 
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-            }
+        public void kill() {
+            stop = true;
+            this.interrupt();
         }
     }
 
-    public void terminate() {
-        stop = true;
+    protected class TemperatureThread extends Thread {
+
+        private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+        private final ToolModel currentTool = Base.getMainWindow().getMachineInterface().getModel().currentTool();
+        private boolean stop = false;
+
+        public TemperatureThread() {
+            super(TemperatureThread.class.getSimpleName());
+        }
+
+        @Override
+        public void run() {
+            while (stop == false) {
+                int currentTemperature;
+
+                showMessage();
+                while (stop == false) {
+                    driver.readTemperature();
+                    currentTemperature = currentTool.getExtruderTemperature();
+                    updateHeatBar(currentTemperature);
+                    Base.hiccup(Base.HEATING_POLL_TIME_MS);
+                }
+            }
+        }
+
+        public void kill() {
+            stop = true;
+            this.interrupt();
+        }
     }
+
 }

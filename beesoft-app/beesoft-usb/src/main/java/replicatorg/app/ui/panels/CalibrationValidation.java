@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import replicatorg.app.Base;
@@ -26,7 +28,7 @@ import replicatorg.machine.MachineInterface;
 public class CalibrationValidation extends BaseDialog {
 
     private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread();
 
     public CalibrationValidation() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -35,7 +37,12 @@ public class CalibrationValidation extends BaseDialog {
         setTextLanguage();
         centerOnScreen();
         enableDrag();
-        resetFeedbackComponents();
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                busyThread.kill();
+            }
+        });
         //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
@@ -99,7 +106,7 @@ public class CalibrationValidation extends BaseDialog {
     public void showMessage() {
         bRepeatCalibration.setEnabled(true);
         bConfirmCalibration.setEnabled(true);
-        
+
         enableMessageDisplay();
         jLabel9.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel9.setHorizontalAlignment(SwingConstants.CENTER);
@@ -139,7 +146,6 @@ public class CalibrationValidation extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -391,7 +397,6 @@ public class CalibrationValidation extends BaseDialog {
     private void bRepeatCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRepeatCalibrationMousePressed
         if (bRepeatCalibration.isEnabled()) {
             CalibrationWelcome cal = new CalibrationWelcome(true);
-            busyThread.terminate();
             dispose();
             cal.setVisible(true);
         }
@@ -421,7 +426,6 @@ public class CalibrationValidation extends BaseDialog {
             machine.runCommand(new replicatorg.drivers.commands.CalibrationStep(busyThread));
             machine.runCommand(new replicatorg.drivers.commands.SendHome());
             dispose();
-            busyThread.terminate();
             Base.bringAllWindowsToFront();
         }
     }//GEN-LAST:event_bConfirmCalibrationMousePressed

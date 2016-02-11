@@ -34,6 +34,11 @@ public class Filament implements Comparable {
     public Filament() {
         this.supportedPrinters = new ArrayList<SlicerConfig>();
     }
+    
+    public Filament(String name) {
+        this.name = name;
+        this.supportedPrinters = new ArrayList<SlicerConfig>();
+    }
 
     public String getVersion() {
         return version;

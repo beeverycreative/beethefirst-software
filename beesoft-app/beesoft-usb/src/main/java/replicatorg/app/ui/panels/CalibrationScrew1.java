@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import replicatorg.app.Base;
@@ -26,7 +28,7 @@ import replicatorg.machine.MachineInterface;
 public class CalibrationScrew1 extends BaseDialog {
 
     private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread();
 
     public CalibrationScrew1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -38,6 +40,13 @@ public class CalibrationScrew1 extends BaseDialog {
         centerOnScreen();
         disableMessageDisplay();
         moveToB();
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                busyThread.kill();
+            }
+        });
     }
 
     private void setFont() {
@@ -133,7 +142,6 @@ public class CalibrationScrew1 extends BaseDialog {
             ProperDefault.remove("maintenance");
         }
 
-        busyThread.terminate();
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -374,7 +382,6 @@ public class CalibrationScrew1 extends BaseDialog {
         if (bNext.isEnabled()) {
             CalibrationScrew2 p = new CalibrationScrew2();
             dispose();
-            busyThread.terminate();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -403,5 +410,3 @@ public class CalibrationScrew1 extends BaseDialog {
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
 }
-
-

@@ -2,14 +2,14 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -24,10 +24,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class Maintenance extends BaseDialog {
 
-    private final int NUMBER_PRINTS_LIMIT = 10;
-    private boolean moving;
-    private final ControlStatus ctrlStatus;
-    private boolean isConnected = true;
+    private final ControlStatus ctrlStatus = new ControlStatus();
 
     public Maintenance() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -36,20 +33,16 @@ public class Maintenance extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        //ProperDefault.put("maintenance", "1");
-        //enableDrag();
         disableMessageDisplay();
         evaluateInitialConditions();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
-        ctrlStatus = new ControlStatus(this, Base.getMainWindow().getMachineInterface());
 
-        /*
-         if (isConnected) {
-         Base.turnOnPowerSaving(false);
-         ctrlStatus.start();
-         Base.systemThreads.add(ctrlStatus);
-         }
-         */
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                ctrlStatus.kill();
+            }
+        });
     }
 
     private void setFont() {
@@ -79,78 +72,49 @@ public class Maintenance extends BaseDialog {
         lChangeFilament.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Title"));
         lChangeFilamentDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Intro"));
         bChangeFilament.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "FilamentChange_button"));
-
-//        int grams = gramsCalculator((Double.valueOf(ProperDefault.get("filamentCoilRemaining")) / 1000));
-//        
-//        if(grams > 0)
-//        {
-//            jLabel5.setText(Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[0]
-//                    + String.valueOf(grams)
-//                    + Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[1].split("\\(")[0]);
-//        }
-//        else
-//        {
-//            jLabel5.setText(Languager.getTagValue("MaintenancePanel", "Filament_Info_None"));
-//        }
         lCalibration_warn.setText(String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Info").split("x")[1]);
         bCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "CalibrationChange_button"));
         lCalibration_desc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Intro"));
         lCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Title"));
-//        jLabel10.setText("(" + Languager.getTagValue("MaintenancePanel", "Filament_Info").split("x")[1].split("\\(")[1]);                           
         lExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Title"));
         bExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_button"));
         lExtruderMaintenanceDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Intro"));
-
         lNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Title"));
         bNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_button"));
         lNozzleSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Intro"));
-//        jLabel16.setText(Languager.getTagValue("MaintenancePanel", ""));
         bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
         jLabel18.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
-
     }
 
     private void evaluateInitialConditions() {
-        moving = true;
+        ctrlStatus.start();
         lChangeFilament_warn.setVisible(false);
         jLabel10.setVisible(false);
-//        if (gramsCalculator(Double.valueOf(ProperDefault.get("filamentCoilRemaining"))) < 100) {
-//            jLabel5.setForeground(Color.red);
-//        } else 
-        if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-            lCalibration_warn.setForeground(Color.red);
-        }
-
-        if (Base.printPaused) {
-            bCalibration.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_12.png")));
-        }
-
-        if (!Base.getMainWindow().getMachineInterface().isConnected()) {
-            this.isConnected = false;
-            bCalibration.setEnabled(false);
-            bChangeFilament.setEnabled(false);
-            bExtruderMaintenance.setEnabled(false);
-            bNozzleSwitch.setEnabled(false);
-        }
     }
 
     private void disableMessageDisplay() {
         l_machine_status_warn.setBackground(new Color(248, 248, 248));
         jLabel18.setForeground(new Color(248, 248, 248));
+        bCalibration.setEnabled(true);
+        bChangeFilament.setEnabled(true);
+        bExtruderMaintenance.setEnabled(true);
+        bNozzleSwitch.setEnabled(true);
     }
 
     private void enableMessageDisplay() {
         l_machine_status_warn.setBackground(new Color(255, 205, 3));
         jLabel18.setForeground(new Color(0, 0, 0));
+        bCalibration.setEnabled(false);
+        bChangeFilament.setEnabled(false);
+        bExtruderMaintenance.setEnabled(false);
+        bNozzleSwitch.setEnabled(false);
     }
 
     public void setBusy() {
-        moving = true;
         enableMessageDisplay();
     }
 
     public void setFree() {
-        moving = false;
         disableMessageDisplay();
     }
 
@@ -581,21 +545,10 @@ public class Maintenance extends BaseDialog {
     private void bExtruderMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMousePressed
         if (bExtruderMaintenance.isEnabled()) {
             dispose();
-            //ctrlStatus.stop();
             ExtruderMaintenance1 p = new ExtruderMaintenance1();
             p.setVisible(true);
-
             Base.getMainWindow().getCanvas().unPickAll();
-            /*
-             } else {
-             if (Base.getMachineLoader().isConnected() == false) {
-             Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-             } else if (Base.isPrinting) {
-             Base.getMainWindow().showFeedBackMessage("btfPrinting");
-             }
-             */
         }
-
     }//GEN-LAST:event_bExtruderMaintenanceMousePressed
 
     private void bExtruderMaintenanceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExtruderMaintenanceMouseExited
@@ -607,7 +560,9 @@ public class Maintenance extends BaseDialog {
     }//GEN-LAST:event_bExtruderMaintenanceMouseEntered
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        doExit();
+        if (bCancel.isEnabled()) {
+            doExit();
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
@@ -630,10 +585,8 @@ public class Maintenance extends BaseDialog {
     private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
         if (bNozzleSwitch.isEnabled()) {
             dispose();
-            //ctrlStatus.stop();
             ExtruderSwitch1 p = new ExtruderSwitch1();
             p.setVisible(true);
-
             Base.getMainWindow().getCanvas().unPickAll();
 
         }
@@ -642,7 +595,6 @@ public class Maintenance extends BaseDialog {
     private void bCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCalibrationMousePressed
         if (bCalibration.isEnabled()) {
             dispose();
-            //ctrlStatus.stop();
             CalibrationWelcome p = new CalibrationWelcome(false);
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
@@ -660,10 +612,8 @@ public class Maintenance extends BaseDialog {
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
             dispose();
-
-            FilamentHeating p = new FilamentHeating();
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
             p.setVisible(true);
-
             Base.getMainWindow().getCanvas().unPickAll();
         }
     }//GEN-LAST:event_bChangeFilamentMousePressed
@@ -707,32 +657,33 @@ public class Maintenance extends BaseDialog {
     private javax.swing.JPanel pNozzleSwitch;
     private javax.swing.JPanel pTop;
     // End of variables declaration//GEN-END:variables
-}
 
-class ControlStatus extends Thread {
+    private class ControlStatus extends Thread {
 
-    private final MachineInterface machine;
-    private final Maintenance maintenancePanel;
+        private final Driver machine = Base.getMainWindow().getMachine().getDriver();
+        private boolean stop = false;
 
-    public ControlStatus(Maintenance filIns, MachineInterface mach) {
-        super("Maintenance Thread");
-        this.machine = mach;
-        this.maintenancePanel = filIns;
-    }
+        public ControlStatus() {
+            super("Maintenance Thread");
+        }
 
-    @Override
-    public void run() {
+        @Override
+        public void run() {
+            while (stop == false) {
+                if (machine.isBusy()) {
+                    setBusy();
+                } else {
+                    setFree();
+                }
 
-        while (true) {
-            if (machine.getDriver().isBusy()) {
-                maintenancePanel.setBusy();
                 Base.hiccup(100);
             }
-            //!machine.getDriver().isBusy()
-            if (!machine.getModel().getMachineBusy()) {
-                maintenancePanel.setFree();
-            }
+        }
 
+        public void kill() {
+            stop = true;
+            this.interrupt();
         }
     }
+
 }
