@@ -1849,11 +1849,12 @@ class PrintEstimationThread extends Thread {
         Printer prt;
         prt = new Printer(printPanel.getPreferences());
         if (prt.isReadyToGenerateGCode()) {
-            prt.generateGCode();
-            File gcode = prt.getGCode();
-            //Estimate time and cost
-            PrintEstimator.estimateTime(gcode);
-            printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+            if (prt.generateGCode() != null) {
+                File gcode = prt.getGCode();
+                //Estimate time and cost
+                PrintEstimator.estimateTime(gcode);
+                printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+            }
         } else {
             Base.writeLog("runEstimator(): failed estimation", this.getClass());
         }
@@ -1911,12 +1912,12 @@ class GCodeExportThread extends Thread {
      */
     public void runExport() {
         Printer prt = new Printer(printPanel.getPreferences());
-        
-        if(prt.isReadyToGenerateGCode() == false) {
+
+        if (prt.isReadyToGenerateGCode() == false) {
             Base.writeLog("runEstimator(): failed export", this.getClass());
             return;
         }
-        
+
         prt.generateGCode();
         File gcode = prt.getGCode();
         //Estimate time and cost

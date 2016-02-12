@@ -19,7 +19,7 @@ import replicatorg.plugin.toolpath.ToolpathGenerator;
 
 public class CuraGenerator extends ToolpathGenerator {
 
-    private static String CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
+    private final String CURA_BIN_PATH;
     private static String ERROR_MESSAGE = "Can't run Cura!";
     private static final String gallery = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER;
     private final CuraEngineConfigurator curaEngineConfigurator;
@@ -39,17 +39,10 @@ public class CuraGenerator extends ToolpathGenerator {
         if (Base.isLinux() || Base.isMacOS()) {
             CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/curaEngine/bin/CuraEngine");
         } else {
-            /**
-             * Different call depending on windows arch. CuraEngine is compiled
-             * in x86 and x64 and it requires different libs
-             */
-            if (Base.isx86_64()) {
-                CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x64\\CuraEngine.exe");
-            } else {
-                CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\x86\\CuraEngine.exe");
-            }
+            CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\CuraEngine.exe");
         }
 
+        System.out.println("CURA_BIN_PATH = " + CURA_BIN_PATH);
         curaEngineConfigurator = new CuraEngineConfigurator(prefs, getParameterMap());
     }
 

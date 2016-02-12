@@ -84,18 +84,17 @@ public class Printer {
 
         // Estimate print duration
 //        PrintEstimator.estimateTime(gcode);
-        if (gcode != null && gcode.canRead() && gcode.length() != 0) {
-            replaceLineInFile(gcode.getPath(), "M31 A0");
-            Base.writeLog("GCode generated", this.getClass());
-        } else {
-            if (!gcode.canRead() || gcode.length() == 0) {
-                // handles with mesh error
-                Base.getMainWindow().showFeedBackMessage("modelMeshError");
-                return "-2";
+        if (gcode != null) {
+            if (gcode.canRead() && gcode.length() != 0) {
+                replaceLineInFile(gcode.getPath(), "M31 A0");
+                Base.writeLog("GCode generated", this.getClass());
             } else {
-                // handles with no permission error cancelling print and setting error message
-                return "-1";
+                Base.getMainWindow().showFeedBackMessage("modelMeshError");
+                return null;
             }
+        } else {
+            // handles with no permission error cancelling print and setting error message
+            return null;
         }
         return PrintEstimator.getEstimatedTime();
     }
@@ -386,7 +385,7 @@ public class Printer {
 //            );
 //        }
     }
-    
+
     public boolean isReadyToGenerateGCode() {
         return generator.isReadyToGenerateGCode();
     }
