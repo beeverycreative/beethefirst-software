@@ -42,7 +42,6 @@ public class CuraGenerator extends ToolpathGenerator {
             CURA_BIN_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("\\curaEngine\\bin\\CuraEngine.exe");
         }
 
-        System.out.println("CURA_BIN_PATH = " + CURA_BIN_PATH);
         curaEngineConfigurator = new CuraEngineConfigurator(prefs, getParameterMap());
     }
 
