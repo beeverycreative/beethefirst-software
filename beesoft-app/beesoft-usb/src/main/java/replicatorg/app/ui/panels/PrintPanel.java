@@ -1640,7 +1640,7 @@ public class PrintPanel extends BaseDialog {
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
             Base.getMainWindow().getButtons().goFilamentChange();
             ProperDefault.put("maintenance", "1");
-            FilamentHeating p = new FilamentHeating();
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
             p.setVisible(true);
         } else {
             // otherwise display the appropriate status message

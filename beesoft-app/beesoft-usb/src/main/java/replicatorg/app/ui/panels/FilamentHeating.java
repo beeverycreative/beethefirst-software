@@ -7,7 +7,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.filaments.Filament;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -40,7 +39,7 @@ public class FilamentHeating extends BaseDialog {
         evaluateInitialConditions();
         this.selectedFilament = selectedFilament;
         centerOnScreen();
-        setProgressBarColor();
+        jProgressBar1.setForeground(new Color(255, 203, 5));
         moveToPosition();
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
@@ -66,18 +65,14 @@ public class FilamentHeating extends BaseDialog {
     private void setTextLanguage() {
         String warning;
 
-        warning = "<html><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
+        warning = "<html><br>" + Languager.getTagValue(1, "FilamentWizard", "Heating_Info") + " <br><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
+        jLabel4.setText(warning);
         jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Heating_Info_Title"));
-        jLabel4.setText(Languager.getTagValue(1, "FilamentWizard", "Heating_Info") + warning);
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-    }
-
-    private void setProgressBarColor() {
-        jProgressBar1.setForeground(new Color(255, 203, 5));
     }
 
     @Override
@@ -119,31 +114,16 @@ public class FilamentHeating extends BaseDialog {
         machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(GOAL_TEMPERATURE + 5));
     }
 
-    private void finalizeHeat() {
-        Base.writeLog("Moving table to home position", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
-    }
-
     private void evaluateInitialConditions() {
         jProgressBar1.setMaximum(GOAL_TEMPERATURE);
         temperatureThread.start();
-        Base.getMainWindow().setEnabled(false);
     }
 
     private void doCancel() {
-        if (Base.printPaused == false) {
-            Base.writeLog("Filament heating canceled", this.getClass());
-            dispose();
-            finalizeHeat();
-            Base.bringAllWindowsToFront();
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.getMainWindow().setEnabled(true);
-        } else {
-            Base.writeLog("Filament heating canceled", this.getClass());
-            finalizeHeat();
-            dispose();
-        }
+        Base.writeLog("Filament heating canceled", this.getClass());
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        dispose();
+        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
     }
 
     @SuppressWarnings("unchecked")

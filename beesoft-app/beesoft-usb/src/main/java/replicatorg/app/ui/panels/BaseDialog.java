@@ -80,7 +80,8 @@ public abstract class BaseDialog extends javax.swing.JDialog {
 
         @Override
         public void run() {
-            Base.hiccup(1000); // initial wait
+            driver.setBusy(true);
+            //Base.hiccup(1000); // initial wait
             while (stop == false) {
                 if (driver.isBusy()) {
                     showMessage();

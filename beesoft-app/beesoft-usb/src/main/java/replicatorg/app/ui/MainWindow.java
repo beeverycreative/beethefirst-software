@@ -1496,14 +1496,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     @Override
     public void setEnabled(boolean enabled) {
-
-        if (enabled) {
-            editorEnabled = true;
-            buttons.setMainWindowEnabled(editorEnabled);
-        } else {
-            editorEnabled = false;
-            buttons.setMainWindowEnabled(editorEnabled);
-        }
+        this.editorEnabled = enabled;
     }
 
     @Override
@@ -1770,7 +1763,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 //since we're printing from a GCode file
                 PrintPreferences prefs = 
                         new PrintPreferences("", FilamentControler.NO_FILAMENT, 
-                                20, 0.4, false, false, path);
+                                20, 400, false, false, path);
 
                 Base.isPrintingFromGCode = true;
                 final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);

@@ -10,20 +10,20 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
-* Copyright (c) 2013 BEEVC - Electronic Systems
-* This file is part of BEESOFT software: you can redistribute it and/or modify 
-* it under the terms of the GNU General Public License as published by the 
-* Free Software Foundation, either version 3 of the License, or (at your option)
-* any later version. BEESOFT is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-* or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
-* for more details. You should have received a copy of the GNU General
-* Public License along with BEESOFT. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
+ * software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version. BEESOFT is
+ * distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You
+ * should have received a copy of the GNU General Public License along with
+ * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
+ */
 public class WelcomeQuickguide extends BaseDialog {
 
     boolean configuredPressed;
-    
+
     public WelcomeQuickguide() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
@@ -35,85 +35,72 @@ public class WelcomeQuickguide extends BaseDialog {
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
-     private void setFont()
-    {
+    private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProLight("28"));
         jLabel2.setFont(GraphicDesignComponents.getSSProLight("14"));
         jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
-    
-    private void setTextLanguage()
-    {
-        jLabel1.setText(Languager.getTagValue(1,"QuickGuideWizard", "Title1").toUpperCase());
-        jLabel2.setText(splitString(Languager.getTagValue(1,"QuickGuideWizard", "Info")));
-        jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7"));
-        
+
+    private void setTextLanguage() {
+        jLabel1.setText(Languager.getTagValue(1, "QuickGuideWizard", "Title1").toUpperCase());
+        jLabel2.setText(splitString(Languager.getTagValue(1, "QuickGuideWizard", "Info")));
+        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+
     }
-    
-    
-    private String splitString(String s)
-    {
+
+    private String splitString(String s) {
         int width = 400;
-        return buildString(s.split("\\."),width);
+        return buildString(s.split("\\."), width);
     }
-    
-    private String buildString(String[]parts,int width)
-    {
+
+    private String buildString(String[] parts, int width) {
         String text = "";
         String ihtml = "<html>";
         String ehtml = "</html>";
         String br = "<br>";
-  
-        for(int i = 0; i < parts.length;i++)
-        {
-            if(i+1 < parts.length)
-            {
-                if(getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i+1]) < width)
-                {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i+1]).concat(".").concat(br);
+
+        for (int i = 0; i < parts.length; i++) {
+            if (i + 1 < parts.length) {
+                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
+                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
                     i++;
-                }
-                else
+                } else {
                     text = text.concat(parts[i]).concat(".").concat(br);
-            }
-            else
+                }
+            } else {
                 text = text.concat(parts[i]).concat(".");
+            }
         }
-            
+
         return ihtml.concat(text).concat(ehtml);
     }
- 
-    private int getStringPixelsWidth(String s)
-    {
+
+    private int getStringPixelsWidth(String s) {
         Graphics g = getGraphics();
         FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s); 
+        return fm.stringWidth(s);
     }
-    
-    private void evaluateInitialConditions()
-    {
+
+    private void evaluateInitialConditions() {
         Base.getMainWindow().setEnabled(false);
 
-        if(Base.getMachineLoader().isConnected())
-        {
+        if (Base.getMachineLoader().isConnected()) {
             configuredPressed = false;
-            
-        }
-        else if(!Base.getMachineLoader().isConnected())
-        {
+
+        } else if (!Base.getMachineLoader().isConnected()) {
             Base.getMainWindow().setEnabled(true);
 //            ProperDefault.put("firstTime", String.valueOf(true));
-            jLabel1.setText(Languager.getTagValue(1,"Other", "Warning"));
-            jLabel2.setText(splitString(Languager.getTagValue(1,"Print", "Print_PrinterNotAvailable")));
+            jLabel1.setText(Languager.getTagValue(1, "Other", "Warning"));
+            jLabel2.setText(splitString(Languager.getTagValue(1, "Print", "Print_PrinterNotAvailable")));
 //            jLabel3.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","c_disabled.png")));
 //            jLabel4.setEnabled(false);
 //            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","b_simple_18.png")));
-            jLabel18.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6"));
-                    
+            jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+
         }
-    }   
-                                        
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -253,39 +240,29 @@ public class WelcomeQuickguide extends BaseDialog {
     }//GEN-LAST:event_jLabel18MouseEntered
 
     private void jLabel18MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseExited
-       jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_jLabel18MouseExited
 
     private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
-        if(configuredPressed)
-        {
-           dispose();
-           Base.getMainWindow().setEnabled(true);
-           ProperDefault.put("firstTime", String.valueOf(false)); 
+        if (configuredPressed) {
+            Base.getMainWindow().setEnabled(true);
+            ProperDefault.put("firstTime", String.valueOf(false));
+        } else {
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
+            p.setVisible(true);
         }
-        else
-        {
-//            if(Base.getMachineLoader().isConnected()) 
-//            {
-                FilamentHeating p = new FilamentHeating();
-                p.setVisible(true);
-                dispose();         
-//            }
-//            else
-//                dispose();
-//                TourWelcome p = new TourWelcome();
-//                p.setVisible(true);
-        }
+        dispose();
+
     }//GEN-LAST:event_jLabel18MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         dispose();
         Base.getMainWindow().setEnabled(true);
-        Base.bringAllWindowsToFront();        
+        Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
     }//GEN-LAST:event_jLabel15MousePressed
 
-   
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;

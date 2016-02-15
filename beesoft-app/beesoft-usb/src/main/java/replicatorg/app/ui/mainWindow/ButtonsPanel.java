@@ -30,7 +30,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private boolean jLabel4Bool = true;
     private boolean jLabel6Bool = false;
     private final int NUMBER_PRINTS_LIMIT = 15;
-    private boolean mainWindowEnabled;
+    
 
     public ButtonsPanel(replicatorg.app.ui.MainWindow mainWindow) {
         initComponents();
@@ -44,19 +44,18 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel6.setText(Languager.getTagValue(1, "MainWindowButtons", "Models"));
-        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Maintenance"));
-        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "QuickWizard"));
+        bModels.setText(Languager.getTagValue(1, "MainWindowButtons", "Models"));
+        bMaintenance.setText(Languager.getTagValue(1, "MainWindowButtons", "Maintenance"));
+        bQuickGuide.setText(Languager.getTagValue(1, "MainWindowButtons", "QuickWizard"));
         jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
     }
 
     public void setLogo(String iconPath) {
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/"+iconPath)));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/" + iconPath)));
     }
-    
-    public void setMessage(String message) {
 
-        if(message.equals("is connecting")) {
+    public void setMessage(String message) {
+        if (message.equals("is connecting")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusConnecting"));
         } else if (message.equals("is connected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
@@ -64,15 +63,14 @@ public class ButtonsPanel extends javax.swing.JPanel {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
         } else if (message.equals("is disconnected")) {
             jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
-        } 
-
+        }
     }
 
     private void setFont() {
         jLabel3.setFont(getSSProLight("18"));
-        jLabel6.setFont(getSSProLight("13"));
-        jLabel5.setFont(getSSProLight("13"));
-        jLabel4.setFont(getSSProLight("13"));
+        bModels.setFont(getSSProLight("13"));
+        bQuickGuide.setFont(getSSProLight("13"));
+        bMaintenance.setFont(getSSProLight("13"));
         jLabel1.setFont(getSSProRegular("13"));
 
     }
@@ -84,13 +82,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     public void goFilamentChange() {
-        
+
         if (!maintenance_pressed) {
             if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
                 jLabel4Bool = false;
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
                 jLabel4Bool = false;
             }
 
@@ -98,38 +96,28 @@ public class ButtonsPanel extends javax.swing.JPanel {
         }
     }
 
-    private double gramsCalculator(double meters) {
-        double grams = meters * 12 / 4;
-
-        if (grams > 0) {
-            return (int) meters * 12 / 4;
-        }
-
-        return 0;
-    }
-
     private void evaluateMaintenanceStatus() {
         if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < NUMBER_PRINTS_LIMIT) {
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+            bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
         } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-            jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
+            bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
         }
 
     }
 
     public void updatePressedStateButton(String button) {
         if (button.equals("models")) {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+            bModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             jLabel6Bool = false;
             models_pressed = false;
         }
-       
+
         if (button.equals("maintenance")) {
             if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
                 jLabel4Bool = true;
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
                 jLabel4Bool = true;
             }
 
@@ -137,7 +125,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
         }
 
         if (button.equals("quick_guide")) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+            bQuickGuide.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             jLabel5Bool = true;
         }
 
@@ -156,19 +144,17 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private void updateFromState(final MachineInterface s, final MachineInterface machine) {
 
         if (!s.isConnected()) {
-
             setMessage("is disconnected");
         } else {
 
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+            bQuickGuide.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             jLabel5Bool = true;
 
-            
             if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
                 jLabel4Bool = true;
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
                 jLabel4Bool = true;
             }
 
@@ -184,16 +170,16 @@ public class ButtonsPanel extends javax.swing.JPanel {
         }
     }
 
-    public void setMainWindowEnabled(boolean editorEnabled) {
-        this.mainWindowEnabled = editorEnabled;
-    }
-
     public void blockModelsButton(boolean block) {
         models_pressed = block;
     }
 
     public boolean areIOFunctionsBlocked() {
         return models_pressed;
+    }
+    
+    public void bMaintenanceSetEnabled(boolean enabled) {
+        bMaintenance.setEnabled(enabled);
     }
 
     @SuppressWarnings("unchecked")
@@ -206,9 +192,9 @@ public class ButtonsPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        bMaintenance = new javax.swing.JLabel();
+        bQuickGuide = new javax.swing.JLabel();
+        bModels = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -261,48 +247,48 @@ public class ButtonsPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
-        jLabel4.setText("Maintenance");
-        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        bMaintenance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
+        bMaintenance.setText("Maintenance");
+        bMaintenance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bMaintenance.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel4MouseEntered(evt);
+                bMaintenanceMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel4MouseExited(evt);
+                bMaintenanceMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel4MousePressed(evt);
+                bMaintenanceMousePressed(evt);
             }
         });
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
-        jLabel5.setText("Quick Guide");
-        jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+        bQuickGuide.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
+        bQuickGuide.setText("Quick Guide");
+        bQuickGuide.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bQuickGuide.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel5MousePressed(evt);
+                bQuickGuideMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel5MouseExited(evt);
+                bQuickGuideMouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel5MouseEntered(evt);
+                bQuickGuideMouseEntered(evt);
             }
         });
 
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
-        jLabel6.setText("Models");
-        jLabel6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
+        bModels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
+        bModels.setText("Models");
+        bModels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bModels.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel6MouseEntered(evt);
+                bModelsMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel6MouseExited(evt);
+                bModelsMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel6MousePressed(evt);
+                bModelsMousePressed(evt);
             }
         });
 
@@ -312,11 +298,11 @@ public class ButtonsPanel extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap(56, Short.MAX_VALUE)
-                .addComponent(jLabel6)
+                .addComponent(bModels)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
+                .addComponent(bMaintenance)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
+                .addComponent(bQuickGuide)
                 .addGap(6, 6, 6)
                 .addComponent(jLabel1))
         );
@@ -326,9 +312,9 @@ public class ButtonsPanel extends javax.swing.JPanel {
                 .addGap(0, 24, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6)))
+                    .addComponent(bQuickGuide)
+                    .addComponent(bMaintenance)
+                    .addComponent(bModels)))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -364,51 +350,51 @@ public class ButtonsPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseEntered
+    private void bModelsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bModelsMouseEntered
         if (jLabel6Bool == false) {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
+            bModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
         }
-    }//GEN-LAST:event_jLabel6MouseEntered
+    }//GEN-LAST:event_bModelsMouseEntered
 
-    private void jLabel6MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseExited
+    private void bModelsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bModelsMouseExited
         if (jLabel6Bool == false) {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+            bModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
         }
-    }//GEN-LAST:event_jLabel6MouseExited
+    }//GEN-LAST:event_bModelsMouseExited
 
-    private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
+    private void bMaintenanceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMaintenanceMouseEntered
 
         if (jLabel4Bool) {
             if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7_btn.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7_btn.png")));
             }
         }
-    }//GEN-LAST:event_jLabel4MouseEntered
+    }//GEN-LAST:event_bMaintenanceMouseEntered
 
-    private void jLabel4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseExited
+    private void bMaintenanceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMaintenanceMouseExited
 
         if (jLabel4Bool) {
             if (Integer.valueOf(ProperDefault.get("nTotalPrints")) <= NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
             } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > NUMBER_PRINTS_LIMIT) {
-                jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
+                bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7_btn.png")));
             }
         }
-    }//GEN-LAST:event_jLabel4MouseExited
+    }//GEN-LAST:event_bMaintenanceMouseExited
 
-    private void jLabel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseEntered
+    private void bQuickGuideMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuickGuideMouseEntered
         if (jLabel5Bool) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
+            bQuickGuide.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_7.png")));
         }
-    }//GEN-LAST:event_jLabel5MouseEntered
+    }//GEN-LAST:event_bQuickGuideMouseEntered
 
-    private void jLabel5MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseExited
+    private void bQuickGuideMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuickGuideMouseExited
         if (jLabel5Bool) {
-            jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
+            bQuickGuide.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_7.png")));
         }
-    }//GEN-LAST:event_jLabel5MouseExited
+    }//GEN-LAST:event_bQuickGuideMouseExited
 
     private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
         if (jLabel1Bool == false) {
@@ -422,10 +408,10 @@ public class ButtonsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jLabel1MouseExited
 
-    private void jLabel6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MousePressed
+    private void bModelsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bModelsMousePressed
 
         if (!models_pressed) {
-            jLabel6.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+            bModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
             jLabel6Bool = true;
             models_pressed = true;
             editor.updateModelsOperationCenter(new ModelsOperationCenter());
@@ -437,40 +423,40 @@ public class ButtonsPanel extends javax.swing.JPanel {
             editor.handleNewModel();
         }
 
-    }//GEN-LAST:event_jLabel6MousePressed
+    }//GEN-LAST:event_bModelsMousePressed
 
-    private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
-            if (Base.isPrinting == false) {
-                if (maintenance_pressed == false) {
-                    if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
-                        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-                        jLabel4Bool = false;
-                    } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > 10) {
-                        jLabel4.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
-                        jLabel4Bool = false;
-                    }
-
-                    maintenance_pressed = true;
-                    editor.updateModelsOperationCenter(new ModelsOperationCenter());
-                    SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-                    sceneDP.updateBed(Base.getMainWindow().getBed());
-                    editor.updateDetailsCenter(sceneDP);
-                    Base.getMainWindow().getCanvas().unPickAll();
-                    editor.handleMaintenance();
+    private void bMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMaintenanceMousePressed
+        if (Base.isPrinting == false) {
+            if (maintenance_pressed == false) {
+                if (Integer.valueOf(ProperDefault.get("nTotalPrints")) < 10) {
+                    bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+                    jLabel4Bool = false;
+                } else if (Integer.valueOf(ProperDefault.get("nTotalPrints")) > 10) {
+                    bMaintenance.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7_btn.png")));
+                    jLabel4Bool = false;
                 }
-            }
-    }//GEN-LAST:event_jLabel4MousePressed
 
-    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-          
+                maintenance_pressed = true;
+                editor.updateModelsOperationCenter(new ModelsOperationCenter());
+                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
+                sceneDP.updateBed(Base.getMainWindow().getBed());
+                editor.updateDetailsCenter(sceneDP);
+                Base.getMainWindow().getCanvas().unPickAll();
+                editor.handleMaintenance();
+            }
+        }
+    }//GEN-LAST:event_bMaintenanceMousePressed
+
+    private void bQuickGuideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuickGuideMousePressed
+
         Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
-        
+
         TourWelcome p = new TourWelcome();
         p.setVisible(true);
-        
+
         jLabel5Bool = false;
-        jLabel5.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
-    }//GEN-LAST:event_jLabel5MousePressed
+        bQuickGuide.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
+    }//GEN-LAST:event_bQuickGuideMousePressed
 
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
         MachineInterface machine = Base.getMainWindow().getMachineInterface();
@@ -488,12 +474,12 @@ public class ButtonsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jLabel1MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bMaintenance;
+    private javax.swing.JLabel bModels;
+    private javax.swing.JLabel bQuickGuide;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

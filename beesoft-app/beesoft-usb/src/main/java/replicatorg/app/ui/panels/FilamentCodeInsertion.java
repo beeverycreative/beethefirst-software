@@ -51,7 +51,6 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void setTextLanguage() {
         jLabel1.setText("Filament wizard");
-        //jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title5"));
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
@@ -86,16 +85,9 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void doCancel() {
         Base.writeLog("Filament load/unload canceled", this.getClass());
-        if (Base.printPaused == false) {
-            Base.bringAllWindowsToFront();
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.enableAllOpenWindows();
-            machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
-        } else {
-            machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
-        }
         dispose();
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
     }
 
     @SuppressWarnings("unchecked")

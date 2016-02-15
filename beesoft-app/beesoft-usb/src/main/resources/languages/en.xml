@@ -611,7 +611,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <HeatingMessage3 value="Heating..."/>
             <Info3a value="Use the nozzle tool to unscrew the nozzle and place it on a heat-resistant surface until it has cooled down."/>
             <Info3b value="Screw in the new nozzle, stop tightening as soon as you feel hard resistance. You can now load some fresh filament and see the result of the new extruder. The filament will be thick and even."/>
-            <Info_Warning3 value = "WARNING: BE CAREFULL NOT TO TOUCH THE HOT EXTRUDER."/>
+            <Info_Warning3 value = "WARNING: BE CAREFUL NOT TO TOUCH THE HOT EXTRUDER."/>
  
             <Title4 value="Extruder Switch"/>
         </ExtruderSwitch>

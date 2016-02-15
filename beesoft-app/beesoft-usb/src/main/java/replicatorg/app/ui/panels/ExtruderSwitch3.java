@@ -424,8 +424,8 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unload filament pressed", this.getClass());
-            //bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
             machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
+            machine.getDriver().setBusy(true);
             machine.runCommand(new replicatorg.drivers.commands.UnloadFilament());
         }
     }//GEN-LAST:event_bUnloadMousePressed
@@ -476,7 +476,6 @@ public class ExtruderSwitch3 extends BaseDialog {
     @Override
     public void showMessage() {
         enableMessageDisplay();
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         bLoad.setEnabled(false);
         bUnload.setEnabled(false);
         bNext.setEnabled(false);

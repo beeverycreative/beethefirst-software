@@ -379,7 +379,7 @@ public class PauseMenu extends BaseDialog {
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
-            FilamentHeating p = new FilamentHeating();
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
             this.setVisible(false);
             p.setVisible(true);
             this.setVisible(true);
