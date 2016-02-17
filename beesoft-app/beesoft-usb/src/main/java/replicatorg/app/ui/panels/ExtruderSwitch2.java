@@ -6,12 +6,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -26,7 +27,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class ExtruderSwitch2 extends BaseDialog {
 
-    private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private static final int GOAL_TEMPERATURE = 200;
     private final TemperatureThread updateThread = new TemperatureThread();
     private final Nozzle selectedNozzle;
@@ -93,7 +94,7 @@ public class ExtruderSwitch2 extends BaseDialog {
             Base.writeLog("Temperature achieved...", this.getClass());
             updateThread.kill();
             disableMessageDisplay();
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300"));
+            driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }
     }
@@ -110,7 +111,7 @@ public class ExtruderSwitch2 extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(GOAL_TEMPERATURE + 5));
+        driver.dispatchCommand("M703 S" + GOAL_TEMPERATURE + 5);
     }
 
     private void evaluateInitialConditions() {
@@ -122,7 +123,7 @@ public class ExtruderSwitch2 extends BaseDialog {
 
     private void doCancel() {
         dispose();
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28"));
+        driver.dispatchCommand("G28", COM.NO_RESPONSE);
         Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         Base.getMainWindow().setEnabled(true);
@@ -155,7 +156,6 @@ public class ExtruderSwitch2 extends BaseDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));

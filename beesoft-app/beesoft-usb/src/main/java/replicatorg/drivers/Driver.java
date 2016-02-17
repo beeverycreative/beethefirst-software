@@ -81,14 +81,6 @@ public interface Driver {
     public String dispatchCommand(String command, Enum comtype);
 
     /**
-     * Dispatch a command to the Driver agent in byte[] instead of string.
-     *
-     * @param next message byte[]
-     * @return number of bytes written into endpoint buffer
-     */
-    public int sendCommandBytes(byte[] next);
-
-    /**
      * Transfer a GCode file content.
      *
      * @param gcode GCode file
@@ -574,4 +566,5 @@ public interface Driver {
     public void setMachinePaused(boolean machinePaused);
     public void closeFeedback();
     public int getQueueSize();
+    public String getLastStatusMessage();
 }

@@ -563,13 +563,13 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Title2 value="Extruder Maintenance"/>
             <HeatingMessage2 value="Heating..."/>
             <Info2a value="Use a hex key to remove the screws on the top cover of your 3d printer. Remove the cover by gently pulling upwards" />
-            <Info2b value = "Make sure to place screws in a secure location."/>
+            <Info2b value = "Make sure to place the screws in a secure location."/>
             <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
             <Title3 value="Extruder Maintenance"/>
             <HeatingMessage3 value="Heating..."/>
             <Info3a value="Using the same tool as before, remove the screw that attachs the cover plate to your 3D printer. Afterwards slide the cover plate in the direction indicated OPEN."/>
-            <Info3b value = "Remember to place the screws in a save location."/>
+            <Info3b value = "Remember to place the screws in a safe location."/>
             <Info_Warning3 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
 
             <Title4 value="Extruder Maintenance"/>

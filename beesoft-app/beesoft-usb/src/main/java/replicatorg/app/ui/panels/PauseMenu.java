@@ -7,10 +7,12 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.drivers.Driver;
 import replicatorg.machine.MachineInterface;
 
 public class PauseMenu extends BaseDialog {
 
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final PrintSplashAutonomous printSplash;
     private final MachineInterface machine = Base.getMainWindow().getMachine();
     
@@ -361,8 +363,7 @@ public class PauseMenu extends BaseDialog {
 
     private void bShutdownMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMousePressed
         if (bShutdown.isEnabled()) {
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M36"));
-
+            driver.dispatchCommand("M36");
             dispose();
             ShutdownMenu shutdown = new ShutdownMenu(printSplash);
             shutdown.setVisible(true);

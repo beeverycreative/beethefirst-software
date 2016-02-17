@@ -40,11 +40,11 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeTableXYDataset;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
+import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -65,7 +65,8 @@ public class ControlPanel extends BaseDialog {
         Z_PLUS, Z_MINUS, Y_PLUS, Y_MINUS, X_PLUS, X_MINUS
     };
 
-    private MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final ToolModel currentTool = Base.getMachineLoader().getMachineInterface().getModel().currentTool();
     protected double temperatureGoal = 0;
     protected double zHome = -1;
     private DefaultComboBoxModel comboModel2;
@@ -140,7 +141,7 @@ public class ControlPanel extends BaseDialog {
                 if (movButtonHoldDown != null && movButtonHoldDown.isRunning()) {
                     movButtonHoldDown.stop();
                 }
-                machine.getDriver().dispatchCommand("M1110 S0", COM.DEFAULT);
+                driver.dispatchCommand("M1110 S0");
 
                 if (loggingTemperature == false) {
                     disposeThread.cancel();
@@ -196,11 +197,11 @@ public class ControlPanel extends BaseDialog {
         sleep(100);
 
         // set to relative positioning
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+        driver.dispatchCommand("G91");
         sleep(100);
 
         // enable debug mode
-        machine.getDriver().dispatchCommand("M1110 S1", COM.DEFAULT);
+        driver.dispatchCommand("M1110 S1");
         sleep(100);
 
         setPollDataTrue = new Timer(0, new ActionListener() {
@@ -366,8 +367,8 @@ public class ControlPanel extends BaseDialog {
         double extruderTemp, blockTemp;
         String extruderTempString, blockTempString;
 
-        extruderTemp = machine.getModel().currentTool().getExtruderTemperature();
-        blockTemp = machine.getModel().currentTool().getBlockTemperature();
+        extruderTemp = currentTool.getExtruderTemperature();
+        blockTemp = currentTool.getBlockTemperature();
         extruderTempString = String.valueOf(extruderTemp);
         blockTempString = String.valueOf(blockTemp);
         extruderTemperatureVal.setText(extruderTempString);
@@ -447,7 +448,7 @@ public class ControlPanel extends BaseDialog {
         getInitialValuesThread.cancel();
         Base.getMainWindow().setEnabled(true);
 
-        machine.runCommand(new replicatorg.drivers.commands.SendHome());
+        driver.dispatchCommand("G28");
         dispose();
         Base.bringAllWindowsToFront();
     }
@@ -473,7 +474,7 @@ public class ControlPanel extends BaseDialog {
                     public void actionPerformed(ActionEvent e) {
                         double val;
 
-                        machine.getDriver().dispatchCommand("G0 Z" + movCommandStep, COM.DEFAULT);
+                        driver.dispatchCommand("G0 Z" + movCommandStep);
                         val = Double.parseDouble(zTextFieldValue.getText()) + movCommandStep;
                         zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
@@ -487,7 +488,7 @@ public class ControlPanel extends BaseDialog {
                     public void actionPerformed(ActionEvent e) {
                         double val;
 
-                        machine.getDriver().dispatchCommand("G0 Z-" + movCommandStep, COM.DEFAULT);
+                        driver.dispatchCommand("G0 Z-" + movCommandStep);
                         val = Double.parseDouble(zTextFieldValue.getText()) - movCommandStep;
                         zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));;
                     }
@@ -501,7 +502,7 @@ public class ControlPanel extends BaseDialog {
                     public void actionPerformed(ActionEvent e) {
                         double val;
 
-                        machine.getDriver().dispatchCommand("G0 Y" + movCommandStep, COM.DEFAULT);
+                        driver.dispatchCommand("G0 Y" + movCommandStep);
                         val = Double.parseDouble(yTextFieldValue.getText()) + movCommandStep;
                         yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
@@ -515,7 +516,7 @@ public class ControlPanel extends BaseDialog {
                     public void actionPerformed(ActionEvent e) {
                         double val;
 
-                        machine.getDriver().dispatchCommand("G0 Y-" + movCommandStep, COM.DEFAULT);
+                        driver.dispatchCommand("G0 Y-" + movCommandStep);
                         val = Double.parseDouble(yTextFieldValue.getText()) - movCommandStep;
                         yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
@@ -529,7 +530,7 @@ public class ControlPanel extends BaseDialog {
                     public void actionPerformed(ActionEvent e) {
                         double val;
 
-                        machine.getDriver().dispatchCommand("G0 X" + movCommandStep, COM.DEFAULT);
+                        driver.dispatchCommand("G0 X" + movCommandStep);
                         val = Double.parseDouble(xTextFieldValue.getText()) + movCommandStep;
                         xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
@@ -543,7 +544,7 @@ public class ControlPanel extends BaseDialog {
                     public void actionPerformed(ActionEvent e) {
                         double val;
 
-                        machine.getDriver().dispatchCommand("G0 X-" + movCommandStep, COM.DEFAULT);
+                        driver.dispatchCommand("G0 X-" + movCommandStep);
                         val = Double.parseDouble(xTextFieldValue.getText()) - movCommandStep;
                         xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
@@ -569,7 +570,7 @@ public class ControlPanel extends BaseDialog {
                 return;
             }
 
-            ans = machine.getDriver().dispatchCommand("M121");
+            ans = driver.dispatchCommand("M121");
             parts = ans.split(" ");
         } while (parts.length < 4 || !ans.contains("X:"));
 
@@ -1444,13 +1445,13 @@ public class ControlPanel extends BaseDialog {
     }//GEN-LAST:event_cLogTemperatureActionPerformed
 
     private void bForwardMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bForwardMouseReleased
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E0", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + Double.valueOf(mSpeed.getText()) + " E" + getDistance(), COM.BLOCK));
+        driver.dispatchCommand("G92 E0");
+        driver.dispatchCommand("G1 F" + Double.valueOf(mSpeed.getText()) + " E" + getDistance());
     }//GEN-LAST:event_bForwardMouseReleased
 
     private void bReverseMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bReverseMouseReleased
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G92 E0", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G1 F" + Double.valueOf(mSpeed.getText()) + " E-" + getDistance(), COM.BLOCK));
+        driver.dispatchCommand("G92 E0");
+        driver.dispatchCommand("G1 F" + Double.valueOf(mSpeed.getText()) + " E-" + getDistance());
     }//GEN-LAST:event_bReverseMouseReleased
 
     private void mSpeedKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mSpeedKeyReleased
@@ -1572,17 +1573,17 @@ public class ControlPanel extends BaseDialog {
     }//GEN-LAST:event_xRIGHTMousePressed
 
     private void bTurnOnLEDsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bTurnOnLEDsMouseReleased
-        machine.getDriver().dispatchCommand("M5", COM.DEFAULT);
+        driver.dispatchCommand("M5");
     }//GEN-LAST:event_bTurnOnLEDsMouseReleased
 
     private void bTurnOffLEDsMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bTurnOffLEDsMouseReleased
-        machine.getDriver().dispatchCommand("M6", COM.DEFAULT);
+        driver.dispatchCommand("M6");
     }//GEN-LAST:event_bTurnOffLEDsMouseReleased
 
     private void bBeepMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBeepMousePressed
         String answer;
 
-        answer = machine.getDriver().dispatchCommand("M300", COM.DEFAULT);
+        answer = driver.dispatchCommand("M300");
 
         if (answer.contains("ok")) {
             labelBeepValidation.setVisible(true);
@@ -1591,29 +1592,29 @@ public class ControlPanel extends BaseDialog {
     }//GEN-LAST:event_bBeepMousePressed
 
     private void jSliderExtruderSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderExtruderSpeedMouseReleased
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M126 S" + jSliderExtruderSpeed.getValue(), COM.DEFAULT));
+        driver.dispatchCommand("M126 S" + jSliderExtruderSpeed.getValue());
         jExtruderFanValue.setText(String.valueOf(jSliderExtruderSpeed.getValue()));
     }//GEN-LAST:event_jSliderExtruderSpeedMouseReleased
 
     private void jSliderBlowerSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderBlowerSpeedMouseReleased
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M106 S" + jSliderBlowerSpeed.getValue(), COM.DEFAULT));
+        driver.dispatchCommand("M106 S" + jSliderBlowerSpeed.getValue());
         jBlowerFanValue.setText(String.valueOf(jSliderBlowerSpeed.getValue()));
     }//GEN-LAST:event_jSliderBlowerSpeedMouseReleased
 
     private void bHomeZMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeZMouseReleased
-        machine.getDriver().dispatchCommand("G28 Z");
+        driver.dispatchCommand("G28 Z");
         getPosition();
-        machine.getDriver().dispatchCommand("G91");
+        driver.dispatchCommand("G91");
     }//GEN-LAST:event_bHomeZMouseReleased
 
     private void bHomeXYMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeXYMouseReleased
-        machine.getDriver().dispatchCommand("G28 XY");
+        driver.dispatchCommand("G28 XY");
         getPosition();
-        machine.getDriver().dispatchCommand("G91");
+        driver.dispatchCommand("G91");
     }//GEN-LAST:event_bHomeXYMouseReleased
 
     private void bCurrentPositionMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCurrentPositionMouseReleased
-        machine.getDriver().dispatchCommand("M603");
+        driver.dispatchCommand("M603");
         zHome -= Double.parseDouble(zTextFieldValue.getText());
         zTextFieldValue.setText(String.format(Locale.US, "%3.3f", 0.0));
     }//GEN-LAST:event_bCurrentPositionMouseReleased
@@ -1627,9 +1628,9 @@ public class ControlPanel extends BaseDialog {
                 yVal = Double.parseDouble(yTextFieldValue.getText());
                 zVal = Double.parseDouble(zTextFieldGoal.getText());
 
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G90"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+                driver.dispatchCommand("G90");
+                driver.dispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000");
+                driver.dispatchCommand("G91");
 
                 zTextFieldValue.setText(String.format(Locale.US, "%3.3f", zVal));
             } catch (NumberFormatException ex) {
@@ -1648,9 +1649,9 @@ public class ControlPanel extends BaseDialog {
                 yVal = Double.parseDouble(yTextFieldValue.getText());
                 zVal = Double.parseDouble(zTextFieldValue.getText());
 
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G90"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+                driver.dispatchCommand("G90");
+                driver.dispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000");
+                driver.dispatchCommand("G91");
 
                 xTextFieldValue.setText(String.format(Locale.US, "%3.3f", xVal));
             } catch (NumberFormatException ex) {
@@ -1668,9 +1669,9 @@ public class ControlPanel extends BaseDialog {
                 yVal = Double.parseDouble(yTextFieldGoal.getText());
                 zVal = Double.parseDouble(zTextFieldValue.getText());
 
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G90"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000"));
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G91"));
+                driver.dispatchCommand("G90");
+                driver.dispatchCommand("G0 X" + xVal + " Y" + yVal + " Z" + zVal + " F5000");
+                driver.dispatchCommand("G91");
 
                 yTextFieldValue.setText(String.format(Locale.US, "%3.3f", yVal));
             } catch (NumberFormatException ex) {
@@ -1687,7 +1688,7 @@ public class ControlPanel extends BaseDialog {
 
             if (targetTemperature != temperatureGoal) {
                 if (targetTemperature != -1) {
-                    machine.runCommand(new replicatorg.drivers.commands.SetTemperature(targetTemperature));
+                    driver.setTemperature(targetTemperature);
                     temperatureGoal = targetTemperature;
                 } else {
                     targetTemperatureVal.setText(String.valueOf(temperatureGoal));
@@ -1772,9 +1773,9 @@ public class ControlPanel extends BaseDialog {
         public void run() {
 
             while (stop == false) {
-                if (canPollData && machine.getDriver().isTransferMode() == false) {
+                if (canPollData && driver.isTransferMode() == false) {
                     if (Base.isPrinting == false) {
-                        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
+                        driver.readTemperature();
                     }
                     updateTemperature();
                     Base.hiccup(3000);
@@ -1856,7 +1857,7 @@ public class ControlPanel extends BaseDialog {
             long ms, hours, mins, secs;
 
             while (stop == false) {
-                answer = machine.getDriver().dispatchCommand("M1002", COM.DEFAULT);
+                answer = driver.dispatchCommand("M1002");
                 beginIndex = answer.lastIndexOf("Time: ");
                 endIndex = answer.lastIndexOf("\nok");
 

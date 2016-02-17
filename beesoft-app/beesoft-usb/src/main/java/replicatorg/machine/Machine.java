@@ -205,7 +205,7 @@ public class Machine implements MachineInterface {
     @Override
     public void killSwitch() {
         machineThread.killSwitch();
-        runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        
     }
 
     @Override

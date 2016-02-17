@@ -3,13 +3,15 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
+import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -24,7 +26,8 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentCodeInsertion extends BaseDialog {
 
-    private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final MachineModel model = Base.getMachineLoader().getMachineInterface().getModel();
     private DefaultComboBoxModel<Filament> comboModel;
     private Filament[] categories;
 
@@ -68,8 +71,8 @@ public class FilamentCodeInsertion extends BaseDialog {
         Nozzle nozzle;
         Filament[] filaments;
 
-        machine.getDriver().updateNozzleType();
-        nozzle = new Nozzle(machine.getModel().getNozzleType());
+        driver.updateNozzleType();
+        nozzle = new Nozzle(model.getNozzleType());
         filaments = FilamentControler.getCompatibleFilaments(nozzle);
 
         if (filaments.length == 0) {
@@ -87,7 +90,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         Base.writeLog("Filament load/unload canceled", this.getClass());
         dispose();
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
+        driver.dispatchCommand("M704", UsbPassthroughDriver.COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")

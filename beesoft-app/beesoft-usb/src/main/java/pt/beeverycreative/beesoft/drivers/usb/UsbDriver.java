@@ -549,6 +549,11 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("*closePipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
     }
+    
+    @Override
+    public String getLastStatusMessage() {
+        return lastStatusMessage;
+    }
 
     @Override
     public void dispose() {

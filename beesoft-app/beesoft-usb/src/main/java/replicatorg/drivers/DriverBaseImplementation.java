@@ -24,7 +24,6 @@
 package replicatorg.drivers;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -133,12 +132,6 @@ public abstract class DriverBaseImplementation implements Driver {
     public String dispatchCommand(String code) {
         Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
         return "";
-    }
-
-    @Override
-    public int sendCommandBytes(byte[] next) {
-        Base.logger.log(Level.SEVERE, "Ignoring sending bytes{0}", Arrays.toString(next));
-        return -1;
     }
 
     @Override
@@ -565,7 +558,7 @@ public abstract class DriverBaseImplementation implements Driver {
     public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     @Override
     public String gcodeTransfer(File gcode) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -618,11 +611,16 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void resetBootloaderAndFirmwareVersion() {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void closeFeedback() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public String getLastStatusMessage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

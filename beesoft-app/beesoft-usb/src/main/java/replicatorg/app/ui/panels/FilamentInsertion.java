@@ -6,11 +6,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -25,7 +27,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentInsertion extends BaseDialog {
 
-    private static final MachineInterface machine = Base.getMainWindow().getMachineInterface();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private final Filament selectedFilament;
 
@@ -98,7 +100,7 @@ public class FilamentInsertion extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Moving to load/unload position", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep());
+        driver.dispatchCommand("M703", COM.NO_RESPONSE);
         disposeThread.start();
     }
 
@@ -106,7 +108,7 @@ public class FilamentInsertion extends BaseDialog {
         Base.writeLog("Filament load/unload canceled", this.getClass());
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         dispose();
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
+        driver.dispatchCommand("M704", COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")
@@ -418,8 +420,8 @@ public class FilamentInsertion extends BaseDialog {
         if (bNext.isEnabled()) {
             dispose();
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament(selectedFilament));
-            machine.runCommand(new replicatorg.drivers.commands.SendHome());
+            driver.setCoilText(selectedFilament.getName());
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bNextMousePressed
 
@@ -433,8 +435,8 @@ public class FilamentInsertion extends BaseDialog {
         if (bLoad.isEnabled()) {
             Base.writeLog("Loading filament", this.getClass());
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.LoadFilament());
+            driver.setBusy(true);
+            driver.dispatchCommand("M701", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bLoadMousePressed
 
@@ -442,9 +444,9 @@ public class FilamentInsertion extends BaseDialog {
         if (bUnload.isEnabled()) {
             Base.writeLog("Unloading Filament", this.getClass());
             jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
-            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.UnloadFilament());
+            driver.setCoilText(FilamentControler.NO_FILAMENT);
+            driver.setBusy(true);
+            driver.dispatchCommand("M702", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bUnloadMousePressed
 

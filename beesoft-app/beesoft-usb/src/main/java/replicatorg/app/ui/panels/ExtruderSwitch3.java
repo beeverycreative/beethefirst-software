@@ -6,12 +6,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -26,7 +27,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class ExtruderSwitch3 extends BaseDialog {
 
-    private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private final Nozzle selectedNozzle;
     private final Filament selectedFilament;
@@ -35,26 +36,25 @@ public class ExtruderSwitch3 extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
-        evaluateInitialConditions();
         enableDrag();
         setTextLanguage();
         centerOnScreen();
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep());
+        driver.dispatchCommand("M703", COM.NO_RESPONSE);
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.selectedNozzle = selectedNozzle;
         this.selectedFilament = selectedFilament;
 
         this.addWindowListener(new WindowAdapter() {
             @Override
+            public void windowOpened(WindowEvent e) {
+                disposeThread.start();
+            }
+            @Override
             public void windowClosed(WindowEvent e) {
                 disposeThread.kill();
                 Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             }
         });
-    }
-
-    private void evaluateInitialConditions() {
-        disposeThread.start();
     }
 
     private void setFont() {
@@ -100,7 +100,7 @@ public class ExtruderSwitch3 extends BaseDialog {
 
     private void doCancel() {
         dispose();
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28"));
+        driver.dispatchCommand("G28", COM.NO_RESPONSE);
         Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
@@ -403,9 +403,9 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament(selectedFilament));
-            machine.runCommand(new replicatorg.drivers.commands.SetInstalledNozzle(selectedNozzle));
-            machine.runCommand(new replicatorg.drivers.commands.SendHome());
+            driver.dispatchCommand("M1000 " + selectedFilament.getName());
+            driver.dispatchCommand("M1027 S" + selectedNozzle.getSizeInMicrons());
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bNextMousePressed
 
@@ -424,9 +424,9 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unload filament pressed", this.getClass());
-            machine.runCommand(new replicatorg.drivers.commands.SetLoadedFilament());
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.UnloadFilament());
+            driver.dispatchCommand("M1000 none");
+            driver.setBusy(true);
+            driver.dispatchCommand("M702", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bUnloadMousePressed
 
@@ -441,8 +441,8 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
         if (bLoad.isEnabled()) {
             Base.writeLog("Load filament pressed", this.getClass());
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.LoadFilament());
+            driver.setBusy(true);
+            driver.dispatchCommand("M701", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bLoadMousePressed
 

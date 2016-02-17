@@ -198,9 +198,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void sendInitializationGcode() {
         hiccup(1000, 0);
         Base.writeLog("Sending initialization GCodes", this.getClass());
-
-        cleanup();
-
         String status = checkPrinterStatus();
 
         super.isBootloader = true;
@@ -367,17 +364,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             setBusy(false);
             closePipe(pipes);
             pipes = null;
-        }
-    }
-
-    private void cleanup() {
-        dispatchCommandLock.lock();
-        try {
-            while (readResponse().equals("") == false) {
-                hiccup(50, 0);
-            }
-        } finally {
-            dispatchCommandLock.unlock();
         }
     }
 
@@ -1146,7 +1132,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void startPrintAutonomous() {
-        dispatchCommand(BEGIN_PRINT, COM.DEFAULT);
+        dispatchCommand(BEGIN_PRINT);
     }
 
     @Override
@@ -1781,23 +1767,23 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * @param next Command
      * @return command length
      */
-    @Override
-    public int sendCommandBytes(byte[] next) {
+    private int sendCommandBytes(byte[] next) {
 
         int cmdlen = 0;
 
-        synchronized (dispatchCommandLock) {
-            try {
-                if (!pipes.isOpen()) {
-                    openPipe(pipes);
-                }
-                cmdlen = pipes.getUsbPipeWrite().syncSubmit(next);
-            } catch (UsbException ex) {
-            } catch (UsbNotActiveException ex) {
-            } catch (UsbNotOpenException ex) {
-            } catch (IllegalArgumentException ex) {
-            } catch (UsbDisconnectedException ex) {
+        dispatchCommandLock.lock();
+        try {
+            if (!pipes.isOpen()) {
+                openPipe(pipes);
             }
+            cmdlen = pipes.getUsbPipeWrite().syncSubmit(next);
+        } catch (UsbException ex) {
+        } catch (UsbNotActiveException ex) {
+        } catch (UsbNotOpenException ex) {
+        } catch (IllegalArgumentException ex) {
+        } catch (UsbDisconnectedException ex) {
+        } finally {
+            dispatchCommandLock.unlock();
         }
         return cmdlen;
     }

@@ -4,7 +4,6 @@ import java.awt.Dialog;
 import java.awt.Window;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
-import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**

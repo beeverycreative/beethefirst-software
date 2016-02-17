@@ -16,6 +16,7 @@ import replicatorg.machine.model.ToolModel;
  */
 public abstract class BaseDialog extends javax.swing.JDialog {
 
+    protected static final int TEMPERATURE_GOAL = 200;
     protected int posX = 0, posY = 0;
 
     public BaseDialog(Window window, ModalityType mt) {

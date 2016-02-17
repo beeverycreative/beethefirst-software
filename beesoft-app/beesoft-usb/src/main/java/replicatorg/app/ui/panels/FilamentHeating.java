@@ -6,11 +6,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -25,7 +26,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentHeating extends BaseDialog {
 
-    private static final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private static final int GOAL_TEMPERATURE = 200;
     private final Filament selectedFilament;
     private final TemperatureThread temperatureThread = new TemperatureThread();
@@ -87,7 +88,7 @@ public class FilamentHeating extends BaseDialog {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
             disableMessageDisplay();
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300"));
+            driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }
     }
@@ -111,7 +112,7 @@ public class FilamentHeating extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Waiting for extruder to reach the target temperature, " + GOAL_TEMPERATURE, this.getClass());
         showMessage();
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(GOAL_TEMPERATURE + 5));
+        driver.dispatchCommand("M703 S" + (GOAL_TEMPERATURE + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
@@ -123,7 +124,7 @@ public class FilamentHeating extends BaseDialog {
         Base.writeLog("Filament heating canceled", this.getClass());
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         dispose();
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
+        driver.dispatchCommand("M704", COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")
