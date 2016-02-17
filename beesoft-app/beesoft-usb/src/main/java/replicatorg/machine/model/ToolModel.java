@@ -23,8 +23,6 @@
 package replicatorg.machine.model;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.w3c.dom.Node;
 

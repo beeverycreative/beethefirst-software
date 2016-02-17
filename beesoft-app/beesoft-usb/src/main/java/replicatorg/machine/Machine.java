@@ -47,6 +47,11 @@ import replicatorg.util.Point5d;
  */
 public class Machine implements MachineInterface {
 
+    @Override
+    public String getMachineName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     public enum RequestType {
         // Set up the connection to the machine
 
@@ -127,10 +132,6 @@ public class Machine implements MachineInterface {
     // this is the xml config for this machine.
     protected Node machineNode;
 
-    @Override
-    public String getMachineName() {
-        return machineThread.getMachineName();
-    }
 
     /**
      * Creates the machine object.

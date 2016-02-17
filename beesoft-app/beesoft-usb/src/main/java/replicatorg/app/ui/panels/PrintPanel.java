@@ -3,8 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.EventQueue;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
@@ -23,7 +21,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
@@ -33,8 +30,6 @@ import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.app.util.ExtensionFilter;
-import replicatorg.drivers.Driver;
 import replicatorg.machine.model.MachineModel;
 
 /**
@@ -49,57 +44,38 @@ import replicatorg.machine.model.MachineModel;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class PrintPanel extends BaseDialog {
-    
-    private final boolean isPrinterConnected = Base.getMachineLoader().isConnected();
-    private static final MachineModel machineModel = Base.getMainWindow().getMachine().getModel();
-    private static final Driver driver = Base.getMainWindow().getMachine().getDriver();
 
-    private JLabel quality_low;
-    private JLabel quality_medium;
-    private JLabel quality_solid;
-    private boolean raftPressed, supportPressed, gcodeSavePressed;
-    private boolean noFilament = false;
-    private boolean noNozzle = false;
     private static final String FORMAT = "%2d:%2d";
-    private String coilText = FilamentControler.NO_FILAMENT;
-    private int nozzleType;
+    private static final MachineModel machineModel = Base.getMainWindow().getMachine().getModel();
+    private final boolean isPrinterConnected = Base.getMachineLoader().isConnected();
+    private final int nozzleType;
+    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<Integer, JLabel>();
+    private JLabel lowQuality, mediumQuality, solidQuality;
+    private boolean gcodeSavePressed, lastUsedRaft, lastUsedSupport,
+            lastSelectedRaft, lastUsedGCodeSave, estimatePressed, exportPressed,
+            printerAvailable, lastSelectedSupport, gcodeOK, noFilament = false,
+            noNozzle = false, raftPressed = false, supportPressed = false;
+    private String lastUsedResolution, lastSelectedResolution,
+            gcodeToPrint = null, filament;
+    private int lastUsedDensity, nModels = 0;
     private PrintEstimationThread estimationThread;
     private GCodeExportThread exportThread;
-    private boolean lastUsedRaft;
-    private int lastUsedDensity;
-    private String lastUsedResolution;
-    private boolean lastUsedSupport;
-    private boolean lastSelectedRaft;
-    private String lastSelectedResolution;
-    private boolean lastUsedGCodeSave;
-    boolean lastSelectedSupport;
-    boolean lastSelectedAutonomous;
-    boolean gcodeOK;
-    private boolean estimatePressed;
-    private boolean exportPressed;
-    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<Integer, JLabel>();
-    private boolean printerAvailable;
-    private String gcodeToPrint = null;
-    private int nModels = 0;
-    private PrinterInfo selectedPrinter;
+    private PrinterInfo selectedPrinter = PrinterInfo.BEETHEFIRST;
 
     public PrintPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
+        nozzleType = getNozzleType();
+        filament = getCoilCode();
         initSlidersLabels();
         setFont();
         setTextLanguage();
         initSliderConfigs();
         centerOnScreen();
-        coilText = getCoilCode();
-        nozzleType = getNozzleType();
-        raftPressed = false;
-        supportPressed = false;
         evaluateConditions();
         matchChanges();
         enableDrag();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
-        selectedPrinter = PrinterInfo.BEETHEFIRST;
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -145,9 +121,9 @@ public class PrintPanel extends BaseDialog {
         highPlusHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
         //Density
-        quality_low.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        quality_medium.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        quality_solid.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lowQuality.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        mediumQuality.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        solidQuality.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
 
@@ -159,9 +135,9 @@ public class PrintPanel extends BaseDialog {
         jLabel2.setText(Languager.getTagValue(1, "Print", "Print_Quality"));
         jLabel3.setText(Languager.getTagValue(1, "Print", "Print_Density"));
         jLabel7.setText(Languager.getTagValue(1, "Print", "Print_Raft"));
-        jLabel8.setText(splitString(Languager.getTagValue(1, "Print", "Print_Raft_Info")));
+        jLabel8.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Raft_Info") + "</html>");
         jLabel9.setText(Languager.getTagValue(1, "Print", "Print_Support"));
-        jLabel10.setText(splitString(Languager.getTagValue(1, "Print", "Print_Support_Info")));
+        jLabel10.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Support_Info") + "</html>");
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         bEstimate.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line15"));
         bExport.setText(Languager.getTagValue(1, "OptionPaneButtons", "Export"));
@@ -178,9 +154,9 @@ public class PrintPanel extends BaseDialog {
         bHighRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_High"));
         bHighPlusRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"));
 
-        quality_low.setText(Languager.getTagValue(1, "Print", "Print_Density_Low"));
-        quality_medium.setText(Languager.getTagValue(1, "Print", "Print_Density_Medium"));
-        quality_solid.setText(Languager.getTagValue(1, "Print", "Print_Density_High"));
+        lowQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_Low"));
+        mediumQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_Medium"));
+        solidQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_High"));
 
     }
 
@@ -195,7 +171,6 @@ public class PrintPanel extends BaseDialog {
         code = FilamentControler.NO_FILAMENT;
 
         if (isPrinterConnected) {
-            driver.updateCoilText();
             code = machineModel.getCoilText();
         } //no need for else
 
@@ -221,80 +196,27 @@ public class PrintPanel extends BaseDialog {
 
         return code;
     }
-    
+
     private int getNozzleType() {
         int nozzle;
-        
+
         nozzle = FilamentControler.NO_NOZZLE;
-        
-        if(isPrinterConnected) {
-            driver.updateNozzleType();
+
+        if (isPrinterConnected) {
             nozzle = machineModel.getNozzleType();
         }
-        
+
         Base.writeLog("Nozzle type: " + nozzle, this.getClass());
-        
-        if(nozzle == 0) {
+
+        if (nozzle == 0) {
             noNozzle = true;
             nozzleTypeValue.setFont(GraphicDesignComponents.getSSProBold("12"));
             nozzleTypeValue.setText("0");
         } else {
             nozzleTypeValue.setText(Float.toString(nozzle / 1000.0f)); // from microns to mm
         }
-        
+
         return nozzle;
-    }
-
-    /**
-     * Splits string foreach dot.
-     *
-     * @param s stering to be splitted
-     * @return string splitted on dot.
-     */
-    private String splitString(String s) {
-        int width = 340;
-        return buildString(s.split("\\."), width);
-    }
-
-    /**
-     * Builds a text string based on form properties from several minor strings.
-     *
-     * @param parts text to be embedded
-     * @param width form width
-     * @return final string
-     */
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]); //.concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(".").concat(ehtml);
-    }
-
-    /**
-     * Get String size in pixels
-     *
-     * @param s Text to be processed
-     * @return size in pixels of the given string
-     */
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
     }
 
     /**
@@ -364,16 +286,15 @@ public class PrintPanel extends BaseDialog {
         labelTable2.put(100, k);
 
         densitySlider.setLabelTable(labelTable2);
-
     }
 
     /**
      * Inits Density and resolution fields labels.
      */
     private void initSlidersLabels() {
-        quality_low = new JLabel("light");
-        quality_medium = new JLabel("medium");
-        quality_solid = new JLabel("solid");
+        lowQuality = new JLabel("light");
+        mediumQuality = new JLabel("medium");
+        solidQuality = new JLabel("solid");
     }
 
     /**
@@ -388,17 +309,13 @@ public class PrintPanel extends BaseDialog {
 
             if (button.isSelected()) {
                 String labelText = button.getText();
-
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
                     return "low";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
+                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
                     return "medium";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
+                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
                     return "high+";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
+                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
                     return "high";
                 }
             }
@@ -444,19 +361,15 @@ public class PrintPanel extends BaseDialog {
                 if (noFilament == false && noNozzle == false && Base.isPrinting == false) {
                     bPrint.setEnabled(true);
                 }
+                bChangeFilament.setEnabled(true);
             }
             bEstimate.setEnabled(true);
-        }
-
-        if (printerAvailable) {
-            bChangeFilament.setEnabled(true);
         }
 
         bResButtonGroup.add(bLowRes);
         bResButtonGroup.add(bHighPlusRes);
         bResButtonGroup.add(bHighRes);
         bResButtonGroup.add(bMediumRes);
-
     }
 
     /**
@@ -578,41 +491,6 @@ public class PrintPanel extends BaseDialog {
 
     }
 
-    /**
-     * Select GCode file to open.
-     *
-     * @return path to file
-     */
-    private File selectFile() {
-        File directory = null;
-        String loadDir = ProperDefault.get("ui.open_dir0");
-
-        if (loadDir != null) {
-            directory = new File(loadDir);
-        }
-        JFileChooser fc = new JFileChooser(directory);
-        FileFilter defaultFilter;
-
-        String[] extensions = {".gcode"};
-        fc.addChoosableFileFilter(defaultFilter = new ExtensionFilter(extensions, "GCode files"));
-        fc.addChoosableFileFilter(new ExtensionFilter(".gcode", "GCode files"));
-        fc.setAcceptAllFileFilterUsed(true);
-        fc.setFileFilter(defaultFilter);
-        fc.setDialogTitle("Open a model file...");
-        fc.setDialogType(JFileChooser.OPEN_DIALOG);
-        fc.setFileHidingEnabled(false);
-        int rv = fc.showOpenDialog(this);
-        if (rv == JFileChooser.APPROVE_OPTION) {
-            fc.getSelectedFile().getName();
-            ProperDefault.put("ui.open_dir0", fc.getCurrentDirectory().getAbsolutePath());
-            Base.writeLog("GCode File selected " + fc.getSelectedFile().getAbsolutePath(), this.getClass());
-            return fc.getSelectedFile();
-        } else {
-            return null;
-        }
-
-    }
-
     public void showLoadingIcon(boolean show) {
         loading.setEnabled(show);
 
@@ -668,7 +546,6 @@ public class PrintPanel extends BaseDialog {
 
         densitySlider.setValue(lastUsedDensity);
 
-        //if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
         if (lastUsedResolution.contains("low")) {
             bLowRes.setSelected(true);
         } else if (lastUsedResolution.contains("medium")) {
@@ -756,13 +633,13 @@ public class PrintPanel extends BaseDialog {
         density = parseSlider2();
 
         if (gcodeToPrint != null && printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
+            preferences = new PrintPreferences(resolution, filament, density, nozzleType, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
         } else if (gcodeToPrint != null) {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed, gcodeToPrint);
+            preferences = new PrintPreferences(resolution, filament, density, nozzleType, raftPressed, supportPressed, gcodeToPrint);
         } else if (printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed, selectedPrinter);
+            preferences = new PrintPreferences(resolution, filament, density, nozzleType, raftPressed, supportPressed, selectedPrinter);
         } else {
-            preferences = new PrintPreferences(resolution, coilText, density, nozzleType, raftPressed, supportPressed);
+            preferences = new PrintPreferences(resolution, filament, density, nozzleType, raftPressed, supportPressed);
         }
 
         return preferences;
@@ -1556,21 +1433,21 @@ public class PrintPanel extends BaseDialog {
         if (exportPressed == false && bExport.isEnabled()) {
 
             if (printerAvailable == false
-                    || coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false) {
+                    || filament.equals(FilamentControler.NO_FILAMENT)
+                    || filament.contains(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(filament) == false) {
                 ProfileAndPrinter selection
                         = new ProfileAndPrinter(this, printerAvailable);
                 selection.setVisible(true);
-                coilText = selection.getCoilText();
+                filament = selection.getCoilText();
                 selectedPrinter = selection.getSelectedPrinter();
             }
 
             // if the ProfileAndPrinter panel was closed on X button,
             // cancel the estimation process
-            if (coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false
+            if (filament.equals(FilamentControler.NO_FILAMENT)
+                    || filament.contains(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(filament) == false
                     || selectedPrinter == PrinterInfo.UNKNOWN) {
                 return;
             }
@@ -1712,23 +1589,23 @@ public class PrintPanel extends BaseDialog {
         // if there are any loaded model, do the estimation
         if (estimatePressed == false && bEstimate.isEnabled()) {
             if (printerAvailable == false
-                    || coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false) {
+                    || filament.equals(FilamentControler.NO_FILAMENT)
+                    || filament.contains(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(filament) == false) {
                 Base.writeLog("No printer available, opening selection panel", this.getClass());
                 ProfileAndPrinter selection
                         = new ProfileAndPrinter(this, printerAvailable);
                 selection.setVisible(true);
-                coilText = selection.getCoilText();
+                filament = selection.getCoilText();
                 selectedPrinter = selection.getSelectedPrinter();
-                Base.writeLog(coilText + " and " + selectedPrinter + " selected", this.getClass());
+                Base.writeLog(filament + " and " + selectedPrinter + " selected", this.getClass());
             }
 
             // if the ProfileAndPrinter panel was closed on X button,
             // cancel the estimation process
-            if (coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false
+            if (filament.equals(FilamentControler.NO_FILAMENT)
+                    || filament.contains(FilamentControler.NO_FILAMENT_2)
+                    || FilamentControler.colorExistsLocally(filament) == false
                     || selectedPrinter == PrinterInfo.UNKNOWN) {
                 return;
             }
@@ -1887,7 +1764,7 @@ public class PrintPanel extends BaseDialog {
                     nTimes++;
                     showLoadingIcon(false);
                     Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-                    coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
+                    filament = Base.getMainWindow().getMachine().getModel().getCoilText();
                     stop = true;
                 } else {
                     Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
@@ -1964,7 +1841,7 @@ public class PrintPanel extends BaseDialog {
                 }
             }
 
-            coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
+            filament = Base.getMainWindow().getMachine().getModel().getCoilText();
         }
 
         @Override

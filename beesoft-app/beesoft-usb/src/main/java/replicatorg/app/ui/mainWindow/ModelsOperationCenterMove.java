@@ -6,7 +6,7 @@ import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.util.Units_and_Numbers;
+import replicatorg.util.UnitsAndNumbers;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -334,14 +334,14 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                 if (!(jTextField4.getText().length() == 0)) {
 
                     if (Base.isNumeric(jTextField4.getText())) {
-                        xValue = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(jTextField4.getText());
+                        xValue = UnitsAndNumbers.sGetDecimalStringAnyLocaleAsDouble(jTextField4.getText());
                     } else {
                         jTextField4.setText("");
                     }
                 }
 
                 if (ProperDefault.get("measures").equals("inches")) {
-                    xValue = Units_and_Numbers.inchesToMillimeters(xValue);
+                    xValue = UnitsAndNumbers.inchesToMillimeters(xValue);
                 }
 
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(xValue, 0, 0);
@@ -369,7 +369,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                 }
 
                 if (ProperDefault.get("measures").equals("inches")) {
-                    yValue = Units_and_Numbers.inchesToMillimeters(yValue);
+                    yValue = UnitsAndNumbers.inchesToMillimeters(yValue);
                 }
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, yValue, 0);
             } else {
@@ -398,7 +398,7 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
                 }
 
                 if (ProperDefault.get("measures").equals("inches")) {
-                    zValue = Units_and_Numbers.inchesToMillimeters(zValue);
+                    zValue = UnitsAndNumbers.inchesToMillimeters(zValue);
                 }
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().translateObject(0, 0, zValue);
             } else {

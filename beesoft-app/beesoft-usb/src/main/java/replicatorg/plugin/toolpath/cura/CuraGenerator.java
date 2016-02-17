@@ -87,15 +87,15 @@ public class CuraGenerator extends ToolpathGenerator {
                 = FilamentControler.getFilamentSettings(prefs.getCoilText(),
                         prefs.getResolution(), prefs.getNozzleSize(),
                         prefs.getPrinter().filamentCode());
-
-        if (defaultValues == null || overloadValues == null) {
-            return null;
-        } else {
+        
+        if (defaultValues != null && overloadValues != null) {
             defaultValues.putAll(overloadValues);
             return defaultValues;
+        } else if (overloadValues == null) {
+            return defaultValues;
+        } else {
+            return null;        // if both are null, return null
         }
-        //curaEngineConfigurator.createINIFile(defaultValues);        
-        //return true;
     }
 
     /**

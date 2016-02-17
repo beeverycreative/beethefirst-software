@@ -78,25 +78,15 @@
                 G1 X88 Y-65 Z0 F1000"/>
             
             <calibration_test value =
-                "M29,
-                M300 ;3.X.X - 2013-12-05,
-                M206 X500		; SET ACCEL = 500mm/s^2,
-                M107			; TURN OFF FAN,
-                M104 S220		; HEAT DONT WAIT,
+                "M206 X500		; SET ACCEL = 500mm/s^2,
                 G1 X-98.0 Y-20.0 Z5.0 F3000,
                 G1 Y-68.0 Z0.3,
                 G1 X-98.0 Y0.0 F500 E20,
                 G92 E			;RESET FILAMENT,
-                M106			;TURN FAN ON,
-                M113 S1.0,
-                M107 ; First Layer Blower OFF,
-                M108 S12.24,
-                M104 S205.0,
                 G1 X-85.86957 Y-58.8909 Z0.15 F3600.0,
                 G1 F6000.0,
                 G1 E0.5,
                 G1 F3600.0,
-                M101,
                 G1 X-85.20188 Y-59.34014 Z0.15 F648.0 E0.54773,
                 G1 X-84.65842 Y-59.56525 E0.58262,
                 G1 X-84.08642 Y-59.70257 E0.61751,
@@ -135,13 +125,9 @@
                 G1 F6000.0,
                 G1 E34.4613,
                 G1 F648.0,
-                M103,
                 G1 X-86.67555 Y-58.65422 Z0.15 F6000.0,
                 G1 F648.0,
-                M103,
                 M104 S0,
-                M113 S0.0,
-                M107,
                 G1 F6000"/>                                   
         </gcode>
         <tools>

@@ -356,53 +356,6 @@ public class FilamentControler {
         return result;
     }
 
-    public static int getColorTemperature(String coilCode, String resolution, double nozzleSize, String printerId) {
-        int result;
-        String logStrHeader;
-
-        result = 220;   //  Default
-        logStrHeader = "getColorTemperature(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printerId + ") ";
-
-        if (filamentList == null) {
-            fetchFilaments();
-        }
-
-        try {
-            if (!filamentList.isEmpty()) {
-                for (Filament fil : filamentList) {
-                    if (fil.getName().equals(coilCode)) {
-
-                        for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                            if (printerId.toLowerCase().contains(sc.getPrinterName().toLowerCase())) {
-                                for (Nozzle nozzle : sc.getNozzles()) {
-                                    if (nozzle.getType().equals(Double.toString(nozzleSize))) {
-                                        for (Resolution res : nozzle.getResolutions()) {
-                                            if (res.getType().equalsIgnoreCase(resolution)) {
-                                                for (SlicerParameter parameter : res.getParameters()) {
-                                                    if (parameter.getName().equals("print_temperature")) {
-                                                        Base.writeLog(logStrHeader + "=" + result, FilamentControler.class);
-                                                        return Integer.parseInt(parameter.getValue());
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        } catch (NumberFormatException ex) {
-            Base.writeLog("NumberFormatException, " + logStrHeader + "=" + result, FilamentControler.class);
-        }
-
-        Base.writeLog("Reached end of method, " + logStrHeader + "=" + result, FilamentControler.class);
-        return result;
-
-    }
-
     public static Map<String, String> getFilamentDefaults(String coilCode) {
         String logStrHeader;
 

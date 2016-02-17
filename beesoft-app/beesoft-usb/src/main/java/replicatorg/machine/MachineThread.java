@@ -20,7 +20,6 @@ import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.DriverError;
 import replicatorg.drivers.DriverFactory;
-import replicatorg.drivers.OnboardParameters;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.StopException;
 import replicatorg.drivers.VersionException;
@@ -75,7 +74,7 @@ class MachineThread extends Thread {
 
             if (driver.isBootloader() == false) {
                 Base.rebootingIntoFirmware = false;
-                setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+                //setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                 Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
                 driver.closeFeedback();
             }
@@ -211,8 +210,6 @@ class MachineThread extends Thread {
         loadDriver();
         loadTablePositions();
         loadExtraPrefs();
-        parseName();
-
     }
 
     /**
@@ -369,7 +366,7 @@ class MachineThread extends Thread {
             case CONNECT:
 
                 if (state.getState() == MachineState.State.NOT_ATTACHED && driver.isInitialized()) {
-                    setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+                    //setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                     Base.getMainWindow().getButtons().connect();
                     Base.writeLog("New State: " + state.getState().toString(), this.getClass());
 //                    System.out.println("1");
@@ -383,7 +380,7 @@ class MachineThread extends Thread {
                 }
 
                 if (state.getState() != MachineState.State.BUILDING) {
-                    setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+                    //setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                     //BVC - Machine was already ready, do nothing.
                     //Base.writeLog("New State: " + state.getState().toString());
 //                    System.out.println("3");
@@ -391,7 +388,7 @@ class MachineThread extends Thread {
                     // handle reconect after cable unplug
                     if (command.remoteName != null) {
                         if (command.remoteName.equals("cableDisconnect")) {
-                            setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
+                            //setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
                             Base.getMainWindow().getButtons().connect();
 //                            System.out.println("HERE");
                         }
@@ -402,7 +399,6 @@ class MachineThread extends Thread {
                 break;
             case RESET:
                 if (state.isConnected()) {
-                    readName();
                     setState(new MachineState(MachineState.State.READY),
                             readyMessage());
                 }
@@ -934,32 +930,6 @@ class MachineThread extends Thread {
         }
 
         setState(new MachineState(MachineState.State.NOT_ATTACHED));
-    }
-
-    public void readName() {
-        if (driver instanceof OnboardParameters) {
-            String n = ((OnboardParameters) driver).getMachineName();
-            if (n != null && n.length() > 0) {
-                name = n;
-            } else {
-                parseName(); // Use name from XML file instead of reusing name from last connected machine
-            }
-        }
-    }
-
-    private void parseName() {
-        NodeList kids = machineNode.getChildNodes();
-
-        for (int j = 0; j < kids.getLength(); j++) {
-            Node kid = kids.item(j);
-
-            if (kid.getNodeName().equals("name")) {
-                name = kid.getFirstChild().getNodeValue().trim();
-                return;
-            }
-        }
-
-        name = "Unknown";
     }
 
     private MachineModel loadModel() {

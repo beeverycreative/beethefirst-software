@@ -7,14 +7,10 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import static java.lang.Thread.sleep;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
-import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
 
@@ -35,7 +31,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
     private ImageIcon image;
     private int newWidth = 600;
     private int newHeight = 333;
-    private int duration = 50;
+    private int duration = 30;
 
     /**
      * Welcome Splash init
@@ -104,16 +100,11 @@ public class WelcomeSplash extends javax.swing.JFrame {
                 int inc = 0;
 
                 // Number of seconds to hold splash screen
-                while (i < getDuration()) {
+                while (i < duration) {
                     jProgressBar1.setValue(inc);
                     i++;
-                    inc += getWidth() / 50;
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(WelcomeSplash.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
+                    inc += newWidth / duration;
+                    Base.hiccup(100);
                 }
                 changeState();
             }
@@ -156,33 +147,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
             flashError.setVisible(true);
         }
 
-    }
-
-    /**
-     * Get Splash Width.
-     *
-     * @return splash width
-     */
-    public int getWidth() {
-        return newWidth;
-    }
-
-    /**
-     * Set Splash Screen duration.
-     *
-     * @param milis Duration
-     */
-    public void setDuration(int milis) {
-        this.duration = milis;
-    }
-
-    /**
-     * Get Splash Screen Duration.
-     *
-     * @return duration
-     */
-    public int getDuration() {
-        return duration;
     }
 
     @SuppressWarnings("unchecked")

@@ -2,7 +2,6 @@ package replicatorg.util;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +17,7 @@ import java.util.logging.Logger;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Units_and_Numbers {
+public class UnitsAndNumbers {
 
     public static double millimetersToInches(double mm) {
 
@@ -60,7 +59,7 @@ public class Units_and_Numbers {
             return Double.valueOf(filteredValue);
                                     
         } catch (Exception ex) {
-            Logger.getLogger(Units_and_Numbers.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UnitsAndNumbers.class.getName()).log(Level.SEVERE, null, ex);
             
             return Double.valueOf(value);
         }

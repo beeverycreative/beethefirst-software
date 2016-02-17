@@ -32,9 +32,9 @@ public class MachineCallbackHandler extends Thread {
 	
 	private synchronized void sendMessages() {
 		while (!machineStateChangeEventQueue.isEmpty()) {
-			for (MachineListener l : listeners) {
-				l.machineStateChanged(machineStateChangeEventQueue.peek());
-			}
+			//for (MachineListener l : listeners) {
+				//l.machineStateChanged(machineStateChangeEventQueue.peek());
+			//}
 			Base.logger.fine("Sending machine state change event: "
 					+ machineStateChangeEventQueue.peek().getState().getState().toString());
 			machineStateChangeEventQueue.remove();

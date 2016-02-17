@@ -2,17 +2,15 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -27,7 +25,7 @@ import replicatorg.machine.MachineInterface;
  */
 public class CalibrationScrew1 extends BaseDialog {
 
-    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
+    private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
     private final BusyFeedbackThread busyThread = new BusyFeedbackThread();
 
     public CalibrationScrew1() {
@@ -43,6 +41,10 @@ public class CalibrationScrew1 extends BaseDialog {
 
         this.addWindowListener(new WindowAdapter() {
             @Override
+            public void windowOpened(WindowEvent e) {
+                busyThread.start();
+            }
+            @Override
             public void windowClosed(WindowEvent e) {
                 busyThread.kill();
             }
@@ -56,51 +58,16 @@ public class CalibrationScrew1 extends BaseDialog {
         jLabel5.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Title2"));
         jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_title"));
-        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_Info")));
+        jLabel4.setText("<html>" + Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_Info") + "</html>");
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
         jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
     }
 
     private void enableMessageDisplay() {
@@ -122,26 +89,19 @@ public class CalibrationScrew1 extends BaseDialog {
     @Override
     public void showMessage() {
         bNext.setEnabled(false);
-
         enableMessageDisplay();
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
     }
 
     private void moveToB() {
         Base.writeLog("Calibrating B", this.getClass());
-        machine.getDriver().setBusy(true);
-        machine.runCommand(new replicatorg.drivers.commands.CalibrationStep(busyThread));
+        driver.dispatchCommand("G132", COM.NO_RESPONSE);
+        driver.setBusy(true);
     }
 
     private void doCancel() {
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
-
+        driver.dispatchCommand("G28", COM.NO_RESPONSE);
         Base.bringAllWindowsToFront();
         dispose();
     }
@@ -387,11 +347,15 @@ public class CalibrationScrew1 extends BaseDialog {
     }//GEN-LAST:event_bNextMousePressed
 
     private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
-        doCancel();
+        if (bExit.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bExitMousePressed
 
     private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
-        doCancel();
+        if (bX.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bXMousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

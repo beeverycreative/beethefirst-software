@@ -96,6 +96,8 @@ public interface Driver {
      * @return error or success message
      */
     public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous);
+    
+    public String gcodeTransfer(File gcode);
 
     /**
      * Start print via Autonomous mode.
@@ -422,10 +424,9 @@ public interface Driver {
      * Sets machine temperature.
      *
      * @param temperature Goal temperature
-     * @throws RetryException
      */
-    public void setTemperature(int temperature) throws RetryException;
-    public void setTemperatureBlocking(int temperature) throws RetryException;
+    public void setTemperature(int temperature);
+    public void setTemperatureBlocking(int temperature);
 
     /**
      * Read temperature from machine and updates internal variable.

@@ -375,15 +375,7 @@ public class Printer {
     }
 
     public int getFilamentTemperature() {
-//        if (printPrepared) {
         return Integer.parseInt(generator.getValue("print_temperature"));
-//        } else {
-//            return FilamentControler.getColorTemperature(
-//                    Base.getMainWindow().getMachine().getDriver().getCoilText(),
-//                    "medium", 0.4,
-//                   Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-//            );
-//        }
     }
 
     public boolean isReadyToGenerateGCode() {

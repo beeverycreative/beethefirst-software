@@ -7,6 +7,7 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProLight;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProRegular;
+import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.machine.MachineInterface;
 
@@ -30,7 +31,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
     private boolean jLabel4Bool = true;
     private boolean jLabel6Bool = false;
     private final int NUMBER_PRINTS_LIMIT = 15;
-    
 
     public ButtonsPanel(replicatorg.app.ui.MainWindow mainWindow) {
         initComponents();
@@ -138,10 +138,10 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     public void connect() {
-        updateFromState(Base.getMainWindow().getMachineInterface(), null);
+        updateFromState(Base.getMainWindow().getMachineInterface());
     }
 
-    private void updateFromState(final MachineInterface s, final MachineInterface machine) {
+    private void updateFromState(final MachineInterface s) {
 
         if (!s.isConnected()) {
             setMessage("is disconnected");
@@ -159,14 +159,13 @@ public class ButtonsPanel extends javax.swing.JPanel {
             }
 
             jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_2.png")));
-            //jLabel1Bool = true;
             setMessage("is connected");
         }
     }
 
     public void updateFromMachine(final MachineInterface machine) {
         if (machine != null) {
-            updateFromState(machine, machine);
+            updateFromState(machine);
         }
     }
 
@@ -177,7 +176,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public boolean areIOFunctionsBlocked() {
         return models_pressed;
     }
-    
+
     public void bMaintenanceSetEnabled(boolean enabled) {
         bMaintenance.setEnabled(enabled);
     }
@@ -409,7 +408,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jLabel1MouseExited
 
     private void bModelsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bModelsMousePressed
-
         if (!models_pressed) {
             bModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
             jLabel6Bool = true;
@@ -419,10 +417,8 @@ public class ButtonsPanel extends javax.swing.JPanel {
             sceneDP.updateBed(Base.getMainWindow().getBed());
             editor.updateDetailsCenter(sceneDP);
             Base.getMainWindow().getCanvas().unPickAll();
-//            editor.handleGallery();
             editor.handleNewModel();
         }
-
     }//GEN-LAST:event_bModelsMousePressed
 
     private void bMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMaintenanceMousePressed
@@ -448,29 +444,20 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_bMaintenanceMousePressed
 
     private void bQuickGuideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuickGuideMousePressed
-
         Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
-
         TourWelcome p = new TourWelcome();
         p.setVisible(true);
-
         jLabel5Bool = false;
         bQuickGuide.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_7.png")));
     }//GEN-LAST:event_bQuickGuideMousePressed
 
     private void jLabel1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MousePressed
-        MachineInterface machine = Base.getMainWindow().getMachineInterface();
-
-        if (machine.getModel().getMachineBusy()) {
-            editor.showFeedBackMessage("moving");
-        } else {//&& Base.isPrinting == false 
-            if (!print_pressed && editor.validatePrintConditions()
-                    || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
-                jLabel1Bool = false;
-                print_pressed = true;
-                editor.handlePrintPanel();
-            }
+        if (!print_pressed && editor.validatePrintConditions()) {
+            jLabel1.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_pressed_2.png")));
+            jLabel1Bool = false;
+            print_pressed = true;
+            PrintPanel p = new PrintPanel();
+            p.setVisible(true);
         }
     }//GEN-LAST:event_jLabel1MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -47,10 +47,8 @@ import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.logging.Level;
-
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -66,23 +64,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.undo.CompoundEdit;
-
 import net.iharder.dnd.FileDrop;
 import net.miginfocom.swing.MigLayout;
 import replicatorg.app.Base;
 import replicatorg.app.Base.InitialOpenBehavior;
 import replicatorg.app.MRUList;
-import replicatorg.drivers.OnboardParameters;
 import replicatorg.machine.MachineInterface;
-import replicatorg.machine.MachineListener;
 import replicatorg.machine.MachineLoader;
-import replicatorg.machine.MachineProgressEvent;
-import replicatorg.machine.MachineState;
-import replicatorg.machine.MachineStateChangeEvent;
-import replicatorg.machine.MachineToolStatusEvent;
 import replicatorg.plugin.toolpath.ToolpathGenerator;
 import replicatorg.plugin.toolpath.ToolpathGenerator.GeneratorEvent;
-
 import com.apple.mrj.MRJAboutHandler;
 import com.apple.mrj.MRJApplicationUtils;
 import com.apple.mrj.MRJOpenDocumentHandler;
@@ -105,52 +95,30 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-
 import replicatorg.app.CategoriesList;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
-import replicatorg.app.ui.mainWindow.ButtonsPanel;
-import replicatorg.app.ui.mainWindow.ModelsOperationCenter;
-import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
-import replicatorg.app.ui.mainWindow.MessagesPopUp;
-import replicatorg.app.ui.mainWindow.ModelsDetailsPanel;
-import replicatorg.app.ui.mainWindow.ModelsOperationCenterScale;
-import replicatorg.app.ui.mainWindow.UpdateChecker;
-import replicatorg.app.ui.panels.About;
-import replicatorg.app.ui.panels.BuildStatus;
-import replicatorg.app.ui.panels.ControlPanel;
-
-import replicatorg.app.ui.panels.Gallery;
-import replicatorg.app.ui.panels.Maintenance;
-import replicatorg.app.ui.panels.PreferencesPanel;
-import replicatorg.app.ui.panels.PrintPanel;
-import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.ui.panels.TourWelcome;
-import replicatorg.app.ui.panels.Warning;
-import replicatorg.app.ui.panels.WelcomeQuickguide;
+import replicatorg.app.ui.mainWindow.*;
+import replicatorg.app.ui.panels.*;
 import replicatorg.app.util.ExtensionFilter;
-import replicatorg.drivers.EstimationDriver;
-
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
-import replicatorg.util.Units_and_Numbers;
+import replicatorg.util.UnitsAndNumbers;
 
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
  */
 public class MainWindow extends JFrame implements MRJAboutHandler,
-        MRJQuitHandler, MRJPrefsHandler, MRJOpenDocumentHandler,
-        MachineListener, ChangeListener, ToolpathGenerator.GeneratorListener, ComponentListener, MouseListener, MouseMotionListener, WindowListener, FocusListener {
+        MRJQuitHandler, MRJPrefsHandler, MRJOpenDocumentHandler, ChangeListener, ToolpathGenerator.GeneratorListener, ComponentListener, MouseListener, MouseMotionListener, WindowListener, FocusListener {
 
     private static final long serialVersionUID = 4144538738677712284L;
     static final String WINDOW_TITLE_OK = "BEESOFT";
@@ -193,7 +161,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     JMenu changeToolheadMenu = new JMenu("Swap Toolhead in .gcode");
     JMenu machineMenu;
     public boolean buildOnComplete = true;
-    private boolean preheatMachine = false;
     public boolean building;
     public boolean simulating;
     public boolean debugging;
@@ -326,8 +293,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         setLocationRelativeTo(null);
         pack();
         // Have UI elements listen to machine state.
-        machineLoader.addMachineListener(this);
-        machineLoader.addMachineListener(machineStatusPanel);
+        //machineLoader.addMachineListener(this);
+        //machineLoader.addMachineListener(machineStatusPanel);
     }
 
     public PrintBed getBed() {
@@ -361,20 +328,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public boolean validatePrintConditions() {
         for (int i = 0; i < bed.getModels().size(); i++) {
             if (bed.getModels().get(i).getEditer().modelInvalidPosition()) {
-//                Warning p = new Warning();
-//                p.setVisible(true);
-//                p.setMessage("MessageOutOfBounds");
                 showFeedBackMessage("MessageOutOfBounds");
                 return false;
-            }/*
-            else if (!bed.getModels().get(i).getEditer().modelInBed()) {
-//                Warning p = new Warning();
-//                p.setVisible(true);
-//                p.setMessage("MessageNotInBed");
-                showFeedBackMessage("MessageNotInBed");
-                return false;
             }
-            */
         }
         return true;
     }
@@ -728,7 +684,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 } else {//&& Base.isPrinting == false 
                     if (editor.validatePrintConditions()
                             || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                        editor.handlePrintPanel();
+                        PrintPanel p = new PrintPanel();
+                        p.setVisible(true);
                     }
                 }
             }
@@ -932,15 +889,15 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                         double width = model.getEditer().getWidth();
                         if (ProperDefault.get("measures").equals("inches")) {
-                            width = Units_and_Numbers.millimetersToInches(width);
+                            width = UnitsAndNumbers.millimetersToInches(width);
                         }
                         double depth = model.getEditer().getDepth();
                         if (ProperDefault.get("measures").equals("inches")) {
-                            depth = Units_and_Numbers.millimetersToInches(depth);
+                            depth = UnitsAndNumbers.millimetersToInches(depth);
                         }
                         double height = model.getEditer().getHeight();
                         if (ProperDefault.get("measures").equals("inches")) {
-                            height = Units_and_Numbers.millimetersToInches(height);
+                            height = UnitsAndNumbers.millimetersToInches(height);
                         }
 
                         mOCS.setXValue(df.format(width));
@@ -1075,7 +1032,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 } else {
                     if (validatePrintConditions() && Base.getMainWindow().getBed().getNumberModels() > 0
                             || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                        handlePrintPanel();
+                        PrintPanel printPanel = new PrintPanel();
                     }
                 }
             }
@@ -1198,45 +1155,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     JMenuItem realtimeControlItem = new JMenuItem("Open real time controls window...");
     JMenuItem infoPanelItem = new JMenuItem("Machine information...");
 
-    ///  called when the preheat button is toggled
-    protected void handlePreheat() {
-        preheatMachine = !preheatMachine;
-        doPreheat(preheatMachine);
-    }
-
-    /**
-     * Function enables/disables preheat and updates gui to reflect the state of
-     * preheat.
-     *
-     * @param preheat true/false to indicate if we want preheat running
-     */
-    public void doPreheat(boolean preheat) {
-        int tool0Target = 220;
-        MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-
-        if (machine != null && !building) {
-            // To heat
-            if (preheat) {
-                Base.writeLog("Heating ...", this.getClass());
-                machine.runCommand(new replicatorg.drivers.commands.SelectTool(0));
-                //turn off blower before heating
-                machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-                machine.runCommand(new replicatorg.drivers.commands.SetTemperature(tool0Target));
-            }
-            // To cooldown
-            if (!preheat) {
-                machine.runCommand(new replicatorg.drivers.commands.SelectTool(0));
-                machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-            }
-
-        } else {
-            if (machine != null) {
-                machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-            }
-        }
-
-    }
-
     /**
      * Convenience method, see below.
      *
@@ -1289,15 +1207,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         BufferedImage bi = robot.createScreenCapture(new Rectangle(100, 100));
         ImageIO.write(bi, "jpg", new File("imageTest.jpg"));
 
-    }
-
-    public void handlePrintPanel() {
-        this.setEnabled(false);
-        boolean localPrint = Boolean.valueOf(ProperDefault.get("localPrint"));
-        handleGenBuild();
-
-        PrintPanel p = new PrintPanel();
-        p.setVisible(true);
     }
 
     public void handleMaintenance() {
@@ -1359,133 +1268,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         }
     };
 
-    public void handleGenBuild() {
-
-        Base.writeLog("Starting building ...", this.getClass());
-        buildOnComplete = true;
-        doPreheat(Boolean.valueOf(ProperDefault.get("build.doPreheat")));
-        //machineLoader.getMachineInterface().runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.BLOCK));
-
-        // build specific stuff
-        building = true;
-        setEditorBusy(false);
-        doPreheat(true);
-
-        // start our building thread.
-        message("Building...");
-        buildStart = new Date();
-
-        // Set Building State
-        this.machineLoader.buildDirect("Print");
-
-    }
-
-    public void handleBuild() {
-        if (building) {
-            return;
-        }
-        if (simulating) {
-            return;
-        }
-
-        BuildFlag buildFlag = BuildFlag.JUST_BUILD;
-
-        if (buildFlag == BuildFlag.NONE) {
-            return; //exit ro cancel clicked
-        }
-
-        if (buildFlag == BuildFlag.GEN_AND_BUILD) {
-            //'rewrite' clicked
-            buildOnComplete = true;
-            Cursor old = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            doPreheat(Boolean.valueOf(ProperDefault.get("build.doPreheat")));
-            //machineLoader.getMachineInterface().getDriver().executeGCodeLine("M300");
-            setCursor(old);
-            this.setEnabled(false);
-        }
-        if (buildFlag == BuildFlag.JUST_BUILD) {
-            //'use existing' clicked
-//            doBuild();
-        }
-    }
-
     public MachineInterface getMachine() {
         return this.machineLoader.getMachineInterface();
-    }
-    private Date buildStart = null;
-
-    @Override
-    public void machineStateChanged(MachineStateChangeEvent evt) {
-
-        if (Base.logger.isLoggable(Level.FINE)) {
-            Base.logger.log(Level.FINEST, "Machine state changed to {0}", evt.getState().getState());
-        }
-
-        if (building) {
-            if (evt.getState().canPrint()) {
-                final MachineState endState = evt.getState();
-                building = false;
-
-                SwingUtilities.invokeLater(new Runnable() {
-                    // TODO: Does this work?
-                    @Override
-                    public void run() {
-                        if (endState.canPrint()) {
-                            notifyBuildComplete(buildStart, new Date());
-                        } else {
-                            notifyBuildAborted(buildStart, new Date());
-                        }
-
-                        buildingOver();
-                    }
-                });
-            } else if (evt.getState().getState() == MachineState.State.NOT_ATTACHED) {
-                building = false; // Don't keep the building state when disconnecting from the machine
-                buildingOver();
-            }
-        }
-
-        boolean showParams = evt.getState().isConfigurable()
-                && machineLoader.getDriver() instanceof OnboardParameters
-                && ((OnboardParameters) machineLoader.getDriver()).hasFeatureOnboardParameters();
-
-        if (Base.logger.isLoggable(Level.FINE)) {
-            if (!showParams) {
-                String cause = new String();
-                if (evt.getState().isConfigurable()) {
-                    if (!machineLoader.isLoaded()) {
-                        cause += "[no machine] ";
-                    } else {
-                        if (!(machineLoader.getDriver() instanceof OnboardParameters)) {
-                            cause += "[driver doesn't implement onboard parameters] ";
-                        } else if (!machineLoader.getDriver().isInitialized()) {
-                            cause += "[machine not initialized] ";
-                        } else if (!((OnboardParameters) machineLoader.getDriver()).hasFeatureOnboardParameters()) {
-                            cause += "[firmware doesn't support onboard parameters]";
-                        }
-                    }
-                    Base.logger.log(Level.FINEST, "Couldn''t show onboard parameters: {0}", cause);
-                }
-            }
-        }
-
-        onboardParamsItem.setVisible(showParams);
-        onboardParamsItem.setEnabled(showParams);
-
-        boolean showRealtimeTuning
-                = evt.getState().isConnected();
-        realtimeControlItem.setVisible(showRealtimeTuning);
-        realtimeControlItem.setEnabled(showRealtimeTuning);
-
-        // TODO: When should this be enabled?
-        infoPanelItem.setEnabled(true);
-
-        // Advertise machine name
-        String name = "Not Connected";
-        if (evt.getState().isConnected() && machineLoader.isLoaded()) {
-            name = machineLoader.getMachineInterface().getMachineName();
-        }
     }
 
     public void setEditorBusy(boolean isBusy) {
@@ -1502,63 +1286,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     @Override
     public boolean isEnabled() {
         return editorEnabled;
-    }
-
-    /**
-     * give a prompt and stuff about the build being done with elapsed time,
-     * etc.
-     */
-    private void notifyBuildComplete(Date started, Date finished) {
-        assert started != null;
-        assert finished != null;
-
-        long elapsed = (finished.getTime() - started.getTime()) + 1;
-
-        String time_string = EstimationDriver.getBuildTimeString(elapsed);
-        buildTime = time_string;
-        String message = "Build finished.\n\nCompleted in " + time_string;
-
-        Base.writeLog("Build finished. Completed in " + time_string, this.getClass());
-
-        building = false;
-        buildingOver();
-        Base.getMachineLoader().buildDirect("Ready");
-        setEditorBusy(true);
-        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-        ProperDefault.put("dateLastPrint", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-        ProperDefault.put("nTotalPrints", String.valueOf(Integer.valueOf(ProperDefault.get("nTotalPrints")) + 1));
-        sceneDP.updateBedInfo();
-
-    }
-
-    private void notifyBuildAborted(Date started, Date aborted) {
-        assert started != null;
-        assert aborted != null;
-
-        long elapsed = aborted.getTime() - started.getTime();
-
-        String message = "Build aborted.\n\n";
-        message += "Stopped after "
-                + EstimationDriver.getBuildTimeString(elapsed);
-
-        // Highlight the line at which the user aborted...
-        int atWhichLine = machineLoader.getMachineInterface().getLinesProcessed();
-
-        BuildStatus p = new BuildStatus();
-        p.setVisible(true);
-        p.setCompletionMessage(EstimationDriver.getBuildTimeString(elapsed));
-    }
-
-    // synchronized public void buildingOver()
-    public void buildingOver() {
-        message("Done building.");
-
-        // update buttons & menu's
-        doPreheat(false);
-
-        building = false;
-
-        setEditorBusy(false);
     }
 
     class SimulationThread extends Thread {
@@ -1632,7 +1359,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         if (machineLoader.isLoaded()) {
             machineLoader.getMachineInterface().stopAll();
         }
-        doPreheat(false);
         building = false;
         simulating = false;
         buildOnComplete = false;
@@ -1642,28 +1368,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void handleReset() {
         if (machineLoader.isLoaded()) {
             machineLoader.getMachineInterface().reset();
-        }
-    }
-
-    public void handlePause() {
-        doPause();
-    }
-
-    /**
-     * Pause the applet but don't kill its window.
-     */
-    public void doPause() {
-        if (machineLoader.getMachineInterface().isPaused()) {
-
-            if (simulating) {
-                message("Simulating...");
-            } else if (building) {
-                message("Building...");
-            }
-
-        } else {
-            int atWhichLine = machineLoader.getMachineInterface().getLinesProcessed();
-            message("Paused at line " + atWhichLine + ".");
         }
     }
 
@@ -2238,13 +1942,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         machineLoader.connect(true); // Just performs a setState 
     }
 
-    @Override
-    public void machineProgress(MachineProgressEvent event) {
-    }
-
-    @Override
-    public void toolStatusChanged(MachineToolStatusEvent event) {
-    }
     PrintBed currentElement;
 
     @Override

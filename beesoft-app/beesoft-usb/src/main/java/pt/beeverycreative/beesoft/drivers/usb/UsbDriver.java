@@ -80,6 +80,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private boolean isBusy = true;
     private int readyCount = 0;
     protected static final Lock dispatchCommandLock = new ReentrantLock();
+    private String lastStatusMessage;
 
     /**
      * USBDriver high level definition.
@@ -451,6 +452,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private void processStatus(String status) {
 
         boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving;
+        lastStatusMessage = status;
 
         if (status.contains("S:") == false) {
             isBusy = true;

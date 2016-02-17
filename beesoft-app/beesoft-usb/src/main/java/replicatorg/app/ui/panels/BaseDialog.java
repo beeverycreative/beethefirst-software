@@ -7,6 +7,7 @@ import java.awt.Window;
 import javax.swing.BorderFactory;
 import replicatorg.app.Base;
 import replicatorg.drivers.Driver;
+import replicatorg.machine.model.MachineModel;
 import replicatorg.machine.model.ToolModel;
 
 /**
@@ -69,6 +70,34 @@ public abstract class BaseDialog extends javax.swing.JDialog {
 
     }
 
+    protected class PrintingFeedbackThread extends Thread {
+
+        private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+        private final MachineModel model = Base.getMainWindow().getMachineInterface().getModel();
+        private boolean stop = false;
+
+        public PrintingFeedbackThread() {
+            super(PrintingFeedbackThread.class.getSimpleName());
+        }
+
+        @Override
+        public void run() {
+            while (stop == false) {
+                if (driver.isBusy() || model.getMachinePrinting()) {
+                    showMessage();
+                } else {
+                    resetFeedbackComponents();
+                }
+                Base.hiccup(100);
+            }
+        }
+
+        public void kill() {
+            stop = true;
+            this.interrupt();
+        }
+    }
+
     protected class BusyFeedbackThread extends Thread {
 
         private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
@@ -80,8 +109,6 @@ public abstract class BaseDialog extends javax.swing.JDialog {
 
         @Override
         public void run() {
-            driver.setBusy(true);
-            //Base.hiccup(1000); // initial wait
             while (stop == false) {
                 if (driver.isBusy()) {
                     showMessage();

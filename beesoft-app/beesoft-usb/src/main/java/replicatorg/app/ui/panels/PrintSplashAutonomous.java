@@ -623,16 +623,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         return temp;
     }
 
-    public void abortPrint() {
-        dispose();
-        Base.getMainWindow().setEnabled(true);
-        Base.getMainWindow().doPreheat(false);
-        Base.getMainWindow().handleStop();
-//        Base.getMainWindow().doStop();
-        Base.getMainWindow().getButtons().updatePressedStateButton("print");
-        enableSleep();
-    }
-
     public void startUnload() {
         jProgressBar1.setVisible(false);
         iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
@@ -1141,8 +1131,8 @@ public class PrintSplashAutonomous extends BaseDialog {
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    
-                    while(machine.getDriver().getMachineReady() == false) {
+
+                    while (machine.getDriver().getMachineReady() == false) {
                         Base.hiccup(500);
                     }
 
@@ -1554,10 +1544,7 @@ class PauseAssistantThread extends Thread {
     public void run() {
         boolean temperatureAchieved = false;
 
-        try {
-            machine.getDriver().setTemperatureBlocking(temperatureGoal + 5);
-        } catch (RetryException ex) {
-        }
+        machine.getDriver().setTemperatureBlocking(temperatureGoal + 5);
         printPanel.setHeatingInfo();
 
         printPanel.resetProgressBar();
@@ -1576,8 +1563,8 @@ class PauseAssistantThread extends Thread {
         if (printPanel.isShutdown()) {
             printPanel.activateLoadingIcons();
         }
-        
-        while(machine.getDriver().getMachinePaused()) {
+
+        while (machine.getDriver().getMachinePaused()) {
             Base.hiccup(100);
         }
 
