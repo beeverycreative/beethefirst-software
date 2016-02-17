@@ -2932,7 +2932,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             feedbackWindow.setFeedback1(Feedback.FLASHING_MAIN_MESSAGE);
-            backupConfig();
+            
+            if(firmwareVersion.equals(new Version()) == false) {
+                backupConfig();
+            }
+            
             Base.writeLog("Carrying on with firmware flash", this.getClass());
 
             sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);

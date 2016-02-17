@@ -130,7 +130,6 @@ import replicatorg.app.ui.panels.BuildStatus;
 import replicatorg.app.ui.panels.ControlPanel;
 
 import replicatorg.app.ui.panels.Gallery;
-import replicatorg.app.ui.panels.Help;
 import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PreferencesPanel;
 import replicatorg.app.ui.panels.PrintPanel;
@@ -1116,18 +1115,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             }
         });
         menu.add(item);
-
-        item = newJMenuItem("Help", 'H');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Help p = new Help();
-                p.setVisible(true);
-            }
-        });
-//        menu.add(item);
 
         item = newJMenuItem("Quick Guide ", 'Q');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
