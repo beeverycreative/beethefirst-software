@@ -221,7 +221,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Launching firmware!", this.getClass());
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
-                dispatchCommand(LAUNCH_FIRMWARE); // Launch firmware
+                dispatchCommand(LAUNCH_FIRMWARE, COM.NO_RESPONSE); // Launch firmware
                 hiccup(100, 0);
                 closePipe(pipes);
             } else {
@@ -1852,6 +1852,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private void updateMachineInfo() {
         String firmware;
+        int retry = 3;
         serialNumberString = "0000000000";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
@@ -1866,11 +1867,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         //get firmware version
         //check first for un-initialized serial or firmware version
         if (!serialNumberString.contains("0000000000")) {
-            //sendCommand(GET_FIRMWARE_VERSION);
-            //hiccup(10, 0);
-            //String firmware = readResponse();
-            firmware = dispatchCommand(GET_FIRMWARE_VERSION);
-            firmwareVersion = Version.fromMachineAtFirmware(firmware);
+            while (firmwareVersion.getPrinter() == PrinterInfo.UNKNOWN && retry > 0) {
+                firmware = dispatchCommand(GET_FIRMWARE_VERSION);
+                firmwareVersion = Version.fromMachineAtFirmware(firmware);
+                retry--;
+            }
             System.out.println("firmware_version: " + firmwareVersion);
 
         } else {

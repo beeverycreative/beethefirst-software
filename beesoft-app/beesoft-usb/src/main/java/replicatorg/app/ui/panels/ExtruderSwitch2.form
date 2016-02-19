@@ -25,94 +25,16 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jPanel2" alignment="0" min="-2" pref="571" max="-2" attributes="0"/>
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <Component id="jPanel1" max="32767" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              <Component id="jPanel2" min="-2" pref="26" max="-2" attributes="0"/>
-          </Group>
+          <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanel2">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="5" green="cb" red="ff" type="rgb"/>
-        </Property>
-        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[20, 38]"/>
-        </Property>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[567, 38]"/>
-        </Property>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="bQuit" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="405" max="32767" attributes="0"/>
-                  <Component id="bNext" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="bNext" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bQuit" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JLabel" name="bNext">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="SEGUINTE"/>
-            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_21.png"/>
-            </Property>
-            <Property name="enabled" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bNextMousePressed"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bNextMouseExited"/>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bNextMouseEntered"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="bQuit">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="SAIR"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bQuitMouseEntered"/>
-            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bQuitMouseExited"/>
-            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bQuitMousePressed"/>
-          </Events>
-        </Component>
-      </SubComponents>
-    </Container>
     <Container class="javax.swing.JPanel" name="jPanel1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -125,24 +47,16 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="jSeparator2" alignment="1" max="32767" attributes="0"/>
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="pText1" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
-                          <Component id="jProgressBar1" min="-2" pref="375" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
+                  <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
+                  <Component id="jProgressBar1" min="-2" pref="375" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="pText2" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="pText2" min="-2" pref="547" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lTitle" min="-2" pref="180" max="-2" attributes="0"/>
@@ -158,6 +72,15 @@
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="182" max="-2" attributes="0"/>
               </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="pText1" min="-2" pref="547" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="jPanel2" min="-2" pref="571" max="-2" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -168,17 +91,18 @@
                       <Component id="jPanel3" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="lTitle" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="jProgressBar1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="jSeparator2" min="-2" pref="15" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="pText1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                  <Component id="pText2" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                  <Component id="pText1" pref="31" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="pText2" pref="31" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <Component id="jPanel2" min="-2" pref="26" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -316,6 +240,79 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Heating...Please wait."/>
               </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="jPanel2">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="5" green="cb" red="ff" type="rgb"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 38]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[567, 38]"/>
+            </Property>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="bQuit" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="405" max="32767" attributes="0"/>
+                      <Component id="bNext" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="bNext" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bQuit" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="bNext">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="SEGUINTE"/>
+                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_disabled_21.png"/>
+                </Property>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="horizontalTextPosition" type="int" value="0"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bNextMousePressed"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bNextMouseExited"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bNextMouseEntered"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="bQuit">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="SAIR"/>
+                <Property name="horizontalTextPosition" type="int" value="0"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bQuitMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bQuitMouseExited"/>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bQuitMousePressed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

@@ -488,7 +488,10 @@ public class UsbDriver extends DriverBaseImplementation {
 
     @Override
     public void setBusy(boolean busy) {
-        isBusy = busy;
+        // TODO: change this to accept no arguments and set only to true
+        if (busy == true) {
+            isBusy = busy;
+        }
     }
 
     /**
@@ -549,7 +552,7 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("*closePipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
         }
     }
-    
+
     @Override
     public String getLastStatusMessage() {
         return lastStatusMessage;

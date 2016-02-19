@@ -40,6 +40,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
      */
     public WelcomeSplash(MainWindow wind) {
         initComponents();
+        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         Base.welcomeSplashVisible = true;
         Base.writeLog("Welcome Splash started ...", this.getClass());
         window = wind;
@@ -76,8 +77,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
         int stringPixelSize = (img.getGraphics().getFontMetrics()).stringWidth("Version: " + Base.VERSION_BEESOFT);
         g.drawString("Version: " + Base.VERSION_BEESOFT, bimage.getWidth() - 40 - stringPixelSize, bimage.getHeight() - 10);
         g.dispose();
-        
-        
+
         image = new ImageIcon(bimage);
         // Sets bar preferences and size.
         // Bar width is equal to image width. Height has value = 5

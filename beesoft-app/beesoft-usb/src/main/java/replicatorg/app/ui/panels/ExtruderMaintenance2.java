@@ -2,6 +2,8 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -62,7 +64,7 @@ public class ExtruderMaintenance2 extends BaseDialog {
     private void doCancel() {
         dispose();
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        driver.dispatchCommand("M704");
+        driver.dispatchCommand("M704", COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")

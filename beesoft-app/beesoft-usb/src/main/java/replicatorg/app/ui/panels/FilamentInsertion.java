@@ -100,6 +100,7 @@ public class FilamentInsertion extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Moving to load/unload position", this.getClass());
+        driver.setBusy(true);
         driver.dispatchCommand("M703", COM.NO_RESPONSE);
         disposeThread.start();
     }

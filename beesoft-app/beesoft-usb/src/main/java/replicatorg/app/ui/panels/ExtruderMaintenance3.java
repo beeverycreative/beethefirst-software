@@ -45,14 +45,13 @@ public class ExtruderMaintenance3 extends BaseDialog {
         lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title3"));
 
         String text1 = "<html>"
-                + "<br>"
                 + Languager.getTagValue(1, "ExtruderMaintenance", "Info3a")
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderMaintenance", "Info3b")
                 + "</html>";
         pText1.setText(text1);
 
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info_Warning3") + "</b></html>";
+        String warning = "<html><b>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info_Warning3") + "</b></html>";
 
         pText2.setText(warning);
 
@@ -71,10 +70,6 @@ public class ExtruderMaintenance3 extends BaseDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pButtons = new javax.swing.JPanel();
-        bBack = new javax.swing.JLabel();
-        bNext = new javax.swing.JLabel();
-        bQuit = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         lTitle = new javax.swing.JLabel();
         pExtruder = new javax.swing.JLabel();
@@ -83,14 +78,67 @@ public class ExtruderMaintenance3 extends BaseDialog {
         pText2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
+        pButtons = new javax.swing.JPanel();
+        bBack = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
+        bQuit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setModal(true);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(567, 501));
+        setPreferredSize(new java.awt.Dimension(571, 422));
+
+        jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.setMinimumSize(new java.awt.Dimension(10, 10));
+        jPanel1.setPreferredSize(new java.awt.Dimension(571, 390));
+
+        lTitle.setText("EM_Start");
+        lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+
+        pExtruder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/remove_lid_sized.png"))); // NOI18N
+
+        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
+
+        pText1.setText("Temperatura da Cabeca de Impressao");
+
+        pText2.setText("Suspendisse potenti.");
+        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
+        jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
+        jPanel4.setRequestFocusEnabled(false);
+
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel15MousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(51, 51, 51)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(9, Short.MAX_VALUE))
+        );
 
         pButtons.setBackground(new java.awt.Color(255, 203, 5));
-        pButtons.setMinimumSize(new java.awt.Dimension(20, 38));
-        pButtons.setPreferredSize(new java.awt.Dimension(567, 38));
+        pButtons.setMinimumSize(new java.awt.Dimension(20, 26));
+        pButtons.setPreferredSize(new java.awt.Dimension(567, 26));
 
         bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bBack.setText("ANTERIOR");
@@ -146,7 +194,7 @@ public class ExtruderMaintenance3 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -163,76 +211,30 @@ public class ExtruderMaintenance3 extends BaseDialog {
                 .addGap(20, 20, 20))
         );
 
-        jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-
-        lTitle.setText("EM_Start");
-        lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
-        pExtruder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/remove_lid_sized.png"))); // NOI18N
-
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
-
-        pText1.setText("Temperatura da Cabeca de Impressao");
-
-        pText2.setText("Suspendisse potenti.");
-        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
-        jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel4.setRequestFocusEnabled(false);
-
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel15MousePressed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(128, 128, 128)
-                        .addComponent(pExtruder))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(pText1)))
+                .addGap(128, 128, 128)
+                .addComponent(pExtruder)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(pButtons, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,25 +247,22 @@ public class ExtruderMaintenance3 extends BaseDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pText1)
-                .addGap(6, 6, 6)
-                .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(pButtons, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
         );
 
         pack();

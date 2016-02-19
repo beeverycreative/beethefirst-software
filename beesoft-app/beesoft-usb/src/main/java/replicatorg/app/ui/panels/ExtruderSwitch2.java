@@ -7,7 +7,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
-import pt.beeverycreative.beesoft.filaments.Filament;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -28,12 +27,10 @@ import replicatorg.drivers.Driver;
 public class ExtruderSwitch2 extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private static final int GOAL_TEMPERATURE = 200;
     private final TemperatureThread updateThread = new TemperatureThread();
     private final Nozzle selectedNozzle;
-    private final Filament selectedFilament;
 
-    public ExtruderSwitch2(Nozzle selectedNozzle, Filament selectedFilament) {
+    public ExtruderSwitch2(Nozzle selectedNozzle) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
@@ -42,11 +39,13 @@ public class ExtruderSwitch2 extends BaseDialog {
         evaluateInitialConditions();
         centerOnScreen();
         moveToPosition();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.selectedNozzle = selectedNozzle;
-        this.selectedFilament = selectedFilament;
 
         this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                updateThread.start();
+            }
             @Override
             public void windowClosed(WindowEvent e) {
                 updateThread.kill();
@@ -67,13 +66,11 @@ public class ExtruderSwitch2 extends BaseDialog {
         String text1, warning;
 
         text1 = "<html>"
-                + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info2a")
-                + "<br>"
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info2b")
                 + "</html>";
-        warning = "<html><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
+        warning = "<html><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
 
         pText1.setText(text1);
         pText2.setText(warning);
@@ -90,7 +87,7 @@ public class ExtruderSwitch2 extends BaseDialog {
             jProgressBar1.setValue(nozzleTemperature);
         }
 
-        if (nozzleTemperature >= GOAL_TEMPERATURE) {
+        if (nozzleTemperature >= TEMPERATURE_GOAL) {
             Base.writeLog("Temperature achieved...", this.getClass());
             updateThread.kill();
             disableMessageDisplay();
@@ -111,14 +108,13 @@ public class ExtruderSwitch2 extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
-        driver.dispatchCommand("M703 S" + GOAL_TEMPERATURE + 5);
+        driver.dispatchCommand("M703 S" + (TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
         disableMessageDisplay();
-        updateThread.start();
         jProgressBar1.setForeground(new Color(255, 203, 5));
-        jProgressBar1.setMaximum(GOAL_TEMPERATURE);
+        jProgressBar1.setMaximum(TEMPERATURE_GOAL);
     }
 
     private void doCancel() {
@@ -139,9 +135,6 @@ public class ExtruderSwitch2 extends BaseDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        bNext = new javax.swing.JLabel();
-        bQuit = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         lTitle = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -153,67 +146,13 @@ public class ExtruderSwitch2 extends BaseDialog {
         jLabel15 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         pWarning = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        bNext = new javax.swing.JLabel();
+        bQuit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
         setResizable(false);
-
-        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
-        jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
-
-        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bNext.setText("SEGUINTE");
-        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        bNext.setEnabled(false);
-        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bNextMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bNextMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bNextMouseEntered(evt);
-            }
-        });
-
-        bQuit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bQuit.setText("SAIR");
-        bQuit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bQuit.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bQuitMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bQuitMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bQuitMousePressed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 405, Short.MAX_VALUE)
-                .addComponent(bNext)
-                .addGap(12, 12, 12))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bNext)
-                    .addComponent(bQuit))
-                .addGap(20, 20, 20))
-        );
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
@@ -286,26 +225,78 @@ public class ExtruderSwitch2 extends BaseDialog {
                 .addGap(0, 0, 0))
         );
 
+        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
+        jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
+
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("SEGUINTE");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNextMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bNextMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNextMouseEntered(evt);
+            }
+        });
+
+        bQuit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bQuit.setText("SAIR");
+        bQuit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bQuit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bQuitMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bQuitMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bQuitMousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(bQuit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 405, Short.MAX_VALUE)
+                .addComponent(bNext)
+                .addGap(12, 12, 12))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bNext)
+                    .addComponent(bQuit))
+                .addGap(20, 20, 20))
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(pText1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(96, 96, 96)
-                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(96, 96, 96)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -316,6 +307,13 @@ public class ExtruderSwitch2 extends BaseDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(182, 182, 182))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,25 +329,22 @@ public class ExtruderSwitch2 extends BaseDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pText1)
-                .addGap(6, 6, 6)
-                .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(38, 38, 38))
+                .addComponent(pText1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -374,7 +369,7 @@ public class ExtruderSwitch2 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            ExtruderSwitch3 p = new ExtruderSwitch3(selectedNozzle, selectedFilament);
+            ExtruderSwitch3 p = new ExtruderSwitch3(selectedNozzle);
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed

@@ -142,17 +142,17 @@ public class ExtruderMaintenance5 extends BaseDialog {
         setBackground(new java.awt.Color(248, 248, 248));
         setMaximumSize(new java.awt.Dimension(32767, 32767));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(567, 501));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setMinimumSize(new java.awt.Dimension(567, 501));
-        jPanel1.setPreferredSize(new java.awt.Dimension(567, 501));
+        jPanel1.setMinimumSize(new java.awt.Dimension(0, 0));
         jPanel1.setRequestFocusEnabled(false);
 
         pText2.setBackground(new java.awt.Color(248, 248, 248));
-        pText2.setText("Suspendisse potenti. ");
+        pText2.setText("description");
         pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        pText2.setMaximumSize(new java.awt.Dimension(9999, 9999));
+        pText2.setMinimumSize(new java.awt.Dimension(0, 0));
 
         lTitle.setBackground(new java.awt.Color(248, 248, 248));
         lTitle.setText("INSERIR FILAMENTO");
@@ -160,6 +160,8 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
         pText1.setBackground(new java.awt.Color(248, 248, 248));
         pText1.setText("Como descarregar ou carregar o filamento");
+        pText1.setMaximumSize(new java.awt.Dimension(999, 999));
+        pText1.setMinimumSize(new java.awt.Dimension(20, 20));
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
@@ -373,9 +375,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(pText1)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(pText1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -390,12 +390,12 @@ public class ExtruderMaintenance5 extends BaseDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pText1)
+                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -406,7 +406,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -439,12 +439,13 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
+            driver.setCoilText("none");
             doCancel();
         }
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
-        if(bBack.isEnabled()) {
+        if (bBack.isEnabled()) {
             ExtruderMaintenance4 extMain = new ExtruderMaintenance4();
             dispose();
             extMain.setVisible(true);

@@ -226,11 +226,6 @@
                                   <Component id="lNozzleComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="nozzleComboBox" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="filamentComboBox" min="-2" pref="174" max="-2" attributes="0"/>
-                                  <Component id="lFilamentComboBox" min="-2" max="-2" attributes="0"/>
-                              </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -245,15 +240,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jSeparator2" min="-2" pref="15" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="lNozzleComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lFilamentComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="lNozzleComboBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="filamentComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="nozzleComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="nozzleComboBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="58" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -297,34 +286,10 @@
                   </StringArray>
                 </Property>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nozzleComboBoxActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="filamentComboBox">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="f8" green="f8" red="f8" type="rgb"/>
-                </Property>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
-                    <StringItem index="0" value="Item 1"/>
-                    <StringItem index="1" value="Item 2"/>
-                    <StringItem index="2" value="Item 3"/>
-                    <StringItem index="3" value="Item 4"/>
-                  </StringArray>
-                </Property>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lNozzleComboBox">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Nozzle (mm)"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="lFilamentComboBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Filaments"/>
               </Properties>
             </Component>
           </SubComponents>

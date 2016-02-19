@@ -11,29 +11,21 @@ import javax.xml.bind.annotation.XmlElement;
 //@XmlAccessorType(XmlAccessType.FIELD)
 public class Nozzle implements Comparable {
 
-    private String type;
     private int sizeInMicrons;
 
     @XmlElement(name = "resolution")
     private List<Resolution> resolutions;
     
     public Nozzle() {
-        
     }
     
     public Nozzle(int type) {
-        this.type = String.valueOf((type / 1000.0f));
-        sizeInMicrons = type;
-    }
-    
-    public String getType() {
-        return type;
+        this.sizeInMicrons = type;
     }
 
     @XmlAttribute(name = "type")
     public void setType(String type) {
-        this.type = type;
-        sizeInMicrons = (int) (Float.parseFloat(type) * 1000);
+        sizeInMicrons = Integer.parseInt(type);
     }
 
     public int getSizeInMicrons() {
@@ -47,7 +39,14 @@ public class Nozzle implements Comparable {
     @Override
     public int compareTo(Object o) {
         Nozzle noz = (Nozzle) o;
-        return this.type.compareTo(noz.type);
+        
+        if(sizeInMicrons > noz.sizeInMicrons) {
+            return 1;
+        } else if (sizeInMicrons == noz.sizeInMicrons) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     @Override
@@ -59,18 +58,19 @@ public class Nozzle implements Comparable {
         }
 
         nozzle = (Nozzle) o;
-        return this.type.equalsIgnoreCase(nozzle.type);
+        return this.sizeInMicrons == nozzle.sizeInMicrons;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + (this.type != null ? this.type.hashCode() : 0);
+        int hash = 7;
+        hash = 59 * hash + this.sizeInMicrons;
         return hash;
     }
 
     @Override
     public String toString() {
-        return this.type;
+        // return in milimetres
+        return Float.toString(this.sizeInMicrons / 1000.0f);
     }
 }

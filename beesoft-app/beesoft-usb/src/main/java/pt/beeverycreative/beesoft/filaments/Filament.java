@@ -79,6 +79,20 @@ public class Filament implements Comparable {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public List<Resolution> getSupportedResolutions(String printer, int nozzleMicrons) {
+        for(SlicerConfig sc : supportedPrinters) {
+            if(sc.getPrinterName().equalsIgnoreCase(printer)) {
+                for(Nozzle noz : sc.getNozzles()) {
+                    if(noz.getSizeInMicrons() == nozzleMicrons) {
+                        return noz.getResolutions();
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 
     @Override
     public int compareTo(Object o) {

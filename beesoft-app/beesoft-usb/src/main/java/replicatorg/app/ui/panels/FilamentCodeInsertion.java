@@ -3,7 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
@@ -40,7 +39,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         enableDrag();
         evaluateInitialConditions();
         centerOnScreen();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -71,7 +69,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         Nozzle nozzle;
         Filament[] filaments;
 
-        driver.updateNozzleType();
         nozzle = new Nozzle(model.getNozzleType());
         filaments = FilamentControler.getCompatibleFilaments(nozzle);
 
@@ -90,7 +87,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         Base.writeLog("Filament load/unload canceled", this.getClass());
         dispose();
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        driver.dispatchCommand("M704", UsbPassthroughDriver.COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")

@@ -7,7 +7,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
-import pt.beeverycreative.beesoft.filaments.Filament;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -30,25 +29,24 @@ public class ExtruderSwitch3 extends BaseDialog {
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private final Nozzle selectedNozzle;
-    private final Filament selectedFilament;
 
-    public ExtruderSwitch3(Nozzle selectedNozzle, Filament selectedFilament) {
+    public ExtruderSwitch3(Nozzle selectedNozzle) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         enableDrag();
         setTextLanguage();
         centerOnScreen();
+        driver.setBusy(true);
         driver.dispatchCommand("M703", COM.NO_RESPONSE);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         this.selectedNozzle = selectedNozzle;
-        this.selectedFilament = selectedFilament;
 
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 disposeThread.start();
             }
+
             @Override
             public void windowClosed(WindowEvent e) {
                 disposeThread.kill();
@@ -403,8 +401,8 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            driver.dispatchCommand("M1000 " + selectedFilament.getName());
-            driver.dispatchCommand("M1027 S" + selectedNozzle.getSizeInMicrons());
+            driver.setCoilText("none");
+            driver.setInstalledNozzleSize(selectedNozzle.getSizeInMicrons());
             driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bNextMousePressed

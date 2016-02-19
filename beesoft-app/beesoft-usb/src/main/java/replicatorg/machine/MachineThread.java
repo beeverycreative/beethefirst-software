@@ -75,29 +75,42 @@ class MachineThread extends Thread {
             if (driver.isBootloader() == false) {
                 Base.rebootingIntoFirmware = false;
                 //setState(new MachineState(MachineState.State.READY), "Connected to " + getMachineName());
-                Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
                 driver.closeFeedback();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (driver.isBusy()) {
+                            Base.hiccup(100);
+                        }
+                        Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
+                    }
+                }).start();
             }
 
-            if (checkedForUpdates == false) {
-                // Checks for software and firmware updates
-                if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
-                    UpdateChecker advise = new UpdateChecker();
-                    checkedForUpdates = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (checkedForUpdates == false) {
+                        // Checks for software and firmware updates
+                        if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
+                            UpdateChecker advise = new UpdateChecker();
+                            checkedForUpdates = true;
 
-                    /*
-                     if (advise.isUpdateBetaAvailable()) {
-                     advise.setMessage("AvailableBeta");
-                     advise.setVisible(true);
-                     }*/
-                    if (advise.isUpdateStableAvailable()) {
-                        advise.setMessage("AvailableStable");
-                        advise.setVisible(true);
-                    } else {
-                        advise.dispose();
+                            /*
+                             if (advise.isUpdateBetaAvailable()) {
+                             advise.setMessage("AvailableBeta");
+                             advise.setVisible(true);
+                             }*/
+                            if (advise.isUpdateStableAvailable()) {
+                                advise.setMessage("AvailableStable");
+                                advise.setVisible(true);
+                            } else {
+                                advise.dispose();
+                            }
+                        }
                     }
                 }
-            }
+            }).start();
 
             while (true) {
                 try {

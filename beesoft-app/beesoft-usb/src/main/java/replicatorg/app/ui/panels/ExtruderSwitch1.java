@@ -3,7 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
@@ -31,17 +30,14 @@ public class ExtruderSwitch1 extends BaseDialog {
         enableDrag();
         evaluateInitialConditions();
         centerOnScreen();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        filamentComboBox.setFont(GraphicDesignComponents.getSSProLight("12"));
         nozzleComboBox.setFont(GraphicDesignComponents.getSSProLight("12"));
         lNozzleComboBox.setFont(GraphicDesignComponents.getSSProBold("12"));
-        lFilamentComboBox.setFont(GraphicDesignComponents.getSSProBold("12"));
     }
 
     private void setTextLanguage() {
@@ -87,9 +83,7 @@ public class ExtruderSwitch1 extends BaseDialog {
         jLabel2 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         nozzleComboBox = new javax.swing.JComboBox();
-        filamentComboBox = new javax.swing.JComboBox();
         lNozzleComboBox = new javax.swing.JLabel();
-        lFilamentComboBox = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -105,14 +99,14 @@ public class ExtruderSwitch1 extends BaseDialog {
         bNext.setText("SEGUINTE");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bNextMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNextMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bNextMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bNextMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNextMouseEntered(evt);
             }
         });
 
@@ -198,19 +192,8 @@ public class ExtruderSwitch1 extends BaseDialog {
 
         nozzleComboBox.setBackground(new java.awt.Color(248, 248, 248));
         nozzleComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        nozzleComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nozzleComboBoxActionPerformed(evt);
-            }
-        });
-
-        filamentComboBox.setBackground(new java.awt.Color(248, 248, 248));
-        filamentComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        filamentComboBox.setEnabled(false);
 
         lNozzleComboBox.setText("Nozzle (mm)");
-
-        lFilamentComboBox.setText("Filaments");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -225,10 +208,6 @@ public class ExtruderSwitch1 extends BaseDialog {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lNozzleComboBox)
                             .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(42, 42, 42)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(filamentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lFilamentComboBox))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -239,13 +218,9 @@ public class ExtruderSwitch1 extends BaseDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lNozzleComboBox)
-                    .addComponent(lFilamentComboBox))
+                .addComponent(lNozzleComboBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(filamentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(58, Short.MAX_VALUE))
         );
 
@@ -308,7 +283,7 @@ public class ExtruderSwitch1 extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            ExtruderSwitch2 p = new ExtruderSwitch2((Nozzle) nozzleComboBox.getSelectedItem(), (Filament) filamentComboBox.getSelectedItem());
+            ExtruderSwitch2 p = new ExtruderSwitch2((Nozzle) nozzleComboBox.getSelectedItem());
             dispose();
             p.setVisible(true);
         }
@@ -326,23 +301,9 @@ public class ExtruderSwitch1 extends BaseDialog {
         }
     }//GEN-LAST:event_jLabel15MousePressed
 
-    private void nozzleComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nozzleComboBoxActionPerformed
-        DefaultComboBoxModel filamentComboModel;
-
-        filamentComboModel = new DefaultComboBoxModel<Filament>(FilamentControler.getCompatibleFilaments((Nozzle) nozzleComboBox.getSelectedItem()));
-        filamentComboBox.setModel(filamentComboModel);
-
-        if (filamentComboModel.getSize() > 0) {
-            filamentComboBox.setEnabled(true);
-        } else {
-            filamentComboBox.setEnabled(false);
-        }
-    }//GEN-LAST:event_nozzleComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bNext;
-    private javax.swing.JComboBox filamentComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
@@ -351,7 +312,6 @@ public class ExtruderSwitch1 extends BaseDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JLabel lFilamentComboBox;
     private javax.swing.JLabel lNozzleComboBox;
     private javax.swing.JComboBox nozzleComboBox;
     // End of variables declaration//GEN-END:variables
