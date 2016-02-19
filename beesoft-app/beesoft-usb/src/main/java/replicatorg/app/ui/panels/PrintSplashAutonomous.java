@@ -505,17 +505,15 @@ public class PrintSplashAutonomous extends BaseDialog {
         enableSleep();
         Base.bringAllWindowsToFront();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER);
-        Base.getMainWindow().handleStop();
+        driver.dispatchCommand("M112", COM.NO_RESPONSE);
         Base.getMainWindow().setEnabled(true);
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
-        driver.setTemperature(0);
         ut.stop();
         gcodeGenerator.stop();
         //Clears GCode saved on scene
         Base.getMainWindow().getBed().setGcode(new StringBuffer(""));
         Base.getMainWindow().getBed().setGcodeOK(false);
         prt.endGCodeGeneration();
-        driver.dispatchCommand("G28", COM.NO_RESPONSE);
     }
 
     public void setPrintEnded(int elapsedMinutes) {

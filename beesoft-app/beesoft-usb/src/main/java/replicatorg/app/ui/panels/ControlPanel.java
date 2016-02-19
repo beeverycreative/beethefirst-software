@@ -40,6 +40,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeTableXYDataset;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -95,8 +97,8 @@ public class ControlPanel extends BaseDialog {
     private Timer setPollDataTrue;
     private Timer showBeepLabel;
     protected Timer movButtonHoldDown;
-    private static final int movCommandInterval = 5;
-    private static final double movCommandStep = 0.1;
+    private static final int movCommandInterval = 1;
+    private static final double movCommandStep = 0.07;
     protected volatile boolean canPollData = true;
     protected volatile boolean canMove = true;
 
@@ -120,7 +122,6 @@ public class ControlPanel extends BaseDialog {
         Graphics g = image.getGraphics();
         g.setColor(t0MeasuredColor);
         g.fillRect(0, 0, 10, 10);
-        //image.getGraphics().fillRect(0,0,10,10);
         Icon icon1 = new ImageIcon(image);
 
         this.colorCurrentTemp.setIcon(icon1);
@@ -175,7 +176,6 @@ public class ControlPanel extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        //bCurrentPosition.setText(Languager.getTagValue(1, "ControlPanel", "CurrentPosition"));
         extruderTemperatureLabel.setText(Languager.getTagValue(1, "ControlPanel", "Current_Temperature"));
         motorSpeed.setText(Languager.getTagValue(1, "ControlPanel", "Motor_Speed"));
         extrudeDuration.setText(Languager.getTagValue(1, "ControlPanel", "Extrude_Duration"));
@@ -287,26 +287,14 @@ public class ControlPanel extends BaseDialog {
         axis.setStandardTickUnits(unitSource);
         axis.setTickLabelsVisible(false); // We don't need to see the millisecond count
         axis = plot.getRangeAxis();
-        axis.setRange(0, 300); // set termperature range from 0 to 300 degrees C so you can see overshoots 
+        axis.setRange(0, 300); // set temperature range from 0 to 300 degrees C so you can see overshoots 
 
-        // Tweak L&F of chart
-        //((XYAreaRenderer)plot.getRenderer()).setOutline(true);
         XYStepRenderer renderer = new XYStepRenderer();
         plot.setDataset(1, t0TargetDataset);
         plot.setRenderer(1, renderer);
         plot.getRenderer(1).setSeriesPaint(0, t0TargetColor);
         plot.getRenderer(0).setSeriesPaint(0, t0MeasuredColor);
-
-//		if(machine.getModel().getTools().size() > 1)
-//		{
-//			plot.setDataset(4, t1MeasuredDataset);
-//			plot.setRenderer(4, new XYLineAndShapeRenderer(true,false)); 
-//			plot.getRenderer(4).setSeriesPaint(0, t1MeasuredColor);
-//			plot.setDataset(5, t1TargetDataset);
-//			plot.setRenderer(5, new XYStepRenderer()); 
-//			plot.getRenderer(5).setSeriesPaint(0, t1TargetColor);
-//
-//		}
+        
         plot.setDataset(2, pMeasuredDataset);
         plot.setRenderer(2, new XYLineAndShapeRenderer(true, false));
         plot.getRenderer(2).setSeriesPaint(0, pMeasuredColor);
@@ -321,19 +309,6 @@ public class ControlPanel extends BaseDialog {
         return chartPanel;
     }
 
-    private String[] fullFillCombo() {
-        String[] moves = {
-            "0.05",
-            "0.5",
-            "1",
-            "5",
-            "10",
-            "15",
-            "25",};
-
-        return moves;
-    }
-
     private String[] fullFillComboDuration() {
         String[] duration = {
             "3",
@@ -343,12 +318,6 @@ public class ControlPanel extends BaseDialog {
             "15",};
 
         return duration;
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
     }
 
     private double getDistance() {
@@ -448,7 +417,7 @@ public class ControlPanel extends BaseDialog {
         getInitialValuesThread.cancel();
         Base.getMainWindow().setEnabled(true);
 
-        driver.dispatchCommand("G28");
+        driver.dispatchCommand("G28", COM.NO_RESPONSE);
         dispose();
         Base.bringAllWindowsToFront();
     }
@@ -490,7 +459,7 @@ public class ControlPanel extends BaseDialog {
 
                         driver.dispatchCommand("G0 Z-" + movCommandStep);
                         val = Double.parseDouble(zTextFieldValue.getText()) - movCommandStep;
-                        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));;
+                        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                     }
                 };
                 movButtonHoldDown.addActionListener(listener);

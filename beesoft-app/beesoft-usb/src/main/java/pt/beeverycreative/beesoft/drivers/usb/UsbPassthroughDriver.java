@@ -19,6 +19,7 @@ import javax.usb.UsbException;
 import javax.usb.UsbNotActiveException;
 import javax.usb.UsbNotOpenException;
 import org.w3c.dom.Node;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
@@ -94,7 +95,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean stopTransfer = false;
     private static boolean bootedFromBootloader = false;
     private static boolean backupConfig = false;
-    private static String backupCoilText = "";
+    private static int backupNozzleSize = FilamentControler.NO_NOZZLE;
+    private static String backupCoilText = FilamentControler.NO_FILAMENT;
     private static double backupZVal = 123.495;
     private static final Feedback feedbackWindow = new Feedback();
     //private FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
@@ -178,11 +180,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void closeFeedback() {
-        //if (feedbackThread != null) {
-        //    feedbackThread.cancel();
-        //}
         feedbackWindow.dispose();
-        //feedbackThread = null;
     }
 
     @Override
@@ -312,10 +310,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             if (backupConfig) {
                 setCoilText(backupCoilText);
+                setInstalledNozzleSize(backupNozzleSize);
                 dispatchCommand("M604 Z" + backupZVal);
                 backupConfig = false;
                 backupZVal = 123.495;
-                backupCoilText = "";
+                backupCoilText = FilamentControler.NO_FILAMENT;
+                backupNozzleSize = FilamentControler.NO_NOZZLE;
             } else {
                 updateCoilText();
                 updateNozzleType();
@@ -328,7 +328,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             Base.updateVersions();
 
-        } else if (status.contains("error")) {
+        }
+
+        if (status.contains("error")) {
             setBusy(true);
             setInitialized(false);
             int tries = 0;
@@ -452,6 +454,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         String ans;
 
+        ans = "";
+
         if (next == null) {
             return "";
         }
@@ -460,10 +464,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         try {
             sendCommand(next);
 
-            if (next.contains("M630") || next.contains("M609")) {
-                ans = "";
-            } else {
-                ans = readResponse();
+            if (!next.contains("M630") && !next.contains("M609")) {
+                while (ans.contains("ok") == false) {
+                    ans = readResponse();
+                    
+                    if(ans.contains("ok")) {
+                        break;
+                    } else {
+                        Base.hiccup(100);
+                    }
+                }
             }
 
             if (ans.contains("Q:")) {
@@ -697,6 +707,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommand(SAVE_CONFIG, COM.BLOCK);
     }
 
+    /**
+     * Define what nozzle size is installed in the printer
+     *
+     * @param microns size of the nozzle in microns
+     */
     @Override
     public void setInstalledNozzleSize(int microns) {
         String response;
@@ -713,7 +728,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     /**
-     * Gets the CoilCode from printer AXXX for code, A000 for none NOK for error
+     * Gets the filament name from the printer
      *
      */
     @Override
@@ -740,6 +755,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machine.setCoilText(coilText);
     }
 
+    /**
+     * Reads the nozzle size obtained from the printer and sets it in the
+     * machine model
+     */
     @Override
     public void updateNozzleType() {
         Pattern p;
@@ -765,23 +784,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machine.setNozzleType(nozzleSizeMicrons);
     }
 
-    @Override
-    public boolean isONShutdown() {
-        return isONShutdown;
-    }
-
+    /**
+     * Sets the stopTransfer flag to true.
+     */
     @Override
     public void stopTransfer() {
         stopTransfer = true;
-        while (stopTransfer == true) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
     }
 
+    /**
+     * Obtain the home_pos_z value from the output of M600 command. This value
+     * is how the calibration of the printer is defined.
+     */
     @Override
     public void readZValue() {
         String response, home_pos_z, re1, re2, re3, re4, re5, re6;
@@ -807,18 +821,24 @@ public final class UsbPassthroughDriver extends UsbDriver {
         machine.setzValue(Double.valueOf(home_pos_z));
     }
 
+    /**
+     * Transfers a GCode file. Method should be used if you want to upload a
+     * GCode file without having to provide a PrintSplashAutonomous object to
+     * provide feedback, e.g.: transfer the calibration test file
+     *
+     * @param gcode the GCode file that is to be transferred
+     * @return error message
+     */
     @Override
     public String gcodeTransfer(File gcode) {
 
-        long time, loop = System.currentTimeMillis();
+        long loop = System.currentTimeMillis();
         byte[] gcodeBytes;
         int file_size, srcPos, totalBlocks;
         int offset = MESSAGE_SIZE;
         int destPos = 0;
         int totalMessages;
-        int message = 0;
         int totalBytes = 0;
-        double transferPercentage;
 
         file_size = (int) gcode.length();
         totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
@@ -883,9 +903,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 //            System.out.println("block:" + block + "M28 A" + srcPos + " D" + ((srcPos + MAX_BLOCK_SIZE) - 1));
                 for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
-
-                    message++;
-
                     // Updates variables
                     srcPos = destPos;
                     destPos = srcPos + offset;
@@ -926,14 +943,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("SDCard space allocated with success", this.getClass());
             }
 
-            int sent = 0;
-            ByteRead res;
-            boolean state;
             for (; srcPos < file_size; srcPos += offset) {
-                message++;
-                //Get byte array with MESSAGE_SIZE
-                time = System.currentTimeMillis();
-
                 iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
 
                 //sendCommandBytes(iMessage);
@@ -956,6 +966,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return RESPONSE_OK;
     }
 
+    /**
+     * Transfers a GCode file. A PrintSplashAutonomous object is requested in
+     * order to provide transfer progress feedback to that dialog. TODO: the
+     * panel should obtain feedback another way!
+     *
+     * @param gcode the GCode file that is to be transferred
+     * @param psAutonomous PrintSplashAutonomous object
+     * @return error message
+     */
     @Override
     public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
 
@@ -1084,9 +1103,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("SDCard space allocated with success", this.getClass());
             }
 
-            int sent = 0;
-            ByteRead res;
-            boolean state;
             for (; srcPos < file_size; srcPos += offset) {
                 message++;
                 //Get byte array with MESSAGE_SIZE
@@ -1100,18 +1116,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     return driverErrorDescription;
                 }
 
-                //Transfer each Block
-                /*
-                 if (transferMessage(iMessage).contains(ERROR)) {
-                 driverErrorDescription = ERROR + ":512B message transfer failed";
-                 transferMode = false;
-
-                 return driverErrorDescription;
-                 } else {
-                 totalBytes += iMessage.length;
-                 //                Base.writeLog("512B block transfered with success");
-                 }
-                 */
                 System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
                 transferPercentage = ((double) message / totalMessages) * 100;
                 psAutonomous.updatePrintBar((int) transferPercentage);
@@ -1918,18 +1922,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return -1;
         } else {
 
-            /*
-             if (feedbackThread != null) {
-             feedbackThread.cancel();
-             feedbackThread = null;
-             }
-
-             feedbackThread = new FeedbackThread(feedbackWindow);
-
-             if (feedbackThread.isAlive() == false) {
-             feedbackThread.start();
-             }
-             */
             feedbackWindow.setVisible(true);
             feedbackWindow.setFeedback1(Feedback.FLASHING_MAIN_MESSAGE);
 
@@ -1939,20 +1931,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             Base.writeLog("Carrying on with firmware flash", this.getClass());
 
-            //sendCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
-            //hiccup(QUEUE_WAIT, 0);
-            //readResponse();
             dispatchCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
 
-            //if (firmwareFile.getName().length() > 45) {
             if (backupConfig) {
                 feedbackWindow.setFeedback2(Feedback.FLASHING_SUB_MESSAGE);
             } else {
                 feedbackWindow.setFeedback2(Feedback.FLASHING_SUB_MESSAGE_NO_CALIBRATION);
             }
-            //} else {
-            //    feedbackWindow.setFeedback2("Flashing firmware " + firmwareFile.getName());
-            //}
 
             Base.writeLog("Starting Firmware update.", this.getClass());
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
@@ -1965,9 +1950,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }//no need for else
 
                 Base.writeLog("Setting firmware version to: " + versionToCompare, this.getClass());
-                //sendCommand(SET_FIRMWARE_VERSION + versionToCompare);
-                //hiccup(QUEUE_WAIT, 0);
-                //readResponse();
                 dispatchCommand(SET_FIRMWARE_VERSION + versionToCompare);
 
             } else {
@@ -1982,7 +1964,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean backupConfig() {
         String response;
 
-        Base.writeLog("Acquiring Z value and loaded filament before flashing new firmware", this.getClass());
+        Base.writeLog("Acquiring Z value loaded,filament and nozzle size before flashing new firmware", this.getClass());
         feedbackWindow.setFeedback2(Feedback.SAVING_MESSAGE);
 
         // change into firmware
@@ -2007,8 +1989,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         // request data
         readZValue();
         updateCoilText();
+        updateNozzleType();
         backupZVal = machine.getzValue();
         backupCoilText = machine.getCoilText();
+        backupNozzleSize = machine.getNozzleType();
 
         // change back into bootloader
         dispatchCommand("M609");
@@ -2036,7 +2020,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             establishConnectionToBootloader();
         }
 
-        Base.writeLog("Acquired Z value and loaded filament with success!", this.getClass());
+        Base.writeLog("Acquired Z value, loaded filament and nozzle size with success!", this.getClass());
         backupConfig = true;
         return true;
 

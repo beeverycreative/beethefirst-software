@@ -1311,47 +1311,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     }
 
     /**
-     * Stops the machine from running, and sets gui to 'no build running' mode
-     */
-    public void handleStop() {
-        Base.writeLog("Stopping ...", this.getClass());
-
-        if (Base.printPaused == false) {
-            Base.getMachineLoader().getMachineInterface().killSwitch();
-        }
-
-        getMachineInterface().getDriver().dispatchCommand("M112");
-
-        if (getMachineInterface().getDriver().isONShutdown() == true) {
-            Base.getMachineLoader().getMachineInterface().stopwatch();
-        }
-
-        doStop();
-        Base.writeLog("Print stopped ...", this.getClass());
-        setEditorBusy(false);
-    }
-
-    class EstimationThread extends Thread {
-
-        MainWindow editor;
-
-        public EstimationThread(MainWindow edit) {
-            super("Estimation Thread");
-
-            editor = edit;
-        }
-
-        @Override
-        public void run() {
-            message("Estimating...");
-            editor.estimationOver();
-        }
-    }
-
-    public void estimationOver() {
-    }
-
-    /**
      * Send stop command to loaded machine, Disables pre-heating, and sets
      * building values to false/off
      */
@@ -1363,32 +1322,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         simulating = false;
         buildOnComplete = false;
 
-    }
-
-    public void handleReset() {
-        if (machineLoader.isLoaded()) {
-            machineLoader.getMachineInterface().reset();
-        }
-    }
-
-    /**
-     * Called by EditorStatus to complete the job and re-dispatch to handleNew,
-     * handleOpenScene, handleQuit.
-     */
-    public void checkModified2() {
-
-        switch (checkModifiedMode) {
-            case HANDLE_NEW:
-                handleNew(false);
-                break;
-            case HANDLE_OPEN:
-                handleOpen2Scene(handleOpenPath);
-                break;
-            case HANDLE_QUIT:
-                System.exit(0);
-                break;
-        }
-        checkModifiedMode = 0;
     }
 
     /**
