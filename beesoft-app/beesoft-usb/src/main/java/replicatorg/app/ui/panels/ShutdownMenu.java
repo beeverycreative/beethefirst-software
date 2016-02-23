@@ -13,7 +13,7 @@ public class ShutdownMenu extends BaseDialog {
 
     private final PrintSplashAutonomous printSplash;
     private final MachineInterface machine = Base.getMainWindow().getMachine();
-    
+
     private static final int FILE_KEY = 1;
 
     public ShutdownMenu(Window printSplash) {
@@ -274,9 +274,14 @@ public class ShutdownMenu extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        CancelPrint cancel = new CancelPrint(printSplash);
-        cancel.setVisible(true);
-        //dispose();
+        if (bCancel.isEnabled()) {
+            CancelPrint cancel = new CancelPrint();
+            cancel.setVisible(true);
+            if (cancel.isCancelTrue()) {
+                printSplash.doCancel();
+            }
+            //dispose();
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited

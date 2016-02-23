@@ -1413,7 +1413,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         if (Base.getMainWindow().getBed().isSceneDifferent()) {
                             Base.getMainWindow().handleSave(true);
                         }
-                        p.startConditions();
                     }
                 });
             }

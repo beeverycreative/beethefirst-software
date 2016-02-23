@@ -348,8 +348,11 @@ public class PauseMenu extends BaseDialog {
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         if (bCancel.isEnabled()) {
-            CancelPrint cancel = new CancelPrint(printSplash);
+            CancelPrint cancel = new CancelPrint();
             cancel.setVisible(true);
+            if(cancel.isCancelTrue()) {
+                printSplash.doCancel();
+            }
         }
     }//GEN-LAST:event_bCancelMousePressed
 

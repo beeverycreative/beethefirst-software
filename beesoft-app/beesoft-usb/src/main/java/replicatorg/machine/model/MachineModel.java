@@ -89,8 +89,6 @@ public class MachineModel {
     private String resolution = "lowRes";
 
     private AutonomousData autonomousData;
-    private final Object autonomousDataMutex = new Object();
-    private boolean autonomousDataReady = false;
     private String lastStatusString = "";
 
     /**
@@ -533,11 +531,11 @@ public class MachineModel {
     public Endstops getEndstops(AxisId axis) {
         return this.endstops.get(axis);
     }
-    
+
     public void setLastStatusString(String status) {
         this.lastStatusString = status;
     }
-    
+
     public String getLastStatusString() {
         return lastStatusString;
     }
@@ -598,11 +596,11 @@ public class MachineModel {
     public void setCoilText(String coilText) {
         this.coilText = coilText;
     }
-    
+
     public void setNozzleType(int nozzleType) {
         this.nozzleType = nozzleType;
     }
-    
+
     public int getNozzleType() {
         return nozzleType;
     }
@@ -617,22 +615,11 @@ public class MachineModel {
     }
 
     public void setAutonomousData(AutonomousData data) {
-        synchronized (autonomousDataMutex) {
-            this.autonomousData = data;
-            autonomousDataReady = true;
-            autonomousDataMutex.notifyAll();
-        }
+        this.autonomousData = data;
     }
 
-    public AutonomousData getAutonomousData() throws InterruptedException {
-        synchronized (autonomousDataMutex) {
-            if (autonomousDataReady == false) {
-                autonomousDataMutex.wait(3000);
-            }
-
-            autonomousDataReady = false;
-            return autonomousData;
-        }
+    public AutonomousData getAutonomousData() {
+        return autonomousData;
     }
 
 }

@@ -1444,7 +1444,6 @@ public class PrintPanel extends BaseDialog {
                     if (Base.getMainWindow().getBed().isSceneDifferent()) {
                         Base.getMainWindow().handleSave(true);
                     }
-                    p.startConditions();
                 }
             });
 

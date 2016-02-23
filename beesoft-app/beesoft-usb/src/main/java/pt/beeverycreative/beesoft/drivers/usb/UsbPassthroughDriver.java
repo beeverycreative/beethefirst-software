@@ -256,7 +256,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 p.setVisible(true);
             }
 
-            p.startConditions();
             Base.updateVersions();
         } else if (status.contains("firmware")) {
 

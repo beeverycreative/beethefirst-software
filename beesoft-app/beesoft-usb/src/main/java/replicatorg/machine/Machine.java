@@ -25,7 +25,6 @@ import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.commands.DriverCommand;
 import replicatorg.machine.model.MachineModel;
-import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -46,11 +45,6 @@ import replicatorg.util.Point5d;
  *
  */
 public class Machine implements MachineInterface {
-
-    @Override
-    public String getMachineName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     public enum RequestType {
         // Set up the connection to the machine
@@ -336,35 +330,16 @@ public class Machine implements MachineInterface {
     }
 
     @Override
-    public String getZValue() {
-        return String.valueOf(machineThread.getModel().getzValue());
-    }
-
-    @Override
-    synchronized public boolean isPaused() {
-        return getMachineState().isPaused();
-    }
-
-    @Override
-    public void runCommand(DriverCommand command) {
-        machineThread.scheduleRequest(new MachineCommand(
-                RequestType.RUN_COMMAND, command));
-    }
-
-    @Override
     public void dispose() {
         if (machineThread != null) {
             machineThread.scheduleRequest(new MachineCommand(
                     RequestType.SHUTDOWN, ""));
-
             // Wait 5 seconds for the thread to stop.
             try {
                 machineThread.join(5000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
@@ -373,45 +348,9 @@ public class Machine implements MachineInterface {
 
         callbackHandler.schedule(e);
     }
-
-    protected void emitProgress(MachineProgressEvent progress) {
-        callbackHandler.schedule(progress);
-    }
-
-    protected void emitToolStatus(ToolModel tool) {
-        MachineToolStatusEvent e = new MachineToolStatusEvent(this, tool);
-        callbackHandler.schedule(e);
-    }
-
-    @Override
-    public int getLinesProcessed() {
-        /*
-         * This is for jumping to the right line when aborting or pausing. This
-         * way you'll have the ability to track down where to continue printing.
-         */
-        return machineThread.getLinesProcessed();
-    }
-
-    // TODO: Drop this
-    @Override
-    public boolean isSimulating() {
-        return machineThread.isSimulating();
-    }
-
-    // TODO: Drop this
-    @Override
-    public boolean isInteractiveTarget() {
-        return machineThread.isInteractiveTarget();
-    }
-
-    // TODO: Drop this
-    @Override
-    public JobTarget getTarget() {
-        return machineThread.getTarget();
-    }
     
     @Override
-    public synchronized AutonomousData getAutonomousData() throws InterruptedException {
+    public AutonomousData getAutonomousData() {
         return getModel().getAutonomousData();
     }
 }

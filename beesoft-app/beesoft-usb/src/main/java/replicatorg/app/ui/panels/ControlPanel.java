@@ -3,7 +3,6 @@ package replicatorg.app.ui.panels;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -40,7 +39,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeTableXYDataset;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -63,7 +61,6 @@ import replicatorg.util.Point5d;
 public class ControlPanel extends BaseDialog {
 
     private enum MovDir {
-
         Z_PLUS, Z_MINUS, Y_PLUS, Y_MINUS, X_PLUS, X_MINUS
     };
 

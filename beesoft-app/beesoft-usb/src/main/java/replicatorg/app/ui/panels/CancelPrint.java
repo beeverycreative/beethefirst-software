@@ -19,16 +19,18 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class CancelPrint extends BaseDialog {
 
-    PrintSplashAutonomous panel;
+    private boolean cancel = false;
 
-    public CancelPrint(PrintSplashAutonomous panel) {
+    public CancelPrint() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         enableDrag();
         centerOnScreen();
         enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
-        this.panel = panel;        
+    }
+
+    public boolean isCancelTrue() {
+        return cancel;
     }
 
     @SuppressWarnings("unchecked")
@@ -214,18 +216,20 @@ public class CancelPrint extends BaseDialog {
     }//GEN-LAST:event_bNoMouseExited
 
     private void bNoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNoMousePressed
+        cancel = false;
         dispose();
         Base.bringAllWindowsToFront();
     }//GEN-LAST:event_bNoMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+        cancel = false;
         dispose();
         Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void bYesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bYesMousePressed
+        cancel = true;
         dispose();
-        panel.doCancel();
     }//GEN-LAST:event_bYesMousePressed
 
     private void bYesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bYesMouseExited
