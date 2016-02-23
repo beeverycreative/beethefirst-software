@@ -1,19 +1,12 @@
 package replicatorg.app;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -64,11 +57,11 @@ public class Printer {
     }
 
     /**
-     * Generates GCode based on the print parameters choosen.
+     * Generates GCode based on the print parameters chosen.
      *
-     * @return estimated time for gcode generated or error code
+     * @return true if GCode generation was successful, false otherwise
      */
-    public String generateGCode() {
+    public boolean generateGCode() {
 
         stl = generateSTL();
         Base.writeLog("STL generated with success", this.getClass());
@@ -82,23 +75,23 @@ public class Printer {
         appendStartAndEndGCode();
         gcode = generator.generateToolpath(stl, options);
 
-        // Estimate print duration
-//        PrintEstimator.estimateTime(gcode);
         if (gcode != null) {
             if (gcode.canRead() && gcode.length() != 0) {
-                replaceLineInFile(gcode.getPath(), "M31 A0");
+                //replaceLineInFile(gcode.getPath(), "M31 A0");
                 Base.writeLog("GCode generated", this.getClass());
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelMeshError");
-                return null;
+                return false;
             }
         } else {
             // handles with no permission error cancelling print and setting error message
-            return null;
+            return false;
         }
-        return PrintEstimator.getEstimatedTime();
+        
+        return true;
     }
 
+    /*
     private void replaceLineInFile(String pathString, String textToReplace) {
 
         String m31String;
@@ -139,6 +132,7 @@ public class Printer {
             Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
         }
     }
+    */
 
     private void appendStartAndEndGCode() {
         String[] startCode, endCode;

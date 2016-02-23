@@ -13,7 +13,6 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Base;
 import replicatorg.app.Oracle;
-import replicatorg.app.PrintEstimator;
 import replicatorg.app.util.StreamLoggerThread;
 import replicatorg.plugin.toolpath.ToolpathGenerator;
 
@@ -51,8 +50,8 @@ public class CuraGenerator extends ToolpathGenerator {
     @Override
     public void destroyProcess() {
         if (ist != null && est != null) {
-            ist.stop();
-            est.stop();
+            ist.kill();
+            est.kill();
         }
         process.destroy();
     }
@@ -122,7 +121,8 @@ public class CuraGenerator extends ToolpathGenerator {
 
         // Builds files paths
         stlPath = stl.getAbsolutePath();
-        gcodePath = stlPath.replaceAll(".stl", ".gcode");
+        //gcodePath = stlPath.replaceAll(".stl", ".gcode");
+        gcodePath = Base.GCODE2PRINTER_PATH;
         cfgMap = curaEngineConfigurator.mapIniToCFG(prefs);
 
         //Process parameters for session
@@ -190,16 +190,16 @@ public class CuraGenerator extends ToolpathGenerator {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ioe);
             Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
-            ist.stop();
-            est.stop();
+            ist.kill();
+            est.kill();
             // Throw ToolpathGeneratorException
             return null;
         } catch (InterruptedException ex) {
             Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ex);
             Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
-            ist.stop();
-            est.stop();
+            ist.kill();
+            est.kill();
             // Throw ToolpathGeneratorException
             return null;
         }
@@ -213,11 +213,8 @@ public class CuraGenerator extends ToolpathGenerator {
         Base.writeLog("File " + root + ".gcode created with success", this.getClass());
         File gcode = new File(gcodePath);
 
-        ist.stop();
-        est.stop();
-
-        // Estimates print time
-        PrintEstimator.estimateTime(gcode);
+        ist.kill();
+        est.kill();
 
         return gcode;
     }

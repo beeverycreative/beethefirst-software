@@ -922,22 +922,23 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
         menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Gallery"));
 
-        item = newJMenuItem("Import Model from Library", 'G');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Add"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Gallery p = new Gallery();
-                p.setVisible(true);
-                SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-                sceneDP.updateBed(Base.getMainWindow().getBed());
-                updateDetailsCenter(sceneDP);
-                canvas.unPickAll();
-            }
-        });
-//        menu.add(item);
-
+        /*
+         item = newJMenuItem("Import Model from Library", 'G');
+         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Add"));
+         item.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+         Gallery p = new Gallery();
+         p.setVisible(true);
+         SceneDetailsPanel sceneDP = new SceneDetailsPanel();
+         sceneDP.updateBed(Base.getMainWindow().getBed());
+         updateDetailsCenter(sceneDP);
+         canvas.unPickAll();
+         }
+         });
+         menu.add(item);
+         */
         item = newJMenuItem("Import Model ", 'I');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
@@ -949,17 +950,19 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-        item = newJMenuItem("Online Models", 'I', true);
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Online"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Warning p = new Warning();
-                p.setVisible(true);
-            }
-        });
-//        menu.add(item);
+        /*
+         item = newJMenuItem("Online Models", 'I', true);
+         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Online"));
+         item.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+         Warning p = new Warning();
+         p.setVisible(true);
+         }
+         });
+         menu.add(item);
+         */
         return menu;
     }
 
@@ -1215,12 +1218,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         p.setVisible(true);
     }
 
-    public void handleGallery() {
-        this.setEnabled(false);
-        Gallery p = new Gallery();
-        p.setVisible(true);
-    }
-
     public void handleCAMDelete() {
         if (bed.getPickedModels().size() > 0) {
             canvas.updateBedDeletedModels(bed);
@@ -1398,14 +1395,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                 //Adds default print preferences, they aren't going to be used
                 //since we're printing from a GCode file
-                PrintPreferences prefs = 
-                        new PrintPreferences("", FilamentControler.NO_FILAMENT, 
+                PrintPreferences prefs
+                        = new PrintPreferences("", FilamentControler.NO_FILAMENT,
                                 20, 400, false, false, path);
 
                 Base.isPrintingFromGCode = true;
                 final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
-                p.setVisible(true);
-
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1415,6 +1410,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         }
                     }
                 });
+                p.setVisible(true);
             }
         });
     }

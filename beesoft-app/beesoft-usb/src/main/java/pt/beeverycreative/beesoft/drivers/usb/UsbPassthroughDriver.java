@@ -194,7 +194,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
      * firmware reset.
      */
     public void sendInitializationGcode() {
-        hiccup(1000, 0);
         Base.writeLog("Sending initialization GCodes", this.getClass());
         String status = checkPrinterStatus();
 
@@ -220,7 +219,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
                 dispatchCommand(LAUNCH_FIRMWARE, COM.NO_RESPONSE); // Launch firmware
-                hiccup(100, 0);
+                hiccup(1000, 0);
                 closePipe(pipes);
             } else {
                 status = "error";
@@ -248,12 +247,20 @@ public final class UsbPassthroughDriver extends UsbDriver {
             updateNozzleType();
             PrintPreferences prefs = new PrintPreferences();
 
-            PrintSplashAutonomous p = new PrintSplashAutonomous(
+            final PrintSplashAutonomous p = new PrintSplashAutonomous(
                     true, Base.printPaused, this.isONShutdown, prefs
             );
 
             if (Base.printPaused == false && this.isONShutdown == false) {
-                p.setVisible(true);
+                // we want it to be document modal (that is, to block the underlaying windows)
+                // but we don't want it to be stuck here. is there a better way?
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        p.setVisible(true);
+                    }
+                });
+                t.start();
             }
 
             Base.updateVersions();
@@ -440,7 +447,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommandLock.lock();
         try {
             sendCommandBytes(byteArray);
-            ans = readResponse();
+            ans = readResponseTog();
         } finally {
             dispatchCommandLock.unlock();
         }
@@ -452,8 +459,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public String dispatchCommand(String next) {
 
         String ans;
+        int retryNum;
 
         ans = "";
+        retryNum = 20;
 
         if (next == null) {
             return "";
@@ -463,15 +472,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
         try {
             sendCommand(next);
 
-            if (!next.contains("M630") && !next.contains("M609")) {
-                while (ans.contains("ok") == false) {
-                    ans = readResponse();
-                    
-                    if(ans.contains("ok")) {
-                        break;
-                    } else {
-                        Base.hiccup(100);
-                    }
+            while (ans.contains("ok") == false && retryNum > 0) {
+                ans = readResponse();
+
+                if (ans.contains("ok")) {
+                    break;
+                } else {
+                    Base.hiccup(100);
+                    retryNum--;
                 }
             }
 
@@ -486,6 +494,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
             dispatchCommandLock.unlock();
         }
         return ans;
+    }
+
+    private void dispatchCommandNoResponse(String next) {
+        if (next == null) {
+            return;
+        }
+
+        dispatchCommandLock.lock();
+        try {
+            sendCommand(next);
+        } finally {
+            dispatchCommandLock.unlock();
+        }
     }
 
     @Override
@@ -545,7 +566,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        dispatchCommand(next);
+                        dispatchCommandNoResponse(next);
                     }
                 }).start();
                 return null;
@@ -972,10 +993,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
      *
      * @param gcode the GCode file that is to be transferred
      * @param psAutonomous PrintSplashAutonomous object
+     * @param header header to be included in the file when transferred (e.g.:
+     * M31). If null, no header is included
      * @return error message
      */
     @Override
-    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous, String header) {
 
         long time, loop = System.currentTimeMillis();
         byte[] gcodeBytes;
@@ -1024,6 +1047,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
             //Stores file in byte array
             gcodeBytes = getBytesFromFile(gcode);
             byte[] iMessage;
+
+            if (header != null && !header.equals("") && header.length() < MAX_BLOCK_SIZE) {
+                if (setTransferSize(destPos, (destPos + header.length()) - 1).contains(ERROR)) {
+                    driverErrorDescription = ERROR + ":setTransferSize failed";
+                    transferMode = false;
+                    return driverErrorDescription;
+                } else {
+                    Base.writeLog("SDCard space for header allocated with success", this.getClass());
+                    destPos += header.length();
+                }
+
+                if (dispatchCommand(header.getBytes()).contains("tog") == false) {
+                    Base.writeLog("Header transfer failure, 0 bytes sent.", this.getClass());
+                    return driverErrorDescription;
+                }
+            }
 
             //Send the file 1 block at a time, only send full blocks
             //Each block is MESSAGES_IN_BLOCK messages long        
@@ -1463,6 +1502,131 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.writeComLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
         //}
 
+        return result;
+    }
+
+    private String readResponseTog() {
+
+        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
+            try {
+                Thread.sleep(1, 1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        lastDispatchTime = System.currentTimeMillis();
+        result = "timeout";
+        byte[] readBuffer = new byte[1024];
+
+        int nBits = 0;
+        try {
+            if (m_usbDevice != null) {
+
+                if (pipes != null) {
+                    nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
+                } else {
+                    Base.writeLog("PIPES NULL", this.getClass());
+                    setInitialized(false);
+                    return NOK;
+                    //throw new UsbException("Pipe was null");
+                }
+            }
+        } catch (UsbException ex) {
+            // Cable removable
+            if (ex.getMessage().contains("LIBUSB_ERROR_NO_DEVICE")) {
+                try {
+                    Base.writeLog("LIBUSB_ERROR_NO_DEVICE", this.getClass());
+                    pipes.close();
+                    setInitialized(false);
+                } catch (UsbException ex1) {
+                    Base.writeLog("USB exception [readResponse]: " + ex1.getMessage(), this.getClass());
+                } catch (UsbNotActiveException ex1) {
+                    Base.writeLog("USB communication not active [readResponse]:" + ex1.getMessage(), this.getClass());
+                } catch (UsbNotOpenException ex1) {
+                    Base.writeLog("USB communication is down [readResponse]:" + ex1.getMessage(), this.getClass());
+                } catch (UsbDisconnectedException ex1) {
+                    Base.writeLog("USB disconnected exception [readResponse]:" + ex1.getMessage(), this.getClass());
+                }
+            }
+
+        } catch (UsbNotActiveException ex) {
+            try {
+                pipes.close();
+            } catch (UsbException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
+                }
+            } catch (UsbNotActiveException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
+                }
+            } catch (UsbNotOpenException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
+                }
+            } catch (UsbDisconnectedException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
+                }
+            }
+        } catch (UsbNotOpenException ex) {
+            try {
+                pipes.close();
+                setInitialized(false);
+            } catch (UsbException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
+                }
+            } catch (UsbNotActiveException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
+                }
+            } catch (UsbNotOpenException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
+                }
+            } catch (UsbDisconnectedException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
+                }
+            }
+        } catch (IllegalArgumentException ex) {
+            try {
+                pipes.close();
+                setInitialized(false);
+            } catch (UsbException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
+                }
+            } catch (UsbNotActiveException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
+                }
+            } catch (UsbNotOpenException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
+                }
+            } catch (UsbDisconnectedException ex1) {
+                if (comLog) {
+                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
+                }
+            }
+        }
+
+        // 0 is now an acceptable value; it merely means that we timed out
+        // waiting for input
+        if (nBits >= 0) {
+            try {
+                result = new String(readBuffer, 0, nBits, "US-ASCII").trim();
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        //if (comLog && result.equals("") == false && result.contains("S:") == false) {
+        //Base.writeComLog((System.currentTimeMillis() - startTS), "RECEIVE (" + result.length() + "): " + result.trim() + "\n");
+        //}
         return result;
     }
 
@@ -1967,7 +2131,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         feedbackWindow.setFeedback2(Feedback.SAVING_MESSAGE);
 
         // change into firmware
-        dispatchCommand("M630");
+        dispatchCommand("M630", COM.NO_RESPONSE);
 
         hiccup(3000, 0);
 
@@ -1994,7 +2158,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         backupNozzleSize = machine.getNozzleType();
 
         // change back into bootloader
-        dispatchCommand("M609");
+        dispatchCommand("M609", COM.NO_RESPONSE);
 
         hiccup(3000, 0);
 

@@ -15,7 +15,7 @@
     <parameter name="support" value="None"/>
     <parameter name="platform_adhesion" value="None"/>
     <parameter name="filament_diameter" value="1.75"/>
-    <parameter name="filament_flow" value="106"/>
+    <parameter name="filament_flow" value="105"/>
     <parameter name="retraction_speed" value="125"/>
     <parameter name="retraction_amount" value="1.5"/>
     <parameter name="retraction_dual_amount" value="16.5"/>
@@ -79,10 +79,8 @@
         <parameter name="insetx_speed" value="60"/>
         <parameter name="inset0_speed" value="60"/>
         <parameter name="print_speed" value="60"/>
-        <parameter name="filament_flow" value="104"/>
       </resolution>
       <resolution type="medium">
-        <parameter name="filament_flow" value="105"/>
         <parameter name="layer_height" value="0.2"/>
       </resolution>
       <resolution type="high">
@@ -101,10 +99,8 @@
         <parameter name="insetx_speed" value="60"/>
         <parameter name="inset0_speed" value="60"/>
         <parameter name="print_speed" value="60"/>
-        <parameter name="filament_flow" value="104"/>
       </resolution>
       <resolution type="medium">
-        <parameter name="filament_flow" value="105"/>
         <parameter name="layer_height" value="0.2"/>
       </resolution>
       <resolution type="high">
@@ -123,10 +119,8 @@
         <parameter name="insetx_speed" value="60"/>
         <parameter name="inset0_speed" value="60"/>
         <parameter name="print_speed" value="60"/>
-        <parameter name="filament_flow" value="104"/>
       </resolution>
       <resolution type="medium">
-        <parameter name="filament_flow" value="105"/>
         <parameter name="layer_height" value="0.2"/>
       </resolution>
       <resolution type="high">
@@ -145,10 +139,8 @@
         <parameter name="insetx_speed" value="60"/>
         <parameter name="inset0_speed" value="60"/>
         <parameter name="print_speed" value="60"/>
-        <parameter name="filament_flow" value="104"/>
       </resolution>
       <resolution type="medium">
-        <parameter name="filament_flow" value="105"/>
         <parameter name="layer_height" value="0.2"/>
       </resolution>
       <resolution type="high">

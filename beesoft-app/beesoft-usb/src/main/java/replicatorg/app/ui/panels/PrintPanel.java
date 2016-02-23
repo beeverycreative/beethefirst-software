@@ -1435,8 +1435,6 @@ public class PrintPanel extends BaseDialog {
             Base.turnOnPowerSaving(false);
 
             final PrintSplashAutonomous p = new PrintSplashAutonomous(false, getPreferences());
-            p.setVisible(true);
-
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -1446,6 +1444,7 @@ public class PrintPanel extends BaseDialog {
                     }
                 }
             });
+            p.setVisible(true);
 
         } else {
             EventQueue.invokeLater(new Runnable() {
@@ -1789,13 +1788,14 @@ public class PrintPanel extends BaseDialog {
          */
         private void runEstimator() {
             Printer prt;
+            PrintEstimator estimator;
             prt = new Printer(getPreferences());
             if (prt.isReadyToGenerateGCode()) {
                 prt.generateGCode();
                 File gcode = prt.getGCode();
                 //Estimate time and cost
-                PrintEstimator.estimateTime(gcode);
-                updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
+                estimator = new PrintEstimator(gcode);
+                updateEstimationPanel(estimator.getEstimatedTime(), estimator.getEstimatedCost());
             } else {
                 Base.writeLog("runEstimator(): failed estimation", this.getClass());
             }
@@ -1845,6 +1845,7 @@ public class PrintPanel extends BaseDialog {
          */
         private void runExport() {
             Printer prt = new Printer(getPreferences());
+            PrintEstimator estimator;
 
             if (prt.isReadyToGenerateGCode() == false) {
                 Base.writeLog("runEstimator(): failed export", this.getClass());
@@ -1854,9 +1855,9 @@ public class PrintPanel extends BaseDialog {
             prt.generateGCode();
             File gcode = prt.getGCode();
             //Estimate time and cost
-            PrintEstimator.estimateTime(gcode);
-            updateEstimationPanel(PrintEstimator.getEstimatedTime(),
-                    PrintEstimator.getEstimatedCost());
+            estimator = new PrintEstimator(gcode);
+            updateEstimationPanel(estimator.getEstimatedTime(),
+                    estimator.getEstimatedCost());
 
             //Writes the file
             BufferedInputStream input = null;

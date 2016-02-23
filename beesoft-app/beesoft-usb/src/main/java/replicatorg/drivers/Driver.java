@@ -81,14 +81,17 @@ public interface Driver {
     public String dispatchCommand(String command, Enum comtype);
 
     /**
-     * Transfer a GCode file content.
+     * Transfers a GCode file. A PrintSplashAutonomous object is requested in
+     * order to provide transfer progress feedback to that dialog. TODO: the
+     * panel should obtain feedback another way!
      *
-     * @param gcode GCode file
-     * @param psAutonomous Autonomous agent that handles print with autonomy
-     * @return error or success message
+     * @param gcode the GCode file that is to be transferred
+     * @param psAutonomous PrintSplashAutonomous object
+     * @param header header to be included in the file when transferred (e.g.:
+     * M31). If null, no header is included
+     * @return error message
      */
-    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous);
-    
+    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous, String header);
     public String gcodeTransfer(File gcode);
 
     /**

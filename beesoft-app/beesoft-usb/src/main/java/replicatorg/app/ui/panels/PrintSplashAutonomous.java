@@ -13,8 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
@@ -58,7 +56,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     private boolean lastPanel;
     private boolean isPaused = false;
     private boolean isShutdown = false;
-    private int machinePrintingCount = 0;
     protected final int temperatureGoal;
     private final Object mutex = new Object();
     private final Timer temperatureTimer = new Timer(3000, new TemperatureActionListener());
@@ -73,17 +70,19 @@ public class PrintSplashAutonomous extends BaseDialog {
         preferences = prefs;
         prt = new Printer(preferences);
         temperatureGoal = prt.getFilamentTemperature();
-        jProgressBar1.setForeground(new Color(255, 203, 5));
         printEnded = false;
         bOk.setVisible(false);
         bUnload.setVisible(false);
         bPause.setVisible(false);
         alreadyPrinting = printingState;
+        jProgressBar1.setForeground(new Color(255, 203, 5));
         jProgressBar1.setIndeterminate(true);
+        jProgressBar1.setMaximum(100);
         enableDrag();
         this.setName("Autonomous");
         Base.bringAllWindowsToFront();
 
+        temperatureTimer.setInitialDelay(0);
         if (Base.isPrintingFromGCode) {
             prt.setGCodeFile(new File(preferences.getGcodeToPrint()));
         }
@@ -97,6 +96,7 @@ public class PrintSplashAutonomous extends BaseDialog {
             @Override
             public void windowClosed(WindowEvent e) {
                 ut.kill();
+                temperatureTimer.stop();
                 if (pauseThread != null) {
                     pauseThread.kill();
                 }
@@ -108,7 +108,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     public PrintSplashAutonomous(boolean printingState, boolean isPaused, boolean isShutdown, PrintPreferences prefs) {
-        super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
@@ -116,19 +116,19 @@ public class PrintSplashAutonomous extends BaseDialog {
         preferences = prefs;
         prt = new Printer(preferences);
         temperatureGoal = prt.getFilamentTemperature();
-        jProgressBar1.setForeground(new Color(255, 203, 5));
         printEnded = false;
         bOk.setVisible(false);
         bUnload.setVisible(false);
         bPause.setVisible(false);
         alreadyPrinting = printingState;
+        jProgressBar1.setForeground(new Color(255, 203, 5));
         jProgressBar1.setIndeterminate(true);
+        jProgressBar1.setMaximum(100);
         enableDrag();
         this.setName("Autonomous");
         Base.bringAllWindowsToFront();
-        this.isPaused = isPaused;
-        this.isShutdown = isShutdown;
 
+        temperatureTimer.setInitialDelay(0);
         if (Base.isPrintingFromGCode) {
             prt.setGCodeFile(new File(preferences.getGcodeToPrint()));
         }
@@ -142,11 +142,18 @@ public class PrintSplashAutonomous extends BaseDialog {
             @Override
             public void windowClosed(WindowEvent e) {
                 ut.kill();
+                temperatureTimer.stop();
+                if (pauseThread != null) {
+                    pauseThread.kill();
+                }
                 Base.isPrinting = false;
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
             }
         });
+
+        this.isPaused = isPaused;
+        this.isShutdown = isShutdown;
     }
 
     private void setFont() {
@@ -193,10 +200,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         updateInformationsByError();
         jProgressBar1.setIndeterminate(false);
         jProgressBar1.setValue(0);
-        //In case of error, next time its necessary to clean File
-//        Base.getMainWindow().getBed().setGcodeOK(false);
-
-        // Restart Button
         bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line13"));
         bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
     }
@@ -208,7 +211,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         if (driver.isTransferMode()) {
             driver.stopTransfer();
         } else {
-            driver.dispatchCommand("M112");
+            driver.dispatchCommand("M112", COM.NO_RESPONSE);
             Base.getMainWindow().doStop();
         }
 
@@ -286,32 +289,20 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     private void updatePrintTimes(int estimatedTime, int remainingTime) {
-        if (model.getMachinePrinting() == false
-                && (isPaused || isShutdown)) {
-            activateLoadingIcons();
-            machinePrintingCount = 0;
-        } else {
-            machinePrintingCount++;
+        /*
+         * Set estimated time
+         */
+        if (estimatedTime > -1) {
+            vEstimate.setIcon(null);
+            vEstimate.setText(generateTimeString(estimatedTime));
+        }
 
-            if (machinePrintingCount < 2 && estimatedTime <= 0) {
-                return;
-            }
-
-            /*
-             * Set estimated time
-             */
-            if (estimatedTime > -1) {
-                vEstimate.setIcon(null);
-                vEstimate.setText(generateTimeString(estimatedTime));
-            }
-
-            /*
-             * Set remaining time
-             */
-            if (remainingTime > -1) {
-                vRemaining.setIcon(null);
-                vRemaining.setText(generateTimeString(remainingTime));
-            }
+        /*
+         * Set remaining time
+         */
+        if (remainingTime > -1) {
+            vRemaining.setIcon(null);
+            vRemaining.setText(generateTimeString(remainingTime));
         }
     }
 
@@ -328,6 +319,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void setTransferInfo() {
         jProgressBar1.setIndeterminate(false);
+        jProgressBar1.setMaximum(100);
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Transfering"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Estimation"));
         vEstimate.setText(estimateTransferTime());
@@ -359,6 +351,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Info"));
         tRemaining.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage2"));
         jProgressBar1.setVisible(true);
+        jProgressBar1.setMaximum(temperatureGoal);
     }
 
     private void resetProgressBar() {
@@ -368,6 +361,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void setPrintInfo() {
         jProgressBar1.setVisible(true);
+        jProgressBar1.setMaximum(100);
         updatePrintBar(0);
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info3"));
         tInfo3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info4"));
@@ -411,14 +405,10 @@ public class PrintSplashAutonomous extends BaseDialog {
         return generateTimeString(timeInMinutes);
     }
 
-    private void updateTemperatureOnProgressBar(double temperature, double goal) {
-        int val = jProgressBar1.getValue();
-        int temp_val = (int) (temperature / goal);
-
-        if ((temperature > (int) (jProgressBar1.getValue() * 2)) && (temp_val > (int) (jProgressBar1.getValue()))) {
-            val = temp_val;
+    private void updateTemperatureOnProgressBar(int temperature) {
+        if (temperature > jProgressBar1.getValue()) {
+            jProgressBar1.setValue(temperature);
         }
-        jProgressBar1.setValue(val);
     }
 
     private void cancelProcess() {
@@ -866,7 +856,6 @@ public class PrintSplashAutonomous extends BaseDialog {
             if (printEnded && unloadPressed == false && firstUnloadStep == false) {
                 unloadPressed = true;
 
-                driver.readTemperature();
                 bOk.setVisible(false);
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-02.png")));
@@ -1023,35 +1012,7 @@ public class PrintSplashAutonomous extends BaseDialog {
             this.interrupt();
         }
 
-        private void transferGCode() {
-            final BufferedReader reader;
-
-            try {
-                setTransferInfo();
-
-                try {
-                    reader = new BufferedReader(new FileReader(gcode));
-                } catch (FileNotFoundException ex) {
-                    Base.writeLog("Can't read gCode file to print in autonomous mode", this.getClass());
-                    setError(true);
-                    return;
-                }
-
-                if (driver.gcodeTransfer(gcode, PrintSplashAutonomous.this).toLowerCase().contains(ERROR)) {
-                    setError(true);
-                    reader.close();
-                    return;
-                }
-
-                reader.close();
-
-            } catch (IOException ex) {
-                Logger.getLogger(UpdateThread4.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
         private void monitorPrintFromSDCard() {
-
             boolean machineFinished;
             MachineModel machineModel;
 
@@ -1060,8 +1021,15 @@ public class PrintSplashAutonomous extends BaseDialog {
 
             while (stop == false && !errorOccured) {
 
-                if (!isPaused && !isShutdown) {
-                    getLinesAndTime();
+                if (!driver.isBusy()) {
+                    if (!isPaused && !isShutdown) {
+                        getLinesAndTime();
+                    }
+                    bPause.setEnabled(true);
+                    bCancel.setEnabled(true);
+                } else {
+                    bPause.setEnabled(false);
+                    bCancel.setEnabled(false);
                 }
 
                 String status = machineModel.getLastStatusString();
@@ -1076,7 +1044,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                     break;
                 }
 
-                Base.hiccup(3000);
+                Base.hiccup(500);
             }
         }
 
@@ -1121,6 +1089,9 @@ public class PrintSplashAutonomous extends BaseDialog {
 
         @Override
         public void run() {
+
+            PrintEstimator estimator;
+            String headerStr;
 
             if (alreadyPrinting) {
                 Base.writeLog("Autonomous print resumed", this.getClass());
@@ -1174,41 +1145,42 @@ public class PrintSplashAutonomous extends BaseDialog {
 
                 // THIS REPEATED HEATING IS DONE JUST IN CASE, BECAUSE OF THE POWER SAVING FEATURE
                 // if the transfer takes a long time, printer may enter in power saving mode
-                // supposed to be fixed in firmware already, but it's here too just in case
-                transferGCode();
-                driver.setTemperature(temperatureGoal + 5);
+                // supposed to be fixed in firmware already, but... just in case
+                estimator = new PrintEstimator(gcode);
+                headerStr = "M31 A" + estimator.getEstimatedMinutes() + '\n';
+                setTransferInfo();
+                if (driver.gcodeTransfer(gcode, PrintSplashAutonomous.this, headerStr).toLowerCase().contains(ERROR)) {
+                    setError(true);
+                } else {
+                    driver.setTemperature(temperatureGoal + 5);
 
-                /**
-                 * Controls temperature for proper print
-                 */
-                setHeatingInfo();
-                resetProgressBar();
-                synchronized (mutex) {
-                    try {
-                        temperatureTimer.start();
-                        mutex.wait();
-                        temperatureTimer.stop();
-                    } catch (InterruptedException ex) {
-                        if (stop) {
-                            return;
+                    /**
+                     * Controls temperature for proper print
+                     */
+                    setHeatingInfo();
+                    resetProgressBar();
+                    synchronized (mutex) {
+                        try {
+                            temperatureTimer.start();
+                            System.out.println("started");
+                            mutex.wait();
+                            temperatureTimer.stop();
+                        } catch (InterruptedException ex) {
+                            if (stop) {
+                                return;
+                            }
                         }
                     }
+
+                    /**
+                     * Set UI elements
+                     */
+                    updatePrintTimes(estimator.getEstimatedMinutes(), estimator.getEstimatedMinutes());
+                    setPrintInfo();
+                    driver.startPrintAutonomous();
+                    //activateLoadingIcons();
+                    monitorPrintFromSDCard();
                 }
-
-                /**
-                 * Set UI elements
-                 */
-                setPrintInfo();
-
-                driver.startPrintAutonomous();
-                activateLoadingIcons();
-
-                monitorPrintFromSDCard();
-
-                /**
-                 * Clean temp files created - gcode
-                 */
-                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
 
                 if (errorOccured) {
                     //Inform user that an error happened
@@ -1225,6 +1197,7 @@ public class PrintSplashAutonomous extends BaseDialog {
             while (true) {
                 if (unloadPressed) {
                     driver.setTemperature(temperatureGoal + 5);
+                    jProgressBar1.setMaximum(temperatureGoal);
                     synchronized (mutex) {
                         try {
                             temperatureTimer.start();
@@ -1282,28 +1255,30 @@ public class PrintSplashAutonomous extends BaseDialog {
                         + "reading GCode", this.getClass());
             }
 
-            PrintEstimator.estimateTime(new File(preferences.getGcodeToPrint()));
-            return PrintEstimator.getEstimatedTime();
+            //PrintEstimator.estimateTime(new File(preferences.getGcodeToPrint()));
+            //return PrintEstimator.getEstimatedTime();
+            return null;
         }
 
         @Override
         protected Boolean doInBackground() throws Exception {
-            final String assumedTime;
+            final boolean success;
 
             Base.writeLog("Estimating printing time...", this.getClass());
 
             if (Base.isPrintingFromGCode) {
-                assumedTime = estimateGCodeFromFile();
+                success = true;
+                //success = estimateGCodeFromFile();
             } else {
                 if (prt.isReadyToGenerateGCode()) {
-                    assumedTime = prt.generateGCode();
+                    success = prt.generateGCode();
                 } else {
                     Base.writeLog("generateGCode(): failed GCode generation", this.getClass());
-                    assumedTime = "-1";
+                    success = false;
                 }
             }
 
-            if (assumedTime.equals("-1")) {
+            if (!success) {
                 // Error occurred - permissions maybe
                 // Cancel print and setting message
                 // 5000 ms delay to ensure user reads it
@@ -1311,11 +1286,11 @@ public class PrintSplashAutonomous extends BaseDialog {
                 Base.hiccup(5000);
                 cancelProcess();
                 Base.writeLog("Printing estimation failed...", this.getClass());
-                return false;
             } else {
                 Base.writeLog("Printing estimation successful...", this.getClass());
-                return true;
             }
+
+            return success;
         }
     }
 
@@ -1323,20 +1298,18 @@ public class PrintSplashAutonomous extends BaseDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final double temperature;
+            final int temperature;
 
             driver.readTemperature();
-            temperature = driver.getTemperature();
+            temperature = model.currentTool().getExtruderTemperature();
 
+            updateTemperatureOnProgressBar(temperature);
             if (temperature >= (temperatureGoal - 1)) {
-                updateTemperatureOnProgressBar(100, temperatureGoal / 100);
                 Base.writeLog("Temperature " + temperatureGoal + " achieved", this.getClass());
 
                 synchronized (mutex) {
                     mutex.notifyAll();
                 }
-            } else {
-                updateTemperatureOnProgressBar(temperature, temperatureGoal / 100);
             }
         }
     }
