@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <filament>
   <version>2.0.0</version>
-  <name>PLA by Filkemp (A021-A032)</name>
+  <name>*PLA by Filkemp (A021-A032)</name>
   <defaults>
     <parameter name="ooze_shield" value="False"/>
     <parameter name="layer_height" value="0.3"/>

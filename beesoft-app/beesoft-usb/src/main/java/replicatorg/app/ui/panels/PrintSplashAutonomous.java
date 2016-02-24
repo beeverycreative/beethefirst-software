@@ -855,7 +855,6 @@ public class PrintSplashAutonomous extends BaseDialog {
             //first time you press unload after print is over
             if (printEnded && unloadPressed == false && firstUnloadStep == false) {
                 unloadPressed = true;
-
                 bOk.setVisible(false);
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-02.png")));
@@ -864,6 +863,7 @@ public class PrintSplashAutonomous extends BaseDialog {
 //            jPanel1.setVisible(false);
                 jProgressBar1.setVisible(true);
                 jProgressBar1.setValue(0);
+                startUnload();
                 return;
             } // no need for else
 
@@ -1194,6 +1194,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 finalizePrint();
             }
 
+            
             while (true) {
                 if (unloadPressed) {
                     driver.setTemperature(temperatureGoal + 5);
@@ -1210,7 +1211,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                         }
                     }
 
-                    startUnload();
+                    //startUnload();
                     break;
                 }
                 Base.hiccup(3000);

@@ -47,6 +47,10 @@ public class FilamentHeating extends BaseDialog {
 
         this.addWindowListener(new WindowAdapter() {
             @Override
+            public void windowOpened(WindowEvent e) {
+                temperatureThread.start();
+            }
+            @Override
             public void windowClosed(WindowEvent e) {
                 temperatureThread.kill();
             }
@@ -117,7 +121,9 @@ public class FilamentHeating extends BaseDialog {
 
     private void evaluateInitialConditions() {
         jProgressBar1.setMaximum(GOAL_TEMPERATURE);
-        temperatureThread.start();
+
+        driver.readTemperature();
+        updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());
     }
 
     private void doCancel() {

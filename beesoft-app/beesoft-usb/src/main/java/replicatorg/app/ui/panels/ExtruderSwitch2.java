@@ -46,6 +46,7 @@ public class ExtruderSwitch2 extends BaseDialog {
             public void windowOpened(WindowEvent e) {
                 updateThread.start();
             }
+
             @Override
             public void windowClosed(WindowEvent e) {
                 updateThread.kill();
@@ -115,6 +116,9 @@ public class ExtruderSwitch2 extends BaseDialog {
         disableMessageDisplay();
         jProgressBar1.setForeground(new Color(255, 203, 5));
         jProgressBar1.setMaximum(TEMPERATURE_GOAL);
+
+        driver.readTemperature();
+        updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());
     }
 
     private void doCancel() {

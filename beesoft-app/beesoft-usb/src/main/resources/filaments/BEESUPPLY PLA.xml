@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <filament>
   <version>2.0.0</version>
-  <name>BEESUPPLY PLA (A101-A121)</name>
+  <name>*BEESUPPLY PLA (A101-A121)</name>
   <defaults>
     <parameter name="ooze_shield" value="False"/>
     <parameter name="layer_height" value="0.3"/>
