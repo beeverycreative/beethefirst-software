@@ -43,7 +43,6 @@ public class FilamentHeating extends BaseDialog {
         jProgressBar1.setForeground(new Color(255, 203, 5));
         moveToPosition();
         enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -82,8 +81,6 @@ public class FilamentHeating extends BaseDialog {
 
     @Override
     public void updateHeatBar(int temperature) {
-        Base.writeLog("Current temperature: " + temperature, this.getClass());
-
         if (temperature > jProgressBar1.getValue()) {
             jProgressBar1.setValue(temperature);
         }

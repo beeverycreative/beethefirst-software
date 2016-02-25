@@ -13,13 +13,12 @@ import javax.usb.UsbException;
 import javax.usb.UsbNotActiveException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.tools.XML;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.DriverError;
-import replicatorg.drivers.DriverFactory;
 import replicatorg.drivers.RetryException;
 import replicatorg.drivers.StopException;
 import replicatorg.drivers.VersionException;
@@ -47,7 +46,7 @@ class MachineThread extends Thread {
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
     private static boolean checkedForUpdates = false;
-
+    
     class AssessStatusThread extends Thread {
 
         MachineThread machineThread;
@@ -82,7 +81,7 @@ class MachineThread extends Thread {
                         while (driver.isBusy()) {
                             Base.hiccup(100);
                         }
-                        Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachine());
+                        Base.getMainWindow().getButtons().updateFromMachine(Base.getMainWindow().getMachineInterface());
                     }
                 }).start();
             }
@@ -112,15 +111,16 @@ class MachineThread extends Thread {
                 }
             }).start();
 
+            MachineModel model = driver.getMachine();
             while (true) {
                 try {
                     if (machineThread.isConnected() == false) {
                         throw new UsbException("Machine disconnected during operation");
                     }
 
-                    if (machineThread.getModel().getMachinePowerSaving()) {
+                    if (model.getMachinePowerSaving()) {
                         Base.getMainWindow().getButtons().setMessage("power saving");
-                    } else if (getModel().getMachineReady()) {
+                    } else if (model.getMachineReady()) {
                         Base.getMainWindow().getButtons().setMessage("is connected");
                     }
 
@@ -153,37 +153,6 @@ class MachineThread extends Thread {
         }
     }
 
-    // TODO: Rethink this.
-    class Timer {
-
-        private long lastEventTime = 0;
-        private boolean enabled = false;
-        private long intervalMs = 1000;
-
-        public void start(long interval) {
-            enabled = true;
-            intervalMs = interval;
-        }
-
-        public void stop() {
-            enabled = false;
-        }
-
-        // send out updates
-        public boolean elapsed() {
-            if (!enabled) {
-                return false;
-            }
-            long curMillis = System.currentTimeMillis();
-            if (lastEventTime + intervalMs <= curMillis) {
-                lastEventTime = curMillis;
-
-                return true;
-            }
-            return false;
-        }
-    }
-    private final Timer pollingTimer;
     // Link of machine commands to run
     ConcurrentLinkedQueue<MachineCommand> pendingQueue;
     ConcurrentLinkedQueue<MachineCommand> auxiliarQueue;
@@ -193,15 +162,8 @@ class MachineThread extends Thread {
     // our warmup/cooldown commands
     private Vector<String> warmupCommands;
     private Vector<String> cooldownCommands;
-    // The name of our machine.
-    private String name;
-    // Things that belong to a job
-    // estimated build time in millis
-    private double estimatedBuildTime = 0;
-    // Build statistics
     private double startTimeMillis = -1;
-    // Our driver object. Null when no driver is selected.
-    private Driver driver = null;
+    private final Driver driver;
     // the simulator driver
     private MachineState state = new MachineState(MachineState.State.NOT_ATTACHED);
     MachineModel cachedModel = null;
@@ -210,7 +172,6 @@ class MachineThread extends Thread {
         super("Machine Thread");
 
         this.tablePoints = new HashMap<String, Point5d>();
-        pollingTimer = new Timer();
         lastFeedrate = "0";
         pendingQueue = new ConcurrentLinkedQueue<MachineCommand>();
         auxiliarQueue = new ConcurrentLinkedQueue<MachineCommand>();
@@ -220,7 +181,8 @@ class MachineThread extends Thread {
         this.controller = controller;
 
         // load our various objects
-        loadDriver();
+        //loadDriver();
+        driver = new UsbPassthroughDriver();
         loadTablePositions();
         loadExtraPrefs();
     }
@@ -450,8 +412,6 @@ class MachineThread extends Thread {
                 if (state.canPrint()) {
                     startTimeMillis = System.currentTimeMillis();
 
-                    pollingTimer.start(1000);
-
                     // TODO: This shouldn't be done here?
                     driver.invalidatePosition();
                     setState(new MachineState(MachineState.State.BUILDING));
@@ -467,7 +427,6 @@ class MachineThread extends Thread {
                     startTimeMillis = System.currentTimeMillis();
 
                     // There is no need to reconcile the position.
-                    pollingTimer.start(1000);
 
                     if (state.canPrint()) {
                         setState(new MachineState(MachineState.State.BUILDING), buildingMessage());
@@ -480,8 +439,6 @@ class MachineThread extends Thread {
                 if (state.canPrint()) {
 
                     startTimeMillis = System.currentTimeMillis();
-
-                    pollingTimer.start(1000);
 
                     // TODO: is this what we wanted?
                     driver.invalidatePosition();
@@ -579,24 +536,25 @@ class MachineThread extends Thread {
 //            }
 
             // First, check if the driver registered any errors
-            if (driver.hasError()) {
-                DriverError error = driver.getError();
-                if (state.isConnected() && error.getDisconnected()) {
-                    // If we were connected, but this error causes us to disconnect,
-                    // transition to a disconnected state
-                    setState(new MachineState(MachineState.State.NOT_ATTACHED),
-                            error.getMessage());
-                    Base.writeLog("New State: NOT_ATTACHED. USB driver has errors and got disconnected", this.getClass());
-                } else {
-                    // Otherwise, transition to an error state, where we can still
-                    // configure the machine, but can't print.
-                    setState(new MachineState(MachineState.State.NOT_ATTACHED),
-                            error.getMessage());
-                    Base.writeLog("New State: NOT_ATTACHED. An error has occured", this.getClass());
-                }
+            /*
+             if (driver.hasError()) {
+             DriverError error = driver.getError();
+             if (state.isConnected() && error.getDisconnected()) {
+             // If we were connected, but this error causes us to disconnect,
+             // transition to a disconnected state
+             setState(new MachineState(MachineState.State.NOT_ATTACHED),
+             error.getMessage());
+             Base.writeLog("New State: NOT_ATTACHED. USB driver has errors and got disconnected", this.getClass());
+             } else {
+             // Otherwise, transition to an error state, where we can still
+             // configure the machine, but can't print.
+             setState(new MachineState(MachineState.State.NOT_ATTACHED),
+             error.getMessage());
+             Base.writeLog("New State: NOT_ATTACHED. An error has occured", this.getClass());
+             }
 
-            }
-
+             }
+             */
             if (state.getState() != MachineState.State.BUILDING
                     && state.getState() == MachineState.State.READY) {
                 setState(new MachineState(MachineState.State.READY), readyMessage());
@@ -717,19 +675,21 @@ class MachineThread extends Thread {
             // If we are building
             if (state.isBuilding() && !state.isPaused()) {
 
-                if (Base.getPrintEnded()) {
-                    if (state.getState() == MachineState.State.BUILDING) {
+                /*
+                 if (Base.getPrintEnded()) {
+                 if (state.getState() == MachineState.State.BUILDING) {
 
-                        setState(new MachineState(MachineState.State.READY),
-                                readyMessage());
-                        Base.writeLog("New State: READY", this.getClass());
-                    } else {
-                        setState(new MachineState(MachineState.State.NOT_ATTACHED),
-                                notConnectedMessage());
-                        Base.writeLog("New State: NOT_ATTACHED", this.getClass());
-                    }
+                 setState(new MachineState(MachineState.State.READY),
+                 readyMessage());
+                 Base.writeLog("New State: READY", this.getClass());
+                 } else {
+                 setState(new MachineState(MachineState.State.NOT_ATTACHED),
+                 notConnectedMessage());
+                 Base.writeLog("New State: NOT_ATTACHED", this.getClass());
+                 }
 
-                }
+                 }
+                 */
             }
 
             if (!state.isBuilding()) {
@@ -909,26 +869,27 @@ class MachineThread extends Thread {
         return (driver != null && driver.isInitialized());
     }
 
-    private void loadDriver() {
-        // load our utility drivers
-        if (Boolean.valueOf(ProperDefault.get("machinecontroller.simulator"))) {
-        }
-        Node driverXml = null;
-        // load our actual driver
-        NodeList kids = machineNode.getChildNodes();
-        for (int j = 0; j < kids.getLength(); j++) {
-            Node kid = kids.item(j);
-            if (kid.getNodeName().equals("driver")) {
-                driverXml = kid;
+    /*
+     private void loadDriver() {
+     // load our utility drivers
+     if (Boolean.valueOf(ProperDefault.get("machinecontroller.simulator"))) {
+     }
+     Node driverXml = null;
+     // load our actual driver
+     NodeList kids = machineNode.getChildNodes();
+     for (int j = 0; j < kids.getLength(); j++) {
+     Node kid = kids.item(j);
+     if (kid.getNodeName().equals("driver")) {
+     driverXml = kid;
 
-            }
-        }
-        driver = DriverFactory.factory(driverXml);
-        driver.setMachine(getModel());
-        // Initialization is now handled by the machine thread when it
-        // is placed in a connecting state.
-    }
-
+     }
+     }
+     //driver = DriverFactory.factory(driverXml);
+     //driver.setMachine(getModel());
+     // Initialization is now handled by the machine thread when it
+     // is placed in a connecting state.
+     }
+     */
     private void dispose() {
         if (driver != null) {
             driver.dispose();
@@ -943,27 +904,5 @@ class MachineThread extends Thread {
         }
 
         setState(new MachineState(MachineState.State.NOT_ATTACHED));
-    }
-
-    private MachineModel loadModel() {
-        MachineModel model = new MachineModel();
-        model.loadXML(machineNode);
-        return model;
-    }
-
-    public MachineModel getModel() {
-        if (cachedModel == null) {
-            cachedModel = loadModel();
-        }
-        return cachedModel;
-    }
-
-    // TODO: Make this a command.
-    public void setEstimatedBuildTime(double estimatedBuildTime) {
-        this.estimatedBuildTime = estimatedBuildTime;
-    }
-
-    public String getMachineName() {
-        return name;
     }
 }

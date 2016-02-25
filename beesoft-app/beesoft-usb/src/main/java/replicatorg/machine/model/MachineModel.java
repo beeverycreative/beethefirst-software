@@ -74,7 +74,6 @@ public class MachineModel {
     protected Vector<WipeModel> wipes = new Vector<WipeModel>();
 
     // our build volume
-    protected BuildVolume buildVolume;
     private boolean machineReady = false;
     private boolean machineBusy = false;
     private boolean machinePaused = false;
@@ -98,7 +97,6 @@ public class MachineModel {
     public MachineModel() {
         clamps = new Vector<ClampModel>();
         tools = new Vector<ToolModel>();
-        buildVolume = new BuildVolume(100, 100, 100); // preload it with the default values
 
         //currentPosition = new Point3d();
         minimum = new Point5d();
@@ -112,6 +110,7 @@ public class MachineModel {
     }
 
     //load data from xml config
+    /*
     public void loadXML(Node node) {
         xml = node;
 
@@ -122,7 +121,9 @@ public class MachineModel {
         parseWipes();
         parseExclusion();
     }
+    */
 
+    /*
     private void parseExclusion() {
         if (XML.hasChildNode(xml, "exclusion")) {
             Node exclusionNode = XML.getChildNodeByName(xml, "wipes");
@@ -328,6 +329,7 @@ public class MachineModel {
         }
 
     }
+    */
 
     /**
      * ***********************************
@@ -477,10 +479,6 @@ public class MachineModel {
             //e.printStackTrace();
         }
         return null;
-    }
-
-    public BuildVolume getBuildVolume() {
-        return buildVolume;
     }
 
     public Vector<ToolModel> getTools() {

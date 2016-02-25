@@ -95,7 +95,7 @@ public class About extends BaseDialog {
         String code = "N/A";
 
         if (Base.getMachineLoader().isConnected()) {
-            code = Base.getMainWindow().getMachine().getModel().getCoilText();
+            code = Base.getMainWindow().getMachineInterface().getDriver().getMachine().getCoilText();
         }
 
         if(code.equals(FilamentControler.NO_FILAMENT)

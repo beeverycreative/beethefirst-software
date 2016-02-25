@@ -33,6 +33,7 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 
 import replicatorg.drivers.DriverBaseImplementation;
+import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -124,14 +125,14 @@ public class UsbDriver extends DriverBaseImplementation {
      *
      * @param device USB device from descriptor.
      */
-    private void InitUsbDevice(UsbDevice device) {
+    private void initUSBDevice(UsbDevice device) {
 
         try {
             if (device.isUsbHub()) {
                 UsbHub hub = (UsbHub) device;
 
                 for (UsbDevice child : (List<UsbDevice>) hub.getAttachedUsbDevices()) {
-                    InitUsbDevice(child);
+                    UsbDriver.this.initUSBDevice(child);
                 }
 
             } else {
@@ -182,10 +183,10 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Scans descriptor and inits usb device if match.
      */
-    public void InitUsbDevice() {
+    public void initUSBDevice() {
         m_usbDeviceList.clear();
 
-        InitUsbDevice(usbRootHub);
+        UsbDriver.this.initUSBDevice(usbRootHub);
 
         if (m_usbDeviceList.isEmpty()) {
             m_usbDevice = null;
@@ -352,7 +353,13 @@ public class UsbDriver extends DriverBaseImplementation {
         UsbPipe pipeRead, pipeWrite;
         UsbIrp irpWrite;
         int ansBytes;
+        long elapsedTimeMilliseconds;
         String status;
+        boolean validStatus = false, mismatchDetected = false;
+        
+        if(pipes == null) {
+            return false;
+        }
 
 //        // Confirm the USB device it's ok and working properly
         if (pipes.getUsbPipeWrite() == null || pipes.getUsbPipeRead() == null) {
@@ -422,12 +429,35 @@ public class UsbDriver extends DriverBaseImplementation {
 
                     // clean up
                     try {
-                        ansBytes = pipeRead.syncSubmit(readBuffer);
-                        if (ansBytes > 0) {
-                            try {
-                                status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
-                                processStatus(status);
-                            } catch (UnsupportedEncodingException ex) {
+                        while (validStatus == false) {
+                            elapsedTimeMilliseconds = System.currentTimeMillis();
+                            ansBytes = pipeRead.syncSubmit(readBuffer);
+                            elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
+                            
+                            if(elapsedTimeMilliseconds > 500) {
+                                System.out.println(elapsedTimeMilliseconds);
+                                isBusy = true;
+                                break;
+                            }
+                            
+                            if (ansBytes > 0) {
+                                try {
+                                    status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+
+                                    if (!status.contains("S:")) {
+                                        mismatchDetected = true;
+                                    } else {
+                                        validStatus = true;
+
+                                        // throw away the status message if there was a problem
+                                        // since it may now be outdated
+                                        if (!mismatchDetected) {
+                                            processStatus(status);
+                                        }
+                                    }
+                                } catch (UnsupportedEncodingException ex) {
+                                    Base.writeLog("Unsupported encoding! (system doesn't support UTF-8?)", this.getClass());
+                                }
                             }
                         }
                     } catch (UsbException ex) {
@@ -562,6 +592,7 @@ public class UsbDriver extends DriverBaseImplementation {
     public void dispose() {
         m_usbDevice = null;
         connectedDevice = PrinterInfo.UNKNOWN;
+        setMachine(new MachineModel());
     }
 
     /**

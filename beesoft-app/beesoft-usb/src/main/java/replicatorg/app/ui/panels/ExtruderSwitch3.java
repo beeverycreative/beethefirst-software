@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
@@ -401,7 +402,7 @@ public class ExtruderSwitch3 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            driver.setCoilText("none");
+            driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.setInstalledNozzleSize(selectedNozzle.getSizeInMicrons());
             driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }

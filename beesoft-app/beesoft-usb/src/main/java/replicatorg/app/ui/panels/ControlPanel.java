@@ -65,7 +65,7 @@ public class ControlPanel extends BaseDialog {
     };
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private final ToolModel currentTool = Base.getMachineLoader().getMachineInterface().getModel().currentTool();
+    private final ToolModel currentTool = driver.getMachine().currentTool();
     protected double temperatureGoal = 0;
     protected double zHome = -1;
     private DefaultComboBoxModel comboModel2;

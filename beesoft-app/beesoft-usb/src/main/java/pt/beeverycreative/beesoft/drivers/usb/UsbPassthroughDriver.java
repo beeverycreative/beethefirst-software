@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -20,7 +18,6 @@ import javax.usb.UsbNotActiveException;
 import javax.usb.UsbNotOpenException;
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
-import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.panels.Feedback;
@@ -28,6 +25,7 @@ import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
+import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -53,11 +51,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String SET_FIRMWARE_VERSION = "M114 A";
     private static final String INVALID_FIRMWARE_VERSION = "0.0.0";
     private static final String GET_FIRMWARE_VERSION = "M115";
-    private static final String DUMMY = "M637";
-    private static final String GET_LINE_NUMBER = "M638";
-    private static final String ECHO = "M639";
     private static final String STATUS_OK = "S:3";
-    private static final String STATUS_X = "S:";
     private static final String STATUS_SDCARD = "s:5";
     private static final String RESPONSE_TRANSFER_ON_GOING = "tog";
     private static final String STATUS_SHUTDOWN = "s:9";
@@ -85,7 +79,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final int QUEUE_WAIT = 1000;
     private static final int SEND_WAIT = 2; //2 did not work
     private int queue_size = 0;
-    private final Queue<QueueCommand> resendQueue = new LinkedList<QueueCommand>();
     private long lastDispatchTime;
     private static Version bootloaderVersion = new Version();
     private Version firmwareVersion = new Version();
@@ -99,35 +92,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static String backupCoilText = FilamentControler.NO_FILAMENT;
     private static double backupZVal = 123.495;
     private static final Feedback feedbackWindow = new Feedback();
+    private boolean printerConnected = false;
     //private FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
 
     public enum COM {
 
         DEFAULT, BLOCK, TRANSFER, NO_RESPONSE
-    }
-
-    class QueueCommand {
-
-        String command;
-        int lineNumber;
-
-        public QueueCommand(String command, int lineNumber) {
-            this.command = command;
-            this.lineNumber = lineNumber;
-        }
-
-        public String getCommand() {
-            return command;
-        }
-
-        public int getLineNumber() {
-            return lineNumber;
-        }
-
-        @Override
-        public String toString() {
-            return command + " N:" + lineNumber;
-        }
     }
 
     /**
@@ -196,6 +166,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void sendInitializationGcode() {
         Base.writeLog("Sending initialization GCodes", this.getClass());
         String status = checkPrinterStatus();
+        setMachine(new MachineModel());
 
         super.isBootloader = true;
 
@@ -207,7 +178,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             updateBootloaderInfo();
             if (updateFirmware() >= 0) {
                 lastDispatchTime = System.currentTimeMillis();
-                resendQueue.clear();
 
                 Base.writeLog("Bootloader version: " + bootloaderVersion, this.getClass());
                 Base.writeLog("Firmware version: " + firmwareVersion, this.getClass());
@@ -245,10 +215,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             updateCoilText();
             updateNozzleType();
-            PrintPreferences prefs = new PrintPreferences();
 
             final PrintSplashAutonomous p = new PrintSplashAutonomous(
-                    true, Base.printPaused, this.isONShutdown, prefs
+                    Base.printPaused, this.isONShutdown
             );
 
             if (Base.printPaused == false && this.isONShutdown == false) {
@@ -275,7 +244,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             lastDispatchTime = System.currentTimeMillis();
-            resendQueue.clear();
             super.isBootloader = false;
 
             try {
@@ -415,28 +383,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return QUEUE_LIMIT;
     }
 
-    private void recoverFromSDCardTransfer() {
-        String out = "";
-
-        //Waits for a Status OK to unlock Transfer
-        while (!out.toLowerCase().contains(STATUS_OK)
-                || !out.toLowerCase().contains(ERROR)) {
-
-//                sent = sendCommandBytes(byteMessage.byte_array);
-            out += dispatchCommand(GET_STATUS_FROM_ERROR);
-
-//            System.out.println("out: "+out);
-            try {
-                Thread.sleep(5, 0); //sleep for a five milli second just for luck
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        //End transfer mode
-        transferMode = false;
-    }
-
     private String dispatchCommand(byte[] byteArray) {
         String ans;
 
@@ -462,7 +408,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         int retryNum;
 
         ans = "";
-        retryNum = 20;
+        retryNum = 5;
 
         if (next == null) {
             return "";
@@ -511,10 +457,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public String dispatchCommand(final String next, Enum e) {
-
-        String tResponse;
-        String tExpected;
-
         /**
          * Blocks non-transfer while in TRANSFER mode
          */
@@ -529,26 +471,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
         while (queue_size >= QUEUE_LIMIT) {
             hiccup(QUEUE_WAIT, 0);
 
-            tResponse = dispatchCommand(GET_STATUS);
-            tExpected = STATUS_X;
-
             // Necessary to handle disconnect during readResponse
             if (!isInitialized()) {
                 return NOK;
             }
 
-            if (!tResponse.contains(tExpected)) {
-                recoverCOM();
-                break;
-            } else {
-                // everything is ok, flush resendQueue
-                resendQueue.clear();
-            }
-
-            queue_size = getQfromReverse(tResponse);
-
             if (comLog) {
-                Base.writeComLog((System.currentTimeMillis() - startTS), " Response:" + tResponse);
                 Base.writeComLog((System.currentTimeMillis() - startTS), " Queue:" + queue_size);
             }
         }
@@ -600,100 +528,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (answer.contains(NOK) == false) {
             return answer;
         } else {
-            return recoverCOM();
+            return ERROR;
         }
-    }
-
-    private String recoverCOM() {
-        boolean comLost = false;
-
-        while (comLost) {
-
-            int myID = (int) (Math.random() * 100.0);
-            String ans;
-
-            String message = ECHO + " E" + myID;
-            String expected = "E" + String.valueOf(myID);
-            String response;
-
-            while (true) {
-                response = dispatchCommand(message);
-                if (comLog) {
-                    Base.writeComLog(System.currentTimeMillis() - startTS, "Trying to recover COM. R: " + response + " E: " + expected);
-                }
-
-                /**
-                 * Necessary to handle disconnect during readResponse. Breaks
-                 * the loop.
-                 */
-                if (!isInitialized()) {
-                    return "error";
-                }
-
-                if (response.contains(expected)) {
-                    break;
-                } else if (response.contains(NOK)) {
-                    //received a timeout, will try again.
-                    myID++;
-                    message = ECHO + " E" + myID;
-                    expected = "E" + myID;
-                } else {
-                    //received something try to read the same expected
-                    //dummy - does nothing
-                    message = DUMMY;
-                }
-
-            }
-
-            comLost = false;
-            ans = dispatchCommand(GET_LINE_NUMBER);
-
-            String re1 = "(last)";	// Variable Name 1
-            String re2 = "(\\s+)";	// White Space 1
-            String re3 = "(N)";	// Variable Name 2
-            String re4 = "(:)";	// Any Single Character 1
-            String re5 = "(\\d+)";	// Integer Number 1
-
-            Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-            Matcher m = p.matcher(ans);
-            if (m.find()) {
-
-                int lineNumber = Integer.valueOf(m.group(5));
-
-                while (!resendQueue.isEmpty()) {
-                    QueueCommand top = resendQueue.poll();
-
-                    if (comLog) {
-                        Base.writeComLog(-1, "top = " + top.toString() + "Queue size = " + resendQueue.size());
-                    }
-
-                    if (lineNumber < top.getLineNumber() && !top.command.contains(ECHO)) {
-                        ans = dispatchCommand(top.getCommand());
-
-                        if (comLog) {
-                            Base.writeComLog(-1, "Resend top = " + top.toString());
-                        }
-
-                        if (!ans.contains(NOK)) {
-                        } else {
-                            comLost = true;
-                            break;
-                        }
-
-                    } else {
-                        // Command was previously send. No resend required.
-                        if (comLog) {
-                            Base.writeComLog(-1, "Command skipped = " + top.toString());
-                        }
-                    }
-                }
-            } else {
-                comLost = true;
-            }
-        }
-
-        //queue_size = QUEUE_LIMIT;
-        return "ok";
     }
 
     @Override
@@ -755,7 +591,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void updateCoilText() {
         String coilText, coilTextLowerCase;
 
-        coilText = dispatchCommand(GET_COIL_TEXT, COM.DEFAULT);
+        coilText = dispatchCommand(GET_COIL_TEXT);
         coilTextLowerCase = coilText.toLowerCase();
 
         try {
@@ -1202,10 +1038,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String bTag = "B";
         String cTag = "C";
         String dTag = "D";
-        String aValue = "0";
-        String bValue = "0";
-        String cValue = "0";
-        String dValue = "0";
+        String aValue = "-1";
+        String bValue = "-1";
+        String cValue = "-1";
+        String dValue = "-1";
 
         for (String re : res) {
             if (re.contains(aTag)) {
@@ -1785,7 +1621,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public boolean isInitialized() {
-        return (super.isInitialized() && testPipes(pipes));
+        printerConnected = testPipes(pipes);
+        return printerConnected;
     }
 
     private String checkPrinterStatus() {
@@ -2209,7 +2046,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 pipes = null;
                 while (m_usbDevice == null) {
-                    InitUsbDevice();
+                    initUSBDevice();
                     hiccup(100, 0);
                 }
 
@@ -2262,7 +2099,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 pipes = null;
                 while (m_usbDevice == null) {
-                    InitUsbDevice();
+                    initUSBDevice();
                     hiccup(100, 0);
                 }
 

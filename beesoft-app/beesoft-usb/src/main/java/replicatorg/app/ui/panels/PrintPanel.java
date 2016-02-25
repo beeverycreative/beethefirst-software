@@ -51,7 +51,7 @@ public class PrintPanel extends BaseDialog {
 
     private static final String FORMAT = "%2d:%2d";
     private static final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private static final MachineModel machineModel = Base.getMainWindow().getMachine().getModel();
+    private final MachineModel machineModel = driver.getMachine();
     private final boolean isPrinterConnected = Base.getMachineLoader().isConnected();
     private final int nozzleType;
     private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<Integer, JLabel>();
@@ -82,7 +82,6 @@ public class PrintPanel extends BaseDialog {
         evaluateConditions();
         matchChanges();
         enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -1434,7 +1433,7 @@ public class PrintPanel extends BaseDialog {
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
             Base.turnOnPowerSaving(false);
 
-            final PrintSplashAutonomous p = new PrintSplashAutonomous(false, getPreferences());
+            final PrintSplashAutonomous p = new PrintSplashAutonomous(getPreferences());
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -1814,7 +1813,7 @@ public class PrintPanel extends BaseDialog {
                     nTimes++;
                     showLoadingIcon(false);
                     Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-                    filament = Base.getMainWindow().getMachine().getModel().getCoilText();
+                    filament = driver.getMachine().getCoilText();
                     stop = true;
                 } else {
                     Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
@@ -1892,7 +1891,7 @@ public class PrintPanel extends BaseDialog {
                 }
             }
 
-            filament = Base.getMainWindow().getMachine().getModel().getCoilText();
+            filament = driver.getMachine().getCoilText();
         }
 
         @Override

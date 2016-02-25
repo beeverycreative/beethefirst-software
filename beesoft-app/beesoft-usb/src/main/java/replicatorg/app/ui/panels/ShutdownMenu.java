@@ -12,7 +12,7 @@ import replicatorg.machine.MachineInterface;
 public class ShutdownMenu extends BaseDialog {
 
     private final PrintSplashAutonomous printSplash;
-    private final MachineInterface machine = Base.getMainWindow().getMachine();
+    private final MachineInterface machine = Base.getMainWindow().getMachineInterface();
 
     private static final int FILE_KEY = 1;
 

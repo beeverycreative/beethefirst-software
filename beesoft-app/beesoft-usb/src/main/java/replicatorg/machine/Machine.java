@@ -23,8 +23,6 @@ import org.w3c.dom.Node;
 import replicatorg.app.util.AutonomousData;
 
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.commands.DriverCommand;
-import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -178,12 +176,7 @@ public class Machine implements MachineInterface {
     public Driver getDriver() {
         return machineThread.getDriver();
     }
-
-    @Override
-    public MachineModel getModel() {
-        return machineThread.getModel();
-    }
-
+    
     @Override
     public void stopMotion() {
         machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_MOTION,
@@ -351,6 +344,6 @@ public class Machine implements MachineInterface {
     
     @Override
     public AutonomousData getAutonomousData() {
-        return getModel().getAutonomousData();
+        return null;
     }
 }

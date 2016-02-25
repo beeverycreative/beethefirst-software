@@ -86,18 +86,20 @@ public abstract class DriverBaseImplementation implements Driver {
      * Creates the driver object.
      */
     public DriverBaseImplementation() {
-        errorList = new ConcurrentLinkedQueue<DriverError>();
+        /*
+         errorList = new ConcurrentLinkedQueue<DriverError>();
 
-        // initialize our offsets
-        offsets = new Point3d[7];
-        for (int i = 0; i < 7; i++) {
-            offsets[i] = new Point3d();  // Constructs and initializes a Point3d to (0,0,0)
-        }
+         // initialize our offsets
+         offsets = new Point3d[7];
+         for (int i = 0; i < 7; i++) {
+         offsets[i] = new Point3d();  // Constructs and initializes a Point3d to (0,0,0)
+         }
+         */
         // TODO: do this properly.
-        machine = new MachineModel();
+        //machine = new MachineModel();
         // This must be initialize anyway so, it doesnt matter what name does it have. 
         // The truth is that the name come from the xml
-        driverName = "virtualprinter";
+        //driverName = "virtualprinter";
     }
 
     @Override
@@ -226,14 +228,6 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void assessState() {
-    }
-
-    protected void setError(DriverError newError) {
-        errorList.add(newError);
-    }
-
-    protected void setError(String e) {
-        setError(new DriverError(e, true));
     }
 
     @Override

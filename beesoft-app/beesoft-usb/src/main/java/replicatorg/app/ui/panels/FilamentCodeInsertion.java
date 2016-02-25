@@ -9,7 +9,6 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.drivers.Driver;
 import replicatorg.machine.model.MachineModel;
 
 /**
@@ -25,8 +24,7 @@ import replicatorg.machine.model.MachineModel;
  */
 public class FilamentCodeInsertion extends BaseDialog {
 
-    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private final MachineModel model = Base.getMachineLoader().getMachineInterface().getModel();
+    private final MachineModel model = Base.getMachineLoader().getMachineInterface().getDriver().getMachine();
     private DefaultComboBoxModel<Filament> comboModel;
     private Filament[] categories;
 

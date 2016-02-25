@@ -66,7 +66,7 @@ public class FilamentControler {
      */
     private static void fetchFilaments() {
 
-        String connectedPrinter = Base.getMainWindow().getMachine()
+        String connectedPrinter = Base.getMainWindow().getMachineInterface()
                 .getDriver().getConnectedDevice().filamentCode();
 
         // get all the files from a directory
@@ -150,7 +150,7 @@ public class FilamentControler {
         String connectedPrinter;
         List<Filament> filaments;
 
-        connectedPrinter = Base.getMainWindow().getMachine()
+        connectedPrinter = Base.getMainWindow().getMachineInterface()
                 .getDriver().getConnectedDevice().filamentCode();
 
         if (filamentMap == null) {

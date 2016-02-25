@@ -87,53 +87,52 @@ public class Printer {
             // handles with no permission error cancelling print and setting error message
             return false;
         }
-        
+
         return true;
     }
 
     /*
-    private void replaceLineInFile(String pathString, String textToReplace) {
+     private void replaceLineInFile(String pathString, String textToReplace) {
 
-        String m31String;
-        File fileToRead = new File(pathString);
-        File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
+     String m31String;
+     File fileToRead = new File(pathString);
+     File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
 
-        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes();
-        //+ " L" + getGCodeNLines();
+     m31String = "M31 A" + PrintEstimator.getEstimatedMinutes();
+     //+ " L" + getGCodeNLines();
 
-        Base.writeLog("Attempting to replace M31 A0 with " + m31String, this.getClass());
-        Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
-        Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
+     Base.writeLog("Attempting to replace M31 A0 with " + m31String, this.getClass());
+     Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
+     Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
 
-        try {
-            Reader reader = new InputStreamReader(
-                    new FileInputStream(fileToRead), "UTF-8");
-            BufferedReader fin = new BufferedReader(reader);
-            Writer writer = new OutputStreamWriter(
-                    new FileOutputStream(fileToWrite, false), "UTF-8");
-            BufferedWriter fout = new BufferedWriter(writer);
-            String s;
-            while ((s = fin.readLine()) != null) {
-                String replaced = s.replaceAll(textToReplace, m31String);
-                fout.write(replaced);
-                fout.newLine();
-            }
+     try {
+     Reader reader = new InputStreamReader(
+     new FileInputStream(fileToRead), "UTF-8");
+     BufferedReader fin = new BufferedReader(reader);
+     Writer writer = new OutputStreamWriter(
+     new FileOutputStream(fileToWrite, false), "UTF-8");
+     BufferedWriter fout = new BufferedWriter(writer);
+     String s;
+     while ((s = fin.readLine()) != null) {
+     String replaced = s.replaceAll(textToReplace, m31String);
+     fout.write(replaced);
+     fout.newLine();
+     }
 
-            // might seem weird but not doing this will prevent BEESOFT from
-            // deleting the unmodified file on Windows systems. probably a bug
-            // in the JVM (Java 6)?
-            fin.close();
-            fin = null;
-            fout.close();
-            fout = null;
+     // might seem weird but not doing this will prevent BEESOFT from
+     // deleting the unmodified file on Windows systems. probably a bug
+     // in the JVM (Java 6)?
+     fin.close();
+     fin = null;
+     fout.close();
+     fout = null;
 
-        } catch (IOException e) {
-            Base.writeLog("IOException when attempting to replace M31", this.getClass());
-            Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-    */
-
+     } catch (IOException e) {
+     Base.writeLog("IOException when attempting to replace M31", this.getClass());
+     Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
+     }
+     }
+     */
     private void appendStartAndEndGCode() {
         String[] startCode, endCode;
         StringBuilder codeStringBuilder;

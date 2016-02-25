@@ -1484,15 +1484,6 @@ public class Base {
     static public MainWindow getMainWindow() {
         return editor;
     }
-    static boolean printEnded = false;
-
-    static public void setPrintEnded(boolean val) {
-        printEnded = val;
-    }
-
-    static public boolean getPrintEnded() {
-        return printEnded;
-    }
 
     public static void resetPrintingFlags() {
         isPrinting = false;

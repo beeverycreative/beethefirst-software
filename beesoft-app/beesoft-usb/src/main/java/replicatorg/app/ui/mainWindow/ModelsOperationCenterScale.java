@@ -586,7 +586,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void bScaleToMaxMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMousePressed
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
+        BuildVolume machineVolume = Base.getMainWindow().getCanvas().getBuildVolume();
 
         double scaleX = machineVolume.getX() / model.getEditer().getWidth();
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();

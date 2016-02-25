@@ -660,7 +660,7 @@ public class Maintenance extends BaseDialog {
 
     private class ControlStatus extends Thread {
 
-        private final Driver machine = Base.getMainWindow().getMachine().getDriver();
+        private final Driver machine = Base.getMainWindow().getMachineInterface().getDriver();
         private boolean stop = false;
 
         public ControlStatus() {

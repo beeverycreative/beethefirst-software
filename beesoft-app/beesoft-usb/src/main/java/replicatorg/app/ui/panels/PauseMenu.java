@@ -14,7 +14,7 @@ public class PauseMenu extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final PrintSplashAutonomous printSplash;
-    private final MachineInterface machine = Base.getMainWindow().getMachine();
+    private final MachineInterface machine = Base.getMainWindow().getMachineInterface();
     
     private static final int FILE_KEY = 1;
 

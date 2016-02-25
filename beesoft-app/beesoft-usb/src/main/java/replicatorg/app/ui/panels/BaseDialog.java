@@ -74,7 +74,7 @@ public abstract class BaseDialog extends javax.swing.JDialog {
     protected class PrintingFeedbackThread extends Thread {
 
         private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-        private final MachineModel model = Base.getMainWindow().getMachineInterface().getModel();
+        private final MachineModel model = driver.getMachine();
         private boolean stop = false;
 
         public PrintingFeedbackThread() {
@@ -130,7 +130,7 @@ public abstract class BaseDialog extends javax.swing.JDialog {
     protected class TemperatureThread extends Thread {
 
         private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
-        private final ToolModel currentTool = Base.getMainWindow().getMachineInterface().getModel().currentTool();
+        private final ToolModel currentTool = driver.getMachine().currentTool();
         private boolean stop = false;
 
         public TemperatureThread() {

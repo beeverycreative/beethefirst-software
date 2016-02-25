@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -439,7 +440,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            driver.setCoilText("none");
+            driver.setCoilText(FilamentControler.NO_FILAMENT);
             doCancel();
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -467,7 +468,7 @@ public class ExtruderMaintenance5 extends BaseDialog {
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unload filament pressed", this.getClass());
-            driver.setCoilText("none");
+            driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.dispatchCommand("M702", COM.NO_RESPONSE);
             driver.setBusy(true);
         }

@@ -679,7 +679,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 machine = Base.getMainWindow().getMachineInterface();
                 editor = Base.getMainWindow();
 
-                if (machine.getModel().getMachineBusy()) {
+                if (machine.getDriver().getMachine().getMachineBusy()) {
                     editor.showFeedBackMessage("moving");
                 } else {//&& Base.isPrinting == false 
                     if (editor.validatePrintConditions()
@@ -698,12 +698,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean noFilament;
                 MachineInterface machine = getMachineInterface();
-
-                noFilament = Base.getMainWindow().getMachine().getModel()
-                        .getCoilText()
-                        .equalsIgnoreCase(FilamentControler.NO_FILAMENT_CODE);
 
                 if (Base.isPrinting == true) {
                     Base.getMainWindow().showFeedBackMessage("btfPrinting");
@@ -1265,7 +1260,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         }
     };
 
-    public MachineInterface getMachine() {
+    public MachineInterface getMachineInterface() {
         return this.machineLoader.getMachineInterface();
     }
 
@@ -1400,7 +1395,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                                 20, 400, false, false, path);
 
                 Base.isPrintingFromGCode = true;
-                final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
+                final PrintSplashAutonomous p = new PrintSplashAutonomous(prefs);
                 EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1820,9 +1815,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         Base.logger.info(msg);
     }
 
-    public MachineInterface getMachineInterface() {
-        return this.machineLoader.getMachineInterface();
-    }
+
 
     /**
      * Here we want to: 1. Create a new machine using the given profile name 2.
