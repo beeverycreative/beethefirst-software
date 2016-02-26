@@ -108,7 +108,10 @@ public class FilamentControler {
 
                             if (connectedPrinter.equals(sc.getPrinterName())
                                     || connectedPrinter.equals("UNKNOWN")) {
-                                filamentMap.putIfAbsent(fil.getName(), fil);
+                                // putIfAbsent only exists in java 8
+                                if (filamentMap.get(fil.getName()) == null) {
+                                    filamentMap.put(fil.getName(), fil);
+                                }
                                 break;
                             }
                         }
@@ -189,7 +192,9 @@ public class FilamentControler {
     }
 
     /**
-     * Given a filament, printer and nozzle size, return a list of compatible resolutions
+     * Given a filament, printer and nozzle size, return a list of compatible
+     * resolutions
+     *
      * @param filamentText the filament's name
      * @param printer the printer's name
      * @param nozzleSize the nozzle's size, in microns
@@ -207,7 +212,7 @@ public class FilamentControler {
             fil = filamentMap.get(filamentText);
             return fil.getSupportedResolutions(printer, nozzleSize);
         }
-        
+
         return null;
     }
 

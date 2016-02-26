@@ -435,7 +435,6 @@ public class UsbDriver extends DriverBaseImplementation {
                             elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
                             
                             if(elapsedTimeMilliseconds > 500) {
-                                System.out.println(elapsedTimeMilliseconds);
                                 isBusy = true;
                                 break;
                             }
@@ -444,7 +443,8 @@ public class UsbDriver extends DriverBaseImplementation {
                                 try {
                                     status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
 
-                                    if (!status.contains("S:")) {
+                                    // when printer is in bootloader, M625 returns bad code
+                                    if (!status.contains("S:") && !status.contains("Bad")) {
                                         mismatchDetected = true;
                                     } else {
                                         validStatus = true;

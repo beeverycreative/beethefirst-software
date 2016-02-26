@@ -103,6 +103,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 Base.isPrinting = false;
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
+                driver.setTemperature(0);
             }
         });
     }
@@ -146,6 +147,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 Base.isPrinting = false;
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
+                driver.setTemperature(0);
             }
         });
 
@@ -424,8 +426,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     private void setPrintEnded(int elapsedMinutes) {
-        int nPrints;
-
         monitorPrintTimer.stop();
         printEnded = true;
         unloadPressed = false;
@@ -444,13 +444,9 @@ public class PrintSplashAutonomous extends BaseDialog {
         bOk.setDisabledIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_20.png")));
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
         tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info5"));
-
-        nPrints = Integer.valueOf(ProperDefault.get("nTotalPrints")) + 1;
-        ProperDefault.put("nTotalPrints", String.valueOf(nPrints));
-
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Completion")
                 + " " + generateTimeString(elapsedMinutes));
-
+        driver.setTemperature(temperatureGoal);
     }
 
     private String generateTimeString(int totalMinutes) {
@@ -850,27 +846,10 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
-
             //second next overloads unload button for OK
             if (lastPanel) {
                 dispose();
-            }
-
-            //first time you press unload after print is over
-            if (printEnded && unloadPressed == false && firstUnloadStep == false) {
-
-                driver.setTemperature(temperatureGoal + 5);
-                jProgressBar1.setMaximum(temperatureGoal);
-                synchronized (mutex) {
-                    try {
-                        temperatureTimer.start();
-                        mutex.wait();
-                        temperatureTimer.stop();
-                    } catch (InterruptedException ex) {
-                        return;
-                    }
-                }
-
+            } else if (printEnded && unloadPressed == false && firstUnloadStep == false) {           //first time you press unload after print is over          
                 unloadPressed = true;
                 bOk.setVisible(false);
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
@@ -881,11 +860,8 @@ public class PrintSplashAutonomous extends BaseDialog {
                 jProgressBar1.setVisible(true);
                 jProgressBar1.setValue(0);
                 startUnload();
-                return;
-            } // no need for else
+            } else if (printEnded && unloadPressed == false && firstUnloadStep) {             //any time you press unload after the first time
 
-            //any time you press unload after the first time
-            if (printEnded && unloadPressed == false && firstUnloadStep) {
                 unloadPressed = true;
                 bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
                 bOk.setEnabled(false);
@@ -1270,11 +1246,18 @@ public class PrintSplashAutonomous extends BaseDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean machineFinished;
+            Thread linesThread;
             //String status;
 
             if (!driver.isBusy()) {
                 if (!isPaused && !isShutdown) {
-                    getLinesAndTime();
+                    linesThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getLinesAndTime();
+                        }
+                    });
+                    linesThread.start();
                 }
                 bPause.setEnabled(true);
                 bCancel.setEnabled(true);

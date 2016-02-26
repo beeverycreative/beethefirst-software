@@ -20,7 +20,6 @@ M642 W1,
 "/>
 			<endCode value =
 			"M300,
-M104 S0,
 G28 X,
 G28 Z,
 G1 Y65,
