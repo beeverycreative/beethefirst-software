@@ -19,7 +19,7 @@ public class PauseMenu extends BaseDialog {
     private static final int FILE_KEY = 1;
 
     public PauseMenu(Window printSplash) {
-        super(printSplash, Dialog.ModalityType.MODELESS);
+        super(printSplash, Dialog.ModalityType.DOCUMENT_MODAL);
         this.printSplash = (PrintSplashAutonomous) printSplash;
         this.printSplash.setVisible(false);
         initComponents();
