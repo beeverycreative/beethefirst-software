@@ -189,7 +189,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
                 dispatchCommand(LAUNCH_FIRMWARE, COM.NO_RESPONSE); // Launch firmware
-                hiccup(1000, 0);
+                hiccup(3000, 0);
                 closePipe(pipes);
             } else {
                 status = "error";
@@ -220,17 +220,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     Base.printPaused, this.isONShutdown
             );
 
-            if (Base.printPaused == false && this.isONShutdown == false) {
-                // we want it to be document modal (that is, to block the underlaying windows)
-                // but we don't want it to be stuck here. is there a better way?
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        p.setVisible(true);
-                    }
-                });
-                t.start();
-            }
+            // we want it to be document modal (that is, to block the underlaying windows)
+            // but we don't want it to be stuck here. is there a better way?
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    p.setVisible(true);
+                }
+            });
+            t.start();
 
             Base.updateVersions();
         } else if (status.contains("firmware")) {
