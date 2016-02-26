@@ -1017,11 +1017,15 @@ public class PrintSplashAutonomous extends BaseDialog {
                 if (isShutdown) {
                     disableButtons();
                     ShutdownMenu shutdown = new ShutdownMenu(PrintSplashAutonomous.this);
+                    PrintSplashAutonomous.this.setVisible(false);
                     shutdown.setVisible(true);
+                    PrintSplashAutonomous.this.setVisible(true);
                 } else if (isPaused) {
                     disableButtons();
                     PauseMenu pause = new PauseMenu(PrintSplashAutonomous.this);
+                    PrintSplashAutonomous.this.setVisible(false);
                     pause.setVisible(true);
+                    PrintSplashAutonomous.this.setVisible(true);
                 }
 
                 setPrintInfo();
