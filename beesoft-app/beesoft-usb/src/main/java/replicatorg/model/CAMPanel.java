@@ -25,10 +25,7 @@ import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
 import replicatorg.app.ui.modeling.EditingModel;
 import replicatorg.app.ui.modeling.Tool;
 import replicatorg.app.ui.modeling.ToolPanel;
-import replicatorg.machine.Machine;
-import replicatorg.machine.MachineInterface;
 import replicatorg.machine.model.BuildVolume;
-import replicatorg.machine.model.MachineModel;
 import replicatorg.util.UnitsAndNumbers;
 
 /**
@@ -45,7 +42,6 @@ import replicatorg.util.UnitsAndNumbers;
 public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 
     private static final BuildVolume buildVol = new BuildVolume(190, 135, 125); // preload it with the default values
-    private Raster drawRaster;
     private OffScreenCanvas3D c;
     private SimpleUniverse universe;
     private Canvas3D canvas;

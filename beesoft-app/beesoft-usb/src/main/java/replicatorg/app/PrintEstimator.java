@@ -30,6 +30,7 @@ public class PrintEstimator {
     private final File gcodeFile;
     private final String estimatedTime;
     private final String estimatedCost;
+    private Process process;
 
     public PrintEstimator(File gcodeFile) {
         String[] temp;
@@ -111,7 +112,6 @@ public class PrintEstimator {
             }
 
             ProcessBuilder probuilder = new ProcessBuilder(command);
-            Process process;
             try {
                 process = probuilder.start();
             } catch (IOException ex) {
@@ -148,6 +148,10 @@ public class PrintEstimator {
         }
 
         return result;
+    }
+    
+    public void stopEstimation() {
+        process.destroy();
     }
 
     /**

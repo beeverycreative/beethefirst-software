@@ -7,11 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
@@ -48,7 +44,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private final PrintPreferences preferences;
     private boolean printEnded;
     private final GCodeGenWorker gcodeGenerator = new GCodeGenWorker();
-    private final UpdateThread4 ut = new UpdateThread4();
+    private final PrintingThread ut = new PrintingThread();
     private final boolean alreadyPrinting;
     private boolean errorOccurred = false;
     private boolean unloadPressed;
@@ -829,7 +825,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     }//GEN-LAST:event_bOkMousePressed
 
     private void jLabel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel11MouseClicked
-        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel11MouseClicked
 
     private void bUnloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseEntered
@@ -988,13 +983,13 @@ public class PrintSplashAutonomous extends BaseDialog {
         }
     }
 
-    private class UpdateThread4 extends Thread {
+    private class PrintingThread extends Thread {
 
         private static final String ERROR = "error";
         private boolean stop = false;
         private File gcode = null;
 
-        public UpdateThread4() {
+        public PrintingThread() {
             super("Autonomous Thread");
         }
 
@@ -1110,46 +1105,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     private class GCodeGenWorker extends SwingWorker<Boolean, Void> {
-
-        /**
-         * Runs estimator for selected gcode file
-         *
-         * @return estimation for given gcode
-         */
-        private String estimateGCodeFromFile() {
-
-            String line;
-            int lines;
-            File gcodeFile;
-
-            lines = 0;
-            gcodeFile = new File(preferences.getGcodeToPrint());
-
-            try {
-                BufferedReader reader = new BufferedReader(
-                        new FileReader(gcodeFile));
-
-                // read only the first 100 lines searching for M31, no point in
-                // searching further than that
-                while ((line = reader.readLine()) != null && lines < 100) {
-                    lines++;
-                    if (line.contains("M31")) {
-                        int indexAtA = line.indexOf('A');
-                        return line.substring(indexAtA + 1);
-                    }
-                }
-            } catch (FileNotFoundException ex) {
-                Base.writeLog("Error estimating from GCode file: file not found", this.getClass());
-            } catch (IOException ex) {
-                Base.writeLog("Error estimating from GCode file: error while "
-                        + "reading GCode", this.getClass());
-            }
-
-            //PrintEstimator.estimateTime(new File(preferences.getGcodeToPrint()));
-            //return PrintEstimator.getEstimatedTime();
-            return null;
-        }
-
         @Override
         protected Boolean doInBackground() throws Exception {
             final boolean success;

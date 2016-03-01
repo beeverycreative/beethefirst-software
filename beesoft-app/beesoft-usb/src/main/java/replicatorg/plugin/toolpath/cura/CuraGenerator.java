@@ -26,13 +26,15 @@ public class CuraGenerator extends ToolpathGenerator {
     private StreamLoggerThread ist;
     private StreamLoggerThread est;
     private final PrintPreferences prefs;
+    private final String targetGCodePath;
 
     /**
      * Sets Cura generator paths for bin and gcode export.
      *
      * @param prefs printing preferences
+     * @param targetGCodePath path of the target GCode file
      */
-    public CuraGenerator(PrintPreferences prefs) {
+    public CuraGenerator(PrintPreferences prefs, String targetGCodePath) {
         this.prefs = prefs;
 
         if (Base.isLinux() || Base.isMacOS()) {
@@ -42,6 +44,7 @@ public class CuraGenerator extends ToolpathGenerator {
         }
 
         curaEngineConfigurator = new CuraEngineConfigurator(prefs, getParameterMap());
+        this.targetGCodePath = targetGCodePath;
     }
 
     /**
@@ -85,7 +88,7 @@ public class CuraGenerator extends ToolpathGenerator {
         overloadValues
                 = FilamentControler.getFilamentSettings(prefs.getCoilText(),
                         prefs.getResolution(), prefs.getNozzleSize(),
-                        prefs.getPrinter().filamentCode());
+                        prefs.getPrinter());
         
         if (defaultValues != null && overloadValues != null) {
             defaultValues.putAll(overloadValues);
@@ -107,7 +110,7 @@ public class CuraGenerator extends ToolpathGenerator {
     @Override
     public File generateToolpath(File stl, List<CuraEngineOption> prefs) {
         StringBuilder curaEngineCmd = new StringBuilder();
-        String stlPath, gcodePath;
+        String stlPath;
         List<String> arguments;
         Map<String, String> cfgMap;
 
@@ -121,15 +124,13 @@ public class CuraGenerator extends ToolpathGenerator {
 
         // Builds files paths
         stlPath = stl.getAbsolutePath();
-        //gcodePath = stlPath.replaceAll(".stl", ".gcode");
-        gcodePath = Base.GCODE2PRINTER_PATH;
         cfgMap = curaEngineConfigurator.mapIniToCFG(prefs);
 
         //Process parameters for session
         arguments = new LinkedList<String>();
 
         String[] baseArguments = {CURA_BIN_PATH, "-v", "-p"};
-        String[] filesArguments = {"-o", gcodePath, stlPath};
+        String[] filesArguments = {"-o", targetGCodePath, stlPath};
 
         // Adds base arguments to the process
         for (String s : baseArguments) {
@@ -211,12 +212,9 @@ public class CuraGenerator extends ToolpathGenerator {
         Oracle.setToc();
 
         Base.writeLog("File " + root + ".gcode created with success", this.getClass());
-        File gcode = new File(gcodePath);
-
         ist.kill();
         est.kill();
-
-        return gcode;
+        return new File(targetGCodePath);
     }
 
     public boolean isReadyToGenerateGCode() {

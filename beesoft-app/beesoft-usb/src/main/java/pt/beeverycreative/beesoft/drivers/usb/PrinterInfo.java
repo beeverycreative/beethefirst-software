@@ -15,7 +15,7 @@ public enum PrinterInfo {
     BEEINSCHOOL("BEEINSCHOOL", (short) 0x29c9, (short) 0x0004, Base.configProperties.getFirmwareProperty("firmware.beeinschool"), "logo_beeinschool.png"),
     BEETHEFIRST_PLUS_A("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0005, Base.configProperties.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plusA.png"),
     BEEINSCHOOL_A("BEEINSCHOOL", (short) 0x29c9, (short) 0x0006, Base.configProperties.getFirmwareProperty("firmware.beeinschoola"), "logo_beeinschool_A.png"),
-    UNKNOWN("BEETHEFIRST", (short) 0x0000, (short) 0x0000, "", "");
+    UNKNOWN("UNKNOWN", (short) 0x0000, (short) 0x0000, "", "");
 
     private final String filamentCode, firmwareFilename, iconFilename, presentationName;
     private final short productID;
@@ -42,7 +42,7 @@ public enum PrinterInfo {
     public String filamentCode() {
         return filamentCode;
     }
-    
+
     public String presentationName() {
         return presentationName;
     }
@@ -80,24 +80,39 @@ public enum PrinterInfo {
         return UNKNOWN;
     }
 
-    public static PrinterInfo getDeviceByName(String printerName) {
+    public static PrinterInfo getDeviceByFormalName(String formalName) {
         for (PrinterInfo printer : PrinterInfo.values()) {
-            if (printer.presentationName.equals(printerName)) {
+            if (printer.presentationName.equals(formalName)) {
                 return printer;
             }
         }
 
         return UNKNOWN;
     }
-    
+
+    public static PrinterInfo getDeviceByFilamentName(String filamentName) {
+        for (PrinterInfo printer : PrinterInfo.values()) {
+            if (printer.filamentCode.equals(filamentName)) {
+                return printer;
+            }
+        }
+
+        return UNKNOWN;
+    }
+
     public static String filamentCodeToFormalString(String filamentCode) {
-        
-        if(filamentCode.equals(PrinterInfo.BEETHEFIRST_PLUS.filamentCode)) {
+
+        if (filamentCode.equals(PrinterInfo.BEETHEFIRST_PLUS.filamentCode)) {
             return PrinterInfo.BEETHEFIRST_PLUS.presentationName;
         }
-        
+
         // filamentCode == presentationName
         return filamentCode;
     }
-    
+
+    @Override
+    public String toString() {
+        return presentationName;
+    }
+
 }

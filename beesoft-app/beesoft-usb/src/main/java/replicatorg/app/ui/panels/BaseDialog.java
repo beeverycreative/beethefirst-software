@@ -61,14 +61,15 @@ public abstract class BaseDialog extends javax.swing.JDialog {
     }
 
     protected void resetFeedbackComponents() {
-
+        throw new UnsupportedOperationException("not overriden");
     }
 
     protected void showMessage() {
+        throw new UnsupportedOperationException("not overriden");
     }
 
     protected void updateHeatBar(int currentTemperature) {
-
+        throw new UnsupportedOperationException("not overriden");
     }
 
     protected class PrintingFeedbackThread extends Thread {

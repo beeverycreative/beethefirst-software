@@ -768,8 +768,6 @@ public class Base {
 //            System.out.println(win[i].getName());
         }
         editor.setEnabled(true);
-        editor.getButtons().resetVariables();
-
     }
 
     static public void enableAllOpenWindows() {

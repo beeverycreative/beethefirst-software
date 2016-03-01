@@ -33,27 +33,26 @@ public class Printer {
 
     private final MainWindow mainWindow;
     private final PrintBed bed;
-    private File gcode;
     private final PrintPreferences params;
+    private final CuraGenerator generator;
+    private File gcode;
     private ArrayList<CuraGenerator.CuraEngineOption> options;
     private File stl;
-    private final CuraGenerator generator;
 
     public Printer(PrintPreferences printParams) {
         this.mainWindow = Base.getMainWindow();
         this.bed = mainWindow.getBed();
-        this.gcode = null;
         this.params = printParams;
         this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
-        this.generator = new CuraGenerator(params);
+        this.generator = new CuraGenerator(params, Base.GCODE2PRINTER_PATH);
+    }
 
-        /*
-         if (params != null) {
-         printPrepared = generator.preparePrint();
-         } else {
-         printPrepared = false;
-         }
-         */
+    public Printer(PrintPreferences printParams, String targetGCodePath) {
+        this.mainWindow = Base.getMainWindow();
+        this.bed = mainWindow.getBed();
+        this.params = printParams;
+        this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
+        this.generator = new CuraGenerator(params, targetGCodePath);
     }
 
     /**
@@ -62,7 +61,6 @@ public class Printer {
      * @return true if GCode generation was successful, false otherwise
      */
     public boolean generateGCode() {
-
         stl = generateSTL();
         Base.writeLog("STL generated with success", this.getClass());
 
@@ -91,48 +89,6 @@ public class Printer {
         return true;
     }
 
-    /*
-     private void replaceLineInFile(String pathString, String textToReplace) {
-
-     String m31String;
-     File fileToRead = new File(pathString);
-     File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
-
-     m31String = "M31 A" + PrintEstimator.getEstimatedMinutes();
-     //+ " L" + getGCodeNLines();
-
-     Base.writeLog("Attempting to replace M31 A0 with " + m31String, this.getClass());
-     Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
-     Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
-
-     try {
-     Reader reader = new InputStreamReader(
-     new FileInputStream(fileToRead), "UTF-8");
-     BufferedReader fin = new BufferedReader(reader);
-     Writer writer = new OutputStreamWriter(
-     new FileOutputStream(fileToWrite, false), "UTF-8");
-     BufferedWriter fout = new BufferedWriter(writer);
-     String s;
-     while ((s = fin.readLine()) != null) {
-     String replaced = s.replaceAll(textToReplace, m31String);
-     fout.write(replaced);
-     fout.newLine();
-     }
-
-     // might seem weird but not doing this will prevent BEESOFT from
-     // deleting the unmodified file on Windows systems. probably a bug
-     // in the JVM (Java 6)?
-     fin.close();
-     fin = null;
-     fout.close();
-     fout = null;
-
-     } catch (IOException e) {
-     Base.writeLog("IOException when attempting to replace M31", this.getClass());
-     Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
-     }
-     }
-     */
     private void appendStartAndEndGCode() {
         String[] startCode, endCode;
         StringBuilder codeStringBuilder;

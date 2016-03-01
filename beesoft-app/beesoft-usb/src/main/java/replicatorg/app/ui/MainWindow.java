@@ -102,7 +102,6 @@ import javax.swing.ImageIcon;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import replicatorg.app.CategoriesList;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -557,28 +556,26 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-                    if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
-                        int answer;
-                        answer = JOptionPane.showConfirmDialog(null,
-                                Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
-                                Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
-                        if (answer == JOptionPane.YES_OPTION) {
-                            if (bed.isSceneDifferent()) {
-                                newSceneOnDialog = true;
-                                handleSaveAs();
-                                bed.setSceneDifferent(false);
-                                updateModelsOperationCenter(new ModelsOperationCenter());
-                            }
-                        } else if (answer == JOptionPane.NO_OPTION) {
-                            handleNew(false);
+                if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
+                    int answer;
+                    answer = JOptionPane.showConfirmDialog(null,
+                            Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
+                            Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        if (bed.isSceneDifferent()) {
+                            newSceneOnDialog = true;
+                            handleSaveAs();
+                            bed.setSceneDifferent(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
                         }
-
-                    } else {
+                    } else if (answer == JOptionPane.NO_OPTION) {
                         handleNew(false);
                         updateModelsOperationCenter(new ModelsOperationCenter());
                     }
+
+                } else {
+                    handleNew(false);
+                    updateModelsOperationCenter(new ModelsOperationCenter());
                 }
             }
         });
@@ -594,30 +591,27 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-                    if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
-                        int answer;
-                        answer = JOptionPane.showConfirmDialog(null,
-                                Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
-                                Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
-                        if (answer == JOptionPane.YES_OPTION) {
-                            if (bed.isSceneDifferent()) {
-                                handleSaveAs();
-                                handleOpenScene(null);
-                                bed.setSceneDifferent(false);
-                                updateModelsOperationCenter(new ModelsOperationCenter());
-                            }
-                        } else if (answer == JOptionPane.NO_OPTION) {
+                if (bed.isSceneDifferent() && (oktoGoOnSave == false)) {
+                    int answer;
+                    answer = JOptionPane.showConfirmDialog(null,
+                            Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
+                            Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
+                    if (answer == JOptionPane.YES_OPTION) {
+                        if (bed.isSceneDifferent()) {
+                            handleSaveAs();
                             handleOpenScene(null);
+                            bed.setSceneDifferent(false);
                             updateModelsOperationCenter(new ModelsOperationCenter());
                         }
-
-                    } else {
+                    } else if (answer == JOptionPane.NO_OPTION) {
                         handleOpenScene(null);
                         updateModelsOperationCenter(new ModelsOperationCenter());
                     }
-                }
 
+                } else {
+                    handleOpenScene(null);
+                    updateModelsOperationCenter(new ModelsOperationCenter());
+                }
             }
         });
 
@@ -629,9 +623,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         saveMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-                    handleSave(false);
-                }
+                handleSave(false);
             }
         });
         menu.add(saveMenuItem);
@@ -642,9 +634,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         saveAsMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-                    handleSaveAs();
-                }
+                handleSaveAs();
             }
         });
         menu.add(saveAsMenuItem);
@@ -1390,9 +1380,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                 //Adds default print preferences, they aren't going to be used
                 //since we're printing from a GCode file
-                PrintPreferences prefs
-                        = new PrintPreferences("", FilamentControler.NO_FILAMENT,
-                                20, 400, false, false, path);
+                
+                PrintPreferences prefs = new PrintPreferences(path);
 
                 Base.isPrintingFromGCode = true;
                 final PrintSplashAutonomous p = new PrintSplashAutonomous(prefs);
@@ -1814,8 +1803,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void message(String msg) {
         Base.logger.info(msg);
     }
-
-
 
     /**
      * Here we want to: 1. Create a new machine using the given profile name 2.

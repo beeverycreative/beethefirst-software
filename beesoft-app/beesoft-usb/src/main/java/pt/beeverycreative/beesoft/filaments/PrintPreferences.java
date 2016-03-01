@@ -20,7 +20,7 @@ public class PrintPreferences {
     private final int nozzleSize;
     private final boolean raftPressed;
     private final boolean supportPressed;
-    private String gcodeToPrint = "";
+    private final String gcodeToPrint;
 
     // default preferences, to be used in autonomous mode
     public PrintPreferences() {
@@ -31,6 +31,18 @@ public class PrintPreferences {
         raftPressed = false;
         supportPressed = false;
         printer = driver.getConnectedDevice();
+        gcodeToPrint = "";
+    }
+    
+    public PrintPreferences(String gcodeToPrint) {
+        resolution = "medium";
+        coilText = model.getCoilText();
+        density = 5;
+        nozzleSize = 400;
+        raftPressed = false;
+        supportPressed = false;
+        printer = driver.getConnectedDevice();
+        this.gcodeToPrint = gcodeToPrint;
     }
 
     public PrintPreferences(String resolution, String coilText, int density,
@@ -42,6 +54,7 @@ public class PrintPreferences {
         this.raftPressed = raftPressed;
         this.supportPressed = supportPressed;
         printer = driver.getConnectedDevice();
+        gcodeToPrint = "";
     }
 
     public PrintPreferences(String resolution, String coilText, int density,
@@ -67,19 +80,7 @@ public class PrintPreferences {
         this.raftPressed = raftPressed;
         this.supportPressed = supportPressed;
         this.printer = printer;
-    }
-
-    public PrintPreferences(String resolution, String coilText, int density,
-            int nozzleSize, boolean raftPressed, boolean supportPressed,
-            String gcodeToPrint, PrinterInfo printer) {
-        this.resolution = resolution;
-        this.coilText = coilText;
-        this.density = density;
-        this.nozzleSize = nozzleSize;
-        this.raftPressed = raftPressed;
-        this.supportPressed = supportPressed;
-        this.gcodeToPrint = gcodeToPrint;
-        this.printer = printer;
+        gcodeToPrint = "";
     }
 
     public String getResolution() {

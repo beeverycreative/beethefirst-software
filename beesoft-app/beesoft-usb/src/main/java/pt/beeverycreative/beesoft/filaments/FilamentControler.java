@@ -2,7 +2,7 @@ package pt.beeverycreative.beesoft.filaments;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class FilamentControler {
     public static final int NO_NOZZLE = 0;
 
     private static final Map<String, Filament> filamentMap = new TreeMap<String, Filament>();
-    private static final Set<Nozzle> nozzleList = new TreeSet<Nozzle>();
+    private static final Set<Nozzle> nozzleSet = new TreeSet<Nozzle>();
     private static PrinterInfo currentPrinterFilamentList = null;
     private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
 
@@ -52,7 +52,7 @@ public class FilamentControler {
 
         if (currentPrinterFilamentList == null
                 || !currentPrinterFilamentList.filamentCode().equals(printer.filamentCode())) {
-            fetchFilaments();
+            fetchFilaments(printer);
             currentPrinterFilamentList = printer;
         } else {
             Base.writeLog("No fetch is necessary, list already contains the "
@@ -63,15 +63,25 @@ public class FilamentControler {
     /**
      * Gets the current list of Filament objects present in the filaments
      * directory parsing the available xml files
+     *
+     * @param connectedPrinter PrinterInfo of connected printer. Pass null to
+     * fetch it from driver
      */
-    private static void fetchFilaments() {
+    public static void fetchFilaments(PrinterInfo connectedPrinter) {
 
-        String connectedPrinter = Base.getMainWindow().getMachineInterface()
-                .getDriver().getConnectedDevice().filamentCode();
+        PrinterInfo printer;
+        Set<String> tempPrinterSet;
+
+        if (connectedPrinter != null) {
+            printer = connectedPrinter;
+        } else {
+            printer = Base.getMainWindow().getMachineInterface().getDriver().getConnectedDevice();
+        }
 
         // get all the files from a directory
         File directory = new File(filamentsDir);
         File[] fList = directory.listFiles();
+        tempPrinterSet = new HashSet<String>();
 
         if (fList != null) {
             List<File> filamentFiles = new ArrayList<File>();
@@ -83,7 +93,7 @@ public class FilamentControler {
             }
 
             filamentMap.clear();
-            nozzleList.clear();
+            nozzleSet.clear();
 
             JAXBContext jc;
             Unmarshaller unmarshaller;
@@ -103,16 +113,15 @@ public class FilamentControler {
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
 
                             for (Nozzle noz : sc.getNozzles()) {
-                                nozzleList.add(noz);
+                                nozzleSet.add(noz);
                             }
 
-                            if (connectedPrinter.equals(sc.getPrinterName())
-                                    || connectedPrinter.equals("UNKNOWN")) {
+                            if (printer.filamentCode().equals(sc.getPrinterName())
+                                    || printer.filamentCode().equals("UNKNOWN")) {
                                 // putIfAbsent only exists in java 8
                                 if (filamentMap.get(fil.getName()) == null) {
                                     filamentMap.put(fil.getName(), fil);
                                 }
-                                break;
                             }
                         }
 
@@ -135,8 +144,8 @@ public class FilamentControler {
      * @return array of nozzle objects
      */
     public static Nozzle[] getNozzleArray() {
-        if (nozzleList != null) {
-            return nozzleList.toArray(new Nozzle[nozzleList.size()]);
+        if (nozzleSet != null) {
+            return nozzleSet.toArray(new Nozzle[nozzleSet.size()]);
         } else {
             return new Nozzle[0];
         }
@@ -150,21 +159,21 @@ public class FilamentControler {
      * @return array of compatible filament objects
      */
     public static Filament[] getCompatibleFilaments(Nozzle nozzle) {
-        String connectedPrinter;
+        PrinterInfo connectedPrinter;
         List<Filament> filaments;
 
         connectedPrinter = Base.getMainWindow().getMachineInterface()
-                .getDriver().getConnectedDevice().filamentCode();
+                .getDriver().getConnectedDevice();
 
         if (filamentMap == null) {
-            fetchFilaments();
+            fetchFilaments(connectedPrinter);
         }
 
         if (filamentMap.isEmpty() == false) {
             filaments = new ArrayList<Filament>();
             for (Map.Entry<String, Filament> fil : filamentMap.entrySet()) {
                 for (SlicerConfig sc : fil.getValue().getSupportedPrinters()) {
-                    if (sc.getPrinterName().equalsIgnoreCase(connectedPrinter)) {
+                    if (sc.getPrinterName().equalsIgnoreCase(connectedPrinter.filamentCode())) {
                         for (Nozzle noz : sc.getNozzles()) {
                             if (noz.equals(nozzle)) {
                                 filaments.add(fil.getValue());
@@ -181,39 +190,16 @@ public class FilamentControler {
         }
     }
 
-    public static String[] forceFetch() {
-        fetchFilaments();
-
-        if (!filamentMap.isEmpty()) {
-            return filamentMap.keySet().toArray(new String[filamentMap.size()]);
-        } else {
-            return new String[0];
-        }
+    public static void forceFetch(PrinterInfo printer) {
+        fetchFilaments(printer);
     }
 
-    /**
-     * Given a filament, printer and nozzle size, return a list of compatible
-     * resolutions
-     *
-     * @param filamentText the filament's name
-     * @param printer the printer's name
-     * @param nozzleSize the nozzle's size, in microns
-     * @return ArrayList of Resolution object
-     */
-    public static List<Resolution> getFilResolutions(String filamentText, String printer, int nozzleSize) {
-
-        Filament fil;
-
-        if (filamentMap == null) {
-            fetchFilaments();
-        }
-
+    public static Filament[] getFilamentArray() {
         if (!filamentMap.isEmpty()) {
-            fil = filamentMap.get(filamentText);
-            return fil.getSupportedResolutions(printer, nozzleSize);
+            return filamentMap.values().toArray(new Filament[filamentMap.size()]);
+        } else {
+            return new Filament[0];
         }
-
-        return null;
     }
 
     public static Map<String, String> getFilamentDefaults(String coilCode) {
@@ -223,7 +209,7 @@ public class FilamentControler {
         logStrHeader = "getFilamentDefaults(coilCode=" + coilCode + ") ";
 
         if (filamentMap == null) {
-            fetchFilaments();
+            fetchFilaments(null);
         }
 
         if (!filamentMap.isEmpty()) {
@@ -245,26 +231,26 @@ public class FilamentControler {
      * @param coilCode coil code.
      * @param resolution resolution
      * @param nozzleSize nozzle size, in microns
-     * @param printerId printer identification
+     * @param printer printer identification
      *
      * @return ratio for each color.
      */
     public static Map<String, String> getFilamentSettings(String coilCode,
-            String resolution, int nozzleSize, String printerId) {
+            String resolution, int nozzleSize, PrinterInfo printer) {
 
         String logStrHeader;
         Filament fil;
 
-        logStrHeader = "getFilamentSettings(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printerId + ") ";
+        logStrHeader = "getFilamentSettings(coilCode=" + coilCode + ", resolution=" + resolution + ", nozzleSize=" + nozzleSize + ", printerId=" + printer.filamentCode() + ") ";
 
         if (filamentMap == null) {
-            fetchFilaments();
+            fetchFilaments(printer);
         }
 
         if (!filamentMap.isEmpty()) {
             fil = filamentMap.get(coilCode);
             for (SlicerConfig sc : fil.getSupportedPrinters()) {
-                if (printerId.equals(sc.getPrinterName())) {
+                if (printer.filamentCode().equals(sc.getPrinterName())) {
                     for (Nozzle nozzle : sc.getNozzles()) {
                         if (nozzle.getSizeInMicrons() == nozzleSize) {
                             for (Resolution res : nozzle.getResolutions()) {
@@ -287,7 +273,7 @@ public class FilamentControler {
 
     public static boolean colorExistsLocally(String name) {
         if (filamentMap == null) {
-            fetchFilaments();
+            fetchFilaments(null);
         }
 
         return filamentMap.get(name) != null;
@@ -295,7 +281,7 @@ public class FilamentControler {
 
     public static Filament getMatchingFilament(String filamentText) {
         if (filamentMap == null) {
-            fetchFilaments();
+            fetchFilaments(null);
         }
 
         return filamentMap.get(filamentText);

@@ -147,9 +147,7 @@ public class Gallery extends BaseDialog {
             jLabel37, jLabel38, jLabel39,
             jLabel40};
 
-        if (Base.getMainWindow().getButtons().areIOFunctionsBlocked() == false) {
-            Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
-        }
+        Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
         resetModelsView(1);
         fullfillModelsSlots(1);
     }
@@ -233,9 +231,9 @@ public class Gallery extends BaseDialog {
     private void fullfillModelsSlots(int pageNumber) {
         if (extension.equals("all")) {
             listExistingModels = new File(modelsDir).listFiles(new FileFilter() {
-                private final FileNameExtensionFilter filter =
-                        new FileNameExtensionFilter("BEESOFT files",
-                        "stl", "bee");
+                private final FileNameExtensionFilter filter
+                        = new FileNameExtensionFilter("BEESOFT files",
+                                "stl", "bee");
 
                 @Override
                 public boolean accept(File file) {
@@ -1244,10 +1242,10 @@ public class Gallery extends BaseDialog {
 
         mWindow.getButtons().updatePressedStateButton("models");
         mWindow.setEnabled(true);
-        
+
         //Selects the inserted model
         mWindow.selectLastInsertedModel();
-        
+
         Base.bringAllWindowsToFront();
         dispose();
     }//GEN-LAST:event_jLabel24MousePressed
