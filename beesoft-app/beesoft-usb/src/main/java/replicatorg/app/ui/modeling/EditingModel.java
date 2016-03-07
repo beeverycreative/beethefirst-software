@@ -26,10 +26,8 @@ import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.MainWindow;
 
-import replicatorg.machine.Machine;
 import replicatorg.machine.MachineInterface;
 import replicatorg.machine.model.BuildVolume;
-import replicatorg.machine.model.MachineModel;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
 
@@ -169,21 +167,20 @@ public class EditingModel implements Serializable {
     }
 
     public boolean modelInvalidPosition() {
-        double xLimit, yLimit, zLimit;
+        double xLimit, yLimit;
         BuildVolume machineVolume;
         
         machineVolume = Base.getMainWindow().getCanvas().getBuildVolume();
         xLimit = machineVolume.getX() / 2;
         yLimit = machineVolume.getY() / 2;
-        zLimit = machineVolume.getZ();
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
 
         return Math.abs(lower.x) > xLimit || Math.abs(upper.x) > xLimit ||
-                Math.abs(lower.y) > yLimit || Math.abs(upper.y) > yLimit ||
-                lower.z != 0 || upper.z > zLimit;
+                Math.abs(lower.y) > yLimit || Math.abs(upper.y) > yLimit;
+                //|| lower.z != 0 || upper.z > zLimit;
 
     }
      

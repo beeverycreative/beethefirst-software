@@ -169,6 +169,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         setMachine(new MachineModel());
 
         super.isBootloader = true;
+        
+        synchronized(Base.WELCOME_SPLASH_MONITOR) {
+            if(Base.isWelcomeSplashVisible()) {
+                try {
+                    Base.WELCOME_SPLASH_MONITOR.wait();
+                } catch (InterruptedException ex) {
+                    return;
+                }
+            }
+        }
 
         if (status.contains("bootloader")) {
             bootedFromBootloader = true;
@@ -1583,10 +1593,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private int flashAndCheck(String filename, int nBytes) {
 
         FileInputStream in;
-        int file_size;
-        int sent;
+        int file_size, sent;
         ByteRead res;
-        boolean state;
         String command;
 
         File f = new File(filename);
@@ -1623,24 +1631,27 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     bytesRead += byteMessage.size;
                     byteMessage = new ByteRead(byteMessage.size, new byte[byteMessage.size]);
                     System.arraycopy(byteTemp, 0, byteMessage.byte_array, 0, byteMessage.size);
+                    
+                    if(bytesRead >= 50720) {
+                        System.out.println("break!");
+                    }
 
                     sent = sendCommandBytes(byteMessage.byte_array);
-                    if (sent == 0) {
-                        Base.writeLog("Transfer failure, 0 bytes sent.", this.getClass());
+                    if (sent != byteMessage.size) {
+                        Base.writeLog("Transfer failure, incorrect number of bytes sent.", this.getClass());
                         feedbackWindow.dispose();
                         return -1;
                     }
 
                     res = new ByteRead(0, new byte[byteMessage.size]);
                     try {
-                        ByteRead tempMessage = readBytes();
+                        ByteRead tempMessage = readBytes(sent);
                         System.arraycopy(tempMessage.byte_array, 0,
                                 res.byte_array, res.size, tempMessage.size);
                         res.size += tempMessage.size;
 
                         if (res.size == byteMessage.size) {
-                            state = Arrays.equals(res.byte_array, byteMessage.byte_array);
-                            if (!state) {
+                            if (!Arrays.equals(res.byte_array, byteMessage.byte_array)) {
                                 Base.writeLog("Transmission error found, reboot BEETHEFIRST.", this.getClass());
                                 return -1;
                             }
@@ -1684,18 +1695,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return cmdlen;
     }
 
-    public ByteRead readBytes() throws UsbException {
+    private ByteRead readBytes(int responseSize) throws UsbException {
 
         int indexRead, nBits;
-        byte[] resultByteArray = new byte[64];
-        byte[] readBuffer = new byte[64];
+        byte[] resultByteArray = new byte[responseSize];
+        byte[] readBuffer = new byte[responseSize];
 
         indexRead = 0;
         do {
             nBits = pipes.getUsbPipeRead().syncSubmit(readBuffer);
             System.arraycopy(readBuffer, 0, resultByteArray, indexRead, nBits);
             indexRead += nBits;
-        } while (indexRead < 64);
+        } while (indexRead < responseSize);
 
         return new ByteRead(nBits, resultByteArray);
     }

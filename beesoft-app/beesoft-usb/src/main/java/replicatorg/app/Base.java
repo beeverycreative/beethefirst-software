@@ -189,7 +189,7 @@ public class Base {
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
     public static boolean isPrinting = false;
-    private static boolean welcomeSplashVisible = false;
+    private static boolean welcomeSplashVisible = true;
     public static final Object WELCOME_SPLASH_MONITOR = new Object();
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
