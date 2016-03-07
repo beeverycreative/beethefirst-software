@@ -41,7 +41,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
     public WelcomeSplash(MainWindow wind) {
         initComponents();
         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
-        Base.welcomeSplashVisible = true;
+        Base.setWelcomeSplashVisible(true);
         Base.writeLog("Welcome Splash started ...", this.getClass());
         window = wind;
         // Loads Splash image
@@ -116,10 +116,11 @@ public class WelcomeSplash extends javax.swing.JFrame {
      * Monitor changes in MainWindow and performs several operations at startup.
      */
     public void changeState() {
+        //this.setVisible(false);
+        dispose();
         window.setVisible(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setVisible(false);
-        Base.welcomeSplashVisible = false;
+        Base.setWelcomeSplashVisible(false);
         Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
 
         //GuideWizard

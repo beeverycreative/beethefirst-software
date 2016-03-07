@@ -35,6 +35,7 @@ import javax.vecmath.Point3d;
 
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 
 import replicatorg.app.Base;
 import replicatorg.app.exceptions.BuildFailureException;
@@ -101,6 +102,11 @@ public abstract class DriverBaseImplementation implements Driver {
         // The truth is that the name come from the xml
         //driverName = "virtualprinter";
     }
+    
+    @Override
+    public boolean isAlive() {
+        return false;
+    }
 
     @Override
     public int getQueueSize() {
@@ -137,7 +143,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String dispatchCommand(String code, Enum comtype) {
+    public String dispatchCommand(String code, COM comtype) {
         Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
         return "";
     }

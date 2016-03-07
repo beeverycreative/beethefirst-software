@@ -140,15 +140,10 @@ public class Machine implements MachineInterface {
 
     @Override
     public boolean buildRemote(String remoteName) {
-        machineThread.scheduleRequest(new MachineCommand(
-                RequestType.BUILD_REMOTE, remoteName));
-        return true;
+        return false;
     }
     // The estimate function now checks for some sources of error
     // needs a way to return failure
-    private String message;
-    private long numWarnings;
-    private long numErrors;
 
     /**
      * Begin running a job.
@@ -157,8 +152,6 @@ public class Machine implements MachineInterface {
      */
     @Override
     public boolean buildDirect(String arg) {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.BUILD_DIRECT, arg));
-
         return true;
     }
 
@@ -179,19 +172,14 @@ public class Machine implements MachineInterface {
     
     @Override
     public void stopMotion() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_MOTION,
-                ""));
     }
 
     @Override
     public void stopAll() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_ALL,
-                ""));
     }
 
     @Override
     public void killSwitch() {
-        machineThread.killSwitch();
         
     }
 
@@ -202,20 +190,16 @@ public class Machine implements MachineInterface {
 
     @Override
     public void pause() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.PAUSE,
-                ""));
     }
 
     @Override
     public void unpause() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.UNPAUSE,
-                ""));
+
     }
 
     @Override
     public void reset() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.RESET,
-                ""));
+        
     }
 
 
@@ -227,9 +211,6 @@ public class Machine implements MachineInterface {
             machineThread = new MachineThread(this, machineNode);
             machineThread.start();
         }
-
-        machineThread.scheduleRequest(new MachineCommand(RequestType.CONNECT,
-                ""));
     }
 
     @Override
@@ -249,22 +230,19 @@ public class Machine implements MachineInterface {
 
     @Override
     public int getStopwatch() {
-        return machineThread.getStopwatch();
+        return 0;
     }
 
     @Override
     public void setStopwatch(int stopwatch) {
-        machineThread.setStopwatch(stopwatch);
     }
 
     @Override
     public void stopwatch() {
-        machineThread.stopwatch();
     }
 
     @Override
     public void resumewatch() {
-        machineThread.resumeWatch();
     }
 
     @Override
@@ -325,8 +303,6 @@ public class Machine implements MachineInterface {
     @Override
     public void dispose() {
         if (machineThread != null) {
-            machineThread.scheduleRequest(new MachineCommand(
-                    RequestType.SHUTDOWN, ""));
             // Wait 5 seconds for the thread to stop.
             try {
                 machineThread.join(5000);

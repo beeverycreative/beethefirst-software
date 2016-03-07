@@ -108,6 +108,7 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.*;
 import replicatorg.app.ui.panels.*;
 import replicatorg.app.util.ExtensionFilter;
+import replicatorg.drivers.Driver;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
 import replicatorg.model.PrintBed;
@@ -688,11 +689,11 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MachineInterface machine = getMachineInterface();
+                Driver driver = getMachineInterface().getDriver();
 
                 if (Base.isPrinting == true) {
                     Base.getMainWindow().showFeedBackMessage("btfPrinting");
-                } else if (machine.isConnected() == false) {
+                } else if (driver.isInitialized() == false) {
                     Base.getMainWindow().showFeedBackMessage("btfDisconnect");
                 } else {
                     handleGCodeImport();
@@ -1231,7 +1232,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
     public void simulationOver() {
 //        message("Done simulating.");
-        simulating = false;
         setEditorBusy(false);
     }
 
@@ -1290,20 +1290,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 }
             });
         }
-    }
-
-    /**
-     * Send stop command to loaded machine, Disables pre-heating, and sets
-     * building values to false/off
-     */
-    public void doStop() {
-        if (machineLoader.isLoaded()) {
-            machineLoader.getMachineInterface().stopAll();
-        }
-        building = false;
-        simulating = false;
-        buildOnComplete = false;
-
     }
 
     /**
@@ -1380,7 +1366,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
                 //Adds default print preferences, they aren't going to be used
                 //since we're printing from a GCode file
-                
                 PrintPreferences prefs = new PrintPreferences(path);
 
                 Base.isPrintingFromGCode = true;
@@ -1871,15 +1856,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
             buttons.updateFromMachine(machineLoader.getMachineInterface());
 
-            if (buildOnComplete) {
-//                doBuild();
-            }
         }
 
-        if (buildOnComplete) // for safety, always reset this
-        {
-            buildOnComplete = false;
-        }
     }
 
     @Override

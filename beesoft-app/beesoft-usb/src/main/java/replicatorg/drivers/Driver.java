@@ -27,6 +27,7 @@ import java.io.File;
 
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
@@ -78,7 +79,7 @@ public interface Driver {
      * answer)
      * @return answer for the command sent
      */
-    public String dispatchCommand(String command, Enum comtype);
+    public String dispatchCommand(String command, COM comtype);
 
     /**
      * Transfers a GCode file. A PrintSplashAutonomous object is requested in
@@ -566,6 +567,7 @@ public interface Driver {
     
     public void resetBootloaderAndFirmwareVersion();
     public boolean getMachinePaused();
+    public boolean isAlive();
     public void setMachinePaused(boolean machinePaused);
     public void closeFeedback();
     public int getQueueSize();

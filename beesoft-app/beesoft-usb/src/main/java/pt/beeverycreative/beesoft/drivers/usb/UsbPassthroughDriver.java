@@ -22,6 +22,7 @@ import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.panels.Feedback;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
+import replicatorg.app.ui.panels.SerialNumberInput;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
@@ -41,9 +42,6 @@ import replicatorg.util.Point5d;
  */
 public final class UsbPassthroughDriver extends UsbDriver {
 
-    private static final int SERIAL_NUMBER_SIZE = 10;
-    private static final String NO_SERIAL_NO_FIRMWARE = "0000000000";
-    private static final String NO_SERIAL_FIRMWARE_OK = "0000000001";
     private static final String GET_STATUS = "M625";
     private static final String GET_STATUS_FROM_ERROR = GET_STATUS + new String(new char[507]).replace("\0", "A");
     private static final String GET_POSITION = "M121";
@@ -69,7 +67,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     //BLOCK_SIZE is: how many bytes in each M28 block transfers
     private static final int MAX_BLOCK_SIZE = MESSAGE_SIZE * MESSAGES_IN_BLOCK;
     //private static final String GET_SERIAL = "M117";
-    private static final String SET_SERIAL = "M118 T";
     private static final String SET_COIL_TEXT = "M1000 ";
     private static final String GET_COIL_TEXT = "M1001";
     private static final String GET_NOZZLE_TYPE = "M1028";
@@ -82,7 +79,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private long lastDispatchTime;
     private static Version bootloaderVersion = new Version();
     private Version firmwareVersion = new Version();
-    private String serialNumberString = NO_SERIAL_NO_FIRMWARE;
+    private String serialNumberString = "0000000000";
     private long startTS;
     private String driverErrorDescription;
     private boolean stopTransfer = false;
@@ -92,7 +89,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static String backupCoilText = FilamentControler.NO_FILAMENT;
     private static double backupZVal = 123.495;
     private static final Feedback feedbackWindow = new Feedback();
-    private boolean printerConnected = false;
     //private FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
 
     public enum COM {
@@ -150,7 +146,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void closeFeedback() {
-        feedbackWindow.dispose();
+        Base.rebootingIntoFirmware = false;
+
+        if (feedbackWindow != null) {
+            feedbackWindow.dispose();
+        }
     }
 
     @Override
@@ -170,9 +170,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         super.isBootloader = true;
 
-        //initialize serial to NO SERIAL
-        serialNumberString = NO_SERIAL_NO_FIRMWARE;
-
         if (status.contains("bootloader")) {
             bootedFromBootloader = true;
             updateBootloaderInfo();
@@ -188,6 +185,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Launching firmware!", this.getClass());
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
+                hiccup(1000, 0);
                 dispatchCommand(LAUNCH_FIRMWARE, COM.NO_RESPONSE); // Launch firmware
                 hiccup(3000, 0);
                 closePipe(pipes);
@@ -215,6 +213,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             updateCoilText();
             updateNozzleType();
+            closeFeedback();
 
             final PrintSplashAutonomous p = new PrintSplashAutonomous(
                     Base.printPaused, this.isONShutdown
@@ -296,6 +295,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.isPrinting = false;
 
             dispatchCommand("G28", COM.DEFAULT);
+            closeFeedback();
             setBusy(false);
 
             Base.updateVersions();
@@ -346,39 +346,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void initialize() {
-
         // wait till we're initialized
         if (!isInitialized()) {
             Base.writeLog("Initializing search for printer.", this.getClass());
             establishConnection();
             Base.writeLog("USB Driver initialized", this.getClass());
+            sendInitializationGcode();
         }
-
-        if (Base.welcomeSplashVisible == false) {
-            Base.disposeAllOpenWindows();
-        }
-
-        sendInitializationGcode();
-    }
-
-    private int getQfromReverse(String txt) {
-
-        String resversed_txt = new StringBuilder(txt).reverse().toString();
-        String re4 = "(\\d+)";	// Integer Number 1
-        String re3 = "(:)";	// Any Single Character 1
-        String re2 = "(Q)";	// Variable Name 1
-        String re1 = ".*?";	// Non-greedy match on filler
-
-        Pattern p = Pattern.compile(re4 + re3 + re2 + re1, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-        Matcher m = p.matcher(resversed_txt);
-        if (m.find()) {
-
-            String var1 = m.group(1);
-            String c1 = m.group(2);
-
-            return Integer.parseInt(new StringBuilder(var1).reverse().toString());
-        }
-        return QUEUE_LIMIT;
     }
 
     private String dispatchCommand(byte[] byteArray) {
@@ -454,30 +428,22 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     @Override
-    public String dispatchCommand(final String next, Enum e) {
-        /**
-         * Blocks non-transfer while in TRANSFER mode
-         */
-        if (e != COM.TRANSFER) {
-            if (transferMode) {
-                return "NOK: Dispatch locked in transfer mode.";
-            }
-        }
-
-        COM COMTYPE = (COM) e;
+    public String dispatchCommand(final String next, COM comType) {
         //check if the queue is getting full EX: ok Q:0
-        while (queue_size >= QUEUE_LIMIT) {
-            hiccup(QUEUE_WAIT, 0);
+        /*
+         while (queue_size >= QUEUE_LIMIT) {
+         hiccup(QUEUE_WAIT, 0);
 
-            // Necessary to handle disconnect during readResponse
-            if (!isInitialized()) {
-                return NOK;
-            }
+         // Necessary to handle disconnect during readResponse
+         if (!isInitialized()) {
+         return NOK;
+         }
 
-            if (comLog) {
-                Base.writeComLog((System.currentTimeMillis() - startTS), " Queue:" + queue_size);
-            }
-        }
+         if (comLog) {
+         Base.writeComLog((System.currentTimeMillis() - startTS), " Queue:" + queue_size);
+         }
+         }
+         */
 
         /**
          * Parses Bad GCodes or pipes garbage
@@ -487,7 +453,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         String answer = "";
-        switch (COMTYPE) {
+        switch (comType) {
             case NO_RESPONSE:
                 new Thread(new Runnable() {
                     @Override
@@ -512,12 +478,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     }
                 }
 
-                //Sends blocked command
-                //if (next.contains("G28")) {
-                //    sendCommand(next);
-                //} else {
                 answer = dispatchCommand(next);
-                //}
 
                 break;
 
@@ -542,7 +503,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public String getSerialNumber() {
-        return serialNumberString.trim();
+        return serialNumberString;
     }
 
     @Override
@@ -1240,86 +1201,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     //throw new UsbException("Pipe was null");
                 }
             }
-        } catch (UsbException ex) {
-            // Cable removable
-            if (ex.getMessage().contains("LIBUSB_ERROR_NO_DEVICE")) {
-                try {
-                    Base.writeLog("LIBUSB_ERROR_NO_DEVICE", this.getClass());
-                    pipes.close();
-                    setInitialized(false);
-                } catch (UsbException ex1) {
-                    Base.writeLog("USB exception [readResponse]: " + ex1.getMessage(), this.getClass());
-                } catch (UsbNotActiveException ex1) {
-                    Base.writeLog("USB communication not active [readResponse]:" + ex1.getMessage(), this.getClass());
-                } catch (UsbNotOpenException ex1) {
-                    Base.writeLog("USB communication is down [readResponse]:" + ex1.getMessage(), this.getClass());
-                } catch (UsbDisconnectedException ex1) {
-                    Base.writeLog("USB disconnected exception [readResponse]:" + ex1.getMessage(), this.getClass());
-                }
-            }
-
-        } catch (UsbNotActiveException ex) {
-            try {
-                pipes.close();
-            } catch (UsbException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
-                }
-            } catch (UsbNotActiveException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
-                }
-            } catch (UsbNotOpenException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
-                }
-            } catch (UsbDisconnectedException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
-                }
-            }
-        } catch (UsbNotOpenException ex) {
-            try {
-                pipes.close();
-                setInitialized(false);
-            } catch (UsbException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
-                }
-            } catch (UsbNotActiveException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
-                }
-            } catch (UsbNotOpenException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
-                }
-            } catch (UsbDisconnectedException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
-                }
-            }
-        } catch (IllegalArgumentException ex) {
-            try {
-                pipes.close();
-                setInitialized(false);
-            } catch (UsbException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
-                }
-            } catch (UsbNotActiveException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
-                }
-            } catch (UsbNotOpenException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
-                }
-            } catch (UsbDisconnectedException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
-                }
-            }
+        } catch (Exception ex) {
+            setInitialized(false);
         }
 
         // 0 is now an acceptable value; it merely means that we timed out
@@ -1619,8 +1502,19 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public boolean isInitialized() {
-        printerConnected = testPipes(pipes);
-        return printerConnected;
+        isAlive = testPipes(pipes);
+
+        if (!isAlive) {
+            if (Base.rebootingIntoFirmware == false) {
+                Base.getMainWindow().getButtons().setMessage("is disconnected");
+            }
+            Base.isPrinting = false;
+            Base.printPaused = false;
+            resetBootloaderAndFirmwareVersion();
+            dispose();
+        }
+
+        return isAlive;
     }
 
     private String checkPrinterStatus() {
@@ -1806,50 +1700,75 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return new ByteRead(nBits, resultByteArray);
     }
 
-    //dispacher does not work in bootloader!!!
     private void updateBootloaderInfo() {
 
         String bootloader, firmware;
-        //sendCommand(GET_BOOTLOADER_VERSION);
-        //hiccup(QUEUE_WAIT, 0);
-        //String bootloader = readResponse();
-        bootloader = dispatchCommand("M116");
+        boolean validSerial = false;
 
+        bootloader = dispatchCommand("M116");
         bootloaderVersion = Version.bootloaderVersion(bootloader);
 
         //Default
         firmwareVersion = new Version();
 
-        //get serial number - Must have exactly 10 chars!
-        serialNumberString = "0000000000";
         try {
-            serialNumberString = m_usbDevice.getSerialNumberString();
+            serialNumberString = m_usbDevice.getSerialNumberString().trim();
+
         } catch (UsbException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsbPassthroughDriver.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsbPassthroughDriver.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (UsbDisconnectedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsbPassthroughDriver.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
-        //get firmware version
-        //check first for un-initialized serial or firmware version
-        if (!serialNumberString.contains("0000000000")) {
-            //sendCommand(GET_FIRMWARE_VERSION);
-            //hiccup(10, 0);
-            //String firmware = readResponse();
-            firmware = dispatchCommand(GET_FIRMWARE_VERSION);
+        if (isSerialValid() == false) {
+            while (validSerial == false) {
 
-            if (isNewVendorID) {
-                firmwareVersion = Version.fromMachine(firmware);
-            } else {
-                firmwareVersion = Version.fromMachineOld(firmware);
+                SerialNumberInput serialNumberInput = new SerialNumberInput();
+
+                serialNumberInput.setVisible(true);
+                validSerial = serialNumberInput.isSerialValid();
+
+                if (validSerial) {
+                    dispatchCommand("M118 T" + serialNumberInput.getSerialString());
+                }
             }
-        } else {
-            // No serial means, no firmware. We must update!
-            firmwareVersion = new Version();
-            return;
         }
+
+        firmware = dispatchCommand(GET_FIRMWARE_VERSION);
+
+        if (isNewVendorID) {
+            firmwareVersion = Version.fromMachine(firmware);
+        } else {
+            firmwareVersion = Version.fromMachineOld(firmware);
+        }
+    }
+
+    private boolean isSerialValid() {
+        int printerId, productId;
+
+        if (serialNumberString.length() != 10) {
+            return false;
+        }
+
+        try {
+            printerId = Integer.parseInt(serialNumberString.substring(0, 2));
+        } catch (NumberFormatException nf) {
+            return false;
+        }
+
+        for (PrinterInfo printer : PrinterInfo.values()) {
+            productId = printer.productID();
+            if (printerId == productId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void updateMachineInfo() {
@@ -1858,12 +1777,16 @@ public final class UsbPassthroughDriver extends UsbDriver {
         serialNumberString = "0000000000";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
+
         } catch (UsbException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsbPassthroughDriver.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsbPassthroughDriver.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } catch (UsbDisconnectedException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsbPassthroughDriver.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         //get firmware version
@@ -1940,13 +1863,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Starting Firmware update.", this.getClass());
             if (flashAndCheck(firmwareFile.getAbsolutePath(), -1) > 0) {
                 Base.writeLog("Firmware successfully updated", this.getClass());
-
-                if (serialNumberString.contains(NO_SERIAL_NO_FIRMWARE)) {
-                    setSerial(NO_SERIAL_FIRMWARE_OK);
-                    hiccup();
-                    return 1;
-                }//no need for else
-
                 Base.writeLog("Setting firmware version to: " + versionToCompare, this.getClass());
                 dispatchCommand(SET_FIRMWARE_VERSION + versionToCompare);
 
@@ -2056,7 +1972,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     continue;
                 }
 
-                if (isInitialized() && testPipes(pipes)) {
+                if (isInitialized()) {
                     Base.getMainWindow().getButtons().setMessage("is connecting");
                     ready = true;
                 } else {
@@ -2109,7 +2025,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     continue;
                 }
 
-                if (isInitialized() && testPipes(pipes)) {
+                if (isInitialized()) {
                     hiccup(100, 0);
                     //while (readResponse().equals("") == false) {
                     //    hiccup(10, 0);
@@ -2137,18 +2053,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         } while (ready == false);
 
         return true;
-    }
 
-    private void setSerial(String serial) {
-
-        if (serial.length() == SERIAL_NUMBER_SIZE) {
-            try {
-                Integer.parseInt(serial);
-                dispatchCommand(SET_SERIAL + serial);
-                hiccup(10, 0);
-            } catch (Exception ex) {
-            }
-        }
     }
 
     private class FeedbackThread extends Thread {
@@ -2165,7 +2070,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         public void run() {
             while (feedbackWindow.isVisible() == false && stop == false) {
 
-                if (Base.welcomeSplashVisible == false) {
+                if (Base.isWelcomeSplashVisible() == false) {
                     feedbackWindow.setVisible(true);
                 }
 

@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import javax.usb.UsbDeviceDescriptor;
 import javax.usb.UsbIrp;
 import javax.usb.UsbNotClaimedException;
-import javax.usb.UsbNotOpenException;
 import javax.usb.UsbPipe;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
@@ -79,6 +78,7 @@ public class UsbDriver extends DriverBaseImplementation {
     protected boolean isONShutdown = false;
 
     private boolean isBusy = true;
+    protected boolean isAlive = false;
     private int readyCount = 0;
     protected static final Lock dispatchCommandLock = new ReentrantLock();
     private String lastStatusMessage;
@@ -227,41 +227,10 @@ public class UsbDriver extends DriverBaseImplementation {
             } //no need for else
         }
     }
-
-    /**
-     * Checks if device is connected.
-     *
-     * @return <li> true, if it is connected.
-     * <li> false, if not.
-     */
-    public boolean deviceFound() {
-        if (m_usbDevice == null) {
-            Base.writeLog("USB device not found", this.getClass());
-            setInitialized(false);
-            return false;
-        } else {
-            try {
-                if (m_usbDevice.getManufacturerString() == null) {
-                    setInitialized(false);
-                    Base.writeLog("USB device not found", this.getClass());
-                    return false;
-                }
-            } catch (UsbException ex) {
-                setInitialized(false);
-                Base.writeLog("*deviceFound* <UsbException> " + ex.getMessage(), this.getClass());
-                return false;
-            } catch (UnsupportedEncodingException ex) {
-                setInitialized(false);
-                Base.writeLog("*deviceFound* <UnsupportedEncodingException> " + ex.getMessage(), this.getClass());
-                return false;
-            } catch (UsbDisconnectedException ex) {
-                setInitialized(false);
-                Base.writeLog("*deviceFound* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-                return false;
-            }
-        }
-
-        return true;
+    
+    @Override
+    public boolean isAlive() {
+        return isAlive;
     }
 
     /**
@@ -283,7 +252,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 return null;
             }
 
-            if (pipes == null || !testPipes(pipes)) {
+            if (pipes == null || !isInitialized()) {
                 Base.writeLog("No pipes were found, or testPipes failed. Creating new ones", this.getClass());
                 returnPipes = new UsbPipes();
             } else {
@@ -356,8 +325,8 @@ public class UsbDriver extends DriverBaseImplementation {
         long elapsedTimeMilliseconds;
         String status;
         boolean validStatus = false, mismatchDetected = false;
-        
-        if(pipes == null) {
+
+        if (pipes == null) {
             return false;
         }
 
@@ -366,17 +335,8 @@ public class UsbDriver extends DriverBaseImplementation {
             try {
                 pipes.close();
                 return false;
-            } catch (UsbException ex) {
-                Base.writeLog("*testPipes1* <UsbException> " + ex.getMessage(), this.getClass());
-                return false;
-            } catch (UsbNotActiveException ex) {
-                Base.writeLog("*testPipes1* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
-                return false;
-            } catch (UsbNotOpenException ex) {
-                Base.writeLog("*testPipes1* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
-                return false;
-            } catch (UsbDisconnectedException ex) {
-                Base.writeLog("*testPipes1* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+            } catch (Exception ex) {
+                Base.writeLog("*testPipes1* <Exception> " + ex.getMessage(), this.getClass());
                 return false;
             }
         }
@@ -401,28 +361,10 @@ public class UsbDriver extends DriverBaseImplementation {
                             pipeWrite.syncSubmit(irpWrite);
                         }
 
-                    } catch (UsbException ex) {
-                        Base.writeLog("*testPipes2* <UsbException> " + ex.getMessage(), this.getClass());
-                        setInitialized(false);
-                        return false;
-                    } catch (UsbNotActiveException ex) {
-                        Base.writeLog("*testPipes2* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
-                        setInitialized(false);
-                        return false;
-                    } catch (UsbNotOpenException ex) {
-                        Base.writeLog("*testPipes2* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
-                        setInitialized(false);
-                        return false;
                     } catch (IllegalArgumentException ex) {
                         Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
-                        //setInitialized(false);
-                        //return false;
-                    } catch (UsbDisconnectedException ex) {
-                        Base.writeLog("*testPipes2* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-                        setInitialized(false);
-                        return false;
-                    } catch (UsbNotClaimedException ex) {
-                        Base.writeLog("*testPipes2* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
+                    } catch (Exception ex) {
+                        Base.writeLog("*testPipes2* <Exception> " + ex.getMessage(), this.getClass());
                         setInitialized(false);
                         return false;
                     }
@@ -433,12 +375,12 @@ public class UsbDriver extends DriverBaseImplementation {
                             elapsedTimeMilliseconds = System.currentTimeMillis();
                             ansBytes = pipeRead.syncSubmit(readBuffer);
                             elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
-                            
-                            if(elapsedTimeMilliseconds > 500) {
+
+                            if (elapsedTimeMilliseconds > 500) {
                                 isBusy = true;
                                 break;
                             }
-                            
+
                             if (ansBytes > 0) {
                                 try {
                                     status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
@@ -460,11 +402,12 @@ public class UsbDriver extends DriverBaseImplementation {
                                 }
                             }
                         }
-                    } catch (UsbException ex) {
-                    } catch (UsbNotActiveException ex) {
-                    } catch (UsbNotOpenException ex) {
                     } catch (IllegalArgumentException ex) {
-                    } catch (UsbDisconnectedException ex) {
+                        Base.writeLog("*testPipes3* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
+                    } catch (Exception ex) {
+                        Base.writeLog("*testPipes3* <Exception> " + ex.getMessage(), this.getClass());
+                        setInitialized(false);
+                        return false;
                     }
 
                 } finally {
@@ -572,14 +515,8 @@ public class UsbDriver extends DriverBaseImplementation {
             setInitialized(false);
             pipes.close();
             pipes.getUsbEndpoint().getUsbInterface().release();
-        } catch (UsbException ex) {
-            Base.writeLog("*closePipe* <UsbException> " + ex.getMessage(), this.getClass());
-        } catch (UsbNotActiveException ex) {
-            Base.writeLog("*closePipe* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
-        } catch (UsbNotOpenException ex) {
-            Base.writeLog("*closePipe* <UsbNotOpenException> " + ex.getMessage(), this.getClass());
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("*closePipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+        } catch (Exception ex) {
+            Base.writeLog("*closePipe* <Exception> " + ex.getMessage(), this.getClass());
         }
     }
 

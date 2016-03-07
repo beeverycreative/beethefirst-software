@@ -103,11 +103,6 @@ import replicatorg.drivers.Driver;
 			}
 			singletonMI.connect(force);
 		}
-                
-                public void buildDirect(String arg)
-                {
-                    singletonMI.buildDirect(arg);
-                }
 		
 		// Pass these on to our handler
 		public void addMachineListener(MachineListener listener) {

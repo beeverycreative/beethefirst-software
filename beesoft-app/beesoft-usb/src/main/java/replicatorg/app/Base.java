@@ -189,7 +189,8 @@ public class Base {
     public static boolean errorOccured = false;
     public static boolean printPaused = false;
     public static boolean isPrinting = false;
-    public static boolean welcomeSplashVisible = false;
+    private static boolean welcomeSplashVisible = false;
+    public static final Object WELCOME_SPLASH_MONITOR = new Object();
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
@@ -1160,26 +1161,6 @@ public class Base {
             }
         });
         ProperDefault.put("machine.name", MACHINE_NAME);
-        String machineName = ProperDefault.get("machine.name");
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // quite ugly, but it works for now
-        while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (Base.statusThreadDied) {
-                editor.reloadMachine(machineName, false);
-            }
-        }
-
     }
 
     // .................................................................
@@ -1505,9 +1486,10 @@ public class Base {
             return applicationVersion;
         }
     }
-    
+
     /**
      * To be used when catch isn't supposed to do anything
+     *
      * @param ms time in ms to wait
      */
     public static void hiccup(int ms) {
@@ -1516,5 +1498,18 @@ public class Base {
         } catch (InterruptedException ex) {
             System.out.println("interrupt");
         }
+    }
+
+    public static boolean isWelcomeSplashVisible() {
+        return welcomeSplashVisible;
+    }
+
+    public static void setWelcomeSplashVisible(boolean isVisible) {
+        if (isVisible == false) {
+            synchronized (WELCOME_SPLASH_MONITOR) {
+                WELCOME_SPLASH_MONITOR.notifyAll();
+            }
+        }
+        welcomeSplashVisible = isVisible;
     }
 }

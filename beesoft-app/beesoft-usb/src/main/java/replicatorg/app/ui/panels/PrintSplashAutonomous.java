@@ -207,7 +207,6 @@ public class PrintSplashAutonomous extends BaseDialog {
             driver.stopTransfer();
         } else {
             driver.dispatchCommand("M112", COM.NO_RESPONSE);
-            Base.getMainWindow().doStop();
         }
 
         Base.resetPrintingFlags();

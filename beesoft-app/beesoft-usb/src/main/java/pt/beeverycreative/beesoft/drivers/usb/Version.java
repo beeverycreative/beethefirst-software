@@ -66,7 +66,7 @@ public class Version implements Comparable<Version> {
     }
 
     public String getVersionString() {
-        return flavour + "-" + printer + "-" + major + "." + minor + "." + bug;
+        return flavour + "-" + printer.name() + "-" + major + "." + minor + "." + bug;
     }
     
     public PrinterInfo getPrinter() {
