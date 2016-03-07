@@ -130,6 +130,10 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public void bMaintenanceSetEnabled(boolean enabled) {
         bMaintenance.setEnabled(enabled);
     }
+    
+    public void bPrintSetEnabled(boolean enabled) {
+        bPrint.setEnabled(enabled);
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

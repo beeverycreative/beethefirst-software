@@ -80,6 +80,7 @@ public class EditingModel implements Serializable {
     private Group boundingBox;
     private Point3d centroid = null;
     private Point3d bottom = null;
+    private boolean modelInvalidPosition = false, modelNotInBed = false;
 
     public EditingModel(Model model) {
         this.model = model;
@@ -167,23 +168,28 @@ public class EditingModel implements Serializable {
     }
 
     public boolean modelInvalidPosition() {
-        double xLimit, yLimit;
+        double xLimit, yLimit, zLimit;
         BuildVolume machineVolume;
-        
+
         machineVolume = Base.getMainWindow().getCanvas().getBuildVolume();
         xLimit = machineVolume.getX() / 2;
         yLimit = machineVolume.getY() / 2;
+        zLimit = machineVolume.getZ();
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
 
-        return Math.abs(lower.x) > xLimit || Math.abs(upper.x) > xLimit ||
-                Math.abs(lower.y) > yLimit || Math.abs(upper.y) > yLimit;
-                //|| lower.z != 0 || upper.z > zLimit;
+        modelNotInBed = lower.z != 0;
+        modelInvalidPosition = Math.abs(lower.x) > xLimit
+                || Math.abs(upper.x) > xLimit || Math.abs(lower.y) > yLimit
+                || Math.abs(upper.y) > yLimit || upper.z > zLimit;
+
+        return modelInvalidPosition;
+        //|| lower.z != 0 || upper.z > zLimit;
 
     }
-     
+
     public void centerAndToBed() {
         BoundingBox bb = getBoundingBox(shapeTransform);
         Point3d lower = new Point3d();
@@ -243,7 +249,7 @@ public class EditingModel implements Serializable {
         }
         return false;
     }
-    
+
     public void updateModelColor() {
         if (objectMaterial != null) {
             Color modelColor = new Color(214, 214, 214);
@@ -255,8 +261,12 @@ public class EditingModel implements Serializable {
     private void showMessage() {
         MainWindow editor = Base.getMainWindow();
 
-        if (modelInvalidPosition()) {
+        if (modelInvalidPosition) {
             editor.showFeedBackMessage("outOfBounds");
+        } else {
+            if (modelNotInBed) {
+                editor.showFeedBackMessage("notInBed");
+            }
         }
 
         /*
@@ -278,8 +288,9 @@ public class EditingModel implements Serializable {
                 objectMaterial.setDiffuseColor(new Color3f(modelColor));
             } else {
                 updateModelOverSize();
-                showMessage();
             }
+
+            showMessage();
         }
     }
 
@@ -291,23 +302,25 @@ public class EditingModel implements Serializable {
                 objectMaterial.setDiffuseColor(new Color3f(modelColor));
             } else {
                 updateModelOverSize();
-                showMessage();
             }
+
+            showMessage();
+
         }
     }
 
     public void updateModelUnPicked() {
         if (objectMaterial != null) {
 
-            //if (modelTooBig() && modelOutBonds() && !modelInBed()) {
-            if(modelInvalidPosition()) {
-                showMessage();
+            if (modelInvalidPosition()) {
                 Color modelColor = new Color(224, 59, 42);
                 objectMaterial.setAmbientColor(new Color3f(modelColor));
                 objectMaterial.setDiffuseColor(new Color3f(modelColor));
             } else {
                 updateModelColor();
             }
+
+            showMessage();
         }
     }
 
