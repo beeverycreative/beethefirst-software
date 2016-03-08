@@ -424,7 +424,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
     private void processStatus(String status) {
 
-        boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving;
+        final boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving;
         lastStatusMessage = status;
 
         if (status.contains("S:") == false) {

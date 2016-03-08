@@ -1058,15 +1058,15 @@ public class PrintSplashAutonomous extends BaseDialog {
                     }
                 }
 
-                // THIS REPEATED HEATING IS DONE JUST IN CASE, BECAUSE OF THE POWER SAVING FEATURE
-                // if the transfer takes a long time, printer may enter in power saving mode
-                // supposed to be fixed in firmware already, but... just in case
                 estimator = new PrintEstimator(gcode);
                 headerStr = "M31 A" + estimator.getEstimatedMinutes() + '\n';
                 setTransferInfo();
                 if (driver.gcodeTransfer(gcode, PrintSplashAutonomous.this, headerStr).toLowerCase().contains(ERROR)) {
                     setError(true);
                 } else {
+                    // THIS REPEATED HEATING IS DONE JUST IN CASE, BECAUSE OF THE POWER SAVING FEATURE
+                    // if the transfer takes a long time, printer may enter in power saving mode
+                    // supposed to be fixed in firmware already, but... just in case
                     driver.setTemperature(temperatureGoal + 5);
 
                     /**
@@ -1104,6 +1104,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     private class GCodeGenWorker extends SwingWorker<Boolean, Void> {
+
         @Override
         protected Boolean doInBackground() throws Exception {
             final boolean success;
@@ -1203,19 +1204,11 @@ public class PrintSplashAutonomous extends BaseDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean machineFinished;
-            Thread linesThread;
-            //String status;
+            final boolean machineFinished;
 
             if (!driver.isBusy()) {
                 if (!isPaused && !isShutdown) {
-                    linesThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getLinesAndTime();
-                        }
-                    });
-                    linesThread.start();
+                    getLinesAndTime();
                 }
                 bPause.setEnabled(true);
                 bCancel.setEnabled(true);
@@ -1224,12 +1217,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 bCancel.setEnabled(false);
             }
 
-            //status = model.getLastStatusString();
             machineFinished = !model.getMachinePrinting() && !driver.isBusy();
-            //machineFinished = model.getMachineReady()
-            //        && model.getMachinePaused() == false
-            //        && model.getMachineShutdown() == false;
-            //&& status.contains("W:") == false;             // W:Waiting4File
 
             if (errorOccurred || machineFinished) {
                 if (errorOccurred) {

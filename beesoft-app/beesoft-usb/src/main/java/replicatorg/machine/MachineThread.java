@@ -44,33 +44,43 @@ class MachineThread extends Thread {
         @Override
         public void run() {
             /*
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (checkedForUpdates == false) {
-                        // Checks for software and firmware updates
-                        if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
-                            UpdateChecker advise = new UpdateChecker();
-                            checkedForUpdates = true;
+             new Thread(new Runnable() {
+             @Override
+             public void run() {
+             if (checkedForUpdates == false) {
+             // Checks for software and firmware updates
+             if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
+             UpdateChecker advise = new UpdateChecker();
+             checkedForUpdates = true;
 
                             
-                            // if (advise.isUpdateBetaAvailable()) {
-                            // advise.setMessage("AvailableBeta");
-                            // advise.setVisible(true);
-                            // }
-                            if (advise.isUpdateStableAvailable()) {
-                                advise.setMessage("AvailableStable");
-                                advise.setVisible(true);
-                            } else {
-                                advise.dispose();
-                            }
+             // if (advise.isUpdateBetaAvailable()) {
+             // advise.setMessage("AvailableBeta");
+             // advise.setVisible(true);
+             // }
+             if (advise.isUpdateStableAvailable()) {
+             advise.setMessage("AvailableStable");
+             advise.setVisible(true);
+             } else {
+             advise.dispose();
+             }
+             }
+             }
+             }
+             }).start();
+             */
+
+            while (true) {
+                synchronized (Base.WELCOME_SPLASH_MONITOR) {
+                    if (Base.isWelcomeSplashVisible()) {
+                        try {
+                            Base.WELCOME_SPLASH_MONITOR.wait();
+                        } catch (InterruptedException ex) {
+                            return;
                         }
                     }
                 }
-            }).start();
-            */
 
-            while (true) {
                 DRIVER.initialize();
 
                 if (getModel().getMachinePowerSaving()) {

@@ -28,12 +28,8 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import replicatorg.app.Base;
-import replicatorg.app.tools.XML;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.util.Point5d;
 
@@ -45,8 +41,6 @@ public class MachineModel {
     //our machine space
     //private Point3d currentPosition;
     @SuppressWarnings("unused")
-    private Point5d minimum;
-    private Point5d maximum;
     private EnumMap<AxisId, Endstops> endstops = new EnumMap<AxisId, Endstops>(AxisId.class);
 
     // Which axes exist on this machine
@@ -73,13 +67,12 @@ public class MachineModel {
     //our wipe models @Noah
     protected Vector<WipeModel> wipes = new Vector<WipeModel>();
 
-    // our build volume
     private boolean machineReady = false;
     private boolean machineBusy = false;
     private boolean machinePaused = false;
     private boolean machinePowerSaving = false;
     private boolean machineShutdown = false;
-    private boolean machinePrinting = false;
+    private boolean machinePrinting = true;
     private double zValue;
 
     // Filament code currently on the printer
@@ -99,8 +92,6 @@ public class MachineModel {
         tools = new Vector<ToolModel>();
 
         //currentPosition = new Point3d();
-        minimum = new Point5d();
-        maximum = new Point5d();
         maximumFeedrates = new Point5d();
         homingFeedrates = new Point5d();
         timeOut = new Point5d();
@@ -109,227 +100,6 @@ public class MachineModel {
         currentTool.set(nullTool);
     }
 
-    //load data from xml config
-    /*
-    public void loadXML(Node node) {
-        xml = node;
-
-        parseAxes();
-        parseClamps();
-        parseTools();
-        parseBuildVolume();
-        parseWipes();
-        parseExclusion();
-    }
-    */
-
-    /*
-    private void parseExclusion() {
-        if (XML.hasChildNode(xml, "exclusion")) {
-            Node exclusionNode = XML.getChildNodeByName(xml, "wipes");
-            NodeList exclusionKids = exclusionNode.getChildNodes();
-            for (int i = 0; i < exclusionKids.getLength(); i++) {
-                Node exclusionZoneNode = exclusionKids.item(i);
-
-                if (exclusionZoneNode.getNodeName().equals("wipe")) {
-                    WipeModel wipe = new WipeModel(exclusionZoneNode);
-                    wipes.add(wipe);
-                }
-            }
-        }
-    }
-
-    private void parseWipes() {
-        if (XML.hasChildNode(xml, "wipes")) {
-            Node wipesNode = XML.getChildNodeByName(xml, "wipes");
-
-            //look through the axes.
-            NodeList wipesKids = wipesNode.getChildNodes();
-            for (int i = 0; i < wipesKids.getLength(); i++) {
-                Node wipeNode = wipesKids.item(i);
-
-                if (wipeNode.getNodeName().equals("wipe")) {
-                    WipeModel wipe = new WipeModel(wipeNode);
-                    wipes.add(wipe);
-                }
-            }
-        }
-    }
-
-    //load axes configuration
-    private void parseAxes() {
-        if (XML.hasChildNode(xml, "geometry")) {
-            Node geometry = XML.getChildNodeByName(xml, "geometry");
-
-            //look through the axes.
-            NodeList axisNodes = geometry.getChildNodes();
-            for (int i = 0; i < axisNodes.getLength(); i++) {
-                Node axis = axisNodes.item(i);
-
-                if (axis.getNodeName().equals("axis")) {
-                    //parse our information.
-                    String idStr = XML.getAttributeValue(axis, "id");
-                    try {
-                        AxisId id = AxisId.valueOf(idStr.toUpperCase());
-                        axes.add(id);
-                        //initialize values
-                        double length = 0.0;
-                        double maxFeedrate = 0.0;
-                        double homingFeedrate = 0.0;
-                        double stepspermm = 1.0;
-                        Endstops endstops = Endstops.NONE;
-                        // abritrary # of seconds to time out,
-                        // can be overriden in .xml for each axis, the max val is all we use currently
-                        double defaultTimeout = 20.0;
-                        double timeout = 0;
-                        //if values are missing, ignore them.
-                        try {
-                            length = Double.parseDouble(XML.getAttributeValue(axis, "length"));
-                        } catch (Exception e) {
-                        }
-                        try {
-                            maxFeedrate = Double.parseDouble(XML.getAttributeValue(axis, "maxfeedrate"));
-                        } catch (Exception e) {
-                        }
-                        try {
-                            homingFeedrate = Double.parseDouble(XML.getAttributeValue(axis, "homingfeedrate"));
-                        } catch (Exception e) {
-                            // If the homing feedrate is not available, use the maximum feedrate instead
-                            homingFeedrate = maxFeedrate;
-                        }
-                        try {
-                            String spmm = XML.getAttributeValue(axis, "stepspermm");
-                            if (spmm == null) {
-                                spmm = XML.getAttributeValue(axis, "scale"); // Backwards compatibility
-                            }
-                            stepspermm = Double.parseDouble(spmm);
-                        } catch (Exception e) {
-                        }
-                        try {
-                            timeout = Double.parseDouble(XML.getAttributeValue(axis, "timeout"));
-                        } catch (Exception e) {
-                            // if no timeout is specified, used the default
-                            timeout = defaultTimeout;
-                        }
-                        String endstopStr = XML.getAttributeValue(axis, "endstops");
-                        if (endstopStr != null) {
-                            try {
-                                endstops = Endstops.valueOf(endstopStr.toUpperCase());
-                            } catch (IllegalArgumentException iae) {
-                                Base.logger.severe("Unrecognized endstop value " + endstopStr + " for axis " + id.name());
-                            }
-                        }
-                        maximum.setAxis(id, length);
-                        maximumFeedrates.setAxis(id, maxFeedrate);
-                        homingFeedrates.setAxis(id, homingFeedrate);
-                        stepsPerMM.setAxis(id, stepspermm);
-                        timeOut.setAxis(id, timeout);
-                        this.endstops.put(id, endstops);
-                        Base.logger.fine("Loaded axis " + id.name()
-                                + ": (Length: " + length
-                                + "mm, max feedrate: " + maxFeedrate
-                                + " mm/min, homing feedrate: " + homingFeedrate
-                                + " mm/min, scale: " + stepspermm + " steps/mm"
-                                + "seconds, timeout: " + timeout + ")");
-
-                    } catch (IllegalArgumentException iae) {
-                        // Unrecognized axis!
-                        Base.logger.severe("Unrecognized axis " + idStr + " found in machine descriptor!");
-                    }
-
-                }
-            }
-        }
-    }
-
-    //load clamp configuration
-    private void parseClamps() {
-        if (XML.hasChildNode(xml, "clamps")) {
-            Node clampsNode = XML.getChildNodeByName(xml, "clamps");
-
-            //look through the axes.
-            NodeList clampKids = clampsNode.getChildNodes();
-            for (int i = 0; i < clampKids.getLength(); i++) {
-                Node clampNode = clampKids.item(i);
-
-                ClampModel clamp = new ClampModel(clampNode);
-                clamps.add(clamp);
-
-                System.out.println("adding clamp #" + clamps.size());
-            }
-        }
-    }
-
-    //load tool configuration
-    private void parseTools() {
-        if (XML.hasChildNode(xml, "tools")) {
-            Node toolsNode = XML.getChildNodeByName(xml, "tools");
-
-            //look through the axes.
-            NodeList toolKids = toolsNode.getChildNodes();
-            for (int i = 0; i < toolKids.getLength(); i++) {
-                Node toolNode = toolKids.item(i);
-
-                if (toolNode.getNodeName().equals("tool")) {
-                    ToolModel tool = new ToolModel(toolNode);
-                    if (tool.getIndex() == -1) {
-                        tool.setIndex(tools.size());
-                        tools.add(tool);
-                    } else {
-                        if (tools.size() <= tool.getIndex()) {
-                            tools.setSize(tool.getIndex() + 1);
-                        }
-                        tools.set(tool.getIndex(), tool);
-                    }
-                    synchronized (currentTool) {
-                        if (currentTool.get() == nullTool) {
-                            this.selectTool(tool.getIndex());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //load axes configuration
-    private void parseBuildVolume() {
-//		Base.logger.info("parsing build volume!");
-
-        if (XML.hasChildNode(xml, "geometry")) {
-            Node geometry = XML.getChildNodeByName(xml, "geometry");
-
-            //look through the axes.
-            NodeList axes = geometry.getChildNodes();
-            for (int i = 0; i < axes.getLength(); i++) {
-                Node axis = axes.item(i);
-
-                if (axis.getNodeName().equals("axis")) {
-                    //parse our information.
-                    String id = XML.getAttributeValue(axis, "id");
-
-                    //initialize values
-                    double length = 100; // 100mm by default
-
-                    //if values are missing, ignore them.
-                    try {
-                        length = Double.parseDouble(XML.getAttributeValue(axis, "length"));
-                    } catch (Exception e) {
-                    }
-
-                    //create the right variables.
-                    if (id.toLowerCase().equals("x")) {
-                        buildVolume.setX((int) length);
-                    } else if (id.toLowerCase().equals("y")) {
-                        buildVolume.setY((int) length);
-                    } else if (id.toLowerCase().equals("z")) {
-                        buildVolume.setZ((int) length);
-                    }
-                }
-            }
-        }
-
-    }
-    */
 
     /**
      * ***********************************

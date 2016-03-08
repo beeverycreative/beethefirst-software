@@ -735,8 +735,6 @@ public class Base {
      * @param dirPath Path to directory containing such files
      */
     static public void cleanDirectoryTempFiles(String dirPath) {
-        boolean isBeesoftAlpha = Base.VERSION_BEESOFT.contains("alpha");
-
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
             if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && file.getName().contains("gcodeToPrinter") == false)) {
@@ -757,7 +755,7 @@ public class Base {
          */
     }
 
-    static public void disposeAllOpenWindows() {
+    public static void disposeAllOpenWindows() {
         String name;
 
         java.awt.Window win[] = java.awt.Window.getWindows();

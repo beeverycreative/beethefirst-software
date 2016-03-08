@@ -169,17 +169,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         setMachine(new MachineModel());
 
         super.isBootloader = true;
-        
-        synchronized(Base.WELCOME_SPLASH_MONITOR) {
-            if(Base.isWelcomeSplashVisible()) {
-                try {
-                    Base.WELCOME_SPLASH_MONITOR.wait();
-                } catch (InterruptedException ex) {
-                    return;
-                }
-            }
-        }
-
+       
         if (status.contains("bootloader")) {
             bootedFromBootloader = true;
             updateBootloaderInfo();
@@ -1420,7 +1410,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void setTemperature(int temperature) {
-        dispatchCommand("M104 S" + temperature);
+        //dispatchCommand("M104 S" + temperature);
         super.setTemperature(temperature);
     }
 
@@ -1517,6 +1507,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (!isAlive) {
             if (Base.rebootingIntoFirmware == false) {
                 Base.getMainWindow().getButtons().setMessage("is disconnected");
+                Base.disposeAllOpenWindows();
             }
             Base.isPrinting = false;
             Base.printPaused = false;
