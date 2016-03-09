@@ -7,9 +7,7 @@ import java.util.HashMap;
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.Base;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.tools.XML;
-import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.drivers.Driver;
 import replicatorg.machine.Machine.JobTarget;
 import replicatorg.machine.model.MachineModel;
@@ -85,7 +83,7 @@ class MachineThread extends Thread {
 
                 if (getModel().getMachinePowerSaving()) {
                     Base.getMainWindow().getButtons().setMessage("power saving");
-                } else {
+                } else if (getModel().getMachineOperational()) {
                     Base.getMainWindow().getButtons().setMessage("is connected");
                 }
 

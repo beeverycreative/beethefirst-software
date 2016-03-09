@@ -73,6 +73,7 @@ public class MachineModel {
     private boolean machinePowerSaving = false;
     private boolean machineShutdown = false;
     private boolean machinePrinting = true;
+    private boolean machineOperational = false;
     private double zValue;
 
     // Filament code currently on the printer
@@ -354,6 +355,14 @@ public class MachineModel {
 
     public boolean getMachinePrinting() {
         return machinePrinting;
+    }
+    
+    public void setMachineOperational(boolean machineOperational) {
+        this.machineOperational = machineOperational;
+    }
+    
+    public boolean getMachineOperational() {
+        return machineOperational;
     }
 
     /* Get and Setter CoilCode/BEECODE */

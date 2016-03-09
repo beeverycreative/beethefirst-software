@@ -424,7 +424,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
     private void processStatus(String status) {
 
-        final boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving;
+        final boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving, machineOperational;
         lastStatusMessage = status;
 
         if (status.contains("S:") == false) {
@@ -445,6 +445,7 @@ public class UsbDriver extends DriverBaseImplementation {
         machineShutdown = status.contains("S:9") || status.toLowerCase().contains("shutdown");
         machinePrinting = status.contains("S:5");
         machinePaused = status.contains("Pause");
+        machineOperational = machineReady || machineShutdown || machinePrinting || machinePaused;
 
         machine.setLastStatusString(status);
         machine.setMachineReady(machineReady);
@@ -452,6 +453,7 @@ public class UsbDriver extends DriverBaseImplementation {
         machine.setMachinePowerSaving(machinePowerSaving);
         machine.setMachineShutdown(machineShutdown);
         machine.setMachinePrinting(machinePrinting);
+        machine.setMachineOperational(machineOperational);
     }
 
     @Override
