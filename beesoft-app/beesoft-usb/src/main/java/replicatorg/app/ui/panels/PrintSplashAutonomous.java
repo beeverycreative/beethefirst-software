@@ -99,7 +99,6 @@ public class PrintSplashAutonomous extends BaseDialog {
                 Base.isPrinting = false;
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
-                driver.setTemperature(0);
             }
         });
     }
@@ -143,7 +142,6 @@ public class PrintSplashAutonomous extends BaseDialog {
                 Base.isPrinting = false;
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
                 Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/");
-                driver.setTemperature(0);
             }
         });
 
@@ -205,6 +203,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     protected void doCancel() {
         if (driver.isTransferMode()) {
             driver.stopTransfer();
+            driver.setTemperature(0);
         } else {
             driver.dispatchCommand("M112", COM.NO_RESPONSE);
         }
@@ -813,9 +812,11 @@ public class PrintSplashAutonomous extends BaseDialog {
                     tInfo6.setVisible(false);
 
                 } else {
+                    driver.setTemperature(0);
                     dispose();
                 }
             } else if (errorOccurred) {
+                driver.setTemperature(0);
                 dispose();
                 PrintSplashAutonomous p = new PrintSplashAutonomous(preferences);
                 p.setVisible(true);
@@ -842,6 +843,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         if (bUnload.isEnabled()) {
             //second next overloads unload button for OK
             if (lastPanel) {
+                driver.setTemperature(0);
                 dispose();
             } else if (printEnded && unloadPressed == false && firstUnloadStep == false) {           //first time you press unload after print is over          
                 unloadPressed = true;
@@ -880,8 +882,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void bPauseMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPauseMousePressed
         if (bPause.isEnabled()) {
-            final PrintSplashAutonomous parent = this;
-
             bPause.setVisible(false);
             bOk.setEnabled(false);
             bCancel.setEnabled(false);
@@ -890,26 +890,18 @@ public class PrintSplashAutonomous extends BaseDialog {
             Base.printPaused = true;
             isPaused = true;
             //Pause print
-            driver.dispatchCommand("M640", COM.NO_RESPONSE);
-            //Disable power saving to avoid temperature lowering down
-            Base.turnOnPowerSaving(false);
-
+            driver.dispatchCommand("M640");
+            driver.setBusy(true);
+            
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-
-                    while (driver.getMachineReady() == false) {
+                    while (driver.isBusy() || !model.getMachineReady()) {
                         Base.hiccup(500);
                     }
-
-                    driver.setBusy(false);
-                    bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
-
-                    PauseMenu pause = new PauseMenu(parent);
+                    PauseMenu pause = new PauseMenu();
+                    dispose();
                     pause.setVisible(true);
-
-                    //setPauseElements();
-                    //bPause.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
                 }
             });
         }
@@ -997,29 +989,53 @@ public class PrintSplashAutonomous extends BaseDialog {
             this.interrupt();
         }
 
+        private void doResume() {
+            bPause.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line12"));
+            tInfo2.setText(Languager.getTagValue(1, "Print", "Print_Resuming"));
+            tInfo3.setVisible(false);
+            driver.setTemperature(temperatureGoal + 5);
+            setHeatingInfo();
+            resetProgressBar();
+            synchronized (mutex) {
+                try {
+                    temperatureTimer.start();
+                    mutex.wait();
+                    temperatureTimer.stop();
+                } catch (InterruptedException ex) {
+                    if (stop) {
+                        return;
+                    }
+                }
+            }
+
+            //Resume printing
+            driver.dispatchCommand("M643 S" + temperatureGoal);
+
+            if (isShutdown) {
+                activateLoadingIcons();
+            }
+
+            driver.setBusy(true);
+            while (driver.isBusy()) {
+                Base.hiccup(100);
+            }
+
+            restoreAfterPauseResume();
+        }
+
         @Override
         public void run() {
 
-            PrintEstimator estimator;
-            String headerStr;
+            final PrintEstimator estimator;
+            final String headerStr;
 
             if (alreadyPrinting) {
                 Base.writeLog("Autonomous print resumed", this.getClass());
                 Base.isPrinting = true;
                 activateLoadingIcons();
 
-                if (isShutdown) {
-                    disableButtons();
-                    ShutdownMenu shutdown = new ShutdownMenu(PrintSplashAutonomous.this);
-                    PrintSplashAutonomous.this.setVisible(false);
-                    shutdown.setVisible(true);
-                    PrintSplashAutonomous.this.setVisible(true);
-                } else if (isPaused) {
-                    disableButtons();
-                    PauseMenu pause = new PauseMenu(PrintSplashAutonomous.this);
-                    PrintSplashAutonomous.this.setVisible(false);
-                    pause.setVisible(true);
-                    PrintSplashAutonomous.this.setVisible(true);
+                if (isShutdown || isPaused) {
+                    doResume();
                 }
 
                 setPrintInfo();
@@ -1217,7 +1233,8 @@ public class PrintSplashAutonomous extends BaseDialog {
                 bCancel.setEnabled(false);
             }
 
-            machineFinished = !model.getMachinePrinting() && !driver.isBusy();
+            machineFinished = !model.getMachinePrinting() && !driver.isBusy()
+                    && !model.getMachinePaused() && !model.getMachineShutdown();
 
             if (errorOccurred || machineFinished) {
                 if (errorOccurred) {

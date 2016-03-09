@@ -21,8 +21,10 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.panels.Feedback;
+import replicatorg.app.ui.panels.PauseMenu;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.ui.panels.SerialNumberInput;
+import replicatorg.app.ui.panels.ShutdownMenu;
 import replicatorg.app.ui.panels.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
@@ -72,10 +74,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String GET_NOZZLE_TYPE = "M1028";
     private static final String SAVE_CONFIG = "M601 ";
     private static final String NOK = "NOK";
-    private static final int QUEUE_LIMIT = 85;
     private static final int QUEUE_WAIT = 1000;
     private static final int SEND_WAIT = 2; //2 did not work
-    private int queue_size = 0;
     private long lastDispatchTime;
     private static Version bootloaderVersion = new Version();
     private Version firmwareVersion = new Version();
@@ -93,7 +93,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     public enum COM {
 
-        DEFAULT, BLOCK, TRANSFER, NO_RESPONSE
+        DEFAULT, BLOCK, TRANSFER, NO_RESPONSE, NO_OK
     }
 
     /**
@@ -155,7 +155,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public int getQueueSize() {
-        return queue_size;
+        return 0;
     }
 
     /**
@@ -169,7 +169,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         setMachine(new MachineModel());
 
         super.isBootloader = true;
-       
+
         if (status.contains("bootloader")) {
             bootedFromBootloader = true;
             updateBootloaderInfo();
@@ -196,40 +196,33 @@ public final class UsbPassthroughDriver extends UsbDriver {
             lastDispatchTime = System.currentTimeMillis();
             super.isBootloader = false;
 
-            Base.getMainWindow().setEnabled(true);
-            Base.bringAllWindowsToFront();
-            /**
-             * Does not show PSAutonomous until MainWindows is visible
-             */
-            boolean mwVisible = Base.getMainWindow().isVisible();
-            while (mwVisible == false) {
-                try {
-                    Thread.sleep(100, 0);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                mwVisible = Base.getMainWindow().isVisible();//polls
-            }
-
             updateCoilText();
             updateNozzleType();
             closeFeedback();
-
-            final PrintSplashAutonomous p = new PrintSplashAutonomous(
-                    Base.printPaused, this.isONShutdown
-            );
+            Base.updateVersions();
 
             // we want it to be document modal (that is, to block the underlaying windows)
             // but we don't want it to be stuck here. is there a better way?
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    p.setVisible(true);
+
+                    if (isONShutdown) {
+                        ShutdownMenu shutdown = new ShutdownMenu();
+                        shutdown.setVisible(true);
+                    } else if(Base.printPaused) {
+                        PauseMenu pause = new PauseMenu();
+                        pause.setVisible(true);
+                    } else {
+                        PrintSplashAutonomous p = new PrintSplashAutonomous(
+                                Base.printPaused, isONShutdown
+                        );
+                        p.setVisible(true);
+                    }
                 }
             });
             t.start();
 
-            Base.updateVersions();
         } else if (status.contains("firmware")) {
 
             // this is made just to be sure that the bootloader version
@@ -401,13 +394,26 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
             }
 
-            if (ans.contains("Q:")) {
-                try {
-                    queue_size = Integer.parseInt(ans.substring(ans.indexOf("Q:") + 1));
-                } catch (NumberFormatException ex) {
-                }
-            }
+        } finally {
+            dispatchCommandLock.unlock();
+        }
+        return ans;
+    }
 
+    private String dispatchCommandNoOK(String next) {
+
+        String ans;
+
+        ans = "";
+
+        if (next == null) {
+            return "";
+        }
+
+        dispatchCommandLock.lock();
+        try {
+            sendCommand(next);
+            ans = readResponse();
         } finally {
             dispatchCommandLock.unlock();
         }
@@ -462,6 +468,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     }
                 }).start();
                 return null;
+            case NO_OK:
+                answer = dispatchCommandNoOK(next);
+                break;
             case DEFAULT:
             case TRANSFER:
                 answer = dispatchCommand(next);
@@ -982,7 +991,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String printSession;
         String[] data;
 
-        printSession = dispatchCommand(READ_VARIABLES);
+        printSession = dispatchCommand(READ_VARIABLES, COM.NO_OK);
         data = parseData(printSession);
 
         machine.setAutonomousData(new AutonomousData(data[0], data[1], data[2], data[3], 0));
@@ -1410,7 +1419,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public void setTemperature(int temperature) {
-        //dispatchCommand("M104 S" + temperature);
+        dispatchCommand("M104 S" + temperature);
         super.setTemperature(temperature);
     }
 
@@ -1622,10 +1631,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     bytesRead += byteMessage.size;
                     byteMessage = new ByteRead(byteMessage.size, new byte[byteMessage.size]);
                     System.arraycopy(byteTemp, 0, byteMessage.byte_array, 0, byteMessage.size);
-                    
-                    if(bytesRead >= 50720) {
-                        System.out.println("break!");
-                    }
 
                     sent = sendCommandBytes(byteMessage.byte_array);
                     if (sent != byteMessage.size) {

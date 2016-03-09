@@ -1,25 +1,22 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Window;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 public class ShutdownMenu extends BaseDialog {
 
-    private final PrintSplashAutonomous printSplash;
-    private final MachineInterface machine = Base.getMainWindow().getMachineInterface();
+    private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
 
     private static final int FILE_KEY = 1;
 
-    public ShutdownMenu(Window printSplash) {
-        super(printSplash, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.printSplash = (PrintSplashAutonomous) printSplash;
-        this.printSplash.setVisible(false);
+    public ShutdownMenu() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         showNoFilamentLabel();
         setFont();
@@ -53,7 +50,7 @@ public class ShutdownMenu extends BaseDialog {
         String coilText;
         boolean showLabel;
 
-        coilText = machine.getDriver().getCoilText();
+        coilText = driver.getCoilText();
         showLabel = coilText.equals(FilamentControler.NO_FILAMENT)
                 || coilText.contains(FilamentControler.NO_FILAMENT_2);
 
@@ -274,9 +271,9 @@ public class ShutdownMenu extends BaseDialog {
             CancelPrint cancel = new CancelPrint();
             cancel.setVisible(true);
             if (cancel.isCancelTrue()) {
-                printSplash.doCancel();
+                dispose();
+                driver.dispatchCommand("M112", COM.NO_RESPONSE);
             }
-            //dispose();
         }
     }//GEN-LAST:event_bCancelMousePressed
 
@@ -291,9 +288,7 @@ public class ShutdownMenu extends BaseDialog {
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
             FilamentCodeInsertion p = new FilamentCodeInsertion();
-            this.setVisible(false);
             p.setVisible(true);
-            this.setVisible(true);
 
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
             showNoFilamentLabel();
@@ -318,10 +313,11 @@ public class ShutdownMenu extends BaseDialog {
 
     private void bResumeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bResumeMousePressed
         if (bResume.isEnabled()) {
+            PrintSplashAutonomous p = new PrintSplashAutonomous(
+                    Base.printPaused, true
+            );
             dispose();
-            printSplash.setVisible(true);
-            printSplash.doResume();
-            Base.bringAllWindowsToFront();
+            p.setVisible(true);
         }
     }//GEN-LAST:event_bResumeMousePressed
 

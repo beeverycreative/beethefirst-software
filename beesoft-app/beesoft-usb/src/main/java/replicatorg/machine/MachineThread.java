@@ -85,7 +85,7 @@ class MachineThread extends Thread {
 
                 if (getModel().getMachinePowerSaving()) {
                     Base.getMainWindow().getButtons().setMessage("power saving");
-                } else if (getModel().getMachineReady()) {
+                } else {
                     Base.getMainWindow().getButtons().setMessage("is connected");
                 }
 
