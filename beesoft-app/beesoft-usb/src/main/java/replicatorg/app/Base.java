@@ -395,7 +395,9 @@ public class Base {
         if (!f.exists()) {
             // create BEESOFT dir
             f.mkdir();
-        } else if (!models.exists()) {
+        } 
+        
+        if (!models.exists()) {
             // create models dir inside BEESOFT
             models.mkdir();
         }

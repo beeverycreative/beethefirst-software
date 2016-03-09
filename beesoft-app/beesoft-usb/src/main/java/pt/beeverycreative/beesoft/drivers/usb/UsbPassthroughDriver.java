@@ -210,7 +210,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     if (isONShutdown) {
                         ShutdownMenu shutdown = new ShutdownMenu();
                         shutdown.setVisible(true);
-                    } else if(Base.printPaused) {
+                    } else if (Base.printPaused) {
                         PauseMenu pause = new PauseMenu();
                         pause.setVisible(true);
                     } else {
@@ -292,7 +292,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             setBusy(false);
 
             Base.updateVersions();
-
         }
 
         if (status.contains("error")) {

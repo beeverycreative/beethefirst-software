@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
+import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.app.ui.panels.Warning;
 
@@ -27,6 +28,7 @@ import replicatorg.app.ui.panels.Warning;
  */
 public class WelcomeSplash extends javax.swing.JFrame {
 
+    private final UpdateChecker advise = new UpdateChecker();
     private final MainWindow window;
     private ImageIcon image;
     private int newWidth = 600;
@@ -118,10 +120,23 @@ public class WelcomeSplash extends javax.swing.JFrame {
     public void changeState() {
         //this.setVisible(false);
         dispose();
+        Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
+
+        if (advise.isUpdateStableAvailable()) {
+            advise.setMessage("AvailableStable");
+            advise.setAlwaysOnTop(true);
+            advise.setVisible(true);
+        } else if (advise.isUpdateBetaAvailable()) {
+            advise.setMessage("AvailableBeta");
+            advise.setAlwaysOnTop(true);
+            advise.setVisible(true);
+        } else {
+            advise.dispose();
+        }
+
+        Base.setWelcomeSplashVisible(false);
         window.setVisible(true);
         window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        Base.setWelcomeSplashVisible(false);
-        Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
 
         //GuideWizard
         if (Boolean.valueOf(ProperDefault.get("firstTime"))) {
@@ -222,4 +237,5 @@ public class WelcomeSplash extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
 }

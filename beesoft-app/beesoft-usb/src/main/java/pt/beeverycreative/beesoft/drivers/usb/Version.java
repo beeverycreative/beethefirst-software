@@ -346,6 +346,15 @@ public class Version implements Comparable<Version> {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 43 * hash + this.bug;
+        hash = 43 * hash + this.minor;
+        hash = 43 * hash + this.major;
+        return hash;
+    }
+
     public boolean atLeast(Version v) {
         return compareTo(v) >= 0;
     }

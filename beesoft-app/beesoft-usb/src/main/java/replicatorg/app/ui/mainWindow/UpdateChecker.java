@@ -2,8 +2,6 @@ package replicatorg.app.ui.mainWindow;
 
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +13,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,7 +27,6 @@ import org.xml.sax.SAXException;
 import pt.beeverycreative.beesoft.drivers.usb.Version;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.tools.XML;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
 
@@ -44,11 +43,11 @@ import replicatorg.app.ui.panels.BaseDialog;
  */
 public class UpdateChecker extends BaseDialog {
 
-    private static final String serverURL = "https://www.beeverycreative.com/public/software/BEESOFT/";
+    private static final String SERVER_URL = "https://www.beeverycreative.com/public/software/BEESOFT/";
+    private static final String VERSION_FILE = "updates_new.xml";
 
     private File fileFromServer = null;
-    private boolean updateStableAvailable;
-    private boolean updateBetaAvailable;
+    private boolean updateStableAvailable, updateBetaAvailable;
     private String filenameToDownload;
 
     public UpdateChecker() {
@@ -59,171 +58,139 @@ public class UpdateChecker extends BaseDialog {
         centerOnScreen();
         enableDrag();
         evaluateInitialConditions();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProLight("33"));
         jLabel2.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel19.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bDownload.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
 
     private void setTextLanguage() {
         int fileKey = 1;
         jLabel2.setText(Languager.getTagValue(fileKey, "Other", "NotSupported"));
-        jLabel18.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
-        jLabel19.setText(Languager.getTagValue(fileKey, "Other", "Download"));
+        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
+        bDownload.setText(Languager.getTagValue(fileKey, "Other", "Download"));
     }
 
     private void evaluateInitialConditions() {
-        updateBetaAvailable = false;
         updateStableAvailable = false;
         filenameToDownload = null;
         fileFromServer = getFileFromServer();
 
         if (fileFromServer != null) {
             if (seekUpdates()) {
-                if (updateBetaAvailable) {
-                    setMessage("AvailableBeta");
-                } else {
-                    setMessage("AvailableStable");
-                }
-                fileFromServer.delete();
-                jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
+                bDownload.setEnabled(true);
             } else {
                 setMessage("NotAvailable");
-                jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_15.png")));
-                fileFromServer.delete();
+                bDownload.setEnabled(false);
             }
+            fileFromServer.delete();
         } else {
             setMessage("NoAccess");
-            jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_15.png")));
+            bDownload.setEnabled(false);
         }
-    }
-
-    private String splitString(String s) {
-        int width = 325;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
-    }
-
-    public boolean isUpdateBetaAvailable() {
-        return updateBetaAvailable;
     }
 
     public boolean isUpdateStableAvailable() {
         return updateStableAvailable;
     }
 
-    public boolean seekUpdates() {
-        String softVersionString = Base.VERSION_BEESOFT.split("-")[0];
-        String softServerVersionString = getTagValue("Software", "Version");
-        String softServerVersionBetaString = getTagValue("Software", "Version_beta");
-        int betaServerVersion = Integer.valueOf(getTagValue("Software", "BetaVersion"));
-        int betaSoftVersion;
+    public boolean isUpdateBetaAvailable() {
+        return updateBetaAvailable;
+    }
 
-        Version currentSoftwareVersion = new Version();
-        Version softwareFromServer = new Version();
-        Version softwareBetaFromServer = new Version();
+    private boolean seekUpdates() {
+        String softVersionString, softServerVersionString, softServerBetaVersionString;
+        Version currentSoftwareVersion, softwareFromServerVersion, softwareBetaFromServerVersion;
+        int localBetaVersion, remoteBetaVersion;
+        boolean thisIsBeta;
+
+        softVersionString = Base.VERSION_BEESOFT.split("-")[0];
+        thisIsBeta = Base.VERSION_BEESOFT.contains("beta");
+        softServerVersionString = getTagValue("Version");
+        softServerBetaVersionString = getTagValue("Version_beta");
+        currentSoftwareVersion = new Version();
+        softwareFromServerVersion = new Version();
+        softwareBetaFromServerVersion = new Version();
         currentSoftwareVersion.setVersionFromString(softVersionString);
-        softwareFromServer.setVersionFromString(softServerVersionString);
-        softwareBetaFromServer.setVersionFromString(softServerVersionBetaString);
+        softwareFromServerVersion.setVersionFromString(softServerVersionString);
+        softwareBetaFromServerVersion.setVersionFromString(softServerBetaVersionString);
 
-        if (softVersionString.contains("beta")) {
-            betaSoftVersion = Integer.valueOf(softVersionString.split("beta")[1]);
+        // stable updates
+        if (currentSoftwareVersion.compareTo(softwareFromServerVersion) < 0
+                || (currentSoftwareVersion.compareTo(softwareFromServerVersion) == 0 && thisIsBeta)) {
+            Base.writeLog("New version, " + softwareFromServerVersion + ", available!", this.getClass());
+            updateStableAvailable = true;
+            grabFilenames();
+            return true;
+        } else if (currentSoftwareVersion.compareTo(softwareBetaFromServerVersion) == 0 && thisIsBeta) {  // beta updates
+            localBetaVersion = getBetaVersion(Base.VERSION_BEESOFT);
+            remoteBetaVersion = getBetaVersion(softServerBetaVersionString);
 
-            if (currentSoftwareVersion.compareTo(softwareBetaFromServer) < 0                                                        //Base beta version may be different
-                    || (currentSoftwareVersion.compareTo(softwareBetaFromServer) == 0 && (betaServerVersion > betaSoftVersion))) {  //Same base beta version but different version number                                 
-                updateBetaAvailable = true;
-                grabFilenames(true);
-                return true;
-            } else if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {                                                  //In case of none beta update may exist a stable update
-                updateStableAvailable = true;
-                grabFilenames(false);
-                return true;
-            }
-        } else {
-            /**
-             * Alert for stable updates if BEESOFT version is stable
-             */
-            if (currentSoftwareVersion.compareTo(softwareFromServer) < 0) {
-                Base.writeLog("New version, " + softwareFromServer +", available!", this.getClass());
-                updateStableAvailable = true;
-                grabFilenames(false);
-                return true;
+            if (localBetaVersion != -1 && remoteBetaVersion != -1) {
+                if (remoteBetaVersion > localBetaVersion) {
+                    updateBetaAvailable = true;
+                    grabFilenames();
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
-    private void grabFilenames(boolean isBeta) {
-        if (isBeta == true) {
+    private int getBetaVersion(String betaVersionString) {
+        String re1, re2, re3, re4;
+        Pattern pattern;
+        Matcher matcher;
+
+        re1 = ".*?";
+        re2 = "(beta)";
+        re3 = "(\\.)";
+        re4 = "(\\d+)";
+
+        pattern = Pattern.compile(re1 + re2 + re3 + re4, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        matcher = pattern.matcher(betaVersionString);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(3));
+        }
+
+        return -1;
+    }
+
+    private void grabFilenames() {
+        if (updateStableAvailable) {
             if (Base.isWindows()) {
-                filenameToDownload = getTagValue("Software", "FilenameWinBeta");
+                filenameToDownload = getTagValue("FilenameWin");
             } else if (Base.isMacOS()) {
-                filenameToDownload = getTagValue("Software", "FilenameMacBeta");
+                filenameToDownload = getTagValue("FilenameMac");
             } else {
-                filenameToDownload = getTagValue("Software", "FilenameTuxBeta");
+                filenameToDownload = getTagValue("FilenameTux");
             }
-        } else {
+        } else if (updateBetaAvailable) {
             if (Base.isWindows()) {
-                filenameToDownload = getTagValue("Software", "FilenameWin");
+                filenameToDownload = getTagValue("FilenameWinBeta");
             } else if (Base.isMacOS()) {
-                filenameToDownload = getTagValue("Software", "FilenameMac");
+                filenameToDownload = getTagValue("FilenameMacBeta");
             } else {
-                filenameToDownload = getTagValue("Software", "FilenameTux");
+                filenameToDownload = getTagValue("FilenameTuxBeta");
             }
         }
     }
 
     public void setMessage(String message) {
-        if (message.contains("Available") && !message.equals("NotAvailable")) {
-            if (updateBetaAvailable) {
-                jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", "AvailableBeta")));
-            } else {
-                jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", "AvailableStable")));
-            }
-        } else {
-            jLabel2.setText(splitString(Languager.getTagValue(1, "Updates", message)));
-        }
+        jLabel2.setText("<html>" + Languager.getTagValue(1, "Updates", message) + "</html>");
     }
 
     private File getFileFromServer() {
-        URL url;
+        final URL url;
+        final File tempFile;
 
         try {
             // get URL content
-            url = new URL(serverURL + "updates.xml");
+            url = new URL(SERVER_URL + VERSION_FILE);
             URLConnection conn = url.openConnection();
 
             // open the stream and put it into BufferedReader
@@ -233,15 +200,14 @@ public class UpdateChecker extends BaseDialog {
             String inputLine;
 
             //save to this filename
-            String fileName = "updates.xml";
-            fileFromServer = new File(fileName);
+            tempFile = new File(Base.getAppDataDirectory() + "/" + "updates.xml");
 
-            if (!fileFromServer.exists()) {
-                fileFromServer.createNewFile();
+            if (!tempFile.exists()) {
+                tempFile.createNewFile();
             }
 
             //use FileWriter to write file
-            FileWriter fw = new FileWriter(fileFromServer.getAbsoluteFile());
+            FileWriter fw = new FileWriter(tempFile.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
 
             while ((inputLine = br.readLine()) != null) {
@@ -254,16 +220,16 @@ public class UpdateChecker extends BaseDialog {
         } catch (MalformedURLException e) {
             setMessage("NoConnection");
             Base.writeLog("Cant read update xml from server  " + e.getMessage(), this.getClass());
-            fileFromServer = null;
+            return null;
         } catch (IOException e) {
             setMessage("NoConnection");
             Base.writeLog("Cant read update xml from server  " + e.getMessage(), this.getClass());
-            fileFromServer = null;
+            return null;
         }
-        return fileFromServer;
+        return tempFile;
     }
 
-    public String getTagValue(String rootTag, String subTag) {
+    private String getTagValue(String subTag) {
 
         Document dom;
         // Make an  instance of the DocumentBuilderFactory
@@ -279,35 +245,19 @@ public class UpdateChecker extends BaseDialog {
                 dom = db.parse(fileFromServer);
                 Element doc = dom.getDocumentElement();
                 Node rootNode = doc.cloneNode(true);
+                org.w3c.dom.Element element = (org.w3c.dom.Element) rootNode;
+                NodeList nodeList = element.getChildNodes(); // NodeList
+                Node child;
 
-                if (XML.hasChildNode(rootNode, "tags")) {
-                    Node startnode = XML.getChildNodeByName(rootNode, "tags");
-                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                    NodeList nodeList = element.getChildNodes(); // NodeList
-
-                    for (int i = 1; i < nodeList.getLength(); i++) {
-                        if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            {
-                                return nodeList.item(i).getAttributes().getNamedItem("value").getNodeValue();
-                            }
-                        } else if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) //SubNode List
-                        {
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            {
-                                for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
-                                {
-                                    if (nodeList.item(i).getChildNodes().item(j).getNodeName().equals(subTag)) // Found subTag
-                                    {
-                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue();
-                                    }
-                                }
-
-                            }
-                        }
+                for (int i = 0; i < nodeList.getLength(); ++i) { //Each NodeSubList
+                    child = nodeList.item(i);
+                    if (child.getNodeName().equals(subTag)) // Found subTag
+                    {
+                        return child.getAttributes().getNamedItem("value").getNodeValue();
                     }
                 }
-            } 
+
+            }
         } catch (ParserConfigurationException pce) {
             Base.writeLog(pce.getMessage(), this.getClass());
         } catch (SAXException se) {
@@ -343,8 +293,8 @@ public class UpdateChecker extends BaseDialog {
         jLabel15 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
+        bCancel = new javax.swing.JLabel();
+        bDownload = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(350, 180));
@@ -416,33 +366,35 @@ public class UpdateChecker extends BaseDialog {
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 46));
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
-        jLabel18.setText("OK");
-        jLabel18.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel18.addMouseListener(new java.awt.event.MouseAdapter() {
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
+        bCancel.setText("Cancel");
+        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel18MouseEntered(evt);
+                bCancelMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel18MouseExited(evt);
+                bCancelMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel18MousePressed(evt);
+                bCancelMousePressed(evt);
             }
         });
 
-        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
-        jLabel19.setText("Download");
-        jLabel19.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel19.addMouseListener(new java.awt.event.MouseAdapter() {
+        bDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
+        bDownload.setText("Download");
+        bDownload.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_disabled_15.png"))); // NOI18N
+        bDownload.setEnabled(false);
+        bDownload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bDownload.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jLabel19MouseEntered(evt);
+                bDownloadMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                jLabel19MouseExited(evt);
+                bDownloadMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel19MousePressed(evt);
+                bDownloadMousePressed(evt);
             }
         });
 
@@ -452,9 +404,9 @@ public class UpdateChecker extends BaseDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel19)
+                .addComponent(bDownload)
                 .addGap(12, 12, 12)
-                .addComponent(jLabel18)
+                .addComponent(bCancel)
                 .addGap(12, 12, 12))
         );
         jPanel2Layout.setVerticalGroup(
@@ -462,8 +414,8 @@ public class UpdateChecker extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel19))
+                    .addComponent(bCancel)
+                    .addComponent(bDownload))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -485,40 +437,38 @@ public class UpdateChecker extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel18MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseEntered
-        jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-    }//GEN-LAST:event_jLabel18MouseEntered
+    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
+    }//GEN-LAST:event_bCancelMouseEntered
 
-    private void jLabel18MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MouseExited
-        jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-    }//GEN-LAST:event_jLabel18MouseExited
+    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
+    }//GEN-LAST:event_bCancelMouseExited
 
-    private void jLabel19MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseEntered
-        if (updateBetaAvailable || updateStableAvailable) {
-            jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
+    private void bDownloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bDownloadMouseEntered
+        bDownload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
+    }//GEN-LAST:event_bDownloadMouseEntered
+
+    private void bDownloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bDownloadMouseExited
+        bDownload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
+    }//GEN-LAST:event_bDownloadMouseExited
+
+    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
+        if (bCancel.isEnabled()) {
+            doExit();
         }
-    }//GEN-LAST:event_jLabel19MouseEntered
+    }//GEN-LAST:event_bCancelMousePressed
 
-    private void jLabel19MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MouseExited
-        if (updateBetaAvailable || updateStableAvailable) {
-            jLabel19.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
-        }
-    }//GEN-LAST:event_jLabel19MouseExited
-
-    private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
-        doExit();
-    }//GEN-LAST:event_jLabel18MousePressed
-
-    private void jLabel19MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel19MousePressed
-        fileFromServer.delete();
-        if (updateBetaAvailable || updateStableAvailable) {
+    private void bDownloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bDownloadMousePressed
+        if (bDownload.isEnabled()) {
+            fileFromServer.delete();
             try {
                 if (Base.isLinux()) {
-                    openURL(new URI(serverURL + filenameToDownload));
+                    openURL(new URI(SERVER_URL + filenameToDownload));
                 } else if (Base.isMacOS()) {
-                    openURL(new URI(serverURL + filenameToDownload));
+                    openURL(new URI(SERVER_URL + filenameToDownload));
                 } else {
-                    openURL(new URI(serverURL + filenameToDownload));
+                    openURL(new URI(SERVER_URL + filenameToDownload));
                 }
             } catch (URISyntaxException ex) {
                 Base.writeLog("Searching for new software version. Cant connect to internet", this.getClass());
@@ -528,17 +478,19 @@ public class UpdateChecker extends BaseDialog {
             //Closes BEESOFT
             System.exit(0);
         }
-    }//GEN-LAST:event_jLabel19MousePressed
+    }//GEN-LAST:event_bDownloadMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doExit();
+        if (jLabel15.isEnabled()) {
+            doExit();
+        }
     }//GEN-LAST:event_jLabel15MousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bCancel;
+    private javax.swing.JLabel bDownload;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

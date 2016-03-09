@@ -18,7 +18,7 @@ import replicatorg.util.Point5d;
  */
 class MachineThread extends Thread {
 
-    AssessStatusThread statusThread;
+    private final AssessStatusThread statusThread = new AssessStatusThread();
     private double jogRateLowerValue;
     private double jogRateMediumValue;
     private double jogRateHigherValue;
@@ -28,46 +28,15 @@ class MachineThread extends Thread {
     private final HashMap<String, Point5d> tablePoints;
     private Point5d actualPoint = new Point5d();
     private boolean isFilamentChanged;
-    private static boolean checkedForUpdates = false;
 
-    class AssessStatusThread extends Thread {
+    private class AssessStatusThread extends Thread {
 
-        MachineThread machineThread;
-
-        public AssessStatusThread(MachineThread machineThread) {
+        public AssessStatusThread() {
             super("Assess Status");
-            this.machineThread = machineThread;
         }
 
         @Override
         public void run() {
-            /*
-             new Thread(new Runnable() {
-             @Override
-             public void run() {
-             if (checkedForUpdates == false) {
-             // Checks for software and firmware updates
-             if (!Boolean.valueOf(ProperDefault.get("firstTime"))) {
-             UpdateChecker advise = new UpdateChecker();
-             checkedForUpdates = true;
-
-                            
-             // if (advise.isUpdateBetaAvailable()) {
-             // advise.setMessage("AvailableBeta");
-             // advise.setVisible(true);
-             // }
-             if (advise.isUpdateStableAvailable()) {
-             advise.setMessage("AvailableStable");
-             advise.setVisible(true);
-             } else {
-             advise.dispose();
-             }
-             }
-             }
-             }
-             }).start();
-             */
-
             while (true) {
                 synchronized (Base.WELCOME_SPLASH_MONITOR) {
                     if (Base.isWelcomeSplashVisible()) {
@@ -115,17 +84,10 @@ class MachineThread extends Thread {
 
         this.tablePoints = new HashMap<String, Point5d>();
         lastFeedrate = "0";
-        //pendingQueue = new ConcurrentLinkedQueue<MachineCommand>();
-        //auxiliarQueue = new ConcurrentLinkedQueue<MachineCommand>();
 
         // save our XML
         this.machineNode = machineNode;
         this.controller = controller;
-
-        // load our various objects
-        //loadDriver();
-        //loadTablePositions();
-        //loadExtraPrefs();
     }
 
     /**
@@ -215,56 +177,11 @@ class MachineThread extends Thread {
         return feedrate;
     }
 
-    /*
-     private void loadTablePositions() {
-     if (XML.hasChildNode(machineNode, "trailPositions")) {
-     Node startnode = XML.getChildNodeByName(machineNode, "trailPositions");
-     org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-     NodeList nodeList = element.getChildNodes();
-
-     if (nodeList.getLength() > 0) {
-     for (int i = 1; i < nodeList.getLength(); i += 2) {
-     String pointName = nodeList.item(i).getTextContent();
-     tablePoints.put(nodeList.item(i).getNodeName(), new Point5d(Double.parseDouble(pointName.split(",")[0]), Double.parseDouble(pointName.split(",")[1]), Double.parseDouble(pointName.split(",")[2])));
-     }
-     }
-     }
-     }
-
-    
-     private void loadExtraPrefs() {
-     String[] commands;
-     String command;
-
-     warmupCommands = new Vector<String>();
-     if (XML.hasChildNode(machineNode, "warmup")) {
-     String warmup = XML.getChildNodeValue(machineNode, "warmup");
-     commands = warmup.split("\n");
-
-     for (String command1 : commands) {
-     command = command1.trim();
-     warmupCommands.add(command);
-     }
-     }
-
-     cooldownCommands = new Vector<String>();
-     if (XML.hasChildNode(machineNode, "cooldown")) {
-     String cooldown = XML.getChildNodeValue(machineNode, "cooldown");
-     commands = cooldown.split("\n");
-
-     for (String command1 : commands) {
-     command = command1.trim();
-     cooldownCommands.add(command);
-     }
-     }
-     }
-     */
     /**
      * Main machine thread loop.
      */
     @Override
     public void run() {
-        statusThread = new AssessStatusThread(this);
         statusThread.start();
     }
 
