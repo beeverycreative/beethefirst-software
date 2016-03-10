@@ -11,12 +11,16 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import javax.swing.AbstractButton;
+import javax.swing.ComboBoxEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import pt.beeverycreative.beesoft.filaments.Filament;
@@ -84,7 +88,9 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         DefaultComboBoxModel<String> printerModel;
         Set<String> printerNames;
         String[] printers;
-
+        ComboBoxEditor editor;
+        JTextField textField;
+        
         printerNames = new HashSet<String>();
 
         if (!lockedPrinter) {
@@ -96,6 +102,12 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
             printers = printerNames.toArray(new String[printerNames.size()]);
         } else {
             printers = new String[]{selectedPrinter.presentationName()};
+            printerComboBox.setEditable(true);
+            editor = printerComboBox.getEditor();
+            textField = (JTextField) editor.getEditorComponent();
+            textField.setDisabledTextColor(UIManager.getColor("ComboBox.foreground"));
+            textField.setBackground(new Color(242, 242, 242));
+            printerComboBox.setEnabled(false);
         }
 
         printerModel = new DefaultComboBoxModel<String>(printers);
