@@ -576,6 +576,10 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
     private void initComponents() {
 
         bResButtonGroup = new javax.swing.ButtonGroup();
+        jPanel2 = new javax.swing.JPanel();
+        bCancel = new javax.swing.JLabel();
+        bExport = new javax.swing.JLabel();
+        bEstimate = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
@@ -592,7 +596,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         estimatedMaterial = new javax.swing.JLabel();
         printTime = new javax.swing.JLabel();
         materialCost = new javax.swing.JLabel();
-        loading = new javax.swing.JLabel();
         tfDensity = new javax.swing.JTextField();
         lDensity = new javax.swing.JLabel();
         bLowRes = new javax.swing.JRadioButton();
@@ -610,10 +613,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        bCancel = new javax.swing.JLabel();
-        bExport = new javax.swing.JLabel();
-        bEstimate = new javax.swing.JLabel();
         jLabel25 = new javax.swing.JLabel();
         nozzleTypeLabel = new javax.swing.JLabel();
         filamentComboBox = new javax.swing.JComboBox();
@@ -625,10 +624,89 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(248, 248, 248));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(455, 620));
+
+        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
+
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bCancel.setText("CANCELAR");
+        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bCancelMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
+            }
+        });
+
+        bExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_19.png"))); // NOI18N
+        bExport.setText("Export G-code");
+        bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        bExport.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_19.png"))); // NOI18N
+        bExport.setEnabled(false);
+        bExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExport.setMaximumSize(new java.awt.Dimension(120, 23));
+        bExport.setMinimumSize(new java.awt.Dimension(115, 23));
+        bExport.setPreferredSize(new java.awt.Dimension(115, 23));
+        bExport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExportMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bExportMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bExportMouseEntered(evt);
+            }
+        });
+
+        bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
+        bEstimate.setText("Estimate");
+        bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        bEstimate.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
+        bEstimate.setEnabled(false);
+        bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bEstimateMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bEstimateMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bEstimateMouseEntered(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addComponent(bCancel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bEstimate)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bCancel)
+                    .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bEstimate)))
+        );
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setPreferredSize(new java.awt.Dimension(455, 670));
+        jPanel1.setPreferredSize(new java.awt.Dimension(455, 630));
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -706,14 +784,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
 
         materialCost.setFont(GraphicDesignComponents.getSSProRegular("12"));
         materialCost.setText("N/A");
-
-        loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
-        loading.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading-disabled.gif"))); // NOI18N
-        loading.setEnabled(false);
-        loading.setFocusable(false);
-        loading.setIconTextGap(0);
-        loading.setRequestFocusEnabled(false);
-        loading.setVerifyInputWhenFocusTarget(false);
 
         tfDensity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfDensity.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -862,86 +932,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
                 .addContainerGap())
         );
 
-        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
-
-        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bCancel.setText("CANCELAR");
-        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bCancelMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
-            }
-        });
-
-        bExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_19.png"))); // NOI18N
-        bExport.setText("Export G-code");
-        bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        bExport.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_19.png"))); // NOI18N
-        bExport.setEnabled(false);
-        bExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bExport.setMaximumSize(new java.awt.Dimension(120, 23));
-        bExport.setMinimumSize(new java.awt.Dimension(115, 23));
-        bExport.setPreferredSize(new java.awt.Dimension(115, 23));
-        bExport.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bExportMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bExportMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bExportMouseEntered(evt);
-            }
-        });
-
-        bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
-        bEstimate.setText("Estimate");
-        bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        bEstimate.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
-        bEstimate.setEnabled(false);
-        bEstimate.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bEstimate.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bEstimateMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bEstimateMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bEstimateMouseEntered(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bEstimate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(2, 2, 2)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bCancel)
-                    .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bEstimate)))
-        );
-
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
         nozzleTypeLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
@@ -1046,8 +1036,8 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGap(156, 156, 156)
                                                 .addComponent(filamentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                             .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1060,10 +1050,7 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
                                                     .addGap(42, 42, 42)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(materialCost)
-                                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                                            .addComponent(printTime)
-                                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                            .addComponent(loading))))
+                                                        .addComponent(printTime)))
                                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                                     .addComponent(jLabel25)
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1072,7 +1059,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
                                                     .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
@@ -1115,10 +1101,10 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(printerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(printerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(printerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(printerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel21, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1140,13 +1126,10 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
                             .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(estimatedMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(printTime)
-                            .addComponent(loading))
+                        .addComponent(printTime)
                         .addGap(6, 6, 6)
                         .addComponent(materialCost)))
-                .addGap(27, 27, 27)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1154,10 +1137,14 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 630, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -1352,7 +1339,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lDensity;
-    private javax.swing.JLabel loading;
     private javax.swing.JLabel lowHeightLabel;
     private javax.swing.JLabel materialCost;
     private javax.swing.JLabel medHeightLabel;
