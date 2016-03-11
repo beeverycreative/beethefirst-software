@@ -44,6 +44,7 @@ public class CalibrationPrintTest extends BaseDialog {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
+                driver.gcodeTransfer(new File("machines/calibration.gcode"));
                 tempThread.start();
             }
 
@@ -61,9 +62,13 @@ public class CalibrationPrintTest extends BaseDialog {
 
         temp = FilamentControler.getFilamentDefaults(driver.getCoilText());
 
-        try {
-            tempVal = Integer.parseInt(temp.get("print_temperature"));
-        } catch (NumberFormatException ex) {
+        if (temp != null) {
+            try {
+                tempVal = Integer.parseInt(temp.get("print_temperature"));
+            } catch (NumberFormatException ex) {
+                tempVal = 220;
+            }
+        } else {
             tempVal = 220;
         }
 
@@ -102,12 +107,9 @@ public class CalibrationPrintTest extends BaseDialog {
             calVal = new CalibrationValidation();
 
             Base.writeLog("Temperature achieved...", this.getClass());
-            tempThread.kill();
-            driver.gcodeTransfer(new File("/home/jgrego/NetBeansProjects/beethefirst-software/beesoft-app/beesoft-usb/src/main/resources/machines/calibration.gcode"));
             disableMessageDisplay();
             driver.dispatchCommand("M33", COM.NO_RESPONSE);
             driver.setBusy(true);
-            
             dispose();
             calVal.setVisible(true);
         }
@@ -155,7 +157,7 @@ public class CalibrationPrintTest extends BaseDialog {
 
     private void doCancel() {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        driver.dispatchCommand("G28", COM.NO_RESPONSE);
+        driver.dispatchCommand("M112", COM.NO_RESPONSE);
         Base.bringAllWindowsToFront();
         dispose();
     }

@@ -1238,9 +1238,12 @@ public class PrintPanel extends BasePrintEstimateExport {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
-                    .addComponent(jSeparator1))
-                .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSeparator1)
+                        .addGap(19, 19, 19))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1306,7 +1309,7 @@ public class PrintPanel extends BasePrintEstimateExport {
                         .addComponent(estimatedMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(materialCost)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(bChangeFilament)
                 .addGap(18, 27, Short.MAX_VALUE)
@@ -1374,7 +1377,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             p.setVisible(true);
 
         } else {
-            EventQueue.invokeLater(new Runnable() {
+            Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     /**
@@ -1395,6 +1398,7 @@ public class PrintPanel extends BasePrintEstimateExport {
                     }
                 }
             });
+            t.start();
         }
     }//GEN-LAST:event_bPrintMousePressed
 
@@ -1418,13 +1422,7 @@ public class PrintPanel extends BasePrintEstimateExport {
 
                 if (rVal == JFileChooser.APPROVE_OPTION) {
                     estimateExportThread = new GCodeEstimateExportThread(saveFile.getSelectedFile().getAbsolutePath());
-
-                    EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            estimateExportThread.start();
-                        }
-                    });
+                    estimateExportThread.start();
                 }
             }
         } else if (bExport.isEnabled() == false) { // otherwise warn the user that there are no models loaded
