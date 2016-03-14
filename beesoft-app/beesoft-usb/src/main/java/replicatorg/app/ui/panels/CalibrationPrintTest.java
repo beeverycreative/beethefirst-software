@@ -44,7 +44,7 @@ public class CalibrationPrintTest extends BaseDialog {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                driver.gcodeTransfer(new File(Base.getApplicationDirectory().getAbsolutePath() + "/machines/calibration.gcode"));
+                driver.gcodeTransfer(new File(Base.getApplicationDirectory().getAbsolutePath() + "/machines/calibration.gcode"), null, null);
                 tempThread.start();
             }
 

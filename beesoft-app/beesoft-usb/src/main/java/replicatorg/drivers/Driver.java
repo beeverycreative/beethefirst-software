@@ -93,7 +93,6 @@ public interface Driver {
      * @return error message
      */
     public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous, String header);
-    public String gcodeTransfer(File gcode);
 
     /**
      * Start print via Autonomous mode.

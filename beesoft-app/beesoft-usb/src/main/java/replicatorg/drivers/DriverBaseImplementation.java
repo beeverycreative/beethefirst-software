@@ -560,11 +560,6 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String gcodeTransfer(File gcode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void getPrintSessionsVariables() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
