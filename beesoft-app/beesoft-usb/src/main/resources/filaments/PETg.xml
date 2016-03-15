@@ -82,7 +82,7 @@
         <parameter name="layer_height" value="0.2"/>
       </resolution>
       <resolution type="high">
-	  <parameter name="solid_layer_thickness" value="0.8"/>
+	    <parameter name="solid_layer_thickness" value="0.8"/>
         <parameter name="layer_height" value="0.1"/>
       </resolution>
       <resolution type="high+">

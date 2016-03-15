@@ -230,6 +230,10 @@ public class CuraEngineConfigurator {
     private String getCfgValue(String cfgKey) {
 
         try {
+            
+            if(cfgKey.equals("nozzleSize")) {
+                return String.valueOf((int) (Float.parseFloat(curaIni.get("nozzle_size")) * 1000.0));
+            }
 
             //'layerThickness': int(profile.getProfileSettingFloat('layer_height') * 1000.0),
             if (cfgKey.equals("layerThickness")) {

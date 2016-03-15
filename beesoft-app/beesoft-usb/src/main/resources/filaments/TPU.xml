@@ -76,36 +76,36 @@
   <printer type="BEETHEFIRSTPLUS">
     <nozzle type="600">
       <resolution type="low">
-		<parameter name="layer_height" value="0.3"/>
 		<parameter name="solid_layer_thickness" value="1.2"/>
 		<parameter name="filament_flow" value="110"/>
-		<parameter name="bottom_thickness" value="0.2"/>
+		<parameter name="bottom_thickness" value="0.3"/>
       </resolution>
       <resolution type="medium">
+		<parameter name="layer_height" value="0.2"/>
       </resolution>
     </nozzle>
   </printer>
   <printer type="BEEME">
 	<nozzle type="600">
       <resolution type="low">
-		<parameter name="layer_height" value="0.3"/>
 		<parameter name="solid_layer_thickness" value="1.2"/>
 		<parameter name="filament_flow" value="110"/>
-		<parameter name="bottom_thickness" value="0.2"/>
+		<parameter name="bottom_thickness" value="0.3"/>
       </resolution>
-      <resolution type="medium">
+      <resolution type="medium">		
+        <parameter name="layer_height" value="0.2"/>
       </resolution>
     </nozzle>
   </printer>
   <printer type="BEEINSCHOOL">
 	<nozzle type="600">
       <resolution type="low">
-		<parameter name="layer_height" value="0.3"/>
 		<parameter name="solid_layer_thickness" value="1.2"/>
 		<parameter name="filament_flow" value="110"/>
-		<parameter name="bottom_thickness" value="0.2"/>
+		<parameter name="bottom_thickness" value="0.3"/>
       </resolution>
-      <resolution type="medium">
+      <resolution type="medium">		
+        <parameter name="layer_height" value="0.2"/>
       </resolution>
     </nozzle>
   </printer>
