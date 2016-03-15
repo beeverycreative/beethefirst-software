@@ -58,6 +58,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -301,31 +302,27 @@ public class Base {
         return ID;
     }
 
-    private static BufferedWriter initLog(String fileName) {
-        BufferedWriter bw;
-        OutputStreamWriter osw;
-        FileOutputStream fos;
+    private static void redirectStdErr() {
         File file;
-
-        try {
-            file = new File(getAppDataDirectory().toString() + "/" + fileName);
-
-            if (file.exists()) {
-                file.delete();
+        FileOutputStream fos;
+        PrintStream printStream;
+        if (Base.VERSION_BEESOFT.contains("beta")) {
+            try {
+                file = new File(getAppDataDirectory() + "err.log");
+                
+                if(file.exists()) {
+                    file.delete();
+                }
+                
+                fos = new FileOutputStream(file);
+                printStream = new PrintStream(fos);
+                
+                System.setErr(printStream);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            fos = new FileOutputStream(file);
-            osw = new OutputStreamWriter(fos, "UTF-8");
-            bw = new BufferedWriter(osw);
-
-            return bw;
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return null;
     }
 
     private static BufferedWriter initLog(File file) {
@@ -395,8 +392,8 @@ public class Base {
         if (!f.exists()) {
             // create BEESOFT dir
             f.mkdir();
-        } 
-        
+        }
+
         if (!models.exists()) {
             // create models dir inside BEESOFT
             models.mkdir();
@@ -970,6 +967,8 @@ public class Base {
     }
 
     static public void main(String args[]) {
+        
+        redirectStdErr();
 
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.

@@ -349,6 +349,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private String dispatchCommand(byte[] byteArray) {
         String ans;
+        int retryNum;
+        
+        ans = "";
+        retryNum = 30;
 
         if (byteArray == null) {
             return "";
@@ -357,7 +361,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommandLock.lock();
         try {
             sendCommandBytes(byteArray);
-            ans = readResponseTog();
+
+            while (retryNum > 0) {
+                ans += readResponseTog();
+                
+                if(ans.contains("tog")) {
+                    break;
+                } else {
+                    Base.hiccup(1000);
+                    retryNum--;
+                }
+            }
         } finally {
             dispatchCommandLock.unlock();
         }
@@ -382,8 +396,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         try {
             sendCommand(next);
 
-            while (ans.contains("ok") == false && retryNum > 0) {
-                ans = readResponse();
+            while (retryNum > 0) {
+                ans += readResponse();
 
                 if (ans.contains("ok")) {
                     break;
@@ -782,7 +796,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             Base.hiccup(100);
-            
+
             for (; srcPos < file_size; srcPos += offset) {
                 message++;
                 //Get byte array with MESSAGE_SIZE
@@ -1022,15 +1036,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String readResponse() {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
-            try {
-                Thread.sleep(1, 1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        lastDispatchTime = System.currentTimeMillis();
         result = "timeout";
         byte[] readBuffer = new byte[1024];
 
@@ -1070,15 +1075,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private String readResponseTog() {
 
-        while (SEND_WAIT > (System.currentTimeMillis() - lastDispatchTime)) {
-            try {
-                Thread.sleep(1, 1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        lastDispatchTime = System.currentTimeMillis();
         result = "timeout";
         byte[] readBuffer = new byte[1024];
 
@@ -1095,86 +1091,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     //throw new UsbException("Pipe was null");
                 }
             }
-        } catch (UsbException ex) {
-            // Cable removable
-            if (ex.getMessage().contains("LIBUSB_ERROR_NO_DEVICE")) {
-                try {
-                    Base.writeLog("LIBUSB_ERROR_NO_DEVICE", this.getClass());
-                    pipes.close();
-                    setInitialized(false);
-                } catch (UsbException ex1) {
-                    Base.writeLog("USB exception [readResponse]: " + ex1.getMessage(), this.getClass());
-                } catch (UsbNotActiveException ex1) {
-                    Base.writeLog("USB communication not active [readResponse]:" + ex1.getMessage(), this.getClass());
-                } catch (UsbNotOpenException ex1) {
-                    Base.writeLog("USB communication is down [readResponse]:" + ex1.getMessage(), this.getClass());
-                } catch (UsbDisconnectedException ex1) {
-                    Base.writeLog("USB disconnected exception [readResponse]:" + ex1.getMessage(), this.getClass());
-                }
-            }
-
-        } catch (UsbNotActiveException ex) {
-            try {
-                pipes.close();
-            } catch (UsbException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
-                }
-            } catch (UsbNotActiveException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
-                }
-            } catch (UsbNotOpenException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
-                }
-            } catch (UsbDisconnectedException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
-                }
-            }
-        } catch (UsbNotOpenException ex) {
-            try {
-                pipes.close();
-                setInitialized(false);
-            } catch (UsbException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
-                }
-            } catch (UsbNotActiveException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
-                }
-            } catch (UsbNotOpenException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
-                }
-            } catch (UsbDisconnectedException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
-                }
-            }
-        } catch (IllegalArgumentException ex) {
-            try {
-                pipes.close();
-                setInitialized(false);
-            } catch (UsbException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbException");
-                }
-            } catch (UsbNotActiveException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotActiveException");
-                }
-            } catch (UsbNotOpenException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbNotOpenException");
-                }
-            } catch (UsbDisconnectedException ex1) {
-                if (comLog) {
-                    Base.writeComLog((System.currentTimeMillis() - startTS), "UsbDisconnectedException");
-                }
-            }
+        } catch (Exception ex) {
+            setInitialized(false);
         }
 
         // 0 is now an acceptable value; it merely means that we timed out
