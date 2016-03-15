@@ -1,0 +1,3 @@
+[submodule "beesoft-app/beesoft-usb/src/main/resources/filaments"]
+	path = beesoft-app/beesoft-usb/src/main/resources/filaments
+	url = https://github.com/beeverycreative/Filaments.git
