@@ -75,11 +75,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String SAVE_CONFIG = "M601 ";
     private static final String NOK = "NOK";
     private static final int QUEUE_WAIT = 1000;
-    private static final int SEND_WAIT = 2; //2 did not work
-    private long lastDispatchTime;
     private static Version bootloaderVersion = new Version();
     private Version firmwareVersion = new Version();
-    private String serialNumberString = "0000000000";
+    private String serialNumberString = "9999999999";
     private long startTS;
     private String driverErrorDescription;
     private boolean stopTransfer = false;
@@ -142,6 +140,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         Base.FIRMWARE_IN_USE = null;
         Base.VERSION_BOOTLOADER = null;
+        Base.SERIAL_NUMBER = null;
     }
 
     @Override
@@ -174,7 +173,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             bootedFromBootloader = true;
             updateBootloaderInfo();
             if (updateFirmware() >= 0) {
-                lastDispatchTime = System.currentTimeMillis();
 
                 Base.writeLog("Bootloader version: " + bootloaderVersion, this.getClass());
                 Base.writeLog("Firmware version: " + firmwareVersion, this.getClass());
@@ -193,7 +191,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 status = "error";
             }
         } else if (status.contains("autonomous")) {
-            lastDispatchTime = System.currentTimeMillis();
             super.isBootloader = false;
 
             updateCoilText();
@@ -233,18 +230,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 bootedFromBootloader = false;
             }
 
-            lastDispatchTime = System.currentTimeMillis();
             super.isBootloader = false;
-
-            try {
-                serialNumberString = m_usbDevice.getSerialNumberString();
-            } catch (UsbException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UsbDisconnectedException ex) {
-                Logger.getLogger(UsbPassthroughDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
 
             updateMachineInfo();
 
@@ -989,7 +975,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     private int sendCommand(String next) {
 
-        lastDispatchTime = System.currentTimeMillis();
         //next = clean(next);
         int cmdlen = 0;
         int i = 0;
@@ -1497,9 +1482,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                 if (validSerial) {
                     dispatchCommand("M118 T" + serialNumberInput.getSerialString());
+                    serialNumberString = serialNumberInput.getSerialString();
                 }
             }
         }
+        
+        Base.SERIAL_NUMBER = serialNumberString;
 
         firmware = dispatchCommand(GET_FIRMWARE_VERSION);
 
@@ -1536,10 +1524,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private void updateMachineInfo() {
         String firmware;
         int retry = 3;
-        serialNumberString = "0000000000";
+        serialNumberString = "9999999999";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
-
         } catch (UsbException ex) {
             Logger.getLogger(UsbPassthroughDriver.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -1551,9 +1538,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
+        Base.SERIAL_NUMBER = serialNumberString;
+        
         //get firmware version
         //check first for un-initialized serial or firmware version
-        if (!serialNumberString.contains("0000000000")) {
+        if (!serialNumberString.contains("9999999999")) {
             while (firmwareVersion.getPrinter() == PrinterInfo.UNKNOWN && retry > 0) {
                 firmware = dispatchCommand(GET_FIRMWARE_VERSION);
                 firmwareVersion = Version.fromMachineAtFirmware(firmware);

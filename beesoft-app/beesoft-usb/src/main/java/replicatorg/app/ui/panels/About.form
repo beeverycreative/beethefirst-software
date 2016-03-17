@@ -57,16 +57,17 @@
                           <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                              <Component id="lVersionValue" min="-2" max="-2" attributes="0"/>
+                              <Component id="lFirmwareValue" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lBootloaderValue" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="jBootloaderTooltip" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jLabel9" alignment="0" min="-2" pref="190" max="-2" attributes="0"/>
+                              <Component id="lFilamentValue" alignment="0" min="-2" pref="190" max="-2" attributes="0"/>
+                              <Component id="lSerialValue" min="-2" pref="190" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="68" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -86,22 +87,23 @@
                   </Group>
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel3" max="32767" attributes="0"/>
-                      <Group type="102" attributes="0">
-                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                      <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="lVersionValue" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                          <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                          <Component id="lFirmwareValue" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                              <Component id="lBootloaderValue" min="-2" max="-2" attributes="0"/>
                               <Component id="jBootloaderTooltip" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="lFilamentValue" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="lSerialValue" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="30" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -172,74 +174,82 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                          <Component id="lVersionTitle" min="-2" max="-2" attributes="0"/>
+                          <Component id="lFirmwareTitle" min="-2" max="-2" attributes="0"/>
+                          <Component id="lBootloaderTitle" min="-2" max="-2" attributes="0"/>
+                          <Component id="lFilamentTitle" min="-2" max="-2" attributes="0"/>
+                          <Component id="lSerialTitle" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="14" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="16" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                      <Component id="lVersionTitle" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lFirmwareTitle" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                      <Component id="lBootloaderTitle" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="30" max="32767" attributes="0"/>
+                      <Component id="lFilamentTitle" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="lSerialTitle" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="lVersionTitle">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Version"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
+            <Component class="javax.swing.JLabel" name="lFirmwareTitle">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Firmware"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
+            <Component class="javax.swing.JLabel" name="lBootloaderTitle">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Bootloader"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel5">
+            <Component class="javax.swing.JLabel" name="lFilamentTitle">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Serial Number"/>
+                <Property name="text" type="java.lang.String" value="Filament type"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lSerialTitle">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Serial number"/>
               </Properties>
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="jLabel6">
+        <Component class="javax.swing.JLabel" name="lVersionValue">
           <Properties>
             <Property name="text" type="java.lang.String" value="2.0.0"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel7">
+        <Component class="javax.swing.JLabel" name="lFirmwareValue">
           <Properties>
             <Property name="text" type="java.lang.String" value="2.0.0"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel8">
+        <Component class="javax.swing.JLabel" name="lBootloaderValue">
           <Properties>
             <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-              <ComponentRef name="jLabel8"/>
+              <ComponentRef name="lBootloaderValue"/>
             </Property>
             <Property name="text" type="java.lang.String" value="3.0.0"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel9">
+        <Component class="javax.swing.JLabel" name="lFilamentValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="000000000014"/>
+            <Property name="text" type="java.lang.String" value="A021 - Transparent"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jBootloaderTooltip">
@@ -248,7 +258,7 @@
               <Image iconType="3" name="/replicatorg/app/ui/panels/alerta.png"/>
             </Property>
             <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-              <ComponentRef name="jLabel8"/>
+              <ComponentRef name="lBootloaderValue"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -261,6 +271,11 @@
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="jBootloaderTooltip.setVisible(false);"/>
           </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lSerialValue">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="9999999999"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -278,7 +293,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="364" max="32767" attributes="0"/>
+                  <EmptySpace pref="376" max="32767" attributes="0"/>
                   <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               </Group>

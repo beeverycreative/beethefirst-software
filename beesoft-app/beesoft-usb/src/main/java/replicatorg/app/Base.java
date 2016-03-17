@@ -215,6 +215,7 @@ public class Base {
     
     //public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
     public static String FIRMWARE_IN_USE;
+    public static String SERIAL_NUMBER = "9999999999";
     private final static String VERSION_JAVA = System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
     public static String MACHINE_NAME = "BEETHEFIRST";
@@ -493,6 +494,7 @@ public class Base {
             logBW.write("*************** CONNECTED PRINTER ****************" + newLine);
             logBW.write("Bootloader version: " + VERSION_BOOTLOADER + newLine);
             logBW.write("Firmware version: " + FIRMWARE_IN_USE + newLine);
+            logBW.write("Serial number: " + SERIAL_NUMBER + newLine);
             logBW.write("**************************************************" + newLine);
             logBW.flush();
         } catch (IOException ex) {
