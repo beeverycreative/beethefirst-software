@@ -4,6 +4,7 @@ import java.awt.Dialog;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
+import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
@@ -20,6 +21,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
 public class SerialNumberInput extends BaseDialog {
 
     private boolean validSerial = false;
+    private boolean cancelPressed = false;
 
     public SerialNumberInput() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -27,6 +29,13 @@ public class SerialNumberInput extends BaseDialog {
         enableDrag();
         centerOnScreen();
         enableDrag();
+        setText();
+    }
+
+    private void setText() {
+        final int key = 1;
+        bOk.setText(Languager.getTagValue(key, "OptionPaneButtons", "Line6"));
+        bCancel.setText(Languager.getTagValue(key, "OptionPaneButtons", "Line3"));
     }
 
     public String getSerialString() {
@@ -35,6 +44,10 @@ public class SerialNumberInput extends BaseDialog {
 
     public boolean isSerialValid() {
         return validSerial;
+    }
+
+    public boolean hasCancelBeenPressed() {
+        return cancelPressed;
     }
 
     @SuppressWarnings("unchecked")
@@ -50,6 +63,7 @@ public class SerialNumberInput extends BaseDialog {
         lTitle = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bOk = new javax.swing.JLabel();
+        bCancel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -181,12 +195,33 @@ public class SerialNumberInput extends BaseDialog {
             }
         });
 
+        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bCancel.setText("Cancel");
+        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCancel.setMaximumSize(new java.awt.Dimension(69, 21));
+        bCancel.setMinimumSize(new java.awt.Dimension(69, 21));
+        bCancel.setPreferredSize(new java.awt.Dimension(69, 21));
+        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bCancelMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bOk)
                 .addGap(12, 12, 12))
         );
@@ -194,7 +229,9 @@ public class SerialNumberInput extends BaseDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
-                .addComponent(bOk)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bOk)
+                    .addComponent(bCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -232,6 +269,7 @@ public class SerialNumberInput extends BaseDialog {
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         if (jLabel15.isEnabled()) {
+            cancelPressed = true;
             dispose();
         }
     }//GEN-LAST:event_jLabel15MousePressed
@@ -273,7 +311,23 @@ public class SerialNumberInput extends BaseDialog {
         bOk.setEnabled(false);
     }//GEN-LAST:event_serialNumberInputKeyPressed
 
+    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bCancelMouseEntered
+
+    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
+        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bCancelMouseExited
+
+    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
+        if (bCancel.isEnabled()) {
+            cancelPressed = true;
+            dispose();
+        }
+    }//GEN-LAST:event_bCancelMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bOk;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JPanel jPanel1;

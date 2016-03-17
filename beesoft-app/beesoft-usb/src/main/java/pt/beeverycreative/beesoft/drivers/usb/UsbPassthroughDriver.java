@@ -1451,6 +1451,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         String bootloader, firmware;
         boolean validSerial = false;
+        boolean cancelPressed = false;
 
         bootloader = dispatchCommand("M116");
         bootloaderVersion = Version.bootloaderVersion(bootloader);
@@ -1473,22 +1474,32 @@ public final class UsbPassthroughDriver extends UsbDriver {
         }
 
         if (isSerialValid() == false) {
+            Base.writeLog("Current serial number of this printer is invalid, requesting number to user...", this.getClass());
             while (validSerial == false) {
 
                 SerialNumberInput serialNumberInput = new SerialNumberInput();
 
                 serialNumberInput.setVisible(true);
                 validSerial = serialNumberInput.isSerialValid();
+                cancelPressed = serialNumberInput.hasCancelBeenPressed();
 
                 if (validSerial) {
                     dispatchCommand("M118 T" + serialNumberInput.getSerialString());
                     serialNumberString = serialNumberInput.getSerialString();
+                }
+                
+                if(cancelPressed) {
+                    Base.writeLog("Serial number input has been cancelled, proceeding...", this.getClass());
+                    break;
                 }
             }
         }
         
         Base.SERIAL_NUMBER = serialNumberString;
 
+        // for some reason, requesting firmware version too fast after setting the serial number
+        // causes the answer to be just "ok"
+        Base.hiccup(100);
         firmware = dispatchCommand(GET_FIRMWARE_VERSION);
 
         if (isNewVendorID) {
