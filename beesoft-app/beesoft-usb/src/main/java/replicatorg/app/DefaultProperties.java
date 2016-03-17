@@ -57,7 +57,7 @@ public class DefaultProperties {
         defaultHash.put("temperature.acceptedLimit", String.valueOf(260));
         defaultHash.put("extruderpanel.extrudetime", String.valueOf("5"));
         defaultHash.put("controlpanel.jogmode", String.valueOf("1"));
-        defaultHash.put("controlpanel.enable", String.valueOf("0"));
+        defaultHash.put("controlpanel.enable", "false");
         defaultHash.put("extruderpanel.extrudetime", String.valueOf("5"));
         defaultHash.put("build.runSafetyChecks", String.valueOf(true));
         defaultHash.put("build.runSafetyChecks", String.valueOf(true));
@@ -99,6 +99,8 @@ public class DefaultProperties {
         
         defaultHash.put("languagesCodes", "EN,PT,ES,DE,FR");
         defaultHash.put("languagesList", "English,Português,Español,Deutsch,Français");
+        defaultHash.put("git.filament_repo_url", "https://github.com/beeverycreative/Filaments.git");
+        defaultHash.put("git.filament_repo_branch", "version/2.0.0");
     }
 
     /**

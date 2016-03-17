@@ -13,12 +13,35 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import static java.nio.file.Files.move;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.CreateBranchCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.RemoteAddCommand;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.ResetCommand.ResetType;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.util.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,6 +50,7 @@ import org.xml.sax.SAXException;
 import pt.beeverycreative.beesoft.drivers.usb.Version;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
 
@@ -45,9 +69,11 @@ public class UpdateChecker extends BaseDialog {
 
     private static final String SERVER_URL = "https://www.beeverycreative.com/public/software/BEESOFT/";
     private static final String VERSION_FILE = "updates_new.xml";
-
+    private static final String FILAMENTS_REPO_PATH = Base.getApplicationDirectory().getAbsolutePath() + "/filaments/";
+    private static final String FILAMENTS_REPO_URL = ProperDefault.get("git.filament_repo_url");
+    private static final String FILAMENTS_REPO_BRANCH = ProperDefault.get("git.filament_repo_branch");
     private File fileFromServer = null;
-    private boolean updateStableAvailable, updateBetaAvailable;
+    private boolean updateStableAvailable = false, updateBetaAvailable = false;
     private String filenameToDownload;
 
     public UpdateChecker() {
@@ -58,6 +84,170 @@ public class UpdateChecker extends BaseDialog {
         centerOnScreen();
         enableDrag();
         evaluateInitialConditions();
+    }
+
+    private void updateFilaments() {
+        final FileRepositoryBuilder repoBuilder = new FileRepositoryBuilder();
+        final Git git;
+        final Status repoStatus;
+        final RemoteAddCommand remoteAddCmd;
+        final ResetCommand resetCmd;
+        final CheckoutCommand checkoutCmd;
+        final String currentBranch, newBranch;
+        final List<Ref> branchList;
+        Repository filamentsRepo;
+        boolean branchFoundLocally = false;
+        RevCommit stash = null;
+
+        repoBuilder.setMustExist(true);
+        repoBuilder.setGitDir(new File(FILAMENTS_REPO_PATH + ".git"));
+
+        try {
+            try {
+                Base.writeLog("Attempting to open repo at " + FILAMENTS_REPO_PATH, this.getClass());
+                filamentsRepo = repoBuilder.build();
+            } catch (RepositoryNotFoundException ex) {
+                try {
+                    Base.writeLog("Repository wasn't initialized, initializing it to the given URL: " + FILAMENTS_REPO_URL, this.getClass());
+                    repoBuilder.setMustExist(false);
+                    filamentsRepo = repoBuilder.build();
+                    filamentsRepo.create();
+                } catch (IOException ex1) {
+                    Base.writeLog("IOException while attempting to initialize repository, not updating filaments", this.getClass());
+                    return;
+                }
+            }
+
+            currentBranch = filamentsRepo.getBranch();
+
+        } catch (IOException ex) {
+            Base.writeLog("IOException while attempting to open repository, not updating filaments", this.getClass());
+            return;
+        }
+
+        git = new Git(filamentsRepo);
+
+        try {
+            // it should be only 1, but it shortens the code needed, as the call()
+            // method returns an iterable
+            for (RevCommit commit : git.log().setMaxCount(1).call()) {
+                Base.writeLog("Current commit hash: " + commit, this.getClass());
+            }
+        } catch (GitAPIException ex) {
+            Base.writeLog("GitAPIException while attempting to get current commit's hash. Not a critical error, so proceeding with update", this.getClass());
+        }
+
+        try {
+            remoteAddCmd = git.remoteAdd();
+            remoteAddCmd.setName("origin");
+            remoteAddCmd.setUri(new URIish(FILAMENTS_REPO_URL));
+            remoteAddCmd.call();
+        } catch (URISyntaxException ex) {
+            Base.writeLog("Invalid git filament repo remote URL!", this.getClass());
+            return;
+        } catch (GitAPIException ex) {
+            Base.writeLog("GitAPIException thrown when adding remote to git filament repo", this.getClass());
+            return;
+        }
+
+        try {
+
+            if (currentBranch.equals(FILAMENTS_REPO_BRANCH) == false) {
+                Base.writeLog("Repo branch is " + currentBranch + " and it should be " + FILAMENTS_REPO_BRANCH + ", searching for it", this.getClass());
+                checkoutCmd = git.checkout();
+                checkoutCmd.setName(FILAMENTS_REPO_BRANCH);
+
+                branchList = git.branchList().call();
+
+                for (Ref ref : branchList) {
+                    if (ref.getName().contains(FILAMENTS_REPO_BRANCH)) {
+                        Base.writeLog("Correct branch was found locally", this.getClass());
+                        branchFoundLocally = true;
+                        break;
+                    }
+                }
+
+                if (branchFoundLocally == false) {
+                    Base.writeLog("No correct branch was found locally, attempting to checkout a new branch tracking the remote", this.getClass());
+                    checkoutCmd.setCreateBranch(true);
+                    checkoutCmd.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK);
+                    checkoutCmd.setStartPoint("origin/" + FILAMENTS_REPO_BRANCH);
+                    git.fetch().call();
+                }
+
+                RevCommit backup = null;
+                if (git.status().call().isClean() == false) {
+                    git.add().addFilepattern(".").call();
+                    backup = git.commit().setMessage("local backup of user modifications").call();
+                }
+
+                newBranch = checkoutCmd.call().getName();
+
+                if (newBranch.contains(FILAMENTS_REPO_BRANCH) == false) {
+                    Base.writeLog("Unable to change to correct branch, aborting update", this.getClass());
+                    return;
+                } else {
+                    Base.writeLog("Changed to correct branch, " + newBranch, this.getClass());
+                }
+
+                try {
+                    for (RevCommit commit : git.log().setMaxCount(1).call()) {
+                        Base.writeLog("Commit hash after branch change: " + commit, this.getClass());
+
+                    }
+                } catch (GitAPIException ex) {
+                    // we don't want all the process to stop just because we couldn't acquire the hash here,
+                    // hence this catch
+                    Base.writeLog("GitAPIException while attempting to get current commit's hash, after changing branch. Not a critical error, so proceeding with update", this.getClass());
+                }
+
+                if (backup != null) {
+                    // TODO: restore backup of user modifications
+                    //git.cherryPick().setNoCommit(true).include(backup).call();
+                }
+            }
+
+            repoStatus = git.status().call();
+            if (repoStatus.hasUncommittedChanges()) {
+                Base.writeLog("Repo has uncommited changes, stashing and pulling...", this.getClass());
+                stash = git.stashCreate().call();
+                git.pull().call();
+                git.stashApply().call();        // will apply the last stash made
+                git.stashDrop().call();         // remove the last stash made
+            } else {
+                Base.writeLog("Repo has no uncommited changes, a simple pull will suffice", this.getClass());
+                git.pull().call();
+            }
+
+            Base.writeLog("Filament update concluded successfully!", this.getClass());
+
+            try {
+                for (RevCommit commit : git.log().setMaxCount(1).call()) {
+                    Base.writeLog("Commit hash after update process finished: " + commit, this.getClass());
+
+                }
+            } catch (GitAPIException ex) {
+                // we don't want all the process to stop just because we couldn't acquire the hash here,
+                // hence this catch
+                Base.writeLog("GitAPIException while attempting to get current commit's hash, after the process finished with success. Not a critical error, so proceeding with update", this.getClass());
+            }
+        } catch (GitAPIException ex) {
+            Base.writeLog("GitAPIException while attempting to update filaments, aborting update", this.getClass());
+            try {
+                resetCmd = git.reset();
+                resetCmd.setMode(ResetType.HARD);
+                resetCmd.call();
+
+                if (stash != null) {
+                    git.stashApply().call();
+                    git.stashDrop().call();
+                }
+
+            } catch (GitAPIException ex1) {
+                Base.writeLog("GitAPIException while attempting to reset after an error, uh oh...", this.getClass());
+            }
+        }
+
     }
 
     private void setFont() {
@@ -78,6 +268,7 @@ public class UpdateChecker extends BaseDialog {
     private void evaluateInitialConditions() {
         updateStableAvailable = false;
         filenameToDownload = null;
+        updateFilaments();
         fileFromServer = getFileFromServer();
 
         if (fileFromServer != null) {

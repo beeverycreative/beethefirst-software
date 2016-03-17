@@ -702,6 +702,12 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>4.2.0.201601211800-r</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>
