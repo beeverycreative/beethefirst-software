@@ -111,16 +111,15 @@ public class FilamentControler {
                         // only add to available filaments if it is supported by
                         // the printer, or if no printer is connected
                         for (SlicerConfig sc : fil.getSupportedPrinters()) {
-
-                            for (Nozzle noz : sc.getNozzles()) {
-                                nozzleSet.add(noz);
-                            }
-
                             if (printer.filamentCode().equals(sc.getPrinterName())
                                     || printer.filamentCode().equals("UNKNOWN")) {
                                 // putIfAbsent only exists in java 8
                                 if (filamentMap.get(fil.getName()) == null) {
                                     filamentMap.put(fil.getName(), fil);
+                                }
+
+                                for (Nozzle noz : sc.getNozzles()) {
+                                    nozzleSet.add(noz);
                                 }
                             }
                         }
