@@ -2,26 +2,32 @@ package replicatorg.app.ui.mainWindow;
 
 import java.awt.Desktop;
 import java.awt.Dialog;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import static java.nio.file.Files.move;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
+import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,14 +40,11 @@ import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.util.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -69,7 +72,7 @@ public class UpdateChecker extends BaseDialog {
 
     private static final String SERVER_URL = "https://www.beeverycreative.com/public/software/BEESOFT/";
     private static final String VERSION_FILE = "updates_new.xml";
-    private static final String FILAMENTS_REPO_PATH = Base.getApplicationDirectory().getAbsolutePath() + "/filaments/";
+    private static final String FILAMENTS_REPO_PATH = Base.getAppDataDirectory() + "/filaments/";
     private static final String FILAMENTS_REPO_URL = ProperDefault.get("git.filament_repo_url");
     private static final String FILAMENTS_REPO_BRANCH = ProperDefault.get("git.filament_repo_branch");
     private File fileFromServer = null;
@@ -84,6 +87,63 @@ public class UpdateChecker extends BaseDialog {
         centerOnScreen();
         enableDrag();
         evaluateInitialConditions();
+    }
+
+    private static void copyFilamentProfiles() {
+        final File filamentsFolder;
+        final File[] filamentFileArray;
+        final FilenameFilter xmlFilter;
+        int length;
+        byte[] buffer = new byte[1024];
+        BufferedInputStream inStream = null;
+        BufferedOutputStream outStream = null;
+        FileInputStream fileInStream;
+        FileOutputStream fileOutStream;
+
+        filamentsFolder = new File(Base.getAppDataDirectory() + "/filaments");
+
+        if (filamentsFolder.exists() == false) {
+            filamentsFolder.mkdir();
+
+            xmlFilter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".xml");
+                }
+            };
+
+            filamentFileArray = new File(Base.getApplicationDirectory() + "/filaments").listFiles(xmlFilter);
+
+            for (File xmlFile : filamentFileArray) {
+                try {
+                    fileInStream = new FileInputStream(xmlFile);
+                    fileOutStream = new FileOutputStream(filamentsFolder + "/" + xmlFile.getName());
+                    inStream = new BufferedInputStream(fileInStream);
+                    outStream = new BufferedOutputStream(fileOutStream);
+
+                    while ((length = inStream.read(buffer)) > 0) {
+                        outStream.write(buffer, 0, length);
+                    }
+                } catch (FileNotFoundException ex) {
+                    // do nothing
+                } catch (IOException ex) {
+                    // do nothing
+                } finally {
+                    try {
+                        inStream.close();
+                    } catch (IOException ex) {
+                        // do nothing
+                    }
+                    try {
+                        outStream.close();
+                    } catch (IOException ex) {
+                        // do nothing
+                    }
+                }
+            }
+
+        }
+
     }
 
     private void updateFilaments() {
@@ -268,8 +328,16 @@ public class UpdateChecker extends BaseDialog {
     private void evaluateInitialConditions() {
         updateStableAvailable = false;
         filenameToDownload = null;
-        updateFilaments();
         fileFromServer = getFileFromServer();
+        copyFilamentProfiles();
+
+        Thread updateFilamentsThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateFilaments();
+            }
+        });
+        updateFilamentsThread.start();
 
         if (fileFromServer != null) {
             if (seekUpdates()) {

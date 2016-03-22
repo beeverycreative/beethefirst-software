@@ -37,7 +37,7 @@ public class FilamentControler {
     private static final Map<String, Filament> filamentMap = new TreeMap<String, Filament>();
     private static final Set<Nozzle> nozzleSet = new TreeSet<Nozzle>();
     private static PrinterInfo currentPrinterFilamentList = null;
-    private static final String filamentsDir = Base.getApplicationDirectory() + "/filaments/";
+    private static final String filamentsDir = Base.getAppDataDirectory()+ "/filaments/";
 
     /**
      * Initializes list of filaments for a given printer. Does nothing if the
