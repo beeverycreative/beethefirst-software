@@ -117,7 +117,7 @@ public class CuraGenerator extends ToolpathGenerator {
         //Tests if CuraEngine has +x permissions or if it does exist
         File curaBin = new File(CURA_BIN_PATH);
         if (curaBin.canExecute() == false || curaBin.exists() == false) {
-            Base.writeLog("CuraEngine no execute permissions", this.getClass());
+            Base.writeLog("No execute permissions on " + curaBin.getAbsolutePath(), this.getClass());
             Base.getMainWindow().showFeedBackMessage("gcodeGeneration");
             return null;
         }
