@@ -1,6 +1,7 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.Event;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
@@ -308,6 +309,10 @@ public class SerialNumberInput extends BaseDialog {
     }//GEN-LAST:event_serialNumberInputKeyReleased
 
     private void serialNumberInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_serialNumberInputKeyPressed
+        if (evt.getKeyCode() == Event.ENTER && bOk.isEnabled()) {
+            dispose();
+        }
+        
         bOk.setEnabled(false);
     }//GEN-LAST:event_serialNumberInputKeyPressed
 
