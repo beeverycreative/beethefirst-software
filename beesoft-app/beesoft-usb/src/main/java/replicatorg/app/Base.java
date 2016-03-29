@@ -303,29 +303,6 @@ public class Base {
         return ID;
     }
 
-    private static void redirectStdErr() {
-        File file;
-        FileOutputStream fos;
-        PrintStream printStream;
-        if (Base.VERSION_BEESOFT.contains("beta")) {
-            try {
-                file = new File(getAppDataDirectory() + "err.log");
-                
-                if(file.exists()) {
-                    file.delete();
-                }
-                
-                fos = new FileOutputStream(file);
-                printStream = new PrintStream(fos);
-                
-                System.setErr(printStream);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-    }
-
     private static BufferedWriter initLog(File file) {
         BufferedWriter bw;
         OutputStreamWriter osw;
@@ -970,8 +947,6 @@ public class Base {
 
     static public void main(String args[]) {
         
-        redirectStdErr();
-
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
