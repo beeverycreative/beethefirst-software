@@ -83,7 +83,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private boolean stopTransfer = false;
     private static boolean bootedFromBootloader = false;
     private static boolean backupConfig = false;
-    private static int backupNozzleSize = FilamentControler.NO_NOZZLE;
+    private static int backupNozzleSize = FilamentControler.DEFAULT_NOZZLE_SIZE;
     private static String backupCoilText = FilamentControler.NO_FILAMENT;
     private static double backupZVal = 123.495;
     private static final Feedback feedbackWindow = new Feedback();
@@ -265,7 +265,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 backupConfig = false;
                 backupZVal = 123.495;
                 backupCoilText = FilamentControler.NO_FILAMENT;
-                backupNozzleSize = FilamentControler.NO_NOZZLE;
+                backupNozzleSize = FilamentControler.DEFAULT_NOZZLE_SIZE;
             } else {
                 updateCoilText();
                 updateNozzleType();
@@ -600,7 +600,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         if (m.find()) {
             nozzleSizeMicrons = Integer.parseInt(m.group(5));
         } else {
-            nozzleSizeMicrons = 0;
+            nozzleSizeMicrons = FilamentControler.DEFAULT_NOZZLE_SIZE;
         }
 
         Base.writeLog("Nozzle type: " + nozzleSizeMicrons, this.getClass());
