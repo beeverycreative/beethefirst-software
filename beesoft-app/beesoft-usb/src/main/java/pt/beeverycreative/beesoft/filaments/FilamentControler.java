@@ -32,7 +32,7 @@ public class FilamentControler {
     public static final String NO_FILAMENT = "none";
     public static final String NO_FILAMENT_2 = "no_file";
     public static final String NO_FILAMENT_CODE = "A000";
-    public static final int NO_NOZZLE = 0;
+    public static final int DEFAULT_NOZZLE_SIZE = 400;
 
     private static final Map<String, Filament> filamentMap = new TreeMap<String, Filament>();
     private static final Set<Nozzle> nozzleSet = new TreeSet<Nozzle>();
