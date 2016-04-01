@@ -231,6 +231,10 @@ public class CuraEngineConfigurator {
 
         try {
             
+            if(cfgKey.equals("skinSpeed")) {
+                return String.valueOf(getSpeedOrDefault("solidarea_speed"));
+            }
+            
             if(cfgKey.equals("nozzleSize")) {
                 return String.valueOf((int) (Float.parseFloat(curaIni.get("nozzle_size")) * 1000.0));
             }
