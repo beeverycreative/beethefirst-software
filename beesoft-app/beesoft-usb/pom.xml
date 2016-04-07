@@ -24,8 +24,8 @@
         
         <project.release.name>BEESOFT-${project.release.version}-${release.type}</project.release.name>                    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>       
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <libusb4java.version>1.2.0</libusb4java.version>
     </properties>
     <build>
@@ -320,12 +320,25 @@
                                         <property name="lib.dir" value="${project.build.directory}/libs" />
                                         <property name="app.resources.dir" value="${project.basedir}/src/main/resources/app_resources" />                                
 
-                                        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${compile_classpath}" />
+                                        <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="lib/appbundler-1.0.jar" />
 
-                                        <jarbundler dir="${target.app.dir}" name="BEESOFT" bundleid="org.beesoft.app" mainclass="replicatorg.app.Base" icon="${installer.dir}/bee.icns" 
-                                                    extraclasspath="/System/Library/Java" jvmversion="1.6+" vmoptions="-ea -Xmx1G" 
+                                        <bundleapp outputdirectory="${target.app.dir}" name="BEESOFT" displayname="BEESOFT" identifier="org.beesoft.app"
+                                        mainclassname="replicatorg.app.Base" icon="${installer.dir}/bee.icns">
+                                            <runtime dir="/Library/Java/JavaVirtualMachines/jdk1.8.0_77.jdk/Contents/Home"/>
+                                            <classpath dir="${project.build.directory}" includes="BEESOFT.jar" />
+                                            <classpath dir="${lib.dir}" includes="*.jar" />
+                                            <classpath dir="${resources.dir}/external_libs" includes="*.jar" />
+                                            <classpath dir="${resources.dir}/external_libs/osx" includes="*.jar" />
+                                            <classpath dir="${installer.dir}" includes="*.jnilib" />
+                                            <option value="-Dbeesoft.app-resources=$APP_PACKAGE/Contents/Resources" />
+                                            <option value="-Dapple.laf.useScreenMenuBar=true" />
+                                            <option value="-Djava.ext.dirs=" />
+                                        </bundleapp>
+                                        
+                                        <!--jarbundler dir="${target.app.dir}" name="BEESOFT" bundleid="org.beesoft.app" mainclass="replicatorg.app.Base" icon="${installer.dir}/bee.icns" 
+                                                    extraclasspath="/System/Library/Java" jvmversion="1.7+" vmoptions="-ea -Xmx1G" 
                                                     infostring="BEESOFT, © 2013-2015 BEEVC - Electronic Systems" 
-                                                    version="${project.release.version}" stubfile="${installer.dir}/BEESOFT">
+                                                    version="${project.release.version}" stubfile="/System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub">
 
                                             <jarfileset dir="${project.build.directory}" includes="BEESOFT.jar" />
                                             <jarfileset dir="${lib.dir}" includes="*.jar" />
@@ -336,7 +349,7 @@
                                             <documenttype name="STL 3D model" extensions="STL" iconFile="${dist.dir}/bee.icns" role="Editor" />
                                             <javaproperty name="beesoft.app-resources" value="$APP_PACKAGE/Contents/Resources" />
                                             <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
-                                        </jarbundler>  
+                                        </jarbundler-->  
 
                                         <copy todir="${reso.dir}">
                                             <fileset dir="${installer.dir}" includes="drivers/*.dmg" />
@@ -620,21 +633,6 @@
         </profile>
     </profiles>  
     <dependencies>
-        <dependency>
-            <groupId>java3d</groupId>
-            <artifactId>j3dcore</artifactId>
-            <version>1.5.1</version>
-        </dependency>      
-        <dependency>
-            <groupId>java3d</groupId>
-            <artifactId>j3dutils</artifactId>
-            <version>1.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>java3d</groupId>
-            <artifactId>vecmath</artifactId>
-            <version>1.5.1</version>
-        </dependency>
         <dependency>
             <groupId>mrj</groupId>
             <artifactId>MRJToolkitStubs</artifactId>

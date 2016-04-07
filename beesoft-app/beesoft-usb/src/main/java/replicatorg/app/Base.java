@@ -345,8 +345,10 @@ public class Base {
     static public File getApplicationDirectory() {
         if (isMacOS()) {
             try {
-                File x = new File(".");
+                //File x = new File("/Users/jpgrego/beethefirst-software/beesoft-app/beesoft-usb/target/mac-BEESOFT-3.14.0-alpha");
+                File x = new File("/Users/jpgrego/beethefirst-software/beesoft-app/beesoft-usb/target/mac-BEESOFT-3.14.0-alpha");
                 String baseDir = x.getCanonicalPath();
+                System.out.println(baseDir);
                 //baseDir = baseDir + "/ReplicatorG.app/Contents/Resources";
                 //Base.logger.severe("OSX AppDir at " + baseDir );
                 //we want to use ReplicatorG.app/Content as our app dir.
