@@ -344,23 +344,8 @@ public class Base {
      */
     static public File getApplicationDirectory() {
         if (isMacOS()) {
-            try {
-                //File x = new File("/Users/jpgrego/beethefirst-software/beesoft-app/beesoft-usb/target/mac-BEESOFT-3.14.0-alpha");
-                File x = new File("/Users/jpgrego/beethefirst-software/beesoft-app/beesoft-usb/target/mac-BEESOFT-3.14.0-alpha");
-                String baseDir = x.getCanonicalPath();
-                System.out.println(baseDir);
-                //baseDir = baseDir + "/ReplicatorG.app/Contents/Resources";
-                //Base.logger.severe("OSX AppDir at " + baseDir );
-                //we want to use ReplicatorG.app/Content as our app dir.
-                if (new File(baseDir + "/BEESOFT.app/Contents/Resources").exists()) {
-                    return new File(baseDir + "/BEESOFT.app/Contents/Resources");
-                } else {
-                    Base.logger.log(Level.SEVERE, "{0}/BEESOFT.app not found, using {1}/replicatorg/", new Object[]{baseDir, baseDir});
-                }
-                return new File(baseDir + "/replicatorg");
-            } catch (java.io.IOException e) {
-                // This space intentionally left blank. Fall through.
-            }
+                String resourcesPath =  new File(System.getProperty("java.library.path")).getParent() + "/Resources";
+                return new File(resourcesPath);
         }
         return new File(System.getProperty("user.dir"));
     }
