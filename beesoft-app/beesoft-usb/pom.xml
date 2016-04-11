@@ -253,8 +253,8 @@
                                 <copy todir="${target.dir}/firmware">
                                     <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy>                                 
-                                <copy todir="${target.dir}/natives/linux-i686">
-                                    <fileset dir="${natives.dir}/linux-i686" includes="*.so" />
+                                <copy todir="${target.dir}/natives/linux-i586">
+                                    <fileset dir="${natives.dir}/linux-i586" includes="*.so" />
                                 </copy>
                                 <copy todir="${target.dir}/natives/linux-amd64">
                                     <fileset dir="${natives.dir}/linux-amd64" includes="*.so" />
