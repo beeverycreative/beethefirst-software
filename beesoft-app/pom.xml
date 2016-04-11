@@ -54,6 +54,10 @@
     </build>
     <repositories>
         <repository>
+            <id>local-maven-repo</id>
+            <url>file:///${project.basedir}/local-maven-repo</url>
+        </repository>
+        <repository>
             <id>ailis</id>
             <name>Ailis Maven Releases</name>
             <url>http://nexus.ailis.de/content/groups/public/</url>
