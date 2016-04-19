@@ -148,7 +148,14 @@
                                     <fileset dir="${lib.dir}" />
                                     <filelist dir="${app.resources.dir}" files="keywords.txt" />
                                     <fileset dir="${project.build.directory}" includes="*.jar" />    
-                                    <fileset dir="${natives.dir}/windows-i586" includes="*.jar" />                                
+                                </copy>
+                                
+                                <copy todir="${target.dir}/natives/windows-i586">
+                                    <fileset dir="${natives.dir}/windows-i586" includes="*.dll" />                                
+                                </copy>
+                                
+                                <copy todir="${target.dir}/natives/windows-amd64">
+                                    <fileset dir="${natives.dir}/windows-amd64" includes="*.dll" />                                
                                 </copy>
                                 
                                 <copy todir="${target.dir}">
@@ -187,9 +194,7 @@
                                     <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
                                 </copy>                                       
                                 <copy todir="${target.dir}">
-                                    <fileset dir="${dist.dir}" includes="*.dll" />
                                     <filelist dir="${dist.dir}" files="BEESOFT.exe" />
-                                    <fileset dir="${dist.dir}" includes="drivers/**/*" />
                                     <fileset dir="${dist.dir}" includes="java/**/*" />
                                 </copy>                          
                             </target>                                        
@@ -456,7 +461,39 @@
                     </plugin>                  
                 </plugins>
             </build>
-        </profile>    
+        </profile>
+        <profile>
+            <id>platform-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>replicatorg.app.Base</mainClass>
+                            <workingDirectory>${project.basedir}/target/win-${project.release.name}</workingDirectory>
+                            <arguments>                        
+                                <argument>-ea</argument>
+                                <argument>-Xmx2048m</argument>
+                                <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>                  
+                </plugins>
+            </build>
+        </profile>     
     </profiles>  
     <dependencies>
         <dependency>
