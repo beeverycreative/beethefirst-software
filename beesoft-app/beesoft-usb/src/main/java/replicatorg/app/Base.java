@@ -343,10 +343,6 @@ public class Base {
      * @return File object pointing to the OS specific ApplicationsDirectory
      */
     static public File getApplicationDirectory() {
-        if (isMacOS()) {
-                String resourcesPath =  new File(System.getProperty("java.library.path")).getParent() + "/Resources";
-                return new File(resourcesPath);
-        }
         return new File(System.getProperty("user.dir"));
     }
 
