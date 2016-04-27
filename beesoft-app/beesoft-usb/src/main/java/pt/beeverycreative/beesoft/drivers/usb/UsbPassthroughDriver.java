@@ -87,7 +87,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static String backupCoilText = FilamentControler.NO_FILAMENT;
     private static double backupZVal = 123.495;
     private static final Feedback feedbackWindow = new Feedback();
-    //private FeedbackThread feedbackThread = new FeedbackThread(feedbackWindow);
 
     public enum COM {
 
@@ -183,7 +182,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Launching firmware!", this.getClass());
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.rebootingIntoFirmware = true;
-                hiccup(1000, 0);
+                hiccup(3000, 0);
                 dispatchCommand(LAUNCH_FIRMWARE, COM.NO_RESPONSE); // Launch firmware
                 hiccup(3000, 0);
                 closePipe(pipes);
@@ -200,22 +199,18 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             // we want it to be document modal (that is, to block the underlaying windows)
             // but we don't want it to be stuck here. is there a better way?
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (isONShutdown) {
-                        ShutdownMenu shutdown = new ShutdownMenu();
-                        shutdown.setVisible(true);
-                    } else if (Base.printPaused) {
-                        PauseMenu pause = new PauseMenu();
-                        pause.setVisible(true);
-                    } else {
-                        PrintSplashAutonomous p = new PrintSplashAutonomous(
-                                Base.printPaused, isONShutdown
-                        );
-                        p.setVisible(true);
-                    }
+            Thread t = new Thread(() -> {
+                if (isONShutdown) {
+                    ShutdownMenu shutdown = new ShutdownMenu();
+                    shutdown.setVisible(true);
+                } else if (Base.printPaused) {
+                    PauseMenu pause = new PauseMenu();
+                    pause.setVisible(true);
+                } else {
+                    PrintSplashAutonomous p = new PrintSplashAutonomous(
+                            Base.printPaused, isONShutdown
+                    );
+                    p.setVisible(true);
                 }
             });
             t.start();
@@ -244,7 +239,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         + firmwareVersion.getVersionString(), this.getClass());
                 Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
                 // Warn user to restart BTF and restart BEESOFT.
-                Warning firmwareOutDate = new Warning("close");
+                Warning firmwareOutDate = new Warning(true);
                 firmwareOutDate.setMessage("FirmwareOutDateVersion");
                 firmwareOutDate.setVisible(true);
 
@@ -336,7 +331,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private String dispatchCommand(byte[] byteArray) {
         String ans;
         int retryNum;
-        
+
         ans = "";
         retryNum = 30;
 
@@ -350,8 +345,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             while (retryNum > 0) {
                 ans += readResponseTog();
-                
-                if(ans.contains("tog")) {
+
+                if (ans.contains("tog")) {
                     break;
                 } else {
                     Base.hiccup(1000);
@@ -435,20 +430,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
     @Override
     public String dispatchCommand(final String next, COM comType) {
         //check if the queue is getting full EX: ok Q:0
-        /*
-         while (queue_size >= QUEUE_LIMIT) {
-         hiccup(QUEUE_WAIT, 0);
-
-         // Necessary to handle disconnect during readResponse
-         if (!isInitialized()) {
-         return NOK;
-         }
-
-         if (comLog) {
-         Base.writeComLog((System.currentTimeMillis() - startTS), " Queue:" + queue_size);
-         }
-         }
-         */
 
         /**
          * Parses Bad GCodes or pipes garbage
@@ -460,11 +441,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String answer = "";
         switch (comType) {
             case NO_RESPONSE:
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dispatchCommandNoResponse(next);
-                    }
+                new Thread(() -> {
+                    dispatchCommandNoResponse(next);
                 }).start();
                 return null;
             case NO_OK:
@@ -1420,11 +1398,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 openPipe(pipes);
             }
             cmdlen = pipes.getUsbPipeWrite().syncSubmit(next);
-        } catch (UsbException ex) {
-        } catch (UsbNotActiveException ex) {
-        } catch (UsbNotOpenException ex) {
-        } catch (IllegalArgumentException ex) {
-        } catch (UsbDisconnectedException ex) {
+        } catch (UsbException | UsbNotActiveException | UsbNotOpenException | IllegalArgumentException | UsbDisconnectedException ex) {
+            // do nothing
         } finally {
             dispatchCommandLock.unlock();
         }
@@ -1451,7 +1426,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         String bootloader, firmware;
         boolean validSerial = false;
-        boolean cancelPressed = false;
+        boolean cancelPressed;
 
         bootloader = dispatchCommand("M116");
         bootloaderVersion = Version.bootloaderVersion(bootloader);
@@ -1462,13 +1437,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         try {
             serialNumberString = m_usbDevice.getSerialNumberString().trim();
 
-        } catch (UsbException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (UsbDisconnectedException ex) {
+        } catch (UsbException | UnsupportedEncodingException | UsbDisconnectedException ex) {
             Logger.getLogger(UsbPassthroughDriver.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -1487,14 +1456,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     dispatchCommand("M118 T" + serialNumberInput.getSerialString());
                     serialNumberString = serialNumberInput.getSerialString();
                 }
-                
-                if(cancelPressed) {
+
+                if (cancelPressed) {
                     Base.writeLog("Serial number input has been cancelled, proceeding...", this.getClass());
                     break;
                 }
             }
         }
-        
+
         Base.SERIAL_NUMBER = serialNumberString;
 
         // for some reason, requesting firmware version too fast after setting the serial number
@@ -1538,19 +1507,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         serialNumberString = "9999999999";
         try {
             serialNumberString = m_usbDevice.getSerialNumberString();
-        } catch (UsbException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(UsbPassthroughDriver.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (UsbDisconnectedException ex) {
+        } catch (UsbException | UnsupportedEncodingException | UsbDisconnectedException ex) {
             Logger.getLogger(UsbPassthroughDriver.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
 
         Base.SERIAL_NUMBER = serialNumberString;
-        
+
         //get firmware version
         //check first for un-initialized serial or firmware version
         if (!serialNumberString.contains("9999999999")) {
@@ -1679,7 +1642,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Couldn't establish connection after attempting to go back to bootloader, requesting user to restart", this.getClass());
 
             // Warn user to restart BTF and restart BEESOFT.
-            Warning firmwareOutDate = new Warning("close");
+            Warning firmwareOutDate = new Warning(true);
             firmwareOutDate.setMessage("FirmwareOutDateVersion");
             firmwareOutDate.setVisible(true);
 
@@ -1739,7 +1702,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     ready = true;
                 } else {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
-                    Thread.sleep(1000);
+                    Base.hiccup(1000);
                 }
 
                 if (tries++ >= 10) {
@@ -1807,7 +1770,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                     }
                 } else {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());
-                    Thread.sleep(1000);
+                    Base.hiccup(1000);
                 }
 
             } catch (Exception ex) {
@@ -1817,38 +1780,4 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return true;
 
     }
-
-    private class FeedbackThread extends Thread {
-
-        private final Feedback feedbackWindow;
-        private boolean stop = false;
-
-        public FeedbackThread(Feedback feedbackWindow) {
-            super("FeedbackThread");
-            this.feedbackWindow = feedbackWindow;
-        }
-
-        @Override
-        public void run() {
-            while (feedbackWindow.isVisible() == false && stop == false) {
-
-                if (Base.isWelcomeSplashVisible() == false) {
-                    feedbackWindow.setVisible(true);
-                }
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(FeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
-        }
-
-        public void cancel() {
-            stop = true;
-            this.interrupt();
-        }
-    }
-
 }

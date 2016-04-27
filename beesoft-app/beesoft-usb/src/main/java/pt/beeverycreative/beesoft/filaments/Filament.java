@@ -18,6 +18,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Filament implements Comparable {
 
+    public enum Material {
+        PLA, TPU, PET;
+    }
+
     @XmlElement(name = "version")
     private String version;
 
@@ -31,30 +35,29 @@ public class Filament implements Comparable {
     @XmlElement(name = "name")
     private String name;
 
+    @XmlElement(name = "material")
+    private Material material;
+
     public Filament() {
-        this.supportedPrinters = new ArrayList<SlicerConfig>();
+        this.supportedPrinters = new ArrayList<>();
     }
-    
+
     public Filament(String name) {
         this.name = name;
-        this.supportedPrinters = new ArrayList<SlicerConfig>();
+        this.supportedPrinters = new ArrayList<>();
     }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public Map<String, String> getDefaultParametersMap() {
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
 
         if (defaultParameters.isEmpty() == false) {
-            for (SlicerParameter parameter : defaultParameters) {
+            defaultParameters.stream().forEach((parameter) -> {
                 result.put(parameter.getName(), parameter.getValue());
-            }
+            });
         }
 
         return result;
@@ -76,15 +79,15 @@ public class Filament implements Comparable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Material getMaterial() {
+        return material;
     }
-    
+
     public List<Resolution> getSupportedResolutions(String printer, int nozzleMicrons) {
-        for(SlicerConfig sc : supportedPrinters) {
-            if(sc.getPrinterName().equalsIgnoreCase(printer)) {
-                for(Nozzle noz : sc.getNozzles()) {
-                    if(noz.getSizeInMicrons() == nozzleMicrons) {
+        for (SlicerConfig sc : supportedPrinters) {
+            if (sc.getPrinterName().equalsIgnoreCase(printer)) {
+                for (Nozzle noz : sc.getNozzles()) {
+                    if (noz.getSizeInMicrons() == nozzleMicrons) {
                         return noz.getResolutions();
                     }
                 }
@@ -99,15 +102,15 @@ public class Filament implements Comparable {
         Filament f = (Filament) o;
         return this.name.compareTo(f.name);
     }
-    
+
     @Override
     public boolean equals(Object o) {
         Filament f;
-                
-        if(o == null || o instanceof Filament == false) {
+
+        if (o == null || o instanceof Filament == false) {
             return false;
         }
-        
+
         f = (Filament) o;
         return this.name.equalsIgnoreCase(f.name);
     }
@@ -119,7 +122,7 @@ public class Filament implements Comparable {
         hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         return this.name;

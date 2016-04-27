@@ -111,9 +111,7 @@ public class GraphicDesignComponents {
         {
             try {
                 ssProBold = Font.createFont(Font.TRUETYPE_FONT, getFont("SourceSansPro-Bold.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -121,9 +119,7 @@ public class GraphicDesignComponents {
         {
             try {
                 ssProBold = Font.createFont(Font.TRUETYPE_FONT, getFont("DejaVuSans-Bold.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             } 
         }
@@ -140,9 +136,7 @@ public class GraphicDesignComponents {
         {        
             try {
                 ssProItalic = Font.createFont(Font.TRUETYPE_FONT, getFont("SourceSansPro-Italic.ttf").openStream()); 
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -150,9 +144,7 @@ public class GraphicDesignComponents {
         {
             try {
                 ssProItalic = Font.createFont(Font.TRUETYPE_FONT, getFont("DejaVuSans-Italic.ttf").openStream()); 
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -169,9 +161,7 @@ public class GraphicDesignComponents {
         { 
             try {
                 ssProLight = Font.createFont(Font.TRUETYPE_FONT, getFont("SourceSansPro-Light.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -179,9 +169,7 @@ public class GraphicDesignComponents {
         {
              try {
                 ssProLight = Font.createFont(Font.TRUETYPE_FONT, getFont("DejaVuSans-Regular.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }           
         }
@@ -198,9 +186,7 @@ public class GraphicDesignComponents {
         { 
             try {
                 ssProRegular = Font.createFont(Font.TRUETYPE_FONT, getFont("SourceSansPro-Regular.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -208,9 +194,7 @@ public class GraphicDesignComponents {
         {
             try {
                 ssProRegular = Font.createFont(Font.TRUETYPE_FONT, getFont("DejaVuSans-Regular.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }        
         }
@@ -227,9 +211,7 @@ public class GraphicDesignComponents {
         { 
             try {
                 ssProSemiBuild = Font.createFont(Font.TRUETYPE_FONT, getFont("SourceSansPro-Semibold.ttf").openStream());
-            } catch (FontFormatException ex) {
-                Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            } catch (FontFormatException | IOException ex) {
                 Logger.getLogger(GraphicDesignComponents.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

@@ -1,9 +1,17 @@
 package replicatorg.app.ui.panels;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.event.ItemEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.Filament.Material;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.Nozzle;
@@ -25,8 +33,12 @@ import replicatorg.machine.model.MachineModel;
 public class FilamentCodeInsertion extends BaseDialog {
 
     private final MachineModel model = Base.getMachineLoader().getMachineInterface().getDriver().getMachine();
+    private final ImageIcon noSupportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento.png"));
+    private final ImageIcon supportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup.png"));
+    private Nozzle currentNozzle = new Nozzle(model.getNozzleType());
     private DefaultComboBoxModel<Filament> comboModel;
-    private Filament[] categories;
+    private FilamentComboItem[] categories;
+    private int firstCompatibleFilamentIndex = 0;
 
     public FilamentCodeInsertion() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -57,28 +69,54 @@ public class FilamentCodeInsertion extends BaseDialog {
     }
 
     private void evaluateInitialConditions() {
-        Base.getMainWindow().setEnabled(false);
+        FilamentComboItem selectedFilament;
+
         categories = fullFillCombo();
         comboModel = new DefaultComboBoxModel(categories);
         jComboBox1.setModel(comboModel);
+        jComboBox1.setRenderer(new CustomRenderer(jComboBox1));
+
+        jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+        selectedFilament = (FilamentComboItem) jComboBox1.getSelectedItem();
+
+        if (selectedFilament.getFilamentObject().getMaterial() == Material.PLA) {
+            jLabel2.setIcon(noSupportImage);
+        } else {
+            jLabel2.setIcon(supportImage);
+        }
     }
 
-    private Filament[] fullFillCombo() {
-        Nozzle nozzle;
-        Filament[] filaments;
+    private FilamentComboItem[] fullFillCombo() {
+        final Filament[] filaments;
+        final FilamentComboItem[] filamentComboItems;
+        int index = 0;
 
-        nozzle = new Nozzle(model.getNozzleType());
-        filaments = FilamentControler.getCompatibleFilaments(nozzle);
+        filaments = FilamentControler.getFilamentArray();
+        firstCompatibleFilamentIndex = 0;
 
         if (filaments.length == 0) {
             Base.writeLog("No filaments found for this printer!", this.getClass());
-            filaments = new Filament[1];
-            filaments[0] = new Filament("No filament available");
+            filamentComboItems = new FilamentComboItem[1];
+            filamentComboItems[0] = new FilamentComboItem(new Filament("No filament available"), true);
         } else {
+            filamentComboItems = new FilamentComboItem[filaments.length];
+
+            FilamentComboItem temp;
+            for (Filament fil : filaments) {
+                temp = new FilamentComboItem(fil);
+                filamentComboItems[index] = temp;
+
+                if (temp.isCompatible() && firstCompatibleFilamentIndex == 0) {
+                    firstCompatibleFilamentIndex = index;
+                }
+
+                index++;
+            }
+
             bNext.setEnabled(true);
         }
 
-        return filaments;
+        return filamentComboItems;
     }
 
     private void doCancel() {
@@ -217,6 +255,11 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
 
         lDesc.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lDesc.setText("<html>Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent). <br><br> The available filament to be selected depends on the nozzle installed in the printer.</html>");
@@ -312,7 +355,10 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            FilamentHeating filamentHeatingPanel = new FilamentHeating((Filament) comboModel.getSelectedItem());
+            final Filament fil;
+            
+            fil = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
+            FilamentHeating filamentHeatingPanel = new FilamentHeating(fil);
             dispose();
             filamentHeatingPanel.setVisible(true);
         }
@@ -330,6 +376,45 @@ public class FilamentCodeInsertion extends BaseDialog {
         }
     }//GEN-LAST:event_bXMousePressed
 
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            final FilamentComboItem filament, filament2;
+            final int selectedIndex;
+            final Warning warning;
+
+            filament = (FilamentComboItem) jComboBox1.getSelectedItem();
+            selectedIndex = jComboBox1.getSelectedIndex();
+
+            // change image according to the filament's material
+            if (filament.getFilamentObject().getMaterial() == Material.PLA) {
+                jLabel2.setIcon(noSupportImage);
+            } else {
+                jLabel2.setIcon(supportImage);
+            }
+
+            // if the selected filament isn't compatible with the current nozzle
+            // display a warning informing the user of this fact, and initiate
+            // the nozzle switch operation, if that's what the user wants
+            if (filament.isCompatible() == false) {
+                warning = new Warning(new ExtruderSwitch1());
+                warning.setMessage("IncompatibleFilament");
+                warning.setVisible(true);
+
+                if (warning.hasCancelBeenPressed() == false) {
+                    currentNozzle = new Nozzle(model.getNozzleType());
+                    evaluateInitialConditions();
+                    filament2 = (FilamentComboItem) jComboBox1.getItemAt(selectedIndex);
+                    if (filament2.isCompatible()) {
+                        jComboBox1.setSelectedIndex(selectedIndex);
+                    }
+                } else {
+                    jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+                }
+            }
+
+        }
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bNext;
@@ -345,4 +430,70 @@ public class FilamentCodeInsertion extends BaseDialog {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lDesc;
     // End of variables declaration//GEN-END:variables
+
+    private class CustomRenderer extends BasicComboBoxRenderer {
+
+        private static final long serialVersionUID = -1L;
+        private final JLabel text;
+
+        public CustomRenderer(JComboBox combo) {
+            text = new JLabel();
+            text.setOpaque(true);
+            text.setFont(combo.getFont());
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus) {
+
+            FilamentComboItem filament = (FilamentComboItem) value;
+
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+            } else {
+                setBackground(Color.WHITE);
+            }
+
+            text.setBackground(getBackground());
+            text.setText(filament.toString());
+            text.setForeground(Color.GRAY);
+
+            if (filament.isCompatible()) {
+                text.setForeground(Color.BLACK);
+            }
+
+            return text;
+        }
+
+    }
+
+    private class FilamentComboItem {
+
+        private final Filament filamentObject;
+        private final boolean compatible;
+
+        public FilamentComboItem(Filament fil) {
+            this.filamentObject = fil;
+            this.compatible = FilamentControler.isFilamentCompatible(this.filamentObject, currentNozzle);
+        }
+
+        public FilamentComboItem(Filament fil, boolean compatible) {
+            this.filamentObject = fil;
+            this.compatible = compatible;
+        }
+
+        public Filament getFilamentObject() {
+            return filamentObject;
+        }
+
+        public boolean isCompatible() {
+            return compatible;
+        }
+
+        @Override
+        public String toString() {
+            return filamentObject.getName();
+        }
+    }
+
 }

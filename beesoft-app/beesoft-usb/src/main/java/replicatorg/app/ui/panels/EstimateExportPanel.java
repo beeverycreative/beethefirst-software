@@ -11,7 +11,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import javax.swing.AbstractButton;
 import javax.swing.ComboBoxEditor;

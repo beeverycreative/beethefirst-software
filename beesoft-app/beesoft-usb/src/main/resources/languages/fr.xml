@@ -729,6 +729,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <ReinstallError value="Réinstallez BEESOFT pour installer tous les fichiers qui manquent."/>
             <NoModelError value="Il n'y a pas de modèles dans l'espace de travail. Chargez au moins un modèle."/>
             <UnknownColor value="La couleur du filament est inconnue. Vous êtes sûr que la couleur est correctement sélectionnée?"/>
+            <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

@@ -13,21 +13,16 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -73,8 +68,8 @@ public class UpdateChecker extends BaseDialog {
     private static final String SERVER_URL = "https://www.beeverycreative.com/public/software/BEESOFT/";
     private static final String VERSION_FILE = "updates_new.xml";
     private static final String FILAMENTS_REPO_PATH = Base.getAppDataDirectory() + "/filaments/";
-    private static final String FILAMENTS_REPO_URL = ProperDefault.get("git.filament_repo_url");
-    private static final String FILAMENTS_REPO_BRANCH = ProperDefault.get("git.filament_repo_branch");
+    private static final String FILAMENTS_REPO_URL = ProperDefault.get("git.filament_repo_url").replaceAll("\"", "");
+    private static final String FILAMENTS_REPO_BRANCH = ProperDefault.get("git.filament_repo_branch").replaceAll("\"", "");
     private File fileFromServer = null;
     private boolean updateStableAvailable = false, updateBetaAvailable = false;
     private String filenameToDownload;
@@ -105,12 +100,7 @@ public class UpdateChecker extends BaseDialog {
         if (filamentsFolder.exists() == false) {
             filamentsFolder.mkdir();
 
-            xmlFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".xml");
-                }
-            };
+            xmlFilter = (File dir, String name1) -> name1.endsWith(".xml");
 
             filamentFileArray = new File(Base.getApplicationDirectory() + "/filaments").listFiles(xmlFilter);
 
@@ -331,13 +321,7 @@ public class UpdateChecker extends BaseDialog {
         fileFromServer = getFileFromServer();
         copyFilamentProfiles();
 
-        Thread updateFilamentsThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                updateFilaments();
-            }
-        });
-        updateFilamentsThread.start();
+        new Thread(this::updateFilaments).start();
 
         if (fileFromServer != null) {
             if (seekUpdates()) {
@@ -446,6 +430,9 @@ public class UpdateChecker extends BaseDialog {
     private File getFileFromServer() {
         final URL url;
         final File tempFile;
+        final BufferedReader br;
+        final BufferedWriter bw;
+        final FileWriter fw;
 
         try {
             // get URL content
@@ -453,8 +440,7 @@ public class UpdateChecker extends BaseDialog {
             URLConnection conn = url.openConnection();
 
             // open the stream and put it into BufferedReader
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             String inputLine;
 
@@ -466,8 +452,8 @@ public class UpdateChecker extends BaseDialog {
             }
 
             //use FileWriter to write file
-            FileWriter fw = new FileWriter(tempFile.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
+            fw = new FileWriter(tempFile.getAbsoluteFile());
+            bw = new BufferedWriter(fw);
 
             while ((inputLine = br.readLine()) != null) {
                 bw.write(inputLine);
@@ -517,12 +503,8 @@ public class UpdateChecker extends BaseDialog {
                 }
 
             }
-        } catch (ParserConfigurationException pce) {
+        } catch (ParserConfigurationException | SAXException | IOException pce) {
             Base.writeLog(pce.getMessage(), this.getClass());
-        } catch (SAXException se) {
-            Base.writeLog(se.getMessage(), this.getClass());
-        } catch (IOException ioe) {
-            Base.writeLog(ioe.getMessage(), this.getClass());
         }
 
         return null;

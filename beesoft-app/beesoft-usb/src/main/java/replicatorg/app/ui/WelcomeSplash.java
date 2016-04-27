@@ -150,7 +150,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
          * Error occured during driver initialization
          */
         if (Base.errorOccured == true) {
-            Warning flashError = new Warning("close");
+            Warning flashError = new Warning(true);
             flashError.setMessage("ErrorUpdating");
             flashError.setVisible(true);
         }
