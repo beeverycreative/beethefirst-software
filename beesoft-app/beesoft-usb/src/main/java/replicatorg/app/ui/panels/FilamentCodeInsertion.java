@@ -356,7 +356,7 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             final Filament fil;
-            
+
             fil = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
             FilamentHeating filamentHeatingPanel = new FilamentHeating(fil);
             dispose();
@@ -396,18 +396,25 @@ public class FilamentCodeInsertion extends BaseDialog {
             // display a warning informing the user of this fact, and initiate
             // the nozzle switch operation, if that's what the user wants
             if (filament.isCompatible() == false) {
-                warning = new Warning(new ExtruderSwitch1());
-                warning.setMessage("IncompatibleFilament");
-                warning.setVisible(true);
+                if (Base.printPaused == false) {
+                    warning = new Warning(new ExtruderSwitch1());
+                    warning.setMessage("IncompatibleFilament");
+                    warning.setVisible(true);
 
-                if (warning.hasCancelBeenPressed() == false) {
-                    currentNozzle = new Nozzle(model.getNozzleType());
-                    evaluateInitialConditions();
-                    filament2 = (FilamentComboItem) jComboBox1.getItemAt(selectedIndex);
-                    if (filament2.isCompatible()) {
-                        jComboBox1.setSelectedIndex(selectedIndex);
+                    if (warning.hasCancelBeenPressed() == false) {
+                        currentNozzle = new Nozzle(model.getNozzleType());
+                        evaluateInitialConditions();
+                        filament2 = (FilamentComboItem) jComboBox1.getItemAt(selectedIndex);
+                        if (filament2.isCompatible()) {
+                            jComboBox1.setSelectedIndex(selectedIndex);
+                        }
+                    } else {
+                        jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
                     }
                 } else {
+                    warning = new Warning(false);
+                    warning.setMessage("IncompatibleFilamentPause");
+                    warning.setVisible(true);
                     jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
                 }
             }

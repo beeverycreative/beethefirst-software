@@ -731,6 +731,7 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <NoModelError value="Não há modelos na área de trabalho. Por favor carrega pelo menos um modelo."/>
             <UnknownColor value="A cor do filamento é desconhecida! A cor seleccionada é a correcta?"/>
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
+            <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

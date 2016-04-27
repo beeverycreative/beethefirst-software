@@ -640,6 +640,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <ExtruderClean_Title value="Nettoyez la buse de l'extrudeur"/>
             <ExtruderClean_button value="Nettoyez la buse maintenant"/>
             <ExtruderClean_Intro value="Cette opération est importante pour éviter l'obtention de morceaux des restes de filament en ce que vous imprimer."/>
+            
             <ExtruderMaintenance_Title value="Maintenance de l'extrudeur"/>
             <ExtruderMaintenance_button value="Maintenance de l'extrudeur"/>
             <ExtruderMaintenance_Intro value="Cette opération vous permet désobstruer la buse en utilisant le Kit de Maintenance."/>
@@ -730,6 +731,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <NoModelError value="Il n'y a pas de modèles dans l'espace de travail. Chargez au moins un modèle."/>
             <UnknownColor value="La couleur du filament est inconnue. Vous êtes sûr que la couleur est correctement sélectionnée?"/>
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
+            <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -761,13 +763,6 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
         <Help>
             <FAQ value="FAQ"/>
             <Troubleshooting value="Résolution des problèmes"/>
-            <Support value="Support"/>
-            <FAQ_Link_PT value="https://www.beeverycreative.com/pt/PF/"/>
-            <Troubleshooting_Link_PT value="https://www.beeverycreative.com/pt/resolucao-de-problemas/"/>
-            <Support_Link_PT value="https://www.beeverycreative.com/customerservice/"/>
-            <FAQ_Link_EN value="https://www.beeverycreative.com/en/FAQ/"/>
-            <Troubleshooting_Link_EN value="https://www.beeverycreative.com/en/resolucao-de-problemas/"/>
-            <Support_Link_EN value="https://www.beeverycreative.com/customerservice/"/>            
         </Help>
         
         <!-- A próxima secção XML contém o texto a apresentar na atualização do software e firmware-->

@@ -731,6 +731,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <NoModelError value="There are no models on the work area. Please load at least one model."/>
             <UnknownColor value="The filament's color is unknown! Are you sure a color is selected correctly?"/>
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
+            <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

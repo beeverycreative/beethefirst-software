@@ -224,12 +224,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         pauseThread.start();
     }
 
-    private void disableButtons() {
-        bOk.setEnabled(false);
-        bPause.setVisible(false);
-        bCancel.setEnabled(false);
-    }
-
     private void restoreAfterPauseResume() {
         disablePreparingNewFilamentInfo();
         isPaused = false;
@@ -482,29 +476,24 @@ public class PrintSplashAutonomous extends BaseDialog {
         iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
         tRemaining.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3"));
 
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-
-                if (!driver.isBusy()) {
-                    unloadPressed = true;
-                    driver.setBusy(true);
-                    driver.dispatchCommand("M702");
-
-                    bUnload.setVisible(true);
-                    iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                    driver.setCoilText(FilamentControler.NO_FILAMENT);
-                    tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
-                    bOk.setVisible(true);
-                    firstUnloadStep = true;
-                    bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-                    tInfo6.setText("");
-                    tInfo2.setText(Languager.getTagValue(1, "Print", "Unload_BuildFinished"));
-                    tInfo6.setText(Languager.getTagValue(1, "Print", "Print_Unloaded3"));
-                    unloadPressed = false;
-                    bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                }
-
+        EventQueue.invokeLater(() -> {
+            if (!driver.isBusy()) {
+                unloadPressed = true;
+                driver.setBusy(true);
+                driver.dispatchCommand("M702");
+                
+                bUnload.setVisible(true);
+                iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
+                driver.setCoilText(FilamentControler.NO_FILAMENT);
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
+                bOk.setVisible(true);
+                firstUnloadStep = true;
+                bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+                tInfo6.setText("");
+                tInfo2.setText(Languager.getTagValue(1, "Print", "Unload_BuildFinished"));
+                tInfo6.setText(Languager.getTagValue(1, "Print", "Print_Unloaded3"));
+                unloadPressed = false;
+                bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
             }
         });
     }
@@ -893,16 +882,13 @@ public class PrintSplashAutonomous extends BaseDialog {
             driver.dispatchCommand("M640");
             driver.setBusy(true);
             
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    while (driver.isBusy() || !model.getMachineReady()) {
-                        Base.hiccup(500);
-                    }
-                    PauseMenu pause = new PauseMenu();
-                    dispose();
-                    pause.setVisible(true);
+            EventQueue.invokeLater(() -> {
+                while (driver.isBusy() || !model.getMachineReady()) {
+                    Base.hiccup(500);
                 }
+                PauseMenu pause = new PauseMenu();
+                dispose();
+                pause.setVisible(true);
             });
         }
     }//GEN-LAST:event_bPauseMousePressed
