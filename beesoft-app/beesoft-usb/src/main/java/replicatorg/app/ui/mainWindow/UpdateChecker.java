@@ -76,6 +76,7 @@ public class UpdateChecker extends BaseDialog {
 
     public UpdateChecker() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         initComponents();
         setFont();
         setTextLanguage();

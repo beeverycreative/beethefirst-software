@@ -616,6 +616,22 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Title4 value="Mudança de nozzle"/>
         </ExtruderSwitch>
 
+        <SupportSwitch>
+            <title value="Support switch" />
+            <intro value="First, make sure you have printed the spool support components (available from the BEESOFT folder)." />
+            <step0 value="Then you must follow these steps:" />
+            <step1 value="1. Remove the four screws that hold the top half of the printer's outer casing."/>
+            <step2 value="2. Remove the casing."/>
+            <step3 value="3. Remove the handle's screw and slide the handle sideways to remove it."/>
+            <step4 value="4. Move the extruder unit to the centre and remove the feeder tube." />
+            <step5 value="5. Place the coils of the feeder step to one end, keeping it in place behind the stepper motor."/>
+            <step6 value="6. Clamp the feeder tube in place with the printed component, sliding it onto the feeder tube admission piece from above." />
+            <step7 value="7. Place the printed adapter piece into the extruder."/>
+            <step8 value="8. Replace the outer casing and screw it into place."/>
+            <step9 value="9. Place the printed spool support at a 90º angle, then twist into place."/>
+            <step10 value="10. Thread the filament through the orifice, unless you are using TPU. If it's TPU, let it unroll freely."/>
+            <step11 value="11. Happy 3D Printing!"/>
+        </SupportSwitch>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no 1º ecrã do Guia Rápido --> 
         <QuickGuideWizard>
@@ -648,6 +664,9 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <NozzleSwitch_Title value="Mudança de nozzle"/>
             <NozzleSwitch_button value="Trocar nozzle agora"/>
             <NozzleSwitch_Intro value="Esta operação irá auxiliar-te na mudança do nozzle fornecido no Kit de Manutenção."/>
+            <SupportSwitch_Title value="Install top spool support" />
+            <SupportSwitch_button value="Change support" />
+            <SupportSwitch_Intro value="A simple tutorial that guides you in the installation of the top spool support." />
         </MaintenancePanel>
 
         <PausePanel>

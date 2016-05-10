@@ -244,6 +244,7 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento.png"))); // NOI18N
 
         jLabel3.setText("Troca de Filamento");

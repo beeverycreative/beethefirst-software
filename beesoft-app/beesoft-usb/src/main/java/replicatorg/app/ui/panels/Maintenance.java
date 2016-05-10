@@ -35,7 +35,6 @@ public class Maintenance extends BaseDialog {
         centerOnScreen();
         disableMessageDisplay();
         evaluateInitialConditions();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -62,6 +61,9 @@ public class Maintenance extends BaseDialog {
         bNozzleSwitch.setFont(GraphicDesignComponents.getSSProRegular("12"));
         lNozzleSwitchDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
         lNozzleSwitch.setFont(GraphicDesignComponents.getSSProBold("14"));
+        bSupportSwitch.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lSupportSwitchDesc.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lSupportSwitch.setFont(GraphicDesignComponents.getSSProBold("14"));
         bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel18.setFont(GraphicDesignComponents.getSSProRegular("14"));
     }
@@ -82,6 +84,9 @@ public class Maintenance extends BaseDialog {
         lNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Title"));
         bNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_button"));
         lNozzleSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Intro"));
+        lSupportSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "SupportSwitch_Title"));
+        bSupportSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "SupportSwitch_button"));
+        lSupportSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "SupportSwitch_Intro"));
         bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
         jLabel18.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
     }
@@ -156,13 +161,17 @@ public class Maintenance extends BaseDialog {
         lNozzleSwitchDesc = new javax.swing.JLabel();
         lNozzleSwitch = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
+        jSeparator4 = new javax.swing.JSeparator();
+        pSupportSwitch = new javax.swing.JPanel();
+        bSupportSwitch = new javax.swing.JLabel();
+        lSupportSwitchDesc = new javax.swing.JLabel();
+        lSupportSwitch = new javax.swing.JLabel();
         pBottom = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(747, 565));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(747, 558));
+        setPreferredSize(new java.awt.Dimension(747, 714));
         setResizable(false);
 
         pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
@@ -205,7 +214,7 @@ public class Maintenance extends BaseDialog {
                 .addComponent(l_tittle)
                 .addGap(183, 183, 183)
                 .addComponent(l_machine_status_warn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(288, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pTopLayout.setVerticalGroup(
             pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,6 +231,7 @@ public class Maintenance extends BaseDialog {
         bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bChangeFilament.setText("Mudar filamento agora");
         bChangeFilament.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bChangeFilament.setEnabled(false);
         bChangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bChangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -289,6 +299,7 @@ public class Maintenance extends BaseDialog {
         bCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bCalibration.setText("Calibrar agora");
         bCalibration.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bCalibration.setEnabled(false);
         bCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -351,6 +362,7 @@ public class Maintenance extends BaseDialog {
         bExtruderMaintenance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bExtruderMaintenance.setText("Limpar bico agora");
         bExtruderMaintenance.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bExtruderMaintenance.setEnabled(false);
         bExtruderMaintenance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bExtruderMaintenance.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -400,6 +412,7 @@ public class Maintenance extends BaseDialog {
         bNozzleSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bNozzleSwitch.setText("Limpar bico agora");
         bNozzleSwitch.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bNozzleSwitch.setEnabled(false);
         bNozzleSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNozzleSwitch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -449,6 +462,60 @@ public class Maintenance extends BaseDialog {
         jSeparator3.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator3.setPreferredSize(new java.awt.Dimension(1, 1));
 
+        jSeparator4.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator4.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator4.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator4.setPreferredSize(new java.awt.Dimension(1, 1));
+
+        pSupportSwitch.setBackground(new java.awt.Color(248, 248, 248));
+
+        bSupportSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
+        bSupportSwitch.setText("Mudar suporte");
+        bSupportSwitch.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bSupportSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bSupportSwitch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bSupportSwitchMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bSupportSwitchMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bSupportSwitchMouseEntered(evt);
+            }
+        });
+
+        lSupportSwitchDesc.setText("Lorem ipsum dolor sit amet.");
+
+        lSupportSwitch.setText("Mudar suporte");
+
+        javax.swing.GroupLayout pSupportSwitchLayout = new javax.swing.GroupLayout(pSupportSwitch);
+        pSupportSwitch.setLayout(pSupportSwitchLayout);
+        pSupportSwitchLayout.setHorizontalGroup(
+            pSupportSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pSupportSwitchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pSupportSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pSupportSwitchLayout.createSequentialGroup()
+                        .addComponent(bSupportSwitch)
+                        .addGap(575, 575, 575))
+                    .addComponent(lSupportSwitchDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pSupportSwitchLayout.createSequentialGroup()
+                        .addComponent(lSupportSwitch)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        pSupportSwitchLayout.setVerticalGroup(
+            pSupportSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pSupportSwitchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lSupportSwitch)
+                .addGap(2, 2, 2)
+                .addComponent(lSupportSwitchDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bSupportSwitch)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout pMaintenanceLayout = new javax.swing.GroupLayout(pMaintenance);
         pMaintenance.setLayout(pMaintenanceLayout);
         pMaintenanceLayout.setHorizontalGroup(
@@ -456,14 +523,16 @@ public class Maintenance extends BaseDialog {
             .addGroup(pMaintenanceLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pExtruderMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pCalibration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pExtruderMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pCalibration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pNozzleSwitch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pNozzleSwitch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pSupportSwitch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pMaintenanceLayout.setVerticalGroup(
@@ -471,11 +540,11 @@ public class Maintenance extends BaseDialog {
             .addGroup(pMaintenanceLayout.createSequentialGroup()
                 .addComponent(pTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(pCalibration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pCalibration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -484,7 +553,11 @@ public class Maintenance extends BaseDialog {
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pNozzleSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pSupportSwitch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pBottom.setBackground(new java.awt.Color(255, 203, 5));
@@ -533,8 +606,8 @@ public class Maintenance extends BaseDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(pBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -626,17 +699,34 @@ public class Maintenance extends BaseDialog {
         bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
     }//GEN-LAST:event_bChangeFilamentMouseEntered
 
+    private void bSupportSwitchMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bSupportSwitchMouseEntered
+        bSupportSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_12.png")));
+    }//GEN-LAST:event_bSupportSwitchMouseEntered
+
+    private void bSupportSwitchMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bSupportSwitchMouseExited
+        bSupportSwitch.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
+    }//GEN-LAST:event_bSupportSwitchMouseExited
+
+    private void bSupportSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bSupportSwitchMousePressed
+        if (bSupportSwitch.isEnabled()) {
+            SupportSwitch1 p = new SupportSwitch1();
+            p.setVisible(true);
+        }
+    }//GEN-LAST:event_bSupportSwitchMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCalibration;
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bChangeFilament;
     private javax.swing.JLabel bExtruderMaintenance;
     private javax.swing.JLabel bNozzleSwitch;
+    private javax.swing.JLabel bSupportSwitch;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel lCalibration;
     private javax.swing.JLabel lCalibration_desc;
     private javax.swing.JLabel lCalibration_warn;
@@ -647,6 +737,8 @@ public class Maintenance extends BaseDialog {
     private javax.swing.JLabel lExtruderMaintenanceDesc;
     private javax.swing.JLabel lNozzleSwitch;
     private javax.swing.JLabel lNozzleSwitchDesc;
+    private javax.swing.JLabel lSupportSwitch;
+    private javax.swing.JLabel lSupportSwitchDesc;
     private javax.swing.JPanel l_machine_status_warn;
     private javax.swing.JLabel l_tittle;
     private javax.swing.JPanel pBottom;
@@ -655,6 +747,7 @@ public class Maintenance extends BaseDialog {
     private javax.swing.JPanel pExtruderMaintenance;
     private javax.swing.JPanel pMaintenance;
     private javax.swing.JPanel pNozzleSwitch;
+    private javax.swing.JPanel pSupportSwitch;
     private javax.swing.JPanel pTop;
     // End of variables declaration//GEN-END:variables
 

@@ -2,7 +2,6 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
