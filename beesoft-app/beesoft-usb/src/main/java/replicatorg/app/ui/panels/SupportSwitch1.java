@@ -78,7 +78,6 @@ public class SupportSwitch1 extends BaseDialog {
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jSeparator2 = new javax.swing.JSeparator();
         lDesc = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -187,11 +186,6 @@ public class SupportSwitch1 extends BaseDialog {
         jLabel2.setMinimumSize(new java.awt.Dimension(532, 250));
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 250));
 
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
-
         lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lDesc.setText("<html>\nFirst, make sure you have printed the spool support components (available from the BEESOFT folder).\n<br><br>\nThen you must follow these steps:\n<br><br>\n1. Remove the four screws that hold the top half of the printer's outer casing.\n<br>\n2. Remove the casing\n<br>\n3. Remove the handle's screw and slide the handle sideways to remove it.\n<br>\n4. Move the extruder unit to the centre and remove the feeder tube.\n</html>");
 
@@ -199,21 +193,18 @@ public class SupportSwitch1 extends BaseDialog {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(58, 58, 58)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(59, 59, 59))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(21, 21, 21)
                 .addComponent(lDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -284,14 +275,14 @@ public class SupportSwitch1 extends BaseDialog {
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         if (bCancel.isEnabled()) {
             dispose();
-            driver.dispatchCommand("G28", COM.NO_RESPONSE);
+            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         if (jLabel15.isEnabled()) {
             dispose();
-            driver.dispatchCommand("G28", COM.NO_RESPONSE);
+            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_jLabel15MousePressed
 
@@ -305,7 +296,6 @@ public class SupportSwitch1 extends BaseDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lDesc;
     // End of variables declaration//GEN-END:variables
 }

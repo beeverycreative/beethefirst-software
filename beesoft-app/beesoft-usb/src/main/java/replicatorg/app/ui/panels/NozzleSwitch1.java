@@ -21,12 +21,12 @@ import replicatorg.machine.model.MachineModel;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderSwitch1 extends BaseDialog {
+public class NozzleSwitch1 extends BaseDialog {
     
     private final MachineModel model = Base.getMachineLoader()
             .getMachineInterface().getDriver().getMachine();
 
-    public ExtruderSwitch1() {
+    public NozzleSwitch1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
@@ -51,7 +51,12 @@ public class ExtruderSwitch1 extends BaseDialog {
         jLabel1.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
+        lDesc.setText(
+                "<html>"
+                + Languager.getTagValue(1, "ExtruderSwitch", "NozzleSelectDesc1") 
+                + "<br><br>" 
+                + Languager.getTagValue(1, "ExtruderSwitch", "NozzleSelectDesc2")
+                + "</html>");
     }
 
     private void evaluateInitialConditions() {
@@ -212,7 +217,8 @@ public class ExtruderSwitch1 extends BaseDialog {
         lNozzleComboBox.setText("Nozzle (mm)");
 
         lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lDesc.setText("<html> \n\tSelect the nozzle size that is about to be installed. \n\t<br><br>\n\tPlease note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove.\n\t<br><br>\n\tNotice that some filaments may not work with some nozzle sizes and so they will not be able to be selected on the Change Filament operation. \n</html>");
+        lDesc.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lDesc.setText("<html> \n\tSelect the nozzle size that is about to be installed. \n\t<br><br>\n\tPlease note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove.\n</html>");
 
         lCurrentNozzleTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lCurrentNozzleTitle.setText("Current nozzle installed:");
@@ -251,18 +257,17 @@ public class ExtruderSwitch1 extends BaseDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lNozzleComboBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lNozzleComboBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lCurrentNozzleTitle)
                             .addComponent(lCurrentNozzleVar))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(lDesc))
-                .addContainerGap())
+                        .addContainerGap(75, Short.MAX_VALUE))
+                    .addComponent(lDesc)))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -322,7 +327,7 @@ public class ExtruderSwitch1 extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            ExtruderSwitch2 p = new ExtruderSwitch2((Nozzle) nozzleComboBox.getSelectedItem());
+            NozzleSwitch2 p = new NozzleSwitch2((Nozzle) nozzleComboBox.getSelectedItem());
             dispose();
             p.setVisible(true);
         }

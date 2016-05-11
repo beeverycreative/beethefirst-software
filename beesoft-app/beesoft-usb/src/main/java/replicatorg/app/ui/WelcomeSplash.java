@@ -141,7 +141,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         /**
          * Check is 3DModels folder exists. If not, create it.
          */
-        Base.getAppDataDirectory();
         Base.copy3DFiles();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
         window.setEnabled(true);

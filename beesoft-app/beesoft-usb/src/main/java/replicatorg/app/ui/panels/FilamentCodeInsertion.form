@@ -153,7 +153,7 @@
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jPanel3" min="-2" pref="365" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -249,7 +249,7 @@
                       <Component id="jSeparator2" min="-2" pref="15" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="18" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jComboBox1" min="-2" max="-2" attributes="0"/>
                           <Component id="lDesc" min="-2" max="-2" attributes="0"/>
@@ -312,7 +312,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="SansSerif" size="12" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent). &lt;br&gt;&lt;br&gt; The available filament to be selected depends on the nozzle installed in the printer.&lt;/html&gt;"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent).&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>

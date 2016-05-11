@@ -58,7 +58,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -363,39 +362,8 @@ public class Base {
         return f;
     }
 
-    private static byte[] readAllBytes(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-
-        // Get the size of the file
-        long length = file.length();
-
-        if (length > Integer.MAX_VALUE) {
-            // File is too large
-        }
-
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int) length];
-
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
-
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file " + file.getName());
-        }
-
-        // Close the input stream and return bytes
-        is.close();
-        return bytes;
-    }
-
     private static Map<String, String> getGalleryMap(File[] models) {
-        Map<String, String> mod = new HashMap<String, String>();
+        Map<String, String> mod = new HashMap<>();
 
         for (File model : models) {
             mod.put(model.getName(), model.getAbsolutePath());
@@ -404,8 +372,8 @@ public class Base {
     }
 
     public static void copy3DFiles() {
-        InputStream inStream;
-        OutputStream outStream;
+        BufferedInputStream inStream;
+        BufferedOutputStream outStream;
 
         File[] models = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER).listFiles();
         Map<String, String> galleryModels = getGalleryMap(new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER).listFiles());
@@ -416,8 +384,8 @@ public class Base {
                 File bfile = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + model.getName());
                 if (!galleryModels.containsKey(afile.getName())) {
 
-                    inStream = new FileInputStream(afile);
-                    outStream = new FileOutputStream(bfile);
+                    inStream = new BufferedInputStream(new FileInputStream(afile));
+                    outStream = new BufferedOutputStream(new FileOutputStream(bfile));
 
                     byte[] buffer = new byte[1024];
 
@@ -433,7 +401,7 @@ public class Base {
                 }
             } catch (IOException e) {
                 Base.writeLog(e.getMessage(), Base.class);
-            }
+            } 
         }
 
     }
@@ -698,7 +666,7 @@ public class Base {
     static public void cleanDirectoryTempFiles(String dirPath) {
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
-            if (file.getName().contains(".stl") || (file.getName().contains(".gcode") && file.getName().contains("gcodeToPrinter") == false)) {
+            if (file.getName().contains(".gcode") && file.getName().contains("gcodeToPrinter") == false) {
                 file.delete();
             }
         }
@@ -929,7 +897,7 @@ public class Base {
     }
 
     static public void main(String args[]) {
-        
+
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory",

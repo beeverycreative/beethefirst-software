@@ -1407,7 +1407,8 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         // Opens at last directory
         if (opt == 0) {
-            loadDir = ProperDefault.get("ui.open_dir0");
+            //loadDir = ProperDefault.get("ui.open_dir0");
+            loadDir = Base.getAppDataDirectory().getAbsolutePath() + "/3DModels";
         }
 
         if (loadDir != null) {

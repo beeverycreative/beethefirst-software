@@ -258,21 +258,20 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jSeparator2" min="-2" pref="15" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lNozzleComboBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="lNozzleComboBox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="lCurrentNozzleTitle" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="lCurrentNozzleVar" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="nozzleComboBox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace pref="75" max="32767" attributes="0"/>
                           </Group>
                           <Component id="lDesc" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -330,7 +329,8 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Source Sans Pro" size="12" style="0"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt; &#xa;&#x9;Select the nozzle size that is about to be installed. &#xa;&#x9;&lt;br&gt;&lt;br&gt;&#xa;&#x9;Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove.&#xa;&#x9;&lt;br&gt;&lt;br&gt;&#xa;&#x9;Notice that some filaments may not work with some nozzle sizes and so they will not be able to be selected on the Change Filament operation. &#xa;&lt;/html&gt;"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt; &#xa;&#x9;Select the nozzle size that is about to be installed. &#xa;&#x9;&lt;br&gt;&lt;br&gt;&#xa;&#x9;Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove.&#xa;&lt;/html&gt;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lCurrentNozzleTitle">

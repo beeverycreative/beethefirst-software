@@ -489,10 +489,11 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento --> 
         <FilamentWizard>
             <Title1 value="PREPARING"/>
+            <CodeInsertionDesc value="Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent)." />
             <Heating_Info_Title value="Extruder nozzle temperature"/>
             <Heating_Info value="Extruder nozzle has to be heated whenever you change the filament. When it reaches the ideal temperature you may move to the next stage. "/>
             <Info_Warning value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/> 
-            <Title2 value="Filament Unload"/>
+            <Title2 value="Filament Load/Unload"/>
             <LoadButton value="Load"/>
             <UnloadButton value="Unload"/>
             <Exchange_Info_Title value="Make sure the filament is correctly unloaded before proceeding."/>
@@ -594,8 +595,9 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
         
         <ExtruderSwitch>
-
             <Title1 value="Extruder Switch"/>
+            <NozzleSelectDesc1 value="Select the nozzle size that is about to be installed." />
+            <NozzleSelectDesc2 value="Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove." />
             <HeatingMessage1 value="Heating..."/>
             <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
             <Info1b value = " "/>
@@ -618,7 +620,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
         <SupportSwitch>
             <title value="Support switch" />
-            <intro value="First, make sure you have printed the spool support components (available from the BEESOFT folder)." />
+            <intro value="First, make sure you have printed the spool support components (available by pressing the Import Model button)." />
             <step0 value="Then you must follow these steps:" />
             <step1 value="1. Remove the four screws that hold the top half of the printer's outer casing, and remove it."/>
             <step2 value="2. Remove the handle's screw and slide the handle sideways to remove it."/>

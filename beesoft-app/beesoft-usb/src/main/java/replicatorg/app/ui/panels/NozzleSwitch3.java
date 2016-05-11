@@ -25,13 +25,13 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class ExtruderSwitch3 extends BaseDialog {
+public class NozzleSwitch3 extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private final Nozzle selectedNozzle;
 
-    public ExtruderSwitch3(Nozzle selectedNozzle) {
+    public NozzleSwitch3(Nozzle selectedNozzle) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();

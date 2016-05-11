@@ -65,7 +65,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
+        lDesc.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "CodeInsertionDesc") + "</html>");
     }
 
     private void evaluateInitialConditions() {
@@ -263,7 +263,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         });
 
         lDesc.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lDesc.setText("<html>Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent). <br><br> The available filament to be selected depends on the nozzle installed in the printer.</html>");
+        lDesc.setText("<html>Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent).</html>");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -290,7 +290,7 @@ public class FilamentCodeInsertion extends BaseDialog {
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -315,7 +315,7 @@ public class FilamentCodeInsertion extends BaseDialog {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(12, 12, 12)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -398,7 +398,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             // the nozzle switch operation, if that's what the user wants
             if (filament.isCompatible() == false) {
                 if (Base.printPaused == false) {
-                    warning = new Warning(new ExtruderSwitch1());
+                    warning = new Warning(new NozzleSwitch1());
                     warning.setMessage("IncompatibleFilament");
                     warning.setVisible(true);
 

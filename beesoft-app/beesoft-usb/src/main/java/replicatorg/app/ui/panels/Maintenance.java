@@ -104,6 +104,7 @@ public class Maintenance extends BaseDialog {
         bChangeFilament.setEnabled(true);
         bExtruderMaintenance.setEnabled(true);
         bNozzleSwitch.setEnabled(true);
+        bSupportSwitch.setEnabled(true);
     }
 
     private void enableMessageDisplay() {
@@ -113,6 +114,7 @@ public class Maintenance extends BaseDialog {
         bChangeFilament.setEnabled(false);
         bExtruderMaintenance.setEnabled(false);
         bNozzleSwitch.setEnabled(false);
+        bSupportSwitch.setEnabled(false);
     }
 
     public void setBusy() {
@@ -472,6 +474,7 @@ public class Maintenance extends BaseDialog {
         bSupportSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
         bSupportSwitch.setText("Mudar suporte");
         bSupportSwitch.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
+        bSupportSwitch.setEnabled(false);
         bSupportSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bSupportSwitch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -658,7 +661,7 @@ public class Maintenance extends BaseDialog {
     private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
         if (bNozzleSwitch.isEnabled()) {
             dispose();
-            ExtruderSwitch1 p = new ExtruderSwitch1();
+            NozzleSwitch1 p = new NozzleSwitch1();
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
 

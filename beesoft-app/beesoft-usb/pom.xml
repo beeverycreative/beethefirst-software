@@ -159,7 +159,7 @@
                                 </copy>
                                 
                                 <copy todir="${target.dir}">
-                                    <filelist dir="${app.resources.dir}/images" files="logo.gif, loading.gif" />
+                                    <filelist dir="${app.resources.dir}/images" files="icon.png" />
                                 </copy>
                                 
                                 <!-- standard files -->                                
@@ -224,7 +224,7 @@
                                     <fileset dir="${project.build.directory}" includes="*.jar" />                                    
                                 </copy>
                                 <copy todir="${target.dir}">
-                                    <filelist dir="${app.resources.dir}/images" files="logo.gif, loading.gif" />
+                                    <filelist dir="${app.resources.dir}/images" files="icon.png" />
                                 </copy>
                                                                 
                                 <!-- standard files -->                                
@@ -333,7 +333,7 @@
 
                                         <copy todir="${reso.dir}">
                                             <fileset dir="${installer.dir}" includes="drivers/*.dmg" />
-                                            <filelist dir="${project.basedir}/src/main/resources/app_resources/images" files="logo.gif,loading.gif" />
+                                            <filelist dir="${project.basedir}/src/main/resources/app_resources/images" files="icon.png" />
                                             <filelist dir="${project.basedir}" files="license.txt,readme.txt,contributors.txt,changelog.txt" />
                                         </copy>                              
                                         <copy todir="${reso.dir}/curaEngine/bin">

@@ -30,6 +30,10 @@ public class FilamentInsertion extends BaseDialog {
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
     private final Filament selectedFilament;
+    private final ImageIcon extLoadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/load_filament_external.gif"));
+    private final ImageIcon extUnloadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_external.gif"));
+    private final ImageIcon intLoadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/load_filament_internal.gif"));
+    private final ImageIcon intUnloadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_internal.gif"));
 
     public FilamentInsertion(Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -40,6 +44,13 @@ public class FilamentInsertion extends BaseDialog {
         centerOnScreen();
         this.selectedFilament = selectedFilament;
         moveToPosition();
+
+        // change image according to the filament's material
+        if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
+            jLabel2.setIcon(intUnloadImage);
+        } else {
+            jLabel2.setIcon(extUnloadImage);
+        }
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -152,7 +163,7 @@ public class FilamentInsertion extends BaseDialog {
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/infografia-01.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_internal.gif"))); // NOI18N
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 233));
 
         bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
@@ -435,7 +446,11 @@ public class FilamentInsertion extends BaseDialog {
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
         if (bLoad.isEnabled()) {
             Base.writeLog("Loading filament", this.getClass());
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
+            if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
+                jLabel2.setIcon(intLoadImage);
+            } else {
+                jLabel2.setIcon(extLoadImage);
+            }
             driver.setBusy(true);
             driver.dispatchCommand("M701", COM.NO_RESPONSE);
         }
@@ -444,7 +459,11 @@ public class FilamentInsertion extends BaseDialog {
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unloading Filament", this.getClass());
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
+            if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
+                jLabel2.setIcon(intUnloadImage);
+            } else {
+                jLabel2.setIcon(extUnloadImage);
+            }
             driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.setBusy(true);
             driver.dispatchCommand("M702", COM.NO_RESPONSE);

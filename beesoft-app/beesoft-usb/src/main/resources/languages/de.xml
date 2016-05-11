@@ -489,10 +489,11 @@
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento --> 
         <FilamentWizard>
             <Title1 value="VORBEREITUNG"/>
+            <CodeInsertionDesc value="Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent)." />
             <Heating_Info_Title value="Extruderdüse Temperatur"/>
             <Heating_Info value="Die Extruderdüse erwärmt, immer wann Sie das Filament zu wechseln möchten. Wenn es die ideale Temperatur erreicht, können Sie in die nächste Phase zu bewegen."/>
             <Info_Warning value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/> 
-            <Title2 value="Das Filament entladen"/>
+            <Title2 value="Das Filament Laden/Entladen"/>
             <LoadButton value="Laden"/>
             <UnloadButton value="Entladen"/>
             <Exchange_Info_Title value="Sicherstellen, dass das Filament richtig entladen ist, bevor Sie fortfahren."/>
@@ -594,8 +595,9 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
 
         
         <ExtruderSwitch>
-
             <Title1 value="Extruderdüse wechseln"/>
+            <NozzleSelectDesc1 value="Select the nozzle size that is about to be installed." />
+            <NozzleSelectDesc2 value="Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove." />
             <HeatingMessage1 value="Erhitzen..."/>
             <Info1a value="Benutzen Sie diesen Vorgang, wenn Sie die Extruderdüse ersetzen möchten. Dies beinhaltet die Handhabung eines heißen Extruder, benötigen Sie: eine hitzebeständige Schale oder Oberfläche, eine Ersatzdüse und das Werkzeug von Ihrem Wartungs-Kit."/>
             <Info1b value = " "/>
@@ -618,19 +620,18 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
 
         <SupportSwitch>
             <title value="Support switch" />
-            <intro value="First, make sure you have printed the spool support components (available from the BEESOFT folder)." />
+            <intro value="First, make sure you have printed the spool support components (available by pressing the Import Model button)." />
             <step0 value="Then you must follow these steps:" />
-            <step1 value="1. Remove the four screws that hold the top half of the printer's outer casing."/>
-            <step2 value="2. Remove the casing."/>
-            <step3 value="3. Remove the handle's screw and slide the handle sideways to remove it."/>
-            <step4 value="4. Move the extruder unit to the centre and remove the feeder tube." />
-            <step5 value="5. Place the coils of the feeder step to one end, keeping it in place behind the stepper motor."/>
-            <step6 value="6. Clamp the feeder tube in place with the printed component, sliding it onto the feeder tube admission piece from above." />
-            <step7 value="7. Place the printed adapter piece into the extruder."/>
-            <step8 value="8. Replace the outer casing and screw it into place."/>
-            <step9 value="9. Place the printed spool support at a 90º angle, then twist into place."/>
-            <step10 value="10. Thread the filament through the orifice, unless you are using TPU. If it's TPU, let it unroll freely."/>
-            <step11 value="11. Happy 3D Printing!"/>
+            <step1 value="1. Remove the four screws that hold the top half of the printer's outer casing, and remove it."/>
+            <step2 value="2. Remove the handle's screw and slide the handle sideways to remove it."/>
+            <step3 value="3. Remove the feeder tube from the extruder unit."/>
+            <step4 value="4. Place the coils of the feeder step to one end, keeping it in place behind the stepper motor." />
+            <step5 value="5. Clamp the feeder tube in place with the printed component, sliding it onto the feeder tube admission piece from above."/>
+            <step6 value="6. Place the printed adapter piece into the extruder." />
+            <step7 value="7. Replace the outer casing and screw it into place."/>
+            <step8 value="8. Place the printed spool support at a 90º angle, then twist into place."/>
+            <step9 value="9. Thread the filament through the orifice, unless you are using TPU. If it's TPU, let it unroll freely."/>
+            <step10 value="10. Happy 3D Printing!"/>
         </SupportSwitch>
 
         <!-- A próxima secção XML contém o texto a ser apresentado no 1º ecrã do Guia Rápido --> 

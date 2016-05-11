@@ -184,8 +184,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.rebootingIntoFirmware = true;
                 hiccup(3000, 0);
                 dispatchCommand(LAUNCH_FIRMWARE, COM.NO_RESPONSE); // Launch firmware
-                hiccup(3000, 0);
                 closePipe(pipes);
+                hiccup(3000, 0);
             } else {
                 status = "error";
             }
@@ -347,6 +347,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 ans += readResponseTog();
 
                 if (ans.contains("tog")) {
+                    if(ans.equals("tog") == false) {
+                        System.out.println("break");
+                    }
                     break;
                 } else {
                     Base.hiccup(1000);
