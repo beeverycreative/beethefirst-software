@@ -811,5 +811,9 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <All value="All"/>
         </Gallery>
 
+        <GenericMessages>
+            <CPEnableTitle value="Debug mode has been enabled!" />
+            <CPEnableText value="You can now use the Control Panel." />
+        </GenericMessages>
     </tags>      
 </languages>

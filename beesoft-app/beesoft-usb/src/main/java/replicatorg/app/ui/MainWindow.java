@@ -255,7 +255,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
 
         menubar.add(buildFileMenu());
         menubar.add(buildEditMenu());
-//        menubar.add(buildModelsMenu());
         menubar.add(buildPrinterMenu());
         menubar.add(buildHelpMenu());
         setJMenuBar(menubar);
@@ -385,6 +384,29 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     private void updateGUI() {
         this.setSize(this.getWidth() + 1, this.getHeight());
         this.setSize(this.getWidth() - 1, this.getHeight());
+    }
+
+    public void setCPVisible() {
+        JMenu menu;
+        JMenuItem menuItem;
+        String name;
+        for (Component c : this.getJMenuBar().getComponents()) {
+            menu = (JMenu) c;
+            name = menu.getText();
+            if (name.equalsIgnoreCase("Printer")) {
+                for (int i = 0; i < menu.getItemCount(); ++i) {
+                    menuItem = (JMenuItem) menu.getItem(i);
+                    if (menuItem != null) {
+                        name = menuItem.getText();
+                        if (name.equalsIgnoreCase("Control Panel")) {
+                            menuItem.setVisible(true);
+                            break;
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     private void updateSizeVariables(int wth, int hth) {
@@ -543,7 +565,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         }
     }
 
-    protected JMenu buildFileMenu() {
+    private JMenu buildFileMenu() {
         JMenuItem item;
         JMenu menu = new JMenu("File");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
@@ -739,7 +761,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         return menu;
     }
 
-    public JMenu buildEditMenu() {
+    private JMenu buildEditMenu() {
         JMenu menu = new JMenu("Edit");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
@@ -901,58 +923,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         return menu;
     }
 
-    protected JMenu buildModelsMenu() {
-        JMenuItem item;
-        JMenu menu = new JMenu("Gallery");
-        menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
-        menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Gallery"));
-
-        /*
-         item = newJMenuItem("Import Model from Library", 'G');
-         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Add"));
-         item.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-         Gallery p = new Gallery();
-         p.setVisible(true);
-         SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-         sceneDP.updateBed(Base.getMainWindow().getBed());
-         updateDetailsCenter(sceneDP);
-         canvas.unPickAll();
-         }
-         });
-         menu.add(item);
-         */
-        item = newJMenuItem("Import Model ", 'I');
-        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleNewModel();
-            }
-        });
-        menu.add(item);
-
-        /*
-         item = newJMenuItem("Online Models", 'I', true);
-         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-         item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Online"));
-         item.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-         Warning p = new Warning();
-         p.setVisible(true);
-         }
-         });
-         menu.add(item);
-         */
-        return menu;
-    }
-
-    protected JMenu buildPrinterMenu() {
+    private JMenu buildPrinterMenu() {
         boolean enableCP;
         JMenuItem item;
         JMenu menu = new JMenu("Printer");
@@ -979,25 +950,24 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-        if (enableCP == true) {
-            item = newJMenuItem("Control Panel", 'K');
-            item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-            item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
-            item.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (machineLoader.isConnected()) {
-                        if (Base.isPrinting == false) {
-                            ControlPanel cp = new ControlPanel();
-                            cp.setVisible(true);
-                        }
-                    } else {
-                        showFeedBackMessage("btfDisconnect");
+        item = newJMenuItem("Control Panel", 'K');
+        item.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (machineLoader.isConnected()) {
+                    if (Base.isPrinting == false) {
+                        ControlPanel cp = new ControlPanel();
+                        cp.setVisible(true);
                     }
+                } else {
+                    showFeedBackMessage("btfDisconnect");
                 }
-            });
-            menu.add(item);
-        }
+            }
+        });
+        menu.add(item);
+        item.setVisible(enableCP);
 
         menu.addSeparator();
 
@@ -1031,7 +1001,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         return menu;
     }
 
-    protected JMenu buildHelpMenu() {
+    private JMenu buildHelpMenu() {
         JMenuItem item;
         JMenu menu = new JMenu("Help");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
@@ -1101,30 +1071,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         });
         menu.add(item);
 
-        return menu;
-    }
-
-    protected JMenu buildAboutMenu() {
-
-        JMenu menu = new JMenu("About");
-        menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
-        menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_About"));
-        menu.addMenuListener(new MenuListener() {
-            @Override
-            public void menuSelected(MenuEvent e) {
-                About p = new About();
-                p.setVisible(true);
-            }
-
-            @Override
-            public void menuDeselected(MenuEvent e) {
-            }
-
-            @Override
-            public void menuCanceled(MenuEvent e) {
-            }
-        });
         return menu;
     }
 

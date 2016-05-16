@@ -58,7 +58,7 @@
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jUnknownTitle" min="-2" max="-2" attributes="0"/>
+                          <Component id="jTitle" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                           <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -71,7 +71,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
-                      <Component id="jUnknownTitle" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTitle" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                   <Component id="jPanel3" max="32767" attributes="0"/>
@@ -139,7 +139,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jUnknownText" min="-2" pref="358" max="-2" attributes="0"/>
+                      <Component id="jText" min="-2" pref="358" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -148,33 +148,30 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
-                      <Component id="jUnknownText" min="-2" max="-2" attributes="0"/>
+                      <Component id="jText" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="95" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jUnknownText">
+            <Component class="javax.swing.JLabel" name="jText">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="GraphicDesignComponents.getSSProBold(&quot;12&quot;)" type="code"/>
+                  <Connection code="GraphicDesignComponents.getSSProBold(&quot;14&quot;)" type="code"/>
                 </Property>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="&quot;&lt;html&gt;&lt;p&gt;&quot; + Languager.getTagValue(1, &quot;UnknownFilament&quot;, &quot;UnknownFilamentText&quot;) + &quot;&lt;/p&gt;&lt;/html&gt;&quot;" type="code"/>
-                </Property>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Text goes here!&lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JLabel" name="jUnknownTitle">
+        <Component class="javax.swing.JLabel" name="jTitle">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="GraphicDesignComponents.getSSProRegular(&quot;14&quot;)" type="code"/>
             </Property>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="&quot;&lt;html&gt;&lt;p&gt;&quot; + Languager.getTagValue(1, &quot;UnknownFilament&quot;, &quot;UnknownFilamentTitle&quot;) + &quot;&lt;/p&gt;&lt;/html&gt;&quot;" type="code"/>
-            </Property>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;Title goes here!&lt;/html&gt;"/>
             <Property name="verticalAlignment" type="int" value="3"/>
           </Properties>
         </Component>

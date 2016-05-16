@@ -810,6 +810,10 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <Models value="Modelos"/>
             <All value="Todos"/>
         </Gallery>
-        
+
+        <GenericMessages>
+            <CPEnableTitle value="Debug mode has been enabled!" />
+            <CPEnableText value="You can now use the Control Panel." />
+        </GenericMessages>
     </tags>      
 </languages>

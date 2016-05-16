@@ -811,5 +811,9 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <All value="Tout"/>
         </Gallery>
 
+        <GenericMessages>
+            <CPEnableTitle value="Debug mode has been enabled!" />
+            <CPEnableText value="You can now use the Control Panel." />
+        </GenericMessages>
     </tags>      
 </languages>

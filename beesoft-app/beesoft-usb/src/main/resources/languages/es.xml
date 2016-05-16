@@ -811,5 +811,9 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <All value="Todos"/>
         </Gallery>
 
+        <GenericMessages>
+            <CPEnableTitle value="Debug mode has been enabled!" />
+            <CPEnableText value="You can now use the Control Panel." />
+        </GenericMessages>
     </tags>      
 </languages>

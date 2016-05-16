@@ -3,10 +3,13 @@ package replicatorg.app.ui.panels;
 import java.awt.Dialog;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
@@ -22,10 +25,15 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class About extends BaseDialog {
 
+    private final Timer resetClickCount = new Timer(1000, (ActionEvent e) -> {
+        clickCount = 0;
+    });
     private InformationTooltip info;
+    private int clickCount = 0;
 
     public About() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        resetClickCount.setRepeats(false);
         initComponents();
         setFont();
         enableDrag();
@@ -143,6 +151,11 @@ public class About extends BaseDialog {
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel1MouseClicked(evt);
+            }
+        });
 
         jLabel1.setText("BEESOFT");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
@@ -384,6 +397,20 @@ public class About extends BaseDialog {
         this.toBack();
     }//GEN-LAST:event_jBootloaderTooltipMouseClicked
 
+    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
+        resetClickCount.stop();
+        clickCount++;
+        
+        if(clickCount >= 10) {
+            ProperDefault.put("controlpanel.enable", "true");
+            Base.getMainWindow().setCPVisible();
+            GenericMessage message = new GenericMessage("CPEnableTitle", "CPEnableText");
+            message.setVisible(true);
+        }
+        
+        resetClickCount.start();
+    }//GEN-LAST:event_jPanel1MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jBootloaderTooltip;
     private javax.swing.JLabel jLabel1;
@@ -404,4 +431,5 @@ public class About extends BaseDialog {
     private javax.swing.JLabel lVersionTitle;
     private javax.swing.JLabel lVersionValue;
     // End of variables declaration//GEN-END:variables
+
 }
