@@ -28,6 +28,7 @@ public class About extends BaseDialog {
     private final Timer resetClickCount = new Timer(1000, (ActionEvent e) -> {
         clickCount = 0;
     });
+    private final boolean cpEnabled = Boolean.parseBoolean(ProperDefault.get("controlpanel.enable"));
     private InformationTooltip info;
     private int clickCount = 0;
 
@@ -401,7 +402,7 @@ public class About extends BaseDialog {
         resetClickCount.stop();
         clickCount++;
         
-        if(clickCount >= 10) {
+        if(clickCount >= 10 && cpEnabled == false) {
             ProperDefault.put("controlpanel.enable", "true");
             Base.getMainWindow().setCPVisible();
             GenericMessage message = new GenericMessage("CPEnableTitle", "CPEnableText");
