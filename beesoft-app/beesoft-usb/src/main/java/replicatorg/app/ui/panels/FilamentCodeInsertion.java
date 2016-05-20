@@ -33,7 +33,7 @@ import replicatorg.machine.model.MachineModel;
 public class FilamentCodeInsertion extends BaseDialog {
 
     private final MachineModel model = Base.getMachineLoader().getMachineInterface().getDriver().getMachine();
-    private final ImageIcon noSupportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento.png"));
+    private final ImageIcon bothSupportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_ambos.png"));
     private final ImageIcon supportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup.png"));
     private Nozzle currentNozzle = new Nozzle(model.getNozzleType());
     private DefaultComboBoxModel<Filament> comboModel;
@@ -80,7 +80,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         selectedFilament = (FilamentComboItem) jComboBox1.getSelectedItem();
 
         if (selectedFilament.getFilamentObject().getMaterial() == Material.PLA) {
-            jLabel2.setIcon(noSupportImage);
+            jLabel2.setIcon(bothSupportImage);
         } else {
             jLabel2.setIcon(supportImage);
         }
@@ -388,7 +388,7 @@ public class FilamentCodeInsertion extends BaseDialog {
 
             // change image according to the filament's material
             if (filament.getFilamentObject().getMaterial() == Material.PLA) {
-                jLabel2.setIcon(noSupportImage);
+                jLabel2.setIcon(bothSupportImage);
             } else {
                 jLabel2.setIcon(supportImage);
             }
