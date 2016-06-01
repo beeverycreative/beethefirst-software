@@ -629,8 +629,8 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <step5 value="5. Clamp the feeder tube in place with the printed component, sliding it onto the feeder tube admission piece from above."/>
             <step6 value="6. Place the printed adapter piece into the extruder." />
             <step7 value="7. Replace the outer casing and screw it into place."/>
-            <step8 value="8. Place the printed spool support at a 90º angle, then twist into place."/>
-            <step9 value="9. Thread the filament through the orifice, unless you are using TPU. If it's TPU, let it unroll freely."/>
+            <step8 value="8. Place the printed spool support at a 90º angle, then twist into place. Make sure the spool support is on the left, opposite the side where the internal spool holder goes."/>
+            <step9 value="9. Thread the filament through the orifice."/>
             <step10 value="10. Happy 3D Printing!"/>
         </SupportSwitch>
 
