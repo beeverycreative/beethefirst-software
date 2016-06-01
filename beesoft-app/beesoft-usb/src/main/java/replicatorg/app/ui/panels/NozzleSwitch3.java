@@ -5,10 +5,8 @@ import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
-import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -28,63 +26,62 @@ import replicatorg.drivers.Driver;
 public class NozzleSwitch3 extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
-    private final Nozzle selectedNozzle;
+    private final BusyFeedbackThread busyFeedbackThread = new BusyFeedbackThread();
 
-    public NozzleSwitch3(Nozzle selectedNozzle) {
+    public NozzleSwitch3() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        setFont();
         enableDrag();
         setTextLanguage();
         centerOnScreen();
         driver.setBusy(true);
         driver.dispatchCommand("M703", COM.NO_RESPONSE);
-        this.selectedNozzle = selectedNozzle;
 
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                disposeThread.start();
+                busyFeedbackThread.start();
             }
 
             @Override
             public void windowClosed(WindowEvent e) {
-                disposeThread.kill();
+                busyFeedbackThread.kill();
                 Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             }
         });
     }
 
-    private void setFont() {
-        lTitle.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        pText1.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        pText2.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bLoad.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bUnload.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        pWarning.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
-    }
-
     private void setTextLanguage() {
-        String text1, warning;
+        String text1;
 
         text1 = "<html>"
-                + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info3a")
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info3b")
                 + "</html>";
-        warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning3") + "</b></html>";
 
-        pText1.setText(text1);
-        pText2.setText(warning);
         lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title3"));
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        pWarning.setHorizontalAlignment(SwingConstants.CENTER);
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        pWarning.setText(Languager.getTagValue(1, "ExtruderSwitch", "HeatingMessage3"));
+        pText1.setText("<html>" + text1 + "</html>");
+        pText2.setText("<html>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning3") + "</html>");
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6")); // next
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+    }
+
+    @Override
+    public void showMessage() {
+        enableMessageDisplay();
+        bLoad.setEnabled(false);
+        bUnload.setEnabled(false);
+        bNext.setEnabled(false);
+    }
+
+    @Override
+    public void resetFeedbackComponents() {
+        bLoad.setEnabled(true);
+        bUnload.setEnabled(true);
+        bNext.setEnabled(true);
+        disableMessageDisplay();
     }
 
     private void enableMessageDisplay() {
@@ -101,9 +98,7 @@ public class NozzleSwitch3 extends BaseDialog {
         dispose();
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
         Base.bringAllWindowsToFront();
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -111,53 +106,119 @@ public class NozzleSwitch3 extends BaseDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        pWarning = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
+        pText2 = new javax.swing.JLabel();
+        lTitle = new javax.swing.JLabel();
+        pText1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         bLoad = new javax.swing.JLabel();
         bUnload = new javax.swing.JLabel();
         iInfographic = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
-        pText2 = new javax.swing.JLabel();
-        lTitle = new javax.swing.JLabel();
-        pText1 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        pWarning = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(248, 248, 248));
+        setMinimumSize(null);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(571, 448));
-        setResizable(false);
+        setPreferredSize(null);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
-        jPanel1.setMinimumSize(new java.awt.Dimension(567, 501));
+        jPanel1.setMaximumSize(new java.awt.Dimension(567, 501));
         jPanel1.setPreferredSize(new java.awt.Dimension(567, 501));
         jPanel1.setRequestFocusEnabled(false);
 
-        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
+        pText2.setBackground(new java.awt.Color(248, 248, 248));
+        pText2.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        pText2.setText("WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON.");
+        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-        pWarning.setText("Moving...Please wait.");
+        lTitle.setBackground(new java.awt.Color(248, 248, 248));
+        lTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        lTitle.setText("Extruder Switch");
+        lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.PREFERRED_SIZE, 137, Short.MAX_VALUE)
+        pText1.setBackground(new java.awt.Color(248, 248, 248));
+        pText1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        pText1.setText("<html> Using the same tool as before, remove the screw that attachs the cover plate to your 3D printer. Afterwards slide the cover plate in the direction indicated OPEN. <br> Remember to place the screws in a safe location. </html>");
+
+        jPanel3.setBackground(new java.awt.Color(248, 248, 248));
+
+        bLoad.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
+        bLoad.setText("Load");
+        bLoad.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3.png"))); // NOI18N
+        bLoad.setEnabled(false);
+        bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bLoadMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bLoadMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bLoadMousePressed(evt);
+            }
+        });
+
+        bUnload.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
+        bUnload.setText("Unload");
+        bUnload.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3_inverted.png"))); // NOI18N
+        bUnload.setEnabled(false);
+        bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bUnload.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bUnloadMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bUnloadMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bUnloadMousePressed(evt);
+            }
+        });
+
+        iInfographic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/switch_nozzle_sized.png"))); // NOI18N
+
+        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(73, 73, 73)
+                .addComponent(iInfographic)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bLoad)
+                    .addComponent(bUnload))
                 .addContainerGap())
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(pWarning))
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(iInfographic)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(119, 119, 119)
+                        .addComponent(bLoad)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bUnload)))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 15, Short.MAX_VALUE))
         );
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
@@ -188,88 +249,28 @@ public class NozzleSwitch3 extends BaseDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel5.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
 
-        bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
-        bLoad.setText("Load");
-        bLoad.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3.png"))); // NOI18N
-        bLoad.setEnabled(false);
-        bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bLoadMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bLoadMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bLoadMousePressed(evt);
-            }
-        });
+        pWarning.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        pWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        pWarning.setText("Heating...");
 
-        bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
-        bUnload.setText("Unload");
-        bUnload.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3_inverted.png"))); // NOI18N
-        bUnload.setEnabled(false);
-        bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bUnload.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bUnloadMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bUnloadMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bUnloadMousePressed(evt);
-            }
-        });
-
-        iInfographic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/nozzle_replacement.gif"))); // NOI18N
-
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(iInfographic)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bLoad)
-                    .addComponent(bUnload))
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iInfographic)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(119, 119, 119)
-                        .addComponent(bLoad)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bUnload)))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 15, Short.MAX_VALUE))
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(pWarning))
         );
-
-        pText2.setBackground(new java.awt.Color(248, 248, 248));
-        pText2.setText("Suspendisse potenti. ");
-        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        lTitle.setBackground(new java.awt.Color(248, 248, 248));
-        lTitle.setText("INSERIR FILAMENTO");
-        lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
-        pText1.setBackground(new java.awt.Color(248, 248, 248));
-        pText1.setText("Como descarregar ou carregar o filamento");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -280,18 +281,15 @@ public class NozzleSwitch3 extends BaseDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(lTitle)
+                        .addGap(105, 105, 105)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(pText1)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,16 +301,17 @@ public class NozzleSwitch3 extends BaseDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pText1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pText2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pText2)
+                .addGap(12, 12, 12))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
+        bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bNext.setText("Ok");
         bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
@@ -330,18 +329,19 @@ public class NozzleSwitch3 extends BaseDialog {
             }
         });
 
+        bExit.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bExit.setText("SAIR");
+        bExit.setText("Cancel");
         bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bExit.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bExitMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExitMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bExitMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bExitMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bExitMouseEntered(evt);
             }
         });
 
@@ -376,7 +376,7 @@ public class NozzleSwitch3 extends BaseDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -404,7 +404,7 @@ public class NozzleSwitch3 extends BaseDialog {
         if (bNext.isEnabled()) {
             dispose();
             driver.setCoilText(FilamentControler.NO_FILAMENT);
-            driver.setInstalledNozzleSize(selectedNozzle.getSizeInMicrons());
+            driver.setInstalledNozzleSize(400);
             driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -424,7 +424,7 @@ public class NozzleSwitch3 extends BaseDialog {
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unload filament pressed", this.getClass());
-            driver.dispatchCommand("M1000 none");
+            driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.setBusy(true);
             driver.dispatchCommand("M702", COM.NO_RESPONSE);
         }
@@ -473,19 +473,4 @@ public class NozzleSwitch3 extends BaseDialog {
     private javax.swing.JLabel pWarning;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void showMessage() {
-        enableMessageDisplay();
-        bLoad.setEnabled(false);
-        bUnload.setEnabled(false);
-        bNext.setEnabled(false);
-    }
-
-    @Override
-    public void resetFeedbackComponents() {
-        bLoad.setEnabled(true);
-        bUnload.setEnabled(true);
-        bNext.setEnabled(true);
-        disableMessageDisplay();
-    }
 }
