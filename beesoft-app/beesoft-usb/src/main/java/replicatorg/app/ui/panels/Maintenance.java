@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -661,7 +662,7 @@ public class Maintenance extends BaseDialog {
     private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
         if (bNozzleSwitch.isEnabled()) {
             dispose();
-            NozzleSwitch1 p = new NozzleSwitch1();
+            NozzleSwitch2 p = new NozzleSwitch2(new Nozzle(400));
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
 
