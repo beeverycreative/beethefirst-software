@@ -43,7 +43,7 @@ public class PrintPanel extends BasePrintEstimateExport {
     private static final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final MachineModel machineModel = driver.getMachine();
     private final int nozzleType;
-    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<Integer, JLabel>();
+    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<>();
     private final String filament;
     private final PrinterInfo connectedPrinter = driver.getConnectedDevice();
     private JLabel lowQuality, mediumQuality, solidQuality;
@@ -69,6 +69,12 @@ public class PrintPanel extends BasePrintEstimateExport {
         evaluateConditions();
         matchChanges();
         enableDrag();
+        
+        // disabled for now
+        jLabel25.setVisible(false);
+        nozzleTypeLabel.setVisible(false);
+        nozzleTypeValue.setVisible(false);
+        mmLabel.setVisible(false);
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -108,18 +114,23 @@ public class PrintPanel extends BasePrintEstimateExport {
 
             if (resList != null) {
                 for (Resolution res : resList) {
-                    if (res.getType().equals("low")) {
-                        atLeastOneResEnabled = true;
-                        bLowRes.setEnabled(true);
-                    } else if (res.getType().equals("medium")) {
-                        atLeastOneResEnabled = true;
-                        bMediumRes.setEnabled(true);
-                    } else if (res.getType().equals("high")) {
-                        atLeastOneResEnabled = true;
-                        bHighRes.setEnabled(true);
-                    } else if (res.getType().equals("high+")) {
-                        atLeastOneResEnabled = true;
-                        bHighPlusRes.setEnabled(true);
+                    switch (res.getType()) {
+                        case "low":
+                            atLeastOneResEnabled = true;
+                            bLowRes.setEnabled(true);
+                            break;
+                        case "medium":
+                            atLeastOneResEnabled = true;
+                            bMediumRes.setEnabled(true);
+                            break;
+                        case "high":
+                            atLeastOneResEnabled = true;
+                            bHighRes.setEnabled(true);
+                            break;
+                        case "high+":
+                            atLeastOneResEnabled = true;
+                            bHighPlusRes.setEnabled(true);
+                            break;
                     }
                 }
             }
