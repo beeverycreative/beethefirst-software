@@ -595,7 +595,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
 
         
         <ExtruderSwitch>
-            <Title1 value="Extruder Switch"/>
+            <Title1 value="Nozzle Switch"/>
             <NozzleSelectDesc1 value="Select the nozzle size that is about to be installed." />
             <NozzleSelectDesc2 value="Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove." />
             <HeatingMessage1 value="Heating..."/>
@@ -603,19 +603,19 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <Info1b value = " "/>
             <Info_Warning1 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
 
-            <Title2 value="Extruder Switch"/>
+            <Title2 value="Nozzle Switch"/>
             <HeatingMessage2 value="Heating..."/>
             <Info2a value="Your 3D printer must finish heating before continuing this operation."/>
             <Info2b value ="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
             <Info_Warning2 value = "WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
             
-            <Title3 value="Extruder Switch"/>
+            <Title3 value="Nozzle Switch"/>
             <HeatingMessage3 value="Heating..."/>
             <Info3a value="Use the nozzle tool to unscrew the nozzle and place it on a heat-resistant surface until it has cooled down."/>
             <Info3b value="Screw in the new nozzle, stop tightening as soon as you feel hard resistance. You can now load some fresh filament and see the result of the new extruder. The filament will be thick and even."/>
             <Info_Warning3 value = "WARNING: BE CAREFUL NOT TO TOUCH THE HOT EXTRUDER."/>
  
-            <Title4 value="Extruder Switch"/>
+            <Title4 value="Nozzle Switch"/>
         </ExtruderSwitch>
 
         <SupportSwitch>

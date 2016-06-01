@@ -140,7 +140,7 @@ public class NozzleSwitch3 extends BaseDialog {
 
         lTitle.setBackground(new java.awt.Color(248, 248, 248));
         lTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
-        lTitle.setText("Extruder Switch");
+        lTitle.setText("Nozzle Switch");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         pText1.setBackground(new java.awt.Color(248, 248, 248));

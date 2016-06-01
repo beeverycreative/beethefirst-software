@@ -595,7 +595,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
 
         
         <ExtruderSwitch>
-            <Title1 value="Interrupteur de l'Extrudeur"/>
+            <Title1 value="Interrupteur de l'Ajutage"/>
             <NozzleSelectDesc1 value="Select the nozzle size that is about to be installed." />
             <NozzleSelectDesc2 value="Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove." />
             <HeatingMessage1 value="Chauffage..."/>
@@ -603,19 +603,19 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <Info1b value = " "/>
             <Info_Warning1 value = "AVERTISSEMENT: NE TOUCHEZ JAMAIS LA BUSE DE L'EXTRUDEUR PENDANT QUE L'IMPRIMANTE EST ALLUMÉE."/>
 
-            <Title2 value="Interrupteur de l'Extrudeur"/>
+            <Title2 value="Interrupteur de l'Ajutage"/>
             <HeatingMessage2 value="Chauffage..."/>
             <Info2a value="Votre imprimante 3D doit finir le chauffage avant continuer cette opération."/>
             <Info2b value ="L'extrudeur est complètement chaud quand la barre d'état en BEESOFT est complète. Laissez l'imprimante pendant quelques instants pour permettre que le PLA à l’intérieur fonde. "/>
             <Info_Warning2 value = "VERTISSEMENT: NE TOUCHEZ JAMAIS LA BUSE DE L'EXTRUDEUR PENDANT QUE L'IMPRIMANTE EST ALLUMÉE."/>
             
-            <Title3 value="Interrupteur de l'Extrudeur"/>
+            <Title3 value="Interrupteur de l'Ajutage"/>
             <HeatingMessage3 value="Chauffage..."/>
             <Info3a value="Utilisez l'outil de la buse pour dévisser la buse et la placer dans la surface résistant à la chaleur pour refroidir."/>
             <Info3b value="Visser la nouvelle buse, arrêtez quand vous sentez une forte résistance. Maintenant, vous pouvez charger nouveau filament et regarder le résultat du nouveau extrudeur. Le filament sera dense et uniforme."/>
             <Info_Warning3 value = "AVERTISSEMENT: ATTENTION POUR NE PAS TOUCHER L'EXTRUDEUR CHAUD."/>
  
-            <Title4 value="Interrupteur de l'Extrudeur"/>
+            <Title4 value="Interrupteur de l'Ajutage"/>
         </ExtruderSwitch>
 
         <SupportSwitch>
