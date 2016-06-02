@@ -61,6 +61,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -317,9 +322,7 @@ public class Base {
             bw = new BufferedWriter(osw);
 
             return bw;
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -371,39 +374,46 @@ public class Base {
         return mod;
     }
 
-    public static void copy3DFiles() {
-        BufferedInputStream inStream;
-        BufferedOutputStream outStream;
+    private static void copyFolderRecursively(final File sourceDir, final File destDir) throws IOException {
 
-        File[] models = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER).listFiles();
-        Map<String, String> galleryModels = getGalleryMap(new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER).listFiles());
+        final String[] files;
+        File srcFile, destFile;
 
-        for (File model : models) {
+        files = sourceDir.list();
+
+        if (sourceDir.isDirectory()) {
+            if (destDir.exists() == false) {
+                destDir.mkdir();
+            }
+
+            for (String file : files) {
+                srcFile = new File(sourceDir, file);
+                destFile = new File(destDir, file);
+                copyFolderRecursively(srcFile, destFile);
+            }
+        } else {
             try {
-                File afile = new File(model.getAbsolutePath());
-                File bfile = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/" + model.getName());
-                if (!galleryModels.containsKey(afile.getName())) {
-
-                    inStream = new BufferedInputStream(new FileInputStream(afile));
-                    outStream = new BufferedOutputStream(new FileOutputStream(bfile));
-
-                    byte[] buffer = new byte[1024];
-
-                    int length;
-                    //copy the file content in bytes 
-                    while ((length = inStream.read(buffer)) > 0) {
-
-                        outStream.write(buffer, 0, length);
-                    }
-
-                    inStream.close();
-                    outStream.close();
-                }
-            } catch (IOException e) {
-                Base.writeLog(e.getMessage(), Base.class);
-            } 
+                Files.copy(sourceDir.toPath(), destDir.toPath());
+            } catch (FileAlreadyExistsException ex) {
+                // ignore in case a file with the same name already exists, and
+                // keep going
+            }
         }
 
+    }
+
+    public static void copy3DFiles() {
+        final File sourceDir;
+        final File destDir;
+
+        sourceDir = new File(Base.getApplicationDirectory() + "/" + Base.MODELS_FOLDER);
+        destDir = new File(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
+
+        try {
+            copyFolderRecursively(sourceDir, destDir);
+        } catch (IOException ex) {
+            Base.writeLog(ex.getMessage(), Base.class);
+        }
     }
 
     public static void updateVersions() {
