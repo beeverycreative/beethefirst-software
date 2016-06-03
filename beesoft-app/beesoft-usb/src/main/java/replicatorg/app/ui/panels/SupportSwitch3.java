@@ -42,18 +42,15 @@ public class SupportSwitch3 extends BaseDialog {
 
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "SupportSwitch", "title"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         lDesc.setText("<html>"
-                + Languager.getTagValue(1, "SupportSwitch", "step7")
+                + Languager.getTagValue(1, "SupportSwitch", "step4")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step8")
+                + Languager.getTagValue(1, "SupportSwitch", "step5")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step9")
-                + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step10")
-                + "</html>");
+                + Languager.getTagValue(1, "SupportSwitch", "step6"));
     }
 
     @SuppressWarnings("unchecked")
@@ -83,7 +80,7 @@ public class SupportSwitch3 extends BaseDialog {
 
         bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bNext.setText("Ok");
+        bNext.setText("Next");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -186,19 +183,19 @@ public class SupportSwitch3 extends BaseDialog {
         );
 
         jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
-        jLabel1.setText("Extruder Switch");
+        jLabel1.setText("Support Switch");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/SuporteGIF03.gif"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/SuporteGIF02.gif"))); // NOI18N
         jLabel2.setMaximumSize(new java.awt.Dimension(532, 250));
         jLabel2.setMinimumSize(new java.awt.Dimension(532, 250));
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 250));
 
         lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lDesc.setText("<html>\n8. Replace the outer casing and screw it into place.\n<br>\n9. Place the printed spool support at a 90º angle, then twist into place.\n<br>\n10. Thread the filament through the orifice, unless you are using TPU. If it's TPU, let it unroll freely.\n<br>\n11. Happy 3D Printing!\n</html>");
+        lDesc.setText("<html>\n5. Place the coils of the feeder step to one end, keeping it in place behind the stepper motor.\n<br>\n6. Clamp the feeder tube in place with the printed component, sliding it onto the feeder tube admission piece from above.\n<br>\n7. Place the printed adapter piece into the extruder.\n</html>");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -277,8 +274,9 @@ public class SupportSwitch3 extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
+            SupportSwitch4 p = new SupportSwitch4();
             dispose();
-            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
+            p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
 

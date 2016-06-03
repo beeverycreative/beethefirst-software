@@ -10,7 +10,6 @@ import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -389,18 +388,21 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
 
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            final Filament filament, filament2;
-            final int selectedIndex;
+            final Filament filament;
             final Warning warning;
 
             filament = (Filament) jComboBox1.getSelectedItem();
-            selectedIndex = jComboBox1.getSelectedIndex();
 
             // change image according to the filament's material
             if (filament.getMaterial() == Material.PLA) {
                 jLabel2.setIcon(bothSupportImage);
             } else {
                 jLabel2.setIcon(supportImage);
+                
+                warning = new Warning(new SupportSwitch2());
+                warning.setMessage("ChangeSupport");
+                warning.setVisible(true);
+
             }
 
             // if the selected filament isn't compatible with the current nozzle

@@ -336,6 +336,11 @@ public class PrintBed implements Serializable {
         }
 //        System.out.println(pickedModels.size());
     }
+    
+    public void removeAllModels() {
+        printBed_Models.clear();
+        nModels = 0;
+    }
 
     public void duplicateModel() {
         if (pickedModels.size() > 0) {

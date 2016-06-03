@@ -1,8 +1,6 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
@@ -21,37 +19,40 @@ import replicatorg.drivers.Driver;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class SupportSwitch2 extends BaseDialog {
+public class SupportSwitch4 extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
 
-    public SupportSwitch2() {
+    public SupportSwitch4() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
+        setFont();
         setTextLanguage();
         enableDrag();
         centerOnScreen();
+    }
 
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-                driver.dispatchCommand("G0 X0 F6000");
-            }
-        });
+    private void setFont() {
+        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
+        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bBack.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        lDesc.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "SupportSwitch", "title"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         lDesc.setText("<html>"
-                + Languager.getTagValue(1, "SupportSwitch", "step0")
-                + "<br><br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step1")
+                + Languager.getTagValue(1, "SupportSwitch", "step7")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step2")
+                + Languager.getTagValue(1, "SupportSwitch", "step8")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step3")
+                + Languager.getTagValue(1, "SupportSwitch", "step9")
+                + "<br>"
+                + Languager.getTagValue(1, "SupportSwitch", "step10")
                 + "</html>");
     }
 
@@ -82,7 +83,7 @@ public class SupportSwitch2 extends BaseDialog {
 
         bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bNext.setText("Next");
+        bNext.setText("Ok");
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -191,13 +192,13 @@ public class SupportSwitch2 extends BaseDialog {
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/SuporteGIF01.gif"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/SuporteGIF03.gif"))); // NOI18N
         jLabel2.setMaximumSize(new java.awt.Dimension(532, 250));
         jLabel2.setMinimumSize(new java.awt.Dimension(532, 250));
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 250));
 
         lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lDesc.setText("<html> Please follow these steps: <br><br> 1. Remove the four screws that hold the top half of the printer's outer casing. <br> 2. Remove the casing <br> 3. Remove the handle's screw and slide the handle sideways to remove it. <br> 4. Move the extruder unit to the centre and remove the feeder tube. </html>");
+        lDesc.setText("<html>\n8. Replace the outer casing and screw it into place.\n<br>\n9. Place the printed spool support at a 90º angle, then twist into place.\n<br>\n10. Thread the filament through the orifice, unless you are using TPU. If it's TPU, let it unroll freely.\n<br>\n11. Happy 3D Printing!\n</html>");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -276,9 +277,8 @@ public class SupportSwitch2 extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            SupportSwitch3 p = new SupportSwitch3();
             dispose();
-            p.setVisible(true);
+            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bNextMousePressed
 
@@ -298,7 +298,7 @@ public class SupportSwitch2 extends BaseDialog {
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
         if (bBack.isEnabled()) {
-            SupportSwitch1 p = new SupportSwitch1();
+            SupportSwitch3 p = new SupportSwitch3();
             dispose();
             p.setVisible(true);
         }

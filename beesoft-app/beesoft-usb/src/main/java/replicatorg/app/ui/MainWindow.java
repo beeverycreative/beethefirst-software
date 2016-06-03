@@ -99,8 +99,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import replicatorg.app.CategoriesList;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
@@ -145,7 +143,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     MessagePanel console;
     JSplitPane splitPane;
     JLabel lineNumberComponent;
-    public PrintBed bed;
+    private PrintBed bed;
     JMenuItem saveMenuItem;
     JMenuItem saveAsMenuItem;
     JMenuItem controlPanelItem;
@@ -1273,23 +1271,34 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         return;
                     }
                 }
-                Base.logger.log(Level.INFO, "Loading {0}", path);
-                Base.writeLog("Loading " + path + " ...", this.getClass());
 
-                bed.addSTL(new File(path));
-                Model m = bed.getModels().get(bed.getModels().size() - 1);
-                m.getEditer().centerAndToBed();
-                sceneDP.updateBedInfo();
-                canvas.updateBedImportedModels(bed);
-                showFeedBackMessage("importModel");
-                Base.getMainWindow().getBed().setGcodeOK(false);
-                bed.setSceneDifferent(true);
-                oktoGoOnSave = false;
-
-                //Selects the last inserted model
-                Base.getMainWindow().selectLastInsertedModel();
+                handleNewModel(new File(path));
             }
         });
+    }
+
+    public void handleNewModel(final File model) {
+        Base.writeLog("Loading " + model.getAbsolutePath() + " ...", this.getClass());
+
+        bed.addSTL(model);
+        Model m = bed.getModels().get(bed.getModels().size() - 1);
+        m.getEditer().centerAndToBed();
+        sceneDP.updateBedInfo();
+        canvas.updateBedImportedModels(bed);
+        showFeedBackMessage("importModel");
+        Base.getMainWindow().getBed().setGcodeOK(false);
+        bed.setSceneDifferent(true);
+        oktoGoOnSave = false;
+
+        //Selects the last inserted model
+        Base.getMainWindow().selectLastInsertedModel();
+    }
+
+    public void removeAllModels() {
+        bed.removeAllModels();
+        sceneDP.updateBedInfo();
+        canvas.updateBedDeletedModels(bed);
+        canvas.rebuildScene();
     }
 
     /**

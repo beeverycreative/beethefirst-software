@@ -620,8 +620,14 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
 
         <SupportSwitch>
             <title value="Support switch" />
-            <intro value="First, make sure you have printed the spool support components (available by pressing the Import Model button)." />
-            <step0 value="Then you must follow these steps:" />
+            <welcome value="Welcome to the Support Switch wizard." />
+            <intro0 value="Changing your spool support may be necessary due to spool size constraints." />
+            <intro1 value="As such, this wizard aims to show you the necessary steps to print and install the new support." />
+            <intro2 value="If you haven't printed the spool support components yet, please click on this button to close this wizard and load the models." />
+            <intro3 value="To proceed, you must unload your filament, if any is currently loaded. If you wish to do this now, please click here." />
+            <button0 value="Load Support Models" />
+            <button1 value="Unload filament" />
+            <step0 value="Please follow these steps: " />
             <step1 value="1. Remove the four screws that hold the top half of the printer's outer casing, and remove it."/>
             <step2 value="2. Remove the handle's screw and slide the handle sideways to remove it."/>
             <step3 value="3. Remove the feeder tube from the extruder unit."/>
@@ -752,6 +758,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <UnknownColor value="La couleur du filament est inconnue. Vous êtes sûr que la couleur est correctement sélectionnée?"/>
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
             <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
+            <ChangeSupport value="In order to use this filament, you have to change your current spool support. Do you wish to proceed?" />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

@@ -1,14 +1,11 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.io.File;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -23,67 +20,149 @@ import replicatorg.drivers.Driver;
  */
 public class SupportSwitch1 extends BaseDialog {
 
-    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-
     public SupportSwitch1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        setFont();
         setTextLanguage();
         enableDrag();
         centerOnScreen();
-
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-                driver.dispatchCommand("G0 X0 F6000");
-            }
-        });
-    }
-
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        lDesc.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "SupportSwitch", "title"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-        lDesc.setText("<html>"
-                + Languager.getTagValue(1, "SupportSwitch", "intro")
+        lDesc1.setText("<html>"
+                + Languager.getTagValue(1, "SupportSwitch", "welcome")
                 + "<br><br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step0")
+                + Languager.getTagValue(1, "SupportSwitch", "intro0")
                 + "<br><br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step1")
-                + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step2")
-                + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step3")
+                + Languager.getTagValue(1, "SupportSwitch", "intro1")
                 + "</html>");
+        lDesc2.setText("<html>" + Languager.getTagValue(1, "SupportSwitch", "intro2") + "</html>");
+        bLoadSupportModels.setText("<html>" + Languager.getTagValue(1, "SupportSwitch", "button0") + "</html>");
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        bNext = new javax.swing.JLabel();
-        bCancel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        lDesc = new javax.swing.JLabel();
+        lDesc1 = new javax.swing.JLabel();
+        lDesc2 = new javax.swing.JLabel();
+        bLoadSupportModels = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        bNext = new javax.swing.JLabel();
+        bCancel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setUndecorated(true);
         setResizable(false);
+
+        jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.setPreferredSize(new java.awt.Dimension(567, 468));
+
+        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
+        jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
+        jPanel4.setRequestFocusEnabled(false);
+
+        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel15MousePressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(51, 51, 51)
+                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(8, 8, 8)
+                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(9, Short.MAX_VALUE))
+        );
+
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        jLabel1.setText("Support Switch");
+        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+
+        jPanel3.setBackground(new java.awt.Color(248, 248, 248));
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup.png"))); // NOI18N
+        jLabel2.setMaximumSize(new java.awt.Dimension(532, 250));
+        jLabel2.setMinimumSize(new java.awt.Dimension(532, 250));
+        jLabel2.setPreferredSize(new java.awt.Dimension(532, 250));
+
+        lDesc1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDesc1.setText("<html>Welcome to the Support Switch wizard.  <br> <br> Changing your spool support may be necessary due to spool size constraints.  <br> <br> As such, this wizard aims to show you the necessary steps to print and install the new support. </html>");
+
+        lDesc2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDesc2.setText("<html>\nIf you haven't printed the spool support components yet, please click on this button to close this wizard and load the models.\n</html>");
+
+        bLoadSupportModels.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bLoadSupportModels.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        bLoadSupportModels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
+        bLoadSupportModels.setText("Load Support Models");
+        bLoadSupportModels.setBorder(null);
+        bLoadSupportModels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bLoadSupportModels.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bLoadSupportModelsMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bLoadSupportModelsMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bLoadSupportModelsMouseEntered(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(lDesc2, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bLoadSupportModels)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addComponent(lDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lDesc2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(bLoadSupportModels)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
@@ -142,73 +221,6 @@ public class SupportSwitch1 extends BaseDialog {
                 .addGap(20, 20, 20))
         );
 
-        jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setPreferredSize(new java.awt.Dimension(567, 468));
-
-        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
-        jPanel4.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel4.setRequestFocusEnabled(false);
-
-        jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        jLabel15.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel15MousePressed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
-
-        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
-        jLabel1.setText("Extruder Switch");
-        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
-        jPanel3.setBackground(new java.awt.Color(248, 248, 248));
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/SuporteGIF01.gif"))); // NOI18N
-        jLabel2.setMaximumSize(new java.awt.Dimension(532, 250));
-        jLabel2.setMinimumSize(new java.awt.Dimension(532, 250));
-        jLabel2.setPreferredSize(new java.awt.Dimension(532, 250));
-
-        lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lDesc.setText("<html>\nFirst, make sure you have printed the spool support components (available from the BEESOFT folder).\n<br><br>\nThen you must follow these steps:\n<br><br>\n1. Remove the four screws that hold the top half of the printer's outer casing.\n<br>\n2. Remove the casing\n<br>\n3. Remove the handle's screw and slide the handle sideways to remove it.\n<br>\n4. Move the extruder unit to the centre and remove the feeder tube.\n</html>");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(59, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
-                .addComponent(lDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -219,6 +231,9 @@ public class SupportSwitch1 extends BaseDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,8 +241,11 @@ public class SupportSwitch1 extends BaseDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(12, 12, 12)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(100, 100, 100))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -235,14 +253,10 @@ public class SupportSwitch1 extends BaseDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -275,19 +289,36 @@ public class SupportSwitch1 extends BaseDialog {
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         if (bCancel.isEnabled()) {
             dispose();
-            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         if (jLabel15.isEnabled()) {
             dispose();
-            driver.dispatchCommand("G28 X", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_jLabel15MousePressed
 
+    private void bLoadSupportModelsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadSupportModelsMouseEntered
+        bLoadSupportModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
+    }//GEN-LAST:event_bLoadSupportModelsMouseEntered
+
+    private void bLoadSupportModelsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadSupportModelsMouseExited
+        bLoadSupportModels.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
+    }//GEN-LAST:event_bLoadSupportModelsMouseExited
+
+    private void bLoadSupportModelsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadSupportModelsMousePressed
+        final String modelPath;
+        
+        modelPath = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/External Spool Holder/Ext_spool_holder-all.stl";
+        
+        Base.disposeAllOpenWindows();
+        Base.getMainWindow().removeAllModels();
+        Base.getMainWindow().handleNewModel(new File(modelPath));
+    }//GEN-LAST:event_bLoadSupportModelsMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
+    private javax.swing.JLabel bLoadSupportModels;
     private javax.swing.JLabel bNext;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
@@ -296,6 +327,7 @@ public class SupportSwitch1 extends BaseDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JLabel lDesc;
+    private javax.swing.JLabel lDesc1;
+    private javax.swing.JLabel lDesc2;
     // End of variables declaration//GEN-END:variables
 }
