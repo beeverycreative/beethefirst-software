@@ -1127,12 +1127,6 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     public void handleAbout() {
     }
 
-    public void handleQuickStartWizard() {
-        this.setEnabled(false);
-        WelcomeQuickguide p = new WelcomeQuickguide();
-        p.setVisible(true);
-    }
-
     public void captureScreen(String fileName) throws Exception {
 
         Robot robot = new Robot();

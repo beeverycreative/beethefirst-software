@@ -20,12 +20,12 @@ import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
-import replicatorg.app.ui.panels.Feedback;
+import replicatorg.app.ui.popups.Feedback;
 import replicatorg.app.ui.panels.PauseMenu;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
 import replicatorg.app.ui.panels.SerialNumberInput;
 import replicatorg.app.ui.panels.ShutdownMenu;
-import replicatorg.app.ui.panels.Warning;
+import replicatorg.app.ui.popups.Warning;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.RetryException;
 import replicatorg.machine.model.MachineModel;
@@ -239,8 +239,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         + firmwareVersion.getVersionString(), this.getClass());
                 Base.writeLog("Soliciting user to restart BEESOFT and the printer", this.getClass());
                 // Warn user to restart BTF and restart BEESOFT.
-                Warning firmwareOutDate = new Warning(true);
-                firmwareOutDate.setMessage("FirmwareOutDateVersion");
+                Warning firmwareOutDate = new Warning("FirmwareOutDateVersion", true);
                 firmwareOutDate.setVisible(true);
 
                 Base.getMainWindow().setEnabled(false);
@@ -1645,8 +1644,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Couldn't establish connection after attempting to go back to bootloader, requesting user to restart", this.getClass());
 
             // Warn user to restart BTF and restart BEESOFT.
-            Warning firmwareOutDate = new Warning(true);
-            firmwareOutDate.setMessage("FirmwareOutDateVersion");
+            Warning firmwareOutDate = new Warning("FirmwareOutDateVersion", true);
             firmwareOutDate.setVisible(true);
 
             Base.getMainWindow().setEnabled(false);

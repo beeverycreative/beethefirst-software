@@ -1,10 +1,11 @@
-package replicatorg.app.ui.panels;
+package replicatorg.app.ui.popups;
 
 import java.awt.Dialog;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.panels.BaseDialog;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -17,71 +18,54 @@ import replicatorg.app.ui.GraphicDesignComponents;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class Warning extends BaseDialog {
+public class Query extends BaseDialog {
 
-    private final boolean exitOnDispose;
     private final BaseDialog operationToDisplay;
-    private boolean cancelPressed = false;
+    private final Runnable runnableToExecute;
 
-    public Warning(boolean exitOnDispose) {
+    /**
+     * Query constructor that opens another dialog as soon as the Yes button has
+     * been pressed
+     *
+     * @param messageToDisplay the key of the message that is to be displayed
+     * @param operationToDisplay dialog that is to be displayed
+     */
+    public Query(final String messageToDisplay, final BaseDialog operationToDisplay) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        setFont();
         setTextLanguage();
         centerOnScreen();
         enableDrag();
-        this.exitOnDispose = exitOnDispose;
-        this.operationToDisplay = null;
-        bCancel.setVisible(false);
+        this.operationToDisplay = operationToDisplay;
+        this.runnableToExecute = null;
+
+        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
     }
 
     /**
-     * Warning constructor that opens another dialog as soon as the OK button
-     * has been pressed
+     * Query constructor that executes a given runnable as as soon as the Yes
+     * button has been pressed
      *
-     * @param operationToDisplay dialog that is to be displayed
+     * @param messageToDisplay the key of the message that is to be displayed
+     * @param runnable runnable that is to be executed
      */
-    public Warning(BaseDialog operationToDisplay) {
+    public Query(final String messageToDisplay, final Runnable runnable) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        setFont();
         setTextLanguage();
         centerOnScreen();
         enableDrag();
-        this.exitOnDispose = false;
-        this.operationToDisplay = operationToDisplay;
-    }
+        this.operationToDisplay = null;
+        this.runnableToExecute = runnable;
 
-    public boolean hasCancelBeenPressed() {
-        return cancelPressed;
-    }
+        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
 
-    private void setFont() {
-        lTitle.setFont(GraphicDesignComponents.getSSProRegular("15"));
-        jLabel2.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bOk.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
     }
 
     private void setTextLanguage() {
         jLabel2.setText(Languager.getTagValue(1, "Other", "NotSupported"));
-        bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-    }
-
-    public void setMessage(String message) {
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", message) + "</html>");
-    }
-
-    private void doExit() {
-        if (exitOnDispose) {
-            System.exit(0);
-        } else if (operationToDisplay != null) {
-            dispose();
-            operationToDisplay.setVisible(true);
-        } else {
-            dispose();
-        }
+        bYes.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line1"));
+        bNo.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line2"));
     }
 
     @SuppressWarnings("unchecked")
@@ -94,16 +78,16 @@ public class Warning extends BaseDialog {
         bX = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        bOk = new javax.swing.JLabel();
-        bCancel = new javax.swing.JLabel();
+        bYes = new javax.swing.JLabel();
+        bNo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(350, 150));
+        setMinimumSize(new java.awt.Dimension(10, 10));
         setUndecorated(true);
-        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
+        lTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 15)); // NOI18N
         lTitle.setText("BEESOFT");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -135,6 +119,8 @@ public class Warning extends BaseDialog {
                 .addGap(0, 0, 0))
         );
 
+        jLabel2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Functionality not yet supported...");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -149,7 +135,7 @@ public class Warning extends BaseDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
@@ -166,34 +152,35 @@ public class Warning extends BaseDialog {
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 46));
 
-        bOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
-        bOk.setText("OK");
-        bOk.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bOk.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bOkMouseEntered(evt);
+        bYes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bYes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bYes.setText("Yes");
+        bYes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bYes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bYesMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                bOkMouseExited(evt);
+                bYesMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bOkMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bYesMouseEntered(evt);
             }
         });
 
-        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bCancel.setText("Cancel");
-        bCancel.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+        bNo.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bNo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_18.png"))); // NOI18N
+        bNo.setText("No");
+        bNo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
+                bNoMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                bCancelMouseExited(evt);
+                bNoMouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
+                bNoMouseEntered(evt);
             }
         });
 
@@ -202,19 +189,19 @@ public class Warning extends BaseDialog {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(224, Short.MAX_VALUE)
-                .addComponent(bCancel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bYes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bOk)
-                .addGap(12, 12, 12))
+                .addComponent(bNo)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bOk)
-                    .addComponent(bCancel))
+                    .addComponent(bYes)
+                    .addComponent(bNo))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -236,44 +223,53 @@ public class Warning extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bOkMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMouseEntered
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
-    }//GEN-LAST:event_bOkMouseEntered
+    private void bYesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bYesMouseEntered
+        bYes.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
+    }//GEN-LAST:event_bYesMouseEntered
 
-    private void bOkMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMouseExited
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
-    }//GEN-LAST:event_bOkMouseExited
+    private void bYesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bYesMouseExited
+        bYes.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+    }//GEN-LAST:event_bYesMouseExited
 
-    private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed
-        doExit();
-    }//GEN-LAST:event_bOkMousePressed
+    private void bYesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bYesMousePressed
+        if (bYes.isEnabled()) {
+            if (operationToDisplay != null) {
+                dispose();
+                operationToDisplay.setVisible(true);
+            } else if (runnableToExecute != null) {
+                dispose();
+                runnableToExecute.run();
+            } else {
+                dispose();
+            }
+        }
+    }//GEN-LAST:event_bYesMousePressed
 
     private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
         if (bX.isEnabled()) {
-            cancelPressed = true;
             dispose();
         }
     }//GEN-LAST:event_bXMousePressed
 
-    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        if (bCancel.isEnabled()) {
-            cancelPressed = true;
+    private void bNoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNoMousePressed
+        if (bNo.isEnabled()) {
             dispose();
         }
-    }//GEN-LAST:event_bCancelMousePressed
+    }//GEN-LAST:event_bNoMousePressed
 
-    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
-        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bCancelMouseExited
+    private void bNoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNoMouseEntered
+        bNo.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_18.png")));
 
-    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
-        bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bCancelMouseEntered
+    }//GEN-LAST:event_bNoMouseEntered
+
+    private void bNoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNoMouseExited
+        bNo.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
+    }//GEN-LAST:event_bNoMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel bCancel;
-    private javax.swing.JLabel bOk;
+    private javax.swing.JLabel bNo;
     private javax.swing.JLabel bX;
+    private javax.swing.JLabel bYes;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

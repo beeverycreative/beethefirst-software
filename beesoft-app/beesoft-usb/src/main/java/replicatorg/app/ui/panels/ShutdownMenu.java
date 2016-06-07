@@ -7,6 +7,7 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Query;
 import replicatorg.drivers.Driver;
 
 public class ShutdownMenu extends BaseDialog {
@@ -267,13 +268,16 @@ public class ShutdownMenu extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
+        final Runnable action;
+        final Query cancelPrintQuery;
+
         if (bCancel.isEnabled()) {
-            CancelPrint cancel = new CancelPrint();
-            cancel.setVisible(true);
-            if (cancel.isCancelTrue()) {
+            action = () -> {
                 dispose();
                 driver.dispatchCommand("M112", COM.NO_RESPONSE);
-            }
+            };
+            cancelPrintQuery = new Query("CancelPrintText", action);
+            cancelPrintQuery.setVisible(true);
         }
     }//GEN-LAST:event_bCancelMousePressed
 

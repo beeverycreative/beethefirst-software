@@ -23,6 +23,7 @@ import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import pt.beeverycreative.beesoft.filaments.Resolution;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Warning;
 import replicatorg.drivers.Driver;
 import replicatorg.machine.model.MachineModel;
 
@@ -246,8 +247,8 @@ public class PrintPanel extends BasePrintEstimateExport {
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             jLabel22.setText(code);
 
-            UnknownFilament unkFilPanel = new UnknownFilament();
-            unkFilPanel.setVisible(true);
+            Warning unkFilWarning = new Warning("UnknownFilamentText", false);
+            unkFilWarning.setVisible(true);
         } else {
             jLabel22.setText(code);
         }

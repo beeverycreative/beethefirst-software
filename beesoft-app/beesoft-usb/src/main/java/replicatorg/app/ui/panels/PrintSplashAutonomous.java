@@ -21,6 +21,7 @@ import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.PrintEstimator;
 import replicatorg.app.Printer;
 import replicatorg.app.ProperDefault;
+import replicatorg.app.ui.popups.Query;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.drivers.Driver;
 import replicatorg.machine.model.MachineModel;
@@ -779,13 +780,13 @@ public class PrintSplashAutonomous extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
+        final Query cancelPrintQuery;
+        
         if (bCancel.isEnabled()) {
-            CancelPrint cancelPanel = new CancelPrint();
-            cancelPanel.setVisible(true);
-            if (cancelPanel.isCancelTrue()) {
-                doCancel();
-            }
+            cancelPrintQuery = new Query("CancelPrintText", this::doCancel);
+            cancelPrintQuery.setVisible(true);
         }
+        
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed

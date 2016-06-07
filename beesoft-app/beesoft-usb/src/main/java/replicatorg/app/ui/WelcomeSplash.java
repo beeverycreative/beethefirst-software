@@ -11,7 +11,7 @@ import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
-import replicatorg.app.ui.panels.Warning;
+import replicatorg.app.ui.popups.Warning;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -149,8 +149,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
          * Error occured during driver initialization
          */
         if (Base.errorOccured == true) {
-            Warning flashError = new Warning(true);
-            flashError.setMessage("ErrorUpdating");
+            Warning flashError = new Warning("ErrorUpdating", true);
             flashError.setVisible(true);
         }
 

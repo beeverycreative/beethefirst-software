@@ -1,11 +1,13 @@
 package replicatorg.app.ui.panels;
 
+import replicatorg.app.ui.popups.Warning;
 import java.awt.Dialog;
 import java.io.File;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Query;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -104,7 +106,7 @@ public class SupportSwitch1 extends BaseDialog {
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup_smaller.png"))); // NOI18N
         jLabel2.setMaximumSize(new java.awt.Dimension(532, 250));
         jLabel2.setMinimumSize(new java.awt.Dimension(532, 250));
         jLabel2.setPreferredSize(new java.awt.Dimension(532, 250));
@@ -151,8 +153,8 @@ public class SupportSwitch1 extends BaseDialog {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
                 .addComponent(lDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -241,11 +243,11 @@ public class SupportSwitch1 extends BaseDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(100, 100, 100))
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -256,7 +258,7 @@ public class SupportSwitch1 extends BaseDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -279,10 +281,21 @@ public class SupportSwitch1 extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
+        final BaseDialog unloadQuery;
+        final BaseDialog supportSwitch2;
+        final Runnable displayFilamentHeating;
+
         if (bNext.isEnabled()) {
-            SupportSwitch2 p = new SupportSwitch2();
+            displayFilamentHeating = () -> {
+                FilamentHeating filamentHeating = new FilamentHeating(null);
+                filamentHeating.setVisible(true);
+            };
+            unloadQuery = new Query("UnloadBeforeSupport", displayFilamentHeating);
+            supportSwitch2 = new SupportSwitch2();
+
+            unloadQuery.setVisible(true);
             dispose();
-            p.setVisible(true);
+            supportSwitch2.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
 
@@ -307,14 +320,22 @@ public class SupportSwitch1 extends BaseDialog {
     }//GEN-LAST:event_bLoadSupportModelsMouseExited
 
     private void bLoadSupportModelsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadSupportModelsMousePressed
+        final Warning warning;
+
+        warning = new Warning("LoadSupportModels", this::loadSupportModels);
+        warning.setVisible(true);
+    }//GEN-LAST:event_bLoadSupportModelsMousePressed
+
+    private void loadSupportModels() {
         final String modelPath;
-        
+
         modelPath = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/External Spool Holder/Ext_spool_holder-all.stl";
-        
+
         Base.disposeAllOpenWindows();
         Base.getMainWindow().removeAllModels();
         Base.getMainWindow().handleNewModel(new File(modelPath));
-    }//GEN-LAST:event_bLoadSupportModelsMousePressed
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;

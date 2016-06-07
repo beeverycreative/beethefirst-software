@@ -1,5 +1,6 @@
 package replicatorg.app.ui.panels;
 
+import replicatorg.app.ui.popups.InformationTooltip;
 import java.awt.Dialog;
 import java.awt.MouseInfo;
 import java.awt.Point;

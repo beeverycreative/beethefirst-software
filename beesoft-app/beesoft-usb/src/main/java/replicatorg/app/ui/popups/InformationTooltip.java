@@ -1,10 +1,11 @@
-package replicatorg.app.ui.panels;
+package replicatorg.app.ui.popups;
 
 import java.awt.Dialog;
 import java.awt.Window;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.panels.BaseDialog;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT

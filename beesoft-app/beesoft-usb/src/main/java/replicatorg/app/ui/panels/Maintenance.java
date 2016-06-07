@@ -713,6 +713,7 @@ public class Maintenance extends BaseDialog {
     private void bSupportSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bSupportSwitchMousePressed
         if (bSupportSwitch.isEnabled()) {
             SupportSwitch1 p = new SupportSwitch1();
+            dispose();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bSupportSwitchMousePressed

@@ -220,15 +220,6 @@
             <About_FilamentColor value="Tipo de filamento"/> 
         </AboutSoftware>
 
-        <CancelPrint>
-            <CancelPrintText value="Tem a certeza que pretende cancelar a sua impressão?" />
-        </CancelPrint>
-
-        <UnknownFilament>
-            <UnknownFilamentTitle value="Filamento desconhecido carregado na sua impressora" />
-            <UnknownFilamentText value="Não existem definições no BEESOFT para o filamento carregado na impressora. Por favor mude o filamento." />
-        </UnknownFilament>
-
         <ProfileAndPrinter>
             <TitleText value="Por favor escolha o filamento e a impressora" />
             <FilamentText value="Filamento" />
@@ -759,6 +750,10 @@ Para carregar filamento, insere-o no orifício e empurra-o até não conseguires
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
             <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
             <ChangeSupport value="In order to use this filament, you have to change your current spool support. Do you wish to proceed?" />
+            <LoadSupportModels value="Please return to this wizard when you're done printing the required models. You can do this by clicking on the Maintenance button (left of the Print button, upper right corner of the screen), and pressing the Change Support button afterwards." />
+            <UnknownFilamentText value="Não existem definições no BEESOFT para o filamento carregado na impressora. Por favor mude o filamento." />
+            <UnloadBeforeSupport value="To proceed, you must ensure you have no loaded filament on your printer. Do you wish to unload now?" />
+            <CancelPrintText value="Are you sure you want to cancel your print?" />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

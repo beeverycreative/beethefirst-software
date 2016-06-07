@@ -220,15 +220,6 @@
             <About_FilamentColor value="Filament type"/> 
         </AboutSoftware>
 
-        <CancelPrint>
-            <CancelPrintText value="Are you sure you want to cancel your print?" />
-        </CancelPrint>
-
-        <UnknownFilament>
-            <UnknownFilamentTitle value="Unknown filament loaded in your printer" />
-            <UnknownFilamentText value="There are no existing settings in BEESOFT for the filament loaded on the printer. Please change the filament." />
-        </UnknownFilament>
-
         <ProfileAndPrinter>
             <TitleText value="Please select the filament and the printer" />
             <FilamentText value="Filament" />
@@ -759,6 +750,10 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
             <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
             <ChangeSupport value="In order to use this filament, you have to change your current spool support. Do you wish to proceed?" />
+            <LoadSupportModels value="Please return to this wizard when you're done printing the required models. You can do this by clicking on the Maintenance button (left of the Print button, upper right corner of the screen), and pressing the Change Support button afterwards." />
+            <UnknownFilamentText value="There are no existing settings in BEESOFT for the filament loaded on the printer. Please change the filament." />
+            <UnloadBeforeSupport value="To proceed, you must ensure you have no loaded filament on your printer. Do you wish to unload now?" />
+            <CancelPrintText value="Are you sure you want to cancel your print?" />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

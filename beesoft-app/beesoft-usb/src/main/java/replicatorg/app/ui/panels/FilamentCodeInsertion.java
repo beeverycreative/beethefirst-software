@@ -1,5 +1,6 @@
 package replicatorg.app.ui.panels;
 
+import replicatorg.app.ui.popups.Warning;
 import java.awt.Dialog;
 import java.awt.event.ItemEvent;
 import javax.swing.DefaultComboBoxModel;
@@ -399,8 +400,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             } else {
                 jLabel2.setIcon(supportImage);
                 
-                warning = new Warning(new SupportSwitch2());
-                warning.setMessage("ChangeSupport");
+                warning = new Warning("ChangeSupport", new SupportSwitch1());
                 warning.setVisible(true);
 
             }

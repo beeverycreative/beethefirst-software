@@ -35,7 +35,7 @@ public class SupportSwitch2 extends BaseDialog {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                driver.dispatchCommand("G0 X0 F6000");
+                driver.dispatchCommand("G0 X0 F6000", COM.NO_RESPONSE);
             }
         });
     }

@@ -46,10 +46,12 @@ public class FilamentInsertion extends BaseDialog {
         moveToPosition();
 
         // change image according to the filament's material
-        if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
-            jLabel2.setIcon(intUnloadImage);
-        } else {
-            jLabel2.setIcon(extUnloadImage);
+        if (this.selectedFilament != null) {
+            if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
+                jLabel2.setIcon(intUnloadImage);
+            } else {
+                jLabel2.setIcon(extUnloadImage);
+            }
         }
 
         this.addWindowListener(new WindowAdapter() {
@@ -119,8 +121,8 @@ public class FilamentInsertion extends BaseDialog {
     private void doCancel() {
         Base.writeLog("Filament load/unload canceled", this.getClass());
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        dispose();
         driver.dispatchCommand("M704", COM.NO_RESPONSE);
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -430,10 +432,14 @@ public class FilamentInsertion extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            dispose();
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            driver.setCoilText(selectedFilament.getName());
+
+            if (selectedFilament != null) {
+                driver.setCoilText(selectedFilament.getName());
+            }
+
             driver.dispatchCommand("G28", COM.NO_RESPONSE);
+            dispose();
         }
     }//GEN-LAST:event_bNextMousePressed
 
@@ -446,10 +452,12 @@ public class FilamentInsertion extends BaseDialog {
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
         if (bLoad.isEnabled()) {
             Base.writeLog("Loading filament", this.getClass());
-            if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
-                jLabel2.setIcon(intLoadImage);
-            } else {
-                jLabel2.setIcon(extLoadImage);
+            if (this.selectedFilament != null) {
+                if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
+                    jLabel2.setIcon(intLoadImage);
+                } else {
+                    jLabel2.setIcon(extLoadImage);
+                }
             }
             driver.setBusy(true);
             driver.dispatchCommand("M701", COM.NO_RESPONSE);
@@ -459,10 +467,12 @@ public class FilamentInsertion extends BaseDialog {
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
         if (bUnload.isEnabled()) {
             Base.writeLog("Unloading Filament", this.getClass());
-            if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
-                jLabel2.setIcon(intUnloadImage);
-            } else {
-                jLabel2.setIcon(extUnloadImage);
+            if (this.selectedFilament != null) {
+                if (this.selectedFilament.getMaterial() == Filament.Material.PLA) {
+                    jLabel2.setIcon(intUnloadImage);
+                } else {
+                    jLabel2.setIcon(extUnloadImage);
+                }
             }
             driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.setBusy(true);

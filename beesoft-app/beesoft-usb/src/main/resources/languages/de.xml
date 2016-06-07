@@ -220,15 +220,6 @@
             <About_FilamentColor value="Filament-Typ"/> 
         </AboutSoftware>
 
-        <CancelPrint>
-            <CancelPrintText value="Sind Sie sicher, dass Sie Ihren Druck abbrechen wollen?" />
-        </CancelPrint>
-
-        <UnknownFilament>
-            <UnknownFilamentTitle value="Unbekanntes Filament in Ihrem Drucker eingelegt" />
-            <UnknownFilamentText value="Es gibt keine vorhandenen Einstellungen in BEESOFT für das Filament, dass momentan in Ihrem Drucker geladen ist. Bitte wechseln Sie das Filament." />
-        </UnknownFilament>
-
         <ProfileAndPrinter>
             <TitleText value="Bitte wählen Sie das Filament und den Drucker aus" />
             <FilamentText value="Filament" />
@@ -759,6 +750,10 @@ Um das Filament zu laden einfügen Sie es in die Einlassöffnung und schieben Si
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
             <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
             <ChangeSupport value="In order to use this filament, you have to change your current spool support. Do you wish to proceed?" />
+            <LoadSupportModels value="Please return to this wizard when you're done printing the required models. You can do this by clicking on the Maintenance button (left of the Print button, upper right corner of the screen), and pressing the Change Support button afterwards." />
+            <UnknownFilamentText value="Es gibt keine vorhandenen Einstellungen in BEESOFT für das Filament, dass momentan in Ihrem Drucker geladen ist. Bitte wechseln Sie das Filament." />
+            <UnloadBeforeSupport value="To proceed, you must ensure you have no loaded filament on your printer. Do you wish to unload now?" />
+            <CancelPrintText value="Are you sure you want to cancel your print?" />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
