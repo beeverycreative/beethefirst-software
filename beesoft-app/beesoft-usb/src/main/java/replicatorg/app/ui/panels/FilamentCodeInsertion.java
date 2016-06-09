@@ -1,6 +1,5 @@
 package replicatorg.app.ui.panels;
 
-import replicatorg.app.ui.popups.Warning;
 import java.awt.Dialog;
 import java.awt.event.ItemEvent;
 import javax.swing.DefaultComboBoxModel;
@@ -11,6 +10,7 @@ import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Query;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -390,7 +390,7 @@ public class FilamentCodeInsertion extends BaseDialog {
 
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             final Filament filament;
-            final Warning warning;
+            final Query query;
 
             filament = (Filament) jComboBox1.getSelectedItem();
 
@@ -400,8 +400,8 @@ public class FilamentCodeInsertion extends BaseDialog {
             } else {
                 jLabel2.setIcon(supportImage);
                 
-                warning = new Warning("ChangeSupport", new SupportSwitch1());
-                warning.setVisible(true);
+                query = new Query("ChangeSupport", new SupportSwitch1());
+                query.setVisible(true);
 
             }
 
