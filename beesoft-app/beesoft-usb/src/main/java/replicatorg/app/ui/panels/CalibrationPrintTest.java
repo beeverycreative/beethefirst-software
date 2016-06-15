@@ -47,7 +47,7 @@ public class CalibrationPrintTest extends BaseDialog {
                 driver.dispatchCommand("G91");
                 driver.dispatchCommand("G0 Z15 F2000");
                 driver.dispatchCommand("G90");
-                driver.gcodeTransfer(new File(Base.getApplicationDirectory().getAbsolutePath() + "/machines/calibration.gcode"), null, null);
+                driver.transferGCode(new File(Base.getApplicationDirectory().getAbsolutePath() + "/machines/calibration.gcode"), null);
                 tempThread.start();
             }
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -79,8 +80,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private Version firmwareVersion = new Version();
     private String serialNumberString = "9999999999";
     private long startTS;
-    private String driverErrorDescription;
     private boolean stopTransfer = false;
+    private int transferProgress = 0;
     private static boolean bootedFromBootloader = false;
     private static boolean backupConfig = false;
     private static int backupNozzleSize = FilamentControler.DEFAULT_NOZZLE_SIZE;
@@ -346,7 +347,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 ans += readResponseTog();
 
                 if (ans.contains("tog")) {
-                    if(ans.equals("tog") == false) {
+                    if (ans.equals("tog") == false) {
                         System.out.println("break");
                     }
                     break;
@@ -623,174 +624,117 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         machine.setzValue(Double.valueOf(home_pos_z));
     }
+    
+    public int getTransferProgress() {
+        return transferProgress;
+    }
 
     /**
-     * Transfers a GCode file. A PrintSplashAutonomous object is requested in
-     * order to provide transfer progress feedback to that dialog. TODO: the
-     * panel should obtain feedback another way!
+     * Transfers a given GCode file to the printer's SDCard.
      *
-     * @param gcode the GCode file that is to be transferred
-     * @param psAutonomous PrintSplashAutonomous object
-     * @param header header to be included in the file when transferred (e.g.:
-     * M31). If null, no header is included
-     * @return error message
+     * @param gcodeFile
+     * @param header
+     * @return
      */
     @Override
-    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous, String header) {
+    public boolean transferGCode(File gcodeFile, String header) {
 
-        long loop = System.currentTimeMillis();
-        byte[] gcodeBytes;
-        int file_size, srcPos, totalBlocks, offset = MESSAGE_SIZE, destPos = 0,
-                totalMessages, message = 0, totalBytes = 0;
-        double transferPercentage, transferSpeed;
+        final long fileSize, totalMessages, totalBlocks;
+        final RandomAccessFile randomAccessFile;
+        int blockPointer, bytesRead, numMessages, messageLength;
+        byte[] blockBuffer, messageBuffer;
 
-        file_size = (int) gcode.length();
-        totalMessages = (int) Math.ceil((double) file_size / (double) MESSAGE_SIZE);
-        totalBlocks = (int) Math.ceil((double) file_size / (double) (MESSAGES_IN_BLOCK * MESSAGE_SIZE));
+        if (!gcodeFile.isFile() || !gcodeFile.canRead()) {
+            Base.writeLog("GCode file not found or unreadable", this.getClass());
+            return false;
+        }
 
-        transferMode = true;
+        try {
+            randomAccessFile = new RandomAccessFile(gcodeFile, "r");
+        } catch (FileNotFoundException ex) {
+            Base.writeLog("File to be transferred was not found.", this.getClass());
+            return false;
+        }
+
+        blockPointer = 0;
+        blockBuffer = new byte[MAX_BLOCK_SIZE];
+        fileSize = gcodeFile.length();
+        totalMessages = fileSize / MESSAGE_SIZE + ((fileSize % MESSAGE_SIZE == 0) ? 0 : 1);
+        totalBlocks = totalMessages / MESSAGES_IN_BLOCK + ((totalMessages % MESSAGES_IN_BLOCK == 0) ? 0 : 1);
 
         dispatchCommandLock.lock();
         try {
             if (dispatchCommand(INIT_SDCARD, COM.TRANSFER).contains(ERROR)) {
-                driverErrorDescription = ERROR + ":INIT_SDCARD failed";
-                transferMode = false;
-                return driverErrorDescription;
+                Base.writeLog("(" + INIT_SDCARD.trim() + ") SDCard init has failed", this.getClass());
+                return false;
             } else {
-                Base.writeLog("SD Card init successful", this.getClass());
+                Base.writeLog("(" + INIT_SDCARD.trim() + ") SDCard init has been successful", this.getClass());
             }
 
-            //Set file at SDCard
-            if (createSDCardFile(gcode).contains(ERROR)) {
-                driverErrorDescription = ERROR + ":createSDCardFile failed";
-                transferMode = false;
-                return driverErrorDescription;
+            if (dispatchCommand(SET_FILENAME + fileName, COM.TRANSFER).contains(FILE_CREATED) == false) {
+                Base.writeLog("(" + SET_FILENAME.trim() + ") File creation failed", this.getClass());
+                return false;
             } else {
-                Base.writeLog("SD Card file created with success", this.getClass());
+                Base.writeLog("(" + SET_FILENAME.trim() + ") File creation has succeeded", this.getClass());
             }
-
-            //Stores file in byte array
-            gcodeBytes = getBytesFromFile(gcode);
-            byte[] iMessage;
 
             if (header != null && !header.equals("") && header.length() < MAX_BLOCK_SIZE) {
-                if (setTransferSize(destPos, (destPos + header.length()) - 1).contains(ERROR)) {
-                    driverErrorDescription = ERROR + ":setTransferSize failed";
-                    transferMode = false;
-                    return driverErrorDescription;
+                if (allocateSDCardSpace(blockPointer, (blockPointer + header.length()) - 1).contains(ERROR)) {
+                    Base.writeLog("SDCard space allocation for header failed", this.getClass());
+                    return false;
                 } else {
                     Base.writeLog("SDCard space for header allocated with success", this.getClass());
-                    destPos += header.length();
+                    blockPointer += header.length();
                 }
 
                 if (dispatchCommand(header.getBytes()).contains("tog") == false) {
                     Base.writeLog("Header transfer failure, 0 bytes sent.", this.getClass());
-                    return driverErrorDescription;
-                }
-            }
-
-            //Send the file 1 block at a time, only send full blocks
-            //Each block is MESSAGES_IN_BLOCK messages long        
-            for (int block = 1; block < totalBlocks; block++) {
-
-                //check if the transfer was canceled
-                if (stopTransfer == true) {
-                    Base.writeLog("Transfer canceled.", this.getClass());
-                    driverErrorDescription = ERROR + ":Transfer canceled.";
-                    //dispatchCommand("G28");
-                    transferMode = false;
-                    stopTransfer = false;
-                    return driverErrorDescription;
-                }
-
-                // size is MAX_BLOCK_SIZE of file_size
-                if (setTransferSize(destPos, (destPos + MAX_BLOCK_SIZE) - 1).contains(ERROR)) {
-                    driverErrorDescription = ERROR + ":setTransferSize failed";
-                    transferMode = false;
-                    return driverErrorDescription;
+                    return false;
                 } else {
-                    Base.writeLog("SDCard space allocated with success", this.getClass());
+                    Base.writeLog("Header transferred successfully.", this.getClass());
+                }
+            }
+
+            // Send all blocks
+            for (long block = 0; block < totalBlocks; ++block) {
+                try {
+                    bytesRead = randomAccessFile.read(blockBuffer, 0, MAX_BLOCK_SIZE);
+                } catch (IOException ex) {
+                    Base.writeLog("IOException thrown when attempting to obtain a block from the file (512*512 bytes).", this.getClass());
+                    return false;
                 }
 
-                Base.hiccup(100);
+                if (allocateSDCardSpace(blockPointer, blockPointer + bytesRead - 1).contains(ERROR)) {
+                    Base.writeLog("SDCard space allocation for " + block + " block failed", this.getClass());
+                    return false;
+                } else {
+                    blockPointer += MAX_BLOCK_SIZE;
+                }
 
-//            System.out.println("block:" + block + "M28 A" + srcPos + " D" + ((srcPos + MAX_BLOCK_SIZE) - 1));
-                for (int i = 0; i < MESSAGES_IN_BLOCK; i++) {
+                numMessages = bytesRead / MESSAGES_IN_BLOCK + ((bytesRead % MESSAGES_IN_BLOCK == 0) ? 0 : 1);
 
-                    message++;
+                // TODO: if errors occur here, recovery may be necessary
+                for (int message = 0; message < numMessages; ++message) {
+                    messageLength = Math.min(MESSAGE_SIZE, bytesRead);
+                    messageBuffer = new byte[messageLength];
+                    System.arraycopy(blockBuffer, message * MESSAGE_SIZE, messageBuffer, 0, messageLength);
 
-                    // Updates variables
-                    srcPos = destPos;
-                    destPos = srcPos + offset;
-                    iMessage = subbytes(gcodeBytes, srcPos, destPos);
-                    if (dispatchCommand(iMessage).contains("tog") == false) {
+                    if (dispatchCommand(messageBuffer).contains("tog") == false) {
                         Base.writeLog("Transfer failure, 0 bytes sent.", this.getClass());
-                        return driverErrorDescription;
-                    }
-
-                    //System.out.println("Message " + message + "/" + totalMessages + " in " + (System.currentTimeMillis() - time) + "ms");
-                    transferPercentage = ((double) message / totalMessages) * 100;
-
-                    if (Base.printPaused == false && psAutonomous != null) {
-                        psAutonomous.updatePrintBar((int) transferPercentage);
+                        return false;
+                    } else {
+                        bytesRead -= messageLength;
                     }
                 }
-
+                
+                transferProgress = Math.toIntExact(block / totalBlocks) * 100;
             }
 
-            srcPos = destPos;
-
-            //check if the transfer was canceled
-            if (stopTransfer == true) {
-                Base.writeLog("Transfer canceled.", this.getClass());
-                driverErrorDescription = ERROR + ":Transfer canceled.";
-                //dispatchCommand("G28");
-                transferMode = false;
-                stopTransfer = false;
-                return driverErrorDescription;
-            }
-
-            // last block is special
-            //destpos is MAX_BLOCK_SIZE+src or file_size
-            if (setTransferSize(srcPos, Math.min(srcPos + MAX_BLOCK_SIZE, file_size) - 1).contains(ERROR)) {
-                driverErrorDescription = ERROR + ":setTransferSize failed";
-                transferMode = false;
-
-                return driverErrorDescription;
-            } else {
-                Base.writeLog("SDCard space allocated with success", this.getClass());
-            }
-
-            Base.hiccup(100);
-
-            for (; srcPos < file_size; srcPos += offset) {
-                message++;
-                //Get byte array with MESSAGE_SIZE
-                iMessage = subbytes(gcodeBytes, srcPos, Math.min(srcPos + offset, file_size));
-
-                //sendCommandBytes(iMessage);
-                if (dispatchCommand(iMessage).contains("tog") == false) {
-                    Base.writeLog("Transfer failure, 0 bytes sent.", this.getClass());
-                    return driverErrorDescription;
-                }
-
-                transferPercentage = ((double) message / totalMessages) * 100;
-                if (psAutonomous != null) {
-                    psAutonomous.updatePrintBar((int) transferPercentage);
-                }
-            }
-
-            loop = System.currentTimeMillis() - loop;
-            transferSpeed = totalBytes / (loop / 1000.0);
-            Base.writeLog("Transmission sucessfull " + totalBytes + " bytes in " + loop / 1000.0
-                    + "s : " + transferSpeed + "kbps\n", this.getClass());
-
-            transferMode = false;
         } finally {
             dispatchCommandLock.unlock();
         }
 
-        return RESPONSE_OK;
+        return true;
     }
 
     @Override
@@ -847,46 +791,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
         return variables;
     }
 
-    private String createSDCardFile(File gcode) {
-
-        String out = "";
-        String response = "";
-
-        if (!gcode.isFile() || !gcode.canRead()) {
-            String err = out + "File not found or unreadable.\n";
-            Base.writeLog("Impossible to read GCode file for transfer: " + err, this.getClass());
-            return err;
-        }
-
-        //sleep for a nano second just for luck
-        try {
-            Thread.sleep(0, 1);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PrintSplashAutonomous.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        out = dispatchCommand(SET_FILENAME + fileName, COM.TRANSFER);
-
-        if (out.contains(FILE_CREATED) == false) {
-            out += response + "\n";
-            Base.writeLog("M30 failed. File not created " + out, this.getClass());
-            return ERROR + out + "M30 failed. File not created";
-        } else {
-            return FILE_CREATED;
-        }
-
-    }
-
-    private String setTransferSize(int srcPos, int destPos) {
+    private String allocateSDCardSpace(int srcPos, int destPos) {
 
         String command, response;
 
         command = TRANSFER_BLOCK + "A" + srcPos + " D" + destPos;
 
         response = dispatchCommand(command);
-        //sendCommand(command);
-        //hiccup(100, 0);
-        //out = readResponse();
 
         if (response.contains(RESPONSE_OK)) {
             return RESPONSE_OK;
@@ -894,57 +805,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return ERROR + response + "\nM28 failed. Response not OK";
         }
 
-    }
-
-    private byte[] getBytesFromFile(File gcode) {
-        FileInputStream in;
-
-        byte[] bytes = new byte[(int) gcode.length()];
-
-        //Open stream to read File
-        try {
-            in = new FileInputStream(gcode);
-            in.read(bytes);
-            in.close();
-        } catch (FileNotFoundException ex) {
-            return null;
-        } catch (IOException ex) {
-            return null;
-        }
-
-        return bytes;
-    }
-
-    /**
-     * Return a new byte array containing a sub-portion of the source array
-     *
-     * @param source
-     * @param srcBegin The beginning index (inclusive)
-     * @param srcEnd The ending index (exclusive)
-     *
-     * @return The new, populated byte array
-     */
-    private byte[] subbytes(byte[] source, int srcBegin, int srcEnd) {
-        byte destination[];
-
-        destination = new byte[srcEnd - srcBegin];
-        getBytes(source, srcBegin, srcEnd, destination, 0);
-
-        return destination;
-    }
-
-    /**
-     * Copies bytes from the source byte array to the destination array
-     *
-     * @param source The source array
-     * @param srcBegin Index of the first source byte to copy
-     * @param srcEnd Index after the last source byte to copy
-     * @param destination The destination array
-     * @param dstBegin The starting offset in the destination array
-     */
-    private void getBytes(byte[] source, int srcBegin, int srcEnd, byte[] destination,
-            int dstBegin) {
-        System.arraycopy(source, srcBegin, destination, dstBegin, srcEnd - srcBegin);
     }
 
     /**

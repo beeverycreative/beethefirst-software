@@ -749,7 +749,7 @@ Pour charger le filament, insérez le filament dans l'orifice et poussez jusqu'a
             <UnknownColor value="La couleur du filament est inconnue. Vous êtes sûr que la couleur est correctement sélectionnée?"/>
             <IncompatibleFilament value="In order to use this filament, you have to change your current nozzle. Do you wish to proceed?" />
             <IncompatibleFilamentPause value="It is not possible to change to this filament during Pause/Shutdown." />
-            <ChangeSupport value="In order to use this filament, you have to change your current spool support. Do you wish to proceed?" />
+            <ChangeSupport value="In order to use this type of filament, you must have the external spool holder mounted. Do you wish to proceed?" />
             <LoadSupportModels value="Please return to this wizard when you're done printing the required models. You can do this by clicking on the Maintenance button (left of the Print button, upper right corner of the screen), and pressing the Change Support button afterwards." />
             <UnknownFilamentText value="Il n'existent pas de paramètres dans BEESOFT pour le filament dans l'imprimante. Changez le filament." />
             <UnloadBeforeSupport value="To proceed, you must ensure you have no loaded filament on your printer. Do you wish to unload now?" />

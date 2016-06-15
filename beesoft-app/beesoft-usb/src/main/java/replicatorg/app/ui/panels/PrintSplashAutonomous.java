@@ -1064,7 +1064,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 estimator = new PrintEstimator(gcode);
                 headerStr = "M31 A" + estimator.getEstimatedMinutes() + '\n';
                 setTransferInfo();
-                if (driver.gcodeTransfer(gcode, PrintSplashAutonomous.this, headerStr).toLowerCase().contains(ERROR)) {
+                if (driver.transferGCode(gcode, headerStr) == false) {
                     setError(true);
                 } else {
                     // THIS REPEATED HEATING IS DONE JUST IN CASE, BECAUSE OF THE POWER SAVING FEATURE

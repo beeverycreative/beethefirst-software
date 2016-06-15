@@ -227,7 +227,7 @@ public class UsbDriver extends DriverBaseImplementation {
             } //no need for else
         }
     }
-    
+
     @Override
     public boolean isAlive() {
         return isAlive;
@@ -357,9 +357,7 @@ public class UsbDriver extends DriverBaseImplementation {
                             pipes.open();
                         }
 
-                        if (!transferMode) {
-                            pipeWrite.syncSubmit(irpWrite);
-                        }
+                        pipeWrite.syncSubmit(irpWrite);
 
                     } catch (IllegalArgumentException ex) {
                         Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());

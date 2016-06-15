@@ -82,17 +82,13 @@ public interface Driver {
     public String dispatchCommand(String command, COM comtype);
 
     /**
-     * Transfers a GCode file. A PrintSplashAutonomous object is requested in
-     * order to provide transfer progress feedback to that dialog. TODO: the
-     * panel should obtain feedback another way!
+     * Transfers a given GCode file to the printer's SDCard.
      *
-     * @param gcode the GCode file that is to be transferred
-     * @param psAutonomous PrintSplashAutonomous object
-     * @param header header to be included in the file when transferred (e.g.:
-     * M31). If null, no header is included
-     * @return error message
+     * @param gcodeFile
+     * @param header
+     * @return
      */
-    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous, String header);
+    public boolean transferGCode(File gcodeFile, String header);
 
     /**
      * Start print via Autonomous mode.
