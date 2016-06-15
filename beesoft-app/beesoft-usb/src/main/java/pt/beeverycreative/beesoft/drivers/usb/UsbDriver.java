@@ -60,7 +60,7 @@ public class UsbDriver extends DriverBaseImplementation {
     //check this, maybe delete
     protected boolean isNewVendorID = false;
 
-    protected ArrayList<AbstractDevice> m_usbDeviceList = new ArrayList<AbstractDevice>();
+    protected ArrayList<AbstractDevice> m_usbDeviceList = new ArrayList<>();
     /**
      * Lock for multi-threaded access to this driver's serial port.
      */

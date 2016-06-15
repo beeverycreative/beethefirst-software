@@ -276,7 +276,7 @@ public class ShutdownMenu extends BaseDialog {
                 dispose();
                 driver.dispatchCommand("M112", COM.NO_RESPONSE);
             };
-            cancelPrintQuery = new Query("CancelPrintText", action);
+            cancelPrintQuery = new Query("CancelPrintText", action, null);
             cancelPrintQuery.setVisible(true);
         }
     }//GEN-LAST:event_bCancelMousePressed

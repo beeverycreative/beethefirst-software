@@ -101,6 +101,8 @@ public class DefaultProperties {
         defaultHash.put("languagesList", "English,Português,Español,Deutsch,Français");
         defaultHash.put("git.filament_repo_url", "https://github.com/beeverycreative/Filaments.git");
         defaultHash.put("git.filament_repo_branch", "version/2.0.0");
+        
+        defaultHash.put("filament.dont_show_support_query", String.valueOf(false));
     }
 
     /**

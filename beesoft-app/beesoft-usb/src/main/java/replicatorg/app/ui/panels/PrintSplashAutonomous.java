@@ -783,7 +783,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         final Query cancelPrintQuery;
         
         if (bCancel.isEnabled()) {
-            cancelPrintQuery = new Query("CancelPrintText", this::doCancel);
+            cancelPrintQuery = new Query("CancelPrintText", this::doCancel, null);
             cancelPrintQuery.setVisible(true);
         }
         

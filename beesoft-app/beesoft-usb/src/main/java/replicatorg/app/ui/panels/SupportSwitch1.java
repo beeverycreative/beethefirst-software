@@ -290,7 +290,7 @@ public class SupportSwitch1 extends BaseDialog {
                 FilamentHeating filamentHeating = new FilamentHeating(null);
                 filamentHeating.setVisible(true);
             };
-            unloadQuery = new Query("UnloadBeforeSupport", displayFilamentHeating);
+            unloadQuery = new Query("UnloadBeforeSupport", displayFilamentHeating, null);
             supportSwitch2 = new SupportSwitch2();
 
             unloadQuery.setVisible(true);

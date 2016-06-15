@@ -289,6 +289,7 @@
             <Line17 value="Parar"/>  
             <Line16 value="Desconectar"/>
             <Export value="Exportar G-code"/>
+            <DontDisplayAgain value="Don't show this again" />
         </OptionPaneButtons>
 
         <!-- A próxima secção XML contém o texto a ser apresentado aquando de operações de abertura de ficheiros -->
@@ -479,8 +480,10 @@
 
         <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento --> 
         <FilamentWizard>
-            <Title1 value="PREPARANDO"/>
+            <Title1 value="Filament wizard"/>
             <CodeInsertionDesc value="Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent)." />
+            <ADesc value="A – External spool holder for all spool weights and all filament types." />
+            <BDesc value="B – Internal spool holder for PLA filament and 330g spool only." />
             <Heating_Info_Title value="Temperatura del nozzle de la extrusora"/>
             <Heating_Info value="El nozzle de la extrusora tiene que calentarse cada vez que cambies de filamento. Cuando se alcanza la temperatura ideal puedes pasar a la siguiente etapa."/>
             <Info_Warning value = "ADVERTENCIA: NUNCA TOQUE EL NOZZLE DE LA EXTRUSORA CUANDO LA IMPRESORA ESTE ENCENDIDA."/> 

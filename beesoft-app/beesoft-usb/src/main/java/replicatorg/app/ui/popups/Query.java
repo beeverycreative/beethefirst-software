@@ -4,6 +4,7 @@ import java.awt.Dialog;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
 
@@ -22,6 +23,7 @@ public class Query extends BaseDialog {
 
     private final BaseDialog operationToDisplay;
     private final Runnable runnableToExecute;
+    private final String configToBeSet;
 
     /**
      * Query constructor that opens another dialog as soon as the Yes button has
@@ -29,8 +31,10 @@ public class Query extends BaseDialog {
      *
      * @param messageToDisplay the key of the message that is to be displayed
      * @param operationToDisplay dialog that is to be displayed
+     * @param configToBeSet if this is not null, a checkbox will be displayed,
+     * allowing the user to toggle a given configuration
      */
-    public Query(final String messageToDisplay, final BaseDialog operationToDisplay) {
+    public Query(final String messageToDisplay, final BaseDialog operationToDisplay, String configToBeSet) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
@@ -38,6 +42,11 @@ public class Query extends BaseDialog {
         enableDrag();
         this.operationToDisplay = operationToDisplay;
         this.runnableToExecute = null;
+        this.configToBeSet = configToBeSet;
+
+        if (configToBeSet == null) {
+            jCheckboxNotAgain.setVisible(false);
+        }
 
         jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
     }
@@ -48,8 +57,10 @@ public class Query extends BaseDialog {
      *
      * @param messageToDisplay the key of the message that is to be displayed
      * @param runnable runnable that is to be executed
+     * @param configToBeSet if this is not null, a checkbox will be displayed,
+     * allowing the user to toggle a given configuration
      */
-    public Query(final String messageToDisplay, final Runnable runnable) {
+    public Query(final String messageToDisplay, final Runnable runnable, String configToBeSet) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
@@ -57,15 +68,19 @@ public class Query extends BaseDialog {
         enableDrag();
         this.operationToDisplay = null;
         this.runnableToExecute = runnable;
+        this.configToBeSet = configToBeSet;
+
+        if (configToBeSet == null) {
+            jCheckboxNotAgain.setVisible(false);
+        }
 
         jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
-
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue(1, "Other", "NotSupported"));
         bYes.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line1"));
         bNo.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line2"));
+        jCheckboxNotAgain.setText(Languager.getTagValue(1, "OptionPaneButtons", "DontDisplayAgain"));
     }
 
     @SuppressWarnings("unchecked")
@@ -80,6 +95,7 @@ public class Query extends BaseDialog {
         jPanel2 = new javax.swing.JPanel();
         bYes = new javax.swing.JLabel();
         bNo = new javax.swing.JLabel();
+        jCheckboxNotAgain = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(10, 10));
@@ -184,12 +200,26 @@ public class Query extends BaseDialog {
             }
         });
 
+        jCheckboxNotAgain.setBackground(new java.awt.Color(255, 203, 5));
+        jCheckboxNotAgain.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        jCheckboxNotAgain.setText("Don't show this again");
+        jCheckboxNotAgain.setBorder(null);
+        jCheckboxNotAgain.setContentAreaFilled(false);
+        jCheckboxNotAgain.setFocusPainted(false);
+        jCheckboxNotAgain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckboxNotAgainActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jCheckboxNotAgain)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bYes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bNo)
@@ -201,7 +231,8 @@ public class Query extends BaseDialog {
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bYes)
-                    .addComponent(bNo))
+                    .addComponent(bNo)
+                    .addComponent(jCheckboxNotAgain, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -266,10 +297,17 @@ public class Query extends BaseDialog {
         bNo.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_18.png")));
     }//GEN-LAST:event_bNoMouseExited
 
+    private void jCheckboxNotAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckboxNotAgainActionPerformed
+        if(jCheckboxNotAgain.isEnabled()) {
+            ProperDefault.put(configToBeSet, String.valueOf(jCheckboxNotAgain.isSelected()));
+        }
+    }//GEN-LAST:event_jCheckboxNotAgainActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bNo;
     private javax.swing.JLabel bX;
     private javax.swing.JLabel bYes;
+    private javax.swing.JCheckBox jCheckboxNotAgain;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

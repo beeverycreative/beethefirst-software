@@ -9,6 +9,7 @@ import pt.beeverycreative.beesoft.filaments.Filament.Material;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.popups.Query;
 
@@ -37,28 +38,20 @@ public class FilamentCodeInsertion extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         Base.writeLog("First step of the filament change operation", this.getClass());
         initComponents();
-        setFont();
         setTextLanguage();
         enableDrag();
         evaluateInitialConditions();
         centerOnScreen();
     }
 
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
-        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
-        lDesc.setFont(GraphicDesignComponents.getSSProRegular("12"));
-    }
-
     private void setTextLanguage() {
-        jLabel1.setText("Filament wizard");
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         lDesc.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "CodeInsertionDesc") + "</html>");
+        lDescA.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "ADesc") + "</html>");
+        lDescB.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "BDesc") + "</html>");
     }
 
     private void evaluateInitialConditions() {
@@ -150,20 +143,21 @@ public class FilamentCodeInsertion extends BaseDialog {
         jSeparator2 = new javax.swing.JSeparator();
         jComboBox1 = new javax.swing.JComboBox();
         lDesc = new javax.swing.JLabel();
+        lDescA = new javax.swing.JLabel();
+        lDescB = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(567, 501));
-        setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
+        bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bNext.setText("SEGUINTE");
+        bNext.setText("Next");
         bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bNext.setEnabled(false);
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -179,18 +173,19 @@ public class FilamentCodeInsertion extends BaseDialog {
             }
         });
 
+        bCancel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bCancel.setText("SAIR");
+        bCancel.setText("Cancel");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bCancelMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
             }
         });
 
@@ -201,7 +196,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 402, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 408, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
@@ -247,6 +242,7 @@ public class FilamentCodeInsertion extends BaseDialog {
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel1.setText("BEM-VINDO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
@@ -255,7 +251,8 @@ public class FilamentCodeInsertion extends BaseDialog {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_ambos.png"))); // NOI18N
 
-        jLabel3.setText("Troca de Filamento");
+        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        jLabel3.setText("Select type");
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
@@ -263,6 +260,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
         jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
+        jComboBox1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -270,8 +268,14 @@ public class FilamentCodeInsertion extends BaseDialog {
             }
         });
 
-        lDesc.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lDesc.setText("<html>Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent).</html>");
+
+        lDescA.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDescA.setText("<html> A – External spool holder for all spool weights and all filament types. </html>");
+
+        lDescB.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDescB.setText("<html>\nB – Internal spool holder for PLA filament and 330g spool only.\n</html>");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -281,28 +285,34 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lDescA, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lDescB, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(lDesc))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lDescA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(lDescB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -323,8 +333,7 @@ public class FilamentCodeInsertion extends BaseDialog {
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(12, 12, 12)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -338,7 +347,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -397,42 +406,47 @@ public class FilamentCodeInsertion extends BaseDialog {
             // change image according to the filament's material
             if (filament.getMaterial() == Material.PLA) {
                 jLabel2.setIcon(bothSupportImage);
+                lDescA.setVisible(true);
+                lDescB.setVisible(true);
             } else {
                 jLabel2.setIcon(supportImage);
-                
-                query = new Query("ChangeSupport", new SupportSwitch1());
-                query.setVisible(true);
+                lDescA.setVisible(false);
+                lDescB.setVisible(false);
 
+                if (Boolean.parseBoolean(ProperDefault.get("filament.dont_show_support_query")) == false) {
+                    query = new Query("ChangeSupport", new SupportSwitch1(), "filament.dont_show_support_query");
+                    query.setVisible(true);
+                }
             }
 
             // if the selected filament isn't compatible with the current nozzle
             // display a warning informing the user of this fact, and initiate
             // the nozzle switch operation, if that's what the user wants
             /*
-            if (filament.isCompatible() == false) {
-                if (Base.printPaused == false) {
-                    warning = new Warning(new NozzleSwitch1());
-                    warning.setMessage("IncompatibleFilament");
-                    warning.setVisible(true);
+             if (filament.isCompatible() == false) {
+             if (Base.printPaused == false) {
+             warning = new Warning(new NozzleSwitch1());
+             warning.setMessage("IncompatibleFilament");
+             warning.setVisible(true);
 
-                    if (warning.hasCancelBeenPressed() == false) {
-                        currentNozzle = new Nozzle(model.getNozzleType());
-                        evaluateInitialConditions();
-                        filament2 = (FilamentComboItem) jComboBox1.getItemAt(selectedIndex);
-                        if (filament2.isCompatible()) {
-                            jComboBox1.setSelectedIndex(selectedIndex);
-                        }
-                    } else {
-                        jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
-                    }
-                } else {
-                    warning = new Warning(false);
-                    warning.setMessage("IncompatibleFilamentPause");
-                    warning.setVisible(true);
-                    jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
-                }
-            }
-            */
+             if (warning.hasCancelBeenPressed() == false) {
+             currentNozzle = new Nozzle(model.getNozzleType());
+             evaluateInitialConditions();
+             filament2 = (FilamentComboItem) jComboBox1.getItemAt(selectedIndex);
+             if (filament2.isCompatible()) {
+             jComboBox1.setSelectedIndex(selectedIndex);
+             }
+             } else {
+             jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+             }
+             } else {
+             warning = new Warning(false);
+             warning.setMessage("IncompatibleFilamentPause");
+             warning.setVisible(true);
+             jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+             }
+             }
+             */
         }
 
     }//GEN-LAST:event_jComboBox1ItemStateChanged
@@ -451,6 +465,8 @@ public class FilamentCodeInsertion extends BaseDialog {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lDesc;
+    private javax.swing.JLabel lDescA;
+    private javax.swing.JLabel lDescB;
     // End of variables declaration//GEN-END:variables
 
     /*
