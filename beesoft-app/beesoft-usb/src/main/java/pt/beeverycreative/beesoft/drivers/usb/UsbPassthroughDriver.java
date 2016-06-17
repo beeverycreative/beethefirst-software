@@ -46,7 +46,6 @@ import replicatorg.util.Point5d;
 public final class UsbPassthroughDriver extends UsbDriver {
 
     private static final String GET_STATUS = "M625";
-    private static final String GET_STATUS_FROM_ERROR = GET_STATUS + new String(new char[507]).replace("\0", "A");
     private static final String GET_POSITION = "M121";
     private static final String LAUNCH_FIRMWARE = "M630";
     private static final String SET_FIRMWARE_VERSION = "M114 A";
@@ -67,6 +66,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String INIT_SDCARD = "M21 ";
     private static final int MESSAGE_SIZE = 512;
     private static final int MESSAGES_IN_BLOCK = 512;
+    private static final String GET_STATUS_FROM_ERROR = GET_STATUS + new String(new char[MESSAGE_SIZE - 4]).replace("\0", "A");
     //BLOCK_SIZE is: how many bytes in each M28 block transfers
     private static final int MAX_BLOCK_SIZE = MESSAGE_SIZE * MESSAGES_IN_BLOCK;
     //private static final String GET_SERIAL = "M117";
@@ -730,7 +730,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
                         transferProgress = Math.toIntExact(messagesSent++ * 100 / totalMessages);
                         if (panel != null) {
-                             panel.updatePrintBar(transferProgress);
+                            panel.updatePrintBar(transferProgress);
                         }
                     }
                 }

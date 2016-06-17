@@ -344,7 +344,9 @@ public class UsbDriver extends DriverBaseImplementation {
         pipeRead = pipes.getUsbPipeRead();
         pipeWrite = pipes.getUsbPipeWrite();
         irpWrite = pipes.getUsbPipeWrite().createUsbIrp();
-        irpWrite.setData("M625\n".getBytes());
+        // this way we can easily recover if printer is stuck in transfer mode
+        // and it works even if it isn't
+        irpWrite.setData(("M625\n" + new String(new char[507])).getBytes()); 
 
         try {
             if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
@@ -382,6 +384,14 @@ public class UsbDriver extends DriverBaseImplementation {
                             if (ansBytes > 0) {
                                 try {
                                     status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+
+                                    // if printer is stuck in transfer mode, 
+                                    // attempt to recover it
+                                    while (status.contains("tog")) {
+                                        pipeWrite.syncSubmit(irpWrite);
+                                        ansBytes = pipeRead.syncSubmit(readBuffer);
+                                        status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+                                    }
 
                                     // when printer is in bootloader, M625 returns bad code
                                     if (!status.contains("S:") && !status.contains("Bad")) {
