@@ -624,7 +624,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         machine.setzValue(Double.valueOf(home_pos_z));
     }
-    
+
     public int getTransferProgress() {
         return transferProgress;
     }
@@ -634,13 +634,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
      *
      * @param gcodeFile
      * @param header
+     * @param panel
      * @return
      */
     @Override
-    public boolean transferGCode(File gcodeFile, String header) {
+    public boolean transferGCode(File gcodeFile, String header, PrintSplashAutonomous panel) {
 
         final long fileSize, totalMessages, totalBlocks;
         final RandomAccessFile randomAccessFile;
+        long messagesSent;
         int blockPointer, bytesRead, numMessages, messageLength;
         byte[] blockBuffer, messageBuffer;
 
@@ -659,6 +661,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         blockPointer = 0;
         blockBuffer = new byte[MAX_BLOCK_SIZE];
         fileSize = gcodeFile.length();
+        messagesSent = 0;
         totalMessages = fileSize / MESSAGE_SIZE + ((fileSize % MESSAGE_SIZE == 0) ? 0 : 1);
         totalBlocks = totalMessages / MESSAGES_IN_BLOCK + ((totalMessages % MESSAGES_IN_BLOCK == 0) ? 0 : 1);
 
@@ -724,10 +727,13 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         return false;
                     } else {
                         bytesRead -= messageLength;
+
+                        transferProgress = Math.toIntExact(messagesSent++ * 100 / totalMessages);
+                        if (panel != null) {
+                             panel.updatePrintBar(transferProgress);
+                        }
                     }
                 }
-                
-                transferProgress = Math.toIntExact(block / totalBlocks) * 100;
             }
 
         } finally {

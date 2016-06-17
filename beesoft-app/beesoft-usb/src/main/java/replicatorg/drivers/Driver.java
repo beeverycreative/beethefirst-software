@@ -86,9 +86,10 @@ public interface Driver {
      *
      * @param gcodeFile
      * @param header
+     * @param panel
      * @return
      */
-    public boolean transferGCode(File gcodeFile, String header);
+    public boolean transferGCode(File gcodeFile, String header, PrintSplashAutonomous panel);
 
     /**
      * Start print via Autonomous mode.

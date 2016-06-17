@@ -555,7 +555,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public boolean transferGCode(File gcode, String header) {
+    public boolean transferGCode(File gcode, String header, PrintSplashAutonomous panel) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

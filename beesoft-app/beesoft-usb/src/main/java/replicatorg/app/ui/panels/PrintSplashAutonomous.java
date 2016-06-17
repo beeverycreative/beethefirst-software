@@ -395,7 +395,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         return generateTimeString(timeInMinutes);
     }
 
-    private void updateTemperatureOnProgressBar(int temperature) {
+    private void updateValueOnProgressBar(int temperature) {
         if (temperature > jProgressBar1.getValue()) {
             jProgressBar1.setValue(temperature);
         }
@@ -1064,7 +1064,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 estimator = new PrintEstimator(gcode);
                 headerStr = "M31 A" + estimator.getEstimatedMinutes() + '\n';
                 setTransferInfo();
-                if (driver.transferGCode(gcode, headerStr) == false) {
+                if (driver.transferGCode(gcode, headerStr, PrintSplashAutonomous.this) == false) {
                     setError(true);
                 } else {
                     // THIS REPEATED HEATING IS DONE JUST IN CASE, BECAUSE OF THE POWER SAVING FEATURE
@@ -1151,7 +1151,7 @@ public class PrintSplashAutonomous extends BaseDialog {
             driver.readTemperature();
             temperature = model.currentTool().getExtruderTemperature();
 
-            updateTemperatureOnProgressBar(temperature);
+            updateValueOnProgressBar(temperature);
             if (temperature >= (temperatureGoal - 1)) {
                 Base.writeLog("Temperature " + temperatureGoal + " achieved", this.getClass());
 
