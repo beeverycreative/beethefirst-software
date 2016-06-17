@@ -12,6 +12,7 @@ import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Warning;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -402,14 +403,22 @@ public class About extends BaseDialog {
     private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
         resetClickCount.stop();
         clickCount++;
-        
-        if(clickCount >= 10 && cpEnabled == false) {
-            ProperDefault.put("controlpanel.enable", "true");
-            Base.getMainWindow().setCPVisible();
-            GenericMessage message = new GenericMessage("CPEnableTitle", "CPEnableText");
-            message.setVisible(true);
+
+        if (clickCount >= 10) {
+            final Warning warning;
+            if (cpEnabled == false) {
+                ProperDefault.put("controlpanel.enable", "true");
+                Base.getMainWindow().setCPVisibility(true);
+                warning = new Warning("CPEnableText", false);
+                warning.setVisible(true);
+            } else {
+                ProperDefault.put("controlpanel.enable", "false");
+                Base.getMainWindow().setCPVisibility(false);
+                warning = new Warning("CPDisableText", false);
+                warning.setVisible(true);
+            }
         }
-        
+
         resetClickCount.start();
     }//GEN-LAST:event_jPanel1MouseClicked
 

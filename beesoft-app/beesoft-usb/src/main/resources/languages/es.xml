@@ -757,6 +757,8 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <UnknownFilamentText value="No hay configuraciones existentes en el BEESOFT para el filamento cargado en la impresora. Por favor cambia el filamento." />
             <UnloadBeforeSupport value="To proceed, you must ensure you have no loaded filament on your printer. Do you wish to unload now?" />
             <CancelPrintText value="Are you sure you want to cancel your print?" />
+            <CPEnableText value="You can now use the Control Panel." />
+            <CPDisableText value="Control Panel has been disabled." />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
@@ -815,10 +817,5 @@ Para cargar el filamento, insertarlo en el orificio de la entrada y empújalo ha
             <Models value="Modelos"/>
             <All value="Todos"/>
         </Gallery>
-
-        <GenericMessages>
-            <CPEnableTitle value="Debug mode has been enabled!" />
-            <CPEnableText value="You can now use the Control Panel." />
-        </GenericMessages>
     </tags>      
 </languages>

@@ -384,7 +384,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         this.setSize(this.getWidth() - 1, this.getHeight());
     }
 
-    public void setCPVisible() {
+    public void setCPVisibility(boolean visibility) {
         JMenu menu;
         JMenuItem menuItem;
         String name;
@@ -397,7 +397,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                     if (menuItem != null) {
                         name = menuItem.getText();
                         if (name.equalsIgnoreCase("Control Panel")) {
-                            menuItem.setVisible(true);
+                            menuItem.setVisible(visibility);
                             break;
                         }
                     }
