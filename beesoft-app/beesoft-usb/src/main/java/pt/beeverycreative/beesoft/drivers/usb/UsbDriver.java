@@ -83,6 +83,9 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static final Lock dispatchCommandLock = new ReentrantLock();
     private String lastStatusMessage;
 
+    protected static final int MESSAGE_SIZE = 512;
+    protected static final int MESSAGES_IN_BLOCK = 16;
+
     /**
      * USBDriver high level definition.
      *
@@ -346,7 +349,7 @@ public class UsbDriver extends DriverBaseImplementation {
         irpWrite = pipes.getUsbPipeWrite().createUsbIrp();
         // this way we can easily recover if printer is stuck in transfer mode
         // and it works even if it isn't
-        irpWrite.setData(("M625\n" + new String(new char[507])).getBytes()); 
+        irpWrite.setData(("M625" + new String(new char[MESSAGE_SIZE - 5]) + "\n").getBytes());
 
         try {
             if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
@@ -387,10 +390,17 @@ public class UsbDriver extends DriverBaseImplementation {
 
                                     // if printer is stuck in transfer mode, 
                                     // attempt to recover it
-                                    while (status.contains("tog")) {
-                                        pipeWrite.syncSubmit(irpWrite);
-                                        ansBytes = pipeRead.syncSubmit(readBuffer);
-                                        status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+                                    if (status.contains("tog")) {
+                                        while (status.contains("tog")) {
+                                            System.out.println(status);
+                                            Base.hiccup(50);
+                                            pipeWrite.syncSubmit(irpWrite);
+                                            Base.hiccup(50);
+                                            ansBytes = pipeRead.syncSubmit(readBuffer);
+                                            status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+                                        }
+                                        Base.hiccup(1000);
+                                        return false;
                                     }
 
                                     // when printer is in bootloader, M625 returns bad code
