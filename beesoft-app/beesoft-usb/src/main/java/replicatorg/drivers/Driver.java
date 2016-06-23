@@ -70,6 +70,8 @@ public interface Driver {
      * @return 
      */
     public String dispatchCommand(String command);
+    
+    public String dispatchCommand(String command, int timeout);
 
     /**
      * Dispatch a command to the Driver agent.
@@ -156,13 +158,6 @@ public interface Driver {
     public void updateNozzleType();
 
     /**
-     * Read data from the read endpoint.
-     *
-     * @return data available at the endpoint
-     */
-    public String readResponse();
-
-    /**
      * Get Total Extruded Value since filament change.
      * @return 
      */
@@ -217,19 +212,6 @@ public interface Driver {
      * <li> false, if not.
      */
     public boolean isBootloader();
-
-    /**
-     * Holds BEESOFT for 1 nano.
-     */
-    public void hiccup();
-
-    /**
-     * Holds BEESOFT for a period of mili and nano.
-     *
-     * @param mili miliseconds for application to be held
-     * @param nano nanoseconds for application to be held
-     */
-    public void hiccup(int mili, int nano);
 
     /**
      * Check that the communication line is still up, the machine is still

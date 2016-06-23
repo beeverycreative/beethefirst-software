@@ -62,10 +62,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -700,7 +697,7 @@ public class Base {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             name = win1.getName();
-            if (!name.equals("mainWindow") && !name.equals("FeedbackDialog")) {
+            if (!name.equals("mainWindow") && !(name.equals("FeedbackDialog") && Base.rebootingIntoFirmware)) {
                 win1.dispose();
             }
 //            System.out.println(win[i].getName());

@@ -249,18 +249,10 @@ class MachineThread extends Thread {
     public boolean isConnected() {
         return (DRIVER != null && DRIVER.isInitialized());
     }
-
-    private void dispose() {
-        if (DRIVER != null) {
+    
+    public void dispose() {
+        if(DRIVER != null) {
             DRIVER.dispose();
-        }
-
-        if (statusThread != null) {
-            try {
-                statusThread.interrupt();
-                statusThread.join(1000);
-            } catch (InterruptedException e) {
-            }
         }
     }
 }

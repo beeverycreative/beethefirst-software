@@ -102,7 +102,7 @@ public abstract class DriverBaseImplementation implements Driver {
         // The truth is that the name come from the xml
         //driverName = "virtualprinter";
     }
-    
+
     @Override
     public boolean isAlive() {
         return false;
@@ -139,6 +139,11 @@ public abstract class DriverBaseImplementation implements Driver {
     @Override
     public String dispatchCommand(String code) {
         Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        return "";
+    }
+
+    @Override
+    public String dispatchCommand(String code, int timeout) {
         return "";
     }
 
@@ -222,14 +227,6 @@ public abstract class DriverBaseImplementation implements Driver {
     @Override
     public boolean isInitialized() {
         return isInitialized.get();
-    }
-
-    @Override
-    public void hiccup() {
-    }
-
-    @Override
-    public void hiccup(int mili, int nano) {
     }
 
     @Override
@@ -435,11 +432,6 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void readZValue() {
-    }
-
-    @Override
-    public String readResponse() {
-        return "";
     }
 
     @Override
