@@ -346,7 +346,7 @@ public class UsbDriver extends DriverBaseImplementation {
         irpWrite = pipes.getUsbPipeWrite().createUsbIrp();
         // this way we can easily recover if printer is stuck in transfer mode
         // and it works even if it isn't
-        irpWrite.setData(("M625\n" + new String(new char[507])).getBytes()); 
+        irpWrite.setData(("M625\n").getBytes()); 
 
         try {
             if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
