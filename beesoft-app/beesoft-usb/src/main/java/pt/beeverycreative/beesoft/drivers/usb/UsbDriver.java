@@ -214,7 +214,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
         //final String testMsg = "M625" + new String(new char[MESSAGE_SIZE - 6]) + "\n";
         final String testMsg = "M625\n";
-        int ansBytes;
+        int ansBytes, tries = 10;
         long elapsedTimeMilliseconds;
         String status;
         boolean validStatus = false, mismatchDetected = false;
@@ -243,7 +243,7 @@ public class UsbDriver extends DriverBaseImplementation {
                     hiccup(100);
 
                     // clean up
-                    while (validStatus == false) {
+                    while (validStatus == false && --tries > 0) {
                         elapsedTimeMilliseconds = System.currentTimeMillis();
                         status = receiveAnswer();
                         elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
@@ -424,7 +424,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         Base.writeLog("Bulk send failed. Error: " + LibUsb.errorName(result), this.getClass());
                     }
 
-                    if (result == LibUsb.ERROR_NO_DEVICE) {
+                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO) {
                         resetBEESOFTstatus();
                     }
                     /*
@@ -486,7 +486,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         Base.writeLog("Bulk receive failed. Error: " + LibUsb.errorName(result), this.getClass());
                     }
 
-                    if (result == LibUsb.ERROR_NO_DEVICE) {
+                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO) {
                         resetBEESOFTstatus();
                     }
                     /*
@@ -521,7 +521,8 @@ public class UsbDriver extends DriverBaseImplementation {
     }
 
     private void resetBEESOFTstatus() {
-        if (Base.rebootingIntoFirmware == false) {
+        if (Base.keepFeedbackOpen == false) {
+            machine.setMachineOperational(false);
             Base.getMainWindow().getButtons().setMessage("is disconnected");
             Base.disposeAllOpenWindows();
         }

@@ -196,7 +196,7 @@ public class Base {
     private static String COMPUTER_ARCHITECTURE;
     public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
-    public static boolean rebootingIntoFirmware = false;
+    public static boolean keepFeedbackOpen = false;
     public static final short HEATING_POLL_TIME_MS = 500;
 
     public enum InitialOpenBehavior {
@@ -697,7 +697,7 @@ public class Base {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             name = win1.getName();
-            if (!name.equals("mainWindow") && !(name.equals("FeedbackDialog") && Base.rebootingIntoFirmware)) {
+            if (!name.equals("mainWindow") && !(name.equals("FeedbackDialog") && Base.keepFeedbackOpen)) {
                 win1.dispose();
             }
 //            System.out.println(win[i].getName());

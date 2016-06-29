@@ -38,6 +38,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String GET_STATUS = "M625";
     private static final String GET_POSITION = "M121";
     private static final String LAUNCH_FIRMWARE = "M630";
+    private static final String LAUNCH_BOOTLOADER = "M609";
     private static final String SET_FIRMWARE_VERSION = "M114 A";
     private static final String INVALID_FIRMWARE_VERSION = "0.0.0";
     private static final String GET_FIRMWARE_VERSION = "M115";
@@ -107,7 +108,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     @Override
     public void closeFeedback() {
-        Base.rebootingIntoFirmware = false;
+        Base.keepFeedbackOpen = false;
 
         if (feedbackWindow != null) {
             feedbackWindow.dispose();
@@ -130,7 +131,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
         setMachine(new MachineModel());
 
         super.isBootloader = true;
-        dispatchCommand("M114 ABEEVC-BEETHEFIRST_PLUS-10.4.9");
 
         if (status.contains("bootloader")) {
             bootedFromBootloader = true;
@@ -139,7 +139,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 super.isBootloader = true;
                 Base.writeLog("Launching firmware!", this.getClass());
                 feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
-                Base.rebootingIntoFirmware = true;
+                Base.keepFeedbackOpen = true;
                 dispatchCommand(LAUNCH_FIRMWARE); // Launch firmware
                 cleanLibUsbDevice();
             } else {
@@ -550,7 +550,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     @Override
     public boolean transferGCode(File gcodeFile, String header, PrintSplashAutonomous panel) {
-        
+
         final long fileSize, totalMessages, totalBlocks;
         final RandomAccessFile randomAccessFile;
         long messagesSent, elapsedTimeMilliseconds;
@@ -683,7 +683,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
         Base.writeLog("Successfully transferred " + gcodeFile.length() + " bytes in " + elapsedTimeMilliseconds / 1000 + " seconds.", this.getClass());
         Base.writeLog("Transfer rate: " + gcodeFile.length() / 1000 / (elapsedTimeMilliseconds / 1000) + "KBps", this.getClass());
-        
+
         return true;
     }
 
@@ -1177,15 +1177,17 @@ public final class UsbPassthroughDriver extends UsbDriver {
         feedbackWindow.setFeedback2(Feedback.SAVING_MESSAGE);
 
         // change into firmware
-        dispatchCommand("M630", COM.NO_RESPONSE);
+        Base.keepFeedbackOpen = true;
+        dispatchCommand(LAUNCH_FIRMWARE);
 
         //hiccup(3000);
-
         // reestablish connection
         if (establishConnection() == false) {
             Base.writeLog("Establishing connection after changing into firmware failed", this.getClass());
             return false;
         }
+
+        Base.keepFeedbackOpen = false;
 
         // going into firmware may have failed
         response = dispatchCommand("M625").toLowerCase();
@@ -1204,10 +1206,11 @@ public final class UsbPassthroughDriver extends UsbDriver {
         backupNozzleSize = machine.getNozzleType();
 
         // change back into bootloader
-        dispatchCommand("M609", COM.NO_RESPONSE);
+        Base.keepFeedbackOpen = true;
+        dispatchCommand(LAUNCH_BOOTLOADER);
+        Base.keepFeedbackOpen = false;
 
         //hiccup(3000);
-
         if (establishConnection() == false) {
             Base.writeLog("Couldn't establish connection after attempting to go back to bootloader, requesting user to restart", this.getClass());
 
