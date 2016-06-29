@@ -5,8 +5,6 @@ import java.nio.IntBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.usb4java.Context;
 import org.usb4java.Device;
 import org.usb4java.DeviceDescriptor;
@@ -58,11 +56,13 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static final Lock dispatchCommandLock = new ReentrantLock();
     private String lastStatusMessage;
 
+    protected static final int TRANSFER_MESSAGE_SIZE = 32;
     protected static final int MESSAGE_SIZE = 512;
-    protected static final int MESSAGES_IN_BLOCK = 16;
+    protected static final int SD_CARD_MESSAGE_SIZE = 512;
+    protected static final int MESSAGES_IN_BLOCK = 512;
 
     /**
-     * USBDriver high level definition.
+     * USBDriver low level definition.
      *
      */
     protected UsbDriver() {
@@ -212,7 +212,8 @@ public class UsbDriver extends DriverBaseImplementation {
      */
     protected boolean testComm() {
 
-        final String testMsg = "M625" + new String(new char[MESSAGE_SIZE - 6]) + "\n";
+        //final String testMsg = "M625" + new String(new char[MESSAGE_SIZE - 6]) + "\n";
+        final String testMsg = "M625\n";
         int ansBytes;
         long elapsedTimeMilliseconds;
         String status;
@@ -227,13 +228,18 @@ public class UsbDriver extends DriverBaseImplementation {
         try {
             if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
                 try {
-                    ansBytes = sendCommand(testMsg);
+
+                    while (receiveAnswerBytes(MESSAGE_SIZE, 100).length > 0) {
+                        hiccup(50);
+                    }
+
+                    ansBytes = sendCommand(testMsg, 30000);
 
                     if (ansBytes == 0) {
                         Base.writeLog("Couldn't send test message", this.getClass());
                         return false;
                     }
-                    
+
                     hiccup(100);
 
                     // clean up
@@ -250,17 +256,19 @@ public class UsbDriver extends DriverBaseImplementation {
                         if (status.length() > 0) {
                             // if printer is stuck in transfer mode, 
                             // attempt to recover it
-                            if (status.contains("tog")) {
-                                while (status.contains("tog")) {
-                                    System.out.println(status);
-                                    hiccup(50);
-                                    sendCommand(testMsg);
-                                    hiccup(50);
-                                    status = receiveAnswer();
-                                }
-                                hiccup(1000);
-                                return false;
-                            }
+                            /*
+                             if (status.contains("tog")) {
+                             while (status.contains("tog")) {
+                             System.out.println(status);
+                             hiccup(50);
+                             sendCommand(testMsg);
+                             hiccup(50);
+                             status = receiveAnswer();
+                             }
+                             hiccup(1000);
+                             return false;
+                             }
+                             */
 
                             // when printer is in bootloader, M625 returns bad code
                             if (!status.contains("S:") && !status.contains("Bad")) {
@@ -372,6 +380,7 @@ public class UsbDriver extends DriverBaseImplementation {
      * Actually sends command over USB.
      *
      * @param next
+     * @param timeout
      * @return
      */
     protected int sendCommand(String next, int timeout) {
@@ -387,6 +396,7 @@ public class UsbDriver extends DriverBaseImplementation {
      * Send command to Machine
      *
      * @param next Command
+     * @param timeout
      * @return command length
      */
     protected int sendCommandBytes(byte[] next, int timeout) {
@@ -409,7 +419,10 @@ public class UsbDriver extends DriverBaseImplementation {
                 result = LibUsb.bulkTransfer(connectedDeviceHandle, (byte) (LibUsb.ENDPOINT_OUT | 0x05), buffer, transfered, timeout);
 
                 if (result != LibUsb.SUCCESS) {
-                    Base.writeLog("Bulk send failed. Error: " + LibUsb.errorName(result), this.getClass());
+
+                    if (result != LibUsb.ERROR_TIMEOUT) {
+                        Base.writeLog("Bulk send failed. Error: " + LibUsb.errorName(result), this.getClass());
+                    }
 
                     if (result == LibUsb.ERROR_NO_DEVICE) {
                         resetBEESOFTstatus();
@@ -468,7 +481,10 @@ public class UsbDriver extends DriverBaseImplementation {
                 result = LibUsb.bulkTransfer(connectedDeviceHandle, (byte) (LibUsb.ENDPOINT_IN | 0x02), buffer, transfered, timeout);
 
                 if (result != LibUsb.SUCCESS) {
-                    Base.writeLog("Bulk receive failed. Error: " + LibUsb.errorName(result), this.getClass());
+
+                    if (result != LibUsb.ERROR_TIMEOUT) {
+                        Base.writeLog("Bulk receive failed. Error: " + LibUsb.errorName(result), this.getClass());
+                    }
 
                     if (result == LibUsb.ERROR_NO_DEVICE) {
                         resetBEESOFTstatus();
@@ -497,11 +513,10 @@ public class UsbDriver extends DriverBaseImplementation {
      *
      * @param mili milliseconds to sleep.
      */
-    protected void hiccup(int mili) {
+    protected void hiccup(long mili) {
         try {
             Thread.sleep(mili);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
