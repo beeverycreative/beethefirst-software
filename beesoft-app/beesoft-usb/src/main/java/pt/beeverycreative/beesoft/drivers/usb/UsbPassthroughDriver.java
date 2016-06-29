@@ -616,7 +616,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
             // Send all blocks
-            for (long block = 0; block < totalBlocks; ++block) {
+            for (long block = 0; block < totalBlocks && stopTransfer == false; ++block) {
                 try {
                     bytesRead = randomAccessFile.read(blockBuffer, 0, MAX_BLOCK_SIZE);
                 } catch (IOException ex) {
