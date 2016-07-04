@@ -90,32 +90,9 @@ public class UsbDriver extends DriverBaseImplementation {
     }
 
     protected boolean initPrinter() {
-        final Device device;
-
-        device = findDevice();
-
-        if (device != null) {
-            connectedDeviceHandle = obtainHandleFromDevice(device);
-            claimDeviceInterface(connectedDeviceHandle, 0);
-            serialNumberString = LibUsb.getStringDescriptor(connectedDeviceHandle, serialNumberIndex);
-            Base.SERIAL_NUMBER = serialNumberString;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Attempts to find a BEEVERYCREATIVE printer.
-     *
-     * @return the libusb device object representing the printer
-     */
-    private Device findDevice() {
-
         final DeviceList deviceList = new DeviceList();
-        DeviceDescriptor deviceDescriptor;
-        int result;
-        short idVendor, idProduct;
+        final Device device;
+        final int result;
 
         result = LibUsb.getDeviceList(context, deviceList);
 
@@ -123,6 +100,36 @@ public class UsbDriver extends DriverBaseImplementation {
             Base.writeLog("Unable to get device list. Error: " + LibUsb.errorName(result), this.getClass());
             throw new LibUsbException("Unable to get device list", result);
         }
+
+        try {
+            device = findDevice(deviceList);
+
+            if (device != null) {
+                connectedDeviceHandle = obtainHandleFromDevice(device);
+                claimDeviceInterface(connectedDeviceHandle, 0);
+                serialNumberString = LibUsb.getStringDescriptor(connectedDeviceHandle, serialNumberIndex);
+                Base.SERIAL_NUMBER = serialNumberString;
+                return true;
+            } else {
+                return false;
+            }
+        } finally {
+            LibUsb.freeDeviceList(deviceList, true);
+        }
+    }
+
+    /**
+     * Attempts to find a BEEVERYCREATIVE printer.
+     *
+     * @param deviceList device list, passed to clean after we find and connect
+     * to the device (otherwise, it won't work on Windows)
+     * @return the libusb device object representing the printer
+     */
+    private Device findDevice(DeviceList deviceList) {
+
+        DeviceDescriptor deviceDescriptor;
+        int result;
+        short idVendor, idProduct;
 
         try {
             for (Device device : deviceList) {
