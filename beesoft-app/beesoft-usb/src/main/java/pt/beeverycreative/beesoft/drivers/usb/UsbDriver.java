@@ -148,7 +148,12 @@ public class UsbDriver extends DriverBaseImplementation {
                 }
             }
         } finally {
-            LibUsb.freeDeviceList(deviceList, true);
+            // for some reason, if we free the device list on windows
+            // LIBUSB_ERROR_NO_DEVICE is thrown when we attempt to obtain the
+            // handle
+            if (Base.isWindows() == false) {
+                LibUsb.freeDeviceList(deviceList, true);
+            }
         }
 
         return null;
