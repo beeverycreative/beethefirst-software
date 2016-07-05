@@ -106,6 +106,7 @@ public class CalibrationWelcome extends BaseDialog {
         bPlus005.setEnabled(true);
         bNext.setEnabled(true);
         disableMessageDisplay();
+        busyThread.kill();
     }
 
     @Override

@@ -52,7 +52,6 @@ public class UsbDriver extends DriverBaseImplementation {
     protected boolean isONShutdown = false;
 
     private boolean isBusy = true;
-    private int readyCount = 0;
     protected static final Lock dispatchCommandLock = new ReentrantLock();
     private String lastStatusMessage;
 
@@ -231,14 +230,14 @@ public class UsbDriver extends DriverBaseImplementation {
         // this way we can easily recover if printer is stuck in transfer mode
         // and it works even if it isn't
         try {
-            if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
+            if (dispatchCommandLock.tryLock(50, TimeUnit.MILLISECONDS)) {
                 try {
 
                     while (receiveAnswerBytes(MESSAGE_SIZE, 100).length > 0) {
                         hiccup(50);
                     }
 
-                    ansBytes = sendCommand(testMsg, 30000);
+                    ansBytes = sendCommand(testMsg, 50);
 
                     if (ansBytes == 0) {
                         Base.writeLog("Couldn't send test message", this.getClass());
@@ -250,7 +249,7 @@ public class UsbDriver extends DriverBaseImplementation {
                     // clean up
                     while (validStatus == false && --tries > 0) {
                         elapsedTimeMilliseconds = System.currentTimeMillis();
-                        status = receiveAnswer();
+                        status = receiveAnswer(50);
                         elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
 
                         if (elapsedTimeMilliseconds > 500) {
@@ -310,13 +309,7 @@ public class UsbDriver extends DriverBaseImplementation {
             isBusy = true;
             return;
         } else {
-            if (readyCount == 5) {
-                isBusy = false;
-                readyCount = 0;
-            } else {
-                readyCount++;
-                return;
-            }
+            isBusy = false;
         }
 
         machineReady = status.contains("S:3");
@@ -326,13 +319,17 @@ public class UsbDriver extends DriverBaseImplementation {
         machinePaused = status.contains("Pause");
         machineOperational = machineReady || machineShutdown || machinePrinting || machinePaused;
 
-        machine.setLastStatusString(status);
-        machine.setMachineReady(machineReady);
-        machine.setMachinePaused(machinePaused);
-        machine.setMachinePowerSaving(machinePowerSaving);
-        machine.setMachineShutdown(machineShutdown);
-        machine.setMachinePrinting(machinePrinting);
-        machine.setMachineOperational(machineOperational);
+        try {
+            machine.setLastStatusString(status);
+            machine.setMachineReady(machineReady);
+            machine.setMachinePaused(machinePaused);
+            machine.setMachinePowerSaving(machinePowerSaving);
+            machine.setMachineShutdown(machineShutdown);
+            machine.setMachinePrinting(machinePrinting);
+            machine.setMachineOperational(machineOperational);
+        } catch (NullPointerException ex) {
+            Base.writeLog("Machine was null", this.getClass());
+        }
     }
 
     @Override

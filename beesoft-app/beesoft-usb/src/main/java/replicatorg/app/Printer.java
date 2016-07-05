@@ -37,7 +37,6 @@ public class Printer {
     private final CuraGenerator generator;
     private File gcode;
     private ArrayList<CuraGenerator.CuraEngineOption> options;
-    private File stl;
 
     public Printer(PrintPreferences printParams) {
         this.mainWindow = Base.getMainWindow();
@@ -61,7 +60,7 @@ public class Printer {
      * @return true if GCode generation was successful, false otherwise
      */
     public boolean generateGCode() {
-        stl = generateSTL();
+        final File stl = generateSTL();
         Base.writeLog("STL generated with success", this.getClass());
 
         options = getRaftAndSupportParameters();
@@ -72,6 +71,7 @@ public class Printer {
 
         appendStartAndEndGCode();
         gcode = generator.generateToolpath(stl, options);
+        stl.delete();
 
         if (gcode != null) {
             if (gcode.canRead() && gcode.length() != 0) {

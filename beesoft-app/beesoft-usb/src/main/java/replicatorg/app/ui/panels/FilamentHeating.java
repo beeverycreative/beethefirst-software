@@ -27,7 +27,7 @@ import replicatorg.drivers.Driver;
 public class FilamentHeating extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private static final int GOAL_TEMPERATURE = 200;
+    private static final int GOAL_TEMPERATURE = 215;
     private final Filament selectedFilament;
     private final TemperatureThread temperatureThread = new TemperatureThread();
 
