@@ -133,12 +133,12 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void executeGCodeLine(String code) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
     @Override
     public String dispatchCommand(String code) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
         return "";
     }
 
@@ -149,7 +149,7 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public String dispatchCommand(String code, COM comtype) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
         return "";
     }
 
@@ -192,13 +192,13 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     public void read(String code) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
     @Override
     public void dispose() {
         if (Base.logger.isLoggable(Level.FINE)) {
-            Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
+            //Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
         }
 //		parser = null;
     }

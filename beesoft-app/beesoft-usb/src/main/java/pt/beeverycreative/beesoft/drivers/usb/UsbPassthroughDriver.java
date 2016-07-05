@@ -1053,7 +1053,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         // for some reason, requesting firmware version too fast after setting the serial number
         // causes the answer to be just "ok"
-        Base.hiccup(100);
+        hiccup(100);
         firmware = dispatchCommand(GET_FIRMWARE_VERSION);
 
         if (isNewVendorID) {

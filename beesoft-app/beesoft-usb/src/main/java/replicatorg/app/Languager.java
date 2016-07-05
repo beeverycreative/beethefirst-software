@@ -324,7 +324,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "file with root tag" + BASE_TAG);
+                //Base.logger.log(Level.INFO, "Permission denied over {0}", "file with root tag" + BASE_TAG);
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());

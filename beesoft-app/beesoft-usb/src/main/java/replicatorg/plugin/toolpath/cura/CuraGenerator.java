@@ -188,7 +188,7 @@ public class CuraGenerator extends ToolpathGenerator {
                 return null;
             }
         } catch (IOException ioe) {
-            Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ioe);
+            //Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ioe);
             Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
             ist.kill();
@@ -196,7 +196,7 @@ public class CuraGenerator extends ToolpathGenerator {
             // Throw ToolpathGeneratorException
             return null;
         } catch (InterruptedException ex) {
-            Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ex);
+            //Base.logger.log(Level.SEVERE, ERROR_MESSAGE, ex);
             Base.writeLog(ERROR_MESSAGE, this.getClass());
             process.destroy();
             ist.kill();
