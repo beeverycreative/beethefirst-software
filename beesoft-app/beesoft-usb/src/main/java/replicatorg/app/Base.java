@@ -52,13 +52,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
@@ -886,6 +884,7 @@ public class Base {
                     "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                     "BEESOFT");
+            System.setProperty("java.awt.headless", "false");
         }
 
         boolean cleanPrefs = false;
