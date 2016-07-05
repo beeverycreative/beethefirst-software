@@ -5,11 +5,13 @@ import java.nio.IntBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.usb4java.ConfigDescriptor;
 import org.usb4java.Context;
 import org.usb4java.Device;
 import org.usb4java.DeviceDescriptor;
 import org.usb4java.DeviceHandle;
 import org.usb4java.DeviceList;
+import org.usb4java.EndpointDescriptor;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
@@ -59,6 +61,9 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static final int MESSAGE_SIZE = 512;
     protected static final int SD_CARD_MESSAGE_SIZE = 512;
     protected static final int MESSAGES_IN_BLOCK = 512;
+    
+    private byte ENDPOINT_IN_ADDRESS = LibUsb.ENDPOINT_IN | 0x02;
+    private byte ENDPOINT_OUT_ADDRESS = LibUsb.ENDPOINT_OUT | 0x05;
 
     /**
      * USBDriver low level definition.
@@ -112,6 +117,7 @@ public class UsbDriver extends DriverBaseImplementation {
     private Device findDevice() {
 
         final DeviceList deviceList = new DeviceList();
+        final ConfigDescriptor configDescriptor = new ConfigDescriptor();
         DeviceDescriptor deviceDescriptor;
         int result;
         short idVendor, idProduct;
@@ -143,6 +149,17 @@ public class UsbDriver extends DriverBaseImplementation {
                     FilamentControler.initFilamentList(connectedDevice);
                     isNewVendorID = idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID;
                     serialNumberIndex = deviceDescriptor.iSerialNumber();
+
+                    LibUsb.getActiveConfigDescriptor(device, configDescriptor);
+                    for (EndpointDescriptor e : configDescriptor.iface()[0].altsetting()[0].endpoint()) {
+                        byte endpointAddress = e.bEndpointAddress();
+                        if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_IN) {
+                            ENDPOINT_IN_ADDRESS = endpointAddress;
+                        } else if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_OUT) {
+                            ENDPOINT_OUT_ADDRESS = endpointAddress;
+                        }
+                    }
+
                     return device;
                 }
             }
@@ -418,7 +435,7 @@ public class UsbDriver extends DriverBaseImplementation {
         dispatchCommandLock.lock();
         try {
             if (connectedDeviceHandle != null) {
-                result = LibUsb.bulkTransfer(connectedDeviceHandle, (byte) (LibUsb.ENDPOINT_OUT | 0x05), buffer, transfered, timeout);
+                result = LibUsb.bulkTransfer(connectedDeviceHandle, ENDPOINT_OUT_ADDRESS, buffer, transfered, timeout);
 
                 if (result != LibUsb.SUCCESS) {
 
@@ -480,7 +497,7 @@ public class UsbDriver extends DriverBaseImplementation {
         dispatchCommandLock.lock();
         try {
             if (connectedDeviceHandle != null) {
-                result = LibUsb.bulkTransfer(connectedDeviceHandle, (byte) (LibUsb.ENDPOINT_IN | 0x02), buffer, transfered, timeout);
+                result = LibUsb.bulkTransfer(connectedDeviceHandle, ENDPOINT_IN_ADDRESS, buffer, transfered, timeout);
 
                 if (result != LibUsb.SUCCESS) {
 
