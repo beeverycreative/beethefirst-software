@@ -3,7 +3,6 @@ package replicatorg.app.ui.popups;
 import java.awt.Dialog;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
 
 /**
@@ -33,7 +32,6 @@ public class Feedback extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         setName("FeedbackDialog");
         initComponents();
-        setFont();
         centerOnScreen();
         enableDrag();
         lFeedbackMain.setText("");
@@ -44,7 +42,7 @@ public class Feedback extends BaseDialog {
     public void setFeedback1(int index) {
         switch (index) {
             case FLASHING_MAIN_MESSAGE:
-                lFeedbackMain.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingMainMessage"));
+                lFeedbackMain.setText("<html>" + Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingMainMessage") + "</html>");
                 break;
             default:
                 break;
@@ -52,43 +50,40 @@ public class Feedback extends BaseDialog {
     }
 
     public void setFeedback2(int index) {
+        String msg = "<html>";
+        
         switch (index) {
             case FLASHING_SUB_MESSAGE:
-                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessage"));
+                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessage");
                 break;
             case FLASHING_SUB_MESSAGE_NO_CALIBRATION:
-                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessageNoCalibration"));
+                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessageNoCalibration");
                 break;
             case LAUNCHING_MESSAGE:
-                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "LaunchingMessage"));
+                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "LaunchingMessage");
                 break;
             case SAVING_MESSAGE:
-                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "SavingMessage"));
+                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "SavingMessage");
                 break;
             case RESTART_PRINTER:
-                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessage"));
+                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessage");
                 break;
             default:
                 break;
         }
+        
+        msg += "</html>";
+        lFeedbackSub.setText(msg);
     }
     
     public void setFeedback3(int index) {
         switch(index) {
             case RESTART_PRINTER:
-                lFeedbackSub.setText(Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessageTimeout"));
+                lFeedbackSub.setText("<html>" + Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessageTimeout") + "</html>");
                 break;
             default: 
                 break;
         }
-    }
-
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProLight("33"));
-        lFeedbackMain.setFont(GraphicDesignComponents.getSSProBold("12"));
-        lFeedbackSub.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        lFeedbackRestart.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     @SuppressWarnings("unchecked")
@@ -97,7 +92,6 @@ public class Feedback extends BaseDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
         lFeedbackMain = new javax.swing.JLabel();
         lFeedbackSub = new javax.swing.JLabel();
         loading = new javax.swing.JLabel();
@@ -110,30 +104,19 @@ public class Feedback extends BaseDialog {
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro Light", 0, 33)); // NOI18N
         jLabel1.setText("BEESOFT");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
-        jPanel4.setRequestFocusEnabled(false);
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 64, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 37, Short.MAX_VALUE)
-        );
-
+        lFeedbackMain.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
         lFeedbackMain.setText("Feedback1");
 
+        lFeedbackSub.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lFeedbackSub.setText("Feedback2");
 
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
 
+        lFeedbackRestart.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lFeedbackRestart.setText("Feedback3");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -144,36 +127,30 @@ public class Feedback extends BaseDialog {
                 .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lFeedbackRestart)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(lFeedbackMain))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 182, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lFeedbackSub)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(loading)
-                        .addGap(75, 75, 75))))
+                        .addComponent(jLabel1)
+                        .addGap(0, 189, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lFeedbackMain, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lFeedbackRestart, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lFeedbackSub, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(loading)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(lFeedbackMain))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(lFeedbackMain)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lFeedbackSub)
                     .addComponent(loading))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lFeedbackRestart)
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -193,7 +170,6 @@ public class Feedback extends BaseDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel lFeedbackMain;
     private javax.swing.JLabel lFeedbackRestart;
     private javax.swing.JLabel lFeedbackSub;
