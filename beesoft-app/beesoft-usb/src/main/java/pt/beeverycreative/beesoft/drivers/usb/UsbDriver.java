@@ -460,7 +460,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         Base.writeLog("Bulk send failed. Error: " + LibUsb.errorName(result), this.getClass());
                     }
 
-                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO) {
+                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO || result == LibUsb.ERROR_OTHER) {
                         resetBEESOFTstatus();
                     }
                     /*
@@ -522,7 +522,7 @@ public class UsbDriver extends DriverBaseImplementation {
                         Base.writeLog("Bulk receive failed. Error: " + LibUsb.errorName(result), this.getClass());
                     }
 
-                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO) {
+                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO || result == LibUsb.ERROR_OTHER) {
                         resetBEESOFTstatus();
                     }
                     /*
