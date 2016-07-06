@@ -558,7 +558,9 @@ public class UsbDriver extends DriverBaseImplementation {
 
     private void resetBEESOFTstatus() {
         if (Base.keepFeedbackOpen == false) {
-            machine.setMachineOperational(false);
+            if (machine != null) {
+                machine.setMachineOperational(false);
+            }
             Base.getMainWindow().getButtons().setMessage("is disconnected");
             Base.disposeAllOpenWindows();
         }
