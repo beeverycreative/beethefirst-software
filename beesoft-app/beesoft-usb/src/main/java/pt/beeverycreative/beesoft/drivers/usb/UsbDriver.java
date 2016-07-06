@@ -141,13 +141,13 @@ public class UsbDriver extends DriverBaseImplementation {
                 idVendor = deviceDescriptor.idVendor();
                 idProduct = deviceDescriptor.idProduct();
                 connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
-                //Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
 
                 if (connectedDevice != PrinterInfo.UNKNOWN) {
                     Base.writeLog("Found device " + Integer.toHexString(idVendor) + ":" + Integer.toHexString(idProduct), this.getClass());
                     FilamentControler.initFilamentList(connectedDevice);
                     isNewVendorID = idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID;
                     serialNumberIndex = deviceDescriptor.iSerialNumber();
+                    Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
                     return device;
                 }
             }
