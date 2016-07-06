@@ -61,7 +61,7 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static final int MESSAGE_SIZE = 512;
     protected static final int SD_CARD_MESSAGE_SIZE = 512;
     protected static final int MESSAGES_IN_BLOCK = 512;
-    
+
     private byte ENDPOINT_IN_ADDRESS = LibUsb.ENDPOINT_IN | 0x02;
     private byte ENDPOINT_OUT_ADDRESS = LibUsb.ENDPOINT_OUT | 0x05;
 
@@ -117,7 +117,6 @@ public class UsbDriver extends DriverBaseImplementation {
     private Device findDevice() {
 
         final DeviceList deviceList = new DeviceList();
-        final ConfigDescriptor configDescriptor = new ConfigDescriptor();
         DeviceDescriptor deviceDescriptor;
         int result;
         short idVendor, idProduct;
@@ -149,17 +148,6 @@ public class UsbDriver extends DriverBaseImplementation {
                     FilamentControler.initFilamentList(connectedDevice);
                     isNewVendorID = idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID;
                     serialNumberIndex = deviceDescriptor.iSerialNumber();
-
-                    LibUsb.getActiveConfigDescriptor(device, configDescriptor);
-                    for (EndpointDescriptor e : configDescriptor.iface()[0].altsetting()[0].endpoint()) {
-                        byte endpointAddress = e.bEndpointAddress();
-                        if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_IN) {
-                            ENDPOINT_IN_ADDRESS = endpointAddress;
-                        } else if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_OUT) {
-                            ENDPOINT_OUT_ADDRESS = endpointAddress;
-                        }
-                    }
-
                     return device;
                 }
             }
@@ -177,7 +165,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
     private DeviceHandle obtainHandleFromDevice(Device device) {
         final DeviceHandle deviceHandle = new DeviceHandle();
-        final int result;
+        int result;
 
         result = LibUsb.open(device, deviceHandle);
 
@@ -186,12 +174,22 @@ public class UsbDriver extends DriverBaseImplementation {
             throw new LibUsbException("Unable to open USB device", result);
         }
 
+        if (Base.isMacOS()) {
+            result = LibUsb.setConfiguration(deviceHandle, 0);
+
+            if (result != LibUsb.SUCCESS) {
+                // not critical
+                Base.writeLog("Failed setting configuration 0", this.getClass());
+            }
+        }
+
         return deviceHandle;
     }
 
     private boolean claimDeviceInterface(DeviceHandle deviceHandle, int interfaceNumber) {
-        int result;
         final boolean detach;
+        final ConfigDescriptor configDescriptor = new ConfigDescriptor();
+        int result;
 
         detach = LibUsb.hasCapability(LibUsb.CAP_SUPPORTS_DETACH_KERNEL_DRIVER)
                 && LibUsb.kernelDriverActive(deviceHandle, interfaceNumber) == 1;
@@ -209,6 +207,25 @@ public class UsbDriver extends DriverBaseImplementation {
         if (result != LibUsb.SUCCESS) {
             Base.writeLog("Unable to claim interface. Error: " + LibUsb.errorName(result), this.getClass());
             throw new LibUsbException("Unable to claim interface", result);
+        }
+
+        // if it can't get the active config descriptor assume the default ENDPOINT addresses
+        result = LibUsb.getActiveConfigDescriptor(LibUsb.getDevice(deviceHandle), configDescriptor);
+        if (result == LibUsb.SUCCESS) {
+            try {
+                for (EndpointDescriptor e : configDescriptor.iface()[0].altsetting()[0].endpoint()) {
+                    byte endpointAddress = e.bEndpointAddress();
+                    if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_IN) {
+                        ENDPOINT_IN_ADDRESS = endpointAddress;
+                    } else if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_OUT) {
+                        ENDPOINT_OUT_ADDRESS = endpointAddress;
+                    }
+                }
+            } finally {
+                LibUsb.freeConfigDescriptor(configDescriptor);
+            }
+        } else {
+            Base.writeLog("Failed obtaining active config descriptor, assuming default ENDPOINT addresses...", this.getClass());
         }
 
         return true;
