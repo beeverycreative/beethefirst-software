@@ -51,7 +51,7 @@ public class ObjLoader extends LoaderBase {
         }
         catch( IOException e )
         {
-        	Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
+        	//Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
         	return null;
         }
 	}
@@ -144,7 +144,7 @@ public class ObjLoader extends LoaderBase {
             return scene;
 
 		} catch (IOException e) {
-			Base.logger.log(Level.SEVERE,"I/O error reading .OBJ",e);
+			//Base.logger.log(Level.SEVERE,"I/O error reading .OBJ",e);
 		}
 		
 		return null;

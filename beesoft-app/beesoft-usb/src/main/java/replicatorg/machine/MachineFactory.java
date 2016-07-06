@@ -63,7 +63,7 @@ public class MachineFactory {
 	public static Machine load(String name, MachineCallbackHandler callbackHandler) {
 		Node machineNode = getMachineNode(name);
 		if (machineNode == null) { 
-			Base.logger.log(Level.SEVERE, "Could not load machine ''{0}'' no machineNode found", name);
+			//Base.logger.log(Level.SEVERE, "Could not load machine ''{0}'' no machineNode found", name);
 			return null; 
 		}
 		return new Machine(machineNode, callbackHandler);
@@ -125,7 +125,7 @@ public class MachineFactory {
 			NodeList names = e.getElementsByTagName("name");
 			if (names != null && names.getLength() > 0) {
 				String mname = names.item(0).getTextContent().trim();
-				Base.logger.log(Level.FINE, "Adding machine {0} for node {1}", new Object[]{mname, e.toString()});
+				//Base.logger.log(Level.FINE, "Adding machine {0} for node {1}", new Object[]{mname, e.toString()});
 				map.put(mname,e);
 			}
 		}
@@ -146,7 +146,7 @@ public class MachineFactory {
 			try {
 				db = dbf.newDocumentBuilder();
 			} catch (ParserConfigurationException e) {
-				Base.logger.log(Level.SEVERE, "Could not create document builder", e);
+				//Base.logger.log(Level.SEVERE, "Could not create document builder", e);
 			}
 		}
 		List<String> filenames = Arrays.asList(dir.list());
@@ -157,7 +157,7 @@ public class MachineFactory {
 			}
 			File f = new File(dir,filename);
 			if (f.exists() && f.isFile()) {
-				Base.logger.log(Level.FINE, "Scanning file {0}", filename);
+				//Base.logger.log(Level.FINE, "Scanning file {0}", filename);
 				try {
 					Document d = db.parse(f);
 					addMachinesForDocument(d,machineMap);

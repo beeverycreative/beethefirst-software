@@ -184,18 +184,13 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     /**
-     * Error variable for the possible situations of failure during transfer.
      * Used to abort UI panel and inform user.
-     *
-     * @param newError
      */
-    private void setError(boolean newError) {
-        errorOccurred = newError;
+    public void setError() {
+        errorOccurred = true;
         updateInformationsByError();
         jProgressBar1.setIndeterminate(false);
         jProgressBar1.setValue(0);
-        bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line13"));
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
     }
 
     /**
@@ -204,7 +199,10 @@ public class PrintSplashAutonomous extends BaseDialog {
     protected void doCancel() {
         if (driver.isTransferMode()) {
             driver.stopTransfer();
-            driver.setTemperature(0);
+
+            if (errorOccurred == false) {
+                driver.setTemperature(0);
+            }
         } else {
             driver.dispatchCommand("M112", COM.NO_RESPONSE);
         }
@@ -482,7 +480,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 unloadPressed = true;
                 driver.setBusy(true);
                 driver.dispatchCommand("M702");
-                
+
                 bUnload.setVisible(true);
                 iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
                 driver.setCoilText(FilamentControler.NO_FILAMENT);
@@ -781,12 +779,17 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         final Query cancelPrintQuery;
-        
+
         if (bCancel.isEnabled()) {
-            cancelPrintQuery = new Query("CancelPrintText", this::doCancel, null);
-            cancelPrintQuery.setVisible(true);
+            if (errorOccurred == false) {
+                cancelPrintQuery = new Query("CancelPrintText", this::doCancel, null);
+                cancelPrintQuery.setVisible(true);
+            } else {
+                Base.getMainWindow().getButtons().setMessage("is disconnected");
+                doCancel();
+            }
         }
-        
+
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed
@@ -882,7 +885,7 @@ public class PrintSplashAutonomous extends BaseDialog {
             //Pause print
             driver.dispatchCommand("M640");
             driver.setBusy(true);
-            
+
             EventQueue.invokeLater(() -> {
                 while (driver.isBusy() || !model.getMachineReady()) {
                     Base.hiccup(500);
@@ -1043,7 +1046,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                             return;
                         }
                     } catch (ExecutionException ex) {
-                        setError(true);
+                        setError();
                         stop = true;
                         return;
                     }
@@ -1064,9 +1067,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                 estimator = new PrintEstimator(gcode);
                 headerStr = "M31 A" + estimator.getEstimatedMinutes() + '\n';
                 setTransferInfo();
-                if (driver.transferGCode(gcode, headerStr, PrintSplashAutonomous.this) == false) {
-                    setError(true);
-                } else {
+                if (driver.transferGCode(gcode, headerStr, PrintSplashAutonomous.this)) {
                     // THIS REPEATED HEATING IS DONE JUST IN CASE, BECAUSE OF THE POWER SAVING FEATURE
                     // if the transfer takes a long time, printer may enter in power saving mode
                     // supposed to be fixed in firmware already, but... just in case

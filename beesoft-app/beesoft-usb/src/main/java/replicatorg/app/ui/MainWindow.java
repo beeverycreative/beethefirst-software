@@ -1077,9 +1077,9 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             try {
                 java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
             } catch (IOException e) {
-                Base.logger.log(Level.WARNING, "Could not load URL.");
+                //Base.logger.log(Level.WARNING, "Could not load URL.");
             } catch (java.net.URISyntaxException e) {
-                Base.logger.log(Level.WARNING, "bad URI");
+                //Base.logger.log(Level.WARNING, "bad URI");
             }
         }
     }
@@ -1310,7 +1310,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         return;
                     }
                 }
-                Base.logger.log(Level.INFO, "Loading {0}", path);
+                //Base.logger.log(Level.INFO, "Loading {0}", path);
                 Base.writeLog("Loading " + path + " ...", this.getClass());
 
                 //Adds default print preferences, they aren't going to be used
@@ -1445,7 +1445,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                         return;
                     }
                 }
-                Base.logger.log(Level.INFO, "Loading {0}", path);
+                //Base.logger.log(Level.INFO, "Loading {0}", path);
                 Base.writeLog("Loading " + path + " ...", this.getClass());
                 handleOpenPath = path;
 
@@ -1732,7 +1732,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
                 mess = mess.substring(javaLang.length());
             }
         }
-        Base.logger.log(Level.SEVERE, mess, e);
+        //Base.logger.log(Level.SEVERE, mess, e);
     }
 
     public void message(String msg) {
@@ -1753,7 +1753,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         MachineInterface mi = machineLoader.getMachineInterface(name);
 
         if (mi == null) {
-            Base.logger.log(Level.SEVERE, "could not load machine ''{0}'' please check Driver", name);
+            //Base.logger.log(Level.SEVERE, "could not load machine ''{0}'' please check Driver", name);
             return;
         }
 
@@ -1778,7 +1778,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         MachineInterface mi = machineLoader.getMachineInterface(name);
 
         if (mi == null) {
-            Base.logger.log(Level.SEVERE, "could not load machine ''{0}'' please check Driver", name);
+            //Base.logger.log(Level.SEVERE, "could not load machine ''{0}'' please check Driver", name);
             return;
         }
 

@@ -305,6 +305,7 @@ public class Machine implements MachineInterface {
         if (machineThread != null) {
             // Wait 5 seconds for the thread to stop.
             try {
+                machineThread.dispose();
                 machineThread.join(5000);
             } catch (Exception e) {
                 e.printStackTrace();

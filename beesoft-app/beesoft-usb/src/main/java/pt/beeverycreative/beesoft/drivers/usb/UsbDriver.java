@@ -1,35 +1,22 @@
 package pt.beeverycreative.beesoft.drivers.usb;
 
-import de.ailis.usb4java.AbstractDevice;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-
-import javax.usb.UsbClaimException;
-import javax.usb.UsbConfiguration;
-import javax.usb.UsbConst;
-import javax.usb.UsbDevice;
-import javax.usb.UsbDisconnectedException;
-import javax.usb.UsbEndpoint;
-import javax.usb.UsbException;
-import javax.usb.UsbHostManager;
-import javax.usb.UsbHub;
-import javax.usb.UsbInterface;
-import javax.usb.UsbNotActiveException;
-import javax.usb.UsbServices;
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.usb.UsbDeviceDescriptor;
-import javax.usb.UsbIrp;
-import javax.usb.UsbNotClaimedException;
-import javax.usb.UsbPipe;
+import org.usb4java.ConfigDescriptor;
+import org.usb4java.Context;
+import org.usb4java.Device;
+import org.usb4java.DeviceDescriptor;
+import org.usb4java.DeviceHandle;
+import org.usb4java.DeviceList;
+import org.usb4java.EndpointDescriptor;
+import org.usb4java.LibUsb;
+import org.usb4java.LibUsbException;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
+import replicatorg.app.ProperDefault;
 
 import replicatorg.drivers.DriverBaseImplementation;
 import replicatorg.machine.model.MachineModel;
@@ -47,30 +34,19 @@ import replicatorg.machine.model.MachineModel;
  */
 public class UsbDriver extends DriverBaseImplementation {
 
-    protected AbstractDevice m_usbDevice;
-
-    private final short BEEVERYCREATIVE_VENDOR_ID = (short) 0xffff;
+    protected static final int TIMEOUT = 2500;
     private final short BEEVERYCREATIVE_NEW_VENDOR_ID = (short) 0x29c9;
-
-    private UsbServices usbServices = null;
-    private UsbHub usbRootHub = null;
-
+    private final Context context;
+    protected final boolean comLog = Boolean.valueOf(ProperDefault.get("comLog"));
+    protected final long startTS;
+    protected String serialNumberString = "9999999999";
+    private byte serialNumberIndex;
+    protected DeviceHandle connectedDeviceHandle = null;
     protected PrinterInfo connectedDevice = PrinterInfo.UNKNOWN;
 
     //check this, maybe delete
     protected boolean isNewVendorID = false;
 
-    protected ArrayList<AbstractDevice> m_usbDeviceList = new ArrayList<>();
-    /**
-     * Lock for multi-threaded access to this driver's serial port.
-     */
-    private final ReentrantReadWriteLock m_usbLock = new ReentrantReadWriteLock();
-    /**
-     * Locks the serial object as in use so that it cannot be disposed until it
-     * is unlocked. Multiple threads can hold this lock concurrently.
-     */
-    public final ReadLock m_usbInUse = m_usbLock.readLock();
-    protected UsbPipes pipes;
     /**
      * Variables for extruded material management
      */
@@ -78,36 +54,33 @@ public class UsbDriver extends DriverBaseImplementation {
     protected boolean isONShutdown = false;
 
     private boolean isBusy = true;
-    protected boolean isAlive = false;
-    private int readyCount = 0;
     protected static final Lock dispatchCommandLock = new ReentrantLock();
     private String lastStatusMessage;
 
+    protected static final int TRANSFER_MESSAGE_SIZE = 32;
+    protected static final int MESSAGE_SIZE = 512;
+    protected static final int SD_CARD_MESSAGE_SIZE = 512;
+    protected static final int MESSAGES_IN_BLOCK = 512;
+
+    private byte ENDPOINT_IN_ADDRESS = LibUsb.ENDPOINT_IN | 0x02;
+    private byte ENDPOINT_OUT_ADDRESS = LibUsb.ENDPOINT_OUT | 0x05;
+
     /**
-     * USBDriver high level definition.
+     * USBDriver low level definition.
      *
      */
     protected UsbDriver() {
+        final int result;
 
-        try {
-            if (usbServices == null) {
-                usbServices = UsbHostManager.getUsbServices();
-            }
+        context = new Context();
+        result = LibUsb.init(context);
 
-            if (usbRootHub == null) {
-                usbRootHub = usbServices.getRootUsbHub();
-            }
-
-        } catch (UsbException ex) {
-            setInitialized(false);
-            //Base.writeLog("*initUsbDevice* <UsbException> " + ex.getMessage(), this.getClass());
-        } catch (SecurityException ex) {
-            setInitialized(false);
-            Base.writeLog("*initUsbDevice* <SecurityException> " + ex.getMessage(), this.getClass());
-        } catch (UsbDisconnectedException ex) {
-            setInitialized(false);
-            Base.writeLog("*initUsbDevice* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
+        if (result != LibUsb.SUCCESS) {
+            Base.writeLog("Unable to initialize libusb. Error: " + LibUsb.errorName(result), this.getClass());
+            throw new LibUsbException("Unable to initialize libusb.", result);
         }
+
+        startTS = System.currentTimeMillis();
     }
 
     /**
@@ -120,182 +93,142 @@ public class UsbDriver extends DriverBaseImplementation {
         return connectedDevice;
     }
 
-    /**
-     * Inits USB device.
-     *
-     * @param device USB device from descriptor.
-     */
-    private void initUSBDevice(UsbDevice device) {
+    protected boolean initPrinter() {
+        final Device device;
 
-        try {
-            if (device.isUsbHub()) {
-                UsbHub hub = (UsbHub) device;
-
-                for (UsbDevice child : (List<UsbDevice>) hub.getAttachedUsbDevices()) {
-                    UsbDriver.this.initUSBDevice(child);
-                }
-
-            } else {
-                addIfCompatible(device);
-            }
-        } catch (UsbException ex) {
-            m_usbDevice = null;
-            //Base.writeLog("*initUsbDevice(device)* <UsbException> " + ex.getMessage(), this.getClass());
-        } catch (UnsupportedEncodingException ex) {
-            m_usbDevice = null;
-            Base.writeLog("*initUsbDevice(device)* <UnsupportedEncodingException> " + ex.getMessage(), this.getClass());
-        } catch (UsbDisconnectedException ex) {
-            m_usbDevice = null;
-            Base.writeLog("*initUsbDevice(device)* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-        }
-    }
-
-    public boolean addIfCompatible(UsbDevice device) throws UsbException, UnsupportedEncodingException {
-
-        UsbDeviceDescriptor descriptor;
-        short idVendor, idProduct;
-
-        descriptor = device.getUsbDeviceDescriptor();
-        idVendor = descriptor.idVendor();
-        idProduct = descriptor.idProduct();
-
-        // verify if it's one of BEE's printers, else ignore it;
-        // getting more information without knowing what we're dealing with
-        // can cause ugly libusb crashes
-        if (PrinterInfo.getDevice(idVendor + ":" + idProduct) == PrinterInfo.UNKNOWN) {
-            return false;
-        }
-
-        //manufacturerString = device.getManufacturerString();
-        //productString = device.getProductString();
-        //serialNumberString = device.getSerialNumberString().trim();
-        Base.writeLog("*** Adding to candidate list ***", this.getClass());
-        Base.writeLog("Vendor ID: " + Integer.toHexString(idVendor & 0xFFFF), this.getClass());
-        Base.writeLog("Product ID: " + Integer.toHexString(idProduct & 0xFFFF), this.getClass());
-        //Base.writeLog("Manufacturer string: " + manufacturerString, this.getClass());
-        //Base.writeLog("Product string: " + productString, this.getClass());
-        //Base.writeLog("Serial number: " + serialNumberString, this.getClass());
-        Base.writeLog("********************************", this.getClass());
-        m_usbDeviceList.add((AbstractDevice) device);
-        return true;
-    }
-
-    /**
-     * Scans descriptor and inits usb device if match.
-     */
-    public void initUSBDevice() {
-        m_usbDeviceList.clear();
-
-        UsbDriver.this.initUSBDevice(usbRootHub);
-
-        if (m_usbDeviceList.isEmpty()) {
-            m_usbDevice = null;
-            //Base.writeLog("Failed to find USB device.");
-            setInitialized(false);
-        } else {
-            //Chose the device to Initialize
-            m_usbDevice = m_usbDeviceList.get(0);
-            short idProduct = m_usbDevice.getUsbDeviceDescriptor().idProduct();
-            short idVendor = m_usbDevice.getUsbDeviceDescriptor().idVendor();
-            connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
-            Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
-
-            // early load of the list of filaments, to save time later on
-            if (connectedDevice != PrinterInfo.UNKNOWN) {
-                FilamentControler.initFilamentList(connectedDevice);
-            }
-
-            if (Base.isMacOS()) {
-                ((AbstractDevice) m_usbDevice).setActiveUsbConfigurationNumber();
-            }
-
-            if (m_usbDeviceList.size() == 1) {
-                Base.writeLog("Found 1 device, connecting...", this.getClass());
-            } else {
-                Base.writeLog("Multiple machines found. "
-                        + "Connecting to the first of the list...", this.getClass());
-            }
-
-            UsbDeviceDescriptor descriptor;
-            descriptor = m_usbDevice.getUsbDeviceDescriptor();
-            if (descriptor.idVendor() == BEEVERYCREATIVE_NEW_VENDOR_ID) {
-                isNewVendorID = true;
-            } //no need for else
-
-            if (descriptor.idVendor() == BEEVERYCREATIVE_VENDOR_ID) {
-                isNewVendorID = false;
-            } //no need for else
-        }
-    }
-
-    @Override
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    /**
-     * Gets pipe from a USB device
-     *
-     * @param device USB device connected.
-     * @return USB Pipes with Endpoints set.
-     */
-    protected UsbPipes GetPipe(UsbDevice device) {
-
-        UsbPipes returnPipes;
-        UsbConfiguration config;
+        device = findDevice();
 
         if (device != null) {
-            if (device.isConfigured()) {
-                config = device.getActiveUsbConfiguration();
-            } else {
-                Base.writeLog("Couldn't obtain valid USB configuration. Obtaining pipes failed", this.getClass());
-                return null;
+            connectedDeviceHandle = obtainHandleFromDevice(device);
+            claimDeviceInterface(connectedDeviceHandle, 0);
+            serialNumberString = LibUsb.getStringDescriptor(connectedDeviceHandle, serialNumberIndex);
+            Base.SERIAL_NUMBER = serialNumberString;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Attempts to find a BEEVERYCREATIVE printer.
+     *
+     * @return the libusb device object representing the printer
+     */
+    private Device findDevice() {
+
+        final DeviceList deviceList = new DeviceList();
+        DeviceDescriptor deviceDescriptor;
+        int result;
+        short idVendor, idProduct;
+
+        result = LibUsb.getDeviceList(context, deviceList);
+
+        if (result < 0) {
+            Base.writeLog("Unable to get device list. Error: " + LibUsb.errorName(result), this.getClass());
+            throw new LibUsbException("Unable to get device list", result);
+        }
+
+        try {
+            for (Device device : deviceList) {
+                deviceDescriptor = new DeviceDescriptor();
+                result = LibUsb.getDeviceDescriptor(device, deviceDescriptor);
+
+                if (result != LibUsb.SUCCESS) {
+                    Base.writeLog("Unable to read device descriptor. Error: " + LibUsb.errorName(result), this.getClass());
+                    throw new LibUsbException("Unable to read device descriptor", result);
+                }
+
+                idVendor = deviceDescriptor.idVendor();
+                idProduct = deviceDescriptor.idProduct();
+                connectedDevice = PrinterInfo.getDevice(idVendor + ":" + idProduct);
+
+                if (connectedDevice != PrinterInfo.UNKNOWN) {
+                    Base.writeLog("Found device " + Integer.toHexString(idVendor) + ":" + Integer.toHexString(idProduct), this.getClass());
+                    FilamentControler.initFilamentList(connectedDevice);
+                    isNewVendorID = idVendor == BEEVERYCREATIVE_NEW_VENDOR_ID;
+                    serialNumberIndex = deviceDescriptor.iSerialNumber();
+                    Base.getMainWindow().getButtons().setLogo(connectedDevice.iconFilename());
+                    return device;
+                }
             }
-
-            if (pipes == null || !isInitialized()) {
-                Base.writeLog("No pipes were found, or testPipes failed. Creating new ones", this.getClass());
-                returnPipes = new UsbPipes();
-            } else {
-                Base.writeLog("testPipes returned true, returning current pipes", this.getClass());
-                return pipes;
-            }
-
-            List interfaces = config.getUsbInterfaces();
-            for (Object ifaceObj : interfaces) {
-                UsbInterface iface = (UsbInterface) ifaceObj;
-                if (iface.isClaimed() || !iface.isActive()) {
-                    continue;
-                }
-
-                List endpoints = iface.getUsbEndpoints();
-                for (Object endpointObj : endpoints) {
-                    UsbEndpoint endpoint = (UsbEndpoint) endpointObj;
-
-                    if (endpoint.getType() != UsbConst.ENDPOINT_TYPE_BULK) {
-                        continue;
-                    }
-
-                    if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_OUT) {
-                        Base.writeLog("Setting out direction endpoint", this.getClass());
-                        returnPipes.setUsbPipeWrite(endpoint.getUsbPipe());
-                    }
-
-                    if (endpoint.getDirection() == UsbConst.ENDPOINT_DIRECTION_IN) {
-                        Base.writeLog("Setting in direction endpoint", this.getClass());
-                        returnPipes.setUsbPipeRead(endpoint.getUsbPipe());
-                    }
-                }
-
-                if (returnPipes.getUsbPipeRead() != null && returnPipes.getUsbPipeWrite() != null) {
-                    Base.writeLog("Returning new pipes", this.getClass());
-                    return returnPipes;
-//                }
-                }
+        } finally {
+            // for some reason, if we free the device list on windows
+            // LIBUSB_ERROR_NO_DEVICE is thrown when we attempt to obtain the
+            // handle
+            if (Base.isWindows() == false) {
+                LibUsb.freeDeviceList(deviceList, true);
             }
         }
 
-        Base.writeLog("Failed initializing new pipes! Returning null", this.getClass());
         return null;
+    }
+
+    private DeviceHandle obtainHandleFromDevice(Device device) {
+        final DeviceHandle deviceHandle = new DeviceHandle();
+        int result;
+
+        result = LibUsb.open(device, deviceHandle);
+
+        if (result != LibUsb.SUCCESS) {
+            Base.writeLog("Unable to open USB device. Error: " + LibUsb.errorName(result), this.getClass());
+            throw new LibUsbException("Unable to open USB device", result);
+        }
+
+        if (Base.isMacOS()) {
+            result = LibUsb.setConfiguration(deviceHandle, 0);
+
+            if (result != LibUsb.SUCCESS) {
+                // not critical
+                Base.writeLog("Failed setting configuration 0", this.getClass());
+            }
+        }
+
+        return deviceHandle;
+    }
+
+    private boolean claimDeviceInterface(DeviceHandle deviceHandle, int interfaceNumber) {
+        final boolean detach;
+        final ConfigDescriptor configDescriptor = new ConfigDescriptor();
+        int result;
+
+        detach = LibUsb.hasCapability(LibUsb.CAP_SUPPORTS_DETACH_KERNEL_DRIVER)
+                && LibUsb.kernelDriverActive(deviceHandle, interfaceNumber) == 1;
+
+        if (detach) {
+            result = LibUsb.detachKernelDriver(deviceHandle, interfaceNumber);
+            if (result != LibUsb.SUCCESS) {
+                Base.writeLog("Unable to detach kernel driver. Error: " + LibUsb.errorName(result), this.getClass());
+                throw new LibUsbException("Unable to detach kernel driver", result);
+            }
+        }
+
+        result = LibUsb.claimInterface(deviceHandle, interfaceNumber);
+
+        if (result != LibUsb.SUCCESS) {
+            Base.writeLog("Unable to claim interface. Error: " + LibUsb.errorName(result), this.getClass());
+            throw new LibUsbException("Unable to claim interface", result);
+        }
+
+        // if it can't get the active config descriptor assume the default ENDPOINT addresses
+        result = LibUsb.getActiveConfigDescriptor(LibUsb.getDevice(deviceHandle), configDescriptor);
+        if (result == LibUsb.SUCCESS) {
+            try {
+                for (EndpointDescriptor e : configDescriptor.iface()[0].altsetting()[0].endpoint()) {
+                    byte endpointAddress = e.bEndpointAddress();
+                    if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_IN) {
+                        ENDPOINT_IN_ADDRESS = endpointAddress;
+                    } else if ((endpointAddress & LibUsb.ENDPOINT_DIR_MASK) == LibUsb.ENDPOINT_OUT) {
+                        ENDPOINT_OUT_ADDRESS = endpointAddress;
+                    }
+                }
+            } finally {
+                LibUsb.freeConfigDescriptor(configDescriptor);
+            }
+        } else {
+            Base.writeLog("Failed obtaining active config descriptor, assuming default ENDPOINT addresses...", this.getClass());
+        }
+
+        return true;
     }
 
     /**
@@ -311,113 +244,84 @@ public class UsbDriver extends DriverBaseImplementation {
     /**
      * Test pipe for USB device detection
      *
-     * @param pipes
      * @return <li> true, if available
      * <li> false, if not
      *
      */
-    protected boolean testPipes(UsbPipes pipes) {
+    protected boolean testComm() {
 
-        byte[] readBuffer = new byte[1024];
-        UsbPipe pipeRead, pipeWrite;
-        UsbIrp irpWrite;
-        int ansBytes;
+        //final String testMsg = "M625" + new String(new char[MESSAGE_SIZE - 6]) + "\n";
+        final String testMsg = "M625\n";
+        int ansBytes, tries = 10;
         long elapsedTimeMilliseconds;
         String status;
         boolean validStatus = false, mismatchDetected = false;
 
-        if (pipes == null) {
+        if (connectedDeviceHandle == null) {
             return false;
         }
 
-//        // Confirm the USB device it's ok and working properly
-        if (pipes.getUsbPipeWrite() == null || pipes.getUsbPipeRead() == null) {
-            try {
-                pipes.close();
-                return false;
-            } catch (Exception ex) {
-                Base.writeLog("*testPipes1* <Exception> " + ex.getMessage(), this.getClass());
-                return false;
-            }
-        }
-
-        pipeRead = pipes.getUsbPipeRead();
-        pipeWrite = pipes.getUsbPipeWrite();
-        irpWrite = pipes.getUsbPipeWrite().createUsbIrp();
         // this way we can easily recover if printer is stuck in transfer mode
         // and it works even if it isn't
-        irpWrite.setData(("M625\n" + new String(new char[507])).getBytes()); 
-
         try {
-            if (dispatchCommandLock.tryLock(500, TimeUnit.MILLISECONDS)) {
+            if (dispatchCommandLock.tryLock(50, TimeUnit.MILLISECONDS)) {
                 try {
-                    try {
-                        if (!pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().isClaimed()) {
-                            pipes.getUsbPipeRead().getUsbEndpoint().getUsbInterface().claim();
-                        }
-                        if (!pipes.isOpen()) {
-                            pipes.open();
-                        }
 
-                        pipeWrite.syncSubmit(irpWrite);
+                    while (receiveAnswerBytes(MESSAGE_SIZE, 100).length > 0) {
+                        hiccup(50);
+                    }
 
-                    } catch (IllegalArgumentException ex) {
-                        Base.writeLog("*testPipes2* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
-                    } catch (Exception ex) {
-                        Base.writeLog("*testPipes2* <Exception> " + ex.getMessage(), this.getClass());
-                        setInitialized(false);
+                    ansBytes = sendCommand(testMsg, 50);
+
+                    if (ansBytes == 0) {
+                        Base.writeLog("Couldn't send test message", this.getClass());
                         return false;
                     }
 
+                    hiccup(100);
+
                     // clean up
-                    try {
-                        while (validStatus == false) {
-                            elapsedTimeMilliseconds = System.currentTimeMillis();
-                            ansBytes = pipeRead.syncSubmit(readBuffer);
-                            elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
+                    while (validStatus == false && --tries > 0) {
+                        elapsedTimeMilliseconds = System.currentTimeMillis();
+                        status = receiveAnswer(50);
+                        elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
 
-                            if (elapsedTimeMilliseconds > 500) {
-                                isBusy = true;
-                                break;
-                            }
+                        if (elapsedTimeMilliseconds > 500) {
+                            isBusy = true;
+                            break;
+                        }
 
-                            if (ansBytes > 0) {
-                                try {
-                                    status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
+                        if (status.length() > 0) {
+                            // if printer is stuck in transfer mode, 
+                            // attempt to recover it
+                            /*
+                             if (status.contains("tog")) {
+                             while (status.contains("tog")) {
+                             System.out.println(status);
+                             hiccup(50);
+                             sendCommand(testMsg);
+                             hiccup(50);
+                             status = receiveAnswer();
+                             }
+                             hiccup(1000);
+                             return false;
+                             }
+                             */
 
-                                    // if printer is stuck in transfer mode, 
-                                    // attempt to recover it
-                                    while (status.contains("tog")) {
-                                        pipeWrite.syncSubmit(irpWrite);
-                                        ansBytes = pipeRead.syncSubmit(readBuffer);
-                                        status = new String(readBuffer, 0, ansBytes, "UTF-8").trim();
-                                    }
+                            // when printer is in bootloader, M625 returns bad code
+                            if (!status.contains("S:") && !status.contains("Bad")) {
+                                mismatchDetected = true;
+                            } else {
+                                validStatus = true;
 
-                                    // when printer is in bootloader, M625 returns bad code
-                                    if (!status.contains("S:") && !status.contains("Bad")) {
-                                        mismatchDetected = true;
-                                    } else {
-                                        validStatus = true;
-
-                                        // throw away the status message if there was a problem
-                                        // since it may now be outdated
-                                        if (!mismatchDetected) {
-                                            processStatus(status);
-                                        }
-                                    }
-                                } catch (UnsupportedEncodingException ex) {
-                                    Base.writeLog("Unsupported encoding! (system doesn't support UTF-8?)", this.getClass());
+                                // throw away the status message if there was a problem
+                                // since it may now be outdated
+                                if (!mismatchDetected) {
+                                    processStatus(status);
                                 }
                             }
                         }
-                    } catch (IllegalArgumentException ex) {
-                        Base.writeLog("*testPipes3* <IllegalArgumentException> " + ex.getMessage(), this.getClass());
-                    } catch (Exception ex) {
-                        Base.writeLog("*testPipes3* <Exception> " + ex.getMessage(), this.getClass());
-                        setInitialized(false);
-                        return false;
                     }
-
                 } finally {
                     dispatchCommandLock.unlock();
                 }
@@ -439,13 +343,7 @@ public class UsbDriver extends DriverBaseImplementation {
             isBusy = true;
             return;
         } else {
-            if (readyCount == 5) {
-                isBusy = false;
-                readyCount = 0;
-            } else {
-                readyCount++;
-                return;
-            }
+            isBusy = false;
         }
 
         machineReady = status.contains("S:3");
@@ -455,13 +353,17 @@ public class UsbDriver extends DriverBaseImplementation {
         machinePaused = status.contains("Pause");
         machineOperational = machineReady || machineShutdown || machinePrinting || machinePaused;
 
-        machine.setLastStatusString(status);
-        machine.setMachineReady(machineReady);
-        machine.setMachinePaused(machinePaused);
-        machine.setMachinePowerSaving(machinePowerSaving);
-        machine.setMachineShutdown(machineShutdown);
-        machine.setMachinePrinting(machinePrinting);
-        machine.setMachineOperational(machineOperational);
+        try {
+            machine.setLastStatusString(status);
+            machine.setMachineReady(machineReady);
+            machine.setMachinePaused(machinePaused);
+            machine.setMachinePowerSaving(machinePowerSaving);
+            machine.setMachineShutdown(machineShutdown);
+            machine.setMachinePrinting(machinePrinting);
+            machine.setMachineOperational(machineOperational);
+        } catch (NullPointerException ex) {
+            Base.writeLog("Machine was null", this.getClass());
+        }
     }
 
     @Override
@@ -477,59 +379,6 @@ public class UsbDriver extends DriverBaseImplementation {
         }
     }
 
-    /**
-     *
-     * @param pipes
-     * @throws UsbNotActiveException
-     * @throws UsbDisconnectedException
-     */
-    protected void openPipe(UsbPipes pipes) {
-        try {
-            if (!pipes.getUsbEndpoint().getUsbInterface().isClaimed()) {
-                pipes.getUsbEndpoint().getUsbInterface().claim();
-            }
-            if (!pipes.isOpen()) {
-                pipes.open();
-            }
-            setInitialized(true);
-            Base.writeLog("Pipes have been opened", this.getClass());
-        } catch (UsbClaimException ex) {
-            Base.writeLog("*openPipe* <UsbClaimException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-        } catch (UsbException ex) {
-            Base.writeLog("*openPipe* <UsbException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-        } catch (UsbNotActiveException ex) {
-            Base.writeLog("*openPipe* <UsbNotActiveException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-        } catch (UsbDisconnectedException ex) {
-            Base.writeLog("*openPipe* <UsbDisconnectedException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-        } catch (UsbNotClaimedException ex) {
-            Base.writeLog("*openPipe* <UsbNotClaimedException> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-        } catch (Exception ex) {
-            Base.writeLog("*openPipe* <Unknown> " + ex.getMessage(), this.getClass());
-            setInitialized(false);
-        }
-    }
-
-    /**
-     *
-     * @param pipes
-     * @throws UsbNotActiveException
-     * @throws UsbDisconnectedException
-     */
-    protected void closePipe(UsbPipes pipes) {
-        try {
-            setInitialized(false);
-            pipes.close();
-            pipes.getUsbEndpoint().getUsbInterface().release();
-        } catch (Exception ex) {
-            Base.writeLog("*closePipe* <Exception> " + ex.getMessage(), this.getClass());
-        }
-    }
-
     @Override
     public String getLastStatusMessage() {
         return lastStatusMessage;
@@ -537,34 +386,185 @@ public class UsbDriver extends DriverBaseImplementation {
 
     @Override
     public void dispose() {
-        m_usbDevice = null;
+        cleanLibUsbDevice();
+        LibUsb.exit(context);
         connectedDevice = PrinterInfo.UNKNOWN;
         setMachine(new MachineModel());
     }
 
+    protected void cleanLibUsbDevice() {
+        final int result;
+
+        if (connectedDeviceHandle != null) {
+            result = LibUsb.releaseInterface(connectedDeviceHandle, 0);
+
+            if (result != LibUsb.SUCCESS) {
+                Base.writeLog("Unable to release interface. Error: " + LibUsb.errorName(result), this.getClass());
+            }
+
+            LibUsb.close(connectedDeviceHandle);
+            connectedDeviceHandle = null;
+        }
+    }
+
+    protected int sendCommand(String next) {
+        next += '\n';
+        return sendCommandBytes(next.getBytes(), TIMEOUT);
+    }
+
     /**
-     * Sleeps driver for 1 nano second.
+     * Actually sends command over USB.
+     *
+     * @param next
+     * @param timeout
+     * @return
      */
-    @Override
-    public void hiccup() {
-        //sleep for a nano second just for luck
-        hiccup(0, 1);
+    protected int sendCommand(String next, int timeout) {
+        next += '\n';
+        return sendCommandBytes(next.getBytes(), timeout);
+    }
+
+    protected int sendCommandBytes(byte[] next) {
+        return sendCommandBytes(next, TIMEOUT);
+    }
+
+    /**
+     * Send command to Machine
+     *
+     * @param next Command
+     * @param timeout
+     * @return command length
+     */
+    protected int sendCommandBytes(byte[] next, int timeout) {
+
+        final ByteBuffer buffer;
+        final IntBuffer transfered = IntBuffer.allocate(1);
+        final int result;
+
+        // skip empty commands.
+        if (next.length == 0) {
+            return 0;
+        }
+
+        buffer = ByteBuffer.allocateDirect(next.length);
+        buffer.put(next);
+
+        dispatchCommandLock.lock();
+        try {
+            if (connectedDeviceHandle != null) {
+                result = LibUsb.bulkTransfer(connectedDeviceHandle, ENDPOINT_OUT_ADDRESS, buffer, transfered, timeout);
+
+                if (result != LibUsb.SUCCESS) {
+
+                    if (result != LibUsb.ERROR_TIMEOUT) {
+                        Base.writeLog("Bulk send failed. Error: " + LibUsb.errorName(result), this.getClass());
+                    }
+
+                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO) {
+                        resetBEESOFTstatus();
+                    }
+                    /*
+                     } else {
+                     throw new LibUsbException("Bulk transfer failed", result);
+                     }
+                     */
+                }
+
+                return transfered.get();
+            }
+        } finally {
+            dispatchCommandLock.unlock();
+        }
+
+        return 0;
+    }
+
+    protected String receiveAnswer() {
+        final byte[] answer;
+
+        answer = receiveAnswerBytes();
+
+        return new String(answer).trim();
+    }
+
+    protected String receiveAnswer(int timeout) {
+        final byte[] answer;
+
+        answer = receiveAnswerBytes(MESSAGE_SIZE, timeout);
+
+        return new String(answer).trim();
+    }
+
+    protected byte[] receiveAnswerBytes() {
+        return receiveAnswerBytes(MESSAGE_SIZE, TIMEOUT);
+    }
+
+    protected byte[] receiveAnswerBytes(int expectedSize) {
+        return receiveAnswerBytes(expectedSize, TIMEOUT);
+    }
+
+    protected byte[] receiveAnswerBytes(int expectedSize, int timeout) {
+        final ByteBuffer buffer;
+        final IntBuffer transfered = IntBuffer.allocate(1);
+        final byte[] retArray;
+        int result;
+
+        buffer = ByteBuffer.allocateDirect(expectedSize);
+
+        dispatchCommandLock.lock();
+        try {
+            if (connectedDeviceHandle != null) {
+                result = LibUsb.bulkTransfer(connectedDeviceHandle, ENDPOINT_IN_ADDRESS, buffer, transfered, timeout);
+
+                if (result != LibUsb.SUCCESS) {
+
+                    if (result != LibUsb.ERROR_TIMEOUT) {
+                        Base.writeLog("Bulk receive failed. Error: " + LibUsb.errorName(result), this.getClass());
+                    }
+
+                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO) {
+                        resetBEESOFTstatus();
+                    }
+                    /*
+                     } else {
+                     throw new LibUsbException("Bulk transfer failed", result);
+                     }
+                     */
+                }
+
+                retArray = new byte[transfered.get()];
+                buffer.rewind();
+                buffer.get(retArray);
+                return retArray;
+            }
+        } finally {
+            dispatchCommandLock.unlock();
+        }
+
+        return new byte[0];
     }
 
     /**
      * Sleeps driver for specified duration.
      *
-     * @param mili miliseconds to sleep.
-     * @param nano nanoseconds to sleep.
+     * @param mili milliseconds to sleep.
      */
-    @Override
-    public void hiccup(int mili, int nano) {
-
+    protected void hiccup(long mili) {
         try {
-            Thread.sleep(mili, nano);
+            Thread.sleep(mili);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    private void resetBEESOFTstatus() {
+        if (Base.keepFeedbackOpen == false) {
+            machine.setMachineOperational(false);
+            Base.getMainWindow().getButtons().setMessage("is disconnected");
+            Base.disposeAllOpenWindows();
+        }
+        Base.isPrinting = false;
+        Base.printPaused = false;
+        resetBootloaderAndFirmwareVersion();
+        cleanLibUsbDevice();
+    }
 }

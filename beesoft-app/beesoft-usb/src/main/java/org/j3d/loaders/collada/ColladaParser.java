@@ -191,11 +191,11 @@ public class ColladaParser {
 			}
 			return true;
 		} catch (ParserConfigurationException e) {
-			Base.logger.log(Level.SEVERE,"Could not configure parser",e);
+			//Base.logger.log(Level.SEVERE,"Could not configure parser",e);
 		} catch (SAXException e) {
-			Base.logger.log(Level.INFO,"Could not configure parser",e);
+			//Base.logger.log(Level.INFO,"Could not configure parser",e);
 		} catch (IOException e) {
-			Base.logger.log(Level.SEVERE,"IO Error during Collada document read",e);
+			//Base.logger.log(Level.SEVERE,"IO Error during Collada document read",e);
 		}
 		return false;
 	}

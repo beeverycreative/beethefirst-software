@@ -144,15 +144,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
         Base.copy3DFiles();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
         window.setEnabled(true);
-
-        /**
-         * Error occured during driver initialization
-         */
-        if (Base.errorOccured == true) {
-            Warning flashError = new Warning("ErrorUpdating", true);
-            flashError.setVisible(true);
-        }
-
     }
 
     @SuppressWarnings("unchecked")

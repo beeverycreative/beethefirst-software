@@ -28,7 +28,7 @@ public class StreamLoggerThread extends Thread {
 	
 	protected void logMessage(String line) {
 		Level logLevel = getLogLevel(line);
-		Base.logger.log(logLevel,line);		
+		//Base.logger.log(logLevel,line);		
 	}
         
         public void end()
@@ -56,7 +56,7 @@ public class StreamLoggerThread extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			Base.logger.log(Level.SEVERE,"Stream logger interrupted",e);
+			//Base.logger.log(Level.SEVERE,"Stream logger interrupted",e);
 		}
 	}
         

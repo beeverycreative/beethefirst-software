@@ -148,7 +148,7 @@ public abstract class BaseDialog extends javax.swing.JDialog {
                     driver.readTemperature();
                     currentTemperature = currentTool.getExtruderTemperature();
                     updateHeatBar(currentTemperature);
-                    Base.hiccup(Base.HEATING_POLL_TIME_MS);
+                    Base.hiccup(500);
                 }
             }
         }

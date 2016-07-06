@@ -42,7 +42,7 @@ public class GTSLoader extends LoaderBase {
         }
         catch( IOException e )
         {
-        	Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
+        	//Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
         	return null;
         }
     }

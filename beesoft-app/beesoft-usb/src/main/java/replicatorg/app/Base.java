@@ -52,20 +52,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -78,7 +73,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -102,7 +96,7 @@ import replicatorg.util.ConfigProperties;
  */
 public class Base {
 
-    private static final String newLine = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
      * enum for fast/easy OS checking
@@ -113,94 +107,48 @@ public class Base {
     }
 
     /**
-     * enum for fast/easy arch checking
-     */
-    public enum Arch {
-
-        x86_64, x86, ARM, PPC, OTHER
-    }
-    /**
-     * Full name of the Java version (i.e. 1.5.0_11). Prior to 0125, this was
-     * only the first three digits.
-     */
-    public static final String javaVersionName = System.getProperty("java.version");
-    /**
-     * Version of Java that's in use, whether 1.1 or 1.3 or whatever, stored as
-     * a float.
-     * <P>
-     * Note that because this is stored as a float, the values may not be
-     * <EM>exactly</EM>
-     * 1.3 or 1.4. Instead, make sure you're comparing against 1.3f or 1.4f,
-     * which will have the same amount of error (i.e. 1.40000001). This could
-     * just be a double, but since Processing only uses floats, it's safer for
-     * this to be a float because there's no good way to specify a double with
-     * the preproc.
-     */
-    public static final float javaVersion = Float.parseFloat(javaVersionName.substring(0, 3));
-    /**
      * Current platform in use
      */
-    static public Platform platform;
-    static public Arch arch;
     /**
      * Current platform in use.
      * <P>
      * Equivalent to System.getProperty("os.name"), just used internally.
      */
-    static public String platformName = System.getProperty("os.name");
+    private static final Platform PLATFORM;
 
     static {
+        final String PLATFORM_NAME = System.getProperty("os.name");
+
         // figure out which operating system
         // this has to be first, since editor needs to know
-
-        if (platformName.toLowerCase().contains("mac")) {
+        if (PLATFORM_NAME.toLowerCase().contains("mac")) {
             // can only check this property if running on a mac
             // on a pc it throws a security exception and kills the applet
             // (but on the mac it does just fine)
             if (System.getProperty("mrj.version") != null) { // running on a
                 // mac
-                platform = (platformName.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
+                PLATFORM = (PLATFORM_NAME.equals("Mac OS X")) ? Platform.MACOSX : Platform.MACOS9;
             } else {
-                platform = Platform.MACOSX;
+                PLATFORM = Platform.MACOSX;
             }
-
         } else {
-            String osname = System.getProperty("os.name");
-
-            if (osname.contains("Windows")) {
-                platform = Platform.WINDOWS;
-
-            } else if (osname.equals("Linux")) { // true for the ibm vm
-                platform = Platform.LINUX;
-
+            if (PLATFORM_NAME.contains("Windows")) {
+                PLATFORM = Platform.WINDOWS;
+            } else if (PLATFORM_NAME.equals("Linux")) { // true for the ibm vm
+                PLATFORM = Platform.LINUX;
             } else {
-                platform = Platform.OTHER;
-            }
-            String aString = System.getProperty("os.arch");
-            COMPUTER_ARCHITECTURE = aString;
-            if ("i386".equals(aString)) {
-                arch = Arch.x86;
-            } else if ("x86_64".equals(aString) || "amd64".equals(aString)) {
-                arch = Arch.x86_64;
-            } else if ("universal".equals(aString) || "ppc".equals(aString)) {
-                arch = Arch.OTHER;
-                throw new RuntimeException("Can not use use arch: '" + arch + "'");
+                PLATFORM = Platform.OTHER;
             }
         }
     }
 
     public static final ConfigProperties configProperties = new ConfigProperties();
-    public static boolean statusThreadDied = false;
-    public static boolean errorOccured = false;
     public static boolean printPaused = false;
     public static boolean isPrinting = false;
     private static boolean welcomeSplashVisible = true;
     public static final Object WELCOME_SPLASH_MONITOR = new Object();
-    private static String COMPUTER_ARCHITECTURE;
-    public static boolean gcodeToSave = false;
     public static boolean isPrintingFromGCode = false;
-    public static boolean rebootingIntoFirmware = false;
-    public static final short HEATING_POLL_TIME_MS = 500;
+    public static boolean keepFeedbackOpen = false;
 
     public enum InitialOpenBehavior {
 
@@ -211,7 +159,30 @@ public class Base {
 
     public static int ID = 0;
 
-    public static final String VERSION_BEESOFT = setVersionString();
+    public static final String VERSION_BEESOFT;
+
+    static {
+        final String releaseType, applicationVersion, buildNumber;
+
+        releaseType = configProperties.getBuildProperty("release.type");
+        applicationVersion = configProperties.getBuildProperty("application.version");
+        buildNumber = configProperties.getBuildProperty("build.number");
+
+        switch (releaseType) {
+            case "alpha":
+                VERSION_BEESOFT = applicationVersion + "-" + releaseType + "-" + buildNumber;
+
+                break;
+            case "beta":
+                VERSION_BEESOFT = applicationVersion + "-" + releaseType;
+
+                break;
+            default:
+                VERSION_BEESOFT = applicationVersion;
+                break;
+
+        }
+    }
 
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER;
@@ -294,7 +265,7 @@ public class Base {
         if (!dir.exists()) {
             dir.mkdirs();
             if (!dir.exists()) { // we failed to create our user dir. Log the failure, try to continue
-                Base.logger.log(Level.SEVERE, "We could not create a user directory at: {0}", path);
+                //Base.logger.log(Level.SEVERE, "We could not create a user directory at: {0}", path);
                 return null;
             }
         }
@@ -429,11 +400,11 @@ public class Base {
         try {
             logBW.newLine();
             logBW.newLine();
-            logBW.write("*************** CONNECTED PRINTER ****************" + newLine);
-            logBW.write("Bootloader version: " + VERSION_BOOTLOADER + newLine);
-            logBW.write("Firmware version: " + FIRMWARE_IN_USE + newLine);
-            logBW.write("Serial number: " + SERIAL_NUMBER + newLine);
-            logBW.write("**************************************************" + newLine);
+            logBW.write("*************** CONNECTED PRINTER ****************" + NEW_LINE);
+            logBW.write("Bootloader version: " + VERSION_BOOTLOADER + NEW_LINE);
+            logBW.write("Firmware version: " + FIRMWARE_IN_USE + NEW_LINE);
+            logBW.write("Serial number: " + SERIAL_NUMBER + NEW_LINE);
+            logBW.write("**************************************************" + NEW_LINE);
             logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
@@ -444,13 +415,12 @@ public class Base {
     private static void writeLogHeader() {
         try {
             logBW.newLine();
-            logBW.write("**************************************************" + newLine);
-            logBW.write(PROGRAM + " " + VERSION_BEESOFT + newLine);
-            logBW.write("Java version: " + VERSION_JAVA + newLine);
-            logBW.write("Architecture: " + COMPUTER_ARCHITECTURE + newLine);
-            logBW.write("Machine name: BEETHEFIRST" + newLine);
-            logBW.write("Company name: BEEVERYCREATIVE" + newLine);
-            logBW.write("**************************************************" + newLine);
+            logBW.write("**************************************************" + NEW_LINE);
+            logBW.write(PROGRAM + " " + VERSION_BEESOFT + NEW_LINE);
+            logBW.write("Java version: " + VERSION_JAVA + NEW_LINE);
+            logBW.write("Operating system: " + PLATFORM.name() + NEW_LINE);
+            logBW.write("Arch: " + System.getProperty("os.arch") + NEW_LINE);
+            logBW.write("**************************************************" + NEW_LINE);
             logBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
@@ -543,7 +513,7 @@ public class Base {
 
         try {
             if (!message.equals("\n")) {
-                comLogBW.write("Timestamp: " + timeStamp + " | " + message + newLine);
+                comLogBW.write("Timestamp: " + timeStamp + " | " + message + NEW_LINE);
                 comLogBW.flush();
             } else {
                 comLogBW.newLine();
@@ -700,7 +670,7 @@ public class Base {
         java.awt.Window win[] = java.awt.Window.getWindows();
         for (Window win1 : win) {
             name = win1.getName();
-            if (!name.equals("mainWindow") && !name.equals("FeedbackDialog")) {
+            if (!name.equals("mainWindow") && !(name.equals("FeedbackDialog") && Base.keepFeedbackOpen)) {
                 win1.dispose();
             }
 //            System.out.println(win[i].getName());
@@ -795,7 +765,7 @@ public class Base {
      */
     static public File getUserFile(String path, boolean autoCopy) {
         if (path.contains("..")) {
-            Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
+            //Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
             return null;
         }
         // First look in the user's local .replicatorG directory for the path.
@@ -813,7 +783,7 @@ public class Base {
                 try {
                     Base.copyFile(original, f);
                 } catch (IOException ioe) {
-                    Base.logger.log(Level.SEVERE, "Couldn't copy " + path + " to your local .replicatorG directory", f);
+                    //Base.logger.log(Level.SEVERE, "Couldn't copy " + path + " to your local .replicatorG directory", f);
                 }
             }
         }
@@ -822,7 +792,7 @@ public class Base {
 
     static public File getUserDir(String path, boolean autoCopy) {
         if (path.contains("..")) {
-            Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
+            //Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
             return null;
         }
         // First look in the user's local .replicatorG directory for the path.
@@ -840,7 +810,7 @@ public class Base {
                 try {
                     Base.copyDir(original, f);
                 } catch (IOException ioe) {
-                    Base.logger.log(Level.SEVERE, "Couldn't copy " + path + " to your local .replicatorG directory", f);
+                    //Base.logger.log(Level.SEVERE, "Couldn't copy " + path + " to your local .replicatorG directory", f);
                 }
             }
         }
@@ -914,6 +884,7 @@ public class Base {
                     "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name",
                     "BEESOFT");
+            System.setProperty("java.awt.headless", "false");
         }
 
         boolean cleanPrefs = false;
@@ -935,6 +906,7 @@ public class Base {
                         debugLevelArg = Integer.parseInt(args[i + 1]);
                         i++;
                     } catch (NumberFormatException e) {
+                        // do nothing
                     };
                 }
                 if (debugLevelArg == 0) {
@@ -987,16 +959,6 @@ public class Base {
         new Base();
     }
 
-    private File openStatsFile() {
-        /**
-         * Put log file near app folder *
-         */
-        String path = getAppDataDirectory().toString();
-        File f = new File(path + "/Statistics.txt");
-
-        return f;
-    }
-
     public static String getDefaultCharEncoding() {
         byte[] bArray = {'w'};
         InputStream is = new ByteArrayInputStream(bArray);
@@ -1032,7 +994,7 @@ public class Base {
             if (Base.isMacOS()) {
                 // Only override the IU's necessary for ColorChooser and
                 // FileChooser:
-                Set<Object> includes = new HashSet<Object>();
+                Set<Object> includes = new HashSet<>();
                 includes.add("ColorChooser");
                 includes.add("FileChooser");
                 includes.add("Component");
@@ -1052,11 +1014,6 @@ public class Base {
                 // need to enable the preferences option manually
 //                macApplication.setEnabledPreferencesMenu(true);
                 writeLog("Operating System: Mac OS", this.getClass());
-
-            } else if (Base.isLinux()) {
-                writeLog("Operating System: Linux", this.getClass());
-            } else {
-                writeLog("Operating System: Windows", this.getClass());
             }
         } catch (Exception e) {
             writeLog(e.getMessage(), this.getClass());
@@ -1108,7 +1065,7 @@ public class Base {
      * @return
      */
     static public boolean isMacOS() {
-        return platform == Platform.MACOSX;
+        return PLATFORM == Platform.MACOSX;
     }
 
     /**
@@ -1117,7 +1074,7 @@ public class Base {
      * @return
      */
     static public boolean isWindows() {
-        return platform == Platform.WINDOWS;
+        return PLATFORM == Platform.WINDOWS;
     }
 
     /**
@@ -1126,15 +1083,7 @@ public class Base {
      * @return
      */
     static public boolean isLinux() {
-        return platform == Platform.LINUX;
-    }
-
-    static public boolean isx86_64() {
-        return arch == Arch.x86_64;
-    }
-
-    static public boolean isx86() {
-        return arch == Arch.x86;
+        return PLATFORM == Platform.LINUX;
     }
 
     /**
@@ -1234,13 +1183,12 @@ public class Base {
                     BufferedImage.TYPE_INT_ARGB);
             img2.getGraphics().drawImage(image, 0, 0, null);
             image = img2;
-        } catch (InterruptedException e) {
-            Base.logger.log(Level.FINE, "Could not load image: " + name, e);
-        } catch (IOException ioe) {
-            Base.logger.log(Level.FINE, "Could not load image: " + name, ioe);
-        } catch (IllegalArgumentException iae) {
-            Base.logger.log(Level.FINE, "Could not load image: " + name, iae);
+        } catch (InterruptedException | IOException | IllegalArgumentException e) {
+            //Base.logger.log(Level.FINE, "Could not load image: " + name, e);
         }
+        //Base.logger.log(Level.FINE, "Could not load image: " + name, ioe);
+        //Base.logger.log(Level.FINE, "Could not load image: " + name, iae);
+
         return image;
     }
 
@@ -1249,7 +1197,7 @@ public class Base {
     }
 
     // ...................................................................
-    static public void copyFile(File afile, File bfile) throws IOException {
+    private static void copyFile(File afile, File bfile) throws IOException {
         InputStream from = new BufferedInputStream(new FileInputStream(afile));
         OutputStream to = new BufferedOutputStream(new FileOutputStream(bfile));
         byte[] buffer = new byte[16 * 1024];
@@ -1265,58 +1213,6 @@ public class Base {
         // } catch (IOException e) {
         // e.printStackTrace();
         // }
-    }
-
-    /**
-     * Grab the contents of a file as a string.
-     *
-     * @param file
-     * @return
-     * @throws java.io.IOException
-     */
-    static public String loadFile(File file) throws IOException {
-        Base.logger.log(Level.INFO, "Load file : {0}", file.getAbsolutePath());
-        // empty code file.. no worries, might be getting filled up later
-        if (file.length() == 0) {
-            return "";
-        }
-
-        InputStreamReader isr = new InputStreamReader(new FileInputStream(file));
-        BufferedReader reader = new BufferedReader(isr);
-
-        StringBuilder buffer = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-            buffer.append('\n');
-        }
-        reader.close();
-        return buffer.toString();
-    }
-
-    /**
-     * Spew the contents of a String object out to a fil
-     *
-     * @param str
-     * @param file
-     * @throws java.io.IOException
-     */
-    static public void saveFile(String str, File file) throws IOException {
-        Base.logger.log(Level.INFO, "Saving as {0}", file.getCanonicalPath());
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(str.getBytes());
-        InputStreamReader isr = new InputStreamReader(bis);
-        BufferedReader reader = new BufferedReader(isr);
-
-        FileWriter fw = new FileWriter(file);
-        PrintWriter wrtr = new PrintWriter(new BufferedWriter(fw));
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-            wrtr.println(line);
-        }
-        wrtr.flush();
-        wrtr.close();
     }
 
     static public void copyDir(File sourceDir, File targetDir)
@@ -1335,51 +1231,6 @@ public class Base {
                 target.setLastModified(source.lastModified());
             } else {
                 copyFile(source, target);
-            }
-        }
-    }
-
-    /**
-     * Gets a list of all files within the specified folder, and returns a list
-     * of their relative paths. Ignores any files/folders prefixed with a dot.
-     *
-     * @param path
-     * @param relative
-     * @return
-     */
-    static public String[] listFiles(String path, boolean relative) {
-        return listFiles(new File(path), relative);
-    }
-
-    static public String[] listFiles(File folder, boolean relative) {
-        String path = folder.getAbsolutePath();
-        Vector<String> vector = new Vector<String>();
-        addToFileList(relative ? (path + File.separator) : "", path, vector);
-        String outgoing[] = new String[vector.size()];
-        vector.copyInto(outgoing);
-        return outgoing;
-    }
-
-    static protected void addToFileList(String basePath, String path,
-            Vector<String> fileList) {
-        File folder = new File(path);
-        String list[] = folder.list();
-        if (list == null) {
-            return;
-        }
-
-        for (String list1 : list) {
-            if (list1.charAt(0) == '.') {
-                continue;
-            }
-            File file = new File(path, list1);
-            String newPath = file.getAbsolutePath();
-            if (newPath.startsWith(basePath)) {
-                newPath = newPath.substring(basePath.length());
-            }
-            fileList.add(newPath);
-            if (file.isDirectory()) {
-                addToFileList(basePath, newPath, fileList);
             }
         }
     }
@@ -1405,23 +1256,6 @@ public class Base {
         isPrinting = false;
         printPaused = false;
         isPrintingFromGCode = false;
-        gcodeToSave = false;
-    }
-
-    private static String setVersionString() {
-        String releaseType, applicationVersion, buildNumber;
-
-        releaseType = configProperties.getBuildProperty("release.type");
-        applicationVersion = configProperties.getBuildProperty("application.version");
-        buildNumber = configProperties.getBuildProperty("build.number");
-
-        if (releaseType.equals("alpha")) {
-            return applicationVersion + "-" + releaseType + "-" + buildNumber;
-        } else if (releaseType.contains("beta")) {
-            return applicationVersion + "-" + releaseType;
-        } else {
-            return applicationVersion;
-        }
     }
 
     /**
