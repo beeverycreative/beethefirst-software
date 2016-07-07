@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class DefaultProperties {
 
-    private static HashMap<String, String> defaultHash = new HashMap<String, String>();
+    private static final HashMap<String, String> defaultHash = new HashMap<>();
 
     ;
 
@@ -103,6 +103,7 @@ public class DefaultProperties {
         defaultHash.put("git.filament_repo_branch", "version/2.0.0");
         
         defaultHash.put("filament.dont_show_support_query", String.valueOf(false));
+        defaultHash.put("serialnumber.reset", String.valueOf(false));
     }
 
     /**
@@ -113,15 +114,5 @@ public class DefaultProperties {
      */
     public static String getDefault(String value) {
         return defaultHash.get(value);
-    }
-
-    /**
-     * Overrides property with a new value.
-     *
-     * @param key property attribute
-     * @param value property value
-     */
-    public static void setDefault(String key, String value) {
-        defaultHash.put(key, value);
     }
 }

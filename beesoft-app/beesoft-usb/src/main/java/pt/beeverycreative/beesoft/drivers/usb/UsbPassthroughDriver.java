@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.popups.Feedback;
 import replicatorg.app.ui.panels.PauseMenu;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
@@ -267,6 +268,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return "";
         }
 
+        if (connectedDeviceHandle == null) {
+            return "";
+        }
+
         dispatchCommandLock.lock();
         try {
             sendCommand(next);
@@ -293,6 +298,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         } finally {
             dispatchCommandLock.unlock();
         }
+
         return ans;
     }
 
@@ -303,6 +309,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
         ans = "";
 
         if (next == null) {
+            return "";
+        }
+
+        if (connectedDeviceHandle == null) {
             return "";
         }
 
@@ -326,6 +336,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
     private void dispatchCommandNoResponse(String next) {
         if (next == null) {
+            return;
+        }
+
+        if (connectedDeviceHandle == null) {
             return;
         }
 
@@ -1064,7 +1078,15 @@ public final class UsbPassthroughDriver extends UsbDriver {
     }
 
     private boolean isSerialValid() {
-        int printerId, productId;
+        final int printerId;
+        final boolean resetSN = Boolean.parseBoolean(ProperDefault.get("serialnumber.reset"));
+        int productId;
+
+        if (resetSN) {
+            ProperDefault.put("serialnumber.reset", "false");
+            dispatchCommand("M118 T9999999999");
+            return false;
+        }
 
         if (serialNumberString.length() != 10) {
             return false;

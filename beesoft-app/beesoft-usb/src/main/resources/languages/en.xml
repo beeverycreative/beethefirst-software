@@ -759,6 +759,7 @@ To load the filament insert it in the inlet hole and push it until it reaches th
             <CancelPrintText value="Are you sure you want to cancel your print?" />
             <CPEnableText value="You can now use the Control Panel." />
             <CPDisableText value="Control Panel has been disabled." />
+            <CPResetSN value="Please restart your printer to complete this operation." />
         </StatusMessages>
 
         <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->

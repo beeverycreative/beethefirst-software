@@ -39,10 +39,13 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeTableXYDataset;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Warning;
 import replicatorg.drivers.Driver;
 import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
@@ -61,10 +64,12 @@ import replicatorg.util.Point5d;
 public class ControlPanel extends BaseDialog {
 
     private enum MovDir {
+
         Z_PLUS, Z_MINUS, Y_PLUS, Y_MINUS, X_PLUS, X_MINUS
     };
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final PrinterInfo connectedPrinter = driver.getConnectedDevice();
     private final ToolModel currentTool = driver.getMachine().currentTool();
     protected double temperatureGoal = 0;
     protected double zHome = -1;
@@ -94,8 +99,8 @@ public class ControlPanel extends BaseDialog {
     private Timer setPollDataTrue;
     private Timer showBeepLabel;
     protected Timer movButtonHoldDown;
-    private static final int movCommandInterval = 1;
-    private static final double movCommandStep = 0.07;
+    private static final int movCommandInterval = 10;
+    private static final double movCommandStep = 0.16;
     protected volatile boolean canPollData = true;
     protected volatile boolean canMove = true;
 
@@ -105,7 +110,6 @@ public class ControlPanel extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
         initComponents();
         Base.writeLog("Control panel opened...", this.getClass());
-        setFont();
         setTextLanguage();
         centerOnScreen();
         enableDrag();
@@ -132,14 +136,28 @@ public class ControlPanel extends BaseDialog {
 
         this.colorTargetTemp.setIcon(icon2);
         this.colorTargetTemp.setText("");
+        
+        if (connectedPrinter == PrinterInfo.BEETHEFIRST) {
+            jSliderBlowerSpeed.setMaximum(1);
+            jSliderBlowerSpeed.setMinorTickSpacing(0);
+            jSliderBlowerSpeed.setMajorTickSpacing(1);
+
+            jSliderExtruderSpeed.setEnabled(false);
+        }
 
         this.addWindowListener(new WindowAdapter() {
+            
+            @Override
+            public void windowOpened(WindowEvent e) {
+                consoleInput.requestFocus();
+            }
+            
             @Override
             public void windowClosed(WindowEvent e) {
                 if (movButtonHoldDown != null && movButtonHoldDown.isRunning()) {
                     movButtonHoldDown.stop();
                 }
-                driver.dispatchCommand("M1110 S0");
+                driver.dispatchCommand("M1110 S0", COM.NO_RESPONSE);
 
                 if (loggingTemperature == false) {
                     disposeThread.cancel();
@@ -148,28 +166,6 @@ public class ControlPanel extends BaseDialog {
                 getInitialValuesThread.cancel();
             }
         });
-    }
-
-    private void setFont() {
-        extrudeCombo.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bBeep.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCurrentPosition.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bCurrentPosition.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        extruderTemperatureLabel.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        blockTemperatureLabel.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        motorSpeed.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        extrudeDuration.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bReverse.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bForward.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        logTemperature.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        notes.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bOK.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bTurnOnLEDs.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bTurnOffLEDs.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        labelLastPrintTime.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel6.setFont(GraphicDesignComponents.getSSProRegular("14"));
     }
 
     private void setTextLanguage() {
@@ -187,37 +183,25 @@ public class ControlPanel extends BaseDialog {
         getPosition();
 
         disposeThread.start();
-        sleep(100);
         inputValidationThread.start();
-        sleep(100);
         getInitialValuesThread.start();
-        sleep(100);
 
         // set to relative positioning
         driver.dispatchCommand("G91");
-        sleep(100);
 
         // enable debug mode
         driver.dispatchCommand("M1110 S1");
-        sleep(100);
 
-        setPollDataTrue = new Timer(0, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (movButtonHoldDown.isRunning() == false) {
-                    canPollData = true;
-                }
+        setPollDataTrue = new Timer(0, (ActionEvent e) -> {
+            if (movButtonHoldDown.isRunning() == false) {
+                canPollData = true;
             }
         });
         setPollDataTrue.setInitialDelay(200);
         setPollDataTrue.setRepeats(false);
 
-        showBeepLabel = new Timer(0, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                labelBeepValidation.setVisible(false);
-            }
+        showBeepLabel = new Timer(0, (ActionEvent e) -> {
+            labelBeepValidation.setVisible(false);
         });
         showBeepLabel.setInitialDelay(2000);
         showBeepLabel.setRepeats(false);
@@ -247,14 +231,6 @@ public class ControlPanel extends BaseDialog {
             return Integer.valueOf(targetTemperatureVal.getText());
         } catch (IllegalArgumentException ex) {
             return -1;
-        }
-    }
-
-    private void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ControlPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -291,7 +267,7 @@ public class ControlPanel extends BaseDialog {
         plot.setRenderer(1, renderer);
         plot.getRenderer(1).setSeriesPaint(0, t0TargetColor);
         plot.getRenderer(0).setSeriesPaint(0, t0MeasuredColor);
-        
+
         plot.setDataset(2, pMeasuredDataset);
         plot.setRenderer(2, new XYLineAndShapeRenderer(true, false));
         plot.getRenderer(2).setSeriesPaint(0, pMeasuredColor);
@@ -435,85 +411,67 @@ public class ControlPanel extends BaseDialog {
 
         switch (whereTo) {
             case Z_PLUS:
-                listener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        double val;
+                listener = (ActionEvent e) -> {
+                    double val;
 
-                        driver.dispatchCommand("G0 Z" + movCommandStep);
-                        val = Double.parseDouble(zTextFieldValue.getText()) + movCommandStep;
-                        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
-                    }
+                    driver.dispatchCommand("G0 F1000 Z" + movCommandStep, COM.NO_RESPONSE);
+                    val = Double.parseDouble(zTextFieldValue.getText()) + movCommandStep;
+                    zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                 };
                 movButtonHoldDown.addActionListener(listener);
                 movButtonHoldDown.start();
                 break;
             case Z_MINUS:
-                listener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        double val;
+                listener = (ActionEvent e) -> {
+                    double val;
 
-                        driver.dispatchCommand("G0 Z-" + movCommandStep);
-                        val = Double.parseDouble(zTextFieldValue.getText()) - movCommandStep;
-                        zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
-                    }
+                    driver.dispatchCommand("G0 F1000 Z-" + movCommandStep, COM.NO_RESPONSE);
+                    val = Double.parseDouble(zTextFieldValue.getText()) - movCommandStep;
+                    zTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                 };
                 movButtonHoldDown.addActionListener(listener);
                 movButtonHoldDown.start();
                 break;
             case Y_PLUS:
-                listener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        double val;
+                listener = (ActionEvent e) -> {
+                    double val;
 
-                        driver.dispatchCommand("G0 Y" + movCommandStep);
-                        val = Double.parseDouble(yTextFieldValue.getText()) + movCommandStep;
-                        yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
-                    }
+                    driver.dispatchCommand("G0 F1000 Y" + movCommandStep, COM.NO_RESPONSE);
+                    val = Double.parseDouble(yTextFieldValue.getText()) + movCommandStep;
+                    yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                 };
                 movButtonHoldDown.addActionListener(listener);
                 movButtonHoldDown.start();
                 break;
             case Y_MINUS:
-                listener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        double val;
+                listener = (ActionEvent e) -> {
+                    double val;
 
-                        driver.dispatchCommand("G0 Y-" + movCommandStep);
-                        val = Double.parseDouble(yTextFieldValue.getText()) - movCommandStep;
-                        yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
-                    }
+                    driver.dispatchCommand("G0 F1000 Y-" + movCommandStep, COM.NO_RESPONSE);
+                    val = Double.parseDouble(yTextFieldValue.getText()) - movCommandStep;
+                    yTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                 };
                 movButtonHoldDown.addActionListener(listener);
                 movButtonHoldDown.start();
                 break;
             case X_PLUS:
-                listener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        double val;
+                listener = (ActionEvent e) -> {
+                    double val;
 
-                        driver.dispatchCommand("G0 X" + movCommandStep);
-                        val = Double.parseDouble(xTextFieldValue.getText()) + movCommandStep;
-                        xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
-                    }
+                    driver.dispatchCommand("G0 F1000 X" + movCommandStep, COM.NO_RESPONSE);
+                    val = Double.parseDouble(xTextFieldValue.getText()) + movCommandStep;
+                    xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                 };
                 movButtonHoldDown.addActionListener(listener);
                 movButtonHoldDown.start();
                 break;
             case X_MINUS:
-                listener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        double val;
+                listener = (ActionEvent e) -> {
+                    double val;
 
-                        driver.dispatchCommand("G0 X-" + movCommandStep);
-                        val = Double.parseDouble(xTextFieldValue.getText()) - movCommandStep;
-                        xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
-                    }
+                    driver.dispatchCommand("G0 F1000 X-" + movCommandStep, COM.NO_RESPONSE);
+                    val = Double.parseDouble(xTextFieldValue.getText()) - movCommandStep;
+                    xTextFieldValue.setText(String.format(Locale.US, "%3.3f", val));
                 };
                 movButtonHoldDown.addActionListener(listener);
                 movButtonHoldDown.start();
@@ -604,6 +562,12 @@ public class ControlPanel extends BaseDialog {
         labelLastPrintTime = new javax.swing.JLabel();
         textFieldLastPrintTime = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        bResetSN = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        consoleArea = new javax.swing.JTextArea();
+        consoleInput = new javax.swing.JTextField();
+        bSendCmd = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         notes = new javax.swing.JLabel();
         jPanel9 = new javax.swing.JPanel();
@@ -639,7 +603,6 @@ public class ControlPanel extends BaseDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
         jPanel1.setToolTipText("");
@@ -649,7 +612,7 @@ public class ControlPanel extends BaseDialog {
         jPanel2.setToolTipText("");
         jPanel2.setPreferredSize(new java.awt.Dimension(499, 620));
 
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Movement", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, GraphicDesignComponents.getSSProBold("12")));
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Movement", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Source Sans Pro", 1, 12))); // NOI18N
         jPanel8.setOpaque(false);
 
         bHomeXY.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/home2.png"))); // NOI18N
@@ -662,9 +625,11 @@ public class ControlPanel extends BaseDialog {
         jLabel2.setText("X");
 
         zTextFieldValue.setEditable(false);
+        zTextFieldValue.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         zTextFieldValue.setText("0.0");
 
         xTextFieldValue.setEditable(false);
+        xTextFieldValue.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         xTextFieldValue.setText("0.0");
 
         jLabel4.setText("Z");
@@ -736,6 +701,7 @@ public class ControlPanel extends BaseDialog {
         });
 
         yTextFieldValue.setEditable(false);
+        yTextFieldValue.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         yTextFieldValue.setText("0.0");
 
         xLEFT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/X-.png"))); // NOI18N
@@ -770,7 +736,9 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        bCurrentPosition.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         bCurrentPosition.setText("Calibration set 0");
+        bCurrentPosition.setContentAreaFilled(false);
         bCurrentPosition.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 bCurrentPositionMouseReleased(evt);
@@ -784,6 +752,7 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        xTextFieldGoal.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         xTextFieldGoal.setText("0.0");
         xTextFieldGoal.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -791,6 +760,7 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        yTextFieldGoal.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         yTextFieldGoal.setText("0.0");
         yTextFieldGoal.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -798,6 +768,7 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        zTextFieldGoal.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         zTextFieldGoal.setText("0.0");
         zTextFieldGoal.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -897,18 +868,22 @@ public class ControlPanel extends BaseDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Other", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, GraphicDesignComponents.getSSProBold("12")));
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Other", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Source Sans Pro", 1, 12))); // NOI18N
         jPanel7.setToolTipText("");
         jPanel7.setOpaque(false);
 
+        bBeep.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         bBeep.setText("Beep");
+        bBeep.setContentAreaFilled(false);
         bBeep.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 bBeepMousePressed(evt);
             }
         });
 
+        bTurnOffLEDs.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         bTurnOffLEDs.setText("Turn off LEDs");
+        bTurnOffLEDs.setContentAreaFilled(false);
         bTurnOffLEDs.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 bTurnOffLEDsMouseReleased(evt);
@@ -919,20 +894,33 @@ public class ControlPanel extends BaseDialog {
         labelBeepValidation.setForeground(new java.awt.Color(28, 181, 28));
         labelBeepValidation.setText("OK");
 
+        bTurnOnLEDs.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         bTurnOnLEDs.setText("Turn on LEDs");
+        bTurnOnLEDs.setContentAreaFilled(false);
         bTurnOnLEDs.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 bTurnOnLEDsMouseReleased(evt);
             }
         });
 
+        labelLastPrintTime.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         labelLastPrintTime.setText("Last Print time");
 
         textFieldLastPrintTime.setEditable(false);
         textFieldLastPrintTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         textFieldLastPrintTime.setPreferredSize(new java.awt.Dimension(74, 27));
 
+        jLabel6.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel6.setText("(hh:mm:ss)");
+
+        bResetSN.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        bResetSN.setText("Reset S/N");
+        bResetSN.setContentAreaFilled(false);
+        bResetSN.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bResetSNMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -943,6 +931,8 @@ public class ControlPanel extends BaseDialog {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(bTurnOnLEDs, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(bResetSN, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(labelBeepValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(bTurnOffLEDs, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -960,7 +950,9 @@ public class ControlPanel extends BaseDialog {
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(bTurnOnLEDs)
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(bTurnOnLEDs)
+                            .addComponent(bResetSN))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bTurnOffLEDs))
                     .addGroup(jPanel7Layout.createSequentialGroup()
@@ -976,15 +968,64 @@ public class ControlPanel extends BaseDialog {
                 .addGap(12, 12, 12))
         );
 
+        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Console", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Source Sans Pro", 1, 12))); // NOI18N
+        jPanel10.setOpaque(false);
+
+        consoleArea.setEditable(false);
+        consoleArea.setColumns(20);
+        consoleArea.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        consoleArea.setLineWrap(true);
+        consoleArea.setRows(5);
+        consoleArea.setText("Welcome to BEESOFT's Control Panel console!\nThe Control Panel was not designed to work while the printer is in bootloader. Please avoid executing commands like M609!");
+        jScrollPane1.setViewportView(consoleArea);
+
+        consoleInput.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        consoleInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                consoleInputKeyPressed(evt);
+            }
+        });
+
+        bSendCmd.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        bSendCmd.setText("Send");
+        bSendCmd.setContentAreaFilled(false);
+        bSendCmd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSendCmdActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addComponent(consoleInput)
+                .addGap(1, 1, 1)
+                .addComponent(bSendCmd))
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addComponent(jScrollPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(consoleInput)
+                    .addComponent(bSendCmd, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(2, 2, 2))
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, 0))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(11, 11, 11))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -992,22 +1033,27 @@ public class ControlPanel extends BaseDialog {
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
+        notes.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         notes.setText("All files saved under BEESOFT folder in user directory.");
         notes.setToolTipText("");
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Extrusion", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, GraphicDesignComponents.getSSProBold("12")));
+        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Extrusion", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Source Sans Pro", 1, 12))); // NOI18N
         jPanel9.setOpaque(false);
         jPanel9.setPreferredSize(new java.awt.Dimension(471, 591));
 
         jPanel5.setOpaque(false);
 
+        blockTemperatureLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         blockTemperatureLabel.setText("Block temperature");
 
+        targetTemperatureVal.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         targetTemperatureVal.setText("0");
         targetTemperatureVal.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -1015,6 +1061,7 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        extruderTemperatureLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         extruderTemperatureLabel.setText("Extruder temperature");
 
         cLogTemperature.setBackground(new java.awt.Color(248, 248, 248));
@@ -1024,13 +1071,16 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        logTemperature.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         logTemperature.setText("Log Temperature");
         logTemperature.setToolTipText("");
 
         blockTemperatureVal.setEditable(false);
+        blockTemperatureVal.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         blockTemperatureVal.setText("0");
 
         extruderTemperatureVal.setEditable(false);
+        extruderTemperatureVal.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         extruderTemperatureVal.setText("0");
 
         tempPanel.setMinimumSize(new java.awt.Dimension(340, 130));
@@ -1046,10 +1096,12 @@ public class ControlPanel extends BaseDialog {
             .addGap(0, 160, Short.MAX_VALUE)
         );
 
+        tempLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         tempLabel.setText("Temperature Chart");
 
         jPanel6.setOpaque(false);
 
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel1.setLabelFor(colorCurrentTemp);
         jLabel1.setText("Current extruder temperature");
 
@@ -1065,6 +1117,7 @@ public class ControlPanel extends BaseDialog {
         colorCurrentTemp.setMinimumSize(new java.awt.Dimension(10, 10));
         colorCurrentTemp.setPreferredSize(new java.awt.Dimension(10, 10));
 
+        jLabel5.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel5.setLabelFor(colorTargetTemp);
         jLabel5.setText("Target extruder temperature");
 
@@ -1100,10 +1153,13 @@ public class ControlPanel extends BaseDialog {
         );
 
         jBlowerFanValue.setEditable(false);
+        jBlowerFanValue.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jBlowerFanValue.setText("0");
 
+        jBlowerFanTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jBlowerFanTitle.setText("Blower fan");
 
+        jSliderBlowerSpeed.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jSliderBlowerSpeed.setMajorTickSpacing(60);
         jSliderBlowerSpeed.setMaximum(255);
         jSliderBlowerSpeed.setMinorTickSpacing(30);
@@ -1117,6 +1173,7 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        jSliderExtruderSpeed.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jSliderExtruderSpeed.setMajorTickSpacing(60);
         jSliderExtruderSpeed.setMaximum(255);
         jSliderExtruderSpeed.setMinorTickSpacing(30);
@@ -1131,8 +1188,10 @@ public class ControlPanel extends BaseDialog {
         });
 
         jExtruderFanValue.setEditable(false);
+        jExtruderFanValue.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jExtruderFanValue.setText("0");
 
+        jExtruderFanTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jExtruderFanTitle.setText("Extruder fan");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -1164,8 +1223,7 @@ public class ControlPanel extends BaseDialog {
                             .addComponent(tempPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addGap(40, 40, 40)
-                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(53, 53, 53))))
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel5Layout.createSequentialGroup()
                             .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1174,7 +1232,7 @@ public class ControlPanel extends BaseDialog {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(jBlowerFanValue, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addComponent(jSliderBlowerSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                             .addComponent(jSliderExtruderSpeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel5Layout.createSequentialGroup()
                             .addGap(226, 226, 226)
@@ -1221,6 +1279,7 @@ public class ControlPanel extends BaseDialog {
                 .addContainerGap())
         );
 
+        mSpeed.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         mSpeed.setText("500");
         mSpeed.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -1228,20 +1287,27 @@ public class ControlPanel extends BaseDialog {
             }
         });
 
+        extrudeDuration.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         extrudeDuration.setText("Extrude duration");
 
+        bForward.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         bForward.setText("Foward");
+        bForward.setContentAreaFilled(false);
         bForward.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 bForwardMouseReleased(evt);
             }
         });
 
+        extrudeCombo.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         extrudeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        motorSpeed.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         motorSpeed.setText("Speed");
 
+        bReverse.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         bReverse.setText("Reverse");
+        bReverse.setContentAreaFilled(false);
         bReverse.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 bReverseMouseReleased(evt);
@@ -1314,19 +1380,20 @@ public class ControlPanel extends BaseDialog {
         jPanel4.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel4.setPreferredSize(new java.awt.Dimension(567, 38));
 
+        bOK.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bOK.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         bOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bOK.setText("OK");
         bOK.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bOK.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bOKMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bOKMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bOKMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bOKMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bOKMouseEntered(evt);
             }
         });
 
@@ -1342,8 +1409,8 @@ public class ControlPanel extends BaseDialog {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(bOK)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(bOK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -1363,7 +1430,7 @@ public class ControlPanel extends BaseDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE))
                 .addGap(0, 0, 0)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1398,11 +1465,11 @@ public class ControlPanel extends BaseDialog {
 
     private void cLogTemperatureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cLogTemperatureActionPerformed
         if (loggingTemperature) {
-            this.loggingTemperature = false;
+            ControlPanel.loggingTemperature = false;
             cleanLogFiles();
 
         } else {
-            this.loggingTemperature = true;
+            ControlPanel.loggingTemperature = true;
             initFile();
             cleanLogFiles();
         }
@@ -1563,8 +1630,22 @@ public class ControlPanel extends BaseDialog {
     }//GEN-LAST:event_jSliderExtruderSpeedMouseReleased
 
     private void jSliderBlowerSpeedMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSliderBlowerSpeedMouseReleased
-        driver.dispatchCommand("M106 S" + jSliderBlowerSpeed.getValue());
-        jBlowerFanValue.setText(String.valueOf(jSliderBlowerSpeed.getValue()));
+        final int blowerValue = jSliderBlowerSpeed.getValue();
+
+        if (connectedPrinter == PrinterInfo.BEETHEFIRST) {
+            if (blowerValue > 0) {
+                driver.dispatchCommand("M106");
+            } else {
+                driver.dispatchCommand("M107");
+            }
+        } else {
+            if (blowerValue > 0) {
+                driver.dispatchCommand("M106 S" + blowerValue);
+            } else {
+                driver.dispatchCommand("M107");
+            }
+        }
+        jBlowerFanValue.setText(String.valueOf(blowerValue));
     }//GEN-LAST:event_jSliderBlowerSpeedMouseReleased
 
     private void bHomeZMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bHomeZMouseReleased
@@ -1663,6 +1744,37 @@ public class ControlPanel extends BaseDialog {
         }
     }//GEN-LAST:event_targetTemperatureValKeyPressed
 
+    private void bResetSNMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bResetSNMousePressed
+        final Warning resetSNFeedback;
+
+        ProperDefault.put("serialnumber.reset", "true");
+        resetSNFeedback = new Warning("CPResetSN", false);
+        resetSNFeedback.setVisible(true);
+    }//GEN-LAST:event_bResetSNMousePressed
+
+    private void bSendCmdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSendCmdActionPerformed
+        sendCmd(consoleInput.getText());
+    }//GEN-LAST:event_bSendCmdActionPerformed
+
+    private void consoleInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_consoleInputKeyPressed
+        final int keyCode = evt.getKeyCode();
+
+        if (keyCode == KeyEvent.VK_ENTER) {
+            sendCmd(consoleInput.getText());
+        }
+    }//GEN-LAST:event_consoleInputKeyPressed
+
+    private void sendCmd(final String cmd) {
+        final String response;
+
+        if (cmd.length() > 0) {
+            consoleArea.append("\n\n> " + cmd + "\n");
+            response = driver.dispatchCommand(cmd);
+            consoleArea.append(response);
+            consoleInput.setText("");
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bBeep;
     private javax.swing.JButton bCurrentPosition;
@@ -1670,7 +1782,9 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JLabel bHomeXY;
     private javax.swing.JLabel bHomeZ;
     private javax.swing.JLabel bOK;
+    private javax.swing.JButton bResetSN;
     private javax.swing.JButton bReverse;
+    private javax.swing.JButton bSendCmd;
     private javax.swing.JButton bTurnOffLEDs;
     private javax.swing.JButton bTurnOnLEDs;
     private javax.swing.JLabel blockTemperatureLabel;
@@ -1678,6 +1792,8 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JCheckBox cLogTemperature;
     private javax.swing.JLabel colorCurrentTemp;
     private javax.swing.JLabel colorTargetTemp;
+    private javax.swing.JTextArea consoleArea;
+    private javax.swing.JTextField consoleInput;
     private javax.swing.JComboBox extrudeCombo;
     private javax.swing.JLabel extrudeDuration;
     private javax.swing.JLabel extruderTemperatureLabel;
@@ -1693,6 +1809,7 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1701,6 +1818,7 @@ public class ControlPanel extends BaseDialog {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSlider jSliderBlowerSpeed;
     private javax.swing.JSlider jSliderExtruderSpeed;
     private javax.swing.JLabel labelBeepValidation;

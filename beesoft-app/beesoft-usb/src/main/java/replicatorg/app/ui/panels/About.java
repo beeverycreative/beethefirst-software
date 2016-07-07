@@ -30,7 +30,7 @@ public class About extends BaseDialog {
     private final Timer resetClickCount = new Timer(1000, (ActionEvent e) -> {
         clickCount = 0;
     });
-    private final boolean cpEnabled = Boolean.parseBoolean(ProperDefault.get("controlpanel.enable"));
+    private boolean cpEnabled = Boolean.parseBoolean(ProperDefault.get("controlpanel.enable"));
     private InformationTooltip info;
     private int clickCount = 0;
 
@@ -411,11 +411,15 @@ public class About extends BaseDialog {
                 Base.getMainWindow().setCPVisibility(true);
                 warning = new Warning("CPEnableText", false);
                 warning.setVisible(true);
+                cpEnabled = !cpEnabled;
+                clickCount = 0;
             } else {
                 ProperDefault.put("controlpanel.enable", "false");
                 Base.getMainWindow().setCPVisibility(false);
                 warning = new Warning("CPDisableText", false);
                 warning.setVisible(true);
+                cpEnabled = !cpEnabled;
+                clickCount = 0;
             }
         }
 
