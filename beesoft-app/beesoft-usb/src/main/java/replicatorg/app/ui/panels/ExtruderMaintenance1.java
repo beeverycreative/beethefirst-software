@@ -22,7 +22,6 @@ import replicatorg.drivers.Driver;
 public class ExtruderMaintenance1 extends BaseDialog {
     
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private final int temperatureGoal = 200;
     
     public ExtruderMaintenance1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -66,7 +65,7 @@ public class ExtruderMaintenance1 extends BaseDialog {
     
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
-        driver.dispatchCommand("M703 S" + (temperatureGoal + 5), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
         driver.setBusy(true);
     }
     

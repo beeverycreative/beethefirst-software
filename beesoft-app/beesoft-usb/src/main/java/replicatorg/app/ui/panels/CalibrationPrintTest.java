@@ -111,6 +111,7 @@ public class CalibrationPrintTest extends BaseDialog {
 
             Base.writeLog("Temperature achieved...", this.getClass());
             disableMessageDisplay();
+            driver.setTemperature(temperatureGoal);
             driver.dispatchCommand("M33", COM.NO_RESPONSE);
             driver.setBusy(true);
             dispose();

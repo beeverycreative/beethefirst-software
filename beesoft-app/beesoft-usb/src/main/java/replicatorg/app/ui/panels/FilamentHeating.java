@@ -27,7 +27,6 @@ import replicatorg.drivers.Driver;
 public class FilamentHeating extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
-    private static final int GOAL_TEMPERATURE = 215;
     private final Filament selectedFilament;
     private final TemperatureThread temperatureThread = new TemperatureThread();
 
@@ -49,6 +48,7 @@ public class FilamentHeating extends BaseDialog {
             public void windowOpened(WindowEvent e) {
                 temperatureThread.start();
             }
+
             @Override
             public void windowClosed(WindowEvent e) {
                 temperatureThread.kill();
@@ -85,10 +85,11 @@ public class FilamentHeating extends BaseDialog {
             jProgressBar1.setValue(temperature);
         }
 
-        if (temperature >= GOAL_TEMPERATURE) {
+        if (temperature >= GENERIC_TEMPERATURE_GOAL) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
             disableMessageDisplay();
+            driver.setTemperature(GENERIC_TEMPERATURE_GOAL);
             driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }
@@ -111,13 +112,13 @@ public class FilamentHeating extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Waiting for extruder to reach the target temperature, " + GOAL_TEMPERATURE, this.getClass());
+        Base.writeLog("Waiting for extruder to reach the target temperature, " + GENERIC_TEMPERATURE_GOAL, this.getClass());
         showMessage();
-        driver.dispatchCommand("M703 S" + (GOAL_TEMPERATURE + 5), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
-        jProgressBar1.setMaximum(GOAL_TEMPERATURE);
+        jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
 
         driver.readTemperature();
         updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());

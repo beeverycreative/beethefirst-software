@@ -22,7 +22,6 @@ import replicatorg.drivers.Driver;
  */
 public class NozzleSwitch1 extends BaseDialog {
 
-    private static final int GOAL_TEMPERATURE = 200;
     private final Driver driver = Base.getMachineLoader()
             .getMachineInterface().getDriver();
 
@@ -33,7 +32,7 @@ public class NozzleSwitch1 extends BaseDialog {
         setTextLanguage();
         enableDrag();
         centerOnScreen();
-        driver.setTemperature(GOAL_TEMPERATURE);
+        driver.setTemperature(GENERIC_TEMPERATURE_GOAL + 5);
     }
 
     private void setTextLanguage() {

@@ -966,7 +966,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private class PrintingThread extends Thread {
 
-        private static final String ERROR = "error";
         private boolean stop = false;
         private File gcode = null;
 
@@ -1089,6 +1088,8 @@ public class PrintSplashAutonomous extends BaseDialog {
                             }
                         }
                     }
+                    
+                    driver.setTemperature(temperatureGoal);
 
                     /**
                      * Set UI elements

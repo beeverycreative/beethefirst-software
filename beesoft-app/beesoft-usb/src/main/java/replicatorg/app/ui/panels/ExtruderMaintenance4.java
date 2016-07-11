@@ -36,7 +36,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
         enableDrag();
         centerOnScreen();
         jProgressBar1.setForeground(new Color(255, 203, 5));
-        jProgressBar1.setMaximum(TEMPERATURE_GOAL);
+        jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -93,10 +93,11 @@ public class ExtruderMaintenance4 extends BaseDialog {
             jProgressBar1.setValue(nozzleTemperature);
         }
 
-        if (nozzleTemperature >= TEMPERATURE_GOAL) {
+        if (nozzleTemperature >= GENERIC_TEMPERATURE_GOAL) {
             Base.writeLog("Temperature achieved...", this.getClass());
             tempThread.kill();
             disableMessageDisplay();
+            driver.setTemperature(GENERIC_TEMPERATURE_GOAL);
             driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }

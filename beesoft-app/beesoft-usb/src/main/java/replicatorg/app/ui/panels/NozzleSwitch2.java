@@ -79,10 +79,11 @@ public class NozzleSwitch2 extends BaseDialog {
             jProgressBar1.setValue(nozzleTemperature);
         }
 
-        if (nozzleTemperature >= TEMPERATURE_GOAL) {
+        if (nozzleTemperature >= GENERIC_TEMPERATURE_GOAL) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
             disableMessageDisplay();
+            driver.setTemperature(GENERIC_TEMPERATURE_GOAL);
             driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }
@@ -106,12 +107,12 @@ public class NozzleSwitch2 extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
-        driver.dispatchCommand("M703 S" + (TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
         disableMessageDisplay();
-        jProgressBar1.setMaximum(TEMPERATURE_GOAL);
+        jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
 
         driver.readTemperature();
         updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());
