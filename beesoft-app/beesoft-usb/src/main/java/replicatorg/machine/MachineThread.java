@@ -82,7 +82,7 @@ class MachineThread extends Thread {
     public MachineThread(Machine controller, Node machineNode) {
         super("Machine Thread");
 
-        this.tablePoints = new HashMap<String, Point5d>();
+        this.tablePoints = new HashMap<>();
         lastFeedrate = "0";
 
         // save our XML
@@ -211,31 +211,6 @@ class MachineThread extends Thread {
 
     public boolean hasFilamentChanged() {
         return this.isFilamentChanged;
-    }
-
-    public boolean isReadyToPrint() {
-        return state.canPrint();
-    }
-
-    /**
-     * True if the machine's build is going to the simulator.
-     */
-    public boolean isSimulating() {
-        // TODO: implement this.
-        return false;
-    }
-
-    // TODO: Put this somewhere else
-    public boolean isInteractiveTarget() {
-        return false;
-    }
-
-    public JobTarget getTarget() {
-        return JobTarget.NONE;
-    }
-
-    public int getLinesProcessed() {
-        return -1;
     }
 
     public MachineState getMachineState() {

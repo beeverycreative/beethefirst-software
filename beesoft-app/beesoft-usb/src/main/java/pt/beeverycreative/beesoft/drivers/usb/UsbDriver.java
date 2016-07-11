@@ -458,12 +458,14 @@ public class UsbDriver extends DriverBaseImplementation {
 
                     if (result != LibUsb.ERROR_TIMEOUT) {
                         Base.writeLog("Bulk send failed. Error: " + LibUsb.errorName(result), this.getClass());
-                    }
-
-                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO || result == LibUsb.ERROR_OTHER) {
                         resetBEESOFTstatus();
                     }
+
                     /*
+                     if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO || result == LibUsb.ERROR_OTHER) {
+                     resetBEESOFTstatus();
+                     }
+                    
                      } else {
                      throw new LibUsbException("Bulk transfer failed", result);
                      }
@@ -520,12 +522,14 @@ public class UsbDriver extends DriverBaseImplementation {
 
                     if (result != LibUsb.ERROR_TIMEOUT) {
                         Base.writeLog("Bulk receive failed. Error: " + LibUsb.errorName(result), this.getClass());
-                    }
-
-                    if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO || result == LibUsb.ERROR_OTHER) {
                         resetBEESOFTstatus();
                     }
+
                     /*
+                     if (result == LibUsb.ERROR_NO_DEVICE || result == LibUsb.ERROR_IO || result == LibUsb.ERROR_OTHER) {
+                     resetBEESOFTstatus();
+                     }
+                    
                      } else {
                      throw new LibUsbException("Bulk transfer failed", result);
                      }

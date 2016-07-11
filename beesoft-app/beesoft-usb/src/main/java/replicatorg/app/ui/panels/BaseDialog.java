@@ -103,6 +103,7 @@ public abstract class BaseDialog extends javax.swing.JDialog {
     protected class BusyFeedbackThread extends Thread {
 
         private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+        private int readyCount = 0;
         private boolean stop = false;
 
         public BusyFeedbackThread() {
@@ -114,11 +115,18 @@ public abstract class BaseDialog extends javax.swing.JDialog {
             while (stop == false) {
                 if (driver.isBusy()) {
                     showMessage();
+                    readyCount = 0;
+                    Base.hiccup(500);
                 } else {
-                    resetFeedbackComponents();
+                    if (readyCount >= 5) {
+                        resetFeedbackComponents();
+                        readyCount = 0;
+                    } else {
+                        readyCount++;
+                    }
                 }
 
-                Base.hiccup(100);
+                Base.hiccup(200);
             }
         }
 
