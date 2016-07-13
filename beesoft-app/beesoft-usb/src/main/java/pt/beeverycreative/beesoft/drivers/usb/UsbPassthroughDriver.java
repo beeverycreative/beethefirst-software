@@ -48,7 +48,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static final String STATUS_SHUTDOWN = "s:9";
     private static final String ERROR = "error";
     private static final String BEGIN_PRINT = "M33";
-    private static final String fileName = "abcde";
+    private static final String FILENAME = "abcde";
     private static final String RESPONSE_OK = "ok";
     private static final String FILE_CREATED = "File created";
     private static final String SET_FILENAME = "M30 ";
@@ -73,7 +73,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
     private static int backupNozzleSize = FilamentControler.DEFAULT_NOZZLE_SIZE;
     private static String backupCoilText = FilamentControler.NO_FILAMENT;
     private static double backupZVal = 123.495;
-    private static final Feedback feedbackWindow = new Feedback();
+    private static final Feedback FEEDBACK_WINDOW = new Feedback();
 
     public enum COM {
 
@@ -111,8 +111,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
     public void closeFeedback() {
         Base.keepFeedbackOpen = false;
 
-        if (feedbackWindow != null) {
-            feedbackWindow.dispose();
+        if (FEEDBACK_WINDOW != null) {
+            FEEDBACK_WINDOW.dispose();
         }
     }
 
@@ -139,12 +139,12 @@ public final class UsbPassthroughDriver extends UsbDriver {
             if (updateFirmware() >= 0) {
                 super.isBootloader = true;
                 Base.writeLog("Launching firmware!", this.getClass());
-                feedbackWindow.setFeedback2(Feedback.LAUNCHING_MESSAGE);
+                FEEDBACK_WINDOW.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.keepFeedbackOpen = true;
                 dispatchCommand(LAUNCH_FIRMWARE); // Launch firmware
                 cleanLibUsbDevice();
             } else {
-                feedbackWindow.setFeedback2(Feedback.RESTART_PRINTER);
+                FEEDBACK_WINDOW.setFeedback2(Feedback.RESTART_PRINTER);
             }
         } else if (status.contains("autonomous")) {
             super.isBootloader = false;
@@ -602,7 +602,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("(" + INIT_SDCARD.trim() + ") SDCard init has been successful", this.getClass());
             }
 
-            if (dispatchCommand(SET_FILENAME + fileName, COM.TRANSFER).contains(FILE_CREATED) == false) {
+            if (dispatchCommand(SET_FILENAME + FILENAME, COM.TRANSFER).contains(FILE_CREATED) == false) {
                 Base.writeLog("(" + SET_FILENAME.trim() + ") File creation failed", this.getClass());
                 return false;
             } else {
@@ -1161,8 +1161,8 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return -1;
         } else {
 
-            feedbackWindow.setVisible(true);
-            feedbackWindow.setFeedback1(Feedback.FLASHING_MAIN_MESSAGE);
+            FEEDBACK_WINDOW.setVisible(true);
+            FEEDBACK_WINDOW.setFeedback1(Feedback.FLASHING_MAIN_MESSAGE);
 
             if (firmwareVersion.equals(new Version()) == false) {
                 backupConfig();
@@ -1173,9 +1173,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
             dispatchCommand(SET_FIRMWARE_VERSION + INVALID_FIRMWARE_VERSION);
 
             if (backupConfig) {
-                feedbackWindow.setFeedback2(Feedback.FLASHING_SUB_MESSAGE);
+                FEEDBACK_WINDOW.setFeedback2(Feedback.FLASHING_SUB_MESSAGE);
             } else {
-                feedbackWindow.setFeedback2(Feedback.FLASHING_SUB_MESSAGE_NO_CALIBRATION);
+                FEEDBACK_WINDOW.setFeedback2(Feedback.FLASHING_SUB_MESSAGE_NO_CALIBRATION);
             }
 
             Base.writeLog("Starting Firmware update.", this.getClass());
@@ -1196,7 +1196,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         String response;
 
         Base.writeLog("Acquiring Z value loaded,filament and nozzle size before flashing new firmware", this.getClass());
-        feedbackWindow.setFeedback2(Feedback.SAVING_MESSAGE);
+        FEEDBACK_WINDOW.setFeedback2(Feedback.SAVING_MESSAGE);
 
         // change into firmware
         Base.keepFeedbackOpen = true;
@@ -1285,7 +1285,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 }
 
                 if (tries++ >= 10) {
-                    feedbackWindow.setFeedback3(Feedback.RESTART_PRINTER);
+                    FEEDBACK_WINDOW.setFeedback3(Feedback.RESTART_PRINTER);
                 }
             } while (ready == false);
 
@@ -1330,7 +1330,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         //Base.getMainWindow().getButtons().setMessage("is connecting");
                         ready = true;
                     } else {
-                        feedbackWindow.setFeedback2(Feedback.RESTART_PRINTER);
+                        FEEDBACK_WINDOW.setFeedback2(Feedback.RESTART_PRINTER);
                     }
                 } else {
                     Base.writeLog("Failed in establishing connection, trying again in 1 second...", this.getClass());

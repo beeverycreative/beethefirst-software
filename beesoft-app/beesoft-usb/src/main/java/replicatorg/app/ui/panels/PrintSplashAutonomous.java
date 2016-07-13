@@ -48,8 +48,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private final PrintingThread ut = new PrintingThread();
     private final boolean alreadyPrinting;
     private boolean errorOccurred = false;
-    private boolean unloadPressed;
-    private boolean firstUnloadStep = false;
+    private boolean firstUnloadDone = false;
     private boolean lastPanel;
     private boolean isPaused = false;
     private boolean isShutdown = false;
@@ -58,6 +57,7 @@ public class PrintSplashAutonomous extends BaseDialog {
     private final Timer temperatureTimer = new Timer(3000, new TemperatureActionListener());
     private final Timer monitorPrintTimer = new Timer(500, new MonitorPrintListener());
     private PauseAssistantThread pauseThread;
+    private HeatAndUnloadThread heatAndUnloadThread;
 
     public PrintSplashAutonomous(PrintPreferences prefs) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -96,6 +96,9 @@ public class PrintSplashAutonomous extends BaseDialog {
                 monitorPrintTimer.stop();
                 if (pauseThread != null) {
                     pauseThread.kill();
+                }
+                if (heatAndUnloadThread != null) {
+                    heatAndUnloadThread.kill();
                 }
                 Base.isPrinting = false;
                 Base.getMainWindow().getButtons().updatePressedStateButton("print");
@@ -340,6 +343,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tRemaining.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage2"));
         jProgressBar1.setVisible(true);
         jProgressBar1.setMaximum(temperatureGoal);
+        iPrinting.setIcon(null);
     }
 
     private void resetProgressBar() {
@@ -415,7 +419,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     private void setPrintEnded(int elapsedMinutes) {
         monitorPrintTimer.stop();
         printEnded = true;
-        unloadPressed = false;
         tInfo6.setText("");
         tInfo2.setText(Languager.getTagValue(1, "Print", "Print_BuildFinished"));
         vEstimate.setVisible(false);
@@ -433,7 +436,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info5"));
         tEstimation.setText(Languager.getTagValue(1, "Print", "Print_Completion")
                 + " " + generateTimeString(elapsedMinutes));
-        driver.setTemperature(temperatureGoal);
+        driver.setTemperature(0);
     }
 
     private String generateTimeString(int totalMinutes) {
@@ -459,42 +462,13 @@ public class PrintSplashAutonomous extends BaseDialog {
                 temp = hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " "
                         + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute");
             }
+        } else if (minutes != 1) {
+            temp = minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
         } else {
-            if (minutes != 1) {
-                temp = minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes");
-            } else {
-                temp = minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute");
-            }
+            temp = minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute");
         }
 
         return temp;
-    }
-
-    private void startUnload() {
-        jProgressBar1.setVisible(false);
-        iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
-        tRemaining.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3"));
-
-        EventQueue.invokeLater(() -> {
-            if (!driver.isBusy()) {
-                unloadPressed = true;
-                driver.setBusy(true);
-                driver.dispatchCommand("M702");
-
-                bUnload.setVisible(true);
-                iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
-                driver.setCoilText(FilamentControler.NO_FILAMENT);
-                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
-                bOk.setVisible(true);
-                firstUnloadStep = true;
-                bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-                tInfo6.setText("");
-                tInfo2.setText(Languager.getTagValue(1, "Print", "Unload_BuildFinished"));
-                tInfo6.setText(Languager.getTagValue(1, "Print", "Print_Unloaded3"));
-                unloadPressed = false;
-                bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            }
-        });
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -795,15 +769,14 @@ public class PrintSplashAutonomous extends BaseDialog {
     private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed
         if (bOk.isEnabled()) {
             if (printEnded) {
-                if (firstUnloadStep) {
+                if (firstUnloadDone) {
                     bOk.setVisible(false);
                     iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-07.png")));
                     bUnload.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
                     lastPanel = true;
-                    firstUnloadStep = false;
+                    firstUnloadDone = false;
                     tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded2"));
                     tInfo6.setVisible(false);
-
                 } else {
                     driver.setTemperature(0);
                     dispose();
@@ -821,15 +794,11 @@ public class PrintSplashAutonomous extends BaseDialog {
     }//GEN-LAST:event_jLabel11MouseClicked
 
     private void bUnloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseEntered
-        if (!unloadPressed) {
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
+        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bUnloadMouseEntered
 
     private void bUnloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseExited
-        if (!unloadPressed) {
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bUnloadMouseExited
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
@@ -838,30 +807,20 @@ public class PrintSplashAutonomous extends BaseDialog {
             if (lastPanel) {
                 driver.setTemperature(0);
                 dispose();
-            } else if (printEnded && unloadPressed == false && firstUnloadStep == false) {           //first time you press unload after print is over          
-                unloadPressed = true;
-                bOk.setVisible(false);
-                bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
-                iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-02.png")));
-                tInfo2.setText(Languager.getTagValue(1, "Print", "Unloading_Title"));
-                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloading"));
-//            jPanel1.setVisible(false);
-                jProgressBar1.setVisible(true);
-                jProgressBar1.setValue(0);
-                startUnload();
-            } else if (printEnded && unloadPressed == false && firstUnloadStep) {             //any time you press unload after the first time
+            } else {           //first time you press unload after print is over    
+                if (heatAndUnloadThread != null) {
+                    heatAndUnloadThread.kill();
+                }
 
-                unloadPressed = true;
-                bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
-                bOk.setEnabled(false);
-                startUnload();
-                bOk.setEnabled(true);
-                return;
-            } // no need for else
+                // just in case printer is in power saving mode
+                driver.setTemperature(temperatureGoal);
 
-            if (printEnded == false) {
-                doCancel();
-            } // no need for else
+                heatAndUnloadThread = new HeatAndUnloadThread();
+                heatAndUnloadThread.start();
+            }
+            //} else {             //any time you press unload after the first time
+            //    doUnload();
+            //}
         }
     }//GEN-LAST:event_bUnloadMousePressed
 
@@ -1088,7 +1047,7 @@ public class PrintSplashAutonomous extends BaseDialog {
                             }
                         }
                     }
-                    
+
                     driver.setTemperature(temperatureGoal);
 
                     /**
@@ -1103,9 +1062,94 @@ public class PrintSplashAutonomous extends BaseDialog {
                     Base.hiccup(5000);
                     setPrintElements();
                     monitorPrintTimer.start();
+                } else {
+                    setError();
                 }
             }
         }
+    }
+
+    private class HeatAndUnloadThread extends Thread {
+
+        private boolean stop = false;
+
+        public HeatAndUnloadThread() {
+            super("BANTER");
+        }
+
+        @Override
+        public void run() {
+            final int temperature;
+
+            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_21.png")));
+            bUnload.setEnabled(false);
+
+            driver.readTemperature();
+            temperature = model.currentTool().getExtruderTemperature();
+
+            if (temperature < temperatureGoal - 5) {
+                driver.setTemperature(temperatureGoal + 5);
+                setHeatingInfo();
+                resetProgressBar();
+                bOk.setVisible(false);
+                bUnload.setVisible(false);
+                bCancel.setVisible(true);
+
+                synchronized (mutex) {
+                    try {
+                        temperatureTimer.start();
+                        mutex.wait();
+                        temperatureTimer.stop();
+                    } catch (InterruptedException ex) {
+                        if (stop) {
+                            return;
+                        }
+                    }
+                }
+                driver.setTemperature(temperatureGoal);
+                jProgressBar1.setVisible(false);
+            }
+
+            bCancel.setVisible(false);
+            tInfo2.setText(Languager.getTagValue(1, "Print", "Unloading_Title"));
+            doUnload();
+        }
+
+        public void kill() {
+            stop = true;
+            this.interrupt();
+        }
+
+        private void doUnload() {
+            if (!driver.isBusy()) {
+                bOk.setVisible(false);
+                bUnload.setVisible(true);
+                jProgressBar1.setVisible(false);
+                iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "rsz_unload-01.png")));
+                tRemaining.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3"));
+                driver.setBusy(true);
+                driver.dispatchCommand("M702");
+                driver.setCoilText(FilamentControler.NO_FILAMENT);
+
+                while (driver.isBusy()) {
+                    Base.hiccup(100);
+                }
+
+                bUnload.setVisible(true);
+                iPrinting.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-01.png")));
+                tRemaining.setText(Languager.getTagValue(1, "Print", "Print_Unloaded1"));
+                bOk.setVisible(true);
+                firstUnloadDone = true;
+                bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+                tInfo6.setText("");
+                tInfo2.setText(Languager.getTagValue(1, "Print", "Unload_BuildFinished"));
+                tInfo6.setText(Languager.getTagValue(1, "Print", "Print_Unloaded3"));
+                bOk.setVisible(true);
+                bUnload.setEnabled(true);
+                bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+            }
+        }
+
     }
 
     private class GCodeGenWorker extends SwingWorker<Boolean, Void> {
@@ -1119,13 +1163,11 @@ public class PrintSplashAutonomous extends BaseDialog {
             if (Base.isPrintingFromGCode) {
                 success = true;
                 //success = estimateGCodeFromFile();
+            } else if (prt.isReadyToGenerateGCode()) {
+                success = prt.generateGCode();
             } else {
-                if (prt.isReadyToGenerateGCode()) {
-                    success = prt.generateGCode();
-                } else {
-                    Base.writeLog("generateGCode(): failed GCode generation", this.getClass());
-                    success = false;
-                }
+                Base.writeLog("generateGCode(): failed GCode generation", this.getClass());
+                success = false;
             }
 
             if (!success) {
@@ -1155,8 +1197,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
             updateValueOnProgressBar(temperature);
             if (temperature >= (temperatureGoal - 1)) {
-                Base.writeLog("Temperature " + temperatureGoal + " achieved", this.getClass());
-
                 synchronized (mutex) {
                     mutex.notifyAll();
                 }

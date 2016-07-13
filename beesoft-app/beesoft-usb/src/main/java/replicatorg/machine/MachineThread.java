@@ -9,7 +9,6 @@ import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.Base;
 import replicatorg.app.tools.XML;
 import replicatorg.drivers.Driver;
-import replicatorg.machine.Machine.JobTarget;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
