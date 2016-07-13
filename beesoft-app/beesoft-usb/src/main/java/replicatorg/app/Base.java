@@ -131,14 +131,12 @@ public class Base {
             } else {
                 PLATFORM = Platform.MACOSX;
             }
+        } else if (PLATFORM_NAME.contains("Windows")) {
+            PLATFORM = Platform.WINDOWS;
+        } else if (PLATFORM_NAME.equals("Linux")) { // true for the ibm vm
+            PLATFORM = Platform.LINUX;
         } else {
-            if (PLATFORM_NAME.contains("Windows")) {
-                PLATFORM = Platform.WINDOWS;
-            } else if (PLATFORM_NAME.equals("Linux")) { // true for the ibm vm
-                PLATFORM = Platform.LINUX;
-            } else {
-                PLATFORM = Platform.OTHER;
-            }
+            PLATFORM = Platform.OTHER;
         }
     }
 
@@ -168,20 +166,14 @@ public class Base {
         applicationVersion = configProperties.getBuildProperty("application.version");
         buildNumber = configProperties.getBuildProperty("build.number");
 
-        switch (releaseType) {
-            case "alpha":
-                VERSION_BEESOFT = applicationVersion + "-" + releaseType + "-" + buildNumber;
-
-                break;
-            case "beta":
-                VERSION_BEESOFT = applicationVersion + "-" + releaseType;
-
-                break;
-            default:
-                VERSION_BEESOFT = applicationVersion;
-                break;
-
+        if (releaseType.contains("alpha")) {
+            VERSION_BEESOFT = applicationVersion + "-" + releaseType + "-" + buildNumber;
+        } else if (releaseType.contains("beta")) {
+            VERSION_BEESOFT = applicationVersion + "-" + releaseType;
+        } else {
+            VERSION_BEESOFT = applicationVersion;
         }
+        
     }
 
     public static final String PROGRAM = "BEESOFT";
@@ -826,7 +818,7 @@ public class Base {
         return new Font(fontname,
                 ((fontstyle.contains("bold")) ? Font.BOLD : 1)
                 | ((fontstyle.contains("italic")) ? Font.ITALIC
-                        : 0), Integer.parseInt(st.nextToken()));
+                : 0), Integer.parseInt(st.nextToken()));
     }
 
     static public Color getColorPref(String name, String defaultValue) {
