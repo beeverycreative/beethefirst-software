@@ -312,7 +312,7 @@
                                         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="lib/appbundler-1.0.jar" />
 
                                         <bundleapp outputdirectory="${target.app.dir}" name="BEESOFT" displayname="BEESOFT" identifier="org.beesoft.app"
-                                           mainclassname="replicatorg.app.Base" icon="${installer.dir}/bee.icns">
+                                                   mainclassname="replicatorg.app.Base" icon="${installer.dir}/bee.icns">
                                             <runtime dir="/Library/Java/JavaVirtualMachines/${jdk.version}/Contents/Home"/>
                                             <classpath dir="${project.build.directory}" includes="BEESOFT.jar" />
                                             <classpath dir="${lib.dir}" includes="*.jar" />
@@ -544,6 +544,21 @@
             <artifactId>usb4java</artifactId>
             <version>1.2.0</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure.iothub-java-client</groupId>
+            <artifactId>iothub-java-service-client</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.azure.iothub-java-client</groupId>
+            <artifactId>iothub-java-device-client</artifactId>
+            <version>1.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.3.1</version>
         </dependency>
     </dependencies>
 </project>

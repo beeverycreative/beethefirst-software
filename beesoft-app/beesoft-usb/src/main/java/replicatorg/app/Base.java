@@ -73,6 +73,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,6 +85,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import pt.beeverycreative.beesoft.telemetry.TelemetryMessage;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.app.ui.NotificationHandler;
 import replicatorg.app.ui.WelcomeSplash;
@@ -173,13 +176,12 @@ public class Base {
         } else {
             VERSION_BEESOFT = applicationVersion;
         }
-        
+
     }
 
     public static final String PROGRAM = "BEESOFT";
     public static String VERSION_BOOTLOADER;
-    ;
-    
+
     //public static final String VERSION_FIRMWARE_FINAL = configProperties.getAppProperty("firmware.current.version");
     public static String FIRMWARE_IN_USE;
     public static String SERIAL_NUMBER = "9999999999";
@@ -212,11 +214,12 @@ public class Base {
      */
     private static Properties propertiesFile = null;
     /* Date time instance variables */
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
-    private static final File comLogFile = new File(getAppDataDirectory().toString() + "/comLog.txt");
-    private static final BufferedWriter logBW = initLog(BEELOGfile);
-    private static final BufferedWriter comLogBW = initLog(comLogFile);
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static final File BEELOG_FILE = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
+    private static final File COMLOG_FILE = new File(getAppDataDirectory().toString() + "/comLog.txt");
+    private static final BufferedWriter LOG_BW = initLog(BEELOG_FILE);
+    private static final BufferedWriter COM_BW = initLog(COMLOG_FILE);
+    private static final ExecutorService TELEMETRY_MESSAGE_EXECUTOR = Executors.newFixedThreadPool(3);
 
     /**
      * Path of filename opened on the command line, or via the MRJ open document
@@ -292,10 +295,10 @@ public class Base {
         return null;
     }
 
-    public static void closeLogs() {
+    public static void close() {
         try {
-            logBW.close();
-            comLogBW.close();
+            LOG_BW.close();
+            COM_BW.close();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -390,14 +393,14 @@ public class Base {
 
     private static void writePrinterInfo() {
         try {
-            logBW.newLine();
-            logBW.newLine();
-            logBW.write("*************** CONNECTED PRINTER ****************" + NEW_LINE);
-            logBW.write("Bootloader version: " + VERSION_BOOTLOADER + NEW_LINE);
-            logBW.write("Firmware version: " + FIRMWARE_IN_USE + NEW_LINE);
-            logBW.write("Serial number: " + SERIAL_NUMBER + NEW_LINE);
-            logBW.write("**************************************************" + NEW_LINE);
-            logBW.flush();
+            LOG_BW.newLine();
+            LOG_BW.newLine();
+            LOG_BW.write("*************** CONNECTED PRINTER ****************" + NEW_LINE);
+            LOG_BW.write("Bootloader version: " + VERSION_BOOTLOADER + NEW_LINE);
+            LOG_BW.write("Firmware version: " + FIRMWARE_IN_USE + NEW_LINE);
+            LOG_BW.write("Serial number: " + SERIAL_NUMBER + NEW_LINE);
+            LOG_BW.write("**************************************************" + NEW_LINE);
+            LOG_BW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -406,14 +409,14 @@ public class Base {
 
     private static void writeLogHeader() {
         try {
-            logBW.newLine();
-            logBW.write("**************************************************" + NEW_LINE);
-            logBW.write(PROGRAM + " " + VERSION_BEESOFT + NEW_LINE);
-            logBW.write("Java version: " + VERSION_JAVA + NEW_LINE);
-            logBW.write("Operating system: " + PLATFORM.name() + NEW_LINE);
-            logBW.write("Arch: " + System.getProperty("os.arch") + NEW_LINE);
-            logBW.write("**************************************************" + NEW_LINE);
-            logBW.flush();
+            LOG_BW.newLine();
+            LOG_BW.write("**************************************************" + NEW_LINE);
+            LOG_BW.write(PROGRAM + " " + VERSION_BEESOFT + NEW_LINE);
+            LOG_BW.write("Java version: " + VERSION_JAVA + NEW_LINE);
+            LOG_BW.write("Operating system: " + PLATFORM.name() + NEW_LINE);
+            LOG_BW.write("Arch: " + System.getProperty("os.arch") + NEW_LINE);
+            LOG_BW.write("**************************************************" + NEW_LINE);
+            LOG_BW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -425,12 +428,12 @@ public class Base {
          * *** Date and Time procedure ****
          */
         Calendar calendar = Calendar.getInstance();
-        String date = dateFormat.format(calendar.getTime());
+        String date = DATE_FORMAT.format(calendar.getTime());
 
         try {
-            logBW.newLine();
-            logBW.write("[" + date + "]" + " " + message);
-            logBW.flush();
+            LOG_BW.newLine();
+            LOG_BW.write("[" + date + "]" + " " + message);
+            LOG_BW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -439,7 +442,7 @@ public class Base {
 
     public static void writeLog(String message, Class logClass) {
 
-        if (BEELOGfile.length() > 10000000) {
+        if (BEELOG_FILE.length() > 10000000) {
             return;
         }
 
@@ -452,69 +455,39 @@ public class Base {
          * *** Date and Time procedure ****
          */
         Calendar calendar = Calendar.getInstance();
-        String date = dateFormat.format(calendar.getTime());
+        String date = DATE_FORMAT.format(calendar.getTime());
 
         try {
-            logBW.newLine();
-            logBW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
-            logBW.flush();
+            LOG_BW.newLine();
+            LOG_BW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
+            LOG_BW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
-
-    /*
-     public static void writeStatistics(String message) {
-
-     Calendar cal = Calendar.getInstance();
-     String date = dateFormat.format(cal.getTime());
-
-     FileWriter fw = null;
-     try {
-     fw = new FileWriter(statistics.getAbsoluteFile(), true);
-     } catch (IOException ex) {
-     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     BufferedWriter bw = new BufferedWriter(fw);
-     try {
-     bw.write(date);
-     bw.newLine();
-     bw.write("-------------------------------\n");
-     bw.write(message);
-     bw.flush();
-     bw.newLine();
-     bw.close();
-     } catch (IOException ex) {
-     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     try {
-     if (fw != null) {
-     fw.close();
-     }
-     } catch (IOException ex) {
-     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     }
-     */
     public static void writeComLog(long timeStamp, String message) {
 
-        if (comLogFile.length() > 10000000) {
+        if (COMLOG_FILE.length() > 10000000) {
             return;
         }
 
         try {
             if (!message.equals("\n")) {
-                comLogBW.write("Timestamp: " + timeStamp + " | " + message + NEW_LINE);
-                comLogBW.flush();
+                COM_BW.write("Timestamp: " + timeStamp + " | " + message + NEW_LINE);
+                COM_BW.flush();
             } else {
-                comLogBW.newLine();
-                comLogBW.flush();
+                COM_BW.newLine();
+                COM_BW.flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+    
+    public static void sendTelemetryMessage(TelemetryMessage message) {
+        TELEMETRY_MESSAGE_EXECUTOR.execute(message);
     }
 
     private static Properties openFileProperties() {
@@ -868,7 +841,10 @@ public class Base {
         return false;
     }
 
-    static public void main(String args[]) {
+    public static void main(String args[]) {
+
+        TelemetryMessage data = new TelemetryMessage("123", "124", "urp", "durp");
+        sendTelemetryMessage(data);
 
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
