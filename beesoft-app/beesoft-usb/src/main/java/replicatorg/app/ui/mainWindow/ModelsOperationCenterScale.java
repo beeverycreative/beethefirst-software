@@ -591,23 +591,17 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
 
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
-        scale = UnitsAndNumbers.round(scale, 3);
+        //scale = UnitsAndNumbers.round(scale, 3);
 
         //model.getEditer().centerAndToBed();
         model.getEditer().center();
-        model.getEditer().scale(scale, true, false);
-
-        if (model.getEditer().modelInvalidPosition()) {
-            //Small adjustment to avoid the model being out of bounds
-            scale = 0.975;
-            model.getEditer().scale(scale, true, true);
-        }         
+        model.getEditer().scale(scale, true, false);    
 
         //Sets the initial sizing variables to the current values
         this.resetInitialScaleVariables();
         model.resetScale();
         
-        this.update_iFields();
+        this.updateiFields();
     }//GEN-LAST:event_bScaleToMaxMousePressed
 
     private void bScaleToMaxMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMouseExited
@@ -856,7 +850,7 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     /**
      * Updates the axis value fields with the current size values
      */
-    private void update_iFields() {
+    private void updateiFields() {
             
         double width, depth, height;
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
