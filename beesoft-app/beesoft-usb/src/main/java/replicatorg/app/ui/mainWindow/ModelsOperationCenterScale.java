@@ -563,12 +563,10 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }//GEN-LAST:event_bApplyMousePressed
 
     private void bApplyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseExited
-        System.out.println("exited");
         bApply.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_12.png")));
     }//GEN-LAST:event_bApplyMouseExited
 
     private void bApplyMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseEntered
-        System.out.println("entered");
         bApply.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_12.png")));
     }//GEN-LAST:event_bApplyMouseEntered
 

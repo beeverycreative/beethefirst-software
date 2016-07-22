@@ -168,17 +168,25 @@ public class EditingModel implements Serializable {
     }
 
     public boolean modelInvalidPosition() {
-        double xLimit, yLimit, zLimit;
-        BuildVolume machineVolume;
+        final double xLimit, yLimit, zLimit;
+        final BuildVolume machineVolume;
 
         machineVolume = Base.getMainWindow().getCanvas().getBuildVolume();
-        xLimit = machineVolume.getX() / 2;
-        yLimit = machineVolume.getY() / 2;
+        xLimit = machineVolume.getX() / 2.0;
+        yLimit = machineVolume.getY() / 2.0;
         zLimit = machineVolume.getZ();
         Point3d lower = new Point3d();
         Point3d upper = new Point3d();
         getBoundingBox().getLower(lower);
         getBoundingBox().getUpper(upper);
+
+        // truncating values to three decimal places
+        lower.x = lower.x > 0 ? (Math.floor(lower.x * 1000) / 100) : Math.ceil(lower.x * 1000) / 1000;
+        lower.y = lower.y > 0 ? (Math.floor(lower.y * 1000) / 1000) : Math.ceil(lower.y * 1000) / 1000;
+        lower.z = lower.z > 0 ? (Math.floor(lower.z * 1000) / 100) : Math.ceil(lower.z * 1000) / 1000;
+        upper.x = upper.x > 0 ? (Math.floor(upper.x * 1000) / 1000) : Math.ceil(upper.x * 1000) / 1000;
+        upper.y = upper.y > 0 ? (Math.floor(upper.y * 1000) / 1000) : Math.ceil(upper.y * 1000) / 1000;
+        upper.z = upper.z > 0 ? (Math.floor(upper.z * 1000) / 1000) : Math.ceil(upper.z * 1000) / 1000;
 
         modelNotInBed = lower.z != 0;
         modelInvalidPosition = Math.abs(lower.x) > xLimit
@@ -242,10 +250,8 @@ public class EditingModel implements Serializable {
             updateModelOverSize();
             showMessage();
             return true;
-        } else {
-            if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
-                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPickedLite(true);
-            }
+        } else if (Base.getMainWindow().getBed().getNumberPickedModels() > 0) {
+            Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateModelPickedLite(true);
         }
         return false;
     }
@@ -263,10 +269,8 @@ public class EditingModel implements Serializable {
 
         if (modelInvalidPosition) {
             editor.showFeedBackMessage("outOfBounds");
-        } else {
-            if (modelNotInBed) {
-                editor.showFeedBackMessage("notInBed");
-            }
+        } else if (modelNotInBed) {
+            editor.showFeedBackMessage("notInBed");
         }
 
         /*
