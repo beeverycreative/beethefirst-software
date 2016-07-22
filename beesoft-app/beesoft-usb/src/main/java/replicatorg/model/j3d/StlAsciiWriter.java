@@ -24,7 +24,7 @@ public class StlAsciiWriter extends ModelWriter {
 		PrintWriter w = new PrintWriter(ostream);
 		TriangleArray g = getGeometry(shape);
 		if (g == null) {
-			Base.logger.info("Couldn't find valid geometry during save.");
+			Base.LOGGER.info("Couldn't find valid geometry during save.");
 			return;
 		}
 

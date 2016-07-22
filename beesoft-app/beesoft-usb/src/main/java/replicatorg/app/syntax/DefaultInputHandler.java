@@ -348,7 +348,7 @@ public class DefaultInputHandler extends InputHandler
                 }
                 else if(key.length() == 0)
                 {
-                	Base.logger.warning("Invalid key stroke: " + keyStroke);
+                	Base.LOGGER.warning("Invalid key stroke: " + keyStroke);
                         return null;
                 }
                 else
@@ -362,7 +362,7 @@ public class DefaultInputHandler extends InputHandler
                         }
                         catch(Exception e)
                         {
-                        		Base.logger.warning("Invalid key stroke: "
+                        		Base.LOGGER.warning("Invalid key stroke: "
                                         + keyStroke);
                                 return null;
                         }

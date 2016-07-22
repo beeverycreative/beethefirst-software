@@ -110,7 +110,7 @@ public abstract class ToolpathGenerator {
 	
 	public void emitCompletion(GeneratorListener.Completion completion) {
 		for (GeneratorListener listener : listeners) {
-			Base.logger.finest("emitCompletion! sent to " + listener.toString());
+			Base.LOGGER.finest("emitCompletion! sent to " + listener.toString());
 			listener.generationComplete(new GeneratorEvent(this, null, completion));
 		}
 	}

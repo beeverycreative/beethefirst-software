@@ -207,7 +207,7 @@ public class MachineModel {
             ClampModel c = (ClampModel) clamps.get(index);
             return c;
         } catch (ArrayIndexOutOfBoundsException e) {
-            Base.logger.severe("Cannot get non-existant clamp (#" + index + ".");
+            Base.LOGGER.severe("Cannot get non-existant clamp (#" + index + ".");
             e.printStackTrace();
         }
 
@@ -223,12 +223,12 @@ public class MachineModel {
             try {
                 currentTool.set((ToolModel) tools.get(index));
                 if (currentTool.get() == null) {
-                    Base.logger.severe("Cannot select non-existant tool (#" + index + ").");
+                    Base.LOGGER.severe("Cannot select non-existant tool (#" + index + ").");
                     currentTool.set(nullTool);
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 if (xml != null) {
-                    Base.logger.severe("Cannot select non-existant tool (#" + index + ").");
+                    Base.LOGGER.severe("Cannot select non-existant tool (#" + index + ").");
                 } else {
                     // If this machine is not configured, it's presumed it's a null machine
                     // and it's expected that toolheads are not specified.
@@ -246,7 +246,7 @@ public class MachineModel {
         try {
             return tools.get(index);
         } catch (ArrayIndexOutOfBoundsException e) {
-            Base.logger.severe("Cannot get nonexistent tool (#" + index + ".");
+            Base.LOGGER.severe("Cannot get nonexistent tool (#" + index + ".");
             //e.printStackTrace();
         }
         return null;
@@ -277,7 +277,7 @@ public class MachineModel {
         try {
             tools.set(index, t);
         } catch (ArrayIndexOutOfBoundsException e) {
-            Base.logger.severe("Cannot set non-existant tool (#" + index + ".");
+            Base.LOGGER.severe("Cannot set non-existant tool (#" + index + ".");
             e.printStackTrace();
         }
     }

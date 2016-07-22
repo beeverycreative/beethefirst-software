@@ -1530,7 +1530,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
         Runnable saveWork = new Runnable() {
             @Override
             public void run() {
-                Base.logger.info("Saving Scene...");
+                Base.LOGGER.info("Saving Scene...");
                 Base.writeLog("Saving Scene...", this.getClass());
 
                 ObjectOutputStream oos;
@@ -1599,7 +1599,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
             @Override
             public void run() {
                 // TODO: lock sketch?
-                Base.logger.info("Saving...");
+                Base.LOGGER.info("Saving...");
                 Base.writeLog("Saving...", this.getClass());
 
                 if (!bed.saveAs(false)) {
@@ -1710,12 +1710,12 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
      * @param what
      */
     public void error(String what) {
-        Base.logger.severe(what);
+        Base.LOGGER.severe(what);
     }
 
     public void error(Exception e) {
         if (e == null) {
-            Base.logger.severe("MainWindow.error() was passed a null exception.");
+            Base.LOGGER.severe("MainWindow.error() was passed a null exception.");
             return;
         }
 
@@ -1736,7 +1736,7 @@ public class MainWindow extends JFrame implements MRJAboutHandler,
     }
 
     public void message(String msg) {
-        Base.logger.info(msg);
+        Base.LOGGER.info(msg);
     }
 
     /**

@@ -59,8 +59,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -77,6 +80,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import java.util.zip.CRC32;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
@@ -88,6 +92,7 @@ import replicatorg.app.ui.NotificationHandler;
 import replicatorg.app.ui.WelcomeSplash;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
+
 
 /**
  * Primary role of this class is for platform identification and general
@@ -140,7 +145,7 @@ public class Base {
         }
     }
 
-    public static final ConfigProperties configProperties = new ConfigProperties();
+    public static final ConfigProperties CONFIG_PROPERTIES = new ConfigProperties();
     public static boolean printPaused = false;
     public static boolean isPrinting = false;
     private static boolean welcomeSplashVisible = true;
@@ -162,9 +167,9 @@ public class Base {
     static {
         final String releaseType, applicationVersion, buildNumber;
 
-        releaseType = configProperties.getBuildProperty("release.type");
-        applicationVersion = configProperties.getBuildProperty("application.version");
-        buildNumber = configProperties.getBuildProperty("build.number");
+        releaseType = CONFIG_PROPERTIES.getBuildProperty("release.type");
+        applicationVersion = CONFIG_PROPERTIES.getBuildProperty("application.version");
+        buildNumber = CONFIG_PROPERTIES.getBuildProperty("build.number");
 
         if (releaseType.contains("alpha")) {
             VERSION_BEESOFT = applicationVersion + "-" + releaseType + "-" + buildNumber;
@@ -173,7 +178,7 @@ public class Base {
         } else {
             VERSION_BEESOFT = applicationVersion;
         }
-        
+
     }
 
     public static final String PROGRAM = "BEESOFT";
@@ -203,7 +208,7 @@ public class Base {
     /**
      * The general-purpose logging object.
      */
-    public static final Logger logger = Logger.getLogger("replicatorg.log");
+    public static final Logger LOGGER = Logger.getLogger("replicatorg.log");
     public static FileHandler logFileHandler = null;
     public static String logFilePath = null;
 
@@ -212,11 +217,11 @@ public class Base {
      */
     private static Properties propertiesFile = null;
     /* Date time instance variables */
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    private static final File BEELOGfile = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
-    private static final File comLogFile = new File(getAppDataDirectory().toString() + "/comLog.txt");
-    private static final BufferedWriter logBW = initLog(BEELOGfile);
-    private static final BufferedWriter comLogBW = initLog(comLogFile);
+    private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static final File BEELOG_FILE = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
+    private static final File COMLOG_FILE = new File(getAppDataDirectory().toString() + "/comLog.txt");
+    private static final BufferedWriter LOGBW = initLog(BEELOG_FILE);
+    private static final BufferedWriter COMLOGBW = initLog(COMLOG_FILE);
 
     /**
      * Path of filename opened on the command line, or via the MRJ open document
@@ -228,15 +233,15 @@ public class Base {
      * SimpleG uses. If null, this instance will use the default preferences
      * set.
      */
-    private static final String alternatePrefs = null;
+    private static final String ALTERNATE_PREFS = null;
 
     /**
      * Get the preferences node for SimpleG.
      */
     static Preferences getUserPreferences() {
         Preferences prefs = Preferences.userNodeForPackage(Base.class);
-        if (alternatePrefs != null) {
-            prefs = prefs.node("alternate/" + alternatePrefs);
+        if (ALTERNATE_PREFS != null) {
+            prefs = prefs.node("alternate/" + ALTERNATE_PREFS);
         }
         return prefs;
     }
@@ -250,8 +255,8 @@ public class Base {
      */
     static public File getUserDirectory() {
         String path = System.getProperty("user.home") + File.separator + ".replicatorg";
-        if (alternatePrefs != null) {
-            path = path + File.separator + alternatePrefs;
+        if (ALTERNATE_PREFS != null) {
+            path = path + File.separator + ALTERNATE_PREFS;
         }
         File dir = new File(path);
         if (!dir.exists()) {
@@ -294,8 +299,8 @@ public class Base {
 
     public static void closeLogs() {
         try {
-            logBW.close();
-            comLogBW.close();
+            LOGBW.close();
+            COMLOGBW.close();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -360,9 +365,45 @@ public class Base {
             } catch (FileAlreadyExistsException ex) {
                 // ignore in case a file with the same name already exists, and
                 // keep going
+                final long file1crc, file2crc;
+                
+                file1crc = calculateCRC(sourceDir);
+                file2crc = calculateCRC(destDir);
+                
+                if(file1crc > 0 && file2crc > 0 && file1crc != file2crc) {
+                    Files.copy(sourceDir.toPath(), destDir.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
             }
         }
 
+    }
+
+    // http://crackingjavainterviews.blogspot.pt/2013/05/efficient-way-to-calculate-checksum-of.html
+    private static long calculateCRC(File filename) {
+        final int SIZE = 16 * 1024;
+        int length;
+        FileChannel channel;
+        CRC32 crc;
+        byte[] bytes;
+
+        try (FileInputStream in = new FileInputStream(filename);) {
+            channel = in.getChannel();
+            crc = new CRC32();
+            length = (int) channel.size();
+            MappedByteBuffer mb = channel.map(FileChannel.MapMode.READ_ONLY, 0, length);
+            bytes = new byte[SIZE];
+            int nGet;
+            while (mb.hasRemaining()) {
+                nGet = Math.min(mb.remaining(), SIZE);
+                mb.get(bytes, 0, nGet);
+                crc.update(bytes, 0, nGet);
+            }
+            return crc.getValue();
+        } catch (Exception ex) {
+            Base.writeLog(ex.getClass().getName() + " while calculating CRC: " + ex.getMessage());
+        }
+
+        return -1;
     }
 
     public static void copy3DFiles() {
@@ -390,14 +431,14 @@ public class Base {
 
     private static void writePrinterInfo() {
         try {
-            logBW.newLine();
-            logBW.newLine();
-            logBW.write("*************** CONNECTED PRINTER ****************" + NEW_LINE);
-            logBW.write("Bootloader version: " + VERSION_BOOTLOADER + NEW_LINE);
-            logBW.write("Firmware version: " + FIRMWARE_IN_USE + NEW_LINE);
-            logBW.write("Serial number: " + SERIAL_NUMBER + NEW_LINE);
-            logBW.write("**************************************************" + NEW_LINE);
-            logBW.flush();
+            LOGBW.newLine();
+            LOGBW.newLine();
+            LOGBW.write("*************** CONNECTED PRINTER ****************" + NEW_LINE);
+            LOGBW.write("Bootloader version: " + VERSION_BOOTLOADER + NEW_LINE);
+            LOGBW.write("Firmware version: " + FIRMWARE_IN_USE + NEW_LINE);
+            LOGBW.write("Serial number: " + SERIAL_NUMBER + NEW_LINE);
+            LOGBW.write("**************************************************" + NEW_LINE);
+            LOGBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -406,14 +447,14 @@ public class Base {
 
     private static void writeLogHeader() {
         try {
-            logBW.newLine();
-            logBW.write("**************************************************" + NEW_LINE);
-            logBW.write(PROGRAM + " " + VERSION_BEESOFT + NEW_LINE);
-            logBW.write("Java version: " + VERSION_JAVA + NEW_LINE);
-            logBW.write("Operating system: " + PLATFORM.name() + NEW_LINE);
-            logBW.write("Arch: " + System.getProperty("os.arch") + NEW_LINE);
-            logBW.write("**************************************************" + NEW_LINE);
-            logBW.flush();
+            LOGBW.newLine();
+            LOGBW.write("**************************************************" + NEW_LINE);
+            LOGBW.write(PROGRAM + " " + VERSION_BEESOFT + NEW_LINE);
+            LOGBW.write("Java version: " + VERSION_JAVA + NEW_LINE);
+            LOGBW.write("Operating system: " + PLATFORM.name() + NEW_LINE);
+            LOGBW.write("Arch: " + System.getProperty("os.arch") + NEW_LINE);
+            LOGBW.write("**************************************************" + NEW_LINE);
+            LOGBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -425,12 +466,12 @@ public class Base {
          * *** Date and Time procedure ****
          */
         Calendar calendar = Calendar.getInstance();
-        String date = dateFormat.format(calendar.getTime());
+        String date = DATEFORMAT.format(calendar.getTime());
 
         try {
-            logBW.newLine();
-            logBW.write("[" + date + "]" + " " + message);
-            logBW.flush();
+            LOGBW.newLine();
+            LOGBW.write("[" + date + "]" + " " + message);
+            LOGBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -439,7 +480,7 @@ public class Base {
 
     public static void writeLog(String message, Class logClass) {
 
-        if (BEELOGfile.length() > 10000000) {
+        if (BEELOG_FILE.length() > 10000000) {
             return;
         }
 
@@ -452,12 +493,12 @@ public class Base {
          * *** Date and Time procedure ****
          */
         Calendar calendar = Calendar.getInstance();
-        String date = dateFormat.format(calendar.getTime());
+        String date = DATEFORMAT.format(calendar.getTime());
 
         try {
-            logBW.newLine();
-            logBW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
-            logBW.flush();
+            LOGBW.newLine();
+            LOGBW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
+            LOGBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -499,17 +540,17 @@ public class Base {
      */
     public static void writeComLog(long timeStamp, String message) {
 
-        if (comLogFile.length() > 10000000) {
+        if (COMLOG_FILE.length() > 10000000) {
             return;
         }
 
         try {
             if (!message.equals("\n")) {
-                comLogBW.write("Timestamp: " + timeStamp + " | " + message + NEW_LINE);
-                comLogBW.flush();
+                COMLOGBW.write("Timestamp: " + timeStamp + " | " + message + NEW_LINE);
+                COMLOGBW.flush();
             } else {
-                comLogBW.newLine();
-                comLogBW.flush();
+                COMLOGBW.newLine();
+                COMLOGBW.flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
@@ -902,20 +943,20 @@ public class Base {
                     };
                 }
                 if (debugLevelArg == 0) {
-                    logger.setLevel(Level.INFO);
-                    logger.info("Debug level is 'INFO'");
+                    LOGGER.setLevel(Level.INFO);
+                    LOGGER.info("Debug level is 'INFO'");
                 } else if (debugLevelArg == 1) {
-                    logger.setLevel(Level.FINE);
-                    logger.info("Debug level is 'FINE'");
+                    LOGGER.setLevel(Level.FINE);
+                    LOGGER.info("Debug level is 'FINE'");
                 } else if (debugLevelArg == 2) {
-                    logger.setLevel(Level.FINER);
-                    logger.info("Debug level is 'FINER'");
+                    LOGGER.setLevel(Level.FINER);
+                    LOGGER.info("Debug level is 'FINER'");
                 } else if (debugLevelArg == 3) {
-                    logger.setLevel(Level.FINEST);
-                    logger.info("Debug level is 'FINEST'");
+                    LOGGER.setLevel(Level.FINEST);
+                    LOGGER.info("Debug level is 'FINEST'");
                 } else if (debugLevelArg >= 4) {
-                    logger.setLevel(Level.ALL);
-                    logger.info("Debug level is 'ALL'");
+                    LOGGER.setLevel(Level.ALL);
+                    LOGGER.info("Debug level is 'ALL'");
                 }
             } else if (args[i].startsWith("-")) {
                 System.out.println("Usage: ./replicatorg [--debug DEBUGLEVEL] [--alternate-prefs ALTERNATE_PREFS_NAME] [--clean-prefs] [filename.stl]");

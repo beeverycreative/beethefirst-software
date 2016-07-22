@@ -197,7 +197,7 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void dispose() {
-        if (Base.logger.isLoggable(Level.FINE)) {
+        if (Base.LOGGER.isLoggable(Level.FINE)) {
             //Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
         }
 //		parser = null;

@@ -132,7 +132,7 @@ public class MessagePanel extends JScrollPane {
 		setPreferredSize(new Dimension(width, (height * lines)));
 		setMinimumSize(new Dimension(minWidth, (height * 5)));
 
-		Base.logger.addHandler(new Handler() {
+		Base.LOGGER.addHandler(new Handler() {
 			SimpleDateFormat formatter = new SimpleDateFormat("'['HH:mm:ss'] '");
 			public void publish(LogRecord record) {
 				String timestamp = formatter.format(new Date(record.getMillis()));

@@ -248,7 +248,7 @@ public class ToolModel {
                 if (n != null) {
                     motorUsesRelay = isTrueOrOne(n);
                     if (motorUsesRelay) {
-                        Base.logger.severe("Notice: Motor controller configured to use relay, PWM values will be overridden");
+                        Base.LOGGER.severe("Notice: Motor controller configured to use relay, PWM values will be overridden");
                     }
                 }
             } catch (Exception e) {

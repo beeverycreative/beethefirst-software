@@ -625,7 +625,7 @@
       <NozzleSwitch_button value="Replace nozzle  now"/>
       <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
       <SupportSwitch_Title value="Install External Spool Holder."/>
-      <SupportSwitch_button value="Change spool holder. "/>
+      <SupportSwitch_button value="Change spool holder"/>
       <SupportSwitch_Intro value="A simple tutorial that guides you in the installation of the External Spool Holder."/>
     </MaintenancePanel>
     <PausePanel>
