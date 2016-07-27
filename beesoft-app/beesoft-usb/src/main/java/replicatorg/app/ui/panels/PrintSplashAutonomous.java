@@ -1206,8 +1206,9 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private class MonitorPrintListener implements ActionListener {
 
-        private int elapsedMinutes;
         private final MachineModel model = driver.getMachine();
+        private int elapsedMinutes;
+        private boolean donePrintingFile = false;
 
         private void finalizePrint() {
             //End print session
@@ -1262,8 +1263,12 @@ public class PrintSplashAutonomous extends BaseDialog {
                 bCancel.setEnabled(false);
             }
 
+            // the progress bar is 100% if current lines == total lines. just 
+            // one more confirmation before declaring that the print has 
+            // finished
             machineFinished = !model.getMachinePrinting() && !driver.isBusy()
-                    && !model.getMachinePaused() && !model.getMachineShutdown();
+                    && !model.getMachinePaused() && !model.getMachineShutdown()
+                    && jProgressBar1.getValue() >= 100;
 
             if (errorOccurred || machineFinished) {
                 if (errorOccurred) {

@@ -274,7 +274,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return "";
         }
 
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         try {
             sendCommand(next);
 
@@ -298,7 +298,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
         }
 
         return ans;
@@ -318,7 +318,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return "";
         }
 
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         try {
             sendCommand(next);
             if (comLog) {
@@ -331,7 +331,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
         }
         return ans;
     }
@@ -345,7 +345,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return;
         }
 
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         try {
             sendCommand(next, 30000);
             if (comLog) {
@@ -353,7 +353,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeComLog(System.currentTimeMillis() - startTS, "RECEIVE: (no response)\n");
             }
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
         }
     }
 
@@ -594,7 +594,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         totalBlocks = totalMessages / MESSAGES_IN_BLOCK + ((totalMessages % MESSAGES_IN_BLOCK == 0) ? 0 : 1);
 
         transferMode = true;
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         elapsedTimeMilliseconds = System.currentTimeMillis();
         try {
             if (dispatchCommand(INIT_SDCARD, COM.TRANSFER).contains(ERROR)) {
@@ -692,7 +692,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             }
 
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
             transferMode = false;
         }
 
@@ -977,7 +977,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return false;
         }
 
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         try {
             try {
                 while ((readBytes = bis.read(buffer)) != -1) {
@@ -1030,7 +1030,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
             return true;
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
         }
     }
 

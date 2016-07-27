@@ -54,7 +54,7 @@ public class UsbDriver extends DriverBaseImplementation {
     protected boolean isONShutdown = false;
 
     private boolean isBusy = true;
-    protected static final Lock dispatchCommandLock = new ReentrantLock();
+    protected static final Lock DISPATCHCOMMAND_LOCK = new ReentrantLock();
     private String lastStatusMessage;
 
     protected static final int TRANSFER_MESSAGE_SIZE = 32;
@@ -255,7 +255,7 @@ public class UsbDriver extends DriverBaseImplementation {
         int ansBytes, tries = 10;
         long elapsedTimeMilliseconds;
         String status;
-        boolean validStatus = false, mismatchDetected = false;
+        boolean validStatus = false, strContainsStatus;
 
         if (connectedDeviceHandle == null) {
             return false;
@@ -264,7 +264,7 @@ public class UsbDriver extends DriverBaseImplementation {
         // this way we can easily recover if printer is stuck in transfer mode
         // and it works even if it isn't
         try {
-            if (dispatchCommandLock.tryLock(50, TimeUnit.MILLISECONDS)) {
+            if (DISPATCHCOMMAND_LOCK.tryLock(50, TimeUnit.MILLISECONDS)) {
                 try {
 
                     while (receiveAnswerBytes(MESSAGE_SIZE, 100).length > 0) {
@@ -292,38 +292,22 @@ public class UsbDriver extends DriverBaseImplementation {
                         }
 
                         if (status.length() > 0) {
-                            // if printer is stuck in transfer mode, 
-                            // attempt to recover it
-                            /*
-                             if (status.contains("tog")) {
-                             while (status.contains("tog")) {
-                             System.out.println(status);
-                             hiccup(50);
-                             sendCommand(testMsg);
-                             hiccup(50);
-                             status = receiveAnswer();
-                             }
-                             hiccup(1000);
-                             return false;
-                             }
-                             */
 
                             // when printer is in bootloader, M625 returns bad code
-                            if (!status.contains("S:") && !status.contains("Bad")) {
-                                mismatchDetected = true;
-                            } else {
+                            if ((strContainsStatus = status.contains("S:")) || status.contains("Bad")) {
                                 validStatus = true;
 
-                                // throw away the status message if there was a problem
-                                // since it may now be outdated
-                                if (!mismatchDetected) {
+                                if (strContainsStatus) {
                                     processStatus(status);
                                 }
+
+                            } else {
+                                isBusy = true;
                             }
                         }
                     }
                 } finally {
-                    dispatchCommandLock.unlock();
+                    DISPATCHCOMMAND_LOCK.unlock();
                 }
             } else {
                 isBusy = true;
@@ -334,17 +318,16 @@ public class UsbDriver extends DriverBaseImplementation {
         return true;
     }
 
+    /**
+     * Process the string status message provided by the printer. This method
+     * assumes a valid status message is being received as argument.
+     *
+     * @param status the string containing the status message (e.g.: S:3)
+     */
     private void processStatus(String status) {
 
         final boolean machineReady, machinePaused, machineShutdown, machinePrinting, machinePowerSaving, machineOperational;
         lastStatusMessage = status;
-
-        if (status.contains("S:") == false) {
-            isBusy = true;
-            return;
-        } else {
-            isBusy = false;
-        }
 
         machineReady = status.contains("S:3");
         machinePowerSaving = status.contains("Power_Saving");
@@ -364,6 +347,8 @@ public class UsbDriver extends DriverBaseImplementation {
         } catch (NullPointerException ex) {
             Base.writeLog("Machine was null", this.getClass());
         }
+
+        isBusy = false;
     }
 
     @Override
@@ -449,7 +434,7 @@ public class UsbDriver extends DriverBaseImplementation {
         buffer = ByteBuffer.allocateDirect(next.length);
         buffer.put(next);
 
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         try {
             if (connectedDeviceHandle != null) {
                 result = LibUsb.bulkTransfer(connectedDeviceHandle, ENDPOINT_OUT_ADDRESS, buffer, transfered, timeout);
@@ -475,7 +460,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 return transfered.get();
             }
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
         }
 
         return 0;
@@ -513,7 +498,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
         buffer = ByteBuffer.allocateDirect(expectedSize);
 
-        dispatchCommandLock.lock();
+        DISPATCHCOMMAND_LOCK.lock();
         try {
             if (connectedDeviceHandle != null) {
                 result = LibUsb.bulkTransfer(connectedDeviceHandle, ENDPOINT_IN_ADDRESS, buffer, transfered, timeout);
@@ -542,7 +527,7 @@ public class UsbDriver extends DriverBaseImplementation {
                 return retArray;
             }
         } finally {
-            dispatchCommandLock.unlock();
+            DISPATCHCOMMAND_LOCK.unlock();
         }
 
         return new byte[0];
