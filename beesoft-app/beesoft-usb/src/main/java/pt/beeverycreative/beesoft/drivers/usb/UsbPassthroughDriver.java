@@ -141,7 +141,9 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Base.writeLog("Launching firmware!", this.getClass());
                 FEEDBACK_WINDOW.setFeedback2(Feedback.LAUNCHING_MESSAGE);
                 Base.keepFeedbackOpen = true;
+                hiccup(1000);
                 dispatchCommand(LAUNCH_FIRMWARE); // Launch firmware
+                hiccup(3000);
                 cleanLibUsbDevice();
             } else {
                 FEEDBACK_WINDOW.setFeedback2(Feedback.RESTART_PRINTER);
@@ -1205,7 +1207,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         Base.keepFeedbackOpen = true;
         dispatchCommand(LAUNCH_FIRMWARE);
 
-        //hiccup(3000);
+        hiccup(3000);
         // reestablish connection
         if (establishConnection() == false) {
             Base.writeLog("Establishing connection after changing into firmware failed", this.getClass());
@@ -1235,7 +1237,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         dispatchCommand(LAUNCH_BOOTLOADER);
         Base.keepFeedbackOpen = false;
 
-        //hiccup(3000);
+        hiccup(3000);
         if (establishConnection() == false) {
             Base.writeLog("Couldn't establish connection after attempting to go back to bootloader, requesting user to restart", this.getClass());
 
