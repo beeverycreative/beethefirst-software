@@ -1074,7 +1074,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         private boolean stop = false;
 
         public HeatAndUnloadThread() {
-            super("BANTER");
+            super("Heat and unload thread");
         }
 
         @Override

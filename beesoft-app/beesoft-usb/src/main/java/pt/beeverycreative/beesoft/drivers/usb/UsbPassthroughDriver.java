@@ -694,11 +694,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
             transferMode = false;
         }
 
-        elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
-        Base.writeLog("Successfully transferred " + gcodeFile.length() + " bytes in " + elapsedTimeMilliseconds / 1000 + " seconds.", this.getClass());
-        Base.writeLog("Transfer rate: " + gcodeFile.length() / 1000 / (elapsedTimeMilliseconds / 1000.0) + "KBps", this.getClass());
-
-        return true;
+        if (stopTransfer == false) {
+            elapsedTimeMilliseconds = System.currentTimeMillis() - elapsedTimeMilliseconds;
+            Base.writeLog("Successfully transferred " + gcodeFile.length() + " bytes in " + elapsedTimeMilliseconds / 1000 + " seconds.", this.getClass());
+            Base.writeLog("Transfer rate: " + gcodeFile.length() / 1000 / (elapsedTimeMilliseconds / 1000.0) + "KBps", this.getClass());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
