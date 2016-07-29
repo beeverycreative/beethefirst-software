@@ -702,6 +702,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Base.writeLog("Transfer rate: " + gcodeFile.length() / 1000 / (elapsedTimeMilliseconds / 1000.0) + "KBps", this.getClass());
             return true;
         } else {
+            stopTransfer = false;
             return false;
         }
     }
