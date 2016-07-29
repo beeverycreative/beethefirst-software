@@ -181,9 +181,9 @@ public class EditingModel implements Serializable {
         getBoundingBox().getUpper(upper);
 
         // truncating values to three decimal places
-        lower.x = lower.x > 0 ? (Math.floor(lower.x * 1000) / 100) : Math.ceil(lower.x * 1000) / 1000;
+        lower.x = lower.x > 0 ? (Math.floor(lower.x * 1000) / 1000) : Math.ceil(lower.x * 1000) / 1000;
         lower.y = lower.y > 0 ? (Math.floor(lower.y * 1000) / 1000) : Math.ceil(lower.y * 1000) / 1000;
-        lower.z = lower.z > 0 ? (Math.floor(lower.z * 1000) / 100) : Math.ceil(lower.z * 1000) / 1000;
+        lower.z = lower.z > 0 ? (Math.floor(lower.z * 1000) / 1000) : Math.ceil(lower.z * 1000) / 1000;
         upper.x = upper.x > 0 ? (Math.floor(upper.x * 1000) / 1000) : Math.ceil(upper.x * 1000) / 1000;
         upper.y = upper.y > 0 ? (Math.floor(upper.y * 1000) / 1000) : Math.ceil(upper.y * 1000) / 1000;
         upper.z = upper.z > 0 ? (Math.floor(upper.z * 1000) / 1000) : Math.ceil(upper.z * 1000) / 1000;
