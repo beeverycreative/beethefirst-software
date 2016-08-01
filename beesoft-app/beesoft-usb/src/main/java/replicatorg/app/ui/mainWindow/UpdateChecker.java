@@ -436,11 +436,16 @@ public class UpdateChecker extends BaseDialog {
 
     private boolean useWin10Driver() {
         try {
-            return Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\BEESOFT\\", "Win10Driver");
-        }
-        catch (Win32Exception ex) {
-            Base.writeLog("Failed in obtaining from registry which driver to use, will give the standard version to user.", this.getClass());
-            return false;
+            // BEESOFT 32 bits on a 64 bit system; suspected to be the most common scenario
+            return Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\WOW6432Node\\BEESOFT\\", "Win10Driver");
+        } catch (Win32Exception ex) {
+            try {
+                // if the operating system is actually 32 bits, try this
+                return Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\BEESOFT\\", "Win10Driver");
+            } catch(Win32Exception ex2) {
+                Base.writeLog("Failed in obtaining from registry which driver to use, will give the standard version to user.", this.getClass());
+                return false;
+            }
         }
     }
 
