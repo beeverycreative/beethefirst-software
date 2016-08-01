@@ -51,6 +51,9 @@ import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
+import com.sun.jna.platform.win32.WinReg;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.Win32Exception;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -406,7 +409,11 @@ public class UpdateChecker extends BaseDialog {
     private void grabFilenames() {
         if (updateStableAvailable) {
             if (Base.isWindows()) {
-                filenameToDownload = getTagValue("FilenameWin");
+                if (useWin10Driver()) {
+                    filenameToDownload = getTagValue("FilenameWin10");
+                } else {
+                    filenameToDownload = getTagValue("FilenameWin");
+                }
             } else if (Base.isMacOS()) {
                 filenameToDownload = getTagValue("FilenameMac");
             } else {
@@ -414,12 +421,26 @@ public class UpdateChecker extends BaseDialog {
             }
         } else if (updateBetaAvailable) {
             if (Base.isWindows()) {
-                filenameToDownload = getTagValue("FilenameWinBeta");
+                if (useWin10Driver()) {
+                    filenameToDownload = getTagValue("FilenameWin10Beta");
+                } else {
+                    filenameToDownload = getTagValue("FilenameWinBeta");
+                }
             } else if (Base.isMacOS()) {
                 filenameToDownload = getTagValue("FilenameMacBeta");
             } else {
                 filenameToDownload = getTagValue("FilenameTuxBeta");
             }
+        }
+    }
+
+    private boolean useWin10Driver() {
+        try {
+            return Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\BEESOFT\\", "Win10Driver");
+        }
+        catch (Win32Exception ex) {
+            Base.writeLog("Failed in obtaining from registry which driver to use, will give the standard version to user.", this.getClass());
+            return false;
         }
     }
 
@@ -514,8 +535,10 @@ public class UpdateChecker extends BaseDialog {
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(uri);
-            } catch (IOException e) { /* TODO: error handling */ }
-        } else { /* TODO: error handling */ }
+            } catch (IOException e) {
+                /* TODO: error handling */ }
+        } else {
+            /* TODO: error handling */ }
     }
 
     private void doExit() {
