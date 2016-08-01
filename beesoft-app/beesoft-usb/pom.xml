@@ -172,9 +172,6 @@
                                 <copy todir="${target.dir}/firmware">
                                     <fileset dir="${resources.dir}/firmware" />
                                 </copy> 
-                                <copy todir="${target.dir}/update">
-                                    <fileset dir="${resources.dir}/update" />
-                                </copy>       
                                 <copy todir="${target.dir}/machines">
                                     <fileset dir="${resources.dir}/machines" />
                                 </copy>                                   
@@ -549,6 +546,11 @@
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna-platform</artifactId>
             <version>4.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>perlundq</groupId>
+            <artifactId>yajsync-core</artifactId>
+            <version>0.9.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
