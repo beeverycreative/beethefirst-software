@@ -18,6 +18,8 @@ import replicatorg.app.ui.panels.BaseDialog;
  */
 public class Feedback extends BaseDialog {
 
+    private static Feedback feedbackWindow = null;
+
     public static final int FLASHING_MAIN_MESSAGE = 0;
     public static final int FLASHING_SUB_MESSAGE = 1;
     public static final int FLASHING_SUB_MESSAGE_NO_CALIBRATION = 2;
@@ -28,15 +30,34 @@ public class Feedback extends BaseDialog {
     private static final int FILE_KEY = 1;
     private static final String ROOT_TAG = "FeedbackPanel";
 
-    public Feedback() {
+    private Feedback() {
         super(Base.getMainWindow(), Dialog.ModalityType.MODELESS);
-        setName("FeedbackDialog");
+        super.setName("FeedbackDialog");
         initComponents();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         lFeedbackMain.setText("");
         lFeedbackSub.setText("");
         lFeedbackRestart.setText("");
+    }
+
+    public static synchronized Feedback getInstance() {
+        if (feedbackWindow == null) {
+            feedbackWindow = new Feedback();
+            feedbackWindow.setVisible(true);
+        }
+
+        return feedbackWindow;
+    }
+
+    public static synchronized void disposeInstance() {
+        Base.keepFeedbackOpen = false;
+
+        if (feedbackWindow != null) {
+            feedbackWindow.setVisible(false);
+            feedbackWindow.dispose();
+            feedbackWindow = null;
+        }
     }
 
     public void setFeedback1(int index) {
@@ -51,7 +72,7 @@ public class Feedback extends BaseDialog {
 
     public void setFeedback2(int index) {
         String msg = "<html>";
-        
+
         switch (index) {
             case FLASHING_SUB_MESSAGE:
                 msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessage");
@@ -71,17 +92,17 @@ public class Feedback extends BaseDialog {
             default:
                 break;
         }
-        
+
         msg += "</html>";
         lFeedbackSub.setText(msg);
     }
-    
+
     public void setFeedback3(int index) {
-        switch(index) {
+        switch (index) {
             case RESTART_PRINTER:
                 lFeedbackSub.setText("<html>" + Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessageTimeout") + "</html>");
                 break;
-            default: 
+            default:
                 break;
         }
     }

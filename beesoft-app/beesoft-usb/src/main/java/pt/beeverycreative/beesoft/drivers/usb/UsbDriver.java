@@ -81,6 +81,7 @@ public class UsbDriver extends DriverBaseImplementation {
         }
 
         startTS = System.currentTimeMillis();
+        setInitialized(false);
     }
 
     /**

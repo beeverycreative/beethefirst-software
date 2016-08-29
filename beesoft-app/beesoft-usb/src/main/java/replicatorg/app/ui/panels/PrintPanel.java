@@ -1374,7 +1374,6 @@ public class PrintPanel extends BasePrintEstimateExport {
             dispose();
             Base.getMainWindow().getCanvas().unPickAll();
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
-            Base.turnOnPowerSaving(false);
 
             final PrintSplashAutonomous p = new PrintSplashAutonomous(getPreferences());
             EventQueue.invokeLater(new Runnable() {

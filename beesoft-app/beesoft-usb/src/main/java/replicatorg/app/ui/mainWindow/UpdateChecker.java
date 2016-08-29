@@ -82,8 +82,8 @@ public class UpdateChecker extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         evaluateInitialConditions();
     }
 

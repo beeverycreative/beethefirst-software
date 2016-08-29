@@ -547,7 +547,6 @@ public interface Driver {
     public boolean getMachinePaused();
     public boolean isAlive();
     public void setMachinePaused(boolean machinePaused);
-    public void closeFeedback();
     public int getQueueSize();
     public String getLastStatusMessage();
 }

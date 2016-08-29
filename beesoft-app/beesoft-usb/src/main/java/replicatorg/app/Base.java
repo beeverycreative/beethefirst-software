@@ -93,7 +93,6 @@ import replicatorg.app.ui.WelcomeSplash;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
 
-
 /**
  * Primary role of this class is for platform identification and general
  * interaction with the system (launching URLs, loading files and images, etc)
@@ -227,7 +226,7 @@ public class Base {
      * Path of filename opened on the command line, or via the MRJ open document
      * handler.
      */
-    static public String openedAtStartup;
+    public static String openedAtStartup;
     /**
      * This is the name of the alternate preferences set that this instance of
      * SimpleG uses. If null, this instance will use the default preferences
@@ -253,7 +252,7 @@ public class Base {
      *
      * @return
      */
-    static public File getUserDirectory() {
+    public static File getUserDirectory() {
         String path = System.getProperty("user.home") + File.separator + ".replicatorg";
         if (ALTERNATE_PREFS != null) {
             path = path + File.separator + ALTERNATE_PREFS;
@@ -312,11 +311,11 @@ public class Base {
      *
      * @return File object pointing to the OS specific ApplicationsDirectory
      */
-    static public File getApplicationDirectory() {
+    public static File getApplicationDirectory() {
         return new File(System.getProperty("user.dir"));
     }
 
-    static public File getAppDataDirectory() {
+    public static File getAppDataDirectory() {
         File f = new File(System.getProperty("user.home").concat("/BEESOFT"));
         File models = new File(System.getProperty("user.home").concat("/BEESOFT/" + Base.MODELS_FOLDER));
 
@@ -366,11 +365,11 @@ public class Base {
                 // ignore in case a file with the same name already exists, and
                 // keep going
                 final long file1crc, file2crc;
-                
+
                 file1crc = calculateCRC(sourceDir);
                 file2crc = calculateCRC(destDir);
-                
-                if(file1crc > 0 && file2crc > 0 && file1crc != file2crc) {
+
+                if (file1crc > 0 && file2crc > 0 && file1crc != file2crc) {
                     Files.copy(sourceDir.toPath(), destDir.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
@@ -659,15 +658,15 @@ public class Base {
         }
     }
 
-    static public File getApplicationFile(String path) {
+    public static File getApplicationFile(String path) {
         return new File(getApplicationDirectory(), path);
     }
 
-    static public File getUserFile(String path) {
+    public static File getUserFile(String path) {
         return getUserFile(path, true);
     }
 
-    static public File getUserDir(String path) {
+    public static File getUserDir(String path) {
         return getUserDir(path, true);
     }
 
@@ -676,7 +675,7 @@ public class Base {
      *
      * @param dirPath Path to directory containing such files
      */
-    static public void cleanDirectoryTempFiles(String dirPath) {
+    public static void cleanDirectoryTempFiles(String dirPath) {
         File dir = new File(dirPath);
         for (File file : dir.listFiles()) {
             if (file.getName().contains(".gcode") && file.getName().contains("gcodeToPrinter") == false) {
@@ -685,66 +684,52 @@ public class Base {
         }
     }
 
-    public static void turnOnPowerSaving(boolean turnOn) {
-        /*
-         if (turnOn) {
-         //            editor.getMachine().getDriver().dispatchCommand("M641 A1");
-         editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A1", UsbPassthroughDriver.COM.NO_RESPONSE));
-         } else {
-         //            editor.getMachine().getDriver().dispatchCommand("M641 A0");+
-         editor.getMachine().runCommand(new replicatorg.drivers.commands.DispatchCommand("M641 A0", UsbPassthroughDriver.COM.NO_RESPONSE));
-         }
-         */
-    }
-
     public static void disposeAllOpenWindows() {
-        String name;
+        for (final Window window : Base.getMainWindow().getOwnedWindows()) {
+            final String name;
 
-        java.awt.Window win[] = java.awt.Window.getWindows();
-        for (Window win1 : win) {
-            name = win1.getName();
-            if (!name.equals("mainWindow") && !(name.equals("FeedbackDialog") && Base.keepFeedbackOpen)) {
-                win1.dispose();
+            name = window.getName();
+
+            if (!name.equals("mainWindow") && !(name.equals("FeedbackDialog")
+                    && Base.keepFeedbackOpen)) {
+                if (window.isDisplayable()) {
+                    window.setVisible(false);
+                }
             }
-//            System.out.println(win[i].getName());
         }
         editor.setEnabled(true);
     }
 
-    static public void enableAllOpenWindows() {
-        java.awt.Window win[] = java.awt.Window.getWindows();
-        for (Window win1 : win) {
-            if (win1.getName().equals("mainWindow")) {
+    public static void enableAllOpenWindows() {
+        for (final Window window : Base.getMainWindow().getOwnedWindows()) {
+            if (window.getName().equals("mainWindow")) {
                 //|| win[i].getName().equals("Autonomous")
                 if (printPaused) {
-                    win1.setEnabled(false);
+                    window.setEnabled(false);
                 } else {
-                    win1.setEnabled(true);
+                    window.setEnabled(true);
                 }
             } else {
-                win1.setEnabled(true);
+                window.setEnabled(true);
             }
-//            }
-//            System.out.println(win[i].getName());
         }
 
     }
 
-    static public void bringAllWindowsToFront() {
+    public static void bringAllWindowsToFront() {
         bringMainWindowOK();
-        java.awt.Window win[] = java.awt.Window.getOwnerlessWindows();
-        for (Window win1 : win) {
-            win1.toFront();
-            win1.requestFocusInWindow();
+        for (final Window window : Base.getMainWindow().getOwnedWindows()) {
+            window.toFront();
+            window.requestFocusInWindow();
         }
     }
 
-    static public void bringMainWindowOK() {
+    public static void bringMainWindowOK() {
         Base.getMainWindow().setFocusable(true);
         Base.getMainWindow().setFocusableWindowState(true);
     }
 
-    static public void setMainWindowNOK() {
+    public static void setMainWindowNOK() {
         Base.getMainWindow().setFocusable(false);
         Base.getMainWindow().setFocusableWindowState(false);
     }
@@ -767,7 +752,7 @@ public class Base {
      */
     private static final NumberFormat localNF = NumberFormat.getInstance();
 
-    static public NumberFormat getLocalFormat() {
+    public static NumberFormat getLocalFormat() {
         return localNF;
     }
     /**
@@ -785,7 +770,7 @@ public class Base {
         dfs.setDecimalSeparator('.');
     }
 
-    static public NumberFormat getGcodeFormat() {
+    public static NumberFormat getGcodeFormat() {
         return gcodeNF;
     }
 
@@ -796,7 +781,7 @@ public class Base {
      * application directory if none is found in the prefs directory.
      * @return
      */
-    static public File getUserFile(String path, boolean autoCopy) {
+    public static File getUserFile(String path, boolean autoCopy) {
         if (path.contains("..")) {
             //Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
             return null;
@@ -823,7 +808,7 @@ public class Base {
         return f;
     }
 
-    static public File getUserDir(String path, boolean autoCopy) {
+    public static File getUserDir(String path, boolean autoCopy) {
         if (path.contains("..")) {
             //Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
             return null;
@@ -850,7 +835,7 @@ public class Base {
         return f;
     }
 
-    static public Font getFontPref(String name, String defaultValue) {
+    public static Font getFontPref(String name, String defaultValue) {
         String s = defaultValue;
         //preferences.get(name, defaultValue);
         StringTokenizer st = new StringTokenizer(s, ",");
@@ -862,7 +847,7 @@ public class Base {
                 : 0), Integer.parseInt(st.nextToken()));
     }
 
-    static public Color getColorPref(String name, String defaultValue) {
+    public static Color getColorPref(String name, String defaultValue) {
         String s = defaultValue;
         //preferences.get(name, defaultValue);
         Color parsed = null;
@@ -909,7 +894,7 @@ public class Base {
         return false;
     }
 
-    static public void main(String args[]) {
+    public static void main(String args[]) {
 
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
@@ -1097,7 +1082,7 @@ public class Base {
      *
      * @return
      */
-    static public boolean isMacOS() {
+    public static boolean isMacOS() {
         return PLATFORM == Platform.MACOSX;
     }
 
@@ -1106,7 +1091,7 @@ public class Base {
      *
      * @return
      */
-    static public boolean isWindows() {
+    public static boolean isWindows() {
         return PLATFORM == Platform.WINDOWS;
     }
 
@@ -1115,7 +1100,7 @@ public class Base {
      *
      * @return
      */
-    static public boolean isLinux() {
+    public static boolean isLinux() {
         return PLATFORM == Platform.LINUX;
     }
 
@@ -1126,7 +1111,7 @@ public class Base {
      * @param root
      * @param disposer
      */
-    static public void registerWindowCloseKeys(JRootPane root, // Window
+    public static void registerWindowCloseKeys(JRootPane root, // Window
             // window,
             ActionListener disposer) {
 
@@ -1149,7 +1134,7 @@ public class Base {
      * @param message
      * @param e
      */
-    static public void quitWithError(String title, String message, Throwable e) {
+    public static void quitWithError(String title, String message, Throwable e) {
 
         notificationHandler.showError(title, message, e);
 
@@ -1159,12 +1144,12 @@ public class Base {
         System.exit(1);
     }
 
-    static public String getContents(String what) {
+    public static String getContents(String what) {
         File appBase = Base.getApplicationDirectory();
         return appBase.getAbsolutePath() + File.separator + what;
     }
 
-    static public String getLibContents(String what) {
+    public static String getLibContents(String what) {
         /*
          * On MacOSX, the replicatorg.app-resources property points to the
          * resources directory inside the app bundle. On other platforms it's
@@ -1186,7 +1171,7 @@ public class Base {
      * @param who The component that will use the image
      * @return the loaded image object
      */
-    static public Image getDirectImage(String name, Component who) {
+    public static Image getDirectImage(String name, Component who) {
         Image image = null;
 
         // try to get the URL as a system resource
@@ -1201,7 +1186,7 @@ public class Base {
         return image;
     }
 
-    static public BufferedImage getImage(String name, Component who) {
+    public static BufferedImage getImage(String name, Component who) {
         BufferedImage image = null;
 
         // try to get the URL as a system resource
@@ -1225,7 +1210,7 @@ public class Base {
         return image;
     }
 
-    static public InputStream getStream(String filename) throws IOException {
+    public static InputStream getStream(String filename) throws IOException {
         return new FileInputStream(getLibContents(filename));
     }
 
@@ -1248,7 +1233,7 @@ public class Base {
         // }
     }
 
-    static public void copyDir(File sourceDir, File targetDir)
+    public static void copyDir(File sourceDir, File targetDir)
             throws IOException {
         targetDir.mkdirs();
         String files[] = sourceDir.list();
@@ -1274,14 +1259,14 @@ public class Base {
      *
      * @return
      */
-    static public MachineLoader getMachineLoader() {
+    public static MachineLoader getMachineLoader() {
         if (machineLoader == null) {
             machineLoader = new MachineLoader();
         }
         return machineLoader;
     }
 
-    static public MainWindow getMainWindow() {
+    public static MainWindow getMainWindow() {
         return editor;
     }
 

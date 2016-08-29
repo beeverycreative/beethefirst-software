@@ -11,7 +11,6 @@ import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
-import replicatorg.app.ui.popups.Warning;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -26,7 +25,6 @@ import replicatorg.app.ui.popups.Warning;
  */
 public class WelcomeSplash extends javax.swing.JFrame {
 
-    private final UpdateChecker advise = new UpdateChecker();
     private final MainWindow window;
     private ImageIcon image;
     private int newWidth = 600;
@@ -110,6 +108,8 @@ public class WelcomeSplash extends javax.swing.JFrame {
      * Monitor changes in MainWindow and performs several operations at startup.
      */
     public void changeState() {
+        final UpdateChecker advise = new UpdateChecker();
+
         //this.setVisible(false);
         dispose();
         Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
@@ -122,9 +122,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
             advise.setMessage("AvailableBeta");
             advise.setAlwaysOnTop(true);
             advise.setVisible(true);
-        } else {
-            advise.dispose();
-        }
+        } 
+        
+        advise.dispose();
 
         Base.setWelcomeSplashVisible(false);
         window.setVisible(true);
