@@ -369,7 +369,7 @@ public class PrintBed implements Serializable {
             pw = new PrintWriter(stl);
             pw.write("");
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ToolpathGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(ToolpathGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         code = new String(printBed_Models.get(index).getStream());

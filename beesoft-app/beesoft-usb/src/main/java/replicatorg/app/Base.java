@@ -100,6 +100,7 @@ import replicatorg.util.ConfigProperties;
  */
 public class Base {
 
+    public static final Image BEESOFT_ICON = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("images/icon.png"));
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
@@ -189,7 +190,6 @@ public class Base {
     public static String SERIAL_NUMBER = "9999999999";
     private final static String VERSION_JAVA = System.getProperty("java.version");
     public static String VERSION_MACHINE = "000000000000";
-    public static String MACHINE_NAME = "BEETHEFIRST";
     public static final String GCODE_DELIMITER = "--";
     public static final String GCODE_TEMP_FILENAME = "temp.gcode";
     public static final String MODELS_FOLDER = "3DModels";
@@ -925,7 +925,7 @@ public class Base {
                         i++;
                     } catch (NumberFormatException e) {
                         // do nothing
-                    };
+                    }
                 }
                 if (debugLevelArg == 0) {
                     LOGGER.setLevel(Level.INFO);
@@ -1040,39 +1040,35 @@ public class Base {
         // use native popups so they don't look so crappy on osx
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ProperDefault.put("machine.name", MACHINE_NAME);
-                String machineName = ProperDefault.get("machine.name");
-                // build the editor object
-                editor = new MainWindow();
-                writeLog("Main Window initialized", this.getClass());
+        SwingUtilities.invokeLater(() -> {
+            final WelcomeSplash welcomeSplash;
+            
+            // build the editor object
+            editor = new MainWindow();
+            writeLog("Main Window initialized", this.getClass());
 //                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
-                editor.restorePreferences();
-                writeLog("Preferences restored", this.getClass());
-                // add shutdown hook to store preferences
-                Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
-                    final private MainWindow w = editor;
+            editor.restorePreferences();
+            writeLog("Preferences restored", this.getClass());
+            // add shutdown hook to store preferences
+            Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
+                final private MainWindow w = editor;
 
-                    @Override
-                    public void run() {
-                        w.onShutdown();
-                    }
-                });
+                @Override
+                public void run() {
+                    w.onShutdown();
+                }
+            });
 //                Languager.printXML();
-                editor.loadMachine(machineName, false);
-                writeLog("Machine Loaded", this.getClass());
-                // show the window
-                editor.setVisible(false);
-                WelcomeSplash splash = new WelcomeSplash(editor);
-                splash.setVisible(true);
+            editor.loadMachine();
+            writeLog("Machine Loaded", this.getClass());
+            // show the window
+            editor.setVisible(false);
+            welcomeSplash = new WelcomeSplash(editor);
+            welcomeSplash.setVisible(true);
 
 //                buildLogFile(false);
-                writeLog("Log file created", this.getClass());
-            }
+            writeLog("Log file created", this.getClass());
         });
-        ProperDefault.put("machine.name", MACHINE_NAME);
     }
 
     // .................................................................

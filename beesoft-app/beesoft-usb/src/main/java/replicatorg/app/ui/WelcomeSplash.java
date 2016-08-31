@@ -37,8 +37,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
      * @param wind MainWindow for visual and feature control
      */
     public WelcomeSplash(MainWindow wind) {
+        super("Welcome splash");
+        super.setIconImage(Base.BEESOFT_ICON);
         initComponents();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
         Base.setWelcomeSplashVisible(true);
         Base.writeLog("Welcome Splash started ...", this.getClass());
         window = wind;

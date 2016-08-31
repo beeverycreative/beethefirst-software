@@ -409,11 +409,15 @@
                         </executions>
                         <configuration>
                             <mainClass>replicatorg.app.Base</mainClass>
+                            <executable>java</executable>
                             <workingDirectory>${project.basedir}/target/linux-${project.release.name}</workingDirectory>
                             <arguments>                        
                                 <argument>-ea</argument>
                                 <argument>-Xmx2048m</argument>
                                 <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                                <argument>-classpath</argument>
+                                <classpath />
+                                <argument>replicatorg.app.Base</argument>
                             </arguments>
                         </configuration>
                     </plugin>                  

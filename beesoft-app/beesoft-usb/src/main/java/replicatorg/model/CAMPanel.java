@@ -144,7 +144,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
         this.bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 1000000.0);
         this.panel.setLayout(new MigLayout(""));
         this.panel.setOpaque(false);
-        createCanvas(cardPanel.getSize());
+        createCanvas();
         createUniverse();
         this.panel.add(canvas, "dock west");
         this.toolPanel = new ToolPanel(this);
@@ -653,7 +653,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 
     }
 
-    private void createCanvas(Dimension d) {
+    private void createCanvas() {
 //        GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
 //        template.setSceneAntialiasing(GraphicsConfigTemplate3D.REQUIRED);
 //        GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().
@@ -691,13 +691,10 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //          sOff.setSize(sOn.getSize());
 //          sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
 //          sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());    
-
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-        canvas = new Canvas3D(config);
+        canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
         //canvas.setSize((int)((d.getWidth()-200-265)/2),(int)(d.getHeight()/2));
         canvas.setFocusable(true);
         canvas.requestFocus();
-
     }
 
     public void setCanvasSize(Dimension d) {

@@ -50,7 +50,7 @@ public abstract class DriverBaseImplementation implements Driver {
 //	private GCodeParser parser;
 
     // models for our machine
-    protected MachineModel machine;
+    protected MachineModel machine = new MachineModel();
     // Driver name
     protected String driverName;
     // our firmware version info
