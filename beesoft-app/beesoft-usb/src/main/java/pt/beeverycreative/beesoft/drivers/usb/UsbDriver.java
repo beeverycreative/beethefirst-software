@@ -81,7 +81,7 @@ public class UsbDriver extends DriverBaseImplementation {
         }
 
         startTS = System.currentTimeMillis();
-        setInitialized(false);
+        super.setInitialized(false);
     }
 
     /**
@@ -255,6 +255,7 @@ public class UsbDriver extends DriverBaseImplementation {
         final String testMsg = "M625\n";
         int ansBytes, tries = 10;
         long elapsedTimeMilliseconds;
+        byte[] cleanBuffer;
         String status;
         boolean validStatus = false, strContainsStatus;
 
@@ -268,7 +269,15 @@ public class UsbDriver extends DriverBaseImplementation {
             if (DISPATCHCOMMAND_LOCK.tryLock(50, TimeUnit.MILLISECONDS)) {
                 try {
 
-                    while (receiveAnswerBytes(MESSAGE_SIZE, 100).length > 0) {
+                    while ((cleanBuffer = receiveAnswerBytes(MESSAGE_SIZE, 100)).length > 0) {
+                        final String trashString;
+                        
+                        trashString = new String(cleanBuffer);
+                        
+                        if(trashString.contains("Loading Config Override")) {
+                            Base.writeLog("ERROR LOADING CONFIG, LOADING CONFIG OVERRIDES", this.getClass());
+                        }
+                        
                         hiccup(50);
                     }
 
