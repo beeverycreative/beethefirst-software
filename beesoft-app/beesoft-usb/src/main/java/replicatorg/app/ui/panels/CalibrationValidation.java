@@ -47,7 +47,6 @@ public class CalibrationValidation extends BaseDialog {
                 busyThread.kill();
             }
         });
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -100,7 +99,6 @@ public class CalibrationValidation extends BaseDialog {
         } else {
             driver.dispatchCommand("M112", COM.NO_RESPONSE);
         }
-        Base.bringAllWindowsToFront();
         dispose();
     }
 
@@ -383,7 +381,6 @@ public class CalibrationValidation extends BaseDialog {
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             driver.dispatchCommand("G28", COM.NO_RESPONSE);
             dispose();
-            Base.bringAllWindowsToFront();
         }
     }//GEN-LAST:event_bConfirmCalibrationMousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables

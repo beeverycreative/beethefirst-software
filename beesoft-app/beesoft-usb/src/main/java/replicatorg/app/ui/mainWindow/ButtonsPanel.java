@@ -8,6 +8,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProLight;
 import static replicatorg.app.ui.GraphicDesignComponents.getSSProRegular;
 import replicatorg.app.ui.panels.EstimateExportPanel;
+import replicatorg.app.ui.panels.Maintenance;
 import replicatorg.app.ui.panels.PrintPanel;
 import replicatorg.app.ui.panels.TourWelcome;
 import replicatorg.machine.MachineInterface;
@@ -349,14 +350,17 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_bModelsMousePressed
 
     private void bMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMaintenanceMousePressed
+        final Maintenance maintenance;
+        
         if (bMaintenance.isEnabled()) {
             editor.updateModelsOperationCenter(new ModelsOperationCenter());
             SceneDetailsPanel sceneDP = new SceneDetailsPanel();
             sceneDP.updateBed(Base.getMainWindow().getBed());
             editor.updateDetailsCenter(sceneDP);
             Base.getMainWindow().getCanvas().unPickAll();
-            editor.handleMaintenance();
-        }
+            maintenance = new Maintenance();
+            maintenance.setVisible(true);
+        }   
     }//GEN-LAST:event_bMaintenanceMousePressed
 
     private void bQuickGuideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuickGuideMousePressed

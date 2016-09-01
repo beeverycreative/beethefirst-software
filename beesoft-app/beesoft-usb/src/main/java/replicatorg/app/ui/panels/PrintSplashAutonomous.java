@@ -214,8 +214,6 @@ public class PrintSplashAutonomous extends BaseDialog {
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/3DModels/");
         dispose();
-        Base.bringAllWindowsToFront();
-        Base.getMainWindow().setEnabled(true);
     }
 
     protected void doResume() {
@@ -405,10 +403,8 @@ public class PrintSplashAutonomous extends BaseDialog {
 
     private void cancelProcess() {
         dispose();
-        Base.bringAllWindowsToFront();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER);
         driver.dispatchCommand("M112", COM.NO_RESPONSE);
-        Base.getMainWindow().setEnabled(true);
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
         //Clears GCode saved on scene
         Base.getMainWindow().getBed().setGcode(new StringBuffer(""));

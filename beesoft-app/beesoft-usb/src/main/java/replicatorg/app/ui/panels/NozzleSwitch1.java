@@ -67,7 +67,6 @@ public class NozzleSwitch1 extends BaseDialog {
     private void doCancel() {
         dispose();
         driver.setTemperature(0);
-        Base.bringAllWindowsToFront();
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
     }

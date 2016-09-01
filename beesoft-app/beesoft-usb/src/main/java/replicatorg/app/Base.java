@@ -33,15 +33,11 @@ import ch.randelshofer.quaqua.QuaquaManager;
 import com.apple.eawt.Application;
 import com.apple.mrj.MRJApplicationUtils;
 import com.apple.mrj.MRJOpenDocumentHandler;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -65,30 +61,20 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import java.util.zip.CRC32;
 import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import replicatorg.app.ui.MainWindow;
-import replicatorg.app.ui.NotificationHandler;
 import replicatorg.app.ui.WelcomeSplash;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
@@ -102,6 +88,16 @@ public class Base {
 
     public static final Image BEESOFT_ICON = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("images/icon.png"));
     private static final String NEW_LINE = System.getProperty("line.separator");
+    /**
+     * Properties file
+     */
+    private static final Properties PROPERTIES_FILE = openFileProperties();
+    /* Date time instance variables */
+    private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private static final File BEELOG_FILE = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
+    private static final File COMLOG_FILE = new File(getAppDataDirectory().toString() + "/comLog.txt");
+    private static final BufferedWriter LOGBW = initLog(BEELOG_FILE);
+    private static final BufferedWriter COMLOGBW = initLog(COMLOG_FILE);
 
     /**
      * enum for fast/easy OS checking
@@ -210,17 +206,6 @@ public class Base {
     public static final Logger LOGGER = Logger.getLogger("replicatorg.log");
     public static FileHandler logFileHandler = null;
     public static String logFilePath = null;
-
-    /**
-     * Properties file
-     */
-    private static Properties propertiesFile = null;
-    /* Date time instance variables */
-    private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    private static final File BEELOG_FILE = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
-    private static final File COMLOG_FILE = new File(getAppDataDirectory().toString() + "/comLog.txt");
-    private static final BufferedWriter LOGBW = initLog(BEELOG_FILE);
-    private static final BufferedWriter COMLOGBW = initLog(COMLOG_FILE);
 
     /**
      * Path of filename opened on the command line, or via the MRJ open document
@@ -332,15 +317,6 @@ public class Base {
         return f;
     }
 
-    private static Map<String, String> getGalleryMap(File[] models) {
-        Map<String, String> mod = new HashMap<>();
-
-        for (File model : models) {
-            mod.put(model.getName(), model.getAbsolutePath());
-        }
-        return mod;
-    }
-
     private static void copyFolderRecursively(final File sourceDir, final File destDir) throws IOException {
 
         final String[] files;
@@ -420,9 +396,9 @@ public class Base {
     }
 
     public static void updateVersions() {
-        VERSION_BOOTLOADER = editor.getMachineInterface().getDriver().getBootloaderVersion();
-        FIRMWARE_IN_USE = editor.getMachineInterface().getDriver().getFirmwareVersion();
-        VERSION_MACHINE = editor.getMachineInterface().getDriver().getSerialNumber();
+        VERSION_BOOTLOADER = MAIN_WINDOW.getMachineInterface().getDriver().getBootloaderVersion();
+        FIRMWARE_IN_USE = MAIN_WINDOW.getMachineInterface().getDriver().getFirmwareVersion();
+        VERSION_MACHINE = MAIN_WINDOW.getMachineInterface().getDriver().getSerialNumber();
 
         //buildLogFile(true);
         writePrinterInfo();
@@ -504,39 +480,6 @@ public class Base {
 
     }
 
-    /*
-     public static void writeStatistics(String message) {
-
-     Calendar cal = Calendar.getInstance();
-     String date = dateFormat.format(cal.getTime());
-
-     FileWriter fw = null;
-     try {
-     fw = new FileWriter(statistics.getAbsoluteFile(), true);
-     } catch (IOException ex) {
-     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     BufferedWriter bw = new BufferedWriter(fw);
-     try {
-     bw.write(date);
-     bw.newLine();
-     bw.write("-------------------------------\n");
-     bw.write(message);
-     bw.flush();
-     bw.newLine();
-     bw.close();
-     } catch (IOException ex) {
-     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     try {
-     if (fw != null) {
-     fw.close();
-     }
-     } catch (IOException ex) {
-     Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
-     }
-     }
-     */
     public static void writeComLog(long timeStamp, String message) {
 
         if (COMLOG_FILE.length() > 10000000) {
@@ -597,7 +540,7 @@ public class Base {
         String filePath = getAppDataDirectory().toString().concat("/config.properties");
 
         try {
-            propertiesFile.store(new OutputStreamWriter(
+            PROPERTIES_FILE.store(new OutputStreamWriter(
                     new FileOutputStream(filePath), "UTF-8"), null);
 
         } catch (IOException ex) {
@@ -606,11 +549,11 @@ public class Base {
     }
 
     public static void storeProperty(String key, String value) {
-        propertiesFile.setProperty(key, value);
+        PROPERTIES_FILE.setProperty(key, value);
     }
 
     public static void removeProperty(String key) {
-        propertiesFile.remove(key);
+        PROPERTIES_FILE.remove(key);
     }
 
     /**
@@ -621,11 +564,11 @@ public class Base {
      */
     public static String readConfig(String param) {
 
-        if (propertiesFile == null) {
+        if (PROPERTIES_FILE == null) {
             return null;
         }
 
-        return propertiesFile.getProperty(param);
+        return PROPERTIES_FILE.getProperty(param);
 
     }
 
@@ -642,7 +585,7 @@ public class Base {
             try {
                 fis = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
 
-                propertiesFile.load(fis);
+                PROPERTIES_FILE.load(fis);
             } catch (IOException ex) {
                 Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -660,14 +603,6 @@ public class Base {
 
     public static File getApplicationFile(String path) {
         return new File(getApplicationDirectory(), path);
-    }
-
-    public static File getUserFile(String path) {
-        return getUserFile(path, true);
-    }
-
-    public static File getUserDir(String path) {
-        return getUserDir(path, true);
     }
 
     /**
@@ -697,81 +632,7 @@ public class Base {
                 }
             }
         }
-        editor.setEnabled(true);
-    }
-
-    public static void enableAllOpenWindows() {
-        for (final Window window : Base.getMainWindow().getOwnedWindows()) {
-            if (window.getName().equals("mainWindow")) {
-                //|| win[i].getName().equals("Autonomous")
-                if (printPaused) {
-                    window.setEnabled(false);
-                } else {
-                    window.setEnabled(true);
-                }
-            } else {
-                window.setEnabled(true);
-            }
-        }
-
-    }
-
-    public static void bringAllWindowsToFront() {
-        bringMainWindowOK();
-        for (final Window window : Base.getMainWindow().getOwnedWindows()) {
-            window.toFront();
-            window.requestFocusInWindow();
-        }
-    }
-
-    public static void bringMainWindowOK() {
-        Base.getMainWindow().setFocusable(true);
-        Base.getMainWindow().setFocusableWindowState(true);
-    }
-
-    public static void setMainWindowNOK() {
-        Base.getMainWindow().setFocusable(false);
-        Base.getMainWindow().setFocusableWindowState(false);
-    }
-
-    /**
-     * Checks if string is a numeric number
-     *
-     * @param str
-     * @return boolean <li> true, if it is numeric
-     * <li> false, if not
-     */
-    public static boolean isNumeric(String str) {
-        return str.matches("-?\\d+(\\.\\d+)?");
-        //match a number with optional '-' and decimal '.'
-        // not working with arabic digits
-    }
-    /**
-     * Singleton NumberFormat used for parsing and displaying numbers to GUI in
-     * the localized format. Use for all non-GCode, numbers output and input.
-     */
-    private static final NumberFormat localNF = NumberFormat.getInstance();
-
-    public static NumberFormat getLocalFormat() {
-        return localNF;
-    }
-    /**
-     * Singleton Gcode NumberFormat: Unsed for writing the correct precision
-     * strings when generating gcode (minimum one decimal places) using . as
-     * decimal separator
-     */
-    private static final NumberFormat gcodeNF;
-
-    static {
-        // We don't use DFS.getInstance here to maintain compatibility with Java 5
-        DecimalFormatSymbols dfs;
-        gcodeNF = new DecimalFormat("##0.0##");
-        dfs = ((DecimalFormat) gcodeNF).getDecimalFormatSymbols();
-        dfs.setDecimalSeparator('.');
-    }
-
-    public static NumberFormat getGcodeFormat() {
-        return gcodeNF;
+        MAIN_WINDOW.setEnabled(true);
     }
 
     /**
@@ -808,67 +669,11 @@ public class Base {
         return f;
     }
 
-    public static File getUserDir(String path, boolean autoCopy) {
-        if (path.contains("..")) {
-            //Base.logger.log(Level.INFO, "Attempted to access parent directory in {0}, skipping", path);
-            return null;
-        }
-        // First look in the user's local .replicatorG directory for the path.
-        File f = new File(getUserDirectory(), path);
-        // Make the parent file if not already there
-        File dir = f.getParentFile();
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        if (autoCopy && !f.exists()) {
-            // Check if there's an application-level version
-            File original = getApplicationFile(path);
-            // If so, copy it over
-            if (original.exists()) {
-                try {
-                    Base.copyDir(original, f);
-                } catch (IOException ioe) {
-                    //Base.logger.log(Level.SEVERE, "Couldn't copy " + path + " to your local .replicatorG directory", f);
-                }
-            }
-        }
-        return f;
-    }
-
-    public static Font getFontPref(String name, String defaultValue) {
-        String s = defaultValue;
-        //preferences.get(name, defaultValue);
-        StringTokenizer st = new StringTokenizer(s, ",");
-        String fontname = st.nextToken();
-        String fontstyle = st.nextToken();
-        return new Font(fontname,
-                ((fontstyle.contains("bold")) ? Font.BOLD : 1)
-                | ((fontstyle.contains("italic")) ? Font.ITALIC
-                : 0), Integer.parseInt(st.nextToken()));
-    }
-
-    public static Color getColorPref(String name, String defaultValue) {
-        String s = defaultValue;
-        //preferences.get(name, defaultValue);
-        Color parsed = null;
-        if ((s != null) && (s.indexOf("#") == 0)) {
-            try {
-                int v = Integer.parseInt(s.substring(1), 16);
-                parsed = new Color(v);
-            } catch (Exception e) {
-            }
-        }
-        return parsed;
-    }
     /**
      * The main UI window.
      */
-    static MainWindow editor = null;
+    private static final MainWindow MAIN_WINDOW = new MainWindow();
 
-    public static MainWindow getEditor() {
-        return editor;
-    }
-    private static final NotificationHandler notificationHandler = null;
     private static final String[] supportedExtensions = {
         "stl", "bee"
     };
@@ -884,7 +689,7 @@ public class Base {
         return split[split.length - 1];
     }
 
-    public static boolean supportedExtension(String path) {
+    private static boolean supportedExtension(String path) {
         String suffix = getExtension(path);
         for (final String s : supportedExtensions) {
             if (s.equals(suffix)) {
@@ -994,9 +799,6 @@ public class Base {
 
         writeLogHeader();
 
-        // Properties file init
-        propertiesFile = openFileProperties();
-
         // Loads properties at the beginning
         loadProperties();
 
@@ -1040,18 +842,19 @@ public class Base {
         // use native popups so they don't look so crappy on osx
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
+        //MAIN_WINDOW = new MainWindow();
+
         SwingUtilities.invokeLater(() -> {
             final WelcomeSplash welcomeSplash;
-            
+
             // build the editor object
-            editor = new MainWindow();
             writeLog("Main Window initialized", this.getClass());
 //                notificationHandler = NotificationHandler.Factory.getHandler(editor, Boolean.valueOf(ProperDefault.get("ui.preferSystemTrayNotifications")));
-            editor.restorePreferences();
+            MAIN_WINDOW.restorePreferences();
             writeLog("Preferences restored", this.getClass());
             // add shutdown hook to store preferences
             Runtime.getRuntime().addShutdownHook(new Thread("Shutdown Hook") {
-                final private MainWindow w = editor;
+                final private MainWindow w = MAIN_WINDOW;
 
                 @Override
                 public void run() {
@@ -1059,11 +862,11 @@ public class Base {
                 }
             });
 //                Languager.printXML();
-            editor.loadMachine();
+            MAIN_WINDOW.loadMachine();
             writeLog("Machine Loaded", this.getClass());
             // show the window
-            editor.setVisible(false);
-            welcomeSplash = new WelcomeSplash(editor);
+            MAIN_WINDOW.setVisible(false);
+            welcomeSplash = new WelcomeSplash(MAIN_WINDOW);
             welcomeSplash.setVisible(true);
 
 //                buildLogFile(false);
@@ -1100,88 +903,6 @@ public class Base {
         return PLATFORM == Platform.LINUX;
     }
 
-    /**
-     * Registers key events for a Ctrl-W and ESC with an ActionListener that
-     * will take care of disposing the window.
-     *
-     * @param root
-     * @param disposer
-     */
-    public static void registerWindowCloseKeys(JRootPane root, // Window
-            // window,
-            ActionListener disposer) {
-
-        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        root.registerKeyboardAction(disposer, stroke,
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        stroke = KeyStroke.getKeyStroke('W', modifiers);
-        root.registerKeyboardAction(disposer, stroke,
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-
-    /**
-     * Show an error message that's actually fatal to the program. This is an
-     * error that can't be recovered. Use showWarning() for errors that allow
-     * ReplicatorG to continue running.
-     *
-     * @param title
-     * @param message
-     * @param e
-     */
-    public static void quitWithError(String title, String message, Throwable e) {
-
-        notificationHandler.showError(title, message, e);
-
-        if (e != null) {
-            Base.writeLog(e.getMessage(), Base.class);
-        }
-        System.exit(1);
-    }
-
-    public static String getContents(String what) {
-        File appBase = Base.getApplicationDirectory();
-        return appBase.getAbsolutePath() + File.separator + what;
-    }
-
-    public static String getLibContents(String what) {
-        /*
-         * On MacOSX, the replicatorg.app-resources property points to the
-         * resources directory inside the app bundle. On other platforms it's
-         * not set.
-         */
-        String appResources = System.getProperty("replicatorg.app-resources");
-        if (appResources != null) {
-            return appResources + File.separator + what;
-        } else {
-            return getContents("lib" + File.separator + what);
-        }
-    }
-
-    /**
-     * We need to load animated .gifs through this mechanism vs. getImage due to
-     * a number of bugs in Java's image loading routines.
-     *
-     * @param name The path of the image
-     * @param who The component that will use the image
-     * @return the loaded image object
-     */
-    public static Image getDirectImage(String name, Component who) {
-        Image image = null;
-
-        // try to get the URL as a system resource
-        URL url = ClassLoader.getSystemResource(name);
-        try {
-            image = Toolkit.getDefaultToolkit().createImage(url);
-            MediaTracker tracker = new MediaTracker(who);
-            tracker.addImage(image, 0);
-            tracker.waitForAll();
-        } catch (InterruptedException e) {
-        }
-        return image;
-    }
-
     public static BufferedImage getImage(String name, Component who) {
         BufferedImage image = null;
 
@@ -1204,10 +925,6 @@ public class Base {
         //Base.logger.log(Level.FINE, "Could not load image: " + name, iae);
 
         return image;
-    }
-
-    public static InputStream getStream(String filename) throws IOException {
-        return new FileInputStream(getLibContents(filename));
     }
 
     // ...................................................................
@@ -1263,7 +980,7 @@ public class Base {
     }
 
     public static MainWindow getMainWindow() {
-        return editor;
+        return MAIN_WINDOW;
     }
 
     public static void resetPrintingFlags() {

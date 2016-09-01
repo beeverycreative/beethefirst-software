@@ -388,11 +388,9 @@ public class ControlPanel extends BaseDialog {
         }
         inputValidationThread.cancel();
         getInitialValuesThread.cancel();
-        Base.getMainWindow().setEnabled(true);
 
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
         dispose();
-        Base.bringAllWindowsToFront();
     }
 
     private void startMovementTimer(MovDir whereTo) {
@@ -1662,6 +1660,7 @@ public class ControlPanel extends BaseDialog {
 
     private void bCurrentPositionMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCurrentPositionMouseReleased
         driver.dispatchCommand("M603");
+        driver.dispatchCommand("M1030");
         zHome -= Double.parseDouble(zTextFieldValue.getText());
         zTextFieldValue.setText(String.format(Locale.US, "%3.3f", 0.0));
     }//GEN-LAST:event_bCurrentPositionMouseReleased

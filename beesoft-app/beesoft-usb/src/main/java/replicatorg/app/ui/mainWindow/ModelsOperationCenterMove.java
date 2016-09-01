@@ -331,13 +331,10 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
             if (nPickedModels > 0) {
                 double xValue = 0.0;
 
-                if (!(jTextField4.getText().length() == 0)) {
-
-                    if (Base.isNumeric(jTextField4.getText())) {
-                        xValue = UnitsAndNumbers.sGetDecimalStringAnyLocaleAsDouble(jTextField4.getText());
-                    } else {
-                        jTextField4.setText("");
-                    }
+                try {
+                    xValue = Double.parseDouble(jTextField4.getText());
+                } catch (NullPointerException | NumberFormatException ex) {
+                    jTextField4.setText("");
                 }
 
                 if (ProperDefault.get("measures").equals("inches")) {
@@ -360,12 +357,10 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
             if (nPickedModels > 0) {
                 double yValue = 0.0;
 
-                if (!(jTextField5.getText().length() == 0)) {
-                    if (Base.isNumeric(jTextField5.getText())) {
-                        yValue = Double.parseDouble(jTextField5.getText());
-                    } else {
-                        jTextField5.setText("");
-                    }
+                try {
+                    yValue = Double.parseDouble(jTextField5.getText());
+                } catch (NullPointerException | NumberFormatException ex) {
+                    jTextField5.setText("");
                 }
 
                 if (ProperDefault.get("measures").equals("inches")) {
@@ -389,12 +384,10 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
             if (nPickedModels > 0) {
                 double zValue = 0.0;
 
-                if (!(jTextField6.getText().length() == 0)) {
-                    if (Base.isNumeric(jTextField6.getText())) {
-                        zValue = Double.parseDouble(jTextField6.getText());
-                    } else {
-                        jTextField6.setText("");
-                    }
+                try {
+                    zValue = Double.parseDouble(jTextField6.getText());
+                } catch (NullPointerException | NumberFormatException ex) {
+                    jTextField6.setText("");
                 }
 
                 if (ProperDefault.get("measures").equals("inches")) {
@@ -512,5 +505,4 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
     }
-
 }

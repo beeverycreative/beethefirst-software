@@ -549,7 +549,6 @@ public class UpdateChecker extends BaseDialog {
     private void doExit() {
         dispose();
         fileFromServer.delete();
-        Base.bringAllWindowsToFront();
     }
 
     @SuppressWarnings("unchecked")
@@ -743,7 +742,6 @@ public class UpdateChecker extends BaseDialog {
                 Base.writeLog("Searching for new software version. Cant connect to internet", this.getClass());
             }
             dispose();
-            Base.bringAllWindowsToFront();
             //Closes BEESOFT
             System.exit(0);
         }

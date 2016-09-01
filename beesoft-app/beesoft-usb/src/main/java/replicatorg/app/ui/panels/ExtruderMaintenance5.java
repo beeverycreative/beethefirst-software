@@ -35,7 +35,6 @@ public class ExtruderMaintenance5 extends BaseDialog {
         setFont();
         setTextLanguage();
         centerOnScreen();
-        Base.getMainWindow().setEnabled(false);
         if (!driver.getLastStatusMessage().contains("W:Load/Unload")) {
             moveToPosition();
         }

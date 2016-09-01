@@ -56,7 +56,6 @@ public class CalibrationPrintTest extends BaseDialog {
                 tempThread.kill();
             }
         });
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private int getTemperatureGoal() {
@@ -152,7 +151,6 @@ public class CalibrationPrintTest extends BaseDialog {
     }
 
     private void evaluateInitialConditions() {
-        Base.getMainWindow().setEnabled(false);
         disableMessageDisplay();
         driver.setTemperature(temperatureGoal + 5);
         jProgressBar1.setMaximum(temperatureGoal);
@@ -162,7 +160,6 @@ public class CalibrationPrintTest extends BaseDialog {
     private void doCancel() {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         driver.dispatchCommand("M112", COM.NO_RESPONSE);
-        Base.bringAllWindowsToFront();
         dispose();
     }
 

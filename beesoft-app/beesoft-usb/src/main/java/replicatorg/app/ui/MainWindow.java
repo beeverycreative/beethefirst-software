@@ -120,8 +120,6 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         bed = PrintBed.makePrintBed(null);
         cardPanel.setBackground(new Color(255, 255, 255));
         messagesPP.setVisible(false);
-//        camCtrl = new CameraControl(this, false);
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
 
         super.getContentPane().addComponentListener(new ComponentListener() {
             @Override
@@ -143,7 +141,6 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
             public void componentHidden(ComponentEvent e) {
             }
         });
-        
 
         // add listener to handle window close box hit event
         super.addWindowListener(new WindowAdapter() {
@@ -306,7 +303,9 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         this.setSize(d);
         cardPanel.setSize(wth, hth);
         //canvas.getPanel().setSize(this.realWidth - 200 - 265, this.realHeight);
-        canvas.setCanvasSize(new Dimension(wth, hth)); //cardPanel.getSize()
+        if (canvas != null) {
+            canvas.setCanvasSize(new Dimension(wth, hth)); //cardPanel.getSize()
+        }
     }
 
     /**
@@ -481,13 +480,11 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
             if (machine.getDriver().getMachine().getMachineBusy()) {
                 editor.showFeedBackMessage("moving");
             } else//&& Base.isPrinting == false
-            {
-                if (editor.validatePrintConditions()
+             if (editor.validatePrintConditions()
                         || Boolean.valueOf(ProperDefault.get("localPrint"))) {
                     PrintPanel p = new PrintPanel();
                     p.setVisible(true);
                 }
-            }
         });
         menu.add(item);
 
@@ -812,12 +809,6 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         return menuItem;
     }
 
-    public void handleMaintenance() {
-        this.setEnabled(false);
-        Maintenance p = new Maintenance();
-        p.setVisible(true);
-    }
-
     public void handleCAMDelete() {
         if (bed.getPickedModels().size() > 0) {
             canvas.updateBedDeletedModels(bed);
@@ -961,11 +952,9 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
                     if (rv == JFileChooser.APPROVE_OPTION) {
                         ProperDefault.put("ui.open_dir0", fc.getCurrentDirectory().getAbsolutePath());
                         Base.getMainWindow().getButtons().updatePressedStateButton("models");
-                        Base.getMainWindow().setEnabled(true);
                         return fc.getSelectedFile().getAbsolutePath();
                     } else {
                         Base.getMainWindow().getButtons().updatePressedStateButton("models");
-                        Base.getMainWindow().setEnabled(true);
                         return null;
                     }
 

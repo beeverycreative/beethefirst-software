@@ -101,8 +101,6 @@ public class Maintenance extends BaseDialog {
     private void doExit() {
         dispose();
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.enableAllOpenWindows();
-        Base.bringAllWindowsToFront();
     }
 
     @SuppressWarnings("unchecked")

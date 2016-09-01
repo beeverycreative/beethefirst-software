@@ -371,12 +371,10 @@ public class About extends BaseDialog {
 
     private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
         dispose();
-        Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel18MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         dispose();
-        Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jBootloaderTooltipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseEntered

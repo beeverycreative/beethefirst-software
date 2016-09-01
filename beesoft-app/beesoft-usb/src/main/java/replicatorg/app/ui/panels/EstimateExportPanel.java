@@ -522,7 +522,6 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         dispose();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
-        Base.bringAllWindowsToFront();
     }
 
     /**

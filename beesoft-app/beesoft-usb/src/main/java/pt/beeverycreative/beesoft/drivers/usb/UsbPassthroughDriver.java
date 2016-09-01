@@ -191,7 +191,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 Warning firmwareOutDate = new Warning("FirmwareOutDateVersion", true);
                 firmwareOutDate.setVisible(true);
 
-                Base.getMainWindow().setEnabled(false);
                 // Sleep forever, until restart.
                 while (true) {
                     hiccup(100);
@@ -1235,7 +1234,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             Warning firmwareOutDate = new Warning("FirmwareOutDateVersion", true);
             firmwareOutDate.setVisible(true);
 
-            Base.getMainWindow().setEnabled(false);
             // Sleep forever, until restart.
             while (true) {
                 hiccup(3000);

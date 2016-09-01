@@ -36,7 +36,6 @@ public class CalibrationScrew2 extends BaseDialog {
         enableDrag();
         disableMessageDisplay();
         centerOnScreen();
-        Base.getMainWindow().setEnabled(false);
         moveToC();
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -48,7 +47,6 @@ public class CalibrationScrew2 extends BaseDialog {
                 busyThread.kill();
             }
         });
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -105,7 +103,6 @@ public class CalibrationScrew2 extends BaseDialog {
     private void doCancel() {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
-        Base.bringAllWindowsToFront();
         dispose();
     }
 

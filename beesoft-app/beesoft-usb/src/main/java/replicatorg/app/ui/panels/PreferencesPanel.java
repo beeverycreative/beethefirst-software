@@ -47,7 +47,6 @@ public class PreferencesPanel extends BaseDialog {
         buttonGroup1.add(radioInches);
 
         enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -111,7 +110,6 @@ public class PreferencesPanel extends BaseDialog {
         dispose();
 //        Base.writeConfig();
 //        Base.loadProperties();
-        Base.bringAllWindowsToFront();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -395,7 +393,6 @@ public class PreferencesPanel extends BaseDialog {
         Base.writeConfig();
         Base.loadProperties();
         Base.getMainWindow().getCanvas().updateTool();
-        Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel12MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed

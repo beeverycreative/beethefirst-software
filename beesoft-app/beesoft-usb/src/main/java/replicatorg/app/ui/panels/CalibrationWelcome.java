@@ -139,7 +139,6 @@ public class CalibrationWelcome extends BaseDialog {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         driver.dispatchCommand("G90"); // absolute positioning
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
-        Base.bringAllWindowsToFront();
         dispose();
     }
 

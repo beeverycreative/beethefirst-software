@@ -2,8 +2,6 @@ package replicatorg.app.ui.popups;
 
 import java.awt.Dialog;
 import java.awt.Window;
-import javax.swing.ImageIcon;
-import replicatorg.app.Base;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.panels.BaseDialog;
 
@@ -31,7 +29,6 @@ public class InformationTooltip extends BaseDialog {
         enableDrag();
         centerOnScreen();
         enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     @SuppressWarnings("unchecked")

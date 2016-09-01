@@ -47,7 +47,6 @@ public class CalibrationFinish extends BaseDialog {
             }
         });
 
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
 
     private void setFont() {
@@ -103,7 +102,6 @@ public class CalibrationFinish extends BaseDialog {
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         dispose();
-        Base.bringAllWindowsToFront();
     }
 
     @SuppressWarnings("unchecked")

@@ -20,8 +20,8 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class ModelsOperationCenterRotate extends javax.swing.JPanel {
 
+    private static final double CAMBIO_FACTOR = 0.0174532925;
     private boolean fiveDegrees_pressed;
-    private double cambioFactor = 0.0174532925;
 
     public ModelsOperationCenterRotate() {
         initComponents();
@@ -541,14 +541,12 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             if (nPickedModels > 0) {
                 double xValue = 0.0;
 
-                if (!(jTextField4.getText().length() == 0)) {
-                    if (Base.isNumeric(jTextField4.getText())) {
-                        xValue = Double.parseDouble(jTextField4.getText());
-                    } else {
-                        jTextField4.setText("");
-                    }
+                try {
+                    xValue = Double.parseDouble(jTextField4.getText());
+                } catch (NullPointerException | NumberFormatException ex) {
+                    jTextField4.setText("");
                 }
-                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(1d, 0d, 0d, xValue * cambioFactor));
+                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(1d, 0d, 0d, xValue * CAMBIO_FACTOR));
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");
             }
@@ -563,14 +561,13 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             if (nPickedModels > 0) {
                 double yValue = 0.0;
 
-                if (!(jTextField5.getText().length() == 0)) {
-                    if (Base.isNumeric(jTextField5.getText())) {
-                        yValue = Double.parseDouble(jTextField5.getText());
-                    } else {
-                        jTextField5.setText("");
-                    }
+                try {
+                    yValue = Double.parseDouble(jTextField5.getText());
+                } catch (NullPointerException | NumberFormatException ex) {
+                    jTextField5.setText("");
                 }
-                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(0d, 1d, 0d, yValue * cambioFactor));
+
+                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(0d, 1d, 0d, yValue * CAMBIO_FACTOR));
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");
             }
@@ -586,14 +583,13 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             if (nPickedModels > 0) {
                 double zValue = 0.0;
 
-                if (!(jTextField6.getText().length() == 0)) {
-                    if (Base.isNumeric(jTextField6.getText())) {
-                        zValue = Double.parseDouble(jTextField6.getText());
-                    } else {
-                        jTextField6.setText("");
-                    }
+                try {
+                    zValue = Double.parseDouble(jTextField6.getText());
+                } catch (NullPointerException | NumberFormatException ex) {
+                    jTextField6.setText("");
                 }
-                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(0d, 0d, 1d, zValue * cambioFactor));
+
+                Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(0d, 0d, 1d, zValue * CAMBIO_FACTOR));
             } else {
                 Base.getMainWindow().showFeedBackMessage("modelNotPicked");
             }
@@ -733,4 +729,5 @@ public class ModelsOperationCenterRotate extends javax.swing.JPanel {
             Base.getMainWindow().showFeedBackMessage("modelNotPicked");
         }
     }
+
 }

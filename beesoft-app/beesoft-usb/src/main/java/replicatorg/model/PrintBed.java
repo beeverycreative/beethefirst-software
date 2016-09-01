@@ -591,9 +591,6 @@ public class PrintBed implements Serializable {
                 return true;
             }
 
-        } else // Cancel operation for first save
-        {
-            Base.getMainWindow().setEnabled(true);
         }
 
         return false;

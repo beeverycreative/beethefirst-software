@@ -34,7 +34,6 @@ public class CalibrationScrew1 extends BaseDialog {
         setFont();
         setTextLanguage();
         enableDrag();
-        Base.getMainWindow().setEnabled(false);
         centerOnScreen();
         disableMessageDisplay();
         moveToB();
@@ -102,7 +101,6 @@ public class CalibrationScrew1 extends BaseDialog {
     private void doCancel() {
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
         driver.dispatchCommand("G28", COM.NO_RESPONSE);
-        Base.bringAllWindowsToFront();
         dispose();
     }
 
