@@ -90,16 +90,6 @@ public enum PrinterInfo {
         return UNKNOWN;
     }
 
-    public static PrinterInfo getDeviceByFilamentName(String filamentName) {
-        for (PrinterInfo printer : PrinterInfo.values()) {
-            if (printer.filamentCode.equals(filamentName)) {
-                return printer;
-            }
-        }
-
-        return UNKNOWN;
-    }
-
     public static String filamentCodeToFormalString(String filamentCode) {
 
         if (filamentCode.equals(PrinterInfo.BEETHEFIRST_PLUS.filamentCode)) {

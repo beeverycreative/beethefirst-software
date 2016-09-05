@@ -12,6 +12,7 @@
     <version>3.14.0</version>
     <name>beesoft-usb</name>
     <properties>
+        <skipTests>false</skipTests>
         
         <!-- BEESOFT software / firmware versions -->
         <!-- if release.type = 'alpha' the app internally will append the 
@@ -123,7 +124,19 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <skipTests>${skipTests}</skipTests>
+                    <mainClass>replicatorg.app.Base</mainClass>
+                    <executable>java</executable>
+                    <!--workingDirectory>${project.basedir}/target/linux-${project.release.name}</workingDirectory -->
+                    <workingDirectory>${project.basedir}/src/main/resources</workingDirectory>
+                    <arguments>                        
+                        <argument>-ea</argument>
+                        <argument>-Xmx2048m</argument>
+                        <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                        <argument>-classpath</argument>
+                        <classpath />
+                        <argument>replicatorg.app.Base</argument>
+                    </arguments>
                 </configuration>
             </plugin>                             
             <plugin>
@@ -531,7 +544,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
