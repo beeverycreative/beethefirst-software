@@ -236,6 +236,12 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         cardPanel.remove(((BorderLayout) cardPanel.getLayout()).getLayoutComponent(BorderLayout.WEST));
         cardPanel.add(newMOC, BorderLayout.WEST);
         cardPanel.validate();
+        java.awt.EventQueue.invokeLater(() -> {
+            setVisible(true);
+            toFront();
+            requestFocus();
+            repaint();
+        });
 
     }
 
@@ -243,6 +249,12 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         cardPanel.remove(((BorderLayout) cardPanel.getLayout()).getLayoutComponent(BorderLayout.EAST));
         cardPanel.add(newDC, BorderLayout.EAST);
         cardPanel.validate();
+        java.awt.EventQueue.invokeLater(() -> {
+            setVisible(true);
+            toFront();
+            requestFocus();
+            repaint();
+        });
     }
 
     public void showFeedBackMessage(String message) {
@@ -480,11 +492,11 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
             if (machine.getDriver().getMachine().getMachineBusy()) {
                 editor.showFeedBackMessage("moving");
             } else//&& Base.isPrinting == false
-             if (editor.validatePrintConditions()
-                        || Boolean.valueOf(ProperDefault.get("localPrint"))) {
-                    PrintPanel p = new PrintPanel();
-                    p.setVisible(true);
-                }
+            if (editor.validatePrintConditions()
+                    || Boolean.valueOf(ProperDefault.get("localPrint"))) {
+                PrintPanel p = new PrintPanel();
+                p.setVisible(true);
+            }
         });
         menu.add(item);
 
@@ -1287,5 +1299,16 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
             m.getEditer().updateModelPicked();
             this.getCanvas().evaluateModelsBed();
         }
+    }
+
+    @Override
+    public void toFront() {
+        int sta = super.getExtendedState() & ~JFrame.ICONIFIED & JFrame.NORMAL;
+
+        super.setExtendedState(sta);
+        super.setAlwaysOnTop(true);
+        super.toFront();
+        super.requestFocus();
+        super.setAlwaysOnTop(false);
     }
 }
