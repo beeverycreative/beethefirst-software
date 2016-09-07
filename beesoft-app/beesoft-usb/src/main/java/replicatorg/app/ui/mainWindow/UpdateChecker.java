@@ -319,13 +319,15 @@ public class UpdateChecker extends BaseDialog {
     }
 
     private void evaluateInitialConditions() {
+        copyFilamentProfiles();
+        new Thread(this::updateFilaments).start();
+    }
+
+    public void downloadUpdateFile() {
         updateStableAvailable = false;
+        updateBetaAvailable = false;
         filenameToDownload = null;
         fileFromServer = getFileFromServer();
-        copyFilamentProfiles();
-
-        new Thread(this::updateFilaments).start();
-
         if (fileFromServer != null) {
             if (seekUpdates()) {
                 bDownload.setEnabled(true);
@@ -442,7 +444,7 @@ public class UpdateChecker extends BaseDialog {
             try {
                 // if the operating system is actually 32 bits, try this
                 return Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\BEESOFT\\", "Win10Driver");
-            } catch(Win32Exception ex2) {
+            } catch (Win32Exception ex2) {
                 Base.writeLog("Failed in obtaining from registry which driver to use, will give the standard version to user.", this.getClass());
                 return false;
             }

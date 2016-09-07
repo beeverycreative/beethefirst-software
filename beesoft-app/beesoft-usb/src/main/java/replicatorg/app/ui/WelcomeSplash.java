@@ -109,23 +109,10 @@ public class WelcomeSplash extends javax.swing.JFrame {
      * Monitor changes in MainWindow and performs several operations at startup.
      */
     public void changeState() {
-        final UpdateChecker advise = new UpdateChecker();
 
         //this.setVisible(false);
         dispose();
         Base.writeLog("BEESOFT main window loaded ... ", this.getClass());
-
-        if (advise.isUpdateStableAvailable()) {
-            advise.setMessage("AvailableStable");
-            advise.setAlwaysOnTop(true);
-            advise.setVisible(true);
-        } else if (advise.isUpdateBetaAvailable()) {
-            advise.setMessage("AvailableBeta");
-            advise.setAlwaysOnTop(true);
-            advise.setVisible(true);
-        } 
-        
-        advise.dispose();
 
         Base.setWelcomeSplashVisible(false);
         window.setVisible(true);
