@@ -71,6 +71,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.CategoriesList;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.Languager;
@@ -508,12 +509,17 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
         item.setText(Languager.getTagValue(1, "ApplicationMenus", "GCode_Import"));
         item.addActionListener((ActionEvent e) -> {
-            Driver driver = getMachineInterface().getDriver();
-
+            final Driver driver = getMachineInterface().getDriver();
+            final String filamentCode = driver.getMachine().getCoilText();
+            
             if (Base.isPrinting) {
                 Base.getMainWindow().showFeedBackMessage("btfPrinting");
             } else if (!driver.isInitialized()) {
                 Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+            } else if (filamentCode.equals(FilamentControler.NO_FILAMENT) 
+                    || filamentCode.equals(FilamentControler.NO_FILAMENT_2) 
+                    || !FilamentControler.colorExistsLocally(filamentCode)) {
+                Base.getMainWindow().showFeedBackMessage("unknownColor");
             } else {
                 handleGCodeImport();
             }
