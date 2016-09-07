@@ -41,7 +41,7 @@ import replicatorg.machine.model.MachineModel;
 public class PrintPanel extends BasePrintEstimateExport {
 
     private static final String FORMAT = "%2d:%2d";
-    private static final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final MachineModel machineModel = driver.getMachine();
     private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<>();
     private final PrinterInfo connectedPrinter = driver.getConnectedDevice();
@@ -1536,12 +1536,9 @@ public class PrintPanel extends BasePrintEstimateExport {
                 estimateExportThread.start();
             }
         } else if (bEstimate.isEnabled() == false) { // otherwise warn the user that there are no models loaded
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (nModels == 0) {
-                        Base.getMainWindow().showFeedBackMessage("noModelError");
-                    }
+            Thread thread = new Thread(() -> {
+                if (nModels == 0) {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
                 }
             });
             thread.start();

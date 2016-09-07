@@ -693,8 +693,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //          sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());    
         canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
         //canvas.setSize((int)((d.getWidth()-200-265)/2),(int)(d.getHeight()/2));
-        canvas.setFocusable(true);
-        canvas.requestFocus();
     }
 
     public void setCanvasSize(Dimension d) {

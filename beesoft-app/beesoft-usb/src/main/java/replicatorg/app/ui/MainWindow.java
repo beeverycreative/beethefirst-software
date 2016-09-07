@@ -65,6 +65,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowFocusListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -88,7 +89,7 @@ import replicatorg.util.UnitsAndNumbers;
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
  */
-public final class MainWindow extends JFrame implements MRJQuitHandler {
+public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFocusListener {
 
     private final MachineLoader machineLoader = Base.getMachineLoader();
     private final JPanel cardPanel = new JPanel(new BorderLayout());
@@ -198,6 +199,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         pane.add(cardPanel, "growx,growy,shrinkx,shrinky");
         super.setLocationRelativeTo(null);
         super.pack();
+        super.addWindowFocusListener(MainWindow.this);
         // Have UI elements listen to machine state.
         //machineLoader.addMachineListener(this);
         //machineLoader.addMachineListener(machineStatusPanel);
@@ -237,29 +239,31 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         cardPanel.remove(((BorderLayout) cardPanel.getLayout()).getLayoutComponent(BorderLayout.WEST));
         cardPanel.add(newMOC, BorderLayout.WEST);
         cardPanel.validate();
+
         java.awt.EventQueue.invokeLater(() -> {
-            if (!Base.isWelcomeSplashVisible()) {
+            if (Base.getMainWindow().isActive()) {
                 setVisible(true);
                 toFront();
                 requestFocus();
                 repaint();
             }
         });
-
     }
 
     public void updateDetailsCenter(JPanel newDC) {
         cardPanel.remove(((BorderLayout) cardPanel.getLayout()).getLayoutComponent(BorderLayout.EAST));
         cardPanel.add(newDC, BorderLayout.EAST);
         cardPanel.validate();
+
         java.awt.EventQueue.invokeLater(() -> {
-            if (!Base.isWelcomeSplashVisible()) {
+            if (Base.getMainWindow().isActive()) {
                 setVisible(true);
                 toFront();
                 requestFocus();
                 repaint();
             }
         });
+
     }
 
     public void showFeedBackMessage(String message) {
@@ -511,13 +515,13 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         item.addActionListener((ActionEvent e) -> {
             final Driver driver = getMachineInterface().getDriver();
             final String filamentCode = driver.getMachine().getCoilText();
-            
+
             if (Base.isPrinting) {
                 Base.getMainWindow().showFeedBackMessage("btfPrinting");
             } else if (!driver.isInitialized()) {
                 Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-            } else if (filamentCode.equals(FilamentControler.NO_FILAMENT) 
-                    || filamentCode.equals(FilamentControler.NO_FILAMENT_2) 
+            } else if (filamentCode.equals(FilamentControler.NO_FILAMENT)
+                    || filamentCode.equals(FilamentControler.NO_FILAMENT_2)
                     || !FilamentControler.colorExistsLocally(filamentCode)) {
                 Base.getMainWindow().showFeedBackMessage("unknownColor");
             } else {
@@ -1317,5 +1321,21 @@ public final class MainWindow extends JFrame implements MRJQuitHandler {
         super.toFront();
         super.requestFocus();
         super.setAlwaysOnTop(false);
+    }
+
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+        java.awt.EventQueue.invokeLater(() -> {
+            if (Base.getMainWindow().isActive()) {
+                setVisible(true);
+                toFront();
+                requestFocus();
+                repaint();
+            }
+        });
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {
     }
 }
