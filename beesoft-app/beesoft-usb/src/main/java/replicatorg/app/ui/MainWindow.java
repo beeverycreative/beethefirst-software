@@ -452,12 +452,10 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFo
                     }
                 } else if (answer == JOptionPane.NO_OPTION) {
                     handleOpenScene(null);
-                    updateModelsOperationCenter(new ModelsOperationCenter());
                 }
 
             } else {
                 handleOpenScene(null);
-                updateModelsOperationCenter(new ModelsOperationCenter());
             }
         });
 
@@ -1325,14 +1323,23 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFo
 
     @Override
     public void windowGainedFocus(WindowEvent e) {
-        java.awt.EventQueue.invokeLater(() -> {
-            if (Base.getMainWindow().isActive()) {
-                setVisible(true);
-                toFront();
-                requestFocus();
-                repaint();
+        new Thread() {
+            @Override
+            public void run() {
+                // very nasty way of working around the lightweight vs heavyweight problem
+                // Canvas vs JMenu
+                Base.hiccup(500);
+                java.awt.EventQueue.invokeLater(() -> {
+                    if (Base.getMainWindow().isActive()) {
+                        setVisible(true);
+                        toFront();
+                        requestFocus();
+                        repaint();
+                    }
+                });
             }
-        });
+        }.start();
+
     }
 
     @Override
