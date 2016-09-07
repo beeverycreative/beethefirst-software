@@ -185,6 +185,7 @@
                   <Image iconType="3" name="/replicatorg/app/ui/mainWindow/b_simple_7.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Maintenance"/>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
               </Properties>
               <Events>

@@ -41,7 +41,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
         bModels.setText(Languager.getTagValue(1, "MainWindowButtons", "Models"));
         bMaintenance.setText(Languager.getTagValue(1, "MainWindowButtons", "Maintenance"));
         bQuickGuide.setText(Languager.getTagValue(1, "MainWindowButtons", "QuickWizard"));
-        bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
+        bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "EstimateExport"));
         jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
     }
 
@@ -50,21 +50,30 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     public void setMessage(String message) {
-        if (message.equals("is connecting")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusConnecting"));
-            bPrint.setEnabled(false);
-        } else if (message.equals("is connected")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
-            bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
-            printPanel = true;
-            bPrint.setEnabled(true);
-        } else if (message.equals("power saving")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
-        } else if (message.equals("is disconnected")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
-            bPrint.setText("Estimate / Export");
-            printPanel = false;
-            bPrint.setEnabled(true);
+        switch (message) {
+            case "is connecting":
+                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusConnecting"));
+                bPrint.setEnabled(false);
+                break;
+            case "is connected":
+                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
+                bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
+                printPanel = true;
+                bPrint.setEnabled(true);
+                bMaintenance.setEnabled(true);
+                break;
+            case "power saving":
+                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
+                break;
+            case "is disconnected":
+                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
+                bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "EstimateExport"));
+                printPanel = false;
+                bPrint.setEnabled(true);
+                bMaintenance.setEnabled(false);
+                break;
+            default:
+                break;
         }
     }
 
@@ -127,14 +136,6 @@ public class ButtonsPanel extends javax.swing.JPanel {
         if (machine != null) {
             updateFromState(machine);
         }
-    }
-
-    public void bMaintenanceSetEnabled(boolean enabled) {
-        bMaintenance.setEnabled(enabled);
-    }
-
-    public void bPrintSetEnabled(boolean enabled) {
-        bPrint.setEnabled(enabled);
     }
 
     @SuppressWarnings("unchecked")
@@ -204,6 +205,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
         bMaintenance.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/mainWindow/b_simple_7.png"))); // NOI18N
         bMaintenance.setText("Maintenance");
+        bMaintenance.setEnabled(false);
         bMaintenance.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bMaintenance.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -287,7 +289,7 @@ public class ButtonsPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
 
@@ -351,16 +353,11 @@ public class ButtonsPanel extends javax.swing.JPanel {
 
     private void bMaintenanceMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bMaintenanceMousePressed
         final Maintenance maintenance;
-        
+
         if (bMaintenance.isEnabled()) {
-            editor.updateModelsOperationCenter(new ModelsOperationCenter());
-            SceneDetailsPanel sceneDP = new SceneDetailsPanel();
-            sceneDP.updateBed(Base.getMainWindow().getBed());
-            editor.updateDetailsCenter(sceneDP);
-            Base.getMainWindow().getCanvas().unPickAll();
             maintenance = new Maintenance();
             maintenance.setVisible(true);
-        }   
+        }
     }//GEN-LAST:event_bMaintenanceMousePressed
 
     private void bQuickGuideMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuickGuideMousePressed

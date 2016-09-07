@@ -164,6 +164,7 @@
       <Maintenance value="WARTUNG"/>
       <QuickWizard value="KURZANLEITUNG"/>
       <Print value="DRUCKEN"/>
+      <EstimateExport value="Estimate / Export" />
       <Mirror value="Spiegeln"/>
       <Scale value="Skalieren"/>
       <ScaleToMax value="Skalieren zu maximal"/>

@@ -164,6 +164,7 @@
       <Maintenance value="MAINTENANCE"/>
       <QuickWizard value="GUIDE RAPIDE"/>
       <Print value="IMPRIMER"/>
+      <EstimateExport value="Estimate / Export" />
       <Mirror value="Miroir"/>
       <Scale value="Échelle"/>
       <ScaleToMax value="Échelle pour Max"/>
