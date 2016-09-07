@@ -879,7 +879,7 @@ public class Base {
                 }
             });
 //                Languager.printXML();
-            //MAIN_WINDOW.loadMachine();
+            MAIN_WINDOW.loadMachine();
             writeLog("Machine Loaded", this.getClass());
             // show the window
             MAIN_WINDOW.setVisible(false);
