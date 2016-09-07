@@ -43,9 +43,7 @@ public class PrintPanel extends BasePrintEstimateExport {
     private static final String FORMAT = "%2d:%2d";
     private static final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final MachineModel machineModel = driver.getMachine();
-    private final int nozzleType;
     private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<>();
-    private final String filament;
     private final PrinterInfo connectedPrinter = driver.getConnectedDevice();
     private JLabel lowQuality, mediumQuality, solidQuality;
     private boolean gcodeSavePressed, lastUsedRaft, lastUsedSupport,
@@ -55,13 +53,14 @@ public class PrintPanel extends BasePrintEstimateExport {
     private String lastUsedResolution, lastSelectedResolution;
     private int lastUsedDensity, nModels = 0;
     private GCodeEstimateExportThread estimateExportThread;
+    private String filament;
+    private int nozzleType;
 
     public PrintPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        nozzleType = getNozzleType();
-        filament = getCoilCode();
-        verifyCompatibleResolutions();
+        getNozzleType();
+        getCoilCode();
         initSlidersLabels();
         setFont();
         setTextLanguage();
@@ -70,7 +69,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         evaluateConditions();
         matchChanges();
         enableDrag();
-        
+
         // disabled for now
         jLabel25.setVisible(false);
         nozzleTypeLabel.setVisible(false);
@@ -104,11 +103,11 @@ public class PrintPanel extends BasePrintEstimateExport {
         }
     }
 
-    private void verifyCompatibleResolutions() {
+    private void verifyCompatibleResolutions(String filamentCode) {
         Filament fil;
         List<Resolution> resList;
 
-        fil = FilamentControler.getMatchingFilament(filament);
+        fil = FilamentControler.getMatchingFilament(filamentCode);
 
         if (fil != null) {
             resList = fil.getSupportedResolutions(driver.getConnectedDevice().filamentCode(), nozzleType);
@@ -227,7 +226,7 @@ public class PrintPanel extends BasePrintEstimateExport {
      * Get coil code from machine and system. Also prepares label with coil code
      * info.
      */
-    private String getCoilCode() {
+    private void getCoilCode() {
 
         String code;
 
@@ -253,10 +252,11 @@ public class PrintPanel extends BasePrintEstimateExport {
             jLabel22.setText(code);
         }
 
-        return code;
+        verifyCompatibleResolutions(code);
+        filament = code;
     }
 
-    private int getNozzleType() {
+    private void getNozzleType() {
         int nozzle;
 
         nozzle = machineModel.getNozzleType();
@@ -271,7 +271,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             nozzleTypeValue.setText(Float.toString(nozzle / 1000.0f)); // from microns to mm
         }
 
-        return nozzle;
+        nozzleType = nozzle;
     }
 
     /**
@@ -1436,14 +1436,11 @@ public class PrintPanel extends BasePrintEstimateExport {
                 }
             }
         } else if (bExport.isEnabled() == false) { // otherwise warn the user that there are no models loaded
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (nModels == 0) {
-                        Base.getMainWindow().showFeedBackMessage("noModelError");
-                    } else if (noFilament) {
-                        flashNoFilamentMessage();
-                    }
+            Thread thread = new Thread(() -> {
+                if (nModels == 0) {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
+                } else if (noFilament) {
+                    flashNoFilamentMessage();
                 }
             });
             thread.start();
@@ -1469,20 +1466,18 @@ public class PrintPanel extends BasePrintEstimateExport {
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         // if the printer is available, display the filament change screen
         if (bChangeFilament.isEnabled()) {
-            dispose();
-            Base.getMainWindow().getButtons().updatePressedStateButton("print");
             FilamentCodeInsertion p = new FilamentCodeInsertion();
+            this.setVisible(false);
             p.setVisible(true);
+            getCoilCode();
+            this.setVisible(true);
         } else {
             // otherwise display the appropriate status message
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (Base.getMachineLoader().isConnected() == false) {
-                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-                    } else if (Base.isPrinting) {
-                        Base.getMainWindow().showFeedBackMessage("btfPrinting");
-                    }
+            Thread thread = new Thread(() -> {
+                if (Base.getMachineLoader().isConnected() == false) {
+                    Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+                } else if (Base.isPrinting) {
+                    Base.getMainWindow().showFeedBackMessage("btfPrinting");
                 }
             });
             thread.start();
