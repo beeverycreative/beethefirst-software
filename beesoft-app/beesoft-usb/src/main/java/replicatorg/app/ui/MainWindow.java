@@ -66,6 +66,7 @@ import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -89,7 +90,7 @@ import replicatorg.util.UnitsAndNumbers;
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
  */
-public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFocusListener {
+public final class MainWindow extends JFrame implements MRJQuitHandler, WindowListener {
 
     private final MachineLoader machineLoader = Base.getMachineLoader();
     private final JPanel cardPanel = new JPanel(new BorderLayout());
@@ -199,7 +200,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFo
         pane.add(cardPanel, "growx,growy,shrinkx,shrinky");
         super.setLocationRelativeTo(null);
         super.pack();
-        super.addWindowFocusListener(MainWindow.this);
+        super.addWindowListener(MainWindow.this);
         // Have UI elements listen to machine state.
         //machineLoader.addMachineListener(this);
         //machineLoader.addMachineListener(machineStatusPanel);
@@ -499,11 +500,13 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFo
             if (machine.getDriver().getMachine().getMachineBusy()) {
                 editor.showFeedBackMessage("moving");
             } else//&& Base.isPrinting == false
-             if (editor.validatePrintConditions()
+            {
+                if (editor.validatePrintConditions()
                         || Boolean.valueOf(ProperDefault.get("localPrint"))) {
                     PrintPanel p = new PrintPanel();
                     p.setVisible(true);
                 }
+            }
         });
         menu.add(item);
 
@@ -1322,7 +1325,27 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFo
     }
 
     @Override
-    public void windowGainedFocus(WindowEvent e) {
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
         new Thread() {
             @Override
             public void run() {
@@ -1339,10 +1362,9 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowFo
                 });
             }
         }.start();
-
     }
 
     @Override
-    public void windowLostFocus(WindowEvent e) {
+    public void windowDeactivated(WindowEvent e) {
     }
 }
