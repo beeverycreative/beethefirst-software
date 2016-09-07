@@ -53,6 +53,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.MappedByteBuffer;
@@ -96,6 +98,7 @@ public class Base {
     private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private static final File BEELOG_FILE = new File(getAppDataDirectory().toString() + "/BEELOG.txt");
     private static final File COMLOG_FILE = new File(getAppDataDirectory().toString() + "/comLog.txt");
+    private static final File EXCEPTION_FILE = new File(getAppDataDirectory().toString() + "/exception.txt");
     private static final BufferedWriter LOGBW = initLog(BEELOG_FILE);
     private static final BufferedWriter COMLOGBW = initLog(COMLOG_FILE);
 
@@ -446,7 +449,7 @@ public class Base {
         try {
             LOGBW.newLine();
             LOGBW.write("[" + date + "]" + " " + message);
-            LOGBW.flush();
+            //LOGBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -473,7 +476,7 @@ public class Base {
         try {
             LOGBW.newLine();
             LOGBW.write("[" + date + "]" + " (" + logClass.getSimpleName() + ") " + message);
-            LOGBW.flush();
+            //LOGBW.flush();
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -489,10 +492,10 @@ public class Base {
         try {
             if (!message.equals("\n")) {
                 COMLOGBW.write("Timestamp: " + timeStamp + " | " + message + NEW_LINE);
-                COMLOGBW.flush();
+                //COMLOGBW.flush();
             } else {
                 COMLOGBW.newLine();
-                COMLOGBW.flush();
+                //COMLOGBW.flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(Base.class.getName()).log(Level.SEVERE, null, ex);
@@ -699,7 +702,22 @@ public class Base {
         return false;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
+
+        Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
+            final StringWriter sw = new StringWriter();
+            final BufferedWriter bw = initLog(EXCEPTION_FILE);
+            final String stacktrace;
+
+            e.printStackTrace(new PrintWriter(sw));
+            stacktrace = sw.toString();
+            System.out.println(stacktrace);
+            try {
+                bw.write(stacktrace);
+                bw.close();
+            } catch (IOException ex) {
+            }
+        });
 
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
@@ -843,7 +861,6 @@ public class Base {
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
         //MAIN_WINDOW = new MainWindow();
-
         SwingUtilities.invokeLater(() -> {
             final WelcomeSplash welcomeSplash;
 
@@ -862,7 +879,7 @@ public class Base {
                 }
             });
 //                Languager.printXML();
-            MAIN_WINDOW.loadMachine();
+            //MAIN_WINDOW.loadMachine();
             writeLog("Machine Loaded", this.getClass());
             // show the window
             MAIN_WINDOW.setVisible(false);
