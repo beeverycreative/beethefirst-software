@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
-import replicatorg.app.ui.mainWindow.UpdateChecker;
 import replicatorg.app.ui.panels.TourWelcome;
 
 /**
@@ -37,7 +36,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
      * @param wind MainWindow for visual and feature control
      */
     public WelcomeSplash(MainWindow wind) {
-        super("Welcome splash");
+        super("BEESOFT");
         super.setIconImage(Base.BEESOFT_ICON);
         initComponents();
         Base.setWelcomeSplashVisible(true);
