@@ -54,8 +54,8 @@
     </build>
     <repositories>
         <repository>
-            <id>local-maven-repo</id>
-            <url>file:///${project.basedir}/local-maven-repo</url>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
             <id>ailis</id>
