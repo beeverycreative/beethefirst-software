@@ -322,7 +322,7 @@
                                         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="lib/appbundler-1.0.jar" />
 
                                         <bundleapp outputdirectory="${target.app.dir}" name="BEESOFT" displayname="BEESOFT" identifier="org.beesoft.app"
-                                           mainclassname="replicatorg.app.Base" icon="${installer.dir}/bee.icns">
+                                                   mainclassname="replicatorg.app.Base" icon="${installer.dir}/bee.icns">
                                             <runtime dir="/Library/Java/JavaVirtualMachines/${jdk.version}/Contents/Home"/>
                                             <classpath dir="${project.build.directory}" includes="BEESOFT.jar" />
                                             <classpath dir="${lib.dir}" includes="*.jar" />
@@ -497,60 +497,25 @@
             <version>2.3.2</version>
         </dependency>
         <dependency>
-            <groupId>mrj</groupId>
-            <artifactId>MRJToolkitStubs</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout</artifactId>
             <version>3.7.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yuvimasory</groupId>
-            <artifactId>orange-extensions</artifactId>
-            <version>1.3.0</version>
-        </dependency>                               
+        </dependency>                            
         <dependency>
             <groupId>org.devzendo</groupId>
             <artifactId>Quaqua</artifactId>
             <version>7.3.4</version>
         </dependency> 
         <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.16</version>
-        </dependency>   
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.1</version>
-        </dependency>         
-        
-        <dependency>
-            <groupId>javax.usb</groupId>
-            <artifactId>usb-api</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        
-        <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.0.19</version>
-            <scope>compile</scope>
-        </dependency>
-                                        
-        <!-- Tests dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>4.2.0.201601211800-r</version>
+            <version>4.4.1.201607150455-r</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -564,5 +529,26 @@
             <artifactId>jna-platform</artifactId>
             <version>4.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.yuvimasory</groupId>
+            <artifactId>orange-extensions</artifactId>
+            <version>1.3.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>mrj</groupId>
+            <artifactId>MRJToolkitStubs</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
+        
+        <!-- Tests dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
