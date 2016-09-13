@@ -1,6 +1,6 @@
 package replicatorg.util;
 
-import org.scijava.vecmath.Point3d;
+import javax.vecmath.Point3d;
 
 import replicatorg.machine.model.AxisId;
 

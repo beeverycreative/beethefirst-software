@@ -10,19 +10,19 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.logging.Level;
 
-import org.scijava.java3d.BranchGroup;
-import org.scijava.java3d.Shape3D;
+import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Shape3D;
 
 import org.j3d.loaders.collada.ColladaParser;
 import org.xml.sax.InputSource;
 
 import replicatorg.app.Base;
 
-import org.scijava.java3d.loaders.IncorrectFormatException;
-import org.scijava.java3d.loaders.LoaderBase;
-import org.scijava.java3d.loaders.ParsingErrorException;
-import org.scijava.java3d.loaders.Scene;
-import org.scijava.java3d.loaders.SceneBase;
+import com.sun.j3d.loaders.IncorrectFormatException;
+import com.sun.j3d.loaders.LoaderBase;
+import com.sun.j3d.loaders.ParsingErrorException;
+import com.sun.j3d.loaders.Scene;
+import com.sun.j3d.loaders.SceneBase;
 
 public class ColladaLoader extends LoaderBase {
 
