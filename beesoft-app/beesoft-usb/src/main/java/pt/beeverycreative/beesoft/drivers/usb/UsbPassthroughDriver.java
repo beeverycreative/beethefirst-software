@@ -116,7 +116,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
      */
     public void sendInitializationGcode() {
         final String status;
-        
+
         Base.writeLog("Sending initialization GCodes", this.getClass());
         status = checkPrinterStatus();
         setMachine(new MachineModel());
@@ -124,12 +124,20 @@ public final class UsbPassthroughDriver extends UsbDriver {
         super.isBootloader = true;
 
         if (status.contains("bootloader")) {
+            final int updateFirmwareRetVal;
+
             bootedFromBootloader = true;
             updateBootloaderInfo();
-            if (updateFirmware() >= 0) {
+            updateFirmwareRetVal = updateFirmware();
+            if (updateFirmwareRetVal >= 0) {
                 super.isBootloader = true;
                 Base.writeLog("Launching firmware!", this.getClass());
-                Feedback.getInstance().setFeedback2(Feedback.LAUNCHING_MESSAGE);
+
+                // if an update has occurred
+                if (updateFirmwareRetVal > 0) {
+                    Feedback.getInstance().setFeedback2(Feedback.LAUNCHING_MESSAGE);
+                }
+                
                 Base.keepFeedbackOpen = true;
                 hiccup(1000);
                 dispatchCommand(LAUNCH_FIRMWARE); // Launch firmware
@@ -1183,7 +1191,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
                 return -1;
             }
         }
-        return 0; // correct this
+        return 1;
     }
 
     private boolean backupConfig() {
