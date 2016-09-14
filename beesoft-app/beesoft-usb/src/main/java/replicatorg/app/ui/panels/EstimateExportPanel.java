@@ -18,6 +18,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -72,7 +73,7 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         populatePrinterComboBox();
         populateFilamentComboBox();
         populateNozzleComboBox();
-        
+
         // disabled for now
         jLabel25.setVisible(false);
         nozzleTypeLabel.setVisible(false);
@@ -94,8 +95,8 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         String[] printers;
         ComboBoxEditor editor;
         JTextField textField;
-        
-        printerNames = new HashSet<String>();
+
+        printerNames = new HashSet<>();
 
         if (!lockedPrinter) {
             for (PrinterInfo printer : PrinterInfo.values()) {
@@ -114,7 +115,7 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
             printerComboBox.setEnabled(false);
         }
 
-        printerModel = new DefaultComboBoxModel<String>(printers);
+        printerModel = new DefaultComboBoxModel<>(printers);
         printerComboBox.setModel(printerModel);
         printerComboBox.setSelectedIndex(0);
         selectedPrinter = (PrinterInfo) PrinterInfo.getDeviceByFormalName((String) printerComboBox.getSelectedItem());
@@ -126,7 +127,7 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
 
         FilamentControler.forceFetch(selectedPrinter);
         filamentList = FilamentControler.getFilamentArray();
-        filaments = new DefaultComboBoxModel<Filament>(filamentList);
+        filaments = new DefaultComboBoxModel<>(filamentList);
         filamentComboBox.setModel(filaments);
         selectedFilament = (Filament) filamentComboBox.getSelectedItem();
     }
@@ -140,7 +141,7 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
             if (sc.getPrinterName().equals(selectedPrinter.filamentCode())) {
                 nozzleList = sc.getNozzles();
                 nozzleArray = nozzleList.toArray(new Nozzle[nozzleList.size()]);
-                nozzleComboModel = new DefaultComboBoxModel<Nozzle>(nozzleArray);
+                nozzleComboModel = new DefaultComboBoxModel<>(nozzleArray);
                 nozzleComboBox.setModel(nozzleComboModel);
                 break;
             }
@@ -151,7 +152,18 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
     }
 
     private void verifyCompatibleResolutions() {
-        List<Resolution> resList;
+        final List<Resolution> resList;
+        final JRadioButton[] radioButtons = {
+            bLowRes, bMediumRes, bHighRes, bHighPlusRes
+        };
+        JRadioButton selectedRes = null;
+
+        for (JRadioButton button : radioButtons) {
+            if (button.isSelected()) {
+                selectedRes = button;
+                break;
+            }
+        }
 
         bLowRes.setEnabled(false);
         bMediumRes.setEnabled(false);
@@ -163,18 +175,25 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
 
             if (resList != null) {
                 for (Resolution res : resList) {
-                    if (res.getType().equals("low")) {
-                        atLeastOneResEnabled = true;
-                        bLowRes.setEnabled(true);
-                    } else if (res.getType().equals("medium")) {
-                        atLeastOneResEnabled = true;
-                        bMediumRes.setEnabled(true);
-                    } else if (res.getType().equals("high")) {
-                        atLeastOneResEnabled = true;
-                        bHighRes.setEnabled(true);
-                    } else if (res.getType().equals("high+")) {
-                        atLeastOneResEnabled = true;
-                        bHighPlusRes.setEnabled(true);
+                    switch (res.getType()) {
+                        case "low":
+                            atLeastOneResEnabled = true;
+                            bLowRes.setEnabled(true);
+                            break;
+                        case "medium":
+                            atLeastOneResEnabled = true;
+                            bMediumRes.setEnabled(true);
+                            break;
+                        case "high":
+                            atLeastOneResEnabled = true;
+                            bHighRes.setEnabled(true);
+                            break;
+                        case "high+":
+                            atLeastOneResEnabled = true;
+                            bHighPlusRes.setEnabled(true);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -186,14 +205,16 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
             bHighPlusRes.setEnabled(true);
         }
 
-        if (bMediumRes.isEnabled()) {
-            bMediumRes.setSelected(true);
-        } else if (bLowRes.isEnabled()) {
-            bLowRes.setSelected(true);
-        } else if (bHighRes.isEnabled()) {
-            bHighRes.setSelected(true);
-        } else if (bHighPlusRes.isEnabled()) {
-            bHighPlusRes.setSelected(true);
+        if (selectedRes == null || !selectedRes.isEnabled()) {
+            if (bMediumRes.isEnabled()) {
+                bMediumRes.setSelected(true);
+            } else if (bLowRes.isEnabled()) {
+                bLowRes.setSelected(true);
+            } else if (bHighRes.isEnabled()) {
+                bHighRes.setSelected(true);
+            } else if (bHighPlusRes.isEnabled()) {
+                bHighPlusRes.setSelected(true);
+            }
         }
     }
 
@@ -552,12 +573,18 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         labelTable2.get(20).setForeground(Color.BLACK);
         labelTable2.get(40).setForeground(Color.BLACK);
 
-        if (val == 5) {
-            labelTable2.get(5).setForeground(new Color(255, 203, 5));
-        } else if (val == 20) {
-            labelTable2.get(20).setForeground(new Color(255, 203, 5));
-        } else if (val == 40) {
-            labelTable2.get(40).setForeground(new Color(255, 203, 5));
+        switch (val) {
+            case 5:
+                labelTable2.get(5).setForeground(new Color(255, 203, 5));
+                break;
+            case 20:
+                labelTable2.get(20).setForeground(new Color(255, 203, 5));
+                break;
+            case 40:
+                labelTable2.get(40).setForeground(new Color(255, 203, 5));
+                break;
+            default:
+                break;
         }
     }
 
