@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class PrinterInfoTest {
 
-    private static final String FIRMWARE_VERSION = "10.5.10";
+    private static final String FIRMWARE_VERSION = "10.5.11";
 
     public PrinterInfoTest() {
     }

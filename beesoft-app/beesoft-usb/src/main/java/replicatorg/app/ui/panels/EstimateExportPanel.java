@@ -36,7 +36,7 @@ import replicatorg.app.ui.GraphicDesignComponents;
 public class EstimateExportPanel extends BasePrintEstimateExport {
 
     private static final String FORMAT = "%2d:%2d";
-    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<Integer, JLabel>();
+    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<>();
     private final int nModels = Base.getMainWindow().getBed().getNumberModels();
     private final boolean lockedPrinter;
     private JLabel lowQuality, mediumQuality, solidQuality;
