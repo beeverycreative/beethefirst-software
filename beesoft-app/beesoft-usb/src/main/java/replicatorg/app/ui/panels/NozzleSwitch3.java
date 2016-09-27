@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -27,17 +28,18 @@ public class NozzleSwitch3 extends BaseDialog {
 
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
     private final BusyFeedbackThread busyFeedbackThread = new BusyFeedbackThread();
+    private final Nozzle selectedNozzle;
 
-    public NozzleSwitch3() {
+    public NozzleSwitch3(Nozzle selectedNozzle) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        enableDrag();
+        super.enableDrag();
+        super.centerOnScreen();
         setTextLanguage();
-        centerOnScreen();
         driver.setBusy(true);
         driver.dispatchCommand("M703", COM.NO_RESPONSE);
 
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 busyFeedbackThread.start();
@@ -49,6 +51,8 @@ public class NozzleSwitch3 extends BaseDialog {
                 Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
             }
         });
+
+        this.selectedNozzle = selectedNozzle;
     }
 
     private void setTextLanguage() {
@@ -403,7 +407,7 @@ public class NozzleSwitch3 extends BaseDialog {
         if (bNext.isEnabled()) {
             dispose();
             driver.setCoilText(FilamentControler.NO_FILAMENT);
-            driver.setInstalledNozzleSize(400);
+            driver.setInstalledNozzleSize(selectedNozzle.getSizeInMicrons());
             driver.dispatchCommand("G28", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bNextMousePressed
