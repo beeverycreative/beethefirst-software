@@ -38,8 +38,8 @@ public class Query extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         this.operationToDisplay = operationToDisplay;
         this.runnableToExecute = null;
         this.configToBeSet = configToBeSet;
@@ -64,8 +64,8 @@ public class Query extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         this.operationToDisplay = null;
         this.runnableToExecute = runnable;
         this.configToBeSet = configToBeSet;

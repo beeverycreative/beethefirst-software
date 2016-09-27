@@ -39,8 +39,8 @@ public class Warning extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         this.exitOnDispose = exitOnDispose;
         this.operationToDisplay = null;
         this.runnableToExecute = null;
@@ -59,8 +59,8 @@ public class Warning extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         this.exitOnDispose = false;
         this.operationToDisplay = operationToDisplay;
         this.runnableToExecute = null;
@@ -79,8 +79,8 @@ public class Warning extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         this.exitOnDispose = false;
         this.operationToDisplay = null;
         this.runnableToExecute = runnable;

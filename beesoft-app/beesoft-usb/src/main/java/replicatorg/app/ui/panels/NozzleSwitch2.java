@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -27,17 +28,18 @@ public class NozzleSwitch2 extends BaseDialog {
     private final TemperatureThread temperatureThread = new TemperatureThread();
     private final Driver driver = Base.getMachineLoader()
             .getMachineInterface().getDriver();
+    private final Nozzle selectedNozzle;
 
-    public NozzleSwitch2() {
+    public NozzleSwitch2(Nozzle selectedNozzle) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
+        super.enableDrag();
+        super.centerOnScreen();
         setTextLanguage();
-        enableDrag();
         evaluateInitialConditions();
-        centerOnScreen();
         moveToPosition();
 
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 temperatureThread.start();
@@ -48,17 +50,19 @@ public class NozzleSwitch2 extends BaseDialog {
                 temperatureThread.kill();
             }
         });
+
+        this.selectedNozzle = selectedNozzle;
     }
 
     private void setTextLanguage() {
         String text1;
-        
+
         text1 = "<html>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info2a")
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderSwitch", "Info2b")
                 + "</html>";
-        
+
         lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title2"));
         pText1.setText(text1);
         pText2.setText("<html>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning1") + "</html>");
@@ -370,7 +374,7 @@ public class NozzleSwitch2 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            NozzleSwitch3 p = new NozzleSwitch3();
+            NozzleSwitch3 p = new NozzleSwitch3(selectedNozzle);
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
