@@ -16,7 +16,7 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.popups.Feedback;
 import replicatorg.app.ui.panels.PauseMenu;
 import replicatorg.app.ui.panels.PrintSplashAutonomous;
-import replicatorg.app.ui.panels.SerialNumberInput;
+import replicatorg.app.ui.popups.SerialNumberInput;
 import replicatorg.app.ui.panels.ShutdownMenu;
 import replicatorg.app.ui.popups.Warning;
 import replicatorg.app.util.AutonomousData;
