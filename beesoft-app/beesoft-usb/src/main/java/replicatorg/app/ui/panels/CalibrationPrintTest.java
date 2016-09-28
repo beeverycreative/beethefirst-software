@@ -36,9 +36,9 @@ public class CalibrationPrintTest extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
+        super.enableDrag();
         evaluateInitialConditions();
-        centerOnScreen();
+        super.centerOnScreen();
         setProgressBarColor();
 
         this.addWindowListener(new WindowAdapter() {

@@ -38,10 +38,10 @@ public class FilamentHeating extends BaseDialog {
         setTextLanguage();
         evaluateInitialConditions();
         this.selectedFilament = selectedFilament;
-        centerOnScreen();
+        super.centerOnScreen();
         jProgressBar1.setForeground(new Color(255, 203, 5));
         moveToPosition();
-        enableDrag();
+        super.enableDrag();
 
         this.addWindowListener(new WindowAdapter() {
             @Override

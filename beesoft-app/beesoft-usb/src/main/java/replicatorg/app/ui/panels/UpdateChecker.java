@@ -1,4 +1,4 @@
-package replicatorg.app.ui.mainWindow;
+package replicatorg.app.ui.panels;
 
 import java.awt.Desktop;
 import java.awt.Dialog;
@@ -569,7 +569,6 @@ public class UpdateChecker extends BaseDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(350, 180));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(350, 180));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));

@@ -41,7 +41,7 @@ public class FilamentInsertion extends BaseDialog {
         Base.writeLog("Last step of filament change operation", this.getClass());
         initComponents();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
         moveToPosition();
         this.selectedFilament = selectedFilament;
 

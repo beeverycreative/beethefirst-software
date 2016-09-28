@@ -34,8 +34,8 @@ public class CalibrationValidation extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {

@@ -30,8 +30,8 @@ public class PreferencesPanel extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         lockPressed = false;
         if (Boolean.valueOf(ProperDefault.get("lockHeight"))) {
             jLabel8.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "c_checked.png")));
@@ -46,7 +46,7 @@ public class PreferencesPanel extends BaseDialog {
         buttonGroup1.add(radioMM);
         buttonGroup1.add(radioInches);
 
-        enableDrag();
+        super.enableDrag();
     }
 
     private void setFont() {

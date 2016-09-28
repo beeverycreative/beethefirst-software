@@ -33,9 +33,9 @@ public class CalibrationScrew2 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
+        super.enableDrag();
         disableMessageDisplay();
-        centerOnScreen();
+        super.centerOnScreen();
         moveToC();
         this.addWindowListener(new WindowAdapter() {
             @Override

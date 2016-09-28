@@ -31,7 +31,7 @@ public class Maintenance extends BaseDialog {
         Base.writeLog("Maintenance panel opened", this.getClass());
         initComponents();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
         disableMessageDisplay();
         evaluateInitialConditions();
 

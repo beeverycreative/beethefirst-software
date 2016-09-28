@@ -64,7 +64,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
         preferences = prefs;
         prt = new Printer(preferences);
         temperatureGoal = prt.getFilamentTemperature();
@@ -113,7 +113,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
         preferences = new PrintPreferences();
         prt = new Printer(preferences);
         temperatureGoal = prt.getFilamentTemperature();

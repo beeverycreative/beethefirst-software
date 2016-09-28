@@ -26,8 +26,8 @@ public class SupportSwitch1 extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setTextLanguage();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
     }
 
     private void setTextLanguage() {
