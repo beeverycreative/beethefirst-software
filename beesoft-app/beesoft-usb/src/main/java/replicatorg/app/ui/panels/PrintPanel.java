@@ -65,18 +65,12 @@ public class PrintPanel extends BasePrintEstimateExport {
         setFont();
         setTextLanguage();
         initSliderConfigs();
-        centerOnScreen();
+        super.centerOnScreen();
         evaluateConditions();
         matchChanges();
-        enableDrag();
+        super.enableDrag();
 
-        // disabled for now
-        jLabel25.setVisible(false);
-        nozzleTypeLabel.setVisible(false);
-        nozzleTypeValue.setVisible(false);
-        mmLabel.setVisible(false);
-
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (estimateExportThread != null) {
@@ -655,12 +649,18 @@ public class PrintPanel extends BasePrintEstimateExport {
         labelTable2.get(20).setForeground(Color.BLACK);
         labelTable2.get(40).setForeground(Color.BLACK);
 
-        if (val == 5) {
-            labelTable2.get(5).setForeground(new Color(255, 203, 5));
-        } else if (val == 20) {
-            labelTable2.get(20).setForeground(new Color(255, 203, 5));
-        } else if (val == 40) {
-            labelTable2.get(40).setForeground(new Color(255, 203, 5));
+        switch (val) {
+            case 5:
+                labelTable2.get(5).setForeground(new Color(255, 203, 5));
+                break;
+            case 20:
+                labelTable2.get(20).setForeground(new Color(255, 203, 5));
+                break;
+            case 40:
+                labelTable2.get(40).setForeground(new Color(255, 203, 5));
+                break;
+            default:
+                break;
         }
     }
 
@@ -1375,37 +1375,30 @@ public class PrintPanel extends BasePrintEstimateExport {
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
 
             final PrintSplashAutonomous p = new PrintSplashAutonomous(getPreferences());
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-
-                    if (Base.getMainWindow().getBed().isSceneDifferent()) {
-                        Base.getMainWindow().handleSave(true);
-                    }
+            EventQueue.invokeLater(() -> {
+                if (Base.getMainWindow().getBed().isSceneDifferent()) {
+                    Base.getMainWindow().handleSave(true);
                 }
             });
             p.setVisible(true);
 
         } else {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    /**
-                     * Possible cases:
-                     *
-                     * 1- noFilament -> Alert with red blinking text 2-
-                     * isPrinting -> Alert with printing message 3- isDisconenct
-                     * -> Alert with disconnect message
-                     */
-                    if (Base.getMachineLoader().isConnected() == false) {
-                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-                    } else if (Base.isPrinting) {
-                        Base.getMainWindow().showFeedBackMessage("btfPrinting");
-                    } else if (nModels == 0) {
-                        Base.getMainWindow().showFeedBackMessage("noModelError");
-                    } else if (noFilament) {
-                        flashNoFilamentMessage();
-                    }
+            Thread t = new Thread(() -> {
+                /**
+                 * Possible cases:
+                 *
+                 * 1- noFilament -> Alert with red blinking text 2-
+                 * isPrinting -> Alert with printing message 3- isDisconenct
+                 * -> Alert with disconnect message
+                 */
+                if (Base.getMachineLoader().isConnected() == false) {
+                    Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+                } else if (Base.isPrinting) {
+                    Base.getMainWindow().showFeedBackMessage("btfPrinting");
+                } else if (nModels == 0) {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
+                } else if (noFilament) {
+                    flashNoFilamentMessage();
                 }
             });
             t.start();
