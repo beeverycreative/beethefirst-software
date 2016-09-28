@@ -28,8 +28,8 @@ public class ExtruderMaintenance2 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
     }
 
     private void setFont() {

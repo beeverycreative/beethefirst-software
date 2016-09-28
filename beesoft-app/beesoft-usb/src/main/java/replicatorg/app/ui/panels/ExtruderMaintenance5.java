@@ -34,11 +34,11 @@ public class ExtruderMaintenance5 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
         if (!driver.getLastStatusMessage().contains("W:Load/Unload")) {
             moveToPosition();
         }
-        enableDrag();
+        super.enableDrag();
 
         this.addWindowListener(new WindowAdapter() {
             @Override

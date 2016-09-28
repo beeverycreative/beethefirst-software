@@ -33,8 +33,8 @@ public class CalibrationScrew1 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
         disableMessageDisplay();
         moveToB();
 

@@ -28,9 +28,9 @@ public class SerialNumberInput extends BaseDialog {
     public SerialNumberInput() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        enableDrag();
-        centerOnScreen();
-        enableDrag();
+        super.enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         setText();
     }
 

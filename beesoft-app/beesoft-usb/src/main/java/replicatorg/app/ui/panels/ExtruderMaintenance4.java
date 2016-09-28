@@ -33,8 +33,8 @@ public class ExtruderMaintenance4 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
         jProgressBar1.setForeground(new Color(255, 203, 5));
         jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
 

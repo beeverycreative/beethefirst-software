@@ -22,7 +22,7 @@ public class PauseMenu extends BaseDialog {
         showNoFilamentLabel();
         setFont();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
     }
 
     private void setFont() {

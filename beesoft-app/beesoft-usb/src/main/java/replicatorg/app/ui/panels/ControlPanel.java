@@ -111,8 +111,8 @@ public class ControlPanel extends BaseDialog {
         initComponents();
         Base.writeLog("Control panel opened...", this.getClass());
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
         evaluateInitialConditions();
 
         this.tempPanel.setLayout(new GridBagLayout());

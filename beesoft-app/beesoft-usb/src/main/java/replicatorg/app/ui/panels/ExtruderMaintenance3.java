@@ -27,9 +27,9 @@ public class ExtruderMaintenance3 extends BaseDialog {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
-        enableDrag();
+        super.enableDrag();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
     }
 
     private void setFont() {

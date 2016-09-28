@@ -39,11 +39,11 @@ public class About extends BaseDialog {
         resetClickCount.setRepeats(false);
         initComponents();
         setFont();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
         setTextLanguage();
         setValues();
-        enableDrag();
+        super.enableDrag();
     }
 
     private void setFont() {

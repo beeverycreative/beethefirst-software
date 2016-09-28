@@ -66,7 +66,7 @@ public class EstimateExportPanel extends BasePrintEstimateExport {
         setFont();
         setTextLanguage();
         initSliderConfigs();
-        centerOnScreen();
+        super.centerOnScreen();
         evaluateConditions();
         densitySlider.setValue(5);
 

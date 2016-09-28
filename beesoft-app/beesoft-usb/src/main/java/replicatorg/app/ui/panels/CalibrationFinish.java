@@ -33,8 +33,8 @@ public class CalibrationFinish extends BaseDialog {
         setFont();
         setTextLanguage();
         evaluateInitialConditions();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
 
         addWindowListener(new WindowAdapter() {
             @Override

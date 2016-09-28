@@ -77,7 +77,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import replicatorg.app.ui.MainWindow;
-import replicatorg.app.ui.WelcomeSplash;
+import replicatorg.app.ui.panels.WelcomeSplash;
 import replicatorg.machine.MachineLoader;
 import replicatorg.util.ConfigProperties;
 

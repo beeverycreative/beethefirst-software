@@ -35,9 +35,9 @@ public class CalibrationWelcome extends BaseDialog {
         setFont();
         setTextLanguage();
         this.repeatCalibration = repeatCalibration;
-        enableDrag();
+        super.enableDrag();
         moveToA();
-        centerOnScreen();
+        super.centerOnScreen();
         evaluateInitialConditions();
         this.addWindowListener(new WindowAdapter() {
             @Override

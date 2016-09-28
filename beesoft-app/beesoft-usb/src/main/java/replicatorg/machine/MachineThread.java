@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.Base;
 import replicatorg.app.tools.XML;
-import replicatorg.app.ui.mainWindow.UpdateChecker;
+import replicatorg.app.ui.panels.UpdateChecker;
 import replicatorg.drivers.Driver;
 import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;

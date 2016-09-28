@@ -28,8 +28,8 @@ public class ExtruderMaintenance1 extends BaseDialog {
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
         
         if (!driver.getLastStatusMessage().contains("W:")) {
             moveToPosition();

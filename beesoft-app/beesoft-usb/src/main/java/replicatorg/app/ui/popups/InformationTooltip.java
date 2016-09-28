@@ -26,9 +26,9 @@ public class InformationTooltip extends BaseDialog {
 
         setAlwaysOnTop(true);
         initComponents();
-        enableDrag();
-        centerOnScreen();
-        enableDrag();
+        super.enableDrag();
+        super.centerOnScreen();
+        super.enableDrag();
     }
 
     @SuppressWarnings("unchecked")

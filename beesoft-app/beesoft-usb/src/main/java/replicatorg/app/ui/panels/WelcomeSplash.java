@@ -1,5 +1,6 @@
-package replicatorg.app.ui;
+package replicatorg.app.ui.panels;
 
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -9,7 +10,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
-import replicatorg.app.ui.panels.TourWelcome;
+import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.MainWindow;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -22,7 +24,7 @@ import replicatorg.app.ui.panels.TourWelcome;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class WelcomeSplash extends javax.swing.JFrame {
+public class WelcomeSplash extends BaseDialog {
 
     private final MainWindow window;
     private ImageIcon image;
@@ -36,8 +38,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
      * @param wind MainWindow for visual and feature control
      */
     public WelcomeSplash(MainWindow wind) {
-        super("BEESOFT");
+        super(null, Dialog.ModalityType.DOCUMENT_MODAL);
         super.setIconImage(Base.BEESOFT_ICON);
+        super.setName("BEESOFT");
         initComponents();
         Base.setWelcomeSplashVisible(true);
         Base.writeLog("Welcome Splash started ...", this.getClass());
@@ -80,9 +83,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
         jLabel1.setSize(new Dimension(newWidth, newHeight));
         jLayeredPane1.setPreferredSize(new Dimension(newWidth, newHeight));
         jLayeredPane1.setSize(new Dimension(newWidth, newHeight));
-        this.setPreferredSize(new Dimension(newWidth, newHeight + jProgressBar1.getHeight()));
-        this.setSize(new Dimension(newWidth, newHeight + jProgressBar1.getHeight()));
-        this.setLocationRelativeTo(null);
+        super.setPreferredSize(new Dimension(newWidth, newHeight + jProgressBar1.getHeight()));
+        super.setSize(new Dimension(newWidth, newHeight + jProgressBar1.getHeight()));
+        super.setLocationRelativeTo(null);
         // Thread to update JProgress Bar
         new Thread() {
             @Override
@@ -107,7 +110,7 @@ public class WelcomeSplash extends javax.swing.JFrame {
     /**
      * Monitor changes in MainWindow and performs several operations at startup.
      */
-    public void changeState() {
+    private void changeState() {
 
         //this.setVisible(false);
         dispose();
@@ -154,6 +157,9 @@ public class WelcomeSplash extends javax.swing.JFrame {
         lVersion.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lVersion.setText("Version");
 
+        jLayeredPane1.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(lVersion, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
@@ -180,8 +186,6 @@ public class WelcomeSplash extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
-        jLayeredPane1.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(lVersion, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

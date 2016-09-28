@@ -27,6 +27,7 @@
  */
 package replicatorg.app.ui;
 
+import replicatorg.app.ui.panels.UpdateChecker;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
