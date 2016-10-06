@@ -66,26 +66,26 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
-        jLabel15.setText(Languager.getTagValue(1, "ModelDetails", "Model_N"));
-        jLabel5.setText(Languager.getTagValue(1, "ModelDetails", "Model_Selected"));
+        jLabel1.setText(Languager.getTagValue("ModelDetails", "Model"));
+        jLabel15.setText(Languager.getTagValue("ModelDetails", "Model_N"));
+        jLabel5.setText(Languager.getTagValue("ModelDetails", "Model_Selected"));
 
         if (ProperDefault.get("measures").equals("inches")) {
-            jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
-                    + " (" + Languager.getTagValue(1, "MainWindowButtons", "Inches") + ")");
+            jLabel11.setText(Languager.getTagValue("ModelDetails", "Model_Dimensions")
+                    + " (" + Languager.getTagValue("MainWindowButtons", "Inches") + ")");
         } else {
-            jLabel11.setText(Languager.getTagValue(1, "ModelDetails", "Model_Dimensions")
-                    + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
+            jLabel11.setText(Languager.getTagValue("ModelDetails", "Model_Dimensions")
+                    + " (" + Languager.getTagValue("MainWindowButtons", "MM") + ")");
         }
-        jLabel12.setText(Languager.getTagValue(1, "ModelDetails", "Model_Name"));
-        jLabel4.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes"));
+        jLabel12.setText(Languager.getTagValue("ModelDetails", "Model_Name"));
+        jLabel4.setText(Languager.getTagValue("ModelDetails", "Model_Notes"));
 
-        jLabel6.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
-        jLabel7.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
-        jLabel8.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
-        deleteButton.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Delete"));
+        jLabel6.setText(Languager.getTagValue("ApplicationMenus", "Edit_PutPlatform"));
+        jLabel7.setText(Languager.getTagValue("ApplicationMenus", "Edit_Center"));
+        jLabel8.setText(Languager.getTagValue("ApplicationMenus", "Edit_Reset"));
+        deleteButton.setText(Languager.getTagValue("ApplicationMenus", "Edit_Delete"));
         
-        jTextArea1.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes_Placeholder"));        
+        jTextArea1.setText(Languager.getTagValue("ModelDetails", "Model_Notes_Placeholder"));        
 
     }
 
@@ -579,7 +579,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_deleteButtonMouseEntered
 
     private void jTextArea1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea1MouseClicked
-        if (jTextArea1.getText().equals(Languager.getTagValue(1, "ModelDetails", "Model_Notes_Placeholder"))) {
+        if (jTextArea1.getText().equals(Languager.getTagValue("ModelDetails", "Model_Notes_Placeholder"))) {
             jTextArea1.setText("");
             jTextArea1.setForeground(Color.black);
         }
@@ -588,7 +588,7 @@ public class ModelsDetailsPanel extends javax.swing.JPanel {
     private void jTextArea1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextArea1FocusLost
                 
         if (jTextArea1.getText().equals("")) {
-            jTextArea1.setText(Languager.getTagValue(1, "ModelDetails", "Model_Notes_Placeholder"));
+            jTextArea1.setText(Languager.getTagValue("ModelDetails", "Model_Notes_Placeholder"));
             jTextArea1.setForeground(Color.gray);
         }
     }//GEN-LAST:event_jTextArea1FocusLost

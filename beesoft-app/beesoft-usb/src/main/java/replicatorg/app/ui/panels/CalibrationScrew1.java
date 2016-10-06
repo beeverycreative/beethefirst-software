@@ -60,13 +60,13 @@ public class CalibrationScrew1 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Title2"));
-        jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_title"));
-        jLabel4.setText("<html>" + Languager.getTagValue(1, "CalibrationWizard", "LeftScrew_Info") + "</html>");
-        jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Title2"));
+        jLabel3.setText(Languager.getTagValue("CalibrationWizard", "LeftScrew_title"));
+        jLabel4.setText("<html>" + Languager.getTagValue("CalibrationWizard", "LeftScrew_Info") + "</html>");
+        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     private void enableMessageDisplay() {
@@ -89,7 +89,7 @@ public class CalibrationScrew1 extends BaseDialog {
     public void showMessage() {
         bNext.setEnabled(false);
         enableMessageDisplay();
-        jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
     }
 
     private void moveToB() {

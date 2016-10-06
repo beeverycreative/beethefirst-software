@@ -169,14 +169,14 @@ public class ControlPanel extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        extruderTemperatureLabel.setText(Languager.getTagValue(1, "ControlPanel", "Current_Temperature"));
-        motorSpeed.setText(Languager.getTagValue(1, "ControlPanel", "Motor_Speed"));
-        extrudeDuration.setText(Languager.getTagValue(1, "ControlPanel", "Extrude_Duration"));
-        bReverse.setText(Languager.getTagValue(1, "ControlPanel", "Reverse"));
-        bForward.setText(Languager.getTagValue(1, "ControlPanel", "Foward"));
-        logTemperature.setText(Languager.getTagValue(1, "ControlPanel", "Log_Temperature"));
-        notes.setText(Languager.getTagValue(1, "BaseDirectories", "Line9"));
-        bOK.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        extruderTemperatureLabel.setText(Languager.getTagValue("ControlPanel", "Current_Temperature"));
+        motorSpeed.setText(Languager.getTagValue("ControlPanel", "Motor_Speed"));
+        extrudeDuration.setText(Languager.getTagValue("ControlPanel", "Extrude_Duration"));
+        bReverse.setText(Languager.getTagValue("ControlPanel", "Reverse"));
+        bForward.setText(Languager.getTagValue("ControlPanel", "Foward"));
+        logTemperature.setText(Languager.getTagValue("ControlPanel", "Log_Temperature"));
+        notes.setText(Languager.getTagValue("BaseDirectories", "Line9"));
+        bOK.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
     }
 
     private void evaluateInitialConditions() {

@@ -42,22 +42,22 @@ public class ExtruderMaintenance2 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title2"));
+        lTitle.setText(Languager.getTagValue("ExtruderMaintenance", "Title2"));
 
         String text1 = "<html>"
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info2a")
+                + Languager.getTagValue("ExtruderMaintenance", "Info2a")
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info2b")
+                + Languager.getTagValue("ExtruderMaintenance", "Info2b")
                 + "</html>";
         pText1.setText(text1);
 
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info_Warning2") + "</b></html>";
+        String warning = "<html><br><b>" + Languager.getTagValue("ExtruderMaintenance", "Info_Warning2") + "</b></html>";
 
         pText2.setText(warning);
-        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bQuit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bBack.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bQuit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     private void doCancel() {

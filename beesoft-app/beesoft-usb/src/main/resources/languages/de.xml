@@ -164,7 +164,7 @@
       <Maintenance value="WARTUNG"/>
       <QuickWizard value="KURZANLEITUNG"/>
       <Print value="DRUCKEN"/>
-      <EstimateExport value="Estimate / Export" />
+      <EstimateExport value="Estimate / Export"/>
       <Mirror value="Spiegeln"/>
       <Scale value="Skalieren"/>
       <ScaleToMax value="Skalieren zu maximal"/>
@@ -556,26 +556,26 @@
       <Info6b value=" "/>
       <Info_Warning6 value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
     </ExtruderMaintenance>
-    <ExtruderSwitch>
-      <Title1 value="Extruderdüse wechseln"/>
-      <NozzleSelectDesc1 value="Wählen Sie die Extruderdüsengröße, die installiert werden soll."/>
-      <NozzleSelectDesc2 value="Bitte beachten Sie den Unterschied zwischen den Extruderdüsen, wie oben abgebildet ist. Die 0,4 mm Extruderdüse hat einen glatten Lauf, während die 0,6 mm Extruderdüse eine Nut hat."/>
-      <HeatingMessage1 value="Erhitzen..."/>
+    <NozzleSwitch>
+      <Title value="Extruderdüse wechseln"/>
+      <HeatingMessage value="Erhitzen..."/>
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
+      <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
+      <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
+      <NozzleSelectNotice value="NOTICE:" />
+      <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Benutzen Sie diesen Vorgang, wenn Sie die Extruderdüse ersetzen möchten. Dies beinhaltet die Handhabung eines heißen Extruder, benötigen Sie: eine hitzebeständige Schale oder Oberfläche, eine Ersatzdüse und das Werkzeug von Ihrem Wartungs-Kit."/>
       <Info1b value=" "/>
-      <Info_Warning1 value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
-      <Title2 value="Extruderdüse wechseln"/>
-      <HeatingMessage2 value="Erhitzen..."/>
       <Info2a value="Bevor diese Operation weiterhin, muss der Drucker erhitzen."/>
       <Info2b value="Der Extruder ist heiß, wenn diese Statusleiste voll ist. Lassen Sie den Drucker für eine kurze Zeit, um PLA innen zu schmelzen."/>
-      <Info_Warning2 value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
-      <Title3 value="Extruderdüse wechseln"/>
-      <HeatingMessage3 value="Erhitzen..."/>
-      <Info3a value="Benutzen Sie das Düsenwerkzeug, um die Düse abszuchrauben und stellen es auf einer hitzebeständigen Oberfläche bis er abgekühlt ist."/>
-      <Info3b value="Schrauben Sie in die neue Düse und stoppen sobald Sie harte Widerstand spüren. Jetzt können Sie das Filament laden und das Ergebnis sehen. Das Filament wird dick und eben sein."/>
-      <Info_Warning3 value="VORSICHT: NIE DIE EXTRUDERDÜSE BERÜHREN, WENN DER DRUCKER EINGESCHALTEN IST."/>
-      <Title4 value="Extruderdüse wechseln"/>
-    </ExtruderSwitch>
+      <StepByStepTitle value="Step-by-step instructions:" />
+      <Step1 value="1. Unload the filament;" />
+      <Step2 value="2. Unscrew nozzle;" />
+      <Step3 value="3. Screw new nozzle;" />
+      <Step4 value="4. Load filament." />
+      <Notice value="NOTICE: Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+    </NozzleSwitch>
     <SupportSwitch>
       <title value="Spulenhalter Ändern"/>
       <welcome value="Willkommen im Spulenhalter Ändern Assistent."/>
@@ -625,6 +625,9 @@
       <NozzleSwitch_Title value="Extruderdüse wechseln"/>
       <NozzleSwitch_button value="Extruderdüse jetzt wechseln"/>
       <NozzleSwitch_Intro value="Dieser Vorgang ist nötig um die Extruderdüse zu wechseln. Für diesem Vorgang sollen Sie die Wartungs-Kit benutzen."/>
+      <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
+      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
+      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Installieren Sie externe Spulenhalter"/>
       <SupportSwitch_button value="Ändern Spulenhalter"/>
       <SupportSwitch_Intro value="Ein einfaches Tutorial, dass Sie bei der Installation des externen Spulenhalter führungen."/>

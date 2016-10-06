@@ -1,15 +1,21 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Locale;
 import javax.swing.ImageIcon;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.drivers.Driver;
+import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -24,6 +30,8 @@ import replicatorg.drivers.Driver;
  */
 public class Maintenance extends BaseDialog {
 
+    private final MachineModel model = Base.getMachineLoader()
+            .getMachineInterface().getDriver().getMachine();
     private final ControlStatus ctrlStatus = new ControlStatus();
 
     public Maintenance() {
@@ -35,7 +43,7 @@ public class Maintenance extends BaseDialog {
         disableMessageDisplay();
         evaluateInitialConditions();
 
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 ctrlStatus.kill();
@@ -44,30 +52,32 @@ public class Maintenance extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        final int fileKey = 1;
-        l_tittle.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Title").toUpperCase());
-        lChangeFilament.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Title"));
-        lChangeFilamentDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Filament_Intro"));
-        bChangeFilament.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "FilamentChange_button"));
-        lCalibration_warn.setText(String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Info").split("x")[1]);
-        bCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "CalibrationChange_button"));
-        lCalibration_desc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Intro"));
-        lCalibration.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "Calibration_Title"));
-        lExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Title"));
-        bExtruderMaintenance.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_button"));
-        lExtruderMaintenanceDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "ExtruderMaintenance_Intro"));
-        lNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Title"));
-        bNozzleSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_button"));
-        lNozzleSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "NozzleSwitch_Intro"));
-        lSupportSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "SupportSwitch_Title"));
-        bSupportSwitch.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "SupportSwitch_button"));
-        lSupportSwitchDesc.setText(Languager.getTagValue(fileKey, "MaintenancePanel", "SupportSwitch_Intro"));
-        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line6"));
-        jLabel18.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
+        l_tittle.setText("<html>" + Languager.getTagValue("MaintenancePanel", "Title").toUpperCase() + "</html>");
+        lChangeFilament.setText("<html>" + Languager.getTagValue("MaintenancePanel", "Filament_Title") + "</html>");
+        lChangeFilamentDesc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "Filament_Intro") + "</html>");
+        bChangeFilament.setText(Languager.getTagValue("MaintenancePanel", "FilamentChange_button"));
+        lCalibration_warn.setText("<html>" + String.valueOf(ProperDefault.get("nTotalPrints")) + Languager.getTagValue("MaintenancePanel", "Calibration_Info").split("x")[1] + "</html>");
+        bCalibration.setText(Languager.getTagValue("MaintenancePanel", "CalibrationChange_button"));
+        lCalibration_desc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "Calibration_Intro") + "</html>");
+        lCalibration.setText("<html>" + Languager.getTagValue("MaintenancePanel", "Calibration_Title") + "</html>");
+        lExtruderMaintenance.setText("<html>" + Languager.getTagValue("MaintenancePanel", "ExtruderMaintenance_Title") + "</html>");
+        bExtruderMaintenance.setText(Languager.getTagValue("MaintenancePanel", "ExtruderMaintenance_button"));
+        lExtruderMaintenanceDesc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "ExtruderMaintenance_Intro") + "</html>");
+        lNozzleSwitch.setText("<html>" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_Title") + "</html>");
+        bNozzleSwitch.setText(Languager.getTagValue("MaintenancePanel", "NozzleSwitch_button"));
+        lNozzleSwitchDesc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_Intro") + "</html>");
+        lAdditionalNozzleText.setText("<html>" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_AdditionalNozzle") + "</html>");
+        lAdditionalNozzleLink.setText("<html><a href=\"\">" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_AdditionalNozzleButton") + "</a>.</html>");
+        lSupportSwitch.setText("<html>" + Languager.getTagValue("MaintenancePanel", "SupportSwitch_Title") + "</html>");
+        bSupportSwitch.setText(Languager.getTagValue("MaintenancePanel", "SupportSwitch_button"));
+        lSupportSwitchDesc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "SupportSwitch_Intro") + "</html>");
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel18.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
     }
 
     private void evaluateInitialConditions() {
         ctrlStatus.start();
+        lCurrentNozzle.setText("<html>" + String.format(Locale.US, Languager.getTagValue("MaintenancePanel", "NozzleSwitch_CurrentNozzle"), model.getNozzleType() / 1000.0f));
     }
 
     private void disableMessageDisplay() {
@@ -131,6 +141,9 @@ public class Maintenance extends BaseDialog {
         bNozzleSwitch = new javax.swing.JLabel();
         lNozzleSwitchDesc = new javax.swing.JLabel();
         lNozzleSwitch = new javax.swing.JLabel();
+        lCurrentNozzle = new javax.swing.JLabel();
+        lAdditionalNozzleText = new javax.swing.JLabel();
+        lAdditionalNozzleLink = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         jSeparator4 = new javax.swing.JSeparator();
         pSupportSwitch = new javax.swing.JPanel();
@@ -282,7 +295,7 @@ public class Maintenance extends BaseDialog {
         lCalibration.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
         lCalibration.setText("Calibrate");
 
-        lCalibration_warn.setFont(new java.awt.Font("Source Sans Pro", 0, 10)); // NOI18N
+        lCalibration_warn.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
         lCalibration_warn.setText("10 prints have been made since the last calibration.");
 
         javax.swing.GroupLayout pCalibrationLayout = new javax.swing.GroupLayout(pCalibration);
@@ -379,7 +392,7 @@ public class Maintenance extends BaseDialog {
 
         bNozzleSwitch.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bNozzleSwitch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_12.png"))); // NOI18N
-        bNozzleSwitch.setText("Replace nozzle now");
+        bNozzleSwitch.setText("Switch nozzle now");
         bNozzleSwitch.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_12.png"))); // NOI18N
         bNozzleSwitch.setEnabled(false);
         bNozzleSwitch.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -396,10 +409,25 @@ public class Maintenance extends BaseDialog {
         });
 
         lNozzleSwitchDesc.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
-        lNozzleSwitchDesc.setText("This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit.");
+        lNozzleSwitchDesc.setText("It is necessary to change the nozzle when it's clogged or if you need to print with a nozzle of a different diameter, ex: TPU-FLEX.");
 
         lNozzleSwitch.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        lNozzleSwitch.setText("Replace nozzle");
+        lNozzleSwitch.setText("Switch nozzle");
+
+        lCurrentNozzle.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
+        lCurrentNozzle.setText("Current nozzle:");
+        lCurrentNozzle.setMaximumSize(new java.awt.Dimension(150, 16));
+
+        lAdditionalNozzleText.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
+        lAdditionalNozzleText.setText("<html> If you need additional nozzles please click</html>");
+
+        lAdditionalNozzleLink.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
+        lAdditionalNozzleLink.setText("<html>\n<a href=\"\">here</a>. \n</html>");
+        lAdditionalNozzleLink.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lAdditionalNozzleLinkMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout pNozzleSwitchLayout = new javax.swing.GroupLayout(pNozzleSwitch);
         pNozzleSwitch.setLayout(pNozzleSwitchLayout);
@@ -408,13 +436,19 @@ public class Maintenance extends BaseDialog {
             .addGroup(pNozzleSwitchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pNozzleSwitchLayout.createSequentialGroup()
-                        .addComponent(bNozzleSwitch)
-                        .addGap(575, 575, 575))
                     .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pNozzleSwitchLayout.createSequentialGroup()
                         .addComponent(lNozzleSwitch)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pNozzleSwitchLayout.createSequentialGroup()
+                        .addComponent(bNozzleSwitch)
+                        .addGap(18, 18, 18)
+                        .addComponent(lCurrentNozzle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(148, 148, 148)
+                        .addComponent(lAdditionalNozzleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)
+                        .addComponent(lAdditionalNozzleLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(44, Short.MAX_VALUE))))
         );
         pNozzleSwitchLayout.setVerticalGroup(
             pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,7 +458,11 @@ public class Maintenance extends BaseDialog {
                 .addGap(2, 2, 2)
                 .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bNozzleSwitch)
+                .addGroup(pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bNozzleSwitch)
+                    .addComponent(lCurrentNozzle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lAdditionalNozzleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lAdditionalNozzleLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -500,14 +538,14 @@ public class Maintenance extends BaseDialog {
         bCancel.setText("Ok");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bCancelMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
             }
         });
 
@@ -546,7 +584,7 @@ public class Maintenance extends BaseDialog {
                     .addComponent(pSupportSwitch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSeparator4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE)
         );
         pMaintenanceLayout.setVerticalGroup(
             pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -633,7 +671,7 @@ public class Maintenance extends BaseDialog {
     private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
         if (bNozzleSwitch.isEnabled()) {
             dispose();
-            NozzleSwitch1 p = new NozzleSwitch1();
+            NozzleSwitch2 p = new NozzleSwitch2();
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
 
@@ -690,6 +728,20 @@ public class Maintenance extends BaseDialog {
         }
     }//GEN-LAST:event_bSupportSwitchMousePressed
 
+    private void lAdditionalNozzleLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lAdditionalNozzleLinkMouseClicked
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Desktop.getDesktop().browse(new URI("https://www.beeverycreative.com/3d-printing-accessories-plugs/"));
+            } catch (IOException | URISyntaxException ex) {
+                Base.writeLog(ex.getClass().getName() + " when attempting to open the additional nozzles link", this.getClass());
+                Base.writeLog(ex.getMessage(), this.getClass());
+            }
+        } else {
+            Base.writeLog("Desktop isn't available or browse action isn't supported. "
+                    + "This usually happens on Linux distributions that don't use GNOME.", this.getClass());
+        }
+    }//GEN-LAST:event_lAdditionalNozzleLinkMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCalibration;
     private javax.swing.JLabel bCancel;
@@ -702,11 +754,14 @@ public class Maintenance extends BaseDialog {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JLabel lAdditionalNozzleLink;
+    private javax.swing.JLabel lAdditionalNozzleText;
     private javax.swing.JLabel lCalibration;
     private javax.swing.JLabel lCalibration_desc;
     private javax.swing.JLabel lCalibration_warn;
     private javax.swing.JLabel lChangeFilament;
     private javax.swing.JLabel lChangeFilamentDesc;
+    private javax.swing.JLabel lCurrentNozzle;
     private javax.swing.JLabel lExtruderMaintenance;
     private javax.swing.JLabel lExtruderMaintenanceDesc;
     private javax.swing.JLabel lNozzleSwitch;

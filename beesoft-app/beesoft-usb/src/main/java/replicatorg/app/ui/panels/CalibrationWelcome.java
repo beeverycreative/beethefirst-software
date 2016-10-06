@@ -67,21 +67,19 @@ public class CalibrationWelcome extends BaseDialog {
 
     private void setTextLanguage() {
         String warning;
-        int fileKey = 1;
+        warning = "<html>" + Languager.getTagValue("CalibrationWizard", "Info") + "<br><b>" + Languager.getTagValue("CalibrationWizard", "Info_Warning") + "</b></html>";
 
-        warning = "<html>" + Languager.getTagValue(fileKey, "CalibrationWizard", "Info") + "<br><b>" + Languager.getTagValue(fileKey, "CalibrationWizard", "Info_Warning") + "</b></html>";
-
-        jLabel1.setText(Languager.getTagValue(fileKey, "CalibrationWizard", "Title1"));
+        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Title1"));
         jLabel3.setText(warning);
-        jLabel4.setText(Languager.getTagValue(fileKey, "CalibrationWizard", "Buttons_Info"));
-        jLabel5.setText(Languager.getTagValue(fileKey, "FeedbackLabel", "MovingMessage"));
+        jLabel4.setText(Languager.getTagValue("CalibrationWizard", "Buttons_Info"));
+        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
-        bMinus005.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        bPlus005.setText("0.05 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        bMinus05.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        bPlus05.setText("0.5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM").toLowerCase());
-        bNext.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line7"));
-        bExit.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
+        bMinus005.setText("0.05 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
+        bPlus005.setText("0.05 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
+        bMinus05.setText("0.5 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
+        bPlus05.setText("0.5 " + Languager.getTagValue("MainWindowButtons", "MM").toLowerCase());
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     private void enableMessageDisplay() {
@@ -118,7 +116,7 @@ public class CalibrationWelcome extends BaseDialog {
         bNext.setEnabled(false);
 
         enableMessageDisplay();
-        jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel5.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
     }
 
     private void moveToA() {

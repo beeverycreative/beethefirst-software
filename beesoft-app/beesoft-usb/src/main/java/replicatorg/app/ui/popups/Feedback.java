@@ -27,7 +27,6 @@ public class Feedback extends BaseDialog {
     public static final int SAVING_MESSAGE = 4;
     public static final int RESTART_PRINTER = 5;
 
-    private static final int FILE_KEY = 1;
     private static final String ROOT_TAG = "FeedbackPanel";
 
     private Feedback() {
@@ -63,7 +62,7 @@ public class Feedback extends BaseDialog {
     public void setFeedback1(int index) {
         switch (index) {
             case FLASHING_MAIN_MESSAGE:
-                lFeedbackMain.setText("<html>" + Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingMainMessage") + "</html>");
+                lFeedbackMain.setText("<html>" + Languager.getTagValue(ROOT_TAG, "FlashingMainMessage") + "</html>");
                 break;
             default:
                 break;
@@ -75,19 +74,19 @@ public class Feedback extends BaseDialog {
 
         switch (index) {
             case FLASHING_SUB_MESSAGE:
-                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessage");
+                msg += Languager.getTagValue(ROOT_TAG, "FlashingSubMessage");
                 break;
             case FLASHING_SUB_MESSAGE_NO_CALIBRATION:
-                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "FlashingSubMessageNoCalibration");
+                msg += Languager.getTagValue(ROOT_TAG, "FlashingSubMessageNoCalibration");
                 break;
             case LAUNCHING_MESSAGE:
-                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "LaunchingMessage");
+                msg += Languager.getTagValue(ROOT_TAG, "LaunchingMessage");
                 break;
             case SAVING_MESSAGE:
-                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "SavingMessage");
+                msg += Languager.getTagValue(ROOT_TAG, "SavingMessage");
                 break;
             case RESTART_PRINTER:
-                msg += Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessage");
+                msg += Languager.getTagValue(ROOT_TAG, "RestartMessage");
                 break;
             default:
                 break;
@@ -100,7 +99,7 @@ public class Feedback extends BaseDialog {
     public void setFeedback3(int index) {
         switch (index) {
             case RESTART_PRINTER:
-                lFeedbackSub.setText("<html>" + Languager.getTagValue(FILE_KEY, ROOT_TAG, "RestartMessageTimeout") + "</html>");
+                lFeedbackSub.setText("<html>" + Languager.getTagValue(ROOT_TAG, "RestartMessageTimeout") + "</html>");
                 break;
             default:
                 break;

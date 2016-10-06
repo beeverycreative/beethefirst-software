@@ -164,7 +164,7 @@
       <Maintenance value="MANUTENCIÓN"/>
       <QuickWizard value="GUÍA RÁPIDA"/>
       <Print value="IMPRIMIR"/>
-      <EstimateExport value="Estimar / Exportar" />
+      <EstimateExport value="Estimar / Exportar"/>
       <Mirror value="Espejo"/>
       <Scale value="Escala"/>
       <ScaleToMax value="Escalar para máximo"/>
@@ -556,26 +556,26 @@
       <Info6b value=" "/>
       <Info_Warning6 value="ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
     </ExtruderMaintenance>
-    <ExtruderSwitch>
-      <Title1 value="Cambio de nozzle"/>
-      <NozzleSelectDesc1 value="Selecciona el tamaño de la boquilla que está a punto de ser instalado."/>
-      <NozzleSelectDesc2 value="Por favor, tenga en cuenta la diferencia entre las boquillas como se ilustra arriba. La boquilla de 0,4 mm es lisa mientras que la boquilla de 0,6 mm tiene una ranura en la parte exterior."/>
-      <HeatingMessage1 value="Calentando..."/>
+    <NozzleSwitch>
+      <Title value="Cambio de nozzle"/>
+      <HeatingMessage value="Calentando..."/>
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
+      <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
+      <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
+      <NozzleSelectNotice value="NOTICE:" />
+      <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Utiliza esta operación si deseas reemplazar el nozzle de la extrusora. Esto implicará el manejo de la extrusora caliente, vas a necesitar: una bandeja o superficie resistente al calor, un nozzle de repuesto, y la herramienta para retirar el nozzle de tu kit de mantenimiento"/>
       <Info1b value=" "/>
-      <Info_Warning1 value="ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
-      <Title2 value="Cambio de nozzle"/>
-      <HeatingMessage2 value="Calentando..."/>
       <Info2a value="Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
       <Info2b value="La extrusora está totalmente caliente cuando la barra de estado está completamente llena. Espera um momento para que la impresora derrita el PLA dentro do la extrusora."/>
-      <Info_Warning2 value="ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA"/>
-      <Title3 value="Cambio de nozzle"/>
-      <HeatingMessage3 value="Calentando..."/>
-      <Info3a value="Utiliza la herramienta para desenroscar el nozzle y colocalo sobre una superficie resistente al calor hasta que se haya enfriado."/>
-      <Info3b value="Rosca el nuevo nozzle, deja de apretar tan pronto como se sienta resistencia. Ahora puedes cargar el filamento y ver el resultado del nuevo nozzle. El filamento deve salir de forma continua y uniforme."/>
-      <Info_Warning3 value="ADVERTENCIA: NUNCA TOQUE EL NOZZLE CUANDO LA IMPRESORA ESTE ENCENDIDA."/>
-      <Title4 value="Cambio de nozzle"/>
-    </ExtruderSwitch>
+      <StepByStepTitle value="Step-by-step instructions:" />
+      <Step1 value="1. Unload the filament;" />
+      <Step2 value="2. Unscrew nozzle;" />
+      <Step3 value="3. Screw new nozzle;" />
+      <Step4 value="4. Load filament." />
+      <Notice value="NOTICE: Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+    </NozzleSwitch>
     <SupportSwitch>
       <title value="Cambiar soporte de la bobina."/>
       <welcome value="Bienvenido al asistente de cambio del soporte."/>
@@ -625,6 +625,9 @@
       <NozzleSwitch_Title value="Reemplazar el nozzle"/>
       <NozzleSwitch_button value="Reemplazar ahora"/>
       <NozzleSwitch_Intro value="Esta operación sirve para reemplazar el nozzle por el repuesto de tu kit de mantenimiento."/>
+      <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
+      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
+      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Instala el soporte de la bobina externo"/>
       <SupportSwitch_button value="Cambia el soporte de la bobina"/>
       <SupportSwitch_Intro value="Un simple tutorial te guía en la instalación del soporte de la bobina externa."/>

@@ -41,16 +41,16 @@ public class SupportSwitch3 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "SupportSwitch", "title"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue("SupportSwitch", "title"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bBack.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
         lDesc.setText("<html>"
-                + Languager.getTagValue(1, "SupportSwitch", "step4")
+                + Languager.getTagValue("SupportSwitch", "step4")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step5")
+                + Languager.getTagValue("SupportSwitch", "step5")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step6"));
+                + Languager.getTagValue("SupportSwitch", "step6"));
     }
 
     @SuppressWarnings("unchecked")

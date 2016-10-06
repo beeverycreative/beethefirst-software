@@ -312,10 +312,9 @@ public class UpdateChecker extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        int fileKey = 1;
-        jLabel2.setText(Languager.getTagValue(fileKey, "Other", "NotSupported"));
-        bCancel.setText(Languager.getTagValue(fileKey, "OptionPaneButtons", "Line3"));
-        bDownload.setText(Languager.getTagValue(fileKey, "Other", "Download"));
+        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bDownload.setText(Languager.getTagValue("Other", "Download"));
     }
 
     private void evaluateInitialConditions() {
@@ -452,7 +451,7 @@ public class UpdateChecker extends BaseDialog {
     }
 
     public void setMessage(String message) {
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "Updates", message) + "</html>");
+        jLabel2.setText("<html>" + Languager.getTagValue("Updates", message) + "</html>");
     }
 
     private File getFileFromServer() {

@@ -44,18 +44,18 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "SceneDetails", "Scene"));
-//        jLabel2.setText(Languager.getTagValue(1,"", ""));
-        jLabel3.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name"));
-        jLabel4.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes"));
-        jLabel5.setText(Languager.getTagValue(1, "SceneDetails", "Scene_NModels"));
-        jLabel6.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintDate"));
-        jLabel7.setText(Languager.getTagValue(1, "SceneDetails", "Scene_LastPrintTime"));
+        jLabel1.setText(Languager.getTagValue("SceneDetails", "Scene"));
+//        jLabel2.setText(Languager.getTagValue("", ""));
+        jLabel3.setText(Languager.getTagValue("SceneDetails", "Scene_Name"));
+        jLabel4.setText(Languager.getTagValue("SceneDetails", "Scene_Notes"));
+        jLabel5.setText(Languager.getTagValue("SceneDetails", "Scene_NModels"));
+        jLabel6.setText(Languager.getTagValue("SceneDetails", "Scene_LastPrintDate"));
+        jLabel7.setText(Languager.getTagValue("SceneDetails", "Scene_LastPrintTime"));
 
-        jTextField1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name_Hint"));
+        jTextField1.setText(Languager.getTagValue("SceneDetails", "Scene_Name_Hint"));
         jTextField1.setForeground(Color.gray);
 
-        jTextArea1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"));
+        jTextArea1.setText(Languager.getTagValue("SceneDetails", "Scene_Notes_Placeholder"));
         jTextArea1.setForeground(Color.gray);
     }
 
@@ -102,22 +102,22 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
 
             if (duration >= 120) {
                 if (min > 1) {
-                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                    jLabel10.setText(hours + " " + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
                 } else if (min == 1) {
-                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
+                    jLabel10.setText(hours + " " + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinute"));
                 } else {
-                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
+                    jLabel10.setText(hours + " " + Languager.getTagValue("Print", "PrintHour"));
                 }
             } else if (duration >= 60 && duration < 120) {
                 if (min > 1) {
-                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                    jLabel10.setText(hours + " " + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
                 } else if (min == 1) {
-                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
+                    jLabel10.setText(hours + " " + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinute"));
                 } else {
-                    jLabel10.setText(hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
+                    jLabel10.setText(hours + " " + Languager.getTagValue("Print", "PrintHour"));
                 }
             } else {
-                jLabel10.setText(" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                jLabel10.setText(" " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
             }
         } else {
             jLabel10.setText(durT);
@@ -312,7 +312,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextArea1KeyReleased
 
     private void jTextArea1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextArea1MouseClicked
-        if (jTextArea1.getText().equals(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"))) {
+        if (jTextArea1.getText().equals(Languager.getTagValue("SceneDetails", "Scene_Notes_Placeholder"))) {
             jTextArea1.setText("");
             jTextArea1.setForeground(Color.black);
         }
@@ -321,7 +321,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     private void jTextArea1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextArea1FocusLost
 
         if (jTextArea1.getText().equals("")) {
-            jTextArea1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"));
+            jTextArea1.setText(Languager.getTagValue("SceneDetails", "Scene_Notes_Placeholder"));
             jTextArea1.setForeground(Color.gray);
         }
     }//GEN-LAST:event_jTextArea1FocusLost
@@ -331,7 +331,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField1MousePressed
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
-        if (jTextField1.getText().equals(Languager.getTagValue(1, "SceneDetails", "Scene_Name_Hint"))) {
+        if (jTextField1.getText().equals(Languager.getTagValue("SceneDetails", "Scene_Name_Hint"))) {
             jTextField1.setText("");
             jTextField1.setForeground(Color.black);
         }
@@ -339,7 +339,7 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
 
     private void jTextField1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField1FocusLost
         if (jTextField1.getText().equals("")) {
-            jTextField1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Name_Hint"));
+            jTextField1.setText(Languager.getTagValue("SceneDetails", "Scene_Name_Hint"));
             jTextField1.setForeground(Color.gray);
         }
     }//GEN-LAST:event_jTextField1FocusLost

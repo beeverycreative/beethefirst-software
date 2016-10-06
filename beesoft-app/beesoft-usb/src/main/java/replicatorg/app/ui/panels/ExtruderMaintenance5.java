@@ -74,22 +74,22 @@ public class ExtruderMaintenance5 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title5"));
-        pText1.setText("<html>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info5a") + "</html>");
-        pText2.setText("<html>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info5b") + "</html>");
-        bLoad.setText(Languager.getTagValue(1, "FilamentWizard", "LoadButton"));
-        bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        lTitle.setText(Languager.getTagValue("ExtruderMaintenance", "Title5"));
+        pText1.setText("<html>" + Languager.getTagValue("ExtruderMaintenance", "Info5a") + "</html>");
+        pText2.setText("<html>" + Languager.getTagValue("ExtruderMaintenance", "Info5b") + "</html>");
+        bLoad.setText(Languager.getTagValue("FilamentWizard", "LoadButton"));
+        bUnload.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
+        pWarning.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         pWarning.setHorizontalAlignment(SwingConstants.CENTER);
-        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bBack.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     @Override
     public void showMessage() {
         enableMessageDisplay();
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        pWarning.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         bNext.setEnabled(false);
         bLoad.setEnabled(false);
         bUnload.setEnabled(false);

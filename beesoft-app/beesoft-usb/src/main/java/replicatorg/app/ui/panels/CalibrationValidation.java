@@ -59,11 +59,11 @@ public class CalibrationValidation extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Title"));
-        jLabel4.setText("<html>" + Languager.getTagValue(1, "CalibrationWizard", "Validation_Info") + "</html>");
-        bRepeatCalibration.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button2"));
-        bConfirmCalibration.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button1"));
-        jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "Validation_Title"));
+        jLabel4.setText("<html>" + Languager.getTagValue("CalibrationWizard", "Validation_Info") + "</html>");
+        bRepeatCalibration.setText(Languager.getTagValue("CalibrationWizard", "Validation_Button2"));
+        bConfirmCalibration.setText(Languager.getTagValue("CalibrationWizard", "Validation_Button1"));
+        jLabel25.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     private void enableMessageDisplay() {
@@ -81,7 +81,7 @@ public class CalibrationValidation extends BaseDialog {
         bRepeatCalibration.setEnabled(false);
         bConfirmCalibration.setEnabled(false);
         enableMessageDisplay();
-        jLabel9.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel9.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         jLabel9.setHorizontalAlignment(SwingConstants.CENTER);
     }
 

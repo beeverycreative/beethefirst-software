@@ -35,8 +35,8 @@ public class MessagesPopUp extends javax.swing.JDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "FeedbackLabel", "StatusMessage"));
-        jLabel3.setText(Languager.getTagValue(1, "Tour", "DefaultMessage"));
+        jLabel1.setText(Languager.getTagValue("FeedbackLabel", "StatusMessage"));
+        jLabel3.setText(Languager.getTagValue("Tour", "DefaultMessage"));
     }
 
     private void visibility(boolean vsB) {
@@ -92,61 +92,61 @@ public class MessagesPopUp extends javax.swing.JDialog {
 
     public void setMessage(String message) {
         if (message.equals("collision")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageCollision"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageCollision"));
         }
         if (message.equals("notInBed")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageNotInBed"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotInBed"));
         }
         if (message.equals("maxVolume")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageMaxVolume"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageMaxVolume"));
         }
         if (message.equals("outOfBounds")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageOutOfBounds"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageOutOfBounds"));
         }
         if (message.equals("importModel")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageImportModel"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageImportModel"));
         }
         if (message.equals("saveScene")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageSaveScene"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageSaveScene"));
         }
         if (message.equals("loadScene")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageLocadScene"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageLocadScene"));
         }
         if (message.equals("notSaveScene")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageNotSaveScene"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotSaveScene"));
         }
         if (message.equals("notLoadScene")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageNotLocadScene"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageNotLocadScene"));
         }
         if (message.equals("firstTime")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageFirstTime"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageFirstTime"));
         }
         if (message.equals("modelNotPicked")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MessageModelNotPicked"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MessageModelNotPicked"));
         }
         if (message.equals("gcodeGeneration")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "GCodeGeneration"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "GCodeGeneration"));
         }
         if (message.equals("btfDisconnect")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "PrinterDisconnected"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "PrinterDisconnected"));
         }
         if (message.equals("btfPrinting")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "PrinterPrinting"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "PrinterPrinting"));
         }
         if (message.equals("moving")) {
-            jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage2"));
+            jLabel3.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage2"));
         }
         if (message.equals("modelMeshError")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "MeshError"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "MeshError"));
         }
         if (message.equals("reinstallError")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "ReinstallError"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "ReinstallError"));
         }
         if (message.equals("noModelError")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "NoModelError"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "NoModelError"));
         }
         if (message.equals("unknownColor")) {
-            jLabel3.setText(Languager.getTagValue(1, "StatusMessages", "UnknownColor"));
+            jLabel3.setText(Languager.getTagValue("StatusMessages", "UnknownColor"));
         }
 
         autoHide();

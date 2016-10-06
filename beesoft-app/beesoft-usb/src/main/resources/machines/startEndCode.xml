@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<calibration>
 	<gcode>
-		<operationCode>
 			<startCode value =
             "M109 S220,		
 M300, 
@@ -25,7 +23,4 @@ G28 Z,
 G1 Y65,
 G92 E
 "/>
-
-</operationCode>
 	</gcode>
-</calibration>

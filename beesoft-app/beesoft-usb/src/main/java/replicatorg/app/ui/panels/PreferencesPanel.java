@@ -64,16 +64,16 @@ public class PreferencesPanel extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "Preferences", "Preferences_title").toUpperCase());
-        jLabel3.setText(Languager.getTagValue(1, "Preferences", "Measures") + ": ");
-        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "MM"));
-        jLabel6.setText(Languager.getTagValue(1, "MainWindowButtons", "Inches"));
-        jLabel9.setText(Languager.getTagValue(1, "Preferences", "LockHeight"));
-        jLabel10.setText(Languager.getTagValue(1, "Preferences", "LockHeight_info"));
-        jLabel11.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-        jLabel12.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        jLabel4.setText(Languager.getTagValue(1, "Preferences", "Language"));
-        jLanguageWarningLabel.setText("<html><p>" + Languager.getTagValue(1, "Preferences", "LanguageWarning") + "</p></html>");
+        jLabel1.setText(Languager.getTagValue("Preferences", "Preferences_title").toUpperCase());
+        jLabel3.setText(Languager.getTagValue("Preferences", "Measures") + ": ");
+        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "MM"));
+        jLabel6.setText(Languager.getTagValue("MainWindowButtons", "Inches"));
+        jLabel9.setText(Languager.getTagValue("Preferences", "LockHeight"));
+        jLabel10.setText(Languager.getTagValue("Preferences", "LockHeight_info"));
+        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        jLabel12.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        jLabel4.setText(Languager.getTagValue("Preferences", "Language"));
+        jLanguageWarningLabel.setText("<html><p>" + Languager.getTagValue("Preferences", "LanguageWarning") + "</p></html>");
 
         DefaultComboBoxModel model = new DefaultComboBoxModel(languagesLabels);
         jComboBox1.setModel(model);

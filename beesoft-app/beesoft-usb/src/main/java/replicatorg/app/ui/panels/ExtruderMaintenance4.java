@@ -68,23 +68,23 @@ public class ExtruderMaintenance4 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title4"));
+        lTitle.setText(Languager.getTagValue("ExtruderMaintenance", "Title4"));
 
         String text1 = "<html>"
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info4a")
+                + Languager.getTagValue("ExtruderMaintenance", "Info4a")
                 + "<br>"
-                + Languager.getTagValue(1, "ExtruderMaintenance", "Info4b")
+                + Languager.getTagValue("ExtruderMaintenance", "Info4b")
                 + "</html>";
         pText1.setText(text1);
 
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
+        String warning = "<html><br><b>" + Languager.getTagValue("FilamentWizard", "Info_Warning") + "</b></html>";
         pText2.setText(warning);
-        pWarning.setText(Languager.getTagValue(1, "ExtruderMaintenance", "HeatingMessage4"));
+        pWarning.setText(Languager.getTagValue("ExtruderMaintenance", "HeatingMessage4"));
         pWarning.setHorizontalAlignment(SwingConstants.CENTER);
-        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bQuit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bBack.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bQuit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ExtruderMaintenance4 extends BaseDialog {
     @Override
     public void showMessage() {
         enableMessageDisplay();
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
+        pWarning.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
     }
 
     private void doCancel() {

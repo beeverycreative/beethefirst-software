@@ -6,7 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
-import pt.beeverycreative.beesoft.filaments.Nozzle;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -28,9 +27,8 @@ public class NozzleSwitch2 extends BaseDialog {
     private final TemperatureThread temperatureThread = new TemperatureThread();
     private final Driver driver = Base.getMachineLoader()
             .getMachineInterface().getDriver();
-    private final Nozzle selectedNozzle;
 
-    public NozzleSwitch2(Nozzle selectedNozzle) {
+    public NozzleSwitch2() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         super.enableDrag();
@@ -51,30 +49,16 @@ public class NozzleSwitch2 extends BaseDialog {
             }
         });
 
-        this.selectedNozzle = selectedNozzle;
     }
 
     private void setTextLanguage() {
-        String text1;
-
-        text1 = "<html>"
-                + Languager.getTagValue(1, "ExtruderSwitch", "Info2a")
-                + "<br>"
-                + Languager.getTagValue(1, "ExtruderSwitch", "Info2b")
-                + "</html>";
-
-        lTitle.setText(Languager.getTagValue(1, "ExtruderSwitch", "Title2"));
-        pText1.setText(text1);
-        pText2.setText("<html>" + Languager.getTagValue(1, "ExtruderSwitch", "Info_Warning1") + "</html>");
-        pWarning.setText(Languager.getTagValue(1, "ExtruderSwitch", "HeatingMessage2"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bQuit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-    }
-
-    public void sinalizeHeatSuccess() {
-        disableMessageDisplay();
-        driver.dispatchCommand("M300");
-        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        lTitle.setText(Languager.getTagValue("NozzleSwitch", "Title"));
+        lInfo1.setText(Languager.getTagValue("NozzleSwitch", "NozzleHeatingInfo1"));
+        lInfo2.setText(Languager.getTagValue("NozzleSwitch", "NozzleHeatingInfo2"));
+        pWarning.setText("<html>" + Languager.getTagValue("NozzleSwitch", "HeatingMessage"));
+        lWarning.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Info_Warning"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bQuit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     @Override
@@ -106,7 +90,7 @@ public class NozzleSwitch2 extends BaseDialog {
     @Override
     public void showMessage() {
         enableMessageDisplay();
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
+        pWarning.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
     }
 
     private void moveToPosition() {
@@ -140,16 +124,17 @@ public class NozzleSwitch2 extends BaseDialog {
         jLabel2 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jSeparator2 = new javax.swing.JSeparator();
-        pText1 = new javax.swing.JLabel();
-        pText2 = new javax.swing.JLabel();
+        lInfo1 = new javax.swing.JLabel();
+        lWarning = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         pWarning = new javax.swing.JLabel();
+        lInfo2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(571, 355));
+        setPreferredSize(null);
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
@@ -228,12 +213,12 @@ public class NozzleSwitch2 extends BaseDialog {
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
-        pText1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        pText1.setText("<html> Your 3D printer must finish heating before continuing this operation. <br> The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. </html>");
+        lInfo1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lInfo1.setText("<html> The extruder is currently heating, please wait.");
 
-        pText2.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
-        pText2.setText("<html>WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON.</html>");
-        pText2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lWarning.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        lWarning.setText("<html>WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS.");
+        lWarning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -288,6 +273,9 @@ public class NozzleSwitch2 extends BaseDialog {
                 .addGap(0, 0, 0))
         );
 
+        lInfo2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lInfo2.setText("<html> When the extruder has reached the ideal temperature, the progress bar will be full.");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -305,15 +293,19 @@ public class NozzleSwitch2 extends BaseDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(pText2)))
+                    .addComponent(lWarning)))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(96, 96, 96)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(lInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lInfo2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,9 +321,11 @@ public class NozzleSwitch2 extends BaseDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pText1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16)
-                .addComponent(pText2, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                .addComponent(lInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lInfo2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(lWarning, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -345,6 +339,7 @@ public class NozzleSwitch2 extends BaseDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, 0)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -374,7 +369,7 @@ public class NozzleSwitch2 extends BaseDialog {
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
             dispose();
-            NozzleSwitch3 p = new NozzleSwitch3(selectedNozzle);
+            NozzleSwitch3 p = new NozzleSwitch3();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
@@ -401,9 +396,10 @@ public class NozzleSwitch2 extends BaseDialog {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lInfo1;
+    private javax.swing.JLabel lInfo2;
     private javax.swing.JLabel lTitle;
-    private javax.swing.JLabel pText1;
-    private javax.swing.JLabel pText2;
+    private javax.swing.JLabel lWarning;
     private javax.swing.JLabel pWarning;
     // End of variables declaration//GEN-END:variables
 }

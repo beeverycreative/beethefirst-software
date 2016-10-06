@@ -37,9 +37,9 @@ public class TourStep2 extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel2.setText("<html>" + Languager.getTagValue(1,"Tour", "Tour3") + "</html>");
-        jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7")); 
-        jLabel12.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4")); 
+        jLabel2.setText("<html>" + Languager.getTagValue("Tour", "Tour3") + "</html>");
+        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line7")); 
+        jLabel12.setText(Languager.getTagValue("OptionPaneButtons", "Line4")); 
     }
     
     private void putOnScreen()

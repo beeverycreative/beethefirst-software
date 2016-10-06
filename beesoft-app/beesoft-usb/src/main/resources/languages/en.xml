@@ -164,7 +164,7 @@
       <Maintenance value="MAINTENANCE"/>
       <QuickWizard value="QUICK GUIDE"/>
       <Print value="PRINT"/>
-      <EstimateExport value="Estimate / Export" />
+      <EstimateExport value="Estimate / Export"/>
       <Mirror value="Mirror"/>
       <Scale value="Scale"/>
       <ScaleToMax value="Scale to Max"/>
@@ -556,26 +556,26 @@
       <Info6b value=" "/>
       <Info_Warning6 value="WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
     </ExtruderMaintenance>
-    <ExtruderSwitch>
-      <Title1 value="Nozzle Switch"/>
-      <NozzleSelectDesc1 value="Select the nozzle size that is about to be installed."/>
-      <NozzleSelectDesc2 value="Please note the difference between nozzles as pictured above. The 0.4mm nozzle has a smooth barrel while the 0.6mm nozzle has a groove."/>
-      <HeatingMessage1 value="Heating..."/>
+    <NozzleSwitch>
+      <Title value="Nozzle Switch"/>
+      <HeatingMessage value="Heating..." />
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
+      <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
+      <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
+      <NozzleSelectNotice value="NOTICE:" />
+      <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
       <Info1b value=" "/>
-      <Info_Warning1 value="WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
-      <Title2 value="Nozzle Switch"/>
-      <HeatingMessage2 value="Heating..."/>
       <Info2a value="Your 3D printer must finish heating before continuing this operation."/>
       <Info2b value="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
-      <Info_Warning2 value="WARNING: NEVER TOUCH THE EXTRUDER NOZZLE WHEN THE PRINTER IS ON."/>
-      <Title3 value="Nozzle Switch"/>
-      <HeatingMessage3 value="Heating..."/>
-      <Info3a value="Use the nozzle tool to unscrew the nozzle and place it on a heat-resistant surface until it has cooled down."/>
-      <Info3b value="Screw in the new nozzle, stop tightening as soon as you feel hard resistance. You can now load some fresh filament and see the result of the new extruder. The filament will be thick and even."/>
-      <Info_Warning3 value="WARNING: BE CAREFUL NOT TO TOUCH THE HOT EXTRUDER."/>
-      <Title4 value="Nozzle Switch"/>
-    </ExtruderSwitch>
+      <StepByStepTitle value="Step-by-step instructions:" />
+      <Step1 value="1. Unload the filament;" />
+      <Step2 value="2. Unscrew nozzle;" />
+      <Step3 value="3. Screw new nozzle;" />
+      <Step4 value="4. Load filament." />
+      <Notice value="NOTICE: Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+    </NozzleSwitch>
     <SupportSwitch>
       <title value="Support switch"/>
       <welcome value="Welcome to the Support Switch wizard."/>
@@ -622,9 +622,12 @@
       <ExtruderMaintenance_Title value="Extruder Maintenance"/>
       <ExtruderMaintenance_button value="Start extruder maintenance"/>
       <ExtruderMaintenance_Intro value="This operation enables you to unclog the nozzle  using the Maintenance Kit."/>
-      <NozzleSwitch_Title value="Replace nozzle "/>
-      <NozzleSwitch_button value="Replace nozzle  now"/>
-      <NozzleSwitch_Intro value="This operation is for replacing the extruder nozzle with a spare from your Maintenance Kit."/>
+      <NozzleSwitch_Title value="Switch nozzle"/>
+      <NozzleSwitch_button value="Switch nozzle now"/>
+      <NozzleSwitch_Intro value="It is necessary to change the nozzle when it's clogged or if you need to print with a nozzle of a different diameter, ex: TPU-FLEX."/>
+      <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
+      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
+      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Install External Spool Holder."/>
       <SupportSwitch_button value="Change spool holder"/>
       <SupportSwitch_Intro value="A simple tutorial that guides you in the installation of the External Spool Holder."/>

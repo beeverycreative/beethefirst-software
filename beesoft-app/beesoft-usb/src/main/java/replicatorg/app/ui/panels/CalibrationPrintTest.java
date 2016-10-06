@@ -86,11 +86,11 @@ public class CalibrationPrintTest extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage2"));
-        jLabel3.setText(Languager.getTagValue(1, "Print", "Print_Splash_Gcode_Title"));
-        jLabel4.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Calibration_Info") + "</html>");
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        jLabel19.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage2"));
+        jLabel3.setText(Languager.getTagValue("Print", "Print_Splash_Gcode_Title"));
+        jLabel4.setText("<html>" + Languager.getTagValue("Print", "Print_Calibration_Info") + "</html>");
+        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        jLabel19.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     private void setProgressBarColor() {
@@ -142,12 +142,12 @@ public class CalibrationPrintTest extends BaseDialog {
     @Override
     public void showMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
+        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
     }
 
     public void showPrintMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
     }
 
     private void evaluateInitialConditions() {

@@ -65,11 +65,11 @@ public class About extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lVersionTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_SoftwareVersion"));
-        lFirmwareTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_FirmwareVersion"));
-        lBootloaderTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_BootloaderVersion"));
-        lFilamentTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_FilamentColor"));
-        jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        lVersionTitle.setText(Languager.getTagValue("AboutSoftware", "About_SoftwareVersion"));
+        lFirmwareTitle.setText(Languager.getTagValue("AboutSoftware", "About_FirmwareVersion"));
+        lBootloaderTitle.setText(Languager.getTagValue("AboutSoftware", "About_BootloaderVersion"));
+        lFilamentTitle.setText(Languager.getTagValue("AboutSoftware", "About_FilamentColor"));
+        jLabel18.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
     }
 
     private void setValues() {
@@ -80,7 +80,7 @@ public class About extends BaseDialog {
         String serialNumber = Base.SERIAL_NUMBER;
 
         if (bootloader == null || bootloader.equals("0.0.0")) {
-            bootloader = Languager.getTagValue(1, "AboutSoftware",
+            bootloader = Languager.getTagValue("AboutSoftware",
                     "About_NotAvailable");
 
             if (Base.getMachineLoader().isConnected()) {
@@ -89,17 +89,17 @@ public class About extends BaseDialog {
         }
 
         if (firmware == null || firmware.contains("UNKNOWN")) {
-            firmware = Languager.getTagValue(1, "AboutSoftware",
+            firmware = Languager.getTagValue("AboutSoftware",
                     "About_NotAvailable");
         }
 
         if (coilCode.equals("N/A")) {
-            coilCode = Languager.getTagValue(1, "AboutSoftware",
+            coilCode = Languager.getTagValue("AboutSoftware",
                     "About_NotAvailable");
         }
 
         if (serialNumber == null || serialNumber.equals("9999999999")) {
-            serialNumber = Languager.getTagValue(1, "AboutSoftware",
+            serialNumber = Languager.getTagValue("AboutSoftware",
                     "About_NotAvailable");
         }
 
@@ -380,7 +380,7 @@ public class About extends BaseDialog {
     private void jBootloaderTooltipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseEntered
         Point cursorLocation = MouseInfo.getPointerInfo().getLocation();
         cursorLocation.setLocation(cursorLocation.getX() + 20, cursorLocation.getY() - 2);
-        info = new InformationTooltip(this, Languager.getTagValue(1,
+        info = new InformationTooltip(this, Languager.getTagValue(
                 "AboutSoftware", "About_BootloaderVersionNotAvailableText"));
         info.setLocation(cursorLocation);
         info.setVisible(true);

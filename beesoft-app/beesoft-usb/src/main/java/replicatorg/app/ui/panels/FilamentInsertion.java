@@ -70,15 +70,15 @@ public class FilamentInsertion extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title2"));
-        jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info_Title"));
-        jLabel4.setText("<html><br>" + Languager.getTagValue(1, "FilamentWizard", "Exchange_Info") + "</html>");
-        bLoad.setText(Languager.getTagValue(1, "FilamentWizard", "LoadButton"));
-        bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title2"));
+        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Exchange_Info_Title"));
+        jLabel4.setText("<html><br>" + Languager.getTagValue("FilamentWizard", "Exchange_Info") + "</html>");
+        bLoad.setText(Languager.getTagValue("FilamentWizard", "LoadButton"));
+        bUnload.setText(Languager.getTagValue("FilamentWizard", "UnloadButton"));
+        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     @Override
