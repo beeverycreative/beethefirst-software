@@ -456,7 +456,7 @@ public class Base {
 
     }
 
-    public static void writeLog(String message, Class logClass) {
+    public static synchronized void writeLog(String message, Class logClass) {
 
         if (BEELOG_FILE.length() > 10000000) {
             return;
@@ -483,7 +483,7 @@ public class Base {
 
     }
 
-    public static void writeComLog(long timeStamp, String message) {
+    public static synchronized void writeComLog(long timeStamp, String message) {
 
         if (COMLOG_FILE.length() > 10000000) {
             return;

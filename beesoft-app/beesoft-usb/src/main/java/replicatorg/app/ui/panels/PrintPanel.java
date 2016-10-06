@@ -188,31 +188,31 @@ public class PrintPanel extends BasePrintEstimateExport {
      * Set copy for all UI elements.
      */
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
-        jLabel2.setText(Languager.getTagValue(1, "Print", "Print_Quality"));
-        jLabel3.setText(Languager.getTagValue(1, "Print", "Print_Density"));
-        jLabel7.setText(Languager.getTagValue(1, "Print", "Print_Raft"));
-        jLabel8.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Raft_Info") + "</html>");
-        jLabel9.setText(Languager.getTagValue(1, "Print", "Print_Support"));
-        jLabel10.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Support_Info") + "</html>");
-        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-        bEstimate.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line15"));
-        bExport.setText(Languager.getTagValue(1, "OptionPaneButtons", "Export"));
-        bPrint.setText(Languager.getTagValue(1, "ToolPath", "Line21"));
-        bChangeFilament.setText(Languager.getTagValue(1, "Print", "Print_ChangeFilament"));
-        filamentType.setText(Languager.getTagValue(1, "MaintenancePanel", "Filament_Type"));
-        estimatedPrintTime.setText(Languager.getTagValue(1, "Print", "Print_EstimationPrintTime"));
-        estimatedMaterial.setText(Languager.getTagValue(1, "Print", "Print_EstimationMaterial"));
-        lDensity.setText(Languager.getTagValue(1, "Print", "Print_Density_Insertion"));
+        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Print"));
+        jLabel2.setText(Languager.getTagValue("Print", "Print_Quality"));
+        jLabel3.setText(Languager.getTagValue("Print", "Print_Density"));
+        jLabel7.setText(Languager.getTagValue("Print", "Print_Raft"));
+        jLabel8.setText("<html>" + Languager.getTagValue("Print", "Print_Raft_Info") + "</html>");
+        jLabel9.setText(Languager.getTagValue("Print", "Print_Support"));
+        jLabel10.setText("<html>" + Languager.getTagValue("Print", "Print_Support_Info") + "</html>");
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bEstimate.setText(Languager.getTagValue("OptionPaneButtons", "Line15"));
+        bExport.setText(Languager.getTagValue("OptionPaneButtons", "Export"));
+        bPrint.setText(Languager.getTagValue("ToolPath", "Line21"));
+        bChangeFilament.setText(Languager.getTagValue("Print", "Print_ChangeFilament"));
+        filamentType.setText(Languager.getTagValue("MaintenancePanel", "Filament_Type"));
+        estimatedPrintTime.setText(Languager.getTagValue("Print", "Print_EstimationPrintTime"));
+        estimatedMaterial.setText(Languager.getTagValue("Print", "Print_EstimationMaterial"));
+        lDensity.setText(Languager.getTagValue("Print", "Print_Density_Insertion"));
 
-        bLowRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Low"));
-        bMediumRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Medium"));
-        bHighRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_High"));
-        bHighPlusRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"));
+        bLowRes.setText(Languager.getTagValue("Print", "Print_Quality_Low"));
+        bMediumRes.setText(Languager.getTagValue("Print", "Print_Quality_Medium"));
+        bHighRes.setText(Languager.getTagValue("Print", "Print_Quality_High"));
+        bHighPlusRes.setText(Languager.getTagValue("Print", "Print_Quality_SHigh"));
 
-        lowQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_Low"));
-        mediumQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_Medium"));
-        solidQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_High"));
+        lowQuality.setText(Languager.getTagValue("Print", "Print_Density_Low"));
+        mediumQuality.setText(Languager.getTagValue("Print", "Print_Density_Medium"));
+        solidQuality.setText(Languager.getTagValue("Print", "Print_Density_High"));
 
     }
 
@@ -232,9 +232,9 @@ public class PrintPanel extends BasePrintEstimateExport {
                 || code.contains(FilamentControler.NO_FILAMENT_2)) {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
-            code = Languager.getTagValue(1, "Print", "Print_Splash_Info9").toUpperCase();
+            code = Languager.getTagValue("Print", "Print_Splash_Info9").toUpperCase();
             jLabel22.setText(code);
-            jLabel23.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
+            jLabel23.setText(Languager.getTagValue("Print", "Print_Splash_Info11"));
         } else if (FilamentControler.colorExistsLocally(code) == false) {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
@@ -273,13 +273,13 @@ public class PrintPanel extends BasePrintEstimateExport {
      */
     private void initSliderConfigs() {
         JLabel a = new JLabel("O");
-        JLabel a1 = new JLabel(Languager.getTagValue(1, "Print", "Print_Density_Low"));
+        JLabel a1 = new JLabel(Languager.getTagValue("Print", "Print_Density_Low"));
         JLabel b = new JLabel("10");
         b.setBorder(new EmptyBorder(0, 10, 0, 0));
-        JLabel c = new JLabel(Languager.getTagValue(1, "Print", "Print_Density_Medium"));
+        JLabel c = new JLabel(Languager.getTagValue("Print", "Print_Density_Medium"));
         c.setBorder(new EmptyBorder(0, 5, 0, 0));
         JLabel d = new JLabel("30");
-        JLabel e = new JLabel(Languager.getTagValue(1, "Print", "Print_Density_High"));
+        JLabel e = new JLabel(Languager.getTagValue("Print", "Print_Density_High"));
         JLabel f = new JLabel("5O");
         JLabel g = new JLabel("6O");
         JLabel h = new JLabel("7O");
@@ -342,13 +342,13 @@ public class PrintPanel extends BasePrintEstimateExport {
 
             if (button.isSelected()) {
                 String labelText = button.getText();
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
+                if (labelText.contains(Languager.getTagValue("Print", "Print_Quality_Low"))) {
                     return "low";
-                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
+                } else if (labelText.contains(Languager.getTagValue("Print", "Print_Quality_Medium"))) {
                     return "medium";
-                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
+                } else if (labelText.contains(Languager.getTagValue("Print", "Print_Quality_SHigh"))) {
                     return "high+";
-                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
+                } else if (labelText.contains(Languager.getTagValue("Print", "Print_Quality_High"))) {
                     return "high";
                 }
             }
@@ -446,7 +446,7 @@ public class PrintPanel extends BasePrintEstimateExport {
     private String tuneCost(String cost) {
         double meters = Double.valueOf(cost);
         String result = gramsCalculator(meters / 1000.0);
-        return result + " " + Languager.getTagValue(1, "Print", "Print_GramsTag");
+        return result + " " + Languager.getTagValue("Print", "Print_GramsTag");
     }
 
     /**
@@ -496,22 +496,22 @@ public class PrintPanel extends BasePrintEstimateExport {
 
             if (duration >= 120) {
                 if (min > 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
                 } else if (min == 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHours") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinute"));
                 } else {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour"));
                 }
             } else if (duration >= 60 && duration < 120) {
                 if (min > 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
                 } else if (min == 1) {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinute"));
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour") + " " + minutes + " " + Languager.getTagValue("Print", "PrintMinute"));
                 } else {
-                    text = (hours + " " + Languager.getTagValue(1, "Print", "PrintHour"));
+                    text = (hours + " " + Languager.getTagValue("Print", "PrintHour"));
                 }
             } else {
-                text = (" " + minutes + " " + Languager.getTagValue(1, "Print", "PrintMinutes"));
+                text = (" " + minutes + " " + Languager.getTagValue("Print", "PrintMinutes"));
             }
         } else {
             text = (durT);

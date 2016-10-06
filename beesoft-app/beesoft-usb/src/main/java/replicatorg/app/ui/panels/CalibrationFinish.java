@@ -60,13 +60,13 @@ public class CalibrationFinish extends BaseDialog {
 
     private void setTextLanguage() {
         String note;
-        note = "<html>" + Languager.getTagValue(1, "CalibrationWizard", "Test_Info") + "<br><b>" + Languager.getTagValue(1, "CalibrationWizard", "Test_Info_Warning") + "</b></html>";
-        jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "FinalStage_Title"));
+        note = "<html>" + Languager.getTagValue("CalibrationWizard", "Test_Info") + "<br><b>" + Languager.getTagValue("CalibrationWizard", "Test_Info_Warning") + "</b></html>";
+        jLabel1.setText(Languager.getTagValue("CalibrationWizard", "FinalStage_Title"));
         jLabel4.setText(note);
-        bCalibrationTest.setText(Languager.getTagValue(1, "CalibrationWizard", "Test_button"));
-        jLabel6.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bCalibrationTest.setText(Languager.getTagValue("CalibrationWizard", "Test_button"));
+        jLabel6.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     private void evaluateInitialConditions() {
@@ -88,7 +88,7 @@ public class CalibrationFinish extends BaseDialog {
         bCalibrationTest.setEnabled(false);
         bNext.setEnabled(false);
         enableMessageDisplay();
-        jLabel6.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel6.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
     }
 
     @Override

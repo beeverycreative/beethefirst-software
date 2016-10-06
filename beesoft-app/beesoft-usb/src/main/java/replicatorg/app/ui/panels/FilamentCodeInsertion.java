@@ -53,13 +53,13 @@ public class FilamentCodeInsertion extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
-        jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-        lDesc.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "CodeInsertionDesc") + "</html>");
-        lDescA.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "ADesc") + "</html>");
-        lDescB.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "BDesc") + "</html>");
+        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title1"));
+        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Title4"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        lDesc.setText("<html>" + Languager.getTagValue("FilamentWizard", "CodeInsertionDesc") + "</html>");
+        lDescA.setText("<html>" + Languager.getTagValue("FilamentWizard", "ADesc") + "</html>");
+        lDescB.setText("<html>" + Languager.getTagValue("FilamentWizard", "BDesc") + "</html>");
     }
 
     private void evaluateInitialConditions() {
@@ -424,7 +424,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             // the nozzle switch operation, if that's what the user wants
             if (filamentComboItem.isCompatible() == false) {
                 if (Base.printPaused == false) {
-                    filamentIncompatibilityQuery = new Query("IncompatibleFilament", new NozzleSwitch1(), null);
+                    filamentIncompatibilityQuery = new Query("IncompatibleFilament", new NozzleSwitch4(), null);
                     filamentIncompatibilityQuery.setVisible(true);
 
                     selectedNozzle = new Nozzle(model.getNozzleType());

@@ -164,7 +164,7 @@
       <Maintenance value="MAINTENANCE"/>
       <QuickWizard value="GUIDE RAPIDE"/>
       <Print value="IMPRIMER"/>
-      <EstimateExport value="Estimate / Export" />
+      <EstimateExport value="Estimate / Export"/>
       <Mirror value="Miroir"/>
       <Scale value="Échelle"/>
       <ScaleToMax value="Échelle pour Max"/>
@@ -556,26 +556,26 @@
       <Info6b value=" "/>
       <Info_Warning6 value="AVERTISSEMENT: NE TOUCHEZ JAMAIS LA BUSE DE L'EXTRUDEUR PENDANT QUE L'IMPRIMANTE EST ALLUMÉE."/>
     </ExtruderMaintenance>
-    <ExtruderSwitch>
-      <Title1 value="Interrupteur de l'Ajutage"/>
-      <NozzleSelectDesc1 value="Sélectionnez la dimension de la buse que sera installé."/>
-      <NozzleSelectDesc2 value="Notez la différence entre les buses comme illustré ci-dessus. La buse de 0,4mm a un tonneau lisse pendant que la buse de 0,6mm a une rainure."/>
-      <HeatingMessage1 value="Chauffage..."/>
+    <NozzleSwitch>
+      <Title value="Interrupteur de l'Ajutage"/>
+      <HeatingMessage value="Chauffage..."/>
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
+      <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
+      <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
+      <NozzleSelectNotice value="NOTICE:" />
+      <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Utilisez cette opération si vous voulez remplacer la buse de l'extrudeur. Cela impliquera la manipulation d'un extrudeur chaud. Vous aurais besoin: d'un plateau ou surface résistant à la chaleur, une buse de rechange et l'outil pour enlever la buse présent dans votre kit de maintenance."/>
       <Info1b value=" "/>
-      <Info_Warning1 value="AVERTISSEMENT: NE TOUCHEZ JAMAIS LA BUSE DE L'EXTRUDEUR PENDANT QUE L'IMPRIMANTE EST ALLUMÉE."/>
-      <Title2 value="Interrupteur de l'Ajutage"/>
-      <HeatingMessage2 value="Chauffage..."/>
       <Info2a value="Votre imprimante 3D doit finir le chauffage avant continuer cette opération."/>
       <Info2b value="L'extrudeur est complètement chaud quand la barre d'état en BEESOFT est complète. Laissez l'imprimante pendant quelques instants pour permettre que le PLA à l’intérieur fonde. "/>
-      <Info_Warning2 value="VERTISSEMENT: NE TOUCHEZ JAMAIS LA BUSE DE L'EXTRUDEUR PENDANT QUE L'IMPRIMANTE EST ALLUMÉE."/>
-      <Title3 value="Interrupteur de l'Ajutage"/>
-      <HeatingMessage3 value="Chauffage..."/>
-      <Info3a value="Utilisez l'outil de la buse pour dévisser la buse et la placer dans la surface résistant à la chaleur pour refroidir."/>
-      <Info3b value="Visser la nouvelle buse, arrêtez quand vous sentez une forte résistance. Maintenant, vous pouvez charger nouveau filament et regarder le résultat du nouveau extrudeur. Le filament sera dense et uniforme."/>
-      <Info_Warning3 value="AVERTISSEMENT: ATTENTION POUR NE PAS TOUCHER L'EXTRUDEUR CHAUD."/>
-      <Title4 value="Interrupteur de l'Ajutage"/>
-    </ExtruderSwitch>
+      <StepByStepTitle value="Step-by-step instructions:" />
+      <Step1 value="1. Unload the filament;" />
+      <Step2 value="2. Unscrew nozzle;" />
+      <Step3 value="3. Screw new nozzle;" />
+      <Step4 value="4. Load filament." />
+      <Notice value="NOTICE: Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+    </NozzleSwitch>
     <SupportSwitch>
       <title value="Substitution du support"/>
       <welcome value="Bienvenue à l’assistant de Substitution du Support."/>
@@ -625,6 +625,9 @@
       <NozzleSwitch_Title value="Remplacez la buse "/>
       <NozzleSwitch_button value="Remplacez la buse"/>
       <NozzleSwitch_Intro value="Cette opération existe pour remplacer la buse de l'extrudeur par un de rechange qui est dans le Kit de Maintenance."/>
+      <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
+      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
+      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Installer le Support Externe de la Bobine"/>
       <SupportSwitch_button value="Changer le support de la bobine"/>
       <SupportSwitch_Intro value="Un tutoriel simple que vous conduit à travers l’installation du Support Externe de la Bobine."/>

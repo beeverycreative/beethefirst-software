@@ -88,23 +88,23 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
+        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
 
 
             if (ProperDefault.get("measures").equals("inches")) {
-                jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
-                        + " (" + Languager.getTagValue(1, "MainWindowButtons", "Inches") + ")");
+                jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Scale")
+                        + " (" + Languager.getTagValue("MainWindowButtons", "Inches") + ")");
             } else if (ProperDefault.get("measures").equals("mm")){
-                jLabel12.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale")
-                        + " (" + Languager.getTagValue(1, "MainWindowButtons", "MM") + ")");
+                jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Scale")
+                        + " (" + Languager.getTagValue("MainWindowButtons", "MM") + ")");
             }
 
-        bScaleToMax.setText(Languager.getTagValue(1, "MainWindowButtons", "ScaleToMax"));
-        bApply.setText(Languager.getTagValue(1, "MainWindowButtons", "Apply"));
+        bScaleToMax.setText(Languager.getTagValue("MainWindowButtons", "ScaleToMax"));
+        bApply.setText(Languager.getTagValue("MainWindowButtons", "Apply"));
 
     }
 

@@ -31,17 +31,17 @@ public class SupportSwitch1 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "SupportSwitch", "title"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue("SupportSwitch", "title"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
         lDesc1.setText("<html>"
-                + Languager.getTagValue(1, "SupportSwitch", "welcome")
+                + Languager.getTagValue("SupportSwitch", "welcome")
                 + "<br><br>"
-                + Languager.getTagValue(1, "SupportSwitch", "intro0")
-                + Languager.getTagValue(1, "SupportSwitch", "intro1")
+                + Languager.getTagValue("SupportSwitch", "intro0")
+                + Languager.getTagValue("SupportSwitch", "intro1")
                 + "</html>");
-        lDesc2.setText("<html>" + Languager.getTagValue(1, "SupportSwitch", "intro2") + "</html>");
-        bLoadSupportModels.setText("<html>" + Languager.getTagValue(1, "SupportSwitch", "button0") + "</html>");
+        lDesc2.setText("<html>" + Languager.getTagValue("SupportSwitch", "intro2") + "</html>");
+        bLoadSupportModels.setText("<html>" + Languager.getTagValue("SupportSwitch", "button0") + "</html>");
     }
 
     @SuppressWarnings("unchecked")

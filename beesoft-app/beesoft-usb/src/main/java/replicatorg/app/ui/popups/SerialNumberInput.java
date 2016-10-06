@@ -35,9 +35,8 @@ public class SerialNumberInput extends BaseDialog {
     }
 
     private void setText() {
-        final int key = 1;
-        bOk.setText(Languager.getTagValue(key, "OptionPaneButtons", "Line6"));
-        bCancel.setText(Languager.getTagValue(key, "OptionPaneButtons", "Line3"));
+        bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     public String getSerialString() {

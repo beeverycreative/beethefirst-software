@@ -1,11 +1,10 @@
 package replicatorg.app;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,7 +13,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import replicatorg.app.tools.XML;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -29,311 +27,165 @@ import replicatorg.app.tools.XML;
  */
 public class Languager {
 
-    private static final String languager_file = getLanguageFilePath();
-    private static final String printsetup_file = Base.getApplicationDirectory() + "/machines/printSetup.xml";
-    private static final String colors_file = Base.getApplicationDirectory() + "/machines/colorsGCode.xml";
-    private static final String startend_file = Base.getApplicationDirectory() + "/machines/startEndCode.xml";
+    private static final String LANGUAGE_FILE = getLanguageFilePath();
+    private static final String STARTEND_FILE = Base.getApplicationDirectory() + "/machines/startEndCode.xml";
 
+    private static final Map<String, Map<String, String>> LANGUAGE_MAP = getLanguageMap();
+    private static final Map<String, String[]> STARTEND_MAP = getStartEndGCode();
 
     /**
-     * Gets the language file selected in config.properties file. If an appropriate file doesn't exist, return the
-     * path to the english file.
-     * 
+     * Gets the language file selected in config.properties file. If an
+     * appropriate file doesn't exist, return the path to the english file.
+     *
      * @return absolute path to the language file
      */
     private static String getLanguageFilePath() {
-        String languageFilesDir, selectedLanguage, finalPath; 
+        String languageFilesDir, selectedLanguage, finalPath;
         File languageFile;
-        
+
         languageFilesDir = Base.getApplicationDirectory() + "/languages/";
         selectedLanguage = ProperDefault.get("language").toLowerCase();
         finalPath = languageFilesDir + selectedLanguage + ".xml";
         languageFile = new File(finalPath);
-        
-        if(languageFile.exists() == true) {
+
+        if (languageFile.exists() == true) {
             return finalPath;
         } else {
             return languageFilesDir + "en.xml";
         }
-     
+
     }
-    
-    /**
-     * Gets the file based on a code key
-     *
-     * @param code key to access the correct file
-     * @return file path
-     */
-    private static String getFile(int code) {
-        if (code == 1) {
-            return languager_file;
-        } else if (code == 2) {
-            return printsetup_file;
-        } else if (code == 3) {
-            return colors_file;
-        } else if (code == 4) {
-            return startend_file;
+
+    private static Node nodeSearch(final NodeList nodeList, final String nodeName) {
+        for (int i = 0; i < nodeList.getLength(); ++i) {
+            final Node node = nodeList.item(i);
+
+            if (node.getNodeName().equals(nodeName)) {
+                return node;
+            }
         }
 
-        return " ";
+        return null;
     }
     
-    /**
-     * Gets the base tag from the file type
-     *
-     * @param code key to access the correct file
-     * @return file path
-     */
-    private static String getBaseTag(int code) {
-        if (code == 1) {
-            return "tags";            
-        } else if (code == 2) {
-            return "colors";            
-        } else if (code == 3) {
-            return "gcode";
-        } else if (code == 4) {
-            return "gcode";
+    private static Document getDocument(final String documentName) {
+        final DocumentBuilderFactory documentBuilderFactory;
+        final DocumentBuilder documentBuilder;
+        
+        documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException ex) {
+            Base.writeLog("ParserConfigurationException while creating document builder.", Languager.class);
+            Base.writeLog(ex.getMessage(), Languager.class);
+            return null;
         }
-        return " ";
-    }    
+
+        try {
+            return documentBuilder.parse(documentName);
+        } catch (SAXException | IOException ex) {
+            Base.writeLog(ex.getClass().getName() + " while creating document.", Languager.class);
+            Base.writeLog(ex.getMessage(), Languager.class);
+            return null;
+        }
+    }
+    
+    private static Map<String, String[]> getStartEndGCode() {
+        final Document document;
+        final NodeList rootNodeList;
+        final Node gcodeNode, startCodeNode, endCodeNode;
+        final Element startCodeElement, endCodeElement;
+        final Map<String, String[]> resultingMap;
+
+        resultingMap = new HashMap<>();
+        document = getDocument(STARTEND_FILE);
+
+        rootNodeList = document.getChildNodes();
+        gcodeNode = nodeSearch(rootNodeList, "gcode");
+
+        if (gcodeNode != null) {
+            startCodeNode = nodeSearch(gcodeNode.getChildNodes(), "startCode");
+            endCodeNode = nodeSearch(gcodeNode.getChildNodes(), "endCode");
+
+            if (startCodeNode instanceof Element) {
+                startCodeElement = (Element) startCodeNode;
+                resultingMap.put(startCodeElement.getNodeName(), startCodeElement.getAttribute("value").split(","));
+            }
+            
+            if(endCodeNode instanceof Element) {
+                endCodeElement = (Element) endCodeNode;
+                resultingMap.put(endCodeElement.getNodeName(), endCodeElement.getAttribute("value").split(","));
+            }
+        }
+        
+        return resultingMap;
+    }
+
+    private static Map<String, Map<String, String>> getLanguageMap() {
+        final Document document;
+        final NodeList rootNodeList, tagsNodeList;
+        final Node languagesNode, tagsNode;
+        final Map<String, Map<String, String>> resultingMap;
+
+        resultingMap = new HashMap<>();
+        document = getDocument(LANGUAGE_FILE);
+
+        rootNodeList = document.getChildNodes();
+        languagesNode = nodeSearch(rootNodeList, "languages");
+
+        if (languagesNode != null) {
+            tagsNode = nodeSearch(languagesNode.getChildNodes(), "tags");
+
+            if (tagsNode != null) {
+                tagsNodeList = tagsNode.getChildNodes();
+
+                for (int i = 0; i < tagsNodeList.getLength(); ++i) {
+                    final Node node = tagsNodeList.item(i);
+                    final NodeList nodeList;
+                    final Map<String, String> subMap = new HashMap<>();
+
+                    if (node.hasChildNodes()) {
+                        nodeList = node.getChildNodes();
+
+                        for (int j = 0; j < nodeList.getLength(); ++j) {
+                            final Node childNode = nodeList.item(j);
+                            final Element element;
+
+                            if (childNode instanceof Element) {
+                                element = (Element) childNode;
+                                subMap.put(element.getNodeName(), element.getAttribute("value"));
+                            }
+                        }
+
+                        resultingMap.put(node.getNodeName(), subMap);
+                    }
+
+                }
+            }
+        }
+
+        return resultingMap;
+    }
 
     /**
      * Parses tag value from XML and removes string chars only.
      *
-     * @param code
-     * @param rootTag
      * @param subTag
      * @return plain text array without spaces
      */
-    public static String[] getGCodeArray(int code, String rootTag, String subTag) {
-        String plain_code = getTagValue(code, rootTag, subTag);
-        return plain_code.split(",");
+    public static String[] getGCodeArray(String subTag) {
+        return STARTEND_MAP.get(subTag);
     }
 
     /**
      * Gets copy from file associated to rootag and subtag.
      *
-     * @param code access code to a specific file.
      * @param rootTag root tag for file.
      * @param subTag sub tag of the root tag.
      * @return copy or null value.
      */
-    public static String getTagValue(int code, String rootTag, String subTag) {
-        String filePath = getFile(code);
-        String BASE_TAG = getBaseTag(code);
-        
-        if (filePath.isEmpty()) {
-            return "Error getting tag value";
-        }
-
-        if (subTag.contains("endCode")) {
-            subTag = "endCode";
-        }
-
-        Document dom;
-        // Make an  instance of the DocumentBuilderFactory
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            // use the factory to take an instance of the document builder
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            // parse using the builder to get the DOM mapping of the    
-            // XML file
-
-            File f = new File(filePath);
-            if (f.exists() && f.isFile() && f.canRead()) {
-
-                dom = db.parse(f);
-                Element doc = dom.getDocumentElement();
-                Node rootNode = doc.cloneNode(true);
-
-                if (XML.hasChildNode(rootNode, BASE_TAG)) {
-                    Node startnode = XML.getChildNodeByName(rootNode, BASE_TAG);
-                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                    NodeList nodeList = element.getChildNodes(); // NodeList
-
-                    for (int i = 1; i < nodeList.getLength(); i++) {
-                        if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            {
-                                return nodeList.item(i).getAttributes().getNamedItem("value").getNodeValue();
-                            }
-                            //System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value")+"\n");    
-                        } else if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) //SubNode List
-                        {
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) // Found rooTag
-                            {
-                                for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
-                                {
-                                    if (nodeList.item(i).getChildNodes().item(j).getNodeName().equals(subTag)) // Found subTag
-                                    {
-                                        return nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue();
-                                    }
-                                    //                           System.out.println(nodeList.item(i).getNodeName());
-                                    //                           System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " "+nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-            } 
-        } catch (ParserConfigurationException pce) {
-            System.out.println(pce.getMessage());
-        } catch (SAXException se) {
-            System.out.println(se.getMessage());
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
-        }
-
-
-        return null;
+    public static String getTagValue(final String rootTag, final String subTag) {
+        return LANGUAGE_MAP.get(rootTag).get(subTag);
     }
-
-    /**
-     * Gets all copy from file associated to rootag and subtag. Difference from
-     * other similar method is that returns all entries child to subtag.
-     *
-     * @param code access code to a specific file.
-     * @param rootTag root tag for file.
-     * @param subTag sub tag of the root tag.
-     * @return copy or null value.
-     */
-    public static HashMap<String, String> getTagValues(int code, String rootTag, String subTag) {
-        String filePath = getFile(code);
-        String BASE_TAG = getBaseTag(code);
-        
-        HashMap<String, String> childNodes_rootag = new HashMap<String, String>();
-
-        if (filePath.isEmpty()) {
-            return null;
-        }
-        if (subTag.contains("endCode")) {
-            subTag = "endCode";
-        }
-
-        Document dom;
-        // Make an  instance of the DocumentBuilderFactory
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            // use the factory to take an instance of the document builder
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            // parse using the builder to get the DOM mapping of the    
-            // XML file
-
-            File f = new File(filePath);
-            if (f.exists() && f.isFile() && f.canRead()) {
-
-                // Parses file and gets rootNode by it self
-                dom = db.parse(f);
-                Element doc = dom.getDocumentElement();
-                Node rootNode = doc.cloneNode(true);
-
-                //root Node has children with value = TAG var
-                if (XML.hasChildNode(rootNode, BASE_TAG)) {
-                    Node startnode = XML.getChildNodeByName(rootNode, BASE_TAG);
-                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                    NodeList nodeList = element.getChildNodes();
-
-                    //Runs over all children of TAG
-                    for (int i = 1; i < nodeList.getLength(); i++) {
-                        //If
-                        if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) {
-                            //If one of the TAG children is the rootTag
-                            if (nodeList.item(i).getNodeName().equals(rootTag)) {
-                                //Run over the rootTag children
-                                for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) {
-                                    Node subNode = nodeList.item(i).getChildNodes().item(j);
-
-                                    if (subNode.getNodeName().equals(subTag) && subNode.hasChildNodes()) // Found subTag and it has childs
-                                    {   //Run over the subTag children
-                                        for (int k = 1; k < subNode.getChildNodes().getLength(); k += 2) {
-                                            childNodes_rootag.put(subNode.getChildNodes().item(k).getAttributes().getNamedItem("value").getNodeValue(), subNode.getChildNodes().item(k).getNodeName());
-                                        }
-                                        return childNodes_rootag;
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-            } 
-        } catch (ParserConfigurationException pce) {
-            System.out.println(pce.getMessage());
-        } catch (SAXException se) {
-            System.out.println(se.getMessage());
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
-        }
-
-
-        return null;
-    }
-    
-    /**
-     * Gets the list of tag names under rootTag
-     *
-     * @param code access code to a specific file.
-     * @param rootTag root tag for file.
-     * 
-     * @return copy or null value.
-     */
-    public static List<String> getTagList(int code, String rootTag) {
-        String filePath = getFile(code);
-        String BASE_TAG = rootTag;
-        
-        List<String> childNodes_rootag = new ArrayList<String>();
-
-        if (filePath.isEmpty()) {
-            return null;
-        }
-
-        Document dom;
-        // Make an  instance of the DocumentBuilderFactory
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            // use the factory to take an instance of the document builder
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            // parse using the builder to get the DOM mapping of the    
-            // XML file
-
-            File f = new File(filePath);
-            if (f.exists() && f.isFile() && f.canRead()) {
-
-                // Parses file and gets rootNode by it self
-                dom = db.parse(f);
-                Element doc = dom.getDocumentElement();
-                Node rootNode = doc.cloneNode(true);
-
-                //root Node has children with value = TAG var
-                if (XML.hasChildNode(rootNode, BASE_TAG)) {
-                    Node startnode = XML.getChildNodeByName(rootNode, BASE_TAG);
-                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                    NodeList nodeList = element.getChildNodes();
-
-                    //Runs over all children of TAG
-                    for (int i = 1; i < nodeList.getLength(); i++) {
-                        if (!nodeList.item(i).getNodeName().equals("#text")) {
-                            childNodes_rootag.add(nodeList.item(i).getNodeName());
-                        }
-                    }
-                    
-                    return childNodes_rootag;
-                }
-
-            } else {
-                //Base.logger.log(Level.INFO, "Permission denied over {0}", "file with root tag" + BASE_TAG);
-            }
-        } catch (ParserConfigurationException pce) {
-            System.out.println(pce.getMessage());
-        } catch (SAXException se) {
-            System.out.println(se.getMessage());
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
-        }
-
-        return null;
-    }    
 }

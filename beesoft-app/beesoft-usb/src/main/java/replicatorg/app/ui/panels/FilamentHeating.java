@@ -69,14 +69,14 @@ public class FilamentHeating extends BaseDialog {
     private void setTextLanguage() {
         String warning;
 
-        warning = "<html><br>" + Languager.getTagValue(1, "FilamentWizard", "Heating_Info") + " <br><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
+        warning = "<html><br>" + Languager.getTagValue("FilamentWizard", "Heating_Info") + " <br><br><b>" + Languager.getTagValue("FilamentWizard", "Info_Warning") + "</b></html>";
         jLabel4.setText(warning);
-        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
-        jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Heating_Info_Title"));
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title1"));
+        jLabel3.setText(Languager.getTagValue("FilamentWizard", "Heating_Info_Title"));
+        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "MovingMessage"));
         jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-        bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class FilamentHeating extends BaseDialog {
     @Override
     public void showMessage() {
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
+        jLabel7.setText(Languager.getTagValue("FeedbackLabel", "HeatingMessage"));
     }
 
     private void moveToPosition() {

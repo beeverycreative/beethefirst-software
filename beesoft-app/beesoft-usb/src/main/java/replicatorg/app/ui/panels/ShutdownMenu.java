@@ -14,8 +14,6 @@ public class ShutdownMenu extends BaseDialog {
 
     private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
 
-    private static final int FILE_KEY = 1;
-
     public ShutdownMenu() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
@@ -37,14 +35,14 @@ public class ShutdownMenu extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "Title").toUpperCase());
-        lSubTitle.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "SubTitle"));
-        lChangeFilament.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "FilamentTitle"));
-        lChangeFilamentDesc.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "FilamentIntro"));
-        bChangeFilament.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "bFilamentChange"));
-        jLabelNoFilament.setText(Languager.getTagValue(FILE_KEY, "ShutdownPanel", "NoFilament").toUpperCase());
-        bCancel.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line3"));
-        bResume.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line12"));
+        lTitle.setText(Languager.getTagValue("ShutdownPanel", "Title").toUpperCase());
+        lSubTitle.setText(Languager.getTagValue("ShutdownPanel", "SubTitle"));
+        lChangeFilament.setText(Languager.getTagValue("ShutdownPanel", "FilamentTitle"));
+        lChangeFilamentDesc.setText(Languager.getTagValue("ShutdownPanel", "FilamentIntro"));
+        bChangeFilament.setText(Languager.getTagValue("ShutdownPanel", "bFilamentChange"));
+        jLabelNoFilament.setText(Languager.getTagValue("ShutdownPanel", "NoFilament").toUpperCase());
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bResume.setText(Languager.getTagValue("OptionPaneButtons", "Line12"));
     }
 
     private void showNoFilamentLabel() {

@@ -48,7 +48,7 @@ public class Query extends BaseDialog {
             jCheckboxNotAgain.setVisible(false);
         }
 
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
+        jLabel2.setText("<html>" + Languager.getTagValue("StatusMessages", messageToDisplay) + "</html>");
     }
 
     /**
@@ -74,13 +74,13 @@ public class Query extends BaseDialog {
             jCheckboxNotAgain.setVisible(false);
         }
 
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
+        jLabel2.setText("<html>" + Languager.getTagValue("StatusMessages", messageToDisplay) + "</html>");
     }
 
     private void setTextLanguage() {
-        bYes.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line1"));
-        bNo.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line2"));
-        jCheckboxNotAgain.setText(Languager.getTagValue(1, "OptionPaneButtons", "DontDisplayAgain"));
+        bYes.setText(Languager.getTagValue("OptionPaneButtons", "Line1"));
+        bNo.setText(Languager.getTagValue("OptionPaneButtons", "Line2"));
+        jCheckboxNotAgain.setText(Languager.getTagValue("OptionPaneButtons", "DontDisplayAgain"));
     }
 
     @SuppressWarnings("unchecked")

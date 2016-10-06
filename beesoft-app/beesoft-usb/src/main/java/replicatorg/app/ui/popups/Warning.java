@@ -45,7 +45,7 @@ public class Warning extends BaseDialog {
         this.operationToDisplay = null;
         this.runnableToExecute = null;
 
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
+        jLabel2.setText("<html>" + Languager.getTagValue("StatusMessages", messageToDisplay) + "</html>");
     }
 
     /**
@@ -65,7 +65,7 @@ public class Warning extends BaseDialog {
         this.operationToDisplay = operationToDisplay;
         this.runnableToExecute = null;
 
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
+        jLabel2.setText("<html>" + Languager.getTagValue("StatusMessages", messageToDisplay) + "</html>");
     }
 
     /**
@@ -85,13 +85,13 @@ public class Warning extends BaseDialog {
         this.operationToDisplay = null;
         this.runnableToExecute = runnable;
 
-        jLabel2.setText("<html>" + Languager.getTagValue(1, "StatusMessages", messageToDisplay) + "</html>");
+        jLabel2.setText("<html>" + Languager.getTagValue("StatusMessages", messageToDisplay) + "</html>");
 
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue(1, "Other", "NotSupported"));
-        bOk.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
+        bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
     }
 
     @SuppressWarnings("unchecked")

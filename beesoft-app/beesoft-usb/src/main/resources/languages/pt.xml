@@ -164,7 +164,7 @@
       <Maintenance value="MANUTENÇÃO"/>
       <QuickWizard value="GUIA RÁPIDO"/>
       <Print value="IMPRIMIR"/>
-      <EstimateExport value="Estimar / Exportar" />
+      <EstimateExport value="Estimar / Exportar"/>
       <Mirror value="Espelho"/>
       <Scale value="Escala"/>
       <ScaleToMax value="Escalar para máximo"/>
@@ -356,7 +356,7 @@
       <PrinterStatusPowerSaving value="está pronta (poupança de energia)"/>
       <MovingMessage value="A mover... aguarde."/>
       <MovingMessage2 value="Por favor aguarde! Quase pronto..."/>
-      <HeatingMessage value="A aquecer... aguarde."/>
+      <HeatingMessage value="A aquecer... a."/>
       <HeatingMessage2 value="A aquecer..."/>
       <HeatingNozzleMessage value="A aquecer... Por favor aguarde antes de limpar."/>
       <Configurations_Save value="Configurações actuais estão a ser salvas..."/>
@@ -556,26 +556,26 @@
       <Info6b value=" "/>
       <Info_Warning6 value="ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/>
     </ExtruderMaintenance>
-    <ExtruderSwitch>
-      <Title1 value="Mudança de nozzle"/>
-      <NozzleSelectDesc1 value="Selecciona o nozzle com as dimensões adequadas que irá ser instalado."/>
-      <NozzleSelectDesc2 value="Por favor nota a diferença entre os nozzles na imagem acima. O nozzle de 0.6mm tem uma ranhura e o nozzle de 0.4mm não."/>
-      <HeatingMessage1 value="Em aquecimento..."/>
+    <NozzleSwitch>
+      <Title value="Mudança de nozzle"/>
+      <HeatingMessage value="Em aquecimento..."/>
+      <Info_Warning value="ATENÇÃO: CUIDADO PARA NAO TOCARES COM A PELE NO NOZZLE DURANTE ESTE PROCESSO." />
+      <NozzleHeatingInfo1 value="O extrusor está a aquecer, por favor aguarda." />
+      <NozzleHeatingInfo2 value="Quando o extrusor estiver à temperatura ideal, a barra de progresso estará completa." />
+      <NozzleSelectDesc1 value="Escolhe o tamanho do nozzle que aplicaste:"/>
+      <NozzleSelectNotice value="NOTA:" />
+      <NozzleSelectDesc2 value="Os nozzles de 0.6mm têm uma marca em todo o seu perímetro como podes ver na imagem acima."/>
       <Info1a value="Utiliza esta função se precisares de substituir o nozzle do extrusor. Este passo implica o contacto com o extrusor aquecido, por isso irás precisar de: uma superfície resistente ao calor, um nozzle adicional e a ferramenta de remoção do nozzle disponível no teu kit de manutenção."/>
       <Info1b value=" "/>
-      <Info_Warning1 value="ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/>
-      <Title2 value="Mudança de nozzle"/>
-      <HeatingMessage2 value="Em aquecimento..."/>
       <Info2a value="O aquecimento precisa de estar concluído para poderes continuar esta operação."/>
       <Info2b value="O extrudor está completamente aquecido quando a barra de estado está completamente preenchida. Espera um momento para que a impressora derreta o PLA dentro do extrusor."/>
-      <Info_Warning2 value="ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/>
-      <Title3 value="Mudança de nozzle"/>
-      <HeatingMessage3 value="Em aquecimento..."/>
-      <Info3a value="Usa a chave para desenroscar o nozzle e coloca-o num local resistente à temperatura até que arrefeça."/>
-      <Info3b value="Aparafusa o novo nozzle, pára de apertar assim que sentires resistência. Podes carregar filamento para analisar o resultado da troca de nozzle. O filamento deve escorrer de forma uniforme e gradual."/>
-      <Info_Warning3 value="ATENÇÃO: NUNCA TOCAR NO NOZZLE QUANDO A IMPRESSORA ESTIVER LIGADA."/>
-      <Title4 value="Mudança de nozzle"/>
-    </ExtruderSwitch>
+      <StepByStepTitle value="Instruções passo-a-passo:" />
+      <Step1 value="1. Descarregar filamento;" />
+      <Step2 value="2. Desapertar nozzle;" />
+      <Step3 value="3. Apertar novo nozzle;" />
+      <Step4 value="4. Carregar filamento." />
+      <Notice value="NOTA: Aperta o nozzle até sentires resistencia. O aperto deve ser suficiente para não existirem fugas de plástico e não excessivo para não danificar a rosca. Aperto ideal: 3,5N.m" />
+    </NozzleSwitch>
     <SupportSwitch>
       <title value="Mudança de Suporte de Bobine"/>
       <welcome value="Bem-vindo ao Wizard de Mudança de Suporte."/>
@@ -623,11 +623,14 @@
       <ExtruderMaintenance_button value="Começar manutenção"/>
       <ExtruderMaintenance_Intro value="Esta operação irá auxiliar-te a desbloquear o nozzle com auxílio do Kit de Manutenção."/>
       <NozzleSwitch_Title value="Mudança de nozzle"/>
-      <NozzleSwitch_button value="Trocar nozzle agora"/>
-      <NozzleSwitch_Intro value="Esta operação irá auxiliar-te na mudança do nozzle fornecido no Kit de Manutenção."/>
+      <NozzleSwitch_button value="Mudar nozzle agora"/>
+      <NozzleSwitch_Intro value="A troca de nozzle é necessária quando este se encontra obstruído ou caso precises de imprimir com nozzle de diferente diâmetro, ex: TPU-FLEX."/>
+      <NozzleSwitch_CurrentNozzle value="Nozzle atual: %.1f (mm)"/>
+      <NozzleSwitch_AdditionalNozzle value="Caso necessites de nozzles adicionais, clica"/>
+      <NozzleSwitch_AdditionalNozzleButton value="aqui"/>
       <SupportSwitch_Title value="Instala o Suporte de Bobine Externo."/>
       <SupportSwitch_button value="Mudança de Suporte"/>
-      <SupportSwitch_Intro value="Um tutorial simples que irá guiar-te na instalação do Suporte de Bobine Externo. A simple tutorial that guides you in the installation of the top spool support."/>
+      <SupportSwitch_Intro value="Um tutorial simples que irá guiar-te na instalação do Suporte de Bobine Externo."/>
     </MaintenancePanel>
     <PausePanel>
       <Title value="Pausa"/>

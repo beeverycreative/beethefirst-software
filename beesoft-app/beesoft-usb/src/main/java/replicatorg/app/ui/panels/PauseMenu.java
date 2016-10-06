@@ -12,8 +12,6 @@ import replicatorg.drivers.Driver;
 
 public class PauseMenu extends BaseDialog {
 
-    private static final int FILE_KEY = 1;
-
     private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
 
     public PauseMenu() {
@@ -40,17 +38,17 @@ public class PauseMenu extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "Title").toUpperCase());
-        lSubTitle.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "SubTitle"));
-        lChangeFilament.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "FilamentTitle"));
-        lChangeFilamentDesc.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "FilamentIntro"));
-        bChangeFilament.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "bFilamentChange"));
-        bShutdown.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "bShutdown"));
-        lShutdownDesc.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "ShutdownIntro"));
-        lShutdown.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "ShutdownTitle"));
-        jLabelNoFilament.setText(Languager.getTagValue(FILE_KEY, "PausePanel", "NoFilament").toUpperCase());
-        bCancel.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line3"));
-        bResume.setText(Languager.getTagValue(FILE_KEY, "OptionPaneButtons", "Line12"));
+        lTitle.setText(Languager.getTagValue("PausePanel", "Title").toUpperCase());
+        lSubTitle.setText(Languager.getTagValue("PausePanel", "SubTitle"));
+        lChangeFilament.setText(Languager.getTagValue("PausePanel", "FilamentTitle"));
+        lChangeFilamentDesc.setText(Languager.getTagValue("PausePanel", "FilamentIntro"));
+        bChangeFilament.setText(Languager.getTagValue("PausePanel", "bFilamentChange"));
+        bShutdown.setText(Languager.getTagValue("PausePanel", "bShutdown"));
+        lShutdownDesc.setText(Languager.getTagValue("PausePanel", "ShutdownIntro"));
+        lShutdown.setText(Languager.getTagValue("PausePanel", "ShutdownTitle"));
+        jLabelNoFilament.setText(Languager.getTagValue("PausePanel", "NoFilament").toUpperCase());
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+        bResume.setText(Languager.getTagValue("OptionPaneButtons", "Line12"));
     }
 
     private void showNoFilamentLabel() {

@@ -39,10 +39,10 @@ public class TourWelcome extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel1.setText(Languager.getTagValue(1,"Tour", "Tour1_Title"));
-        jLabel2.setText("<html>" + Languager.getTagValue(1,"Tour", "Tour1_Text") + "</html>");
-        jLabel4.setText(Languager.getTagValue(1,"Tour", "Tour1_Jump")); 
-        jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7")); 
+        jLabel1.setText(Languager.getTagValue("Tour", "Tour1_Title"));
+        jLabel2.setText("<html>" + Languager.getTagValue("Tour", "Tour1_Text") + "</html>");
+        jLabel4.setText(Languager.getTagValue("Tour", "Tour1_Jump")); 
+        jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line7")); 
     }
     
     private void centerOnScreen()
@@ -191,14 +191,14 @@ public class TourWelcome extends javax.swing.JFrame {
         {
             jLabel3.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","c_checked.png")));
             jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","b_simple_18.png")));
-            jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line6")); 
+            jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line6")); 
             skipTourPressed = true;
         }
         else
         {
             jLabel3.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","c_unchecked.png")));
             jLabel11.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels","b_simple_21.png")));
-            jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7")); 
+            jLabel11.setText(Languager.getTagValue("OptionPaneButtons", "Line7")); 
             skipTourPressed = false;
         }
     }//GEN-LAST:event_jLabel3MousePressed

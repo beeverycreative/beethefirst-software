@@ -38,11 +38,11 @@ public class ButtonsPanel extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        bModels.setText(Languager.getTagValue(1, "MainWindowButtons", "Models"));
-        bMaintenance.setText(Languager.getTagValue(1, "MainWindowButtons", "Maintenance"));
-        bQuickGuide.setText(Languager.getTagValue(1, "MainWindowButtons", "QuickWizard"));
-        bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "EstimateExport"));
-        jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
+        bModels.setText(Languager.getTagValue("MainWindowButtons", "Models"));
+        bMaintenance.setText(Languager.getTagValue("MainWindowButtons", "Maintenance"));
+        bQuickGuide.setText(Languager.getTagValue("MainWindowButtons", "QuickWizard"));
+        bPrint.setText(Languager.getTagValue("MainWindowButtons", "EstimateExport"));
+        jLabel3.setText(Languager.getTagValue("FeedbackLabel", "PrinterStatusDisconnected"));
     }
 
     public void setLogo(String iconPath) {
@@ -52,22 +52,22 @@ public class ButtonsPanel extends javax.swing.JPanel {
     public void setMessage(String message) {
         switch (message) {
             case "is connecting":
-                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusConnecting"));
+                jLabel3.setText(Languager.getTagValue("FeedbackLabel", "PrinterStatusConnecting"));
                 bPrint.setEnabled(false);
                 break;
             case "is connected":
-                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusReady"));
-                bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "Print"));
+                jLabel3.setText(Languager.getTagValue("FeedbackLabel", "PrinterStatusReady"));
+                bPrint.setText(Languager.getTagValue("MainWindowButtons", "Print"));
                 printPanel = true;
                 bPrint.setEnabled(true);
                 bMaintenance.setEnabled(true);
                 break;
             case "power saving":
-                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusPowerSaving"));
+                jLabel3.setText(Languager.getTagValue("FeedbackLabel", "PrinterStatusPowerSaving"));
                 break;
             case "is disconnected":
-                jLabel3.setText(Languager.getTagValue(1, "FeedbackLabel", "PrinterStatusDisconnected"));
-                bPrint.setText(Languager.getTagValue(1, "MainWindowButtons", "EstimateExport"));
+                jLabel3.setText(Languager.getTagValue("FeedbackLabel", "PrinterStatusDisconnected"));
+                bPrint.setText(Languager.getTagValue("MainWindowButtons", "EstimateExport"));
                 printPanel = false;
                 bPrint.setEnabled(true);
                 bMaintenance.setEnabled(false);

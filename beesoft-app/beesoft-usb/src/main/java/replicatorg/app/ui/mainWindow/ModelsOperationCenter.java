@@ -37,12 +37,12 @@ public class ModelsOperationCenter extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        bMove.setText(Languager.getTagValue(1, "MainWindowButtons", "Move"));
-        bRotate.setText(Languager.getTagValue(1, "MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue(1, "ModelDetails", "Model"));
-        bScale.setText(Languager.getTagValue(1, "MainWindowButtons", "Scale"));
-        bMirror.setText(Languager.getTagValue(1, "MainWindowButtons", "Mirror"));
-        bMoreOptions.setText(Languager.getTagValue(1, "MainWindowButtons", "MoreOptions"));
+        bMove.setText(Languager.getTagValue("MainWindowButtons", "Move"));
+        bRotate.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
+        bScale.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
+        bMirror.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
+        bMoreOptions.setText(Languager.getTagValue("MainWindowButtons", "MoreOptions"));
     }
 
     @SuppressWarnings("unchecked")

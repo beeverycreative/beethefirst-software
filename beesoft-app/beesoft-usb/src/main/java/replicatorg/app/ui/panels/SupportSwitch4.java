@@ -41,18 +41,18 @@ public class SupportSwitch4 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "SupportSwitch", "title"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-        bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
+        jLabel1.setText(Languager.getTagValue("SupportSwitch", "title"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        bBack.setText(Languager.getTagValue("OptionPaneButtons", "Line4"));
+        bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
         lDesc.setText("<html>"
-                + Languager.getTagValue(1, "SupportSwitch", "step7")
+                + Languager.getTagValue("SupportSwitch", "step7")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step8")
+                + Languager.getTagValue("SupportSwitch", "step8")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step9")
+                + Languager.getTagValue("SupportSwitch", "step9")
                 + "<br>"
-                + Languager.getTagValue(1, "SupportSwitch", "step10")
+                + Languager.getTagValue("SupportSwitch", "step10")
                 + "</html>");
     }
 

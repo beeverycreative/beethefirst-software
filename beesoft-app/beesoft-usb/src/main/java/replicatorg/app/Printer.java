@@ -42,7 +42,7 @@ public class Printer {
         this.mainWindow = Base.getMainWindow();
         this.bed = mainWindow.getBed();
         this.params = printParams;
-        this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
+        this.options = new ArrayList<>();
         this.generator = new CuraGenerator(params, Base.GCODE2PRINTER_PATH);
     }
 
@@ -50,7 +50,7 @@ public class Printer {
         this.mainWindow = Base.getMainWindow();
         this.bed = mainWindow.getBed();
         this.params = printParams;
-        this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
+        this.options = new ArrayList<>();
         this.generator = new CuraGenerator(params, targetGCodePath);
     }
 
@@ -93,8 +93,8 @@ public class Printer {
         String[] startCode, endCode;
         StringBuilder codeStringBuilder;
 
-        startCode = Languager.getGCodeArray(4, "operationCode", "startCode");
-        endCode = Languager.getGCodeArray(4, "operationCode", "endCode");
+        startCode = Languager.getGCodeArray("startCode");
+        endCode = Languager.getGCodeArray("endCode");
         codeStringBuilder = new StringBuilder();
 
         codeStringBuilder.append(";startGCode");

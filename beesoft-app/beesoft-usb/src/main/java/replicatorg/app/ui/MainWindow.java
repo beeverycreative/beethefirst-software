@@ -401,18 +401,18 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
         JMenu menu = new JMenu("File");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "File"));
+        menu.setText(Languager.getTagValue("ApplicationMenus", "File"));
 
         item = newJMenuItem("New Scene", 'N');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_New"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "File_New"));
 
         item.addActionListener((ActionEvent e) -> {
             if (bed.isSceneDifferent() && (!oktoGoOnSave)) {
                 int answer;
                 answer = JOptionPane.showConfirmDialog(null,
-                        Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
-                        Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
+                        Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
+                        Languager.getTagValue("ToolPath", "Line8"), 0, 0);
                 if (answer == JOptionPane.YES_OPTION) {
                     if (bed.isSceneDifferent()) {
                         newSceneOnDialog = true;
@@ -437,14 +437,14 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
         //
         item = newJMenuItem("Open Scene...", 'O', false);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Open"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "File_Open"));
 
         item.addActionListener((ActionEvent e) -> {
             if (bed.isSceneDifferent() && (!oktoGoOnSave)) {
                 int answer;
                 answer = JOptionPane.showConfirmDialog(null,
-                        Languager.getTagValue(1, "ToolPath", "Line6") + "\n" + Languager.getTagValue(1, "ToolPath", "Line7"),
-                        Languager.getTagValue(1, "ToolPath", "Line8"), 0, 0);
+                        Languager.getTagValue("ToolPath", "Line6") + "\n" + Languager.getTagValue("ToolPath", "Line7"),
+                        Languager.getTagValue("ToolPath", "Line8"), 0, 0);
                 if (answer == JOptionPane.YES_OPTION) {
                     if (bed.isSceneDifferent()) {
                         handleSaveAs();
@@ -465,13 +465,13 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Save Scene", 'S');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "File_Save"));
         item.addActionListener((ActionEvent e) -> handleSave(false));
         menu.add(item);
 
         item = newJMenuItem("Save As...", 'S', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Save_as"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "File_Save_as"));
         item.addActionListener((ActionEvent e) -> handleSaveAs());
         menu.add(item);
 
@@ -482,15 +482,13 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
         //
         item = newJMenuItem("Import Model ", 'I');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Model_Import"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Model_Import"));
         item.addActionListener((ActionEvent e) -> handleNewModel());
         menu.add(item);
 
         item = newJMenuItem("Export G-code file", 'E');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(
-                1, "ApplicationMenus", "GCode_Export"
-        ));
+        item.setText(Languager.getTagValue("ApplicationMenus", "GCode_Export"));
         item.addActionListener((ActionEvent e) -> {
             MachineInterface machine;
             MainWindow editor;
@@ -513,7 +511,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Print G-code file", 'G');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "GCode_Import"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "GCode_Import"));
         item.addActionListener((ActionEvent e) -> {
             final Driver driver = getMachineInterface().getDriver();
             final String filamentCode = driver.getMachine().getCoilText();
@@ -539,7 +537,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Settings...", 'P', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Preferences"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "File_Preferences"));
 
         item.addActionListener((ActionEvent e) -> new PreferencesPanel().setVisible(true));
         menu.add(item);
@@ -551,7 +549,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Quit", 'Q', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "File_Quit"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "File_Quit"));
         item.addActionListener((ActionEvent e) -> handleQuitInternal());
         menu.add(item);
         return menu;
@@ -561,26 +559,26 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
         JMenu menu = new JMenu("Edit");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit"));
+        menu.setText(Languager.getTagValue("ApplicationMenus", "Edit"));
 
         JMenuItem item;
 
         item = newJMenuItem("Undo", 'Z');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Undo"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Undo"));
         item.addActionListener((ActionEvent e) -> bed.undoTransformation());
 
 //        menu.add(item);
         item = newJMenuItem("Redo", 'Y');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Redo"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Redo"));
         item.addActionListener((ActionEvent e) -> bed.redoTransformation());
 //        menu.add(item);
 
 //        menu.addSeparator();
         item = newJMenuItem("Duplicate", 'V');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Duplicate"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Duplicate"));
         item.addActionListener((ActionEvent e) -> {
             if (bed.getPickedModels().size() > 0) {
                 bed.duplicateModel();
@@ -593,14 +591,14 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Delete", 'D');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Delete"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Delete"));
         item.addActionListener((ActionEvent e) -> handleCAMDelete());
         menu.add(item);
         menu.addSeparator();
 
         item = newJMenuItem("Select all", 'A');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_SelectAll"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_SelectAll"));
         item.addActionListener((ActionEvent e) -> {
             canvas.pickAll();
             ModelsDetailsPanel mdp = new ModelsDetailsPanel();
@@ -611,7 +609,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Unselect", 'Z', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Unselect"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Unselect"));
         item.addActionListener((ActionEvent e) -> {
             canvas.unPickAll();
             SceneDetailsPanel sdp = new SceneDetailsPanel();
@@ -623,7 +621,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Put on Platform", 'L');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_PutPlatform"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_PutPlatform"));
         item.addActionListener((ActionEvent e) -> {
             if (bed.getPickedModels().size() > 0) {
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().putOnPlatform();
@@ -634,7 +632,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Center in Platform", 'C');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Center"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Center"));
         item.addActionListener((ActionEvent e) -> {
             if (bed.getPickedModels().size() > 0) {
                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().center();
@@ -645,7 +643,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Reset Original Position", 'R');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Edit_Reset"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Edit_Reset"));
         item.addActionListener((ActionEvent e) -> {
             if (bed.getPickedModels().size() > 0) {
                 bed.resetTransformation();
@@ -685,12 +683,12 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
         JMenu menu = new JMenu("Printer");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer"));
+        menu.setText(Languager.getTagValue("ApplicationMenus", "Printer"));
         enableCP = Boolean.parseBoolean(Base.readConfig("controlpanel.enable"));
 
         item = newJMenuItem("Maintenance", 'M');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_Maintenance"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Printer_Maintenance"));
         item.addActionListener((ActionEvent e) -> {
             if (machineLoader.isConnected()) {
                 if (!Base.isPrinting) {
@@ -705,7 +703,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Control Panel", 'K');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_ControlPanel"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Printer_ControlPanel"));
         item.addActionListener((ActionEvent e) -> {
             if (machineLoader.isConnected()) {
                 if (!Base.isPrinting) {
@@ -723,7 +721,7 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Print ", 'P');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Printer_Print"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Printer_Print"));
         item.addActionListener((ActionEvent e) -> {
             final MachineInterface machine;
             final PrintPanel printPanel;
@@ -750,23 +748,23 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
         JMenu menu = new JMenu("Help");
         menu.setIcon(GraphicDesignComponents.getMenuItemIcon());
         menu.setFont(GraphicDesignComponents.getSSProLight("13"));
-        menu.setText(Languager.getTagValue(1, "ApplicationMenus", "Help"));
+        menu.setText(Languager.getTagValue("ApplicationMenus", "Help"));
 
         item = newJMenuItem("FAQ", 'F', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "Help", "FAQ"));
+        item.setText(Languager.getTagValue("Help", "FAQ"));
         item.addActionListener((ActionEvent e) -> launchBrowser("https://beeverycreative.com/faq/"));
         menu.add(item);
 
         item = newJMenuItem("Troubleshooting", 'T', true);
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "Help", "Troubleshooting"));
+        item.setText(Languager.getTagValue("Help", "Troubleshooting"));
         item.addActionListener((ActionEvent e) -> launchBrowser("https://beeverycreative.com/troubleshooting/"));
         menu.add(item);
 
         item = newJMenuItem("Quick Guide ", 'Q');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_QuickGuide"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Help_QuickGuide"));
         item.addActionListener((ActionEvent e) -> {
             Base.writeLog("BEESOFT tour loaded ... ", this.getClass());
 
@@ -778,14 +776,14 @@ public final class MainWindow extends JFrame implements MRJQuitHandler, WindowLi
 
         item = newJMenuItem("Check for Updates ", 'U');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_Update"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Help_Update"));
         item.addActionListener((ActionEvent e) -> new UpdateChecker().setVisible(true));
         menu.add(item);
         menu.addSeparator();
 
         item = newJMenuItem("About ", 'K');
         item.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        item.setText(Languager.getTagValue(1, "ApplicationMenus", "Help_About"));
+        item.setText(Languager.getTagValue("ApplicationMenus", "Help_About"));
         item.addActionListener((ActionEvent e) -> new About().setVisible(true));
         menu.add(item);
 

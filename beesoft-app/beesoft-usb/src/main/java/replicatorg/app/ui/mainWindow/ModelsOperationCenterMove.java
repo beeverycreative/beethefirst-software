@@ -54,20 +54,19 @@ public class ModelsOperationCenterMove extends javax.swing.JPanel {
     }
 
     private void setTextLanguage() {
-        int fileKey = 1;
-        jLabel1.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move"));
-        jLabel2.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Rotate"));
-        jLabel3.setText(Languager.getTagValue(fileKey, "ModelDetails", "Model"));
-        jLabel4.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Scale"));
-        jLabel5.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Mirror"));
-        jLabel12.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move"));
+        jLabel1.setText(Languager.getTagValue("MainWindowButtons", "Move"));
+        jLabel2.setText(Languager.getTagValue("MainWindowButtons", "Rotate"));
+        jLabel3.setText(Languager.getTagValue("ModelDetails", "Model"));
+        jLabel4.setText(Languager.getTagValue("MainWindowButtons", "Scale"));
+        jLabel5.setText(Languager.getTagValue("MainWindowButtons", "Mirror"));
+        jLabel12.setText(Languager.getTagValue("MainWindowButtons", "Move"));
 //        jLabel13.setText(Languager.getTagValue("", ""));
 //        jLabel14.setText(Languager.getTagValue("", ""));        
 //        jLabel15.setText(Languager.getTagValue("", ""));    
         if (ProperDefault.get("measures").equals("inches")) {
-            jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 0.2 " + Languager.getTagValue(fileKey, "MainWindowButtons", "Inches"));
+            jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Move") + " 0.2 " + Languager.getTagValue("MainWindowButtons", "Inches"));
         } else {
-            jLabel23.setText(Languager.getTagValue(fileKey, "MainWindowButtons", "Move") + " 5 " + Languager.getTagValue(fileKey, "MainWindowButtons", "MM"));
+            jLabel23.setText(Languager.getTagValue("MainWindowButtons", "Move") + " 5 " + Languager.getTagValue("MainWindowButtons", "MM"));
         }
     }
 
