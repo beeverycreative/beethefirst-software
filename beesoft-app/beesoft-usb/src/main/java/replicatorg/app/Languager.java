@@ -1,6 +1,5 @@
 package replicatorg.app;
 
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

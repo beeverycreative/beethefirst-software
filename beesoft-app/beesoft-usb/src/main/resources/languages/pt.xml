@@ -42,7 +42,6 @@
       <Printer_Print2D value="Imprimir de imagem 2D"/>
       <Help_Topics value="Tópicos de ajuda:"/>
       <Help_Topics_Info value="Se precisares de mais ajuda, por favor consulta as nossas FAQs, o nosso site em www.beeverycreative.com ou contacta o nosso Apoio a Cliente."/>
-      <Help value="Clica aqui para obteres ajuda"/>
       <Help_help value="Ajuda"/>
       <Help_QuickGuide value="Guia rápido"/>
       <Help_Update value="Verifica actualizações"/>
@@ -356,7 +355,7 @@
       <PrinterStatusPowerSaving value="está pronta (poupança de energia)"/>
       <MovingMessage value="A mover... aguarde."/>
       <MovingMessage2 value="Por favor aguarde! Quase pronto..."/>
-      <HeatingMessage value="A aquecer... a."/>
+      <HeatingMessage value="A aquecer... aguarde."/>
       <HeatingMessage2 value="A aquecer..."/>
       <HeatingNozzleMessage value="A aquecer... Por favor aguarde antes de limpar."/>
       <Configurations_Save value="Configurações actuais estão a ser salvas..."/>
@@ -560,10 +559,10 @@
       <Title value="Mudança de nozzle"/>
       <HeatingMessage value="Em aquecimento..."/>
       <Info_Warning value="ATENÇÃO: CUIDADO PARA NAO TOCARES COM A PELE NO NOZZLE DURANTE ESTE PROCESSO." />
+      <NoticeWord value="NOTA:" />
       <NozzleHeatingInfo1 value="O extrusor está a aquecer, por favor aguarda." />
       <NozzleHeatingInfo2 value="Quando o extrusor estiver à temperatura ideal, a barra de progresso estará completa." />
       <NozzleSelectDesc1 value="Escolhe o tamanho do nozzle que aplicaste:"/>
-      <NozzleSelectNotice value="NOTA:" />
       <NozzleSelectDesc2 value="Os nozzles de 0.6mm têm uma marca em todo o seu perímetro como podes ver na imagem acima."/>
       <Info1a value="Utiliza esta função se precisares de substituir o nozzle do extrusor. Este passo implica o contacto com o extrusor aquecido, por isso irás precisar de: uma superfície resistente ao calor, um nozzle adicional e a ferramenta de remoção do nozzle disponível no teu kit de manutenção."/>
       <Info1b value=" "/>
@@ -574,7 +573,17 @@
       <Step2 value="2. Desapertar nozzle;" />
       <Step3 value="3. Apertar novo nozzle;" />
       <Step4 value="4. Carregar filamento." />
-      <Notice value="NOTA: Aperta o nozzle até sentires resistencia. O aperto deve ser suficiente para não existirem fugas de plástico e não excessivo para não danificar a rosca. Aperto ideal: 3,5N.m" />
+      <FirstSeries value="1ª Série" />
+      <SecondSeries value="2ª Série" />
+      <FirstOrSecond value="Primeiro, verifica se o nozzle em questão corresponde à 1ª ou 2ª série." />
+      <List0 value="Para fazer a substituição deste tipo de nozzle, vais precisar de:" />
+      <List1Nozzle value="Nozzle adicional;" />
+      <List2Wrench value="Chave de bocas de 6mm;" />
+      <List2SocketWrench value="Chave de caixa de 10mm;" />
+      <List3Ratchet value="Roquete para chave de caixa;" />
+      <List4Surface value="Uma superfície que aguente o nozzle quando o retirares." />
+      <NoticeInfo1 value="o nozzle retirado vai sair a cerca de 200ºC" />
+      <NoticeInfo2 value="Aperta o nozzle até sentires resistencia. O aperto deve ser suficiente para não existirem fugas de plástico e não excessivo para não danificar a rosca. Aperto ideal: 3,5 (N.m)" />
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Mudança de Suporte de Bobine"/>
