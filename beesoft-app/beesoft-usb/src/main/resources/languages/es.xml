@@ -42,7 +42,6 @@
       <Printer_Print2D value="Impresión de una imagen 2D"/>
       <Help_Topics value="Temas de ayuda:"/>
       <Help_Topics_Info value="Si necesita más ayuda, por favor consulta nuestras FAQs, nuestro sitio web www.beeverycreative.com, o póngase en contacto con el servicio al cliente."/>
-      <Help value="Pulse aquí para obtener ayuda"/>
       <Help_help value="Ayuda"/>
       <Help_QuickGuide value="Guía rápida"/>
       <Help_Update value="Buscar actualizaciones"/>
@@ -560,10 +559,10 @@
       <Title value="Cambio de nozzle"/>
       <HeatingMessage value="Calentando..."/>
       <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <NoticeWord value="NOTICE:" />
       <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
       <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
       <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
-      <NozzleSelectNotice value="NOTICE:" />
       <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Utiliza esta operación si deseas reemplazar el nozzle de la extrusora. Esto implicará el manejo de la extrusora caliente, vas a necesitar: una bandeja o superficie resistente al calor, un nozzle de repuesto, y la herramienta para retirar el nozzle de tu kit de mantenimiento"/>
       <Info1b value=" "/>
@@ -574,7 +573,17 @@
       <Step2 value="2. Unscrew nozzle;" />
       <Step3 value="3. Screw new nozzle;" />
       <Step4 value="4. Load filament." />
-      <Notice value="NOTICE: Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+      <FirstSeries value="1st Series" />
+      <SecondSeries value="2nd Series" />
+      <FirstOrSecond value="First, verify if your nozzle belongs to the 1st or 2nd series." />
+      <List0 value="To replace this type of nozzle, you'll need:" />
+      <List1Nozzle value="Additional nozzle;" />
+      <List2Wrench value="6mm wrench;" />
+      <List2SocketWrench value="10mm socket wrench;" />
+      <List3Ratchet value="Ratchet for the socket wrench;" />
+      <List4Surface value="A surface that can handle nozzle's heat, once you take it off." />
+      <NoticeInfo1 value="the removed nozzle will be at around 200ºC" />
+      <NoticeInfo2 value="Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Cambiar soporte de la bobina."/>

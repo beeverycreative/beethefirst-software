@@ -52,16 +52,18 @@ public class NozzleSwitch3 extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        lTitle.setText(Languager.getTagValue("NozzleSwitch", "Title"));
-        lStepByStepTitle.setText(Languager.getTagValue("NozzleSwitch", "StepByStepTitle"));
-        lStep1.setText(Languager.getTagValue("NozzleSwitch", "Step1"));
-        lStep2.setText(Languager.getTagValue("NozzleSwitch", "Step2"));
-        lStep3.setText(Languager.getTagValue("NozzleSwitch", "Step3"));
-        lStep4.setText(Languager.getTagValue("NozzleSwitch", "Step4"));
-        lNotice.setText(Languager.getTagValue("NozzleSwitch", "Notice"));
+        lTitle.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Title"));
+        lStepByStepTitle.setText("<html>" + Languager.getTagValue("NozzleSwitch", "StepByStepTitle"));
+        lStep1.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step1"));
+        lStep2.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step2"));
+        lStep3.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step3"));
+        lStep4.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step4"));
+        lNotice.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NoticeWord"));
+        lNotice2.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NoticeInfo2"));
+        lWarning.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Info_Warning"));
+
         bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        lWarning.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Info_Warning"));
     }
 
     @Override
@@ -103,6 +105,7 @@ public class NozzleSwitch3 extends BaseDialog {
         lStep2 = new javax.swing.JLabel();
         lStep3 = new javax.swing.JLabel();
         lStep4 = new javax.swing.JLabel();
+        lNotice2 = new javax.swing.JLabel();
         lNotice = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bNext = new javax.swing.JLabel();
@@ -251,8 +254,12 @@ public class NozzleSwitch3 extends BaseDialog {
         lStep4.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lStep4.setText("4. Load filament.");
 
-        lNotice.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lNotice.setText("<html><b>NOTICE</b>: Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m).");
+        lNotice2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lNotice2.setText("<html> Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m).");
+
+        lNotice.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        lNotice.setText("NOTICE: ");
+        lNotice.setMaximumSize(null);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -270,10 +277,14 @@ public class NozzleSwitch3 extends BaseDialog {
                     .addComponent(lStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lNotice, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(lStep1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lStep3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lStep4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(lStep4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lNotice2, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
@@ -293,8 +304,10 @@ public class NozzleSwitch3 extends BaseDialog {
                 .addGap(0, 0, 0)
                 .addComponent(lStep4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lNotice, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lNotice2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addComponent(lWarning)
                 .addContainerGap())
         );
@@ -368,7 +381,7 @@ public class NozzleSwitch3 extends BaseDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 516, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -458,6 +471,7 @@ public class NozzleSwitch3 extends BaseDialog {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lNotice;
+    private javax.swing.JLabel lNotice2;
     private javax.swing.JLabel lStep1;
     private javax.swing.JLabel lStep2;
     private javax.swing.JLabel lStep3;

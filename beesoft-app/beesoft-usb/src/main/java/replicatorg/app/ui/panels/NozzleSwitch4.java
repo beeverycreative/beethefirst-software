@@ -39,9 +39,8 @@ public class NozzleSwitch4 extends BaseDialog {
         jLabel1.setText(Languager.getTagValue("NozzleSwitch", "Title"));
 
         lNozzleSelectDesc1.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NozzleSelectDesc1"));
-        lNozzleSelectDesc2.setText("<html><b>"
-                + Languager.getTagValue("NozzleSwitch", "NozzleSelectNotice") + "</b> "
-                + Languager.getTagValue("NozzleSwitch", "NozzleSelectDesc2"));
+        lNotice.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NoticeWord"));
+        lNotice2.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NozzleSelectDesc2"));
 
         bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
         bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
@@ -80,7 +79,8 @@ public class NozzleSwitch4 extends BaseDialog {
         nozzleComboBox = new javax.swing.JComboBox();
         lNozzleSelectDesc1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        lNozzleSelectDesc2 = new javax.swing.JLabel();
+        lNotice2 = new javax.swing.JLabel();
+        lNotice = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -173,13 +173,18 @@ public class NozzleSwitch4 extends BaseDialog {
         jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
         jLabel3.setText("Nozzle (mm)");
 
-        lNozzleSelectDesc2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lNozzleSelectDesc2.setText("<html><b>NOTICE:</b> 0.6 mm nozzles are marked around their perimeter, as you can observe in the above image.");
+        lNotice2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lNotice2.setText("<html>0.6 mm nozzles are marked around their perimeter, as you can observe in the above image.");
+
+        lNotice.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        lNotice.setText("NOTICE:");
+        lNotice.setMaximumSize(null);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -189,14 +194,16 @@ public class NozzleSwitch4 extends BaseDialog {
                         .addGap(28, 28, 28)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lNotice2, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGap(28, 28, 28)
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lNozzleSelectDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lNozzleSelectDesc2, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(lNozzleSelectDesc1, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +219,9 @@ public class NozzleSwitch4 extends BaseDialog {
                     .addComponent(nozzleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(14, 14, 14)
-                .addComponent(lNozzleSelectDesc2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lNotice2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 
@@ -318,8 +327,9 @@ public class NozzleSwitch4 extends BaseDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lNotice;
+    private javax.swing.JLabel lNotice2;
     private javax.swing.JLabel lNozzleSelectDesc1;
-    private javax.swing.JLabel lNozzleSelectDesc2;
     private javax.swing.JComboBox nozzleComboBox;
     // End of variables declaration//GEN-END:variables
 }

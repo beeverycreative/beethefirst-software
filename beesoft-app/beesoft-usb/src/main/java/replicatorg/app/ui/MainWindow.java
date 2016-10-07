@@ -66,7 +66,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

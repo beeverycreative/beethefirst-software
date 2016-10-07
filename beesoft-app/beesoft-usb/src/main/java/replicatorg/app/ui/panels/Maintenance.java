@@ -195,10 +195,10 @@ public class Maintenance extends BaseDialog {
             pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pTopLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(l_tittle)
-                .addGap(183, 183, 183)
+                .addComponent(l_tittle, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                 .addComponent(l_machine_status_warn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(279, Short.MAX_VALUE))
         );
         pTopLayout.setVerticalGroup(
             pTopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -671,7 +671,7 @@ public class Maintenance extends BaseDialog {
     private void bNozzleSwitchMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNozzleSwitchMousePressed
         if (bNozzleSwitch.isEnabled()) {
             dispose();
-            NozzleSwitch2 p = new NozzleSwitch2();
+            NozzleSwitch1 p = new NozzleSwitch1();
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
 

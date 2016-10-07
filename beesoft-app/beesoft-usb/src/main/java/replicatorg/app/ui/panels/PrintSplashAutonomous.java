@@ -169,7 +169,6 @@ public class PrintSplashAutonomous extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        int fileKey = 1;
         tInfo2.setText(Languager.getTagValue("Print", "Print_Splash_Info2"));
         tInfo3.setText(Languager.getTagValue("Print", "Print_Splash_Info4"));
         tEstimation.setText(Languager.getTagValue("Print", "Print_Estimation"));
