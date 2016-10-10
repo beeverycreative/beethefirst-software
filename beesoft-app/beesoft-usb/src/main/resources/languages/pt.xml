@@ -592,7 +592,7 @@
       <intro1 value="Este Wizard irá ajudar-te com os passos necessário para mudança de suporte de bobine."/>
       <intro2 value="Se ainda não imprimiste as partes que compõem o suporte de bobine, clica neste botão para fechar este wizard e carregar os modelos."/>
       <intro3 value="Para continuar, precisas de retirar o filamento se tiveres algum carregado na impressora. Se quiseres fazer isso agora, clica aqui."/>
-      <button0 value="Carregar modelos do suporte de bobine."/>
+      <button0 value="Carregar modelos"/>
       <button1 value="Retirar filamento"/>
       <step0 value="Por favor segue os seguintes passos:"/>
       <step1 value="1. Desaparafusa os quatro parafusos que seguram a tampa superior da impressora, retirando-a de seguida."/>
@@ -716,16 +716,16 @@
       <ReinstallError value="Instale novamente o BEESOFT para instalar os fiheiros que estão em falta."/>
       <NoModelError value="Não há modelos na área de trabalho. Por favor carrega pelo menos um modelo."/>
       <UnknownColor value="A cor do filamento é desconhecida! A cor seleccionada é a correcta?"/>
-      <IncompatibleFilament value="Precisas de mudar o nozzle para poderes usar este filamento. Pretendes continuar? In order to use this filament, you have to change your current nozzle. Do you wish to proceed?"/>
-      <IncompatibleFilamentPause value="Não é possível mudar para este tipo de filamento durante a Pausa/Desligar. It is not possible to change to this filament during Pause/Shutdown."/>
-      <ChangeSupport value="Precisas de instalar o Suporte Externo de Bobine para poderes continuar. Desejas continuar? In order to use this type of filament, you must have the external spool holder mounted. Do you wish to proceed?"/>
-      <LoadSupportModels value="Volta por favor a este wizard quando tiveres acabado de imprimir os modelos necessários. Poderás fazer isso clicando no botão de Manutenção (à esquerda do botão Imprimir, no canto superior direito do ecrã), a de seguida clicando no botão de Mudança de Suporte. Please return to this wizard when you're done printing the required models. You can do this by clicking on the Maintenance button (left of the Print button, upper right corner of the screen), and pressing the Change Support button afterwards."/>
+      <IncompatibleFilament value="Precisas de mudar o nozzle para poderes usar este filamento. Pretendes continuar?"/>
+      <IncompatibleFilamentPause value="Não é possível mudar para este tipo de filamento durante a Pausa/Desligar."/>
+      <ChangeSupport value="Precisas de instalar o Suporte Externo de Bobine para poderes continuar. Desejas continuar?"/>
+      <LoadSupportModels value="Volta por favor a este wizard quando tiveres acabado de imprimir os modelos necessários. Poderás fazer isso clicando no botão de Manutenção (à esquerda do botão Imprimir, no canto superior direito do ecrã), a de seguida clicando no botão de Mudança de Suporte."/>
       <UnknownFilamentText value="Não existem definições no BEESOFT para o filamento carregado na impressora. Por favor mude o filamento."/>
-      <UnloadBeforeSupport value="Precisas de garantir que não há filamento carregado na impressora para continuares. Pretendes retirar o filamento agora? To proceed, you must ensure you have no loaded filament on your printer. Do you wish to unload now?"/>
-      <CancelPrintText value="Tens a certeza que pretendes cancelar a tua impressão? Are you sure you want to cancel your print?"/>
-      <CPEnableText value="Podes usar o Painel de Controle agora. You can now use the Control Panel."/>
-      <CPDisableText value="O Painel de Controle foi desactivado. Control Panel has been disabled."/>
-      <CPResetSN value="Please restart your printer to complete this operation."/>
+      <UnloadBeforeSupport value="Precisas de garantir que não há filamento carregado na impressora para continuares. Pretendes retirar o filamento agora?" />
+      <CancelPrintText value="Tens a certeza que pretendes cancelar a tua impressão?"/>
+      <CPEnableText value="Podes usar o Painel de Controlo agora."/>
+      <CPDisableText value="O Painel de Controlo foi desactivado."/>
+      <CPResetSN value="Por favor reinicie a sua impressora para concluir esta operação.."/>
     </StatusMessages>
     <!-- A próxima secção XML contém o texto para a Apresentação da Aplicação -->
     <Tour>

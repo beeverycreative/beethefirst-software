@@ -592,7 +592,7 @@
       <intro1 value="Diese Assistent zeigt die notwendige Schritte, um die neue Spulenhalter zu drucken und zu installieren."/>
       <intro2 value="Wenn Sie die Spulenhalter noch nicht gedruckt haben, klicken Sie bitte auf diese Schaltfläche um den Assistent zu schließen und dann laden Sie die Modelle."/>
       <intro3 value="Um fortzufahren, müssen Sie das Filament entladen, wenn es noch nicht entladen wird. Wenn Sie es jetzt entladen möchten, klicken Sie bitte hier."/>
-      <button0 value="Spulenhalter Modelle laden"/>
+      <button0 value="Modelle laden"/>
       <button1 value="Entladen Filament"/>
       <step0 value="Bitte gehen Sie folgendermaßen vor:"/>
       <step1 value="1. Entfernen Sie die vier Schrauben, mit denen die obere Hälfte des Druckers Außengehäuse halten ist und entfernen Sie es."/>

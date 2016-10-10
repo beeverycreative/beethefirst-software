@@ -592,7 +592,7 @@
       <intro1 value="Donc, cet assistant vise démontrer les étapes nécessaires pour imprimer et installer le nouveau support."/>
       <intro2 value="Si vous n’avez pas encore imprimé les composants pour le support de la bobine, appuyez sur ce bouton pour fermer cet assistant et chargez les modèles."/>
       <intro3 value="Pour avancer, déchargez le filament, s’il y a du filament chargé. Pour le faire maintenant, appuyez ici."/>
-      <button0 value="Charger Modèles du Support"/>
+      <button0 value="Charger Modèles"/>
       <button1 value="Décharger le filament"/>
       <step0 value="Suivez ces étapes:"/>
       <step1 value="1. Enlevez les 4 vis que supportent la moitié supérieure du boîtier extérieure de l’imprimante et enlevez-le."/>
