@@ -90,7 +90,6 @@ public class Warning extends BaseDialog {
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue("Other", "NotSupported"));
         bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
     }
 
@@ -109,7 +108,6 @@ public class Warning extends BaseDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(10, 10));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(350, 165));
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
 
@@ -148,6 +146,7 @@ public class Warning extends BaseDialog {
         jLabel2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Functionality not yet supported...");
+        jLabel2.setMaximumSize(new java.awt.Dimension(500, 100));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -171,8 +170,8 @@ public class Warning extends BaseDialog {
                     .addComponent(lTitle)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));

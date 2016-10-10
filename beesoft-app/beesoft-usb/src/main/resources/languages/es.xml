@@ -592,7 +592,7 @@
       <intro1 value="Por eso, este asistente tiene el objetivo de mostrar los pasos necesarios para imprimir e instalar el nuevo soporte."/>
       <intro2 value="Si todavía no has impreso los componentes del soporte de la bobina, por favor haz clic en este botón para cerrar este asistente y cargar los modelos."/>
       <intro3 value="Para continuar, debe descargar tu filamento, si lo tienes cargado en ese momento. Si deseas hacer esto ahora, por favor haz clic aquí."/>
-      <button0 value="Cargar modelos."/>
+      <button0 value="Cargar modelos"/>
       <button1 value="Descargar filamento"/>
       <step0 value="Por favor, siga estos pasos:"/>
       <step1 value="1. Retira los cuatro tornillos que aseguran la mitad superior de la carcasa exterior de la impresora, y retírala."/>
