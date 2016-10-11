@@ -370,8 +370,7 @@ public class FilamentCodeInsertion extends BaseDialog {
         if (bNext.isEnabled()) {
             final Filament fil;
 
-            //fil = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
-            fil = (Filament) comboModel.getSelectedItem();
+            fil = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
             FilamentHeating filamentHeatingPanel = new FilamentHeating(fil);
             dispose();
             filamentHeatingPanel.setVisible(true);

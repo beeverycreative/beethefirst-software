@@ -558,7 +558,7 @@
     <NozzleSwitch>
       <Title value="Mudança de nozzle"/>
       <HeatingMessage value="Em aquecimento..."/>
-      <Info_Warning value="ATENÇÃO: CUIDADO PARA NAO TOCARES COM A PELE NO NOZZLE DURANTE ESTE PROCESSO." />
+      <Info_Warning value="ATENÇÃO: CUIDADO PARA NAO TOCARES DIRETAMENTE NO NOZZLE DURANTE ESTE PROCESSO." />
       <NoticeWord value="NOTA:" />
       <NozzleHeatingInfo1 value="O extrusor está a aquecer, por favor aguarda." />
       <NozzleHeatingInfo2 value="Quando o extrusor estiver à temperatura ideal, a barra de progresso estará completa." />
@@ -619,6 +619,7 @@
       <Filament_Type value="Tipo de filamento: "/>
       <Filament_Intro value="Esta operação é necessária quando pretendes imprimir com uma cor diferente ou quando existe pouco filamento na bobine."/>
       <FilamentChange_button value="Mudar de filamento agora"/>
+      <FilamentSwitch_CurrentFilament value="Filamento atual : %s" />
       <Filament_Info value="Tens x gramas de filamento (estimado)"/>
       <Filament_Info_None value="O filamento remanescente pode não ser suficiente para a próxima impressão."/>
       <Calibration_Title value="Calibração"/>
@@ -635,8 +636,6 @@
       <NozzleSwitch_button value="Mudar nozzle agora"/>
       <NozzleSwitch_Intro value="A troca de nozzle é necessária quando este se encontra obstruído ou caso precises de imprimir com nozzle de diferente diâmetro, ex: TPU-FLEX."/>
       <NozzleSwitch_CurrentNozzle value="Nozzle atual: %.1f (mm)"/>
-      <NozzleSwitch_AdditionalNozzle value="Caso necessites de nozzles adicionais, clica"/>
-      <NozzleSwitch_AdditionalNozzleButton value="aqui"/>
       <SupportSwitch_Title value="Instala o Suporte de Bobine Externo."/>
       <SupportSwitch_button value="Mudança de Suporte"/>
       <SupportSwitch_Intro value="Um tutorial simples que irá guiar-te na instalação do Suporte de Bobine Externo."/>

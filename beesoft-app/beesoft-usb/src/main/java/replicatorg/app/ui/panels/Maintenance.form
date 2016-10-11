@@ -200,15 +200,18 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lChangeFilament" min="-2" max="-2" attributes="0"/>
-                                  <Component id="bChangeFilament" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="lChangeFilament" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="413" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="lChangeFilamentDesc" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="bChangeFilament" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="lCurrentFilament" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="154" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -222,7 +225,10 @@
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                       <Component id="lChangeFilamentDesc" min="-2" pref="50" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="bChangeFilament" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="bChangeFilament" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lCurrentFilament" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -264,6 +270,17 @@
                   <Font name="Source Sans Pro" size="14" style="1"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Change filament"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lCurrentFilament">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro Light" size="12" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Current filament:"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[150, 16]"/>
+                </Property>
               </Properties>
             </Component>
           </SubComponents>
@@ -488,7 +505,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lNozzleSwitchDesc" alignment="0" max="32767" attributes="0"/>
+                          <Component id="lNozzleSwitchDesc" alignment="0" pref="648" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="lNozzleSwitch" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -497,11 +514,7 @@
                               <Component id="bNozzleSwitch" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Component id="lCurrentNozzle" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="148" max="-2" attributes="0"/>
-                              <Component id="lAdditionalNozzleText" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                              <Component id="lAdditionalNozzleLink" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="44" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -518,8 +531,6 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="bNozzleSwitch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lCurrentNozzle" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lAdditionalNozzleText" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="lAdditionalNozzleLink" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -574,25 +585,6 @@
                   <Dimension value="[150, 16]"/>
                 </Property>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="lAdditionalNozzleText">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Source Sans Pro Light" size="12" style="0"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt; If you need additional nozzles please click&lt;/html&gt;"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="lAdditionalNozzleLink">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Source Sans Pro Light" size="12" style="0"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;a href=&quot;&quot;&gt;here&lt;/a&gt;. &#xa;&lt;/html&gt;"/>
-              </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lAdditionalNozzleLinkMouseClicked"/>
-              </Events>
             </Component>
           </SubComponents>
         </Container>

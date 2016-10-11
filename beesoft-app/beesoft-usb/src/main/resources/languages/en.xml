@@ -558,7 +558,7 @@
     <NozzleSwitch>
       <Title value="Nozzle Switch"/>
       <HeatingMessage value="Heating..." />
-      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE DIRECTLY DURING THIS PROCESS." />
       <NoticeWord value="NOTICE:" />
       <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
       <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
@@ -619,6 +619,7 @@
       <Filament_Type value="Filament type: "/>
       <Filament_Intro value="This operation is needed if you want to print with a different color or if the filament available in the spool is not enough."/>
       <FilamentChange_button value="Change filament now"/>
+      <FilamentSwitch_CurrentFilament value="Current filament : %s" />
       <Filament_Info value="You have x grams of filament (estimated)"/>
       <Filament_Info_None value="Remaining filament may not be enough for the next print session."/>
       <Calibration_Title value="Calibrate"/>
@@ -635,8 +636,6 @@
       <NozzleSwitch_button value="Switch nozzle now"/>
       <NozzleSwitch_Intro value="It is necessary to change the nozzle when it's clogged or if you need to print with a nozzle of a different diameter, ex: TPU-FLEX."/>
       <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
-      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
-      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Install External Spool Holder."/>
       <SupportSwitch_button value="Change spool holder"/>
       <SupportSwitch_Intro value="A simple tutorial that guides you in the installation of the External Spool Holder."/>

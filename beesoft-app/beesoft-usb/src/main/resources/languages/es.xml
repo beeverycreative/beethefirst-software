@@ -558,7 +558,7 @@
     <NozzleSwitch>
       <Title value="Cambio de nozzle"/>
       <HeatingMessage value="Calentando..."/>
-      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE DIRECTLY DURING THIS PROCESS." />
       <NoticeWord value="NOTICE:" />
       <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
       <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
@@ -619,6 +619,7 @@
       <Filament_Type value="Tipo de filamento: "/>
       <Filament_Intro value="Esta operación es necesaria cuando se desea imprimir con un color diferente o cuando la bobina tiene poco filamento."/>
       <FilamentChange_button value="Cambiar filamento ahora"/>
+      <FilamentSwitch_CurrentFilament value="Current filament : %s" />
       <Filament_Info value="Tienes x gramos de filamento (estimado)"/>
       <Filament_Info_None value="El filamento que resta en la bobina puede no ser suficiente para la próxima impresión."/>
       <Calibration_Title value="Calibración"/>
@@ -635,8 +636,6 @@
       <NozzleSwitch_button value="Reemplazar ahora"/>
       <NozzleSwitch_Intro value="Esta operación sirve para reemplazar el nozzle por el repuesto de tu kit de mantenimiento."/>
       <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
-      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
-      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Instala el soporte de la bobina externo"/>
       <SupportSwitch_button value="Cambia el soporte de la bobina"/>
       <SupportSwitch_Intro value="Un simple tutorial te guía en la instalación del soporte de la bobina externa."/>
