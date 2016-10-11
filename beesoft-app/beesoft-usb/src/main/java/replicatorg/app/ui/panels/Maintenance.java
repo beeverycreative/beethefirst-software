@@ -66,8 +66,6 @@ public class Maintenance extends BaseDialog {
         lNozzleSwitch.setText("<html>" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_Title") + "</html>");
         bNozzleSwitch.setText(Languager.getTagValue("MaintenancePanel", "NozzleSwitch_button"));
         lNozzleSwitchDesc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_Intro") + "</html>");
-        lAdditionalNozzleText.setText("<html>" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_AdditionalNozzle") + "</html>");
-        lAdditionalNozzleLink.setText("<html><a href=\"\">" + Languager.getTagValue("MaintenancePanel", "NozzleSwitch_AdditionalNozzleButton") + "</a>.</html>");
         lSupportSwitch.setText("<html>" + Languager.getTagValue("MaintenancePanel", "SupportSwitch_Title") + "</html>");
         bSupportSwitch.setText(Languager.getTagValue("MaintenancePanel", "SupportSwitch_button"));
         lSupportSwitchDesc.setText("<html>" + Languager.getTagValue("MaintenancePanel", "SupportSwitch_Intro") + "</html>");
@@ -77,6 +75,7 @@ public class Maintenance extends BaseDialog {
 
     private void evaluateInitialConditions() {
         ctrlStatus.start();
+        lCurrentFilament.setText("<html>" + String.format(Locale.US, Languager.getTagValue("MaintenancePanel", "FilamentSwitch_CurrentFilament"), model.getCoilText()));
         lCurrentNozzle.setText("<html>" + String.format(Locale.US, Languager.getTagValue("MaintenancePanel", "NozzleSwitch_CurrentNozzle"), model.getNozzleType() / 1000.0f));
     }
 
@@ -126,6 +125,7 @@ public class Maintenance extends BaseDialog {
         bChangeFilament = new javax.swing.JLabel();
         lChangeFilamentDesc = new javax.swing.JLabel();
         lChangeFilament = new javax.swing.JLabel();
+        lCurrentFilament = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         pCalibration = new javax.swing.JPanel();
         bCalibration = new javax.swing.JLabel();
@@ -142,8 +142,6 @@ public class Maintenance extends BaseDialog {
         lNozzleSwitchDesc = new javax.swing.JLabel();
         lNozzleSwitch = new javax.swing.JLabel();
         lCurrentNozzle = new javax.swing.JLabel();
-        lAdditionalNozzleText = new javax.swing.JLabel();
-        lAdditionalNozzleLink = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         jSeparator4 = new javax.swing.JSeparator();
         pSupportSwitch = new javax.swing.JPanel();
@@ -236,6 +234,10 @@ public class Maintenance extends BaseDialog {
         lChangeFilament.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
         lChangeFilament.setText("Change filament");
 
+        lCurrentFilament.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
+        lCurrentFilament.setText("Current filament:");
+        lCurrentFilament.setMaximumSize(new java.awt.Dimension(150, 16));
+
         javax.swing.GroupLayout pChangeFilamentLayout = new javax.swing.GroupLayout(pChangeFilament);
         pChangeFilament.setLayout(pChangeFilamentLayout);
         pChangeFilamentLayout.setHorizontalGroup(
@@ -244,13 +246,16 @@ public class Maintenance extends BaseDialog {
                 .addContainerGap()
                 .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pChangeFilamentLayout.createSequentialGroup()
-                        .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lChangeFilament)
-                            .addComponent(bChangeFilament))
+                        .addComponent(lChangeFilament)
                         .addGap(413, 413, 413))
                     .addGroup(pChangeFilamentLayout.createSequentialGroup()
                         .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(pChangeFilamentLayout.createSequentialGroup()
+                        .addComponent(bChangeFilament)
+                        .addGap(18, 18, 18)
+                        .addComponent(lCurrentFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(154, 154, 154))))
         );
         pChangeFilamentLayout.setVerticalGroup(
             pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -260,7 +265,9 @@ public class Maintenance extends BaseDialog {
                 .addGap(2, 2, 2)
                 .addComponent(lChangeFilamentDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bChangeFilament)
+                .addGroup(pChangeFilamentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bChangeFilament)
+                    .addComponent(lCurrentFilament, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
 
@@ -418,17 +425,6 @@ public class Maintenance extends BaseDialog {
         lCurrentNozzle.setText("Current nozzle:");
         lCurrentNozzle.setMaximumSize(new java.awt.Dimension(150, 16));
 
-        lAdditionalNozzleText.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
-        lAdditionalNozzleText.setText("<html> If you need additional nozzles please click</html>");
-
-        lAdditionalNozzleLink.setFont(new java.awt.Font("Source Sans Pro Light", 0, 12)); // NOI18N
-        lAdditionalNozzleLink.setText("<html>\n<a href=\"\">here</a>. \n</html>");
-        lAdditionalNozzleLink.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lAdditionalNozzleLinkMouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout pNozzleSwitchLayout = new javax.swing.GroupLayout(pNozzleSwitch);
         pNozzleSwitch.setLayout(pNozzleSwitchLayout);
         pNozzleSwitchLayout.setHorizontalGroup(
@@ -436,7 +432,7 @@ public class Maintenance extends BaseDialog {
             .addGroup(pNozzleSwitchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lNozzleSwitchDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addGroup(pNozzleSwitchLayout.createSequentialGroup()
                         .addComponent(lNozzleSwitch)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -444,11 +440,7 @@ public class Maintenance extends BaseDialog {
                         .addComponent(bNozzleSwitch)
                         .addGap(18, 18, 18)
                         .addComponent(lCurrentNozzle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(148, 148, 148)
-                        .addComponent(lAdditionalNozzleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(2, 2, 2)
-                        .addComponent(lAdditionalNozzleLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(44, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         pNozzleSwitchLayout.setVerticalGroup(
             pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -460,9 +452,7 @@ public class Maintenance extends BaseDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pNozzleSwitchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bNozzleSwitch)
-                    .addComponent(lCurrentNozzle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lAdditionalNozzleText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lAdditionalNozzleLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lCurrentNozzle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -728,20 +718,6 @@ public class Maintenance extends BaseDialog {
         }
     }//GEN-LAST:event_bSupportSwitchMousePressed
 
-    private void lAdditionalNozzleLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lAdditionalNozzleLinkMouseClicked
-        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            try {
-                Desktop.getDesktop().browse(new URI("https://www.beeverycreative.com/3d-printing-accessories-plugs/"));
-            } catch (IOException | URISyntaxException ex) {
-                Base.writeLog(ex.getClass().getName() + " when attempting to open the additional nozzles link", this.getClass());
-                Base.writeLog(ex.getMessage(), this.getClass());
-            }
-        } else {
-            Base.writeLog("Desktop isn't available or browse action isn't supported. "
-                    + "This usually happens on Linux distributions that don't use GNOME.", this.getClass());
-        }
-    }//GEN-LAST:event_lAdditionalNozzleLinkMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCalibration;
     private javax.swing.JLabel bCancel;
@@ -754,13 +730,12 @@ public class Maintenance extends BaseDialog {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
-    private javax.swing.JLabel lAdditionalNozzleLink;
-    private javax.swing.JLabel lAdditionalNozzleText;
     private javax.swing.JLabel lCalibration;
     private javax.swing.JLabel lCalibration_desc;
     private javax.swing.JLabel lCalibration_warn;
     private javax.swing.JLabel lChangeFilament;
     private javax.swing.JLabel lChangeFilamentDesc;
+    private javax.swing.JLabel lCurrentFilament;
     private javax.swing.JLabel lCurrentNozzle;
     private javax.swing.JLabel lExtruderMaintenance;
     private javax.swing.JLabel lExtruderMaintenanceDesc;

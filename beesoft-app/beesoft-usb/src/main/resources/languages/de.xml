@@ -558,7 +558,7 @@
     <NozzleSwitch>
       <Title value="Extruderdüse wechseln"/>
       <HeatingMessage value="Erhitzen..."/>
-      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS." />
+      <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE DIRECTLY DURING THIS PROCESS." />
       <NoticeWord value="NOTICE:" />
       <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
       <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
@@ -619,6 +619,7 @@
       <Filament_Type value="Filamenttyp: "/>
       <Filament_Intro value="Dieser Vorgang ist erforderlich, wenn mit einer anderen Farbe gedruckt werden soll oder wenn das Filament in der Spule nicht reicht."/>
       <FilamentChange_button value="Filament jetzt wechseln"/>
+      <FilamentSwitch_CurrentFilament value="Current filament : %s" />
       <Filament_Info value="Sie haben x Gramm Filament (geschätzt)"/>
       <Filament_Info_None value="Verbleibende Filament kann nicht genug für den nächsten Druck sein."/>
       <Calibration_Title value="Kalibrierung"/>
@@ -635,8 +636,6 @@
       <NozzleSwitch_button value="Extruderdüse jetzt wechseln"/>
       <NozzleSwitch_Intro value="Dieser Vorgang ist nötig um die Extruderdüse zu wechseln. Für diesem Vorgang sollen Sie die Wartungs-Kit benutzen."/>
       <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
-      <NozzleSwitch_AdditionalNozzle value="If you need additional nozzles please click"/>
-      <NozzleSwitch_AdditionalNozzleButton value="here"/>
       <SupportSwitch_Title value="Installieren Sie externe Spulenhalter"/>
       <SupportSwitch_button value="Ändern Spulenhalter"/>
       <SupportSwitch_Intro value="Ein einfaches Tutorial, dass Sie bei der Installation des externen Spulenhalter führungen."/>
