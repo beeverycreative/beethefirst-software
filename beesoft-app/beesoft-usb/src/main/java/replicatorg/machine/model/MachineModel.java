@@ -29,7 +29,9 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicReference;
 import org.w3c.dom.Node;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
+import replicatorg.app.Languager;
 import replicatorg.app.util.AutonomousData;
 import replicatorg.util.Point5d;
 
@@ -100,7 +102,6 @@ public class MachineModel {
         zValue = 0.0;
         currentTool.set(nullTool);
     }
-
 
     /**
      * ***********************************
@@ -356,11 +357,11 @@ public class MachineModel {
     public boolean getMachinePrinting() {
         return machinePrinting;
     }
-    
+
     public void setMachineOperational(boolean machineOperational) {
         this.machineOperational = machineOperational;
     }
-    
+
     public boolean getMachineOperational() {
         return machineOperational;
     }

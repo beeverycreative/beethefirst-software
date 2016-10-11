@@ -35,7 +35,6 @@ public class NozzleSwitch2 extends BaseDialog {
         super.centerOnScreen();
         setTextLanguage();
         evaluateInitialConditions();
-        moveToPosition();
 
         super.addWindowListener(new WindowAdapter() {
             @Override
@@ -90,11 +89,6 @@ public class NozzleSwitch2 extends BaseDialog {
     @Override
     public void showMessage() {
         enableMessageDisplay();
-    }
-
-    private void moveToPosition() {
-        Base.writeLog("Heating...", this.getClass());
-        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {

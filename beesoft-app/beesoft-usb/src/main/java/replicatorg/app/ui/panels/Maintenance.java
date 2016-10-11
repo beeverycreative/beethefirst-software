@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
@@ -74,8 +75,19 @@ public class Maintenance extends BaseDialog {
     }
 
     private void evaluateInitialConditions() {
+        final String coilText, finalCoilText;
+        
+        coilText = model.getCoilText();
+        
+        if(coilText.equals(FilamentControler.NO_FILAMENT) || coilText.equals(FilamentControler.NO_FILAMENT_2)) {
+            finalCoilText = Languager.getTagValue("Print", "Print_Splash_Info9").toUpperCase();
+            lCurrentFilament.setForeground(Color.RED);
+        } else {
+            finalCoilText = coilText;
+        }
+        
         ctrlStatus.start();
-        lCurrentFilament.setText("<html>" + String.format(Locale.US, Languager.getTagValue("MaintenancePanel", "FilamentSwitch_CurrentFilament"), model.getCoilText()));
+        lCurrentFilament.setText("<html>" + String.format(Locale.US, Languager.getTagValue("MaintenancePanel", "FilamentSwitch_CurrentFilament"), finalCoilText));
         lCurrentNozzle.setText("<html>" + String.format(Locale.US, Languager.getTagValue("MaintenancePanel", "NozzleSwitch_CurrentNozzle"), model.getNozzleType() / 1000.0f));
     }
 
