@@ -1,10 +1,15 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
+import static replicatorg.app.ui.panels.BaseDialog.GENERIC_TEMPERATURE_GOAL;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -19,12 +24,34 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class NozzleSwitch1 extends BaseDialog {
 
+    private final TemperatureThread temperatureThread = new TemperatureThread();
+    private final Driver driver = Base.getMachineLoader()
+            .getMachineInterface().getDriver();
+
     public NozzleSwitch1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         super.enableDrag();
         super.centerOnScreen();
         setTextLanguage();
+        moveToPosition();
+
+        super.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                temperatureThread.start();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                temperatureThread.kill();
+            }
+        });
+    }
+    
+    private void moveToPosition() {
+        Base.writeLog("Heating...", this.getClass());
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), UsbPassthroughDriver.COM.NO_RESPONSE);
     }
 
     private void setTextLanguage() {
