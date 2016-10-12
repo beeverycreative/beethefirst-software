@@ -34,11 +34,11 @@ public class NozzleSwitch1 extends BaseDialog {
         super.enableDrag();
         super.centerOnScreen();
         setTextLanguage();
-        moveToPosition();
 
         super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
+                moveToPosition();
                 temperatureThread.start();
             }
 
@@ -48,7 +48,7 @@ public class NozzleSwitch1 extends BaseDialog {
             }
         });
     }
-    
+
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
         driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), UsbPassthroughDriver.COM.NO_RESPONSE);
@@ -80,6 +80,7 @@ public class NozzleSwitch1 extends BaseDialog {
 
     private void doCancel() {
         dispose();
+        driver.dispatchCommand("G28", UsbPassthroughDriver.COM.NO_RESPONSE);
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
     }
 

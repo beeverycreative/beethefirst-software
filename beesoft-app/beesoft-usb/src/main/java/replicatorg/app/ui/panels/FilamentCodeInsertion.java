@@ -424,7 +424,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             // the nozzle switch operation, if that's what the user wants
             if (filamentComboItem.isCompatible() == false) {
                 if (Base.printPaused == false) {
-                    filamentIncompatibilityQuery = new Query("IncompatibleFilament", new NozzleSwitch4(), null);
+                    filamentIncompatibilityQuery = new Query("IncompatibleFilament", new NozzleSwitch1(), null);
                     filamentIncompatibilityQuery.setVisible(true);
 
                     selectedNozzle = new Nozzle(model.getNozzleType());
