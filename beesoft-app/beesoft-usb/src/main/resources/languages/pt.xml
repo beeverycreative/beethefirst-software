@@ -627,7 +627,7 @@
       <NozzleSwitch_Intro value="Esta operação irá auxiliar-te na mudança do nozzle fornecido no Kit de Manutenção."/>
       <SupportSwitch_Title value="Instala o Suporte de Bobine Externo."/>
       <SupportSwitch_button value="Mudança de Suporte"/>
-      <SupportSwitch_Intro value="Um tutorial simples que irá guiar-te na instalação do Suporte de Bobine Externo. A simple tutorial that guides you in the installation of the top spool support."/>
+      <SupportSwitch_Intro value="Um tutorial simples que irá guiar-te na instalação do Suporte de Bobine Externo."/>
     </MaintenancePanel>
     <PausePanel>
       <Title value="Pausa"/>
