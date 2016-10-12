@@ -462,7 +462,7 @@
     </Print>
     <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento -->
     <FilamentWizard>
-      <Title1 value="Filament wizard"/>
+      <Title1 value="Mudança de filamento"/>
       <CodeInsertionDesc value="Por favor selecciona o código de filamento correcto. Podes encontrar esse código na bobine de filamento (por ex.: A101 - Transparente)."/>
       <ADesc value="A - Suporte de Bobine Externo para bobines de vários pesos e de vários tipos de filamento."/>
       <BDesc value="B - Suporte de Bobine Interno somente para bobines de 330g de PLA."/>
