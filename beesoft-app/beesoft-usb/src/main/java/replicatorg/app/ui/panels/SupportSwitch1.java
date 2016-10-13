@@ -4,10 +4,12 @@ import replicatorg.app.ui.popups.Warning;
 import java.awt.Dialog;
 import java.io.File;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.popups.Query;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -21,6 +23,8 @@ import replicatorg.app.ui.popups.Query;
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
 public class SupportSwitch1 extends BaseDialog {
+
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
 
     public SupportSwitch1() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
@@ -327,8 +331,15 @@ public class SupportSwitch1 extends BaseDialog {
 
     private void loadSupportModels() {
         final String modelPath;
+        final PrinterInfo connectedDevice;
 
-        modelPath = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/External Spool Holder/Ext_spool_holder-all.stl";
+        connectedDevice = driver.getConnectedDevice();
+
+        if (connectedDevice == PrinterInfo.BEEINSCHOOL || connectedDevice == PrinterInfo.BEEINSCHOOL_A) {
+            modelPath = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/External Spool Holder/Ext_spool_holder-all_BIS.stl";
+        } else {
+            modelPath = Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER + "/External Spool Holder/Ext_spool_holder-all.stl";
+        }
 
         Base.disposeAllOpenWindows();
         Base.getMainWindow().removeAllModels();
