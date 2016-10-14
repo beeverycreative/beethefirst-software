@@ -165,7 +165,7 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                   <Component id="highPlusHeightLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="28" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="55" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
@@ -278,7 +278,7 @@
                   <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="15" max="32767" attributes="0"/>
                   <Component id="bChangeFilament" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" pref="27" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" pref="25" max="32767" attributes="0"/>
                   <Component id="jPanel2" min="-2" pref="25" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -334,17 +334,26 @@
         </Container>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="IMPRIMIR"/>
             <Property name="verticalAlignment" type="int" value="3"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="14" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Qualidade"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="14" style="1"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Densidade"/>
           </Properties>
         </Component>
@@ -352,6 +361,9 @@
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="f8" green="f8" red="f8" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="14" style="0"/>
             </Property>
             <Property name="majorTickSpacing" type="int" value="1"/>
             <Property name="paintLabels" type="boolean" value="true"/>
@@ -370,8 +382,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="filamentType">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Filament Type"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -393,8 +405,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel22">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="NO_FILAMENT"/>
           </Properties>
@@ -416,8 +428,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="estimatedPrintTime">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Print time:"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -440,8 +452,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="estimatedMaterial">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Material cost:"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -457,16 +469,16 @@
         </Component>
         <Component class="javax.swing.JLabel" name="printTime">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="N/A"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="materialCost">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="N/A"/>
           </Properties>
@@ -488,6 +500,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="bEstimate">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_15.png"/>
             </Property>
@@ -511,6 +526,9 @@
         </Component>
         <Component class="javax.swing.JTextField" name="tfDensity">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="14" style="0"/>
+            </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
           </Properties>
           <Events>
@@ -519,6 +537,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lDensity">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Density value (%) :"/>
           </Properties>
         </Component>
@@ -528,7 +549,7 @@
               <Color blue="f8" green="f8" red="f8" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Ubuntu" size="12" style="0"/>
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="LOW"/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -546,7 +567,7 @@
               <Color blue="f8" green="f8" red="f8" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Ubuntu" size="12" style="0"/>
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="MEDIUM"/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -564,7 +585,7 @@
               <Color blue="f8" green="f8" red="f8" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Ubuntu" size="12" style="0"/>
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="HIGH"/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -582,7 +603,7 @@
               <Color blue="f8" green="f8" red="f8" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Ubuntu" size="12" style="0"/>
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="HIGH+"/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -597,21 +618,33 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lowHeightLabel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="0.3 mm"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="medHeightLabel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="0.2 mm"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="highHeightLabel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="0.1 mm"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="highPlusHeightLabel">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="0.05 mm"/>
           </Properties>
         </Component>
@@ -679,6 +712,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel10">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Suspendisse potenti."/>
               </Properties>
               <Events>
@@ -697,6 +733,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="1"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Raft"/>
               </Properties>
               <Events>
@@ -705,6 +744,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Suspendisse potenti."/>
               </Properties>
               <Events>
@@ -713,6 +755,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="1"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Support"/>
               </Properties>
               <Events>
@@ -721,6 +766,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/replicatorg/app/ui/panels/c_unchecked.png"/>
                 </Property>
@@ -733,6 +781,9 @@
         </Container>
         <Component class="javax.swing.JLabel" name="bChangeFilament">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_16.png"/>
             </Property>
@@ -791,6 +842,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="bCancel">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
                 </Property>
@@ -805,6 +859,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="bPrint">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_15.png"/>
                 </Property>
@@ -823,6 +880,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="bExport">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_19.png"/>
                 </Property>
@@ -864,8 +924,8 @@
         </Component>
         <Component class="javax.swing.JLabel" name="nozzleTypeLabel">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Nozzle type:"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -881,16 +941,16 @@
         </Component>
         <Component class="javax.swing.JLabel" name="nozzleTypeValue">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="0.0"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="mmLabel">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="GraphicDesignComponents.getSSProRegular(&quot;12&quot;)" type="code"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Source Sans Pro" size="12" style="0"/>
             </Property>
             <Property name="text" type="java.lang.String" value="mm"/>
           </Properties>

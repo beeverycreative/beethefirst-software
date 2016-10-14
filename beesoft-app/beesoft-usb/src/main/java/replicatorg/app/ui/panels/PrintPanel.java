@@ -45,7 +45,6 @@ public class PrintPanel extends BasePrintEstimateExport {
     private final MachineModel machineModel = driver.getMachine();
     private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<>();
     private final PrinterInfo connectedPrinter = driver.getConnectedDevice();
-    private JLabel lowQuality, mediumQuality, solidQuality;
     private boolean gcodeSavePressed, lastUsedRaft, lastUsedSupport,
             lastSelectedRaft, lastUsedGCodeSave, lastSelectedSupport, gcodeOK,
             noFilament = false, noNozzle = false, raftPressed = false,
@@ -61,14 +60,12 @@ public class PrintPanel extends BasePrintEstimateExport {
         initComponents();
         getNozzleType();
         getCoilCode();
-        initSlidersLabels();
-        setFont();
         setTextLanguage();
         initSliderConfigs();
-        centerOnScreen();
+        super.centerOnScreen();
         evaluateConditions();
         matchChanges();
-        enableDrag();
+        super.enableDrag();
 
         // disabled for now
         jLabel25.setVisible(false);
@@ -76,7 +73,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         nozzleTypeValue.setVisible(false);
         mmLabel.setVisible(false);
 
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (estimateExportThread != null) {
@@ -154,43 +151,6 @@ public class PrintPanel extends BasePrintEstimateExport {
     }
 
     /**
-     * Set font for all UI elements.
-     */
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel2.setFont(GraphicDesignComponents.getSSProBold("14"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProBold("14"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel8.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel9.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel10.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bPrint.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bChangeFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bEstimate.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bExport.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        lDensity.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
-        //Resolution
-        bLowRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bMediumRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bHighRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bHighPlusRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
-        lowHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        medHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        highHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        highPlusHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
-        //Density
-        lowQuality.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        mediumQuality.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        solidQuality.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
-    }
-
-    /**
      * Set copy for all UI elements.
      */
     private void setTextLanguage() {
@@ -215,11 +175,6 @@ public class PrintPanel extends BasePrintEstimateExport {
         bMediumRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Medium"));
         bHighRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_High"));
         bHighPlusRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"));
-
-        lowQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_Low"));
-        mediumQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_Medium"));
-        solidQuality.setText(Languager.getTagValue(1, "Print", "Print_Density_High"));
-
     }
 
     /**
@@ -249,6 +204,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             Warning unkFilWarning = new Warning("UnknownFilamentText", false);
             unkFilWarning.setVisible(true);
         } else {
+            noFilament = false;
             jLabel22.setText(code);
         }
 
@@ -328,15 +284,6 @@ public class PrintPanel extends BasePrintEstimateExport {
     }
 
     /**
-     * Inits Density and resolution fields labels.
-     */
-    private void initSlidersLabels() {
-        lowQuality = new JLabel("light");
-        mediumQuality = new JLabel("medium");
-        solidQuality = new JLabel("solid");
-    }
-
-    /**
      * Parses resolution buttons.
      *
      * @return resolution active button value
@@ -387,10 +334,14 @@ public class PrintPanel extends BasePrintEstimateExport {
         materialCost.setText("N/A");
         showLoadingIcon(false);
         updateOldSettings();
-
+        
         if (noFilament) {
             jLabel22.setForeground(Color.red);
             jLabel23.setForeground(Color.red);
+        } else {
+            jLabel22.setForeground(null);
+            jLabel22.setFont(new java.awt.Font("Source Sans Pro", 0, 12));
+            jLabel23.setText(" ");
         }
 
         if (nModels > 0 && atLeastOneResEnabled) {
@@ -709,8 +660,8 @@ public class PrintPanel extends BasePrintEstimateExport {
                 counter = 0;
                 tries++;
             } else {
-                jLabel22.setForeground(new Color(0, 0, 0));
-                jLabel23.setForeground(new Color(0, 0, 0));
+                jLabel22.setForeground(Color.BLACK);
+                jLabel23.setForeground(Color.BLACK);
             }
             Base.hiccup(1000);
         }
@@ -803,14 +754,18 @@ public class PrintPanel extends BasePrintEstimateExport {
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel1.setText("IMPRIMIR");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
+        jLabel2.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
         jLabel2.setText("Qualidade");
 
+        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
         jLabel3.setText("Densidade");
 
         densitySlider.setBackground(new java.awt.Color(248, 248, 248));
+        densitySlider.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         densitySlider.setMajorTickSpacing(1);
         densitySlider.setPaintLabels(true);
         densitySlider.setSnapToTicks(true);
@@ -827,14 +782,14 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
-        filamentType.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        filamentType.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         filamentType.setText("Filament Type");
         filamentType.setMaximumSize(new java.awt.Dimension(100, 13));
         filamentType.setMinimumSize(new java.awt.Dimension(100, 13));
 
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        jLabel22.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        jLabel22.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel22.setText("NO_FILAMENT");
 
         jLabel23.setFont(GraphicDesignComponents.getSSProRegular("10"));
@@ -842,7 +797,7 @@ public class PrintPanel extends BasePrintEstimateExport {
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        estimatedPrintTime.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        estimatedPrintTime.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         estimatedPrintTime.setText("Print time:");
         estimatedPrintTime.setMaximumSize(new java.awt.Dimension(100, 18));
         estimatedPrintTime.setMinimumSize(new java.awt.Dimension(100, 18));
@@ -850,16 +805,16 @@ public class PrintPanel extends BasePrintEstimateExport {
 
         jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        estimatedMaterial.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        estimatedMaterial.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         estimatedMaterial.setText("Material cost:");
         estimatedMaterial.setMaximumSize(new java.awt.Dimension(100, 13));
         estimatedMaterial.setMinimumSize(new java.awt.Dimension(100, 13));
         estimatedMaterial.setPreferredSize(new java.awt.Dimension(100, 13));
 
-        printTime.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        printTime.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         printTime.setText("N/A");
 
-        materialCost.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        materialCost.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         materialCost.setText("N/A");
 
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
@@ -870,6 +825,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         loading.setRequestFocusEnabled(false);
         loading.setVerifyInputWhenFocusTarget(false);
 
+        bEstimate.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
         bEstimate.setText("Estimate");
         bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -888,6 +844,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        tfDensity.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         tfDensity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfDensity.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -895,10 +852,11 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        lDensity.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lDensity.setText("Density value (%) :");
 
         bLowRes.setBackground(new java.awt.Color(248, 248, 248));
-        bLowRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bLowRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bLowRes.setText("LOW");
         bLowRes.setEnabled(false);
         bLowRes.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -909,7 +867,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         });
 
         bMediumRes.setBackground(new java.awt.Color(248, 248, 248));
-        bMediumRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bMediumRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bMediumRes.setText("MEDIUM");
         bMediumRes.setEnabled(false);
         bMediumRes.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -920,7 +878,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         });
 
         bHighRes.setBackground(new java.awt.Color(248, 248, 248));
-        bHighRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bHighRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bHighRes.setText("HIGH");
         bHighRes.setEnabled(false);
         bHighRes.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -931,7 +889,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         });
 
         bHighPlusRes.setBackground(new java.awt.Color(248, 248, 248));
-        bHighPlusRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bHighPlusRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bHighPlusRes.setText("HIGH+");
         bHighPlusRes.setEnabled(false);
         bHighPlusRes.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -942,12 +900,16 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        lowHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lowHeightLabel.setText("0.3 mm");
 
+        medHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         medHeightLabel.setText("0.2 mm");
 
+        highHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         highHeightLabel.setText("0.1 mm");
 
+        highPlusHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         highPlusHeightLabel.setText("0.05 mm");
 
         jPanel6.setMaximumSize(new java.awt.Dimension(176, 150));
@@ -955,6 +917,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         jPanel6.setOpaque(false);
         jPanel6.setPreferredSize(new java.awt.Dimension(176, 150));
 
+        jLabel10.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel10.setText("Suspendisse potenti.");
         jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -969,6 +932,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        jLabel7.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
         jLabel7.setText("Raft");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -976,6 +940,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        jLabel8.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel8.setText("Suspendisse potenti.");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -983,6 +948,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        jLabel9.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
         jLabel9.setText("Support");
         jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -990,6 +956,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1035,6 +1002,7 @@ public class PrintPanel extends BasePrintEstimateExport {
                 .addContainerGap())
         );
 
+        bChangeFilament.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
         bChangeFilament.setText("Change filament");
         bChangeFilament.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_16.png"))); // NOI18N
@@ -1055,6 +1023,7 @@ public class PrintPanel extends BasePrintEstimateExport {
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
 
+        bCancel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bCancel.setText("CANCELAR");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1070,6 +1039,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        bPrint.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
         bPrint.setText("IMPRIMIR");
         bPrint.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
@@ -1087,6 +1057,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             }
         });
 
+        bExport.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_19.png"))); // NOI18N
         bExport.setText("Export G-code");
         bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -1133,16 +1104,16 @@ public class PrintPanel extends BasePrintEstimateExport {
 
         jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
-        nozzleTypeLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        nozzleTypeLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         nozzleTypeLabel.setText("Nozzle type:");
         nozzleTypeLabel.setMaximumSize(new java.awt.Dimension(100, 18));
         nozzleTypeLabel.setMinimumSize(new java.awt.Dimension(100, 18));
         nozzleTypeLabel.setPreferredSize(new java.awt.Dimension(70, 18));
 
-        nozzleTypeValue.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        nozzleTypeValue.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         nozzleTypeValue.setText("0.0");
 
-        mmLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        mmLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         mmLabel.setText("mm");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -1236,7 +1207,7 @@ public class PrintPanel extends BasePrintEstimateExport {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(25, 25, 25)
                                 .addComponent(highPlusHeightLabel)
-                                .addGap(0, 28, Short.MAX_VALUE))
+                                .addGap(0, 55, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(7, 7, 7)
                                 .addComponent(bHighPlusRes, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1323,7 +1294,7 @@ public class PrintPanel extends BasePrintEstimateExport {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(bChangeFilament)
-                .addGap(18, 27, Short.MAX_VALUE)
+                .addGap(18, 25, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -1470,6 +1441,7 @@ public class PrintPanel extends BasePrintEstimateExport {
             this.setVisible(false);
             p.setVisible(true);
             getCoilCode();
+            evaluateConditions();
             this.setVisible(true);
         } else {
             // otherwise display the appropriate status message
