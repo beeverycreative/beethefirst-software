@@ -457,7 +457,7 @@
       <Print_PrinterNotAvailable2 value="Impresora no encontrada"/>
       <PrintMinutes value="minutos"/>
       <PrintMinute value="minuto"/>
-      <PrintHours value="hora"/>
+      <PrintHours value="horas"/>
       <PrintHour value="hora"/>
     </Print>
     <!-- A próxima secção XML contém o texto a ser apresentado no Assistente de Filamento -->
