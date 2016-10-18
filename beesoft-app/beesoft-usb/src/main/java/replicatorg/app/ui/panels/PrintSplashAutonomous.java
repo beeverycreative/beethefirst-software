@@ -76,14 +76,14 @@ public class PrintSplashAutonomous extends BaseDialog {
         jProgressBar1.setForeground(new Color(255, 203, 5));
         jProgressBar1.setIndeterminate(true);
         jProgressBar1.setMaximum(100);
-        this.setName("Autonomous");
+        super.setName("Autonomous");
 
         temperatureTimer.setInitialDelay(0);
         if (Base.isPrintingFromGCode) {
             prt.setGCodeFile(new File(preferences.getGcodeToPrint()));
         }
 
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 ut.start();
@@ -125,11 +125,11 @@ public class PrintSplashAutonomous extends BaseDialog {
         jProgressBar1.setForeground(new Color(255, 203, 5));
         jProgressBar1.setIndeterminate(true);
         jProgressBar1.setMaximum(100);
-        this.setName("Autonomous");
+        super.setName("Autonomous");
 
         temperatureTimer.setInitialDelay(0);
 
-        this.addWindowListener(new WindowAdapter() {
+        super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
                 ut.start();
@@ -1204,7 +1204,6 @@ public class PrintSplashAutonomous extends BaseDialog {
 
         private final MachineModel model = driver.getMachine();
         private int elapsedMinutes;
-        private boolean donePrintingFile = false;
 
         private void finalizePrint() {
             //End print session

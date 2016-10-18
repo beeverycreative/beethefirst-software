@@ -57,7 +57,7 @@ public class UsbDriver extends DriverBaseImplementation {
     protected static final Lock DISPATCHCOMMAND_LOCK = new ReentrantLock();
     private String lastStatusMessage;
 
-    protected static final int TRANSFER_MESSAGE_SIZE = 32;
+    protected static final int TRANSFER_MESSAGE_SIZE = Base.isLinux() ? 128 : 32;
     protected static final int MESSAGE_SIZE = 512;
     protected static final int SD_CARD_MESSAGE_SIZE = 512;
     protected static final int MESSAGES_IN_BLOCK = 512;
@@ -271,13 +271,13 @@ public class UsbDriver extends DriverBaseImplementation {
 
                     while ((cleanBuffer = receiveAnswerBytes(MESSAGE_SIZE, 100)).length > 0) {
                         final String trashString;
-                        
+
                         trashString = new String(cleanBuffer);
-                        
-                        if(trashString.contains("Loading Config Override")) {
+
+                        if (trashString.contains("Loading Config Override")) {
                             Base.writeLog("ERROR LOADING CONFIG, LOADING CONFIG OVERRIDES", this.getClass());
                         }
-                        
+
                         hiccup(50);
                     }
 
