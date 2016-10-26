@@ -1431,7 +1431,7 @@ public class PrintPanel extends BasePrintEstimateExport {
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         // if the printer is available, display the filament change screen
         if (bChangeFilament.isEnabled()) {
-            FilamentCodeInsertion p = new FilamentCodeInsertion();
+            FilamentCodeInsertion p = new FilamentCodeInsertion(false);
             this.setVisible(false);
             p.setVisible(true);
             getCoilCode();

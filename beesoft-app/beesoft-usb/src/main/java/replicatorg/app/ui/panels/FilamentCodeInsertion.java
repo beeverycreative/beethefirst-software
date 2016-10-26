@@ -10,6 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver;
 import pt.beeverycreative.beesoft.filaments.Filament;
 import pt.beeverycreative.beesoft.filaments.Filament.Material;
 import replicatorg.app.Base;
@@ -20,6 +21,7 @@ import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.app.ui.popups.Query;
 import replicatorg.app.ui.popups.Warning;
+import replicatorg.drivers.Driver;
 import replicatorg.machine.model.MachineModel;
 
 /**
@@ -35,6 +37,8 @@ import replicatorg.machine.model.MachineModel;
  */
 public class FilamentCodeInsertion extends BaseDialog {
 
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final boolean isFinalStep;
     private final MachineModel model = Base.getMachineLoader().getMachineInterface().getDriver().getMachine();
     private final ImageIcon bothSupportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_ambos.png"));
     private final ImageIcon supportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup.png"));
@@ -42,8 +46,10 @@ public class FilamentCodeInsertion extends BaseDialog {
     private DefaultComboBoxModel<Filament> comboModel;
     private int firstCompatibleFilamentIndex = 0;
 
-    public FilamentCodeInsertion() {
+    public FilamentCodeInsertion(boolean isFinalStep) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        this.isFinalStep = isFinalStep;
+
         Base.writeLog("First step of the filament change operation", this.getClass());
         initComponents();
         super.enableDrag();
@@ -55,7 +61,7 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue("FilamentWizard", "Title1"));
         jLabel3.setText(Languager.getTagValue("FilamentWizard", "Title4"));
-        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", isFinalStep ? "Line6" : "Line7"));
         bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
         lDesc.setText("<html>" + Languager.getTagValue("FilamentWizard", "CodeInsertionDesc") + "</html>");
         lDescA.setText("<html>" + Languager.getTagValue("FilamentWizard", "ADesc") + "</html>");
@@ -368,12 +374,20 @@ public class FilamentCodeInsertion extends BaseDialog {
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         if (bNext.isEnabled()) {
-            final Filament fil;
+            final Filament selectedFilament;
 
-            fil = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
-            FilamentHeating filamentHeatingPanel = new FilamentHeating(fil);
-            dispose();
-            filamentHeatingPanel.setVisible(true);
+            selectedFilament = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
+
+            if (isFinalStep) {
+                Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+                driver.setCoilText(selectedFilament.getName());
+                driver.dispatchCommand("G28", UsbPassthroughDriver.COM.NO_RESPONSE);
+                dispose();
+            } else {
+                FilamentHeating filamentHeatingPanel = new FilamentHeating(selectedFilament);
+                dispose();
+                filamentHeatingPanel.setVisible(true);
+            }
         }
     }//GEN-LAST:event_bNextMousePressed
 

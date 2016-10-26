@@ -42,7 +42,7 @@ public class NozzleSwitch4 extends BaseDialog {
         lNotice.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NoticeWord"));
         lNotice2.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NozzleSelectDesc2"));
 
-        bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
+        bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
     }
 
@@ -69,7 +69,7 @@ public class NozzleSwitch4 extends BaseDialog {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        bOk = new javax.swing.JLabel();
+        bNext = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -93,19 +93,19 @@ public class NozzleSwitch4 extends BaseDialog {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bOk.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        bOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bOk.setText("Ok");
-        bOk.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bOk.addMouseListener(new java.awt.event.MouseAdapter() {
+        bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("Next");
+        bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                bOkMousePressed(evt);
+                bNextMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                bOkMouseExited(evt);
+                bNextMouseExited(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bOkMouseEntered(evt);
+                bNextMouseEntered(evt);
             }
         });
 
@@ -133,7 +133,7 @@ public class NozzleSwitch4 extends BaseDialog {
                 .addContainerGap()
                 .addComponent(bCancel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bOk)
+                .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
         jPanel2Layout.setVerticalGroup(
@@ -141,7 +141,7 @@ public class NozzleSwitch4 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bOk)
+                    .addComponent(bNext)
                     .addComponent(bCancel))
                 .addGap(20, 20, 20))
         );
@@ -276,13 +276,13 @@ public class NozzleSwitch4 extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bOkMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMouseEntered
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bOkMouseEntered
+    private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+    }//GEN-LAST:event_bNextMouseEntered
 
-    private void bOkMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMouseExited
-        bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bOkMouseExited
+    private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+    }//GEN-LAST:event_bNextMouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
@@ -292,17 +292,20 @@ public class NozzleSwitch4 extends BaseDialog {
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bCancelMouseExited
 
-    private void bOkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bOkMousePressed
+    private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
         final Nozzle selectedNozzle;
-        
-        if (bOk.isEnabled()) {
+        final FilamentCodeInsertion filamentCodeInsertion;
+
+        if (bNext.isEnabled()) {
             selectedNozzle = (Nozzle) nozzleComboBox.getSelectedItem();
-            dispose();
             driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.setInstalledNozzleSize(selectedNozzle.getSizeInMicrons());
-            driver.dispatchCommand("G28", UsbPassthroughDriver.COM.NO_RESPONSE);
+
+            filamentCodeInsertion = new FilamentCodeInsertion(true);
+            dispose();
+            filamentCodeInsertion.setVisible(true);
         }
-    }//GEN-LAST:event_bOkMousePressed
+    }//GEN-LAST:event_bNextMousePressed
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
         if (bCancel.isEnabled()) {
@@ -318,7 +321,7 @@ public class NozzleSwitch4 extends BaseDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
-    private javax.swing.JLabel bOk;
+    private javax.swing.JLabel bNext;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;

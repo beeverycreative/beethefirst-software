@@ -381,7 +381,7 @@ public class PauseMenu extends BaseDialog {
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
-            FilamentCodeInsertion p = new FilamentCodeInsertion();
+            FilamentCodeInsertion p = new FilamentCodeInsertion(false);
             p.setVisible(true);
 
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
