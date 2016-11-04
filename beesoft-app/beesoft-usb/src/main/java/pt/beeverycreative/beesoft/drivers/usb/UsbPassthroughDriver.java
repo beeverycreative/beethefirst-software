@@ -566,10 +566,10 @@ public final class UsbPassthroughDriver extends UsbDriver {
 
         final long fileSize, totalMessages, totalBlocks;
         final RandomAccessFile randomAccessFile;
-        final byte[] togBytes;
         long messagesSent, elapsedTimeMilliseconds;
-        int blockPointer, bytesRead, numMessages, messageLength, byteCounter;
-        byte[] blockBuffer, messageBuffer, answer;
+        int blockPointer, bytesRead, numMessages, messageLength, timeout, byteCounter;
+        byte[] blockBuffer, messageBuffer;
+        String answer="";
 
         if (!gcodeFile.isFile() || !gcodeFile.canRead()) {
             Base.writeLog("GCode file not found or unreadable", this.getClass());
@@ -583,7 +583,6 @@ public final class UsbPassthroughDriver extends UsbDriver {
             return false;
         }
 
-        togBytes = "tog\n".getBytes();
         blockPointer = 0;
         blockBuffer = new byte[MAX_BLOCK_SIZE];
         fileSize = gcodeFile.length();
@@ -663,10 +662,14 @@ public final class UsbPassthroughDriver extends UsbDriver {
                         }
                     }
                     
-                    answer = receiveAnswerBytes(4, TIMEOUT);
-                    Arrays.equals(answer, togBytes);
+                    answer = "";
+                    timeout = 100;
+                    do {
+                        answer += new String(receiveAnswerBytes(4, timeout));
+                        timeout *= 2;
+                    } while (answer.contains("tog") == false && timeout < TIMEOUT*2);
 
-                    if (Arrays.equals(answer, togBytes) == false) {
+                    if (answer.contains("tog") == false) {
                         Base.writeLog("Transfer failure, 0 bytes sent.", this.getClass());
 
                         if (panel != null) {
