@@ -320,9 +320,23 @@ public class UpdateChecker extends BaseDialog {
 
     private void evaluateInitialConditions() {
         copyFilamentProfiles();
+        new Thread(this::checkForUpdates).start();        
         new Thread(this::updateFilaments).start();
     }
-
+    
+    public void checkForUpdates() {
+        downloadUpdateFile();
+        if (isUpdateStableAvailable()) {
+            setMessage("AvailableStable");
+            setAlwaysOnTop(true);
+            setVisible(true);
+        } else if (isUpdateBetaAvailable()) {
+            setMessage("AvailableBeta");
+            setAlwaysOnTop(true);
+            setVisible(true);
+        }
+    }
+    
     public void downloadUpdateFile() {
         updateStableAvailable = false;
         updateBetaAvailable = false;
@@ -469,7 +483,7 @@ public class UpdateChecker extends BaseDialog {
 
             // open the stream and put it into BufferedReader
             br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
+            
             String inputLine;
 
             //save to this filename
