@@ -12,7 +12,7 @@
     <version>3.14.1</version>
     <name>beesoft-usb</name>
     <properties>
-        <skipTests>false</skipTests>
+        <skipTests>true</skipTests>
         
         <!-- BEESOFT software / firmware versions -->
         <!-- if release.type = 'alpha' the app internally will append the 
@@ -470,6 +470,13 @@
             </build>
         </profile>     
     </profiles>  
+    <repositories>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.scijava</groupId>
@@ -555,6 +562,10 @@
             <version>1.0.5</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
