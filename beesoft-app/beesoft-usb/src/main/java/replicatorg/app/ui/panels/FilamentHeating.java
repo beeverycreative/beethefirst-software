@@ -85,7 +85,7 @@ public class FilamentHeating extends BaseDialog {
             jProgressBar1.setValue(temperature);
         }
         
-        double temperatureError = (GENERIC_TEMPERATURE_GOAL - temperature)/GENERIC_TEMPERATURE_GOAL;
+        double temperatureError = (GENERIC_TEMPERATURE_GOAL - temperature)/(double)GENERIC_TEMPERATURE_GOAL;
         if (temperatureError < 0.01) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();

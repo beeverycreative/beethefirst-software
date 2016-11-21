@@ -104,7 +104,7 @@ public class CalibrationPrintTest extends BaseDialog {
         if (currentTemperature > jProgressBar1.getValue()) {
             jProgressBar1.setValue(currentTemperature);
         }
-        double temperatureError = (temperatureGoal - currentTemperature)/temperatureGoal;
+        double temperatureError = (temperatureGoal - currentTemperature)/(double)temperatureGoal;
         if (temperatureError < 0.01) {
             calVal = new CalibrationValidation();
 

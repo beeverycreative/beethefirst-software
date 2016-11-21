@@ -65,7 +65,7 @@ public class NozzleSwitch2 extends BaseDialog {
         if (nozzleTemperature > jProgressBar1.getValue()) {
             jProgressBar1.setValue(nozzleTemperature);
         }
-        double temperatureError = (GENERIC_TEMPERATURE_GOAL - nozzleTemperature)/GENERIC_TEMPERATURE_GOAL;
+        double temperatureError = (GENERIC_TEMPERATURE_GOAL - nozzleTemperature)/(double)GENERIC_TEMPERATURE_GOAL;
         if (temperatureError < 0.01) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
