@@ -114,7 +114,7 @@ public class FilamentHeating extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Waiting for extruder to reach the target temperature, " + GENERIC_TEMPERATURE_GOAL, this.getClass());
         showMessage();
-        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 10), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
