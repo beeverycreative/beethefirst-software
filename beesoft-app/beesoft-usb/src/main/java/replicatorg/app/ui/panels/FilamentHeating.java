@@ -84,8 +84,9 @@ public class FilamentHeating extends BaseDialog {
         if (temperature > jProgressBar1.getValue()) {
             jProgressBar1.setValue(temperature);
         }
-
-        if (temperature >= GENERIC_TEMPERATURE_GOAL) {
+        
+        double temperatureError = (GENERIC_TEMPERATURE_GOAL - temperature)/GENERIC_TEMPERATURE_GOAL;
+        if (temperatureError < 0.01) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
             disableMessageDisplay();
@@ -114,7 +115,7 @@ public class FilamentHeating extends BaseDialog {
     private void moveToPosition() {
         Base.writeLog("Waiting for extruder to reach the target temperature, " + GENERIC_TEMPERATURE_GOAL, this.getClass());
         showMessage();
-        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 10), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
