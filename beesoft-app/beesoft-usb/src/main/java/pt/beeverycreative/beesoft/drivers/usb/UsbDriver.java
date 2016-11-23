@@ -274,7 +274,7 @@ public class UsbDriver extends DriverBaseImplementation {
 
                         trashString = new String(cleanBuffer);
 
-                        if(trashString.contains("Loading Config Override")) {
+                        if (trashString.contains("Loading Config Override")) {
                             Base.writeLog("ERROR LOADING CONFIG, LOADING CONFIG OVERRIDES", this.getClass());
                         }
 

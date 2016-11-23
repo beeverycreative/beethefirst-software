@@ -569,7 +569,7 @@ public final class UsbPassthroughDriver extends UsbDriver {
         long messagesSent, elapsedTimeMilliseconds;
         int blockPointer, bytesRead, numMessages, messageLength, timeout, byteCounter;
         byte[] blockBuffer, messageBuffer;
-        String answer="";
+        String answer;
 
         if (!gcodeFile.isFile() || !gcodeFile.canRead()) {
             Base.writeLog("GCode file not found or unreadable", this.getClass());

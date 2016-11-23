@@ -65,7 +65,7 @@ public class ExtruderMaintenance1 extends BaseDialog {
     
     private void moveToPosition() {
         Base.writeLog("Heating...", this.getClass());
-        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 10), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
         driver.setBusy(true);
     }
     
