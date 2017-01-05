@@ -1,8 +1,8 @@
 package replicatorg.model;
 
-import com.sun.j3d.utils.geometry.*;
-import com.sun.j3d.utils.picking.*;
-import com.sun.j3d.utils.universe.SimpleUniverse;
+import org.scijava.java3d.utils.geometry.*;
+import org.scijava.java3d.utils.picking.*;
+import org.scijava.java3d.utils.universe.SimpleUniverse;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,9 +12,9 @@ import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.media.j3d.*;
+import org.scijava.java3d.*;
 import javax.swing.JPanel;
-import javax.vecmath.*;
+import org.scijava.vecmath.*;
 import net.miginfocom.swing.MigLayout;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
@@ -25,11 +25,8 @@ import replicatorg.app.ui.mainWindow.SceneDetailsPanel;
 import replicatorg.app.ui.modeling.EditingModel;
 import replicatorg.app.ui.modeling.Tool;
 import replicatorg.app.ui.modeling.ToolPanel;
-import replicatorg.machine.Machine;
-import replicatorg.machine.MachineInterface;
 import replicatorg.machine.model.BuildVolume;
-import replicatorg.machine.model.MachineModel;
-import replicatorg.util.Units_and_Numbers;
+import replicatorg.util.UnitsAndNumbers;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -44,7 +41,7 @@ import replicatorg.util.Units_and_Numbers;
  */
 public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 
-    private Raster drawRaster;
+    private static final BuildVolume buildVol = new BuildVolume(190, 135, 125); // preload it with the default values
     private OffScreenCanvas3D c;
     private SimpleUniverse universe;
     private Canvas3D canvas;
@@ -54,7 +51,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
     private JPanel panel;
     private PrintBed bed;
     private String modelationType;
-    BuildVolume buildVol;
     Tool currentTool = null;
     ToolPanel toolPanel;
     private static Vector3d CAMERA_TRANSLATION_DEFAULT = new Vector3d(0, 0, 300);
@@ -148,7 +144,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
         this.bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 1000000.0);
         this.panel.setLayout(new MigLayout(""));
         this.panel.setOpaque(false);
-        createCanvas(cardPanel.getSize());
+        createCanvas();
         createUniverse();
         this.panel.add(canvas, "dock west");
         this.toolPanel = new ToolPanel(this);
@@ -194,9 +190,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = Units_and_Numbers.millimetersToInches(width);
-                                    depth = Units_and_Numbers.millimetersToInches(depth);
-                                    height = Units_and_Numbers.millimetersToInches(height);
+                                    width = UnitsAndNumbers.millimetersToInches(width);
+                                    depth = UnitsAndNumbers.millimetersToInches(depth);
+                                    height = UnitsAndNumbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -230,7 +226,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                     Base.getMainWindow().getBed().getFirstPickedModel().getEditer().rotateObject(new AxisAngle4d(1d, 0d, 0d, 0.087));
                                 }
                             }
-                                                        if (modelationType.equals("scale")) {
+                            if (modelationType.equals("scale")) {
                                 boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
                                 Model model = Base.getMainWindow().getBed().getFirstPickedModel();
                                 EditingModel editModel = model.getEditer();
@@ -247,9 +243,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = Units_and_Numbers.millimetersToInches(width);
-                                    depth = Units_and_Numbers.millimetersToInches(depth);
-                                    height = Units_and_Numbers.millimetersToInches(height);
+                                    width = UnitsAndNumbers.millimetersToInches(width);
+                                    depth = UnitsAndNumbers.millimetersToInches(depth);
+                                    height = UnitsAndNumbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -301,9 +297,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = Units_and_Numbers.millimetersToInches(width);
-                                    depth = Units_and_Numbers.millimetersToInches(depth);
-                                    height = Units_and_Numbers.millimetersToInches(height);
+                                    width = UnitsAndNumbers.millimetersToInches(width);
+                                    depth = UnitsAndNumbers.millimetersToInches(depth);
+                                    height = UnitsAndNumbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -338,7 +334,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                             if (modelationType.equals("mirror")) {
                                 Base.getMainWindow().getBed().getFirstPickedModel().getEditer().mirrorX();
                             }
-                                                        if (modelationType.equals("scale")) {
+                            if (modelationType.equals("scale")) {
                                 boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
                                 Model model = Base.getMainWindow().getBed().getFirstPickedModel();
                                 EditingModel editModel = model.getEditer();
@@ -355,9 +351,9 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
                                 double width = 0, depth = 0, height = 0;
 
                                 if (ProperDefault.get("measures").equals("inches")) {
-                                    width = Units_and_Numbers.millimetersToInches(width);
-                                    depth = Units_and_Numbers.millimetersToInches(depth);
-                                    height = Units_and_Numbers.millimetersToInches(height);
+                                    width = UnitsAndNumbers.millimetersToInches(width);
+                                    depth = UnitsAndNumbers.millimetersToInches(depth);
+                                    height = UnitsAndNumbers.millimetersToInches(height);
                                 } else if (ProperDefault.get("measures").equals("mm")) {
                                     width = model.getEditer().getWidth();
                                     depth = model.getEditer().getDepth();
@@ -506,12 +502,8 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
         }
     }
 
-    private void getBuildVolume() {
-        MachineInterface mc = Base.getMachineLoader().getMachineInterface();
-        if (mc instanceof Machine) {
-            MachineModel mm = mc.getModel();
-            buildVol = mm.getBuildVolume();
-        }
+    public BuildVolume getBuildVolume() {
+        return buildVol;
     }
 
     public Tool getControlTool(int index) {
@@ -661,7 +653,7 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 
     }
 
-    private void createCanvas(Dimension d) {
+    private void createCanvas() {
 //        GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
 //        template.setSceneAntialiasing(GraphicsConfigTemplate3D.REQUIRED);
 //        GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().
@@ -699,13 +691,8 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //          sOff.setSize(sOn.getSize());
 //          sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
 //          sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());    
-
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-        canvas = new Canvas3D(config);
+        canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
         //canvas.setSize((int)((d.getWidth()-200-265)/2),(int)(d.getHeight()/2));
-        canvas.setFocusable(true);
-        canvas.requestFocus();
-
     }
 
     public void setCanvasSize(Dimension d) {
@@ -725,7 +712,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
     }
 
     private void createScene() {
-        getBuildVolume();
         branchRoot = new BranchGroup();
         branchRoot.setCapability(BranchGroup.ALLOW_DETACH);
         branchRoot.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
@@ -755,7 +741,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //        app.setPolygonAttributes(polyAttribs );
 //        cube.setAppearance(app);
 //        branchGroup.addChild(cube);
-
         branchRoot.addChild(branchGroup);
 
     }
@@ -779,7 +764,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
 //            // before grab it in postSwap().
 //            canvas.setImageReady();
 //            v.startView();  
-
         universe.getViewingPlatform().setNominalViewingTransform();
         universe.getViewer().getView().setFrontClipDistance(1d);
         universe.getViewer().getView().setBackClipDistance(1000d);
@@ -1041,7 +1025,6 @@ public class CAMPanel extends MouseAdapter implements MouseListener, Cloneable {
             hashLines.setCoordinate(idx++, new Point3d(buildVol.getX() / 2, buildVol.getY() / 2, 0));
             hashLines.setCoordinate(idx++, new Point3d(buildVol.getX() / 2, -buildVol.getY() / 2, 0));
             hashLines.setCoordinate(idx++, new Point3d(-buildVol.getX() / 2, -buildVol.getY() / 2, 0));
-
 
             //HashLines to close grid
             hashLines.setCoordinate(idx++, new Point3d(buildVol.getX() / 2, -buildVol.getY() / 2, 0));

@@ -10,19 +10,19 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.logging.Level;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Shape3D;
+import org.scijava.java3d.BranchGroup;
+import org.scijava.java3d.Shape3D;
 
 import org.j3d.loaders.collada.ColladaParser;
 import org.xml.sax.InputSource;
 
 import replicatorg.app.Base;
 
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.LoaderBase;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.SceneBase;
+import org.scijava.java3d.loaders.IncorrectFormatException;
+import org.scijava.java3d.loaders.LoaderBase;
+import org.scijava.java3d.loaders.ParsingErrorException;
+import org.scijava.java3d.loaders.Scene;
+import org.scijava.java3d.loaders.SceneBase;
 
 public class ColladaLoader extends LoaderBase {
 
@@ -47,7 +47,7 @@ public class ColladaLoader extends LoaderBase {
         }
         catch( IOException e )
         {
-        	Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
+        	//Base.logger.log(Level.SEVERE,"Could not open URL "+url.toString(),e);
         	return null;
         }
 	}

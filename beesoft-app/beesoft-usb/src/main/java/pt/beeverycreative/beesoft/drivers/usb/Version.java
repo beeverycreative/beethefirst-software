@@ -66,7 +66,11 @@ public class Version implements Comparable<Version> {
     }
 
     public String getVersionString() {
-        return flavour + "-" + printer + "-" + major + "." + minor + "." + bug;
+        return flavour + "-" + printer.name() + "-" + major + "." + minor + "." + bug;
+    }
+    
+    public PrinterInfo getPrinter() {
+        return printer;
     }
 
     public String getRawVersionString() {
@@ -340,6 +344,15 @@ public class Version implements Comparable<Version> {
                     && (bug == v.bug);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 43 * hash + this.bug;
+        hash = 43 * hash + this.minor;
+        hash = 43 * hash + this.major;
+        return hash;
     }
 
     public boolean atLeast(Version v) {

@@ -1,31 +1,28 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Window;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.app.ui.popups.Query;
+import replicatorg.drivers.Driver;
 
 public class ShutdownMenu extends BaseDialog {
 
-    private final PrintSplashAutonomous printSplash;
-    private final MachineInterface machine = Base.getMainWindow().getMachine();
-    
+    private final Driver driver = Base.getMainWindow().getMachineInterface().getDriver();
+
     private static final int FILE_KEY = 1;
 
-    public ShutdownMenu(Window printSplash) {
-        super(printSplash, Dialog.ModalityType.MODELESS);
-        this.printSplash = (PrintSplashAutonomous) printSplash;
-        this.printSplash.setVisible(false);
+    public ShutdownMenu() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         showNoFilamentLabel();
         setFont();
         setTextLanguage();
-        centerOnScreen();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        super.centerOnScreen();
     }
 
     private void setFont() {
@@ -54,7 +51,7 @@ public class ShutdownMenu extends BaseDialog {
         String coilText;
         boolean showLabel;
 
-        coilText = machine.getDriver().getCoilText();
+        coilText = driver.getCoilText();
         showLabel = coilText.equals(FilamentControler.NO_FILAMENT)
                 || coilText.contains(FilamentControler.NO_FILAMENT_2);
 
@@ -82,7 +79,7 @@ public class ShutdownMenu extends BaseDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(772, 239));
+        setPreferredSize(new java.awt.Dimension(772, 249));
         setResizable(false);
 
         pMaintenance.setBackground(new java.awt.Color(248, 248, 248));
@@ -172,26 +169,6 @@ public class ShutdownMenu extends BaseDialog {
                 .addGap(0, 0, 0))
         );
 
-        javax.swing.GroupLayout pMaintenanceLayout = new javax.swing.GroupLayout(pMaintenance);
-        pMaintenance.setLayout(pMaintenanceLayout);
-        pMaintenanceLayout.setHorizontalGroup(
-            pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pMaintenanceLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        pMaintenanceLayout.setVerticalGroup(
-            pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pMaintenanceLayout.createSequentialGroup()
-                .addComponent(pTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(30, 30, 30))
-        );
-
         pBottom.setBackground(new java.awt.Color(255, 203, 5));
         pBottom.setMinimumSize(new java.awt.Dimension(20, 26));
         pBottom.setPreferredSize(new java.awt.Dimension(139, 26));
@@ -254,29 +231,54 @@ public class ShutdownMenu extends BaseDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout pMaintenanceLayout = new javax.swing.GroupLayout(pMaintenance);
+        pMaintenance.setLayout(pMaintenanceLayout);
+        pMaintenanceLayout.setHorizontalGroup(
+            pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pMaintenanceLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pTop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addComponent(pBottom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+        );
+        pMaintenanceLayout.setVerticalGroup(
+            pMaintenanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pMaintenanceLayout.createSequentialGroup()
+                .addComponent(pTop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(pChangeFilament, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(41, 41, 41)
+                .addComponent(pBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
             .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(pBottom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+            .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        CancelPrint cancel = new CancelPrint(printSplash);
-        cancel.setVisible(true);
-        //dispose();
+        final Runnable action;
+        final Query cancelPrintQuery;
+
+        if (bCancel.isEnabled()) {
+            action = () -> {
+                dispose();
+                driver.dispatchCommand("M112", COM.NO_RESPONSE);
+            };
+            cancelPrintQuery = new Query("CancelPrintText", action, null);
+            cancelPrintQuery.setVisible(true);
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
@@ -289,10 +291,8 @@ public class ShutdownMenu extends BaseDialog {
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
-            FilamentHeating p = new FilamentHeating();
-            this.setVisible(false);
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
             p.setVisible(true);
-            this.setVisible(true);
 
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
             showNoFilamentLabel();
@@ -317,10 +317,11 @@ public class ShutdownMenu extends BaseDialog {
 
     private void bResumeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bResumeMousePressed
         if (bResume.isEnabled()) {
+            PrintSplashAutonomous p = new PrintSplashAutonomous(
+                    Base.printPaused, true
+            );
             dispose();
-            printSplash.setVisible(true);
-            printSplash.doResume();
-            Base.bringAllWindowsToFront();
+            p.setVisible(true);
         }
     }//GEN-LAST:event_bResumeMousePressed
 

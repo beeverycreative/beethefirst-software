@@ -13,7 +13,7 @@ import replicatorg.model.CAMPanel.DragMode;
 import static replicatorg.model.CAMPanel.DragMode.NONE;
 import static replicatorg.model.CAMPanel.DragMode.SCALE_OBJECT;
 import replicatorg.model.Model;
-import replicatorg.util.Units_and_Numbers;
+import replicatorg.util.UnitsAndNumbers;
 
 /*
  *  Copyright (c) 2013 BEEVC - Electronic Systems
@@ -141,9 +141,9 @@ public class ScalingTool extends Tool {
                         DecimalFormat df = new DecimalFormat("#.00");
 
                         if (ProperDefault.get("measures").equals("inches")) {
-                            width = Units_and_Numbers.millimetersToInches(model.getEditer().getWidth());
-                            depth = Units_and_Numbers.millimetersToInches(model.getEditer().getDepth());
-                            height = Units_and_Numbers.millimetersToInches(model.getEditer().getHeight());
+                            width = UnitsAndNumbers.millimetersToInches(model.getEditer().getWidth());
+                            depth = UnitsAndNumbers.millimetersToInches(model.getEditer().getDepth());
+                            height = UnitsAndNumbers.millimetersToInches(model.getEditer().getHeight());
                         } else { // although it seems unnecessary and equal to the values assigned above, these values changed with the resize
                             width = model.getEditer().getWidth();
                             depth = model.getEditer().getDepth();

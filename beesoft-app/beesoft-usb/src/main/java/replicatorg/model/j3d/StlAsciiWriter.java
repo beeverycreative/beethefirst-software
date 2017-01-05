@@ -4,11 +4,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
 
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TriangleArray;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
+import org.scijava.java3d.Shape3D;
+import org.scijava.java3d.Transform3D;
+import org.scijava.java3d.TriangleArray;
+import org.scijava.vecmath.Point3d;
+import org.scijava.vecmath.Vector3f;
 
 import replicatorg.app.Base;
 
@@ -24,7 +24,7 @@ public class StlAsciiWriter extends ModelWriter {
 		PrintWriter w = new PrintWriter(ostream);
 		TriangleArray g = getGeometry(shape);
 		if (g == null) {
-			Base.logger.info("Couldn't find valid geometry during save.");
+			Base.LOGGER.info("Couldn't find valid geometry during save.");
 			return;
 		}
 

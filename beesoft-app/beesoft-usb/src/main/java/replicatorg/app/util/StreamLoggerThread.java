@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import replicatorg.app.Base;
 
 public class StreamLoggerThread extends Thread {
-	private InputStreamReader reader; 
+	private final InputStreamReader reader; 
 	private Level defaultLevel;
         private volatile boolean atEnd = false;
+        private boolean stop = false;
 	
 	public StreamLoggerThread(InputStream stream) {
 		reader = new InputStreamReader(stream);
@@ -28,7 +28,7 @@ public class StreamLoggerThread extends Thread {
 	
 	protected void logMessage(String line) {
 		Level logLevel = getLogLevel(line);
-		Base.logger.log(logLevel,line);		
+		//Base.logger.log(logLevel,line);		
 	}
         
         public void end()
@@ -40,7 +40,7 @@ public class StreamLoggerThread extends Thread {
 	public void run() {
 		try {
 			StringBuffer nextLine = new StringBuffer();
-			while (!atEnd) {
+			while (!stop && !atEnd) {
 
 				int nextChar = reader.read();
 				// The \r is for Skeinforge-31 ->, which outputs \r between progress lines
@@ -56,8 +56,13 @@ public class StreamLoggerThread extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			Base.logger.log(Level.SEVERE,"Stream logger interrupted",e);
+			//Base.logger.log(Level.SEVERE,"Stream logger interrupted",e);
 		}
 	}
+        
+        public void kill() {
+            stop = true;
+            this.interrupt();
+        }
 	
 }

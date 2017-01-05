@@ -26,11 +26,11 @@ public class Resolution {
      *
      * @return
      */
-    public HashMap<String, String> getSlicerParameters() {
+    public HashMap<String, String> getParametersMap() {
 
         HashMap<String, String> result = new HashMap<String, String>();
 
-        if (parameters.isEmpty() == false) {
+        if (parameters != null && parameters.isEmpty() == false) {
             for (SlicerParameter parameter : parameters) {
                 result.put(parameter.getName(), parameter.getValue());
             }

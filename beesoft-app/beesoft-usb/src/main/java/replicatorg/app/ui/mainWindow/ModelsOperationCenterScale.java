@@ -9,8 +9,8 @@ import replicatorg.app.ui.GraphicDesignComponents;
 import replicatorg.machine.model.BuildVolume;
 import replicatorg.model.CAMPanel;
 import replicatorg.model.Model;
-import replicatorg.util.Units_and_Numbers;
-import static replicatorg.util.Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble;
+import replicatorg.util.UnitsAndNumbers;
+import static replicatorg.util.UnitsAndNumbers.sGetDecimalStringAnyLocaleAsDouble;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -54,9 +54,9 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
         this.initialDepth = model.getEditer().getDepth();
 
         if (ProperDefault.get("measures").equals("inches")) {
-            iFieldX.setText(df.format(Units_and_Numbers.millimetersToInches(this.initialWidth)));
-            iFieldY.setText(df.format(Units_and_Numbers.millimetersToInches(this.initialDepth)));
-            iFieldZ.setText(df.format(Units_and_Numbers.millimetersToInches(this.initialHeight)));
+            iFieldX.setText(df.format(UnitsAndNumbers.millimetersToInches(this.initialWidth)));
+            iFieldY.setText(df.format(UnitsAndNumbers.millimetersToInches(this.initialDepth)));
+            iFieldZ.setText(df.format(UnitsAndNumbers.millimetersToInches(this.initialHeight)));
         } else if(ProperDefault.get("measures").equals("mm")) {
             iFieldX.setText(df.format(this.initialWidth));
             iFieldY.setText(df.format(this.initialDepth));
@@ -549,26 +549,24 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     private void bApplyMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMousePressed
     
         boolean modelOnPlatform = Base.getMainWindow().getBed().getFirstPickedModel().getEditer().isOnPlatform();
-        double valX = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
-        double valY = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
-        double valZ = Units_and_Numbers.sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());                
+        double valX = UnitsAndNumbers.sGetDecimalStringAnyLocaleAsDouble(iFieldX.getText());
+        double valY = UnitsAndNumbers.sGetDecimalStringAnyLocaleAsDouble(iFieldY.getText());
+        double valZ = UnitsAndNumbers.sGetDecimalStringAnyLocaleAsDouble(iFieldZ.getText());                
            
         if(ProperDefault.get("measures").equals("inches")){
-            valX = Units_and_Numbers.inchesToMillimeters(valX);
-            valY = Units_and_Numbers.inchesToMillimeters(valY);
-            valZ = Units_and_Numbers.inchesToMillimeters(valZ);            
+            valX = UnitsAndNumbers.inchesToMillimeters(valX);
+            valY = UnitsAndNumbers.inchesToMillimeters(valY);
+            valZ = UnitsAndNumbers.inchesToMillimeters(valZ);            
         }                               
         
         Base.getMainWindow().getBed().getFirstPickedModel().getEditer().updateDimensions(valX, valY, valZ, modelOnPlatform);        
     }//GEN-LAST:event_bApplyMousePressed
 
     private void bApplyMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseExited
-        System.out.println("exited");
         bApply.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_simple_12.png")));
     }//GEN-LAST:event_bApplyMouseExited
 
     private void bApplyMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bApplyMouseEntered
-        System.out.println("entered");
         bApply.setIcon(new ImageIcon(GraphicDesignComponents.getImage("mainWindow", "b_hover_12.png")));
     }//GEN-LAST:event_bApplyMouseEntered
 
@@ -586,30 +584,24 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
 
     private void bScaleToMaxMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMousePressed
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
-        BuildVolume machineVolume = Base.getMainWindow().getMachineInterface().getModel().getBuildVolume();
+        BuildVolume machineVolume = Base.getMainWindow().getCanvas().getBuildVolume();
 
         double scaleX = machineVolume.getX() / model.getEditer().getWidth();
         double scaleY = machineVolume.getY() / model.getEditer().getDepth();
         double scaleZ = machineVolume.getZ() / model.getEditer().getHeight();
 
         double scale = Math.min(scaleX, Math.min(scaleZ, scaleY));
-        scale = Units_and_Numbers.round(scale, 3);
+        //scale = UnitsAndNumbers.round(scale, 3);
 
         //model.getEditer().centerAndToBed();
         model.getEditer().center();
-        model.getEditer().scale(scale, true, false);
-
-        if (model.getEditer().modelInvalidPosition()) {
-            //Small adjustment to avoid the model being out of bounds
-            scale = 0.975;
-            model.getEditer().scale(scale, true, true);
-        }         
+        model.getEditer().scale(scale, true, false);    
 
         //Sets the initial sizing variables to the current values
         this.resetInitialScaleVariables();
         model.resetScale();
         
-        this.update_iFields();
+        this.updateiFields();
     }//GEN-LAST:event_bScaleToMaxMousePressed
 
     private void bScaleToMaxMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bScaleToMaxMouseExited
@@ -858,15 +850,15 @@ public class ModelsOperationCenterScale extends javax.swing.JPanel {
     /**
      * Updates the axis value fields with the current size values
      */
-    private void update_iFields() {
+    private void updateiFields() {
             
         double width, depth, height;
         Model model = Base.getMainWindow().getBed().getFirstPickedModel();
         
         if(ProperDefault.get("measures").equals("inches")) {
-            width = Units_and_Numbers.millimetersToInches(model.getEditer().getWidth());
-            depth = Units_and_Numbers.millimetersToInches(model.getEditer().getDepth());
-            height = Units_and_Numbers.millimetersToInches(model.getEditer().getHeight());
+            width = UnitsAndNumbers.millimetersToInches(model.getEditer().getWidth());
+            depth = UnitsAndNumbers.millimetersToInches(model.getEditer().getDepth());
+            height = UnitsAndNumbers.millimetersToInches(model.getEditer().getHeight());
         } else {
             width = model.getEditer().getWidth();
             depth = model.getEditer().getDepth();

@@ -4,7 +4,6 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="undecorated" type="boolean" value="true"/>
-    <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -67,7 +66,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jPanel3" max="32767" attributes="0"/>
-                      <Component id="jPanel2" max="32767" attributes="0"/>
+                      <Component id="jPanel2" pref="621" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Component id="jPanel4" min="-2" pref="26" max="-2" attributes="0"/>
@@ -90,12 +89,13 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jPanel8" max="32767" attributes="0"/>
-                          <Component id="jPanel7" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jPanel10" max="32767" attributes="0"/>
+                          <Component id="jPanel8" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jPanel7" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -105,7 +105,9 @@
                       <Component id="jPanel8" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jPanel10" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -116,7 +118,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Movement">
-                      <Connection PropertyName="font" code="GraphicDesignComponents.getSSProBold(&quot;12&quot;)" type="code"/>
+                      <Font PropertyName="font" name="Source Sans Pro" size="12" style="1"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -260,12 +262,18 @@
                 <Component class="javax.swing.JTextField" name="zTextFieldValue">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="0.0"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="xTextFieldValue">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="0.0"/>
                   </Properties>
                 </Component>
@@ -334,6 +342,9 @@
                 <Component class="javax.swing.JTextField" name="yTextFieldValue">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="0.0"/>
                   </Properties>
                 </Component>
@@ -365,7 +376,11 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bCurrentPosition">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Calibration set 0"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bCurrentPositionMouseReleased"/>
@@ -383,6 +398,9 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="xTextFieldGoal">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="0.0"/>
                   </Properties>
                   <Events>
@@ -391,6 +409,9 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="yTextFieldGoal">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="0.0"/>
                   </Properties>
                   <Events>
@@ -399,6 +420,9 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="zTextFieldGoal">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="0.0"/>
                   </Properties>
                   <Events>
@@ -412,7 +436,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Other">
-                      <Connection PropertyName="font" code="GraphicDesignComponents.getSSProBold(&quot;12&quot;)" type="code"/>
+                      <Font PropertyName="font" name="Source Sans Pro" size="12" style="1"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -428,6 +452,8 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="bTurnOnLEDs" min="-2" pref="145" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="bResetSN" min="-2" pref="145" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="labelBeepValidation" min="-2" pref="29" max="-2" attributes="0"/>
                               </Group>
@@ -450,7 +476,10 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="bTurnOnLEDs" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="bTurnOnLEDs" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="bResetSN" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="bTurnOffLEDs" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -475,7 +504,11 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="bBeep">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Beep"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bBeepMousePressed"/>
@@ -483,7 +516,11 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bTurnOffLEDs">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Turn off LEDs"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bTurnOffLEDsMouseReleased"/>
@@ -502,7 +539,11 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bTurnOnLEDs">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Turn on LEDs"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bTurnOnLEDsMouseReleased"/>
@@ -510,6 +551,9 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="labelLastPrintTime">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Last Print time"/>
                   </Properties>
                 </Component>
@@ -524,8 +568,106 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel6">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="(hh:mm:ss)"/>
                   </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="bResetSN">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Reset S/N"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bResetSNMousePressed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel10">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder title="Console">
+                      <Font PropertyName="font" name="Source Sans Pro" size="12" style="1"/>
+                    </TitledBorder>
+                  </Border>
+                </Property>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jScrollPane1" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="consoleInput" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                          <Component id="bSendCmd" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jScrollPane1" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="consoleInput" max="32767" attributes="0"/>
+                              <Component id="bSendCmd" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+                  <AuxValues>
+                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                  </AuxValues>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTextArea" name="consoleArea">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                        <Property name="columns" type="int" value="20"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
+                        <Property name="lineWrap" type="boolean" value="true"/>
+                        <Property name="rows" type="int" value="5"/>
+                        <Property name="text" type="java.lang.String" value="Welcome to BEESOFT&apos;s Control Panel console!&#xa;The Control Panel was not designed to work while the printer is in bootloader. Please avoid executing commands like M609!"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Component class="javax.swing.JTextField" name="consoleInput">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="consoleInputKeyPressed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="bSendCmd">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Send"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bSendCmdActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -567,6 +709,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="notes">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="14" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="All files saved under BEESOFT folder in user directory."/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
@@ -576,7 +721,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Extrusion">
-                      <Connection PropertyName="font" code="GraphicDesignComponents.getSSProBold(&quot;12&quot;)" type="code"/>
+                      <Font PropertyName="font" name="Source Sans Pro" size="12" style="1"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -691,7 +836,7 @@
                                               </Group>
                                               <Component id="jSliderBlowerSpeed" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <EmptySpace pref="23" max="32767" attributes="0"/>
+                                          <EmptySpace pref="11" max="32767" attributes="0"/>
                                           <Component id="jSliderExtruderSpeed" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
@@ -756,11 +901,17 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="blockTemperatureLabel">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Block temperature"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="targetTemperatureVal">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
                       <Events>
@@ -769,6 +920,9 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="extruderTemperatureLabel">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Extruder temperature"/>
                       </Properties>
                     </Component>
@@ -784,6 +938,9 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="logTemperature">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Log Temperature"/>
                         <Property name="toolTipText" type="java.lang.String" value=""/>
                       </Properties>
@@ -791,12 +948,18 @@
                     <Component class="javax.swing.JTextField" name="blockTemperatureVal">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="extruderTemperatureVal">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
                     </Component>
@@ -822,6 +985,9 @@
                     </Container>
                     <Component class="javax.swing.JLabel" name="tempLabel">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Temperature Chart"/>
                       </Properties>
                     </Component>
@@ -872,6 +1038,9 @@
                       <SubComponents>
                         <Component class="javax.swing.JLabel" name="jLabel1">
                           <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Source Sans Pro" size="14" style="0"/>
+                            </Property>
                             <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                               <ComponentRef name="colorCurrentTemp"/>
                             </Property>
@@ -914,6 +1083,9 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel5">
                           <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Source Sans Pro" size="14" style="0"/>
+                            </Property>
                             <Property name="labelFor" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
                               <ComponentRef name="colorTargetTemp"/>
                             </Property>
@@ -925,16 +1097,25 @@
                     <Component class="javax.swing.JTextField" name="jBlowerFanValue">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jBlowerFanTitle">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Blower fan"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JSlider" name="jSliderBlowerSpeed">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="majorTickSpacing" type="int" value="60"/>
                         <Property name="maximum" type="int" value="255"/>
                         <Property name="minorTickSpacing" type="int" value="30"/>
@@ -949,6 +1130,9 @@
                     </Component>
                     <Component class="javax.swing.JSlider" name="jSliderExtruderSpeed">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="majorTickSpacing" type="int" value="60"/>
                         <Property name="maximum" type="int" value="255"/>
                         <Property name="minorTickSpacing" type="int" value="30"/>
@@ -964,11 +1148,17 @@
                     <Component class="javax.swing.JTextField" name="jExtruderFanValue">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jExtruderFanTitle">
                       <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Source Sans Pro" size="14" style="0"/>
+                        </Property>
                         <Property name="text" type="java.lang.String" value="Extruder fan"/>
                       </Properties>
                     </Component>
@@ -976,6 +1166,9 @@
                 </Container>
                 <Component class="javax.swing.JTextField" name="mSpeed">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="500"/>
                   </Properties>
                   <Events>
@@ -984,12 +1177,19 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="extrudeDuration">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Extrude duration"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="bForward">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Foward"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bForwardMouseReleased"/>
@@ -997,6 +1197,9 @@
                 </Component>
                 <Component class="javax.swing.JComboBox" name="extrudeCombo">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="4">
                         <StringItem index="0" value="Item 1"/>
@@ -1009,12 +1212,19 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="motorSpeed">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Speed"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="bReverse">
                   <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Source Sans Pro" size="14" style="0"/>
+                    </Property>
                     <Property name="text" type="java.lang.String" value="Reverse"/>
+                    <Property name="contentAreaFilled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bReverseMouseReleased"/>
@@ -1050,8 +1260,8 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="bOK" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="bOK" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1059,6 +1269,9 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="bOK">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Source Sans Pro" size="12" style="0"/>
+                </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/replicatorg/app/ui/panels/b_simple_21.png"/>
@@ -1067,9 +1280,9 @@
                 <Property name="horizontalTextPosition" type="int" value="0"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bOKMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bOKMouseExited"/>
                 <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bOKMousePressed"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bOKMouseExited"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bOKMouseEntered"/>
               </Events>
             </Component>
           </SubComponents>

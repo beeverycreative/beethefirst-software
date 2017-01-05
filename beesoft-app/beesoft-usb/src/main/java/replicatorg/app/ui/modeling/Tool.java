@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
-import javax.vecmath.Point3d;
+import org.scijava.vecmath.Point3d;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;
@@ -150,7 +150,6 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
 
         switch (mode) {
             case ROTATE_VIEW:
-                Base.getMainWindow().deactivateCameraControls();
                 // Rotate view
                 parent.preview.adjustViewAngle(-0.005 * xd, -0.005 * yd);
                 break;
@@ -212,7 +211,6 @@ public abstract class Tool implements MouseMotionListener, MouseListener, MouseW
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-        Base.getMainWindow().activateCameraControls();
         int notches = e.getWheelRotation();
         parent.preview.adjustZoom(10d * notches);
     }

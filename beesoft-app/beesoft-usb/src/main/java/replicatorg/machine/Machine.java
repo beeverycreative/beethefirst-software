@@ -23,9 +23,6 @@ import org.w3c.dom.Node;
 import replicatorg.app.util.AutonomousData;
 
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.commands.DriverCommand;
-import replicatorg.machine.model.MachineModel;
-import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -127,10 +124,6 @@ public class Machine implements MachineInterface {
     // this is the xml config for this machine.
     protected Node machineNode;
 
-    @Override
-    public String getMachineName() {
-        return machineThread.getMachineName();
-    }
 
     /**
      * Creates the machine object.
@@ -147,15 +140,10 @@ public class Machine implements MachineInterface {
 
     @Override
     public boolean buildRemote(String remoteName) {
-        machineThread.scheduleRequest(new MachineCommand(
-                RequestType.BUILD_REMOTE, remoteName));
-        return true;
+        return false;
     }
     // The estimate function now checks for some sources of error
     // needs a way to return failure
-    private String message;
-    private long numWarnings;
-    private long numErrors;
 
     /**
      * Begin running a job.
@@ -164,8 +152,6 @@ public class Machine implements MachineInterface {
      */
     @Override
     public boolean buildDirect(String arg) {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.BUILD_DIRECT, arg));
-
         return true;
     }
 
@@ -183,28 +169,18 @@ public class Machine implements MachineInterface {
     public Driver getDriver() {
         return machineThread.getDriver();
     }
-
-    @Override
-    public MachineModel getModel() {
-        return machineThread.getModel();
-    }
-
+    
     @Override
     public void stopMotion() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_MOTION,
-                ""));
     }
 
     @Override
     public void stopAll() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.STOP_ALL,
-                ""));
     }
 
     @Override
     public void killSwitch() {
-        machineThread.killSwitch();
-        runCommand(new replicatorg.drivers.commands.SetBusy(false));
+        
     }
 
     @Override
@@ -214,20 +190,16 @@ public class Machine implements MachineInterface {
 
     @Override
     public void pause() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.PAUSE,
-                ""));
     }
 
     @Override
     public void unpause() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.UNPAUSE,
-                ""));
+
     }
 
     @Override
     public void reset() {
-        machineThread.scheduleRequest(new MachineCommand(RequestType.RESET,
-                ""));
+        
     }
 
 
@@ -239,9 +211,6 @@ public class Machine implements MachineInterface {
             machineThread = new MachineThread(this, machineNode);
             machineThread.start();
         }
-
-        machineThread.scheduleRequest(new MachineCommand(RequestType.CONNECT,
-                ""));
     }
 
     @Override
@@ -261,22 +230,19 @@ public class Machine implements MachineInterface {
 
     @Override
     public int getStopwatch() {
-        return machineThread.getStopwatch();
+        return 0;
     }
 
     @Override
     public void setStopwatch(int stopwatch) {
-        machineThread.setStopwatch(stopwatch);
     }
 
     @Override
     public void stopwatch() {
-        machineThread.stopwatch();
     }
 
     @Override
     public void resumewatch() {
-        machineThread.resumeWatch();
     }
 
     @Override
@@ -334,40 +300,16 @@ public class Machine implements MachineInterface {
         return machineThread.getFeedrate(speedTag);
     }
 
-    protected double getTotalExtrudedValue() {
-        return machineThread.getDriver().getTotalExtrudedValue();
-    }
-
-    @Override
-    public String getZValue() {
-        return String.valueOf(machineThread.getModel().getzValue());
-    }
-
-    @Override
-    synchronized public boolean isPaused() {
-        return getMachineState().isPaused();
-    }
-
-    @Override
-    public void runCommand(DriverCommand command) {
-        machineThread.scheduleRequest(new MachineCommand(
-                RequestType.RUN_COMMAND, command));
-    }
-
     @Override
     public void dispose() {
         if (machineThread != null) {
-            machineThread.scheduleRequest(new MachineCommand(
-                    RequestType.SHUTDOWN, ""));
-
             // Wait 5 seconds for the thread to stop.
             try {
+                machineThread.dispose();
                 machineThread.join(5000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
@@ -376,45 +318,9 @@ public class Machine implements MachineInterface {
 
         callbackHandler.schedule(e);
     }
-
-    protected void emitProgress(MachineProgressEvent progress) {
-        callbackHandler.schedule(progress);
-    }
-
-    protected void emitToolStatus(ToolModel tool) {
-        MachineToolStatusEvent e = new MachineToolStatusEvent(this, tool);
-        callbackHandler.schedule(e);
-    }
-
-    @Override
-    public int getLinesProcessed() {
-        /*
-         * This is for jumping to the right line when aborting or pausing. This
-         * way you'll have the ability to track down where to continue printing.
-         */
-        return machineThread.getLinesProcessed();
-    }
-
-    // TODO: Drop this
-    @Override
-    public boolean isSimulating() {
-        return machineThread.isSimulating();
-    }
-
-    // TODO: Drop this
-    @Override
-    public boolean isInteractiveTarget() {
-        return machineThread.isInteractiveTarget();
-    }
-
-    // TODO: Drop this
-    @Override
-    public JobTarget getTarget() {
-        return machineThread.getTarget();
-    }
     
     @Override
-    public synchronized AutonomousData getAutonomousData() throws InterruptedException {
-        return getModel().getAutonomousData();
+    public AutonomousData getAutonomousData() {
+        return null;
     }
 }

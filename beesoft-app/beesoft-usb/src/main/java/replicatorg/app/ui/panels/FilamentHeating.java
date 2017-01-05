@@ -2,17 +2,16 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
+import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -27,31 +26,34 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentHeating extends BaseDialog {
 
-    private final MachineInterface machine;
-    private boolean achievement;
-    private boolean quickGuide;
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final Filament selectedFilament;
+    private final TemperatureThread temperatureThread = new TemperatureThread();
 
-    private double temperatureGoal;
-    private final UpdateThread updateThread;
-
-    public FilamentHeating() {
+    public FilamentHeating(Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
-        Base.writeLog("First step of the filament change operation", this.getClass());
+        Base.writeLog("Second step of the filament change operation", this.getClass());
         initComponents();
         setFont();
         setTextLanguage();
-        Base.THREAD_KEEP_ALIVE = false;
-        machine = Base.getMachineLoader().getMachineInterface();
-        machine.getDriver().resetToolTemperature();
         evaluateInitialConditions();
-        centerOnScreen();
-        setProgressBarColor();
+        this.selectedFilament = selectedFilament;
+        super.centerOnScreen();
+        jProgressBar1.setForeground(new Color(255, 203, 5));
         moveToPosition();
-        enableDrag();
-        updateThread = new UpdateThread(this);
-        updateThread.start();
-        Base.systemThreads.add(updateThread);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        super.enableDrag();
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                temperatureThread.start();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                temperatureThread.kill();
+            }
+        });
     }
 
     private void setFont() {
@@ -59,99 +61,37 @@ public class FilamentHeating extends BaseDialog {
         jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
         jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel7.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bPrevious.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
 
     private void setTextLanguage() {
+        String warning;
+
+        warning = "<html><br>" + Languager.getTagValue(1, "FilamentWizard", "Heating_Info") + " <br><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
+        jLabel4.setText(warning);
         jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
-        String warning = "<html><br><b>" + Languager.getTagValue(1, "FilamentWizard", "Info_Warning") + "</b></html>";
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Heating_Info_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Heating_Info") + warning));
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        bPrevious.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
+        jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
     }
 
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
+    @Override
+    public void updateHeatBar(int temperature) {
+        if (temperature > jProgressBar1.getValue()) {
+            jProgressBar1.setValue(temperature);
         }
 
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
-    }
-
-    private void setProgressBarColor() {
-        jProgressBar1.setForeground(new Color(255, 203, 5));
-    }
-
-    public boolean getAchievement() {
-        return achievement;
-    }
-
-    public void sinalizeHeatSuccess() {
-        disableMessageDisplay();
-        Base.writeLog("Goal temperature achieved!", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300"));
-        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }
-
-    public void updateHeatBar() {
-
-        machine.runCommand(new replicatorg.drivers.commands.ReadTemperature());
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(FilamentHeating.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        double temperature = machine.getDriver().getTemperature();
-
-        Base.writeLog("Current temperature: " + temperature, this.getClass());
-
-        if (temperature > (int) (jProgressBar1.getValue() * 2)) {
-            int val = (int) (temperature / 2.25);
-            if (val > jProgressBar1.getValue()) {
-                jProgressBar1.setValue(val);
-            }
-        }
-
-        if (temperature <= (temperatureGoal - 1)) {
-            achievement = false;
-        } else {
-            achievement = true;
-            jProgressBar1.setValue(100);
-            sinalizeHeatSuccess();
+        if (temperature >= GENERIC_TEMPERATURE_GOAL) {
+            Base.writeLog("Temperature achieved...", this.getClass());
+            temperatureThread.kill();
+            disableMessageDisplay();
+            driver.setTemperature(GENERIC_TEMPERATURE_GOAL);
+            driver.dispatchCommand("M300");
+            bNext.setEnabled(true);
         }
     }
 
@@ -160,71 +100,35 @@ public class FilamentHeating extends BaseDialog {
         jLabel7.setForeground(new Color(0, 0, 0));
     }
 
-    public void disableMessageDisplay() {
+    private void disableMessageDisplay() {
         jPanel3.setBackground(new Color(248, 248, 248));
         jLabel7.setForeground(new Color(248, 248, 248));
     }
 
+    @Override
     public void showMessage() {
         enableMessageDisplay();
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
     }
 
     private void moveToPosition() {
-        Base.writeLog("Waiting for extruder to reach the target temperature, " + temperatureGoal, this.getClass());
+        Base.writeLog("Waiting for extruder to reach the target temperature, " + GENERIC_TEMPERATURE_GOAL, this.getClass());
         showMessage();
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep(temperatureGoal + 5));
-    }
-
-    private void finalizeHeat() {
-        Base.writeLog("Moving table to home position", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
-        achievement = false;
-        temperatureGoal = FilamentControler.getColorTemperature(
-                machine.getDriver().getCoilText(),
-                "medium",
-                Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-        );
+        jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
 
-        Base.getMainWindow().setEnabled(false);
-        disableMessageDisplay();
-
-        bPrevious.setVisible(false);
-        bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-
-        if (Boolean.valueOf(ProperDefault.get("firstTime")) != true) {
-            bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-            quickGuide = false;
-        } else {
-            bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            quickGuide = true;
-        }
-
+        driver.readTemperature();
+        updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());
     }
 
     private void doCancel() {
-        if (Base.printPaused == false) {
-            Base.writeLog("Filament heating canceled", this.getClass());
-            dispose();
-            Base.THREAD_KEEP_ALIVE = true;
-            finalizeHeat();
-            updateThread.stop();
-            Base.bringAllWindowsToFront();
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.getMainWindow().setEnabled(true);
-
-            if (ProperDefault.get("maintenance").equals("1")) {
-                ProperDefault.remove("maintenance");
-            }
-        } else {
-            Base.writeLog("Filament heating canceled", this.getClass());
-            finalizeHeat();
-            dispose();
-        }
+        Base.writeLog("Filament heating canceled", this.getClass());
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        dispose();
+        driver.dispatchCommand("M704", COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")
@@ -232,7 +136,6 @@ public class FilamentHeating extends BaseDialog {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        bPrevious = new javax.swing.JLabel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -256,23 +159,10 @@ public class FilamentHeating extends BaseDialog {
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bPrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        bPrevious.setText("ANTERIOR");
-        bPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bPrevious.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPreviousMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bPreviousMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPreviousMousePressed(evt);
-            }
-        });
-
-        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -308,9 +198,7 @@ public class FilamentHeating extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
-                .addComponent(bPrevious)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 405, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
@@ -319,7 +207,6 @@ public class FilamentHeating extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bPrevious)
                     .addComponent(bNext)
                     .addComponent(bExit))
                 .addGap(20, 20, 20))
@@ -334,11 +221,6 @@ public class FilamentHeating extends BaseDialog {
 
         jProgressBar1.setBackground(new java.awt.Color(186, 186, 186));
         jProgressBar1.setPreferredSize(new java.awt.Dimension(150, 18));
-        jProgressBar1.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jProgressBar1StateChanged(evt);
-            }
-        });
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
@@ -469,12 +351,6 @@ public class FilamentHeating extends BaseDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jProgressBar1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jProgressBar1StateChanged
-//        if (jProgressBar1.getValue() == 100) {
-//            jLabel18.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-//        }
-    }//GEN-LAST:event_jProgressBar1StateChanged
-
     private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
         bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bExitMouseEntered
@@ -484,62 +360,36 @@ public class FilamentHeating extends BaseDialog {
     }//GEN-LAST:event_bExitMouseExited
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-        if (achievement) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
-        if (achievement) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
-    private void bPreviousMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseEntered
-        if (Boolean.valueOf(ProperDefault.get("firstTime"))) {
-            bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-        }
-    }//GEN-LAST:event_bPreviousMouseEntered
-
-    private void bPreviousMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseExited
-        if (Boolean.valueOf(ProperDefault.get("firstTime"))) {
-            bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        }
-
-    }//GEN-LAST:event_bPreviousMouseExited
-
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (achievement) {
+        if (bNext.isEnabled()) {
             Base.writeLog("Next button pressed, transitioning to next panel", this.getClass());
-            updateThread.stop();
+            FilamentInsertion p = new FilamentInsertion(selectedFilament);
             dispose();
-            FilamentInsertion p = new FilamentInsertion();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
 
-    private void bPreviousMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMousePressed
-        if (quickGuide) {
-            Base.writeLog("Previous button pressed", this.getClass());
-            dispose();
-            WelcomeQuickguide p = new WelcomeQuickguide();
-            p.setVisible(true);
-            finalizeHeat();
-            updateThread.stop();
-        }
-    }//GEN-LAST:event_bPreviousMousePressed
-
     private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
-        doCancel();
+        if (bExit.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bExitMousePressed
 
     private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
-        doCancel();
+        if (bX.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bXMousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bExit;
     private javax.swing.JLabel bNext;
-    private javax.swing.JLabel bPrevious;
     private javax.swing.JLabel bX;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -553,35 +403,4 @@ public class FilamentHeating extends BaseDialog {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-}
-
-class UpdateThread extends Thread {
-
-    FilamentHeating window;
-
-    public UpdateThread(FilamentHeating w) {
-        super("Filament Heating Thread");
-        window = w;
-    }
-
-    @Override
-    public void run() {
-
-        boolean temperatureAchieved = false;
-        // we'll break on interrupts
-        while (!temperatureAchieved && !Base.THREAD_KEEP_ALIVE) {
-//            System.out.println("Thread Alive "+this.getName());
-            try {
-                window.updateHeatBar();
-                temperatureAchieved = window.getAchievement();
-                Thread.sleep(2500);
-            } catch (Exception e) {
-                Base.writeLog("Exception occured while reading temperature ...", this.getClass());
-                this.stop();
-                break;
-            }
-        }
-        this.stop();
-
-    }
 }

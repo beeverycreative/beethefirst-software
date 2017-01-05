@@ -4,9 +4,6 @@ import org.w3c.dom.Node;
 import replicatorg.app.util.AutonomousData;
 
 import replicatorg.drivers.Driver;
-import replicatorg.drivers.commands.DriverCommand;
-import replicatorg.machine.Machine.JobTarget;
-import replicatorg.machine.model.MachineModel;
 import replicatorg.util.Point5d;
 
 /**
@@ -28,10 +25,9 @@ import replicatorg.util.Point5d;
 public interface MachineInterface {
 
     /**
-     * Get the driver instance. Note that this interface will not be supported
-     * in the future; instead use getDriver() *
+     * Get the driver instance. 
+     * @return a driver interface
      */
-    //@Deprecated
     public Driver getDriver();
 
     /**
@@ -51,18 +47,7 @@ public interface MachineInterface {
      */
     // TODO: generic interface for non-serial machines.
     public void connect(boolean b);
-    /**
-     * Get information about the machine configuration, which also happens to be
-     * a control interface to the machine.
-     *
-     * @return a Machine
-     */
-    public MachineModel getModel();
     
-    public String getZValue();
-
-    public String getMachineName();
-
     // Job level commands
 
     public boolean buildDirect(String arg);
@@ -86,11 +71,6 @@ public interface MachineInterface {
     
     public void killSwitch();
 
-    /**
-     * Run a command on the driver *
-     */
-    public void runCommand(DriverCommand command);
-
     public int getStopwatch();
 
     public void setStopwatch(int stopwatch);
@@ -98,17 +78,7 @@ public interface MachineInterface {
     // Query the machine controller
     public MachineState getMachineState();
 
-    public int getLinesProcessed();
-
-    public JobTarget getTarget();
-
-    public boolean isPaused();
-
     public boolean isConnected();
-
-    public boolean isSimulating();
-
-    public boolean isInteractiveTarget();
 
     public Node getMachineNode();
 
@@ -147,5 +117,5 @@ public interface MachineInterface {
     
     public void setLastPrintedPoint(Point5d point);
     
-    public AutonomousData getAutonomousData() throws InterruptedException;
+    public AutonomousData getAutonomousData();
 }

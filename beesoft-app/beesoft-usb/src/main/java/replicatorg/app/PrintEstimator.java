@@ -23,28 +23,39 @@ public class PrintEstimator {
 
     private static final String GCODER_PATH = Base.getApplicationDirectory().getAbsolutePath().concat("/estimator/gcoder.py");
     private static final String ERROR_MESSAGE = "NA";
-    private static String estimatedTime = ERROR_MESSAGE;
-    private static String estimatedCost = ERROR_MESSAGE;
     private static final String BIN_PATH_UNIX = "python";
     private static final String BIN_PATH_WINDOWS = "C:\\Python27\\python.exe";
     private static final double patch = 1.50;
     private static final String dayKeyWord = "day";
+    private final File gcodeFile;
+    private final String estimatedTime;
+    private final String estimatedCost;
+    private Process process;
+
+    public PrintEstimator(File gcodeFile) {
+        String[] temp;
+
+        this.gcodeFile = gcodeFile;
+        temp = estimateTime();
+        estimatedTime = temp[0];
+        estimatedCost = temp[1];
+    }
 
     /**
      * Get Estimated time from estimator process.
      *
      * @return estimated time for gcode.
      */
-    public static String getEstimatedTime() {
+    public String getEstimatedTime() {
         return estimatedTime;
     }
 
-    public static int getEstimatedMinutes() {
+    public int getEstimatedMinutes() {
         int hours, minutes, retVal;
 
-        Base.writeLog("Calculating estimated minutes", PrintEstimator.class);
-        Base.writeLog("estimatedTime: " + estimatedTime, PrintEstimator.class);
-        
+        Base.writeLog("Calculating estimated minutes", this.getClass());
+        Base.writeLog("estimatedTime: " + estimatedTime, this.getClass());
+
         if (estimatedTime.contains(":")) {
             hours = Integer.parseInt(estimatedTime.substring(0,
                     estimatedTime.indexOf(':')));
@@ -54,12 +65,12 @@ public class PrintEstimator {
             hours = 0;
             minutes = Integer.parseInt(estimatedTime);
         }
-        
+
         retVal = minutes + hours * 60;
-        
-        Base.writeLog("Hours: " + hours, PrintEstimator.class);
-        Base.writeLog("Minutes: " + minutes, PrintEstimator.class);
-        Base.writeLog("Returning: " + retVal, PrintEstimator.class);
+
+        Base.writeLog("Hours: " + hours, this.getClass());
+        Base.writeLog("Minutes: " + minutes, this.getClass());
+        Base.writeLog("Returning: " + retVal, this.getClass());
 
         return retVal;
     }
@@ -69,17 +80,22 @@ public class PrintEstimator {
      *
      * @return estimated cost for gcode.
      */
-    public static String getEstimatedCost() {
+    public String getEstimatedCost() {
         return estimatedCost;
     }
 
     /**
      * Runs process to calculate time and material cost.
      *
-     * @param gcode gcode to be analysed.
-     * @return estimated time as hh:mm
+     * @return estimated time as hh:mm and estimated cost
      */
-    public static String estimateTime(File gcode) {
+    private String[] estimateTime() {
+
+        String[] result;
+
+        result = new String[2];
+        result[0] = ERROR_MESSAGE;
+        result[1] = ERROR_MESSAGE;
 
         //Validates if estimator dir exists
         if (new File(GCODER_PATH).exists()) {
@@ -88,59 +104,54 @@ public class PrintEstimator {
             if (Base.isMacOS() || Base.isLinux()) {
                 command[0] = BIN_PATH_UNIX;
                 command[1] = GCODER_PATH;
-                command[2] = gcode.getAbsolutePath();
+                command[2] = gcodeFile.getAbsolutePath();
             } else {
                 command[0] = BIN_PATH_WINDOWS;
                 command[1] = GCODER_PATH;
-                command[2] = gcode.getAbsolutePath();
+                command[2] = gcodeFile.getAbsolutePath();
             }
 
             ProcessBuilder probuilder = new ProcessBuilder(command);
-
-            //You can set up your work directory
-            //        probuilder.directory(new File("c:\\xyzwsdemo"));
-            Process process = null;
             try {
                 process = probuilder.start();
             } catch (IOException ex) {
-                Base.writeLog("Error starting process to estimate print duration", PrintEstimator.class);
-                estimatedTime = ERROR_MESSAGE;
-                return "Error";
+                Base.writeLog("Error starting process to estimate print duration", this.getClass());
+                return result;
             }
 
             //Read out dir output
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
-            String line = null;
+            String line;
             String output = "";
             try {
                 while ((line = br.readLine()) != null) {
                     output = output.concat(line);
                 }
             } catch (IOException ex) {
-                Base.writeLog("Error reading gcode estimater output", PrintEstimator.class);
+                Base.writeLog("Error reading gcode estimater output", this.getClass());
             }
 
             //Wait to get exit value
             try {
-                int exitValue = process.waitFor();
+                process.waitFor();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
 
-            estimatedCost = parseCostOutput(output);
-            estimatedTime = parseTimeOutput(output);
+            result[0] = parseTimeOutput(output);    // time
+            result[1] = parseCostOutput(output);    // cost
 
         } else {
-            Base.writeLog("Error starting process to estimate print duration", PrintEstimator.class);
-            estimatedTime = ERROR_MESSAGE;
-            return "Error";
+            Base.writeLog("Error starting process to estimate print duration", this.getClass());
+            return result;
         }
 
-//        System.out.println("Estimated time: "+estimatedTime);
-        return estimatedTime;
+        return result;
+    }
+    
+    public void stopEstimation() {
+        process.destroy();
     }
 
     /**
@@ -149,7 +160,7 @@ public class PrintEstimator {
      * @param duration estimated time from process.
      * @return estimated time in hh:mm
      */
-    private static String noDays(String duration) {
+    private String noDays(String duration) {
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "((?:(?:[0-1][0-9])|(?:[2][0-3])|(?:[0-9])):(?:[0-5][0-9])(?::[0-5][0-9])?(?:\\s?(?:am|AM|pm|PM))?)";	// HourMinuteSec 1
         String time1 = "ND";
@@ -161,7 +172,7 @@ public class PrintEstimator {
 //                System.out.print("("+time1.toString()+")"+"\n");
         }
 
-        return time1.toString();
+        return time1;
     }
 
     /**
@@ -170,7 +181,7 @@ public class PrintEstimator {
      * @param duration estimated time from process.
      * @return estimated time in hh:mm
      */
-    private static String withDays(String duration) {
+    private String withDays(String duration) {
 
         String re1 = ".*?";	// Non-greedy match on filler
         String re2 = "\\s+";	// Uninteresting: ws
@@ -186,8 +197,8 @@ public class PrintEstimator {
         String re12 = "(\\d+)";	// Integer Number 3
         String re13 = "(:)";	// Any Single Character 3
         String re14 = "(\\d+)";	// Integer Number 4
-        int nDays = 0;
-        int nHours = 0;
+        int nDays;
+        int nHours;
         String time1 = "ND";
 
         Pattern p = Pattern.compile(re1 + re2 + re3 + re4 + re5 + re6 + re7 + re8 + re9 + re10 + re11 + re12 + re13 + re14, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -228,9 +239,9 @@ public class PrintEstimator {
      * @param out output from parsing.
      * @return estimated time filtered and tuned.
      */
-    private static String parseTimeOutput(String out) {
+    private String parseTimeOutput(String out) {
         if (!out.isEmpty()) {
-            String timeParsed = "ND";
+            String timeParsed;
 
             if (out.toLowerCase().contains(dayKeyWord)) {
                 timeParsed = withDays(out);
@@ -249,7 +260,7 @@ public class PrintEstimator {
      * @param baseEstimation base estimation already parsed from process output.
      * @return parsed and patched estimation time.
      */
-    private static String filterTime(String baseEstimation) {
+    private String filterTime(String baseEstimation) {
         String estimation = "ND";
         int hours = 0;
         int minutes = 0;
@@ -296,7 +307,7 @@ public class PrintEstimator {
      * @param mnt patched minutes.
      * @return estimation tuned.
      */
-    private static int[] tuneEstimation(int hr, int mnt) {
+    private int[] tuneEstimation(int hr, int mnt) {
 
         int[] time = new int[2];
         int hours = hr;
@@ -320,7 +331,7 @@ public class PrintEstimator {
      * @param out process output
      * @return material cost
      */
-    private static String parseCostOutput(String out) {
+    private String parseCostOutput(String out) {
 
         String costParsed = ERROR_MESSAGE;
 
@@ -329,7 +340,7 @@ public class PrintEstimator {
             try {
                 costParsed = out.substring(out.indexOf(tag), out.indexOf("mm")).split(tag)[1];
             } catch (StringIndexOutOfBoundsException e) {
-                ;//Do nothing - just avoid throw
+                //Do nothing - just avoid throw
             }
 
         }

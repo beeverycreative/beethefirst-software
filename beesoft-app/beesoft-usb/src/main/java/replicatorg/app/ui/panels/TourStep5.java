@@ -1,13 +1,9 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dimension;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
-import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
 
 /**
@@ -29,8 +25,6 @@ public class TourStep5 extends javax.swing.JFrame {
         setFont();
         setTextLanguage();
         putOnScreen();
-        Base.getMainWindow().setEnabled(false);
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
     }
     
     private void setFont()
@@ -43,7 +37,7 @@ public class TourStep5 extends javax.swing.JFrame {
     
     private void setTextLanguage()
     {
-        jLabel2.setText(splitString(Languager.getTagValue(1,"Tour", "Tour6")));
+        jLabel2.setText("<html>" + Languager.getTagValue(1,"Tour", "Tour6") + "</html>");
         jLabel11.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line7")); 
         jLabel12.setText(Languager.getTagValue(1,"OptionPaneButtons", "Line4"));
     }
@@ -53,8 +47,6 @@ public class TourStep5 extends javax.swing.JFrame {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
  
         // Determine the new location of the window
-        int w = this.getSize().width;
-        int h = this.getSize().height;
         int x = (dim.width-450);
         int y = (135);
         
@@ -62,45 +54,6 @@ public class TourStep5 extends javax.swing.JFrame {
         this.setLocation(x, y);
 //        this.setLocationRelativeTo(Base.getMainWindow());
     }
-
-    private String splitString(String s)
-    {
-        int width = 180;
-        return buildString(s.split("\\."),width);
-    }
-    
-    private String buildString(String[]parts,int width)
-    {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-  
-        for(int i = 0; i < parts.length;i++)
-        {
-            if(i+1 < parts.length)
-            {
-                if(getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i+1]) < width)
-                {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i+1]).concat(".").concat(br);
-                    i++;
-                }
-                else
-                    text = text.concat(parts[i]).concat(".").concat(br);
-            }
-            else
-                text = text.concat(parts[i]).concat(".");
-        }
-            
-        return ihtml.concat(text).concat(ehtml);
-    }
- 
-    private int getStringPixelsWidth(String s)
-    {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s); 
-    } 
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -254,8 +207,6 @@ public class TourStep5 extends javax.swing.JFrame {
         dispose();
         TourFinish p = new TourFinish();
         p.setVisible(true);
-//        Base.getMainWindow().setVisible(true);
-//        Base.getMainWindow().setEnabled(true);
     
     }//GEN-LAST:event_jLabel11MousePressed
 

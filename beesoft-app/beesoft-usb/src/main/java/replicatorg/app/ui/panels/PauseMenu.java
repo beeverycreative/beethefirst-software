@@ -1,30 +1,28 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Window;
 import javax.swing.ImageIcon;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.app.ui.popups.Query;
+import replicatorg.drivers.Driver;
 
 public class PauseMenu extends BaseDialog {
 
-    private final PrintSplashAutonomous printSplash;
-    private final MachineInterface machine = Base.getMainWindow().getMachine();
-    
     private static final int FILE_KEY = 1;
 
-    public PauseMenu(Window printSplash) {
-        super(printSplash, Dialog.ModalityType.MODELESS);
-        this.printSplash = (PrintSplashAutonomous) printSplash;
-        this.printSplash.setVisible(false);
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+
+    public PauseMenu() {
+        super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         showNoFilamentLabel();
         setFont();
         setTextLanguage();
-        centerOnScreen();
+        super.centerOnScreen();
     }
 
     private void setFont() {
@@ -59,7 +57,7 @@ public class PauseMenu extends BaseDialog {
         String coilText;
         boolean showLabel;
 
-        coilText = machine.getDriver().getCoilText();
+        coilText = driver.getCoilText();
         showLabel = coilText.equals(FilamentControler.NO_FILAMENT)
                 || coilText.contains(FilamentControler.NO_FILAMENT_2);
 
@@ -329,7 +327,7 @@ public class PauseMenu extends BaseDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 772, Short.MAX_VALUE)
+            .addComponent(pBottom, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
             .addComponent(pMaintenance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -345,9 +343,16 @@ public class PauseMenu extends BaseDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
+        final Runnable action;
+        final Query cancelPrintQuery;
+        
         if (bCancel.isEnabled()) {
-            CancelPrint cancel = new CancelPrint(printSplash);
-            cancel.setVisible(true);
+            action = () -> {
+                dispose();
+                driver.dispatchCommand("M112", COM.NO_RESPONSE);
+            };
+            cancelPrintQuery = new Query("CancelPrintText", action, null);
+            cancelPrintQuery.setVisible(true);
         }
     }//GEN-LAST:event_bCancelMousePressed
 
@@ -361,10 +366,9 @@ public class PauseMenu extends BaseDialog {
 
     private void bShutdownMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bShutdownMousePressed
         if (bShutdown.isEnabled()) {
-            machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M36"));
-
+            driver.dispatchCommand("M36");
             dispose();
-            ShutdownMenu shutdown = new ShutdownMenu(printSplash);
+            ShutdownMenu shutdown = new ShutdownMenu();
             shutdown.setVisible(true);
         }
     }//GEN-LAST:event_bShutdownMousePressed
@@ -379,10 +383,8 @@ public class PauseMenu extends BaseDialog {
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
-            FilamentHeating p = new FilamentHeating();
-            this.setVisible(false);
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
             p.setVisible(true);
-            this.setVisible(true);
 
             bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_12.png")));
             showNoFilamentLabel();
@@ -407,10 +409,11 @@ public class PauseMenu extends BaseDialog {
 
     private void bResumeMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bResumeMousePressed
         if (bResume.isEnabled()) {
+            PrintSplashAutonomous p = new PrintSplashAutonomous(
+                    true, false
+            );
             dispose();
-            printSplash.setVisible(true);
-            printSplash.doResume();
-            Base.bringAllWindowsToFront();
+            p.setVisible(true);
         }
     }//GEN-LAST:event_bResumeMousePressed
 

@@ -26,6 +26,7 @@ public class MessagesPopUp extends javax.swing.JDialog {
         initComponents();
         setFont();
         setTextLanguage();
+        this.setAlwaysOnTop(true);
     }
 
     private void setFont() {

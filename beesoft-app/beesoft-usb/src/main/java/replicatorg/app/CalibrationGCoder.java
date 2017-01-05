@@ -14,6 +14,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import replicatorg.app.tools.XML;
+import replicatorg.drivers.Driver;
+import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -90,81 +92,5 @@ public class CalibrationGCoder {
             System.err.println(ioe.getMessage());
         }
 
-    }
-
-    /**
-     * Retrieves Tag value from XML
-     *
-     * @param configFile file name with printer configuration
-     * @return Child Node value
-     */
-    private static String getCode(String configFile) {
-
-        String tag = "calibration_test";
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
-
-            File f = new File(Base.getApplicationDirectory() + "/machines/".concat(configFile).concat(".xml"));
-
-            if (f.exists() && f.isFile() && f.canRead()) {
-
-                Document dom = db.parse(f);
-                Element doc = dom.getDocumentElement();
-                Node rootNode = doc.cloneNode(true);
-                System.out.println("rootNode: " + rootNode);
-                NodeList nList = doc.getElementsByTagName(tag);
-                Node nNode = nList.item(0);
-                Element eElement = (Element) nNode;
-
-                String code;
-
-                code = FilamentControler.NO_FILAMENT_CODE;
-
-                if (Base.getMachineLoader().isConnected()) {
-                    Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
-                    code = Base.getMainWindow().getMachine().getModel().getCoilText();
-                } //no need for else
-
-                Base.writeLog("Filament controler coil code: " + code, CalibrationGCoder.class);
-
-                if (code.equals(FilamentControler.NO_FILAMENT_CODE) || code.equals("NOK")) {
-                    //no_Filament = true;
-                    return ("gcode: " + eElement.getAttribute("value"));
-                } else {
-                    String w_val = Double.toString(
-                            FilamentControler.getColorRatio(
-                                    Base.getMainWindow().getMachine().getModel().getCoilText(),
-                                    Base.getMainWindow().getMachine().getModel().getResolution(),
-                                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-                                    
-                            ));
-                    return ("gcode: " + "M642 w"+w_val+", "+ eElement.getAttribute("value"));
-                    
-                }
-            }
-        } catch (SAXException ex) {
-            Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(CalibrationGCoder.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
-    }
-
-    /**
-     * Parses tag value from XML and removes string chars only.
-     *
-     * @param configFile
-     * 
-     * @return plain text array without spaces
-     */
-    public static String[] getColorGCode(String configFile) {
-        String code = getCode(configFile);
-
-        return code.split(",");
     }
 }

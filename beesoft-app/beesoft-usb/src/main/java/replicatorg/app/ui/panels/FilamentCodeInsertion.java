@@ -1,16 +1,17 @@
 package replicatorg.app.ui.panels;
 
 import java.awt.Dialog;
-import java.awt.Window;
+import java.awt.event.ItemEvent;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
-import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.Filament.Material;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.app.ui.popups.Query;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -25,121 +26,104 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentCodeInsertion extends BaseDialog {
 
-    private final Window prevWindow;
-    private final MachineInterface machine;
-    private DefaultComboBoxModel comboModel;
-    private String[] categories;
-    private static final String WRITE_CONFIG = "M601";
-    private boolean noFilamentsFound = false;
+    //private final MachineModel model = Base.getMachineLoader().getMachineInterface().getDriver().getMachine();
+    private final ImageIcon bothSupportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_ambos.png"));
+    private final ImageIcon supportImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_sup.png"));
+    //private Nozzle currentNozzle = new Nozzle(model.getNozzleType());
+    private DefaultComboBoxModel<Filament> comboModel;
+    private Filament[] categories;
+    //private int firstCompatibleFilamentIndex = 0;
 
-    public FilamentCodeInsertion(Window prevWindow) {
+    public FilamentCodeInsertion() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
-        this.prevWindow = prevWindow;
-        Base.writeLog("Final step of the filament change operation", this.getClass());
+        Base.writeLog("First step of the filament change operation", this.getClass());
         initComponents();
-        setFont();
         setTextLanguage();
         enableDrag();
-        machine = Base.getMachineLoader().getMachineInterface();
         evaluateInitialConditions();
         centerOnScreen();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
-    }
-
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
-        bPrev.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jComboBox1.setFont(GraphicDesignComponents.getSSProLight("12"));
-
     }
 
     private void setTextLanguage() {
-        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title5"));
+        jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title1"));
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Title4"));
-        bPrev.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
+        lDesc.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "CodeInsertionDesc") + "</html>");
+        lDescA.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "ADesc") + "</html>");
+        lDescB.setText("<html>" + Languager.getTagValue(1, "FilamentWizard", "BDesc") + "</html>");
     }
 
     private void evaluateInitialConditions() {
-        Base.getMainWindow().setEnabled(false);
+        Filament selectedFilament;
+
         categories = fullFillCombo();
         comboModel = new DefaultComboBoxModel(categories);
         jComboBox1.setModel(comboModel);
+        //jComboBox1.setRenderer(new CustomRenderer(jComboBox1));
+        //jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+        selectedFilament = (Filament) jComboBox1.getSelectedItem();
 
-        if (categories.length > 0) {
-            jComboBox1.setSelectedIndex(getModelCategoryIndex());
-        }
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
+        if (selectedFilament.getMaterial() == Material.PLA) {
+            jLabel2.setIcon(bothSupportImage);
+        } else {
+            jLabel2.setIcon(supportImage);
         }
     }
 
-    private int getModelCategoryIndex() {
-        String code = Base.getMainWindow().getMachine().getModel().getCoilText();
+    private Filament[] fullFillCombo() {
+        Filament[] filaments;
 
-        for (int i = 0; i < categories.length; i++) {
-            /**
-             * Colors available in languages XML coilCode is one of the list
-             */
-            //categories[i].contains(enumCodes[i].toString()) && 
-            if (categories[i].contains(code)) {
-                return i;
-            }
-        }
+        filaments = FilamentControler.getFilamentArray();
 
-        return 0;
-    }
-
-    private String[] fullFillCombo() {
-        String[] result;
-
-        result = FilamentControler.getColors();
-
-        if (result.length == 0) {
+        if (filaments.length == 0) {
             Base.writeLog("No filaments found for this printer!", this.getClass());
-            noFilamentsFound = true;
-            result = new String[1];
-            result[0] = "No filaments found";
+            filaments = new Filament[1];
+            filaments[0] = new Filament("No filament available");
+        } else {
+            bNext.setEnabled(true);
         }
 
-        return result;
+        return filaments;
 
-    }
+        /*
+         final Filament[] filaments;
+         final FilamentComboItem[] filamentComboItems;
+         int index = 0;
 
-    private void finalizeHeat() {
-        Base.writeLog("Moving table to home position", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
+         filaments = FilamentControler.getFilamentArray();
+         firstCompatibleFilamentIndex = 0;
+
+         if (filaments.length == 0) {
+         Base.writeLog("No filaments found for this printer!", this.getClass());
+         filamentComboItems = new FilamentComboItem[1];
+         filamentComboItems[0] = new FilamentComboItem(new Filament("No filament available"), true);
+         } else {
+         filamentComboItems = new FilamentComboItem[filaments.length];
+
+         FilamentComboItem temp;
+         for (Filament fil : filaments) {
+         temp = new FilamentComboItem(fil);
+         filamentComboItems[index] = temp;
+
+         if (temp.isCompatible() && firstCompatibleFilamentIndex == 0) {
+         firstCompatibleFilamentIndex = index;
+         }
+
+         index++;
+         }
+
+         bNext.setEnabled(true);
+         }
+
+         return filamentComboItems;
+         */
     }
 
     private void doCancel() {
-
         Base.writeLog("Filament load/unload canceled", this.getClass());
-
-        if (Base.printPaused == false) {
-            Base.writeLog("Filament selection canceled", this.getClass());
-            Base.bringAllWindowsToFront();
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            Base.enableAllOpenWindows();
-            finalizeHeat();
-
-            if (ProperDefault.get("maintenance").equals("1")) {
-                ProperDefault.remove("maintenance");
-            }
-        } else {
-            Base.writeLog("Filament heating canceled", this.getClass());
-            finalizeHeat();
-            dispose();
-        }
-
         dispose();
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
     }
 
     @SuppressWarnings("unchecked")
@@ -147,7 +131,6 @@ public class FilamentCodeInsertion extends BaseDialog {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        bPrev = new javax.swing.JLabel();
         bNext = new javax.swing.JLabel();
         bCancel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -159,35 +142,24 @@ public class FilamentCodeInsertion extends BaseDialog {
         jLabel3 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jComboBox1 = new javax.swing.JComboBox();
+        lDesc = new javax.swing.JLabel();
+        lDescA = new javax.swing.JLabel();
+        lDescB = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(567, 501));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(567, 501));
-        setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
         jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
         jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bPrev.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bPrev.setText("ANTERIOR");
-        bPrev.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bPrev.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPrevMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bPrevMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPrevMousePressed(evt);
-            }
-        });
-
+        bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bNext.setText("SEGUINTE");
+        bNext.setText("Next");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -201,18 +173,19 @@ public class FilamentCodeInsertion extends BaseDialog {
             }
         });
 
+        bCancel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bCancel.setText("SAIR");
+        bCancel.setText("Cancel");
         bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bCancelMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
             }
         });
 
@@ -223,9 +196,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bCancel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
-                .addComponent(bPrev)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 408, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addGap(12, 12, 12))
         );
@@ -234,7 +205,6 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bPrev)
                     .addComponent(bNext)
                     .addComponent(bCancel))
                 .addGap(20, 20, 20))
@@ -272,14 +242,17 @@ public class FilamentCodeInsertion extends BaseDialog {
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel1.setText("BEM-VINDO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento.png"))); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/troca_filamento_ambos.png"))); // NOI18N
 
-        jLabel3.setText("Troca de Filamento");
+        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        jLabel3.setText("Select type");
 
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
@@ -287,7 +260,22 @@ public class FilamentCodeInsertion extends BaseDialog {
         jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
         jComboBox1.setBackground(new java.awt.Color(248, 248, 248));
+        jComboBox1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
+
+        lDesc.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDesc.setText("<html>Please select the correct code for the filament. You can find that code on the spool, (e.g.: A101 - Transparent).</html>");
+
+        lDescA.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDescA.setText("<html> A – External spool holder for all spool weights and all filament types. </html>");
+
+        lDescB.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lDescB.setText("<html>\nB – Internal spool holder for PLA filament and 330g spool only.\n</html>");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -297,24 +285,33 @@ public class FilamentCodeInsertion extends BaseDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(lDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lDescA, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lDescB, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lDesc, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lDescA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(lDescB, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -335,9 +332,9 @@ public class FilamentCodeInsertion extends BaseDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -351,7 +348,7 @@ public class FilamentCodeInsertion extends BaseDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -367,14 +364,6 @@ public class FilamentCodeInsertion extends BaseDialog {
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
-    private void bPrevMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseEntered
-        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bPrevMouseEntered
-
-    private void bPrevMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMouseExited
-        bPrev.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bPrevMouseExited
-
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bCancelMouseEntered
@@ -384,61 +373,88 @@ public class FilamentCodeInsertion extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
+        if (bNext.isEnabled()) {
+            final Filament fil;
 
-        String coilText;
-
-        if (noFilamentsFound) {
-            coilText = FilamentControler.NO_FILAMENT;
-        } else {
-            coilText = comboModel.getSelectedItem().toString();
+            //fil = ((FilamentComboItem) comboModel.getSelectedItem()).getFilamentObject();
+            fil = (Filament) comboModel.getSelectedItem();
+            FilamentHeating filamentHeatingPanel = new FilamentHeating(fil);
+            dispose();
+            filamentHeatingPanel.setVisible(true);
         }
-
-        machine.getDriver().setCoilText(coilText);
-        //machine.runCommand(new replicatorg.drivers.commands.SetCoilText(coilText));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand(WRITE_CONFIG, COM.DEFAULT));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M300", COM.DEFAULT));
-
-        Base.writeLog("Filament " + coilText + " selected", this.getClass());
-        Base.writeConfig();
-        Base.loadProperties();
-        Base.getMainWindow().getBed().setGcodeOK(false);
-
-        dispose();
-
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.enableAllOpenWindows();
-        Base.bringAllWindowsToFront();
-
-        Base.writeLog("Filament selection finished!", this.getClass());
-        finalizeHeat();
     }//GEN-LAST:event_bNextMousePressed
 
-    private void bPrevMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrevMousePressed
-        Window p;
-        if (prevWindow instanceof FilamentInsertion) {
-            p = new FilamentInsertion();
-        } else if (prevWindow instanceof ExtruderSwitch3) {
-            p = new ExtruderSwitch3();
-        } else {//if(prevWindow instanceof ExtruderMaintenance5) {
-            p = new ExtruderMaintenance5();
-        }
-        dispose();
-        p.setVisible(true);
-    }//GEN-LAST:event_bPrevMousePressed
-
     private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
-        doCancel();
+        if (bCancel.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
-        doCancel();
+        if (bX.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bXMousePressed
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            final Filament filament;
+            final Query query;
+
+            filament = (Filament) jComboBox1.getSelectedItem();
+
+            // change image according to the filament's material
+            if (filament.getMaterial() == Material.PLA) {
+                jLabel2.setIcon(bothSupportImage);
+                lDescA.setVisible(true);
+                lDescB.setVisible(true);
+            } else {
+                jLabel2.setIcon(supportImage);
+                lDescA.setVisible(false);
+                lDescB.setVisible(false);
+
+                if (Boolean.parseBoolean(ProperDefault.get("filament.dont_show_support_query")) == false) {
+                    query = new Query("ChangeSupport", new SupportSwitch1(), "filament.dont_show_support_query");
+                    query.setVisible(true);
+                }
+            }
+
+            // if the selected filament isn't compatible with the current nozzle
+            // display a warning informing the user of this fact, and initiate
+            // the nozzle switch operation, if that's what the user wants
+            /*
+             if (filament.isCompatible() == false) {
+             if (Base.printPaused == false) {
+             warning = new Warning(new NozzleSwitch1());
+             warning.setMessage("IncompatibleFilament");
+             warning.setVisible(true);
+
+             if (warning.hasCancelBeenPressed() == false) {
+             currentNozzle = new Nozzle(model.getNozzleType());
+             evaluateInitialConditions();
+             filament2 = (FilamentComboItem) jComboBox1.getItemAt(selectedIndex);
+             if (filament2.isCompatible()) {
+             jComboBox1.setSelectedIndex(selectedIndex);
+             }
+             } else {
+             jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+             }
+             } else {
+             warning = new Warning(false);
+             warning.setMessage("IncompatibleFilamentPause");
+             warning.setVisible(true);
+             jComboBox1.setSelectedIndex(firstCompatibleFilamentIndex);
+             }
+             }
+             */
+        }
+
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bNext;
-    private javax.swing.JLabel bPrev;
     private javax.swing.JLabel bX;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
@@ -449,5 +465,75 @@ public class FilamentCodeInsertion extends BaseDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lDesc;
+    private javax.swing.JLabel lDescA;
+    private javax.swing.JLabel lDescB;
     // End of variables declaration//GEN-END:variables
+
+    /*
+     private class CustomRenderer extends BasicComboBoxRenderer {
+
+     private static final long serialVersionUID = -1L;
+     private final JLabel text;
+
+     public CustomRenderer(JComboBox combo) {
+     text = new JLabel();
+     text.setOpaque(true);
+     text.setFont(combo.getFont());
+     }
+
+     @Override
+     public Component getListCellRendererComponent(JList list, Object value,
+     int index, boolean isSelected, boolean cellHasFocus) {
+
+     FilamentComboItem filament = (FilamentComboItem) value;
+
+     if (isSelected) {
+     setBackground(list.getSelectionBackground());
+     } else {
+     setBackground(Color.WHITE);
+     }
+
+     text.setBackground(getBackground());
+     text.setText(filament.toString());
+     text.setForeground(Color.GRAY);
+
+     if (filament.isCompatible()) {
+     text.setForeground(Color.BLACK);
+     }
+
+     return text;
+     }
+
+     }
+
+     private class FilamentComboItem {
+
+     private final Filament filamentObject;
+     private final boolean compatible;
+
+     public FilamentComboItem(Filament fil) {
+     this.filamentObject = fil;
+     this.compatible = FilamentControler.isFilamentCompatible(this.filamentObject, currentNozzle);
+     }
+
+     public FilamentComboItem(Filament fil, boolean compatible) {
+     this.filamentObject = fil;
+     this.compatible = compatible;
+     }
+
+     public Filament getFilamentObject() {
+     return filamentObject;
+     }
+
+     public boolean isCompatible() {
+     return compatible;
+     }
+
+     @Override
+     public String toString() {
+     return filamentObject.getName();
+     }
+     }
+     */
 }

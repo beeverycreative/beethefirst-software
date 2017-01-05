@@ -2,14 +2,15 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -24,20 +25,28 @@ import replicatorg.machine.MachineInterface;
  */
 public class CalibrationScrew2 extends BaseDialog {
 
-    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final BusyFeedbackThread busyThread = new BusyFeedbackThread();
 
     public CalibrationScrew2() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
-        enableDrag();
+        super.enableDrag();
         disableMessageDisplay();
-        centerOnScreen();
-        Base.getMainWindow().setEnabled(false);
+        super.centerOnScreen();
         moveToC();
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                busyThread.start();
+            }
+            @Override
+            public void windowClosed(WindowEvent e) {
+                busyThread.kill();
+            }
+        });
     }
 
     private void setFont() {
@@ -53,44 +62,12 @@ public class CalibrationScrew2 extends BaseDialog {
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Title3"));
         jLabel3.setText(Languager.getTagValue(1, "CalibrationWizard", "RightScrew_title"));
-        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "RightScrew_Info")));
+        jLabel4.setText("<html>" + Languager.getTagValue(1, "CalibrationWizard", "RightScrew_Info") + "</html>");
         jLabel5.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel5.setHorizontalAlignment(SwingConstants.CENTER);
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
 
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
     }
 
     private void enableMessageDisplay() {
@@ -119,20 +96,13 @@ public class CalibrationScrew2 extends BaseDialog {
 
     private void moveToC() {
         Base.writeLog("Calibrating C", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.CalibrationStep(busyThread));
+        driver.dispatchCommand("G132", COM.NO_RESPONSE);
+        driver.setBusy(true);
     }
 
     private void doCancel() {
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
-
-        busyThread.terminate();
-        Base.bringAllWindowsToFront();
+        driver.dispatchCommand("G28", COM.NO_RESPONSE);
         dispose();
     }
 
@@ -160,6 +130,7 @@ public class CalibrationScrew2 extends BaseDialog {
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.setPreferredSize(new java.awt.Dimension(583, 466));
 
         jPanel5.setBackground(new java.awt.Color(248, 248, 248));
         jPanel5.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -197,6 +168,7 @@ public class CalibrationScrew2 extends BaseDialog {
 
         jLabel1.setText("CABECA DE IMPRESSAO");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        jLabel1.setMaximumSize(new java.awt.Dimension(300, 18));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/cabeca_impressao_2.png"))); // NOI18N
 
@@ -239,8 +211,8 @@ public class CalibrationScrew2 extends BaseDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -258,7 +230,7 @@ public class CalibrationScrew2 extends BaseDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -273,7 +245,7 @@ public class CalibrationScrew2 extends BaseDialog {
 
         jPanel6.setBackground(new java.awt.Color(255, 203, 5));
         jPanel6.setMinimumSize(new java.awt.Dimension(20, 38));
-        jPanel6.setPreferredSize(new java.awt.Dimension(567, 38));
+        jPanel6.setPreferredSize(new java.awt.Dimension(583, 38));
 
         bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
@@ -314,7 +286,7 @@ public class CalibrationScrew2 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 411, Short.MAX_VALUE)
+                .addGap(417, 417, 417)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -333,7 +305,7 @@ public class CalibrationScrew2 extends BaseDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -366,7 +338,6 @@ public class CalibrationScrew2 extends BaseDialog {
         if (bNext.isEnabled()) {
             CalibrationFinish p = new CalibrationFinish();
             dispose();
-            busyThread.terminate();
             p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed

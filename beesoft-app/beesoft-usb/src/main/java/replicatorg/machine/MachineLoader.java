@@ -56,7 +56,7 @@ import replicatorg.drivers.Driver;
 			}
 			// if we don't have matching types, warn, then load a new singleton over this one
 			else if (singletonMI != null && !machineType.equals(singletonMIType) ) {
-					Base.logger.finest("MachineLoader loading new machine type " + machineType + " over existing machine " + singletonMIType);
+					Base.LOGGER.finest("MachineLoader loading new machine type " + machineType + " over existing machine " + singletonMIType);
 					singletonMI.dispose();
 					singletonMI = MachineFactory.load(machineType, callbackHandler);
 					if(singletonMI != null)
@@ -103,11 +103,6 @@ import replicatorg.drivers.Driver;
 			}
 			singletonMI.connect(force);
 		}
-                
-                public void buildDirect(String arg)
-                {
-                    singletonMI.buildDirect(arg);
-                }
 		
 		// Pass these on to our handler
 		public void addMachineListener(MachineListener listener) {

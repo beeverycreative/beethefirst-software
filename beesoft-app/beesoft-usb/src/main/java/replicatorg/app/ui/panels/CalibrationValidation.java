@@ -2,14 +2,16 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -24,18 +26,27 @@ import replicatorg.machine.MachineInterface;
  */
 public class CalibrationValidation extends BaseDialog {
 
-    private final MachineInterface machine = Base.getMachineLoader().getMachineInterface();
-    private final BusyFeedbackThread busyThread = new BusyFeedbackThread(this, machine);
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final PrintingFeedbackThread busyThread = new PrintingFeedbackThread();
 
     public CalibrationValidation() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
         setTextLanguage();
-        centerOnScreen();
-        enableDrag();
-        resetFeedbackComponents();
-        //setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        super.centerOnScreen();
+        super.enableDrag();
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                busyThread.start();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                busyThread.kill();
+            }
+        });
     }
 
     private void setFont() {
@@ -45,43 +56,14 @@ public class CalibrationValidation extends BaseDialog {
         bConfirmCalibration.setFont(GraphicDesignComponents.getSSProRegular("12"));
         jLabel9.setFont(GraphicDesignComponents.getSSProRegular("14"));
         jLabel25.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue(1, "CalibrationWizard", "Validation_Info")));
+        jLabel4.setText("<html>" + Languager.getTagValue(1, "CalibrationWizard", "Validation_Info") + "</html>");
         bRepeatCalibration.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button2"));
         bConfirmCalibration.setText(Languager.getTagValue(1, "CalibrationWizard", "Validation_Button1"));
         jLabel25.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
     }
 
     private void enableMessageDisplay() {
@@ -96,11 +78,11 @@ public class CalibrationValidation extends BaseDialog {
 
     @Override
     public void showMessage() {
-        bRepeatCalibration.setEnabled(true);
-        bConfirmCalibration.setEnabled(true);
-        
+        bRepeatCalibration.setEnabled(false);
+        bConfirmCalibration.setEnabled(false);
         enableMessageDisplay();
         jLabel9.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
+        jLabel9.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     @Override
@@ -110,35 +92,13 @@ public class CalibrationValidation extends BaseDialog {
         disableMessageDisplay();
     }
 
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
-    }
-
     private void doCancel() {
-
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        machine.runCommand(new replicatorg.drivers.commands.EmergencyStop());
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
-
-        int nCalibrations = Integer.valueOf(ProperDefault.get("nCalibrations"));
-        if ((nCalibrations + 1) == 10) {
-            ProperDefault.put("nCalibrations", String.valueOf(0));
+        if (bConfirmCalibration.isEnabled()) {
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);
         } else {
-            ProperDefault.put("nCalibrations", String.valueOf(nCalibrations++));
+            driver.dispatchCommand("M112", COM.NO_RESPONSE);
         }
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
-
-        busyThread.terminate();
-        Base.bringAllWindowsToFront();
         dispose();
     }
 
@@ -211,6 +171,8 @@ public class CalibrationValidation extends BaseDialog {
 
         bRepeatCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
         bRepeatCalibration.setText("Teste de Calibracao");
+        bRepeatCalibration.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_16.png"))); // NOI18N
+        bRepeatCalibration.setEnabled(false);
         bRepeatCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bRepeatCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -228,6 +190,8 @@ public class CalibrationValidation extends BaseDialog {
 
         bConfirmCalibration.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
         bConfirmCalibration.setText("Teste de Calibracao");
+        bConfirmCalibration.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_16.png"))); // NOI18N
+        bConfirmCalibration.setEnabled(false);
         bConfirmCalibration.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bConfirmCalibration.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -389,7 +353,6 @@ public class CalibrationValidation extends BaseDialog {
     private void bRepeatCalibrationMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRepeatCalibrationMousePressed
         if (bRepeatCalibration.isEnabled()) {
             CalibrationWelcome cal = new CalibrationWelcome(true);
-            busyThread.terminate();
             dispose();
             cal.setVisible(true);
         }
@@ -416,11 +379,8 @@ public class CalibrationValidation extends BaseDialog {
             ProperDefault.put("nTotalPrints", String.valueOf(0));
             Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
             Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            machine.runCommand(new replicatorg.drivers.commands.CalibrationStep(busyThread));
-            machine.runCommand(new replicatorg.drivers.commands.SendHome());
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);
             dispose();
-            busyThread.terminate();
-            Base.bringAllWindowsToFront();
         }
     }//GEN-LAST:event_bConfirmCalibrationMousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables

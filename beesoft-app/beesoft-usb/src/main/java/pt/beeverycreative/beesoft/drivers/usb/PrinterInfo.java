@@ -8,13 +8,14 @@ import replicatorg.app.Base;
  */
 public enum PrinterInfo {
 
-    BEETHEFIRST0("BEETHEFIRST", (short) 0xffff, (short) 0x014e, Base.configProperties.getFirmwareProperty("firmware.beethefirst0"), "logo_beethefirst.png"),
-    BEETHEFIRST("BEETHEFIRST", (short) 0x29c9, (short) 0x0001, Base.configProperties.getFirmwareProperty("firmware.beethefirst"), "logo_beethefirst.png"),
-    BEETHEFIRST_PLUS("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0002, Base.configProperties.getFirmwareProperty("firmware.beethefirstplus"), "logo_beethefirst_plus.png"),
-    BEEME("BEEME", (short) 0x29c9, (short) 0x0003, Base.configProperties.getFirmwareProperty("firmware.beeme"), "logo_beeme.png"),
-    BEEINSCHOOL("BEEINSCHOOL", (short) 0x29c9, (short) 0x0004, Base.configProperties.getFirmwareProperty("firmware.beeinschool"), "logo_beeinschool.png"),
-    BEETHEFIRST_PLUS_A("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0005, Base.configProperties.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plusA.png"),
-    UNKNOWN("BEETHEFIRST", (short) 0x0000, (short) 0x0000, "", "");
+    BEETHEFIRST0("BEETHEFIRST", (short) 0xffff, (short) 0x014e, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beethefirst0"), "logo_beethefirst.png"),
+    BEETHEFIRST("BEETHEFIRST", (short) 0x29c9, (short) 0x0001, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beethefirst"), "logo_beethefirst.png"),
+    BEETHEFIRST_PLUS("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0002, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beethefirstplus"), "logo_beethefirst_plus.png"),
+    BEEME("BEEME", (short) 0x29c9, (short) 0x0003, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beeme"), "logo_beeme.png"),
+    BEEINSCHOOL("BEEINSCHOOL", (short) 0x29c9, (short) 0x0004, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beeinschool"), "logo_beeinschool.png"),
+    BEETHEFIRST_PLUS_A("BEETHEFIRSTPLUS", "BEETHEFIRST+", (short) 0x29c9, (short) 0x0005, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beethefirstplusa"), "logo_beethefirst_plusA.png"),
+    BEEINSCHOOL_A("BEEINSCHOOL", (short) 0x29c9, (short) 0x0006, Base.CONFIG_PROPERTIES.getFirmwareProperty("firmware.beeinschoola"), "logo_beeinschool_A.png"),
+    UNKNOWN("UNKNOWN", (short) 0xffff, (short) 0xffff, "", "");
 
     private final String filamentCode, firmwareFilename, iconFilename, presentationName;
     private final short productID;
@@ -41,7 +42,7 @@ public enum PrinterInfo {
     public String filamentCode() {
         return filamentCode;
     }
-    
+
     public String presentationName() {
         return presentationName;
     }
@@ -79,24 +80,29 @@ public enum PrinterInfo {
         return UNKNOWN;
     }
 
-    public static PrinterInfo getDeviceByName(String printerName) {
+    public static PrinterInfo getDeviceByFormalName(String formalName) {
         for (PrinterInfo printer : PrinterInfo.values()) {
-            if (printer.presentationName.equals(printerName)) {
+            if (printer.presentationName.equals(formalName)) {
                 return printer;
             }
         }
 
         return UNKNOWN;
     }
-    
+
     public static String filamentCodeToFormalString(String filamentCode) {
-        
-        if(filamentCode.equals(PrinterInfo.BEETHEFIRST_PLUS.filamentCode)) {
+
+        if (filamentCode.equals(PrinterInfo.BEETHEFIRST_PLUS.filamentCode)) {
             return PrinterInfo.BEETHEFIRST_PLUS.presentationName;
         }
-        
+
         // filamentCode == presentationName
         return filamentCode;
     }
-    
+
+    @Override
+    public String toString() {
+        return presentationName;
+    }
+
 }

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <calibration>
 	<gcode>
 		<operationCode>
@@ -9,19 +9,16 @@ M206 X500,
 M107,			
 G28,
 G92 E,
-M130 T6 U1.3 V80,
 G1 X-98.0 Y-20.0 Z5.0 F3000,
-G1 Y-68.0 Z0.3,
-G1 X-98.0 Y0.0 F500 E20,
+G1 Y-70.0 Z0.3,
+G1 X-98.0 Y44.0 F500 E27,
 G92 E,
 ,
 ;BEESOFT SPECIFIC,
 M642 W1,
-M31 A0
 "/>
 			<endCode value =
 			"M300,
-M104 S0,
 G28 X,
 G28 Z,
 G1 Y65,

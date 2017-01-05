@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class DefaultProperties {
 
-    private static HashMap<String, String> defaultHash = new HashMap<String, String>();
+    private static final HashMap<String, String> defaultHash = new HashMap<>();
 
     ;
 
@@ -57,7 +57,7 @@ public class DefaultProperties {
         defaultHash.put("temperature.acceptedLimit", String.valueOf(260));
         defaultHash.put("extruderpanel.extrudetime", String.valueOf("5"));
         defaultHash.put("controlpanel.jogmode", String.valueOf("1"));
-        defaultHash.put("controlpanel.enable", String.valueOf("0"));
+        defaultHash.put("controlpanel.enable", "false");
         defaultHash.put("extruderpanel.extrudetime", String.valueOf("5"));
         defaultHash.put("build.runSafetyChecks", String.valueOf(true));
         defaultHash.put("build.runSafetyChecks", String.valueOf(true));
@@ -87,7 +87,7 @@ public class DefaultProperties {
         defaultHash.put("localPrint", String.valueOf(false));
         defaultHash.put("localPrintFileName", "abcde.gcode");
         defaultHash.put("curaFile", "none");
-        defaultHash.put("transferSpeed", "42.0");
+        defaultHash.put("transferSpeed", "74.0");
         defaultHash.put("autonomy", String.valueOf(true));
         defaultHash.put("measures", "mm");
         defaultHash.put("editor.xmin", String.valueOf("0.8"));
@@ -97,8 +97,13 @@ public class DefaultProperties {
         defaultHash.put("editor.ymax", String.valueOf("135"));
         defaultHash.put("editor.zmax", String.valueOf("125"));
         
-        defaultHash.put("languagesCodes", "EN,PT,ES,DE");
-        defaultHash.put("languagesList", "English,Português,Español,Deutsch");
+        defaultHash.put("languagesCodes", "EN,PT,ES,DE,FR");
+        defaultHash.put("languagesList", "English,Português,Español,Deutsch,Français");
+        defaultHash.put("git.filament_repo_url", "https://github.com/beeverycreative/Filaments.git");
+        defaultHash.put("git.filament_repo_branch", "version/2.0.0");
+        
+        defaultHash.put("filament.dont_show_support_query", String.valueOf(false));
+        defaultHash.put("serialnumber.reset", String.valueOf(false));
     }
 
     /**
@@ -109,15 +114,5 @@ public class DefaultProperties {
      */
     public static String getDefault(String value) {
         return defaultHash.get(value);
-    }
-
-    /**
-     * Overrides property with a new value.
-     *
-     * @param key property attribute
-     * @param value property value
-     */
-    public static void setDefault(String key, String value) {
-        defaultHash.put(key, value);
     }
 }

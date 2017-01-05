@@ -3,35 +3,29 @@ package replicatorg.app.ui.panels;
 import java.awt.Color;
 import java.awt.Dialog;
 import java.awt.EventQueue;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
+import pt.beeverycreative.beesoft.filaments.Filament;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
+import pt.beeverycreative.beesoft.filaments.Resolution;
 import replicatorg.app.Languager;
-import replicatorg.app.PrintEstimator;
-import replicatorg.app.Printer;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.app.util.ExtensionFilter;
+import replicatorg.app.ui.popups.Warning;
+import replicatorg.drivers.Driver;
+import replicatorg.machine.model.MachineModel;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -44,98 +38,116 @@ import replicatorg.app.util.ExtensionFilter;
  * should have received a copy of the GNU General Public License along with
  * BEESOFT. If not, see <http://www.gnu.org/licenses/>.
  */
-public class PrintPanel extends BaseDialog {
+public class PrintPanel extends BasePrintEstimateExport {
 
-    private JLabel quality_low;
-    private JLabel quality_medium;
-    private JLabel quality_solid;
-    private boolean raftPressed, supportPressed, gcodeSavePressed;
-    private boolean noFilament = false;
-    private Thread t = null;
     private static final String FORMAT = "%2d:%2d";
-    protected String coilText = FilamentControler.NO_FILAMENT;
-    private PrintEstimationThread estimationThread = null;
-    private GCodeExportThread exportThread = null;
-    private boolean isRunning = true;
-    private boolean lastUsedRaft;
-    private int lastUsedDensity;
-    private String lastUsedResolution;
-    private boolean lastUsedSupport;
-    private boolean lastSelectedRaft;
-    private String lastSelectedResolution;
-    private boolean lastUsedGCodeSave;
-    boolean lastSelectedSupport;
-    boolean lastSelectedAutonomous;
-    boolean gcodeOK;
-    private boolean estimatePressed;
-    private boolean exportPressed;
-    private Hashtable<Integer, JLabel> labelTable2;
-    private boolean printerAvailable;
-    private String gcodeToPrint = null;
-    private int nModels = 0;
-    private PrinterInfo selectedPrinter;
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final MachineModel machineModel = driver.getMachine();
+    private final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<>();
+    private final PrinterInfo connectedPrinter = driver.getConnectedDevice();
+    private boolean gcodeSavePressed, lastUsedRaft, lastUsedSupport,
+            lastSelectedRaft, lastUsedGCodeSave, lastSelectedSupport, gcodeOK,
+            noFilament = false, noNozzle = false, raftPressed = false,
+            supportPressed = false, atLeastOneResEnabled = false;
+    private String lastUsedResolution, lastSelectedResolution;
+    private int lastUsedDensity, nModels = 0;
+    private GCodeEstimateExportThread estimateExportThread;
+    private String filament;
+    private int nozzleType;
 
     public PrintPanel() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
-        initSlidersLabels();
-        setFont();
+        getNozzleType();
+        getCoilCode();
         setTextLanguage();
         initSliderConfigs();
-        centerOnScreen();
-        estimationThread = new PrintEstimationThread(this);
-        coilText = getCoilCode();
-        raftPressed = false;
-        supportPressed = false;
+        super.centerOnScreen();
         evaluateConditions();
         matchChanges();
-        enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
-        selectedPrinter = PrinterInfo.BEETHEFIRST;
+        super.enableDrag();
+
+        // disabled for now
+        jLabel25.setVisible(false);
+        nozzleTypeLabel.setVisible(false);
+        nozzleTypeValue.setVisible(false);
+        mmLabel.setVisible(false);
+
+        super.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                if (estimateExportThread != null) {
+                    estimateExportThread.kill();
+                }
+            }
+        });
     }
 
-    /**
-     * Set font for all UI elements.
-     */
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel2.setFont(GraphicDesignComponents.getSSProBold("14"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProBold("14"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel8.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel9.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel10.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        bCancel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bPrint.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bChangeFilament.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bEstimate.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bExport.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        lDensity.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        filamentType.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        estimatedPrintTime.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        estimatedMaterial.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        printTime.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        materialCost.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel22.setFont(GraphicDesignComponents.getSSProRegular("10"));
-        jLabel23.setFont(GraphicDesignComponents.getSSProRegular("10"));
+    @Override
+    protected void showLoadingIcon(boolean show) {
+        if (show) {
+            materialCost.setText("");
+            printTime.setText("");
+            materialCost.setIcon(loadingIcon);
+            printTime.setIcon(loadingIcon);
+            bEstimate.setEnabled(false);
+            bExport.setEnabled(false);
+        } else {
+            materialCost.setIcon(null);
+            printTime.setIcon(null);
+            bEstimate.setEnabled(true);
+            bExport.setEnabled(true);
+        }
+    }
 
-        //Resolution
-        bLowRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bMediumRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bHighRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bHighPlusRes.setFont(GraphicDesignComponents.getSSProRegular("12"));
+    private void verifyCompatibleResolutions(String filamentCode) {
+        Filament fil;
+        List<Resolution> resList;
 
-        lowHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        medHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        highHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        highPlusHeightLabel.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        fil = FilamentControler.getMatchingFilament(filamentCode);
 
-        //Density
-        quality_low.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        quality_medium.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        quality_solid.setFont(GraphicDesignComponents.getSSProRegular("12"));
+        if (fil != null) {
+            resList = fil.getSupportedResolutions(driver.getConnectedDevice().filamentCode(), nozzleType);
 
+            if (resList != null) {
+                for (Resolution res : resList) {
+                    switch (res.getType()) {
+                        case "low":
+                            atLeastOneResEnabled = true;
+                            bLowRes.setEnabled(true);
+                            break;
+                        case "medium":
+                            atLeastOneResEnabled = true;
+                            bMediumRes.setEnabled(true);
+                            break;
+                        case "high":
+                            atLeastOneResEnabled = true;
+                            bHighRes.setEnabled(true);
+                            break;
+                        case "high+":
+                            atLeastOneResEnabled = true;
+                            bHighPlusRes.setEnabled(true);
+                            break;
+                    }
+                }
+            }
+        } else {
+            atLeastOneResEnabled = true;
+            bLowRes.setEnabled(true);
+            bMediumRes.setEnabled(true);
+            bHighRes.setEnabled(true);
+            bHighPlusRes.setEnabled(true);
+        }
+
+        if (bMediumRes.isEnabled()) {
+            bMediumRes.setSelected(true);
+        } else if (bLowRes.isEnabled()) {
+            bLowRes.setSelected(true);
+        } else if (bHighRes.isEnabled()) {
+            bHighRes.setSelected(true);
+        } else if (bHighPlusRes.isEnabled()) {
+            bHighPlusRes.setSelected(true);
+        }
     }
 
     /**
@@ -146,9 +158,9 @@ public class PrintPanel extends BaseDialog {
         jLabel2.setText(Languager.getTagValue(1, "Print", "Print_Quality"));
         jLabel3.setText(Languager.getTagValue(1, "Print", "Print_Density"));
         jLabel7.setText(Languager.getTagValue(1, "Print", "Print_Raft"));
-        jLabel8.setText(splitString(Languager.getTagValue(1, "Print", "Print_Raft_Info")));
+        jLabel8.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Raft_Info") + "</html>");
         jLabel9.setText(Languager.getTagValue(1, "Print", "Print_Support"));
-        jLabel10.setText(splitString(Languager.getTagValue(1, "Print", "Print_Support_Info")));
+        jLabel10.setText("<html>" + Languager.getTagValue(1, "Print", "Print_Support_Info") + "</html>");
         bCancel.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
         bEstimate.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line15"));
         bExport.setText(Languager.getTagValue(1, "OptionPaneButtons", "Export"));
@@ -158,33 +170,22 @@ public class PrintPanel extends BaseDialog {
         estimatedPrintTime.setText(Languager.getTagValue(1, "Print", "Print_EstimationPrintTime"));
         estimatedMaterial.setText(Languager.getTagValue(1, "Print", "Print_EstimationMaterial"));
         lDensity.setText(Languager.getTagValue(1, "Print", "Print_Density_Insertion"));
-        jLabel23.setText("");
 
         bLowRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Low"));
         bMediumRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_Medium"));
         bHighRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_High"));
         bHighPlusRes.setText(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"));
-
-        quality_low.setText(Languager.getTagValue(1, "Print", "Print_Density_Low"));
-        quality_medium.setText(Languager.getTagValue(1, "Print", "Print_Density_Medium"));
-        quality_solid.setText(Languager.getTagValue(1, "Print", "Print_Density_High"));
-
     }
 
     /**
      * Get coil code from machine and system. Also prepares label with coil code
      * info.
      */
-    private String getCoilCode() {
+    private void getCoilCode() {
 
         String code;
 
-        code = FilamentControler.NO_FILAMENT;
-
-        if (Base.getMachineLoader().isConnected()) {
-            //Base.getMachineLoader().getMachineInterface().getDriver().updateCoilText();
-            code = Base.getMainWindow().getMachine().getModel().getCoilText();
-        } //no need for else
+        code = machineModel.getCoilText();
 
         Base.writeLog("Print panel coil code: " + code, this.getClass());
 
@@ -193,102 +194,46 @@ public class PrintPanel extends BaseDialog {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
             code = Languager.getTagValue(1, "Print", "Print_Splash_Info9").toUpperCase();
-            jLabel22.setText(" " + code);
-            jLabel23.setText(" " + Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
+            jLabel22.setText(code);
+            jLabel23.setText(Languager.getTagValue(1, "Print", "Print_Splash_Info11"));
         } else if (FilamentControler.colorExistsLocally(code) == false) {
             noFilament = true;
             jLabel22.setFont(GraphicDesignComponents.getSSProBold("10"));
-            jLabel22.setText(" " + code);
+            jLabel22.setText(code);
 
-            UnknownFilament unkFilPanel = new UnknownFilament();
-            unkFilPanel.setVisible(true);
+            Warning unkFilWarning = new Warning("UnknownFilamentText", false);
+            unkFilWarning.setVisible(true);
         } else {
-            jLabel22.setText(" " + code);
+            noFilament = false;
+            jLabel22.setText(code);
         }
 
-        return code;
+        verifyCompatibleResolutions(code);
+        filament = code;
     }
 
-    /**
-     * Splits string foreach dot.
-     *
-     * @param s stering to be splitted
-     * @return string splitted on dot.
-     */
-    private String splitString(String s) {
-        int width = 340;
-        return buildString(s.split("\\."), width);
-    }
+    private void getNozzleType() {
+        int nozzle;
 
-    /**
-     * Builds a text string based on form properties from several minor strings.
-     *
-     * @param parts text to be embedded
-     * @param width form width
-     * @return final string
-     */
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
+        nozzle = machineModel.getNozzleType();
 
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]); //.concat(".");
-            }
-        }
+        Base.writeLog("Nozzle type: " + nozzle, this.getClass());
 
-        return ihtml.concat(text).concat(".").concat(ehtml);
-    }
-
-    /**
-     * Get String size in pixels
-     *
-     * @param s Text to be processed
-     * @return size in pixels of the given string
-     */
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
-    }
-
-    /**
-     * Stores gcode path of the file to be printed
-     *
-     * @param gcodeFilePath path for the gcode to be printed
-     */
-    public void setGCodePath(String gcodeFilePath) {
-
-        if (gcodeFilePath != null) {
-            this.gcodeToPrint = gcodeFilePath;
-            Base.isPrintingFromGCode = true;
+        if (nozzle == 0) {
+            noNozzle = true;
+            nozzleTypeValue.setFont(GraphicDesignComponents.getSSProBold("12"));
+            nozzleTypeValue.setText("0");
         } else {
-            this.gcodeToPrint = null;
-            Base.isPrintingFromGCode = false;
+            nozzleTypeValue.setText(Float.toString(nozzle / 1000.0f)); // from microns to mm
         }
+
+        nozzleType = nozzle;
     }
 
     /**
      * Inits Density slider configuration and values.
      */
     private void initSliderConfigs() {
-//        Hashtable labelTable1 = new Hashtable();
-//        labelTable1.put(new Integer(0), quality_prototype);
-//        labelTable1.put(new Integer(50), quality_normal);
-//        labelTable1.put( new Integer(100), quality_artwork );
-//        jSlider1.setLabelTable(labelTable1);
-
-        labelTable2 = new Hashtable<Integer, JLabel>();
-
         JLabel a = new JLabel("O");
         JLabel a1 = new JLabel(Languager.getTagValue(1, "Print", "Print_Density_Low"));
         JLabel b = new JLabel("10");
@@ -336,20 +281,6 @@ public class PrintPanel extends BaseDialog {
         labelTable2.put(100, k);
 
         densitySlider.setLabelTable(labelTable2);
-
-    }
-
-    /**
-     * Inits Density and resolution fields labels.
-     */
-    private void initSlidersLabels() {
-        quality_low = new JLabel("light");
-        quality_medium = new JLabel("medium");
-        quality_solid = new JLabel("solid");
-    }
-
-    public boolean isRunning() {
-        return isRunning;
     }
 
     /**
@@ -364,17 +295,13 @@ public class PrintPanel extends BaseDialog {
 
             if (button.isSelected()) {
                 String labelText = button.getText();
-
                 if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
                     return "low";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
+                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_Medium"))) {
                     return "medium";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
+                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_SHigh"))) {
                     return "high+";
-                }
-                if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
+                } else if (labelText.contains(Languager.getTagValue(1, "Print", "Print_Quality_High"))) {
                     return "high";
                 }
             }
@@ -407,32 +334,28 @@ public class PrintPanel extends BaseDialog {
         materialCost.setText("N/A");
         showLoadingIcon(false);
         updateOldSettings();
-
+        
         if (noFilament) {
             jLabel22.setForeground(Color.red);
             jLabel23.setForeground(Color.red);
+        } else {
+            jLabel22.setForeground(null);
+            jLabel22.setFont(new java.awt.Font("Source Sans Pro", 0, 12));
+            jLabel23.setText(" ");
         }
 
-        printerAvailable = Base.getMachineLoader().isConnected() && !Base.isPrinting;
-
-        if (nModels > 0) {
-            if (printerAvailable) {
-                if (noFilament == false && Base.isPrinting == false) {
-                    bPrint.setEnabled(true);
-                }
+        if (nModels > 0 && atLeastOneResEnabled) {
+            if (noFilament == false && noNozzle == false && Base.isPrinting == false) {
+                bPrint.setEnabled(true);
             }
             bEstimate.setEnabled(true);
-        }
-
-        if (printerAvailable) {
-            bChangeFilament.setEnabled(true);
+            bExport.setEnabled(true);
         }
 
         bResButtonGroup.add(bLowRes);
         bResButtonGroup.add(bHighPlusRes);
         bResButtonGroup.add(bHighRes);
         bResButtonGroup.add(bMediumRes);
-
     }
 
     /**
@@ -441,7 +364,8 @@ public class PrintPanel extends BaseDialog {
      * @param time estimated duration
      * @param cost estimated material cost
      */
-    public void updateEstimationPanel(String time, String cost) {
+    @Override
+    protected void updateEstimationPanel(String time, String cost) {
 
         if (!time.contains("NA") || !time.contains("N/A")) {
             printTime.setText(buildTimeEstimationString(time));
@@ -555,68 +479,6 @@ public class PrintPanel extends BaseDialog {
     }
 
     /**
-     * Select GCode file to open.
-     *
-     * @return path to file
-     */
-    private File selectFile() {
-        File directory = null;
-        String loadDir = ProperDefault.get("ui.open_dir0");
-
-        if (loadDir != null) {
-            directory = new File(loadDir);
-        }
-        JFileChooser fc = new JFileChooser(directory);
-        FileFilter defaultFilter;
-
-        String[] extensions = {".gcode"};
-        fc.addChoosableFileFilter(defaultFilter = new ExtensionFilter(extensions, "GCode files"));
-        fc.addChoosableFileFilter(new ExtensionFilter(".gcode", "GCode files"));
-        fc.setAcceptAllFileFilterUsed(true);
-        fc.setFileFilter(defaultFilter);
-        fc.setDialogTitle("Open a model file...");
-        fc.setDialogType(JFileChooser.OPEN_DIALOG);
-        fc.setFileHidingEnabled(false);
-        int rv = fc.showOpenDialog(this);
-        if (rv == JFileChooser.APPROVE_OPTION) {
-            fc.getSelectedFile().getName();
-            ProperDefault.put("ui.open_dir0", fc.getCurrentDirectory().getAbsolutePath());
-            Base.writeLog("GCode File selected " + fc.getSelectedFile().getAbsolutePath(), this.getClass());
-            return fc.getSelectedFile();
-        } else {
-            return null;
-        }
-
-    }
-
-    public void showLoadingIcon(boolean show) {
-        loading.setVisible(show);
-
-        if (show) {
-            materialCost.setText("N/A");
-            printTime.setText("N/A");
-            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
-        } else {
-            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
-            estimatePressed = false;
-        }
-    }
-
-    public void showLoadingIconExport(boolean show) {
-        loading.setVisible(show);
-
-        if (show) {
-            materialCost.setText("N/A");
-            printTime.setText("N/A");
-            exportPressed = true;
-            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_19.png")));
-        } else {
-            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
-            exportPressed = false;
-        }
-    }
-
-    /**
      * Updates all fields to stored setting, on form load.
      */
     private void matchChanges() {
@@ -644,15 +506,14 @@ public class PrintPanel extends BaseDialog {
 
         densitySlider.setValue(lastUsedDensity);
 
-        //if (lastUsedResolution.contains(Languager.getTagValue(1, "Print", "Print_Quality_Low"))) {
-        if (lastUsedResolution.contains("low")) {
-            bLowRes.setSelected(true);
-        } else if (lastUsedResolution.contains("medium")) {
+        if (lastUsedResolution.contains("medium") && bMediumRes.isEnabled()) {
             bMediumRes.setSelected(true);
-        } else if (lastUsedResolution.contains("high+")) {
-            bHighPlusRes.setSelected(true);
-        } else if (lastUsedResolution.contains("high")) {
+        } else if (lastUsedResolution.contains("low") && bLowRes.isEnabled()) {
+            bLowRes.setSelected(true);
+        } else if (lastUsedResolution.contains("high") && bHighRes.isEnabled()) {
             bHighRes.setSelected(true);
+        } else if (lastUsedResolution.contains("high+") && bHighPlusRes.isEnabled()) {
+            bHighPlusRes.setSelected(true);
         }
 
         checkChanges();
@@ -663,7 +524,7 @@ public class PrintPanel extends BaseDialog {
      *
      * @return
      */
-    public boolean checkChanges() {
+    private boolean checkChanges() {
         boolean equal = false;
 
         lastUsedRaft = Base.getMainWindow().getBed().isLastRaft();
@@ -690,7 +551,7 @@ public class PrintPanel extends BaseDialog {
      *
      * @return
      */
-    public boolean settingsChanged() {
+    private boolean settingsChanged() {
 
         return parseSlider1().equals(lastSelectedResolution)
                 && parseSlider2() == lastUsedDensity
@@ -701,7 +562,7 @@ public class PrintPanel extends BaseDialog {
     /**
      * Updates old print settings with new ones.
      */
-    public void updateOldSettings() {
+    private void updateOldSettings() {
         lastSelectedRaft = raftPressed;
         lastUsedDensity = parseSlider2();
         lastSelectedResolution = parseSlider1();
@@ -715,13 +576,6 @@ public class PrintPanel extends BaseDialog {
         dispose();
         Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
         Base.getMainWindow().getButtons().updatePressedStateButton("print");
-        Base.bringAllWindowsToFront();
-        isRunning = false;
-        estimationThread.stop();
-        if (t != null) {
-            t.stop();
-        }
-
     }
 
     /**
@@ -729,7 +583,8 @@ public class PrintPanel extends BaseDialog {
      *
      * @return print parameters.
      */
-    public PrintPreferences getPreferences() {
+    @Override
+    protected PrintPreferences getPreferences() {
         PrintPreferences preferences;
         String resolution;
         int density;
@@ -737,15 +592,7 @@ public class PrintPanel extends BaseDialog {
         resolution = parseSlider1();
         density = parseSlider2();
 
-        if (gcodeToPrint != null && printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, gcodeToPrint, selectedPrinter);
-        } else if (gcodeToPrint != null) {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, gcodeToPrint);
-        } else if (printerAvailable == false) {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed, selectedPrinter);
-        } else {
-            preferences = new PrintPreferences(resolution, coilText, density, raftPressed, supportPressed);
-        }
+        preferences = new PrintPreferences(resolution, filament, density, nozzleType, raftPressed, supportPressed);
 
         return preferences;
     }
@@ -807,24 +654,16 @@ public class PrintPanel extends BaseDialog {
 
         while (tries < 3) {
             counter++;
-//                        SwingUtilities.invokeLater(new Runnable(){
-//                            public void run() {
             if (counter % 2 == 0) {
                 jLabel22.setForeground(Color.red);
                 jLabel23.setForeground(Color.red);
                 counter = 0;
                 tries++;
             } else {
-                jLabel22.setForeground(new Color(0, 0, 0));
-                jLabel23.setForeground(new Color(0, 0, 0));
+                jLabel22.setForeground(Color.BLACK);
+                jLabel23.setForeground(Color.BLACK);
             }
-//                            }
-//                        });
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Base.writeLog(e.getMessage(), this.getClass());
-            }
+            Base.hiccup(1000);
         }
     }
 
@@ -863,8 +702,6 @@ public class PrintPanel extends BaseDialog {
         medHeightLabel = new javax.swing.JLabel();
         highHeightLabel = new javax.swing.JLabel();
         highPlusHeightLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        bChangeFilament = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -872,19 +709,21 @@ public class PrintPanel extends BaseDialog {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        bChangeFilament = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bCancel = new javax.swing.JLabel();
         bPrint = new javax.swing.JLabel();
         bExport = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        nozzleTypeLabel = new javax.swing.JLabel();
+        nozzleTypeValue = new javax.swing.JLabel();
+        mmLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(new java.awt.Color(248, 248, 248));
         setUndecorated(true);
-        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setMaximumSize(new java.awt.Dimension(374, 450));
-        jPanel1.setMinimumSize(new java.awt.Dimension(374, 460));
-        jPanel1.setPreferredSize(new java.awt.Dimension(374, 450));
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -915,14 +754,18 @@ public class PrintPanel extends BaseDialog {
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel1.setText("IMPRIMIR");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
+        jLabel2.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
         jLabel2.setText("Qualidade");
 
+        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
         jLabel3.setText("Densidade");
 
         densitySlider.setBackground(new java.awt.Color(248, 248, 248));
+        densitySlider.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         densitySlider.setMajorTickSpacing(1);
         densitySlider.setPaintLabels(true);
         densitySlider.setSnapToTicks(true);
@@ -939,28 +782,50 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        filamentType.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         filamentType.setText("Filament Type");
+        filamentType.setMaximumSize(new java.awt.Dimension(100, 13));
+        filamentType.setMinimumSize(new java.awt.Dimension(100, 13));
 
         jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
+        jLabel22.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel22.setText("NO_FILAMENT");
 
-        jLabel23.setText("change filament");
+        jLabel23.setFont(GraphicDesignComponents.getSSProRegular("10"));
+        jLabel23.setText(" ");
 
         jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
+        estimatedPrintTime.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         estimatedPrintTime.setText("Print time:");
+        estimatedPrintTime.setMaximumSize(new java.awt.Dimension(100, 18));
+        estimatedPrintTime.setMinimumSize(new java.awt.Dimension(100, 18));
+        estimatedPrintTime.setPreferredSize(new java.awt.Dimension(70, 18));
 
         jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
 
+        estimatedMaterial.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         estimatedMaterial.setText("Material cost:");
+        estimatedMaterial.setMaximumSize(new java.awt.Dimension(100, 13));
+        estimatedMaterial.setMinimumSize(new java.awt.Dimension(100, 13));
+        estimatedMaterial.setPreferredSize(new java.awt.Dimension(100, 13));
 
+        printTime.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         printTime.setText("N/A");
 
+        materialCost.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         materialCost.setText("N/A");
 
         loading.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading.gif"))); // NOI18N
+        loading.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/loading-disabled.gif"))); // NOI18N
+        loading.setEnabled(false);
+        loading.setFocusable(false);
+        loading.setIconTextGap(0);
+        loading.setRequestFocusEnabled(false);
+        loading.setVerifyInputWhenFocusTarget(false);
 
+        bEstimate.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bEstimate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
         bEstimate.setText("Estimate");
         bEstimate.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -979,6 +844,7 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        tfDensity.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         tfDensity.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         tfDensity.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -986,11 +852,13 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        lDensity.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lDensity.setText("Density value (%) :");
 
         bLowRes.setBackground(new java.awt.Color(248, 248, 248));
-        bLowRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bLowRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bLowRes.setText("LOW");
+        bLowRes.setEnabled(false);
         bLowRes.setPreferredSize(new java.awt.Dimension(100, 23));
         bLowRes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -999,9 +867,9 @@ public class PrintPanel extends BaseDialog {
         });
 
         bMediumRes.setBackground(new java.awt.Color(248, 248, 248));
-        bMediumRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
-        bMediumRes.setSelected(true);
+        bMediumRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bMediumRes.setText("MEDIUM");
+        bMediumRes.setEnabled(false);
         bMediumRes.setPreferredSize(new java.awt.Dimension(100, 23));
         bMediumRes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1010,8 +878,9 @@ public class PrintPanel extends BaseDialog {
         });
 
         bHighRes.setBackground(new java.awt.Color(248, 248, 248));
-        bHighRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bHighRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bHighRes.setText("HIGH");
+        bHighRes.setEnabled(false);
         bHighRes.setPreferredSize(new java.awt.Dimension(100, 23));
         bHighRes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1020,8 +889,9 @@ public class PrintPanel extends BaseDialog {
         });
 
         bHighPlusRes.setBackground(new java.awt.Color(248, 248, 248));
-        bHighPlusRes.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        bHighPlusRes.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bHighPlusRes.setText("HIGH+");
+        bHighPlusRes.setEnabled(false);
         bHighPlusRes.setPreferredSize(new java.awt.Dimension(100, 23));
         bHighPlusRes.setRequestFocusEnabled(false);
         bHighPlusRes.addActionListener(new java.awt.event.ActionListener() {
@@ -1030,56 +900,24 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        lowHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         lowHeightLabel.setText("0.3 mm");
 
+        medHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         medHeightLabel.setText("0.2 mm");
 
+        highHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         highHeightLabel.setText("0.1 mm");
 
+        highPlusHeightLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         highPlusHeightLabel.setText("0.05 mm");
-
-        jPanel3.setMaximumSize(new java.awt.Dimension(136, 22));
-        jPanel3.setMinimumSize(new java.awt.Dimension(136, 22));
-
-        bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
-        bChangeFilament.setText("Change filament");
-        bChangeFilament.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_16.png"))); // NOI18N
-        bChangeFilament.setEnabled(false);
-        bChangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bChangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bChangeFilamentMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bChangeFilamentMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bChangeFilamentMouseEntered(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(bChangeFilament, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(bChangeFilament)
-                .addGap(0, 0, 0))
-        );
 
         jPanel6.setMaximumSize(new java.awt.Dimension(176, 150));
         jPanel6.setMinimumSize(new java.awt.Dimension(176, 150));
         jPanel6.setOpaque(false);
         jPanel6.setPreferredSize(new java.awt.Dimension(176, 150));
 
+        jLabel10.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel10.setText("Suspendisse potenti.");
         jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1094,6 +932,7 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        jLabel7.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
         jLabel7.setText("Raft");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1101,6 +940,7 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        jLabel8.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel8.setText("Suspendisse potenti.");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1108,6 +948,7 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        jLabel9.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
         jLabel9.setText("Support");
         jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1115,6 +956,7 @@ public class PrintPanel extends BaseDialog {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/c_unchecked.png"))); // NOI18N
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1127,7 +969,7 @@ public class PrintPanel extends BaseDialog {
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel5)
@@ -1160,6 +1002,120 @@ public class PrintPanel extends BaseDialog {
                 .addContainerGap())
         );
 
+        bChangeFilament.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bChangeFilament.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_16.png"))); // NOI18N
+        bChangeFilament.setText("Change filament");
+        bChangeFilament.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_16.png"))); // NOI18N
+        bChangeFilament.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bChangeFilament.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bChangeFilamentMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bChangeFilamentMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bChangeFilamentMouseEntered(evt);
+            }
+        });
+
+        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
+        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
+
+        bCancel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bCancel.setText("CANCELAR");
+        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bCancelMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bCancelMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bCancelMouseEntered(evt);
+            }
+        });
+
+        bPrint.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
+        bPrint.setText("IMPRIMIR");
+        bPrint.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
+        bPrint.setEnabled(false);
+        bPrint.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bPrint.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bPrintMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bPrintMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bPrintMouseEntered(evt);
+            }
+        });
+
+        bExport.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_19.png"))); // NOI18N
+        bExport.setText("Export G-code");
+        bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        bExport.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_19.png"))); // NOI18N
+        bExport.setEnabled(false);
+        bExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bExport.setMaximumSize(new java.awt.Dimension(120, 23));
+        bExport.setMinimumSize(new java.awt.Dimension(115, 23));
+        bExport.setPreferredSize(new java.awt.Dimension(115, 23));
+        bExport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExportMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bExportMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bExportMouseEntered(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addComponent(bCancel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bPrint)
+                .addGap(2, 2, 2))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bCancel)
+                    .addComponent(bPrint)
+                    .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
+        jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/arrow_ajuda_2.png"))); // NOI18N
+
+        nozzleTypeLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        nozzleTypeLabel.setText("Nozzle type:");
+        nozzleTypeLabel.setMaximumSize(new java.awt.Dimension(100, 18));
+        nozzleTypeLabel.setMinimumSize(new java.awt.Dimension(100, 18));
+        nozzleTypeLabel.setPreferredSize(new java.awt.Dimension(70, 18));
+
+        nozzleTypeValue.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        nozzleTypeValue.setText("0.0");
+
+        mmLabel.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        mmLabel.setText("mm");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -1174,37 +1130,46 @@ public class PrintPanel extends BaseDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(4, 4, 4)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(estimatedMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGap(15, 15, 15)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(printTime)
+                                            .addComponent(materialCost)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(nozzleTypeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(15, 15, 15)
+                                        .addComponent(nozzleTypeValue)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(mmLabel)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(filamentType)
-                                .addGap(17, 17, 17)
+                                .addComponent(filamentType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(15, 15, 15)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel23)
-                                        .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(bEstimate))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel22)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(loading))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(estimatedMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(estimatedPrintTime, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
-                                .addGap(15, 15, 15)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(printTime)
-                                    .addComponent(materialCost))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(bEstimate))
-                            .addComponent(jSeparator1)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING))
+                                        .addComponent(loading)))))
                         .addGap(19, 19, 19))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(densitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1242,19 +1207,25 @@ public class PrintPanel extends BaseDialog {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(25, 25, 25)
                                 .addComponent(highPlusHeightLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(0, 55, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(7, 7, 7)
                                 .addComponent(bHighPlusRes, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(154, 154, 154)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(149, 149, 149))
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(148, 148, 148)
+                .addComponent(bChangeFilament, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jSeparator1)
+                        .addGap(19, 19, 19))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1296,139 +1267,57 @@ public class PrintPanel extends BaseDialog {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(filamentType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(6, 6, 6)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel23)
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(estimatedPrintTime)
-                                .addComponent(printTime))
-                            .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(estimatedMaterial)
-                                .addComponent(materialCost, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(12, 12, 12)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(bEstimate, javax.swing.GroupLayout.Alignment.LEADING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
-
-        jPanel2.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jPanel2.setMaximumSize(new java.awt.Dimension(20, 26));
-        jPanel2.setMinimumSize(new java.awt.Dimension(20, 26));
-        jPanel2.setPreferredSize(new java.awt.Dimension(20, 26));
-
-        bCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bCancel.setText("CANCELAR");
-        bCancel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bCancelMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bCancelMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bCancelMouseEntered(evt);
-            }
-        });
-
-        bPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_15.png"))); // NOI18N
-        bPrint.setText("IMPRIMIR");
-        bPrint.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_15.png"))); // NOI18N
-        bPrint.setEnabled(false);
-        bPrint.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bPrint.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPrintMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bPrintMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPrintMouseEntered(evt);
-            }
-        });
-
-        bExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_19.png"))); // NOI18N
-        bExport.setText("Export G-code");
-        bExport.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        bExport.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_19.png"))); // NOI18N
-        bExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bExport.setMaximumSize(new java.awt.Dimension(120, 23));
-        bExport.setMinimumSize(new java.awt.Dimension(115, 23));
-        bExport.setPreferredSize(new java.awt.Dimension(115, 23));
-        bExport.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bExportMousePressed(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bExportMouseExited(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bExportMouseEntered(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(bCancel)
-                .addGap(158, 158, 158)
-                .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bPrint)
-                .addGap(12, 12, 12))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bCancel)
-                    .addComponent(bPrint)
-                    .addComponent(bExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bEstimate)
+                    .addComponent(jLabel23))
+                .addGap(0, 0, 0)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(nozzleTypeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(nozzleTypeValue)
+                        .addComponent(mmLabel))
+                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(estimatedPrintTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(printTime))
+                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(estimatedMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(materialCost)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(bChangeFilament)
+                .addGap(18, 25, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void bPrintMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseEntered
-        if (bPrint.isEnabled()) {
-            bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
-        }
+        bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
     }//GEN-LAST:event_bPrintMouseEntered
 
     private void bPrintMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMouseExited
-        if (bPrint.isEnabled()) {
-            bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
-        }
+        bPrint.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
     }//GEN-LAST:event_bPrintMouseExited
 
     private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
@@ -1440,18 +1329,10 @@ public class PrintPanel extends BaseDialog {
     }//GEN-LAST:event_bCancelMouseExited
 
     private void bPrintMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPrintMousePressed
-
-        if (t != null) {
-            t.stop();
-        }
-        estimationThread.stop();
-
         if (bPrint.isEnabled()) {
             if (!checkChanges()) {
                 Base.getMainWindow().getBed().setGcodeOK(false);
             }
-
-            PrintPreferences prefs = getPreferences();
 
             Base.getMainWindow().getBed().setLastRaft(raftPressed);
             Base.getMainWindow().getBed().setLastDensity(parseSlider2());
@@ -1459,17 +1340,12 @@ public class PrintPanel extends BaseDialog {
             Base.getMainWindow().getBed().setLastSupport(supportPressed);
 
             Base.isPrinting = true;
-            Base.getMainWindow().getButtons().blockModelsButton(true);
             Base.cleanDirectoryTempFiles(Base.getAppDataDirectory() + "/" + Base.MODELS_FOLDER);
             dispose();
             Base.getMainWindow().getCanvas().unPickAll();
-            isRunning = false;
             Base.getMainWindow().getButtons().updatePressedStateButton("print");
-            Base.turnOnPowerSaving(false);
 
-            final PrintSplashAutonomous p = new PrintSplashAutonomous(false, prefs);
-            p.setVisible(true);
-
+            final PrintSplashAutonomous p = new PrintSplashAutonomous(getPreferences());
             EventQueue.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -1477,15 +1353,14 @@ public class PrintPanel extends BaseDialog {
                     if (Base.getMainWindow().getBed().isSceneDifferent()) {
                         Base.getMainWindow().handleSave(true);
                     }
-                    p.startConditions();
                 }
             });
+            p.setVisible(true);
 
         } else {
-            t = new Thread(new Runnable() {
+            Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     /**
                      * Possible cases:
                      *
@@ -1505,7 +1380,6 @@ public class PrintPanel extends BaseDialog {
                 }
             });
             t.start();
-
         }
     }//GEN-LAST:event_bPrintMousePressed
 
@@ -1514,57 +1388,30 @@ public class PrintPanel extends BaseDialog {
     }//GEN-LAST:event_bCancelMousePressed
 
     private void bExportMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMousePressed
-
         // if there are any loaded models, export
-        if (exportPressed == false && bExport.isEnabled()) {
+        if (bExport.isEnabled()) {
+            if (noFilament || noNozzle) {
+                EstimateExportPanel estimateExport = new EstimateExportPanel(connectedPrinter);
+                this.setVisible(false);
+                estimateExport.setVisible(true);
+                this.setVisible(true);
+            } else {
+                JFileChooser saveFile = new JFileChooser();
+                saveFile.setSelectedFile(new File("export-"
+                        + System.currentTimeMillis() + ".gcode"));
+                int rVal = saveFile.showSaveDialog(null);
 
-            if (printerAvailable == false
-                    || coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false) {
-                ProfileAndPrinter selection
-                        = new ProfileAndPrinter(this, printerAvailable);
-                selection.setVisible(true);
-                coilText = selection.getCoilText();
-                selectedPrinter = selection.getSelectedPrinter();
-            }
-
-            // if the ProfileAndPrinter panel was closed on X button,
-            // cancel the estimation process
-            if (coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false
-                    || selectedPrinter == PrinterInfo.UNKNOWN) {
-                return;
-            }
-
-            JFileChooser saveFile = new JFileChooser();
-            saveFile.setSelectedFile(new File("export-"
-                    + System.currentTimeMillis() + ".gcode"));
-            int rVal = saveFile.showSaveDialog(null);
-
-            if (rVal == JFileChooser.APPROVE_OPTION) {
-                exportThread = new GCodeExportThread(this, saveFile.getSelectedFile());
-
-                EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        exportThread.start();
-                        Base.systemThreads.add(exportThread);
-                    }
-                });
+                if (rVal == JFileChooser.APPROVE_OPTION) {
+                    estimateExportThread = new GCodeEstimateExportThread(saveFile.getSelectedFile().getAbsolutePath());
+                    estimateExportThread.start();
+                }
             }
         } else if (bExport.isEnabled() == false) { // otherwise warn the user that there are no models loaded
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (printerAvailable == false) {
-                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-                    } else if (nModels == 0) {
-                        Base.getMainWindow().showFeedBackMessage("noModelError");
-                    } else if (noFilament) {
-                        flashNoFilamentMessage();
-                    }
+            Thread thread = new Thread(() -> {
+                if (nModels == 0) {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
+                } else if (noFilament) {
+                    flashNoFilamentMessage();
                 }
             });
             thread.start();
@@ -1572,50 +1419,37 @@ public class PrintPanel extends BaseDialog {
     }//GEN-LAST:event_bExportMousePressed
 
     private void bExportMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMouseExited
-        // don't change the icon if button is disabled due to the absence of loaded models
-        if (exportPressed == false && bExport.isEnabled()) {
-            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
-        }
+        bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_19.png")));
     }//GEN-LAST:event_bExportMouseExited
 
     private void bExportMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExportMouseEntered
-        // don't change the icon if button is disabled due to the absence of loaded models
-        if (exportPressed == false && bExport.isEnabled()) {
-            bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_19.png")));
-        }
+        bExport.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_19.png")));
     }//GEN-LAST:event_bExportMouseEntered
 
     private void bChangeFilamentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseEntered
-        if (bChangeFilament.isEnabled()) {
-            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
-        }
+        bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_16.png")));
     }//GEN-LAST:event_bChangeFilamentMouseEntered
 
     private void bChangeFilamentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMouseExited
-        if (bChangeFilament.isEnabled()) {
-            bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
-        }
+        bChangeFilament.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_16.png")));
     }//GEN-LAST:event_bChangeFilamentMouseExited
 
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         // if the printer is available, display the filament change screen
         if (bChangeFilament.isEnabled()) {
-            dispose();
-            Base.getMainWindow().getButtons().updatePressedStateButton("print");
-            Base.getMainWindow().getButtons().goFilamentChange();
-            ProperDefault.put("maintenance", "1");
-            FilamentHeating p = new FilamentHeating();
+            FilamentCodeInsertion p = new FilamentCodeInsertion();
+            this.setVisible(false);
             p.setVisible(true);
+            getCoilCode();
+            evaluateConditions();
+            this.setVisible(true);
         } else {
             // otherwise display the appropriate status message
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (Base.getMachineLoader().isConnected() == false) {
-                        Base.getMainWindow().showFeedBackMessage("btfDisconnect");
-                    } else if (Base.isPrinting) {
-                        Base.getMainWindow().showFeedBackMessage("btfPrinting");
-                    }
+            Thread thread = new Thread(() -> {
+                if (Base.getMachineLoader().isConnected() == false) {
+                    Base.getMainWindow().showFeedBackMessage("btfDisconnect");
+                } else if (Base.isPrinting) {
+                    Base.getMainWindow().showFeedBackMessage("btfPrinting");
                 }
             });
             thread.start();
@@ -1640,89 +1474,68 @@ public class PrintPanel extends BaseDialog {
 
     private void tfDensityKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfDensityKeyReleased
         String tfDesty_value = tfDensity.getText();
-        boolean isNumber = true;
         try {
-            double d = Double.parseDouble(tfDesty_value);
-        } catch (NumberFormatException nfe) {
-            isNumber = false;
-        }
-
-        if (tfDesty_value.equals("") == false && isNumber) {
-            int densityValue = Integer.valueOf(tfDensity.getText());
-            if (densityValue < 0 || densityValue > 100) {
-                densityValue = 5;
+            if (tfDesty_value.equals("") == false) {
+                int densityValue = Integer.valueOf(tfDensity.getText());
+                if (densityValue < 0 || densityValue > 100) {
+                    densityValue = 5;
+                }
+                densitySlider.setValue(densityValue);
+                checkDensitySliderValue(densityValue);
             }
-            densitySlider.setValue(densityValue);
-            checkDensitySliderValue(densityValue);
+        } catch (NumberFormatException nfe) {
         }
     }//GEN-LAST:event_tfDensityKeyReleased
 
     private void bEstimateMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseEntered
-        // don't change the icon if button is disabled due to the absence of loaded models
-        if (estimatePressed == false && bEstimate.isEnabled()) {
-            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
-        }
+        bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
     }//GEN-LAST:event_bEstimateMouseEntered
 
     private void bEstimateMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMouseExited
-        // don't change the icon if button is disabled due to the absence of loaded models
-        if (estimatePressed == false && bEstimate.isEnabled()) {
-            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
-        }
+        bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
     }//GEN-LAST:event_bEstimateMouseExited
 
     private void bEstimateMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bEstimateMousePressed
-
         // if there are any loaded model, do the estimation
-        if (estimatePressed == false && bEstimate.isEnabled()) {
-            if (printerAvailable == false
-                    || coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false) {
-                Base.writeLog("No printer available, opening selection panel", this.getClass());
-                ProfileAndPrinter selection
-                        = new ProfileAndPrinter(this, printerAvailable);
-                selection.setVisible(true);
-                coilText = selection.getCoilText();
-                selectedPrinter = selection.getSelectedPrinter();
-                Base.writeLog(coilText + " and " + selectedPrinter + " selected", this.getClass());
+        if (bEstimate.isEnabled()) {
+            if (noFilament || noNozzle) {
+                EstimateExportPanel estimateExport = new EstimateExportPanel(connectedPrinter);
+                this.setVisible(false);
+                estimateExport.setVisible(true);
+                this.setVisible(true);
+            } else {
+                estimateExportThread = new GCodeEstimateExportThread();
+                estimateExportThread.start();
             }
-
-            // if the ProfileAndPrinter panel was closed on X button,
-            // cancel the estimation process
-            if (coilText.equals(FilamentControler.NO_FILAMENT)
-                    || coilText.contains(FilamentControler.NO_FILAMENT_2)
-                    || FilamentControler.colorExistsLocally(coilText) == false
-                    || selectedPrinter == PrinterInfo.UNKNOWN) {
-                return;
-            }
-
-            estimationThread = new PrintEstimationThread(this);
-            bEstimate.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_15.png")));
-            estimatePressed = true;
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    estimationThread.start();
-                    Base.systemThreads.add(estimationThread);
-                }
-            });
         } else if (bEstimate.isEnabled() == false) { // otherwise warn the user that there are no models loaded
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (nModels == 0) {
-                        Base.getMainWindow().showFeedBackMessage("noModelError");
-                    }
+            Thread thread = new Thread(() -> {
+                if (nModels == 0) {
+                    Base.getMainWindow().showFeedBackMessage("noModelError");
                 }
             });
             thread.start();
         }
     }//GEN-LAST:event_bEstimateMousePressed
 
-    private void jLabel10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MousePressed
+    private void densitySliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_densitySliderMouseReleased
+        lastUsedDensity = parseSlider2();
+    }//GEN-LAST:event_densitySliderMouseReleased
+
+    private void densitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_densitySliderStateChanged
+        int val = densitySlider.getValue();
+        tfDensity.setText(String.valueOf(val));
+
+        checkDensitySliderValue(val);
+        checkChanges();
+    }//GEN-LAST:event_densitySliderStateChanged
+
+    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+        doCancel();
+    }//GEN-LAST:event_jLabel15MousePressed
+
+    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
         triggerSupport();
-    }//GEN-LAST:event_jLabel10MousePressed
+    }//GEN-LAST:event_jLabel5MousePressed
 
     private void jLabel9MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MousePressed
         triggerSupport();
@@ -1736,30 +1549,13 @@ public class PrintPanel extends BaseDialog {
         triggerRaft();
     }//GEN-LAST:event_jLabel7MousePressed
 
-    private void jLabel5MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MousePressed
-        triggerSupport();
-    }//GEN-LAST:event_jLabel5MousePressed
-
     private void jLabel4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MousePressed
         triggerRaft();
     }//GEN-LAST:event_jLabel4MousePressed
 
-    private void densitySliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_densitySliderMouseReleased
-        lastUsedDensity = parseSlider2();
-    }//GEN-LAST:event_densitySliderMouseReleased
-
-    private void densitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_densitySliderStateChanged
-
-        int val = densitySlider.getValue();
-        tfDensity.setText(String.valueOf(val));
-
-        checkDensitySliderValue(val);
-        checkChanges();
-    }//GEN-LAST:event_densitySliderStateChanged
-
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doCancel();
-    }//GEN-LAST:event_jLabel15MousePressed
+    private void jLabel10MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MousePressed
+        triggerSupport();
+    }//GEN-LAST:event_jLabel10MousePressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bCancel;
@@ -1786,6 +1582,7 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1795,7 +1592,6 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator1;
@@ -1805,161 +1601,11 @@ public class PrintPanel extends BaseDialog {
     private javax.swing.JLabel lowHeightLabel;
     private javax.swing.JLabel materialCost;
     private javax.swing.JLabel medHeightLabel;
+    private javax.swing.JLabel mmLabel;
+    private javax.swing.JLabel nozzleTypeLabel;
+    private javax.swing.JLabel nozzleTypeValue;
     private javax.swing.JLabel printTime;
     private javax.swing.JTextField tfDensity;
     // End of variables declaration//GEN-END:variables
 
-}
-
-class PrintEstimationThread extends Thread {
-
-    private final PrintPanel printPanel;
-    private int nTimes;
-
-    public PrintEstimationThread(PrintPanel panel) {
-        super("Print panel Estimation Thread");
-        this.printPanel = panel;
-        this.nTimes = 0;
-    }
-
-    /**
-     * Runs GCode generator process. Updates window fields to display print
-     * model cost estimation.
-     */
-    public void runEstimator() {
-        Printer prt;
-        prt = new Printer(printPanel.getPreferences());
-        prt.generateGCode();
-        File gcode = prt.getGCode();
-        //Estimate time and cost
-        PrintEstimator.estimateTime(gcode);
-        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(), PrintEstimator.getEstimatedCost());
-    }
-
-    @Override
-    public void run() {
-
-        while (printPanel.isRunning()) {
-            try {
-                Thread.sleep(5, 0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintEstimationThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (!printPanel.settingsChanged() || nTimes == 0) {
-                printPanel.showLoadingIcon(true);
-
-                if (Base.getMainWindow().isOkToGoOnSave() == false) {
-                    Base.getMainWindow().handleSave(true);
-                }
-                runEstimator();
-                printPanel.updateOldSettings();
-                nTimes++;
-                printPanel.showLoadingIcon(false);
-                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-
-                printPanel.coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
-
-                this.stop();
-
-            } else {
-                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-            }
-
-        }
-    }
-}
-
-class GCodeExportThread extends Thread {
-
-    private final PrintPanel printPanel;
-    private final File saveFile;
-    private int nTimes;
-
-    public GCodeExportThread(PrintPanel panel, File saveFile) {
-        super("Print panel Export Thread");
-        this.printPanel = panel;
-        this.saveFile = saveFile;
-        this.nTimes = 0;
-    }
-
-    /**
-     * Runs GCode generator process. Updates window fields to display print
-     * model cost estimation.
-     */
-    public void runExport() {
-        Printer prt = new Printer(printPanel.getPreferences());
-        prt.generateGCode();
-        File gcode = prt.getGCode();
-        //Estimate time and cost
-        PrintEstimator.estimateTime(gcode);
-        printPanel.updateEstimationPanel(PrintEstimator.getEstimatedTime(),
-                PrintEstimator.getEstimatedCost());
-
-        //Writes the file
-        BufferedInputStream input = null;
-        BufferedOutputStream output = null;
-
-        try {
-
-            input = new BufferedInputStream(new FileInputStream(Base.GCODE2PRINTER_PATH));
-            output = new BufferedOutputStream(new FileOutputStream(this.saveFile));
-
-            byte[] buf = new byte[1024];
-            int bytesRead;
-
-            while ((bytesRead = input.read(buf)) > 0) {
-                output.write(buf, 0, bytesRead);
-            }
-
-        } catch (Exception ex) {
-
-            Base.writeLog(ex.getMessage(), this.getClass());
-        } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                }
-
-                if (output != null) {
-                    output.close();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(PrintPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        printPanel.coilText = Base.getMainWindow().getMachine().getModel().getCoilText();
-    }
-
-    @Override
-    public void run() {
-
-        while (printPanel.isRunning()) {
-            try {
-                Thread.sleep(5, 0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintEstimationThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (!printPanel.settingsChanged() || nTimes == 0) {
-                printPanel.showLoadingIconExport(true);
-
-                if (Base.getMainWindow().isOkToGoOnSave() == false) {
-                    Base.getMainWindow().handleSave(true);
-                }
-
-                runExport();
-                printPanel.updateOldSettings();
-                nTimes++;
-                printPanel.showLoadingIconExport(false);
-
-                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-                this.stop();
-
-            } else {
-                Base.cleanDirectoryTempFiles(Base.getAppDataDirectory().getAbsolutePath() + "/" + Base.MODELS_FOLDER + "/");
-            }
-
-        }
-    }
 }

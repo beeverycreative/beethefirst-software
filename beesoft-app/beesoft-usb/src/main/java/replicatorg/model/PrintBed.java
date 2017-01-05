@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.media.j3d.Shape3D;
+import org.scijava.java3d.Shape3D;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import replicatorg.app.Base;
@@ -336,6 +336,11 @@ public class PrintBed implements Serializable {
         }
 //        System.out.println(pickedModels.size());
     }
+    
+    public void removeAllModels() {
+        printBed_Models.clear();
+        nModels = 0;
+    }
 
     public void duplicateModel() {
         if (pickedModels.size() > 0) {
@@ -364,7 +369,7 @@ public class PrintBed implements Serializable {
             pw = new PrintWriter(stl);
             pw.write("");
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ToolpathGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(ToolpathGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         code = new String(printBed_Models.get(index).getStream());
@@ -586,9 +591,6 @@ public class PrintBed implements Serializable {
                 return true;
             }
 
-        } else // Cancel operation for first save
-        {
-            Base.getMainWindow().setEnabled(true);
         }
 
         return false;

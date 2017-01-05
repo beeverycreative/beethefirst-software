@@ -97,7 +97,7 @@ public class WipeModel {
 		}
 		catch(NumberFormatException e)
 		{
-			Base.logger.severe("Could not parse your xml wipe, please make sure everything is formatted correctly");
+			Base.LOGGER.severe("Could not parse your xml wipe, please make sure everything is formatted correctly");
 
 			System.err.println("Could not parse your xml wipe, please make sure everything is formatted correctly");
 			e.printStackTrace();

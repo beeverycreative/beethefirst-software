@@ -1,13 +1,18 @@
 package replicatorg.app.ui.panels;
 
+import replicatorg.app.ui.popups.InformationTooltip;
 import java.awt.Dialog;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 import replicatorg.app.Base;
 import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Languager;
+import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
+import replicatorg.app.ui.popups.Warning;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -22,41 +27,48 @@ import replicatorg.app.ui.GraphicDesignComponents;
  */
 public class About extends BaseDialog {
 
+    private final Timer resetClickCount = new Timer(1000, (ActionEvent e) -> {
+        clickCount = 0;
+    });
+    private boolean cpEnabled = Boolean.parseBoolean(ProperDefault.get("controlpanel.enable"));
     private InformationTooltip info;
+    private int clickCount = 0;
 
     public About() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
+        resetClickCount.setRepeats(false);
         initComponents();
         setFont();
-        enableDrag();
-        centerOnScreen();
+        super.enableDrag();
+        super.centerOnScreen();
         setTextLanguage();
         setValues();
-        enableDrag();
-        setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        super.enableDrag();
     }
 
     private void setFont() {
         jLabel1.setFont(GraphicDesignComponents.getSSProLight("33"));
-        jLabel2.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel4.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel5.setFont(GraphicDesignComponents.getSSProBold("12"));
+        lVersionTitle.setFont(GraphicDesignComponents.getSSProBold("12"));
+        lFirmwareTitle.setFont(GraphicDesignComponents.getSSProBold("12"));
+        lBootloaderTitle.setFont(GraphicDesignComponents.getSSProBold("12"));
+        lFilamentTitle.setFont(GraphicDesignComponents.getSSProBold("12"));
+        lSerialTitle.setFont(GraphicDesignComponents.getSSProBold("12"));
 
-        jLabel6.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jLabel8.setFont(GraphicDesignComponents.getSSProLight("12"));
-        jLabel9.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lVersionValue.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lFirmwareValue.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lBootloaderValue.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lFilamentValue.setFont(GraphicDesignComponents.getSSProLight("12"));
+        lSerialValue.setFont(GraphicDesignComponents.getSSProLight("12"));
 
         jLabel18.setFont(GraphicDesignComponents.getSSProRegular("12"));
 
     }
 
     private void setTextLanguage() {
-        jLabel2.setText(Languager.getTagValue(1, "AboutSoftware", "About_SoftwareVersion"));
-        jLabel3.setText(Languager.getTagValue(1, "AboutSoftware", "About_FirmwareVersion"));
-        jLabel4.setText(Languager.getTagValue(1, "AboutSoftware", "About_BootloaderVersion"));
-        jLabel5.setText(Languager.getTagValue(1, "AboutSoftware", "About_FilamentColor"));
+        lVersionTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_SoftwareVersion"));
+        lFirmwareTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_FirmwareVersion"));
+        lBootloaderTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_BootloaderVersion"));
+        lFilamentTitle.setText(Languager.getTagValue(1, "AboutSoftware", "About_FilamentColor"));
         jLabel18.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
     }
 
@@ -65,6 +77,7 @@ public class About extends BaseDialog {
         String bootloader = Base.VERSION_BOOTLOADER;
         String firmware = Base.FIRMWARE_IN_USE;
         String coilCode = parseCoilCode();
+        String serialNumber = Base.SERIAL_NUMBER;
 
         if (bootloader == null || bootloader.equals("0.0.0")) {
             bootloader = Languager.getTagValue(1, "AboutSoftware",
@@ -85,24 +98,30 @@ public class About extends BaseDialog {
                     "About_NotAvailable");
         }
 
-        jLabel6.setText(beesoft);
-        jLabel7.setText(firmware);
-        jLabel8.setText(bootloader);
-        jLabel9.setText(coilCode);
+        if (serialNumber == null || serialNumber.equals("9999999999")) {
+            serialNumber = Languager.getTagValue(1, "AboutSoftware",
+                    "About_NotAvailable");
+        }
+
+        lVersionValue.setText(beesoft);
+        lFirmwareValue.setText(firmware);
+        lBootloaderValue.setText(bootloader);
+        lFilamentValue.setText(coilCode);
+        lSerialValue.setText(serialNumber);
     }
 
     private String parseCoilCode() {
         String code = "N/A";
 
         if (Base.getMachineLoader().isConnected()) {
-            code = Base.getMainWindow().getMachine().getModel().getCoilText();
+            code = Base.getMainWindow().getMachineInterface().getDriver().getMachine().getCoilText();
         }
 
-        if(code.equals(FilamentControler.NO_FILAMENT)
+        if (code.equals(FilamentControler.NO_FILAMENT)
                 || code.contains(FilamentControler.NO_FILAMENT_2)) {
             return "No filament currently loaded";
         }
-        
+
         return code;
     }
 
@@ -115,16 +134,18 @@ public class About extends BaseDialog {
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        lVersionTitle = new javax.swing.JLabel();
+        lFirmwareTitle = new javax.swing.JLabel();
+        lBootloaderTitle = new javax.swing.JLabel();
+        lFilamentTitle = new javax.swing.JLabel();
+        lSerialTitle = new javax.swing.JLabel();
+        lVersionValue = new javax.swing.JLabel();
+        lFirmwareValue = new javax.swing.JLabel();
+        lBootloaderValue = new javax.swing.JLabel();
+        lFilamentValue = new javax.swing.JLabel();
         jBootloaderTooltip = new javax.swing.JLabel();
         jBootloaderTooltip.setVisible(false);
+        lSerialValue = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
 
@@ -133,6 +154,11 @@ public class About extends BaseDialog {
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
+        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel1MouseClicked(evt);
+            }
+        });
 
         jLabel1.setText("BEESOFT");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
@@ -168,13 +194,15 @@ public class About extends BaseDialog {
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        jLabel2.setText("Version");
+        lVersionTitle.setText("Version");
 
-        jLabel3.setText("Firmware");
+        lFirmwareTitle.setText("Firmware");
 
-        jLabel4.setText("Bootloader");
+        lBootloaderTitle.setText("Bootloader");
 
-        jLabel5.setText("Serial Number");
+        lFilamentTitle.setText("Filament type");
+
+        lSerialTitle.setText("Serial number");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -182,36 +210,39 @@ public class About extends BaseDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5))
-                .addGap(0, 14, Short.MAX_VALUE))
+                    .addComponent(lVersionTitle)
+                    .addComponent(lFirmwareTitle)
+                    .addComponent(lBootloaderTitle)
+                    .addComponent(lFilamentTitle)
+                    .addComponent(lSerialTitle))
+                .addGap(0, 16, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel2)
+                .addComponent(lVersionTitle)
                 .addGap(20, 20, 20)
-                .addComponent(jLabel3)
+                .addComponent(lFirmwareTitle)
                 .addGap(20, 20, 20)
-                .addComponent(jLabel4)
+                .addComponent(lBootloaderTitle)
                 .addGap(20, 20, 20)
-                .addComponent(jLabel5)
-                .addGap(0, 30, Short.MAX_VALUE))
+                .addComponent(lFilamentTitle)
+                .addGap(18, 18, 18)
+                .addComponent(lSerialTitle)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jLabel6.setText("2.0.0");
+        lVersionValue.setText("2.0.0");
 
-        jLabel7.setText("2.0.0");
+        lFirmwareValue.setText("2.0.0");
 
-        jLabel8.setLabelFor(jLabel8);
-        jLabel8.setText("3.0.0");
+        lBootloaderValue.setLabelFor(lBootloaderValue);
+        lBootloaderValue.setText("3.0.0");
 
-        jLabel9.setText("000000000014");
+        lFilamentValue.setText("A021 - Transparent");
 
         jBootloaderTooltip.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/alerta.png"))); // NOI18N
-        jBootloaderTooltip.setLabelFor(jLabel8);
+        jBootloaderTooltip.setLabelFor(lBootloaderValue);
         jBootloaderTooltip.setToolTipText("");
         jBootloaderTooltip.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jBootloaderTooltip.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -226,6 +257,8 @@ public class About extends BaseDialog {
             }
         });
 
+        lSerialValue.setText("9999999999");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -237,14 +270,15 @@ public class About extends BaseDialog {
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
+                            .addComponent(lVersionValue)
+                            .addComponent(lFirmwareValue)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel8)
+                                .addComponent(lBootloaderValue)
                                 .addGap(18, 18, 18)
                                 .addComponent(jBootloaderTooltip))
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 68, Short.MAX_VALUE))
+                            .addComponent(lFilamentValue, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lSerialValue, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -260,17 +294,18 @@ public class About extends BaseDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
+                        .addComponent(lVersionValue)
                         .addGap(20, 20, 20)
-                        .addComponent(jLabel7)
+                        .addComponent(lFirmwareValue)
                         .addGap(20, 20, 20)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
+                            .addComponent(lBootloaderValue)
                             .addComponent(jBootloaderTooltip))
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel9)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(0, 0, 0))
+                        .addComponent(lFilamentValue)
+                        .addGap(18, 18, 18)
+                        .addComponent(lSerialValue)
+                        .addContainerGap(30, Short.MAX_VALUE))))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -296,7 +331,7 @@ public class About extends BaseDialog {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(364, Short.MAX_VALUE)
+                .addContainerGap(376, Short.MAX_VALUE)
                 .addComponent(jLabel18)
                 .addGap(12, 12, 12))
         );
@@ -336,12 +371,10 @@ public class About extends BaseDialog {
 
     private void jLabel18MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel18MousePressed
         dispose();
-        Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel18MousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
         dispose();
-        Base.bringAllWindowsToFront();
     }//GEN-LAST:event_jLabel15MousePressed
 
     private void jBootloaderTooltipMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBootloaderTooltipMouseEntered
@@ -365,22 +398,51 @@ public class About extends BaseDialog {
         this.toBack();
     }//GEN-LAST:event_jBootloaderTooltipMouseClicked
 
+    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
+        resetClickCount.stop();
+        clickCount++;
+
+        if (clickCount >= 10) {
+            final Warning warning;
+            if (cpEnabled == false) {
+                ProperDefault.put("controlpanel.enable", "true");
+                Base.getMainWindow().setCPVisibility(true);
+                warning = new Warning("CPEnableText", false);
+                warning.setVisible(true);
+                cpEnabled = !cpEnabled;
+                clickCount = 0;
+            } else {
+                ProperDefault.put("controlpanel.enable", "false");
+                Base.getMainWindow().setCPVisibility(false);
+                warning = new Warning("CPDisableText", false);
+                warning.setVisible(true);
+                cpEnabled = !cpEnabled;
+                clickCount = 0;
+            }
+        }
+
+        resetClickCount.start();
+    }//GEN-LAST:event_jPanel1MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jBootloaderTooltip;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel lBootloaderTitle;
+    private javax.swing.JLabel lBootloaderValue;
+    private javax.swing.JLabel lFilamentTitle;
+    private javax.swing.JLabel lFilamentValue;
+    private javax.swing.JLabel lFirmwareTitle;
+    private javax.swing.JLabel lFirmwareValue;
+    private javax.swing.JLabel lSerialTitle;
+    private javax.swing.JLabel lSerialValue;
+    private javax.swing.JLabel lVersionTitle;
+    private javax.swing.JLabel lVersionValue;
     // End of variables declaration//GEN-END:variables
+
 }

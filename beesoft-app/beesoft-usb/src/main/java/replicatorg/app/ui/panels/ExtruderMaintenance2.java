@@ -1,17 +1,12 @@
 package replicatorg.app.ui.panels;
 
-import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import javax.swing.ImageIcon;
 import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
-import replicatorg.util.Point5d;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -26,176 +21,49 @@ import replicatorg.util.Point5d;
  */
 public class ExtruderMaintenance2 extends BaseDialog {
 
-    private final MachineInterface machine;
-
-    private double temperatureGoal;
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
 
     public ExtruderMaintenance2() {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents();
         setFont();
-        evaluateInitialConditions();
         setTextLanguage();
-        enableDrag();
-        Base.THREAD_KEEP_ALIVE = false;
-        machine = Base.getMachineLoader().getMachineInterface();
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-
-        centerOnScreen();
-        //moveToPosition();
-         setIconImage(new ImageIcon(Base.getImage("images/icon.png", this)).getImage());
+        super.enableDrag();
+        super.centerOnScreen();
     }
 
     private void setFont() {
         lTitle.setFont(GraphicDesignComponents.getSSProRegular("14"));
         pText1.setFont(GraphicDesignComponents.getSSProBold("12"));
         pText2.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        pWarning.setFont(GraphicDesignComponents.getSSProRegular("14"));
         bBack.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
         bQuit.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     private void setTextLanguage() {
         lTitle.setText(Languager.getTagValue(1, "ExtruderMaintenance", "Title2"));
-        pWarning.setText(Languager.getTagValue(1, "ExtruderMaintenance", "HeatingMessage2"));
-        
+
         String text1 = "<html>"
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderMaintenance", "Info2a")
                 + "<br>"
                 + Languager.getTagValue(1, "ExtruderMaintenance", "Info2b")
                 + "</html>";
-        pText1.setText(splitString(text1));
-        
+        pText1.setText(text1);
+
         String warning = "<html><br><b>" + Languager.getTagValue(1, "ExtruderMaintenance", "Info_Warning2") + "</b></html>";
-        
-        pText2.setText(splitString(warning));
-        
+
+        pText2.setText(warning);
         bBack.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
         bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
         bQuit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
-    }
-   
-    private void enableMessageDisplay() {
-        jPanel3.setBackground(new Color(255, 205, 3));
-        pWarning.setForeground(new Color(0, 0, 0));
-    }
-
-    public void disableMessageDisplay() {
-        jPanel3.setBackground(new Color(248, 248, 248));
-        pWarning.setForeground(new Color(248, 248, 248));
-    }
-
-    public void showMessage() {
-        enableMessageDisplay();
-        pWarning.setText(Languager.getTagValue(1, "FeedbackLabel", "HeatingMessage"));
-    }
-
-    private void moveToPosition() {
-        Base.writeLog("Heating...", this.getClass());
-        Point5d heat = machine.getTablePoints("heat");
-
-        double acHigh = machine.getAcceleration("acHigh");
-        double acMedium = machine.getAcceleration("acMedium");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(temperatureGoal));
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        //turn off blower before heating
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M107"));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acMedium));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(heat));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-    }
-
-    private void finalizeHeat() {
-        Base.writeLog("Cooling down...", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
-    }
-
-    private void evaluateInitialConditions() {
-
-        temperatureGoal = 220;
-        Base.getMainWindow().setEnabled(false);
-        //disableMessageDisplay();
-
-        bBack.setVisible(true);
-        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        
-
-
     }
 
     private void doCancel() {
         dispose();
-        Base.THREAD_KEEP_ALIVE = true;
-        finalizeHeat();
-        Base.bringAllWindowsToFront();
-        Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
         Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-        Base.getMainWindow().setEnabled(true);
-
-        Point5d b = machine.getTablePoints("safe");
-        double acLow = machine.getAcceleration("acLow");
-        double acHigh = machine.getAcceleration("acHigh");
-        double spHigh = machine.getFeedrate("spHigh");
-
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(true));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acLow));
-        machine.runCommand(new replicatorg.drivers.commands.SetFeedrate(spHigh));
-        machine.runCommand(new replicatorg.drivers.commands.QueuePoint(b));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("M206 X" + acHigh));
-        machine.runCommand(new replicatorg.drivers.commands.DispatchCommand("G28", COM.BLOCK));
-        machine.runCommand(new replicatorg.drivers.commands.SetBusy(false));
-
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
-
-        machine.runCommand(new replicatorg.drivers.commands.SetTemperature(0));
+        driver.dispatchCommand("M704", COM.NO_RESPONSE);
     }
 
     @SuppressWarnings("unchecked")
@@ -214,8 +82,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
         pText2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        pWarning = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -226,8 +92,9 @@ public class ExtruderMaintenance2 extends BaseDialog {
         pButtons.setMinimumSize(new java.awt.Dimension(20, 38));
         pButtons.setPreferredSize(new java.awt.Dimension(567, 38));
 
-        bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bBack.setText("ANTERIOR");
+        bBack.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bBack.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bBack.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -241,8 +108,9 @@ public class ExtruderMaintenance2 extends BaseDialog {
             }
         });
 
-        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
         bNext.setText("SEGUINTE");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -278,7 +146,7 @@ public class ExtruderMaintenance2 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pButtonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bQuit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(bBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bNext)
@@ -343,28 +211,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
-        jPanel3.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel3.setPreferredSize(new java.awt.Dimension(169, 17));
-
-        pWarning.setText("Heating...Please wait.");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(pWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(pWarning)
-                .addGap(0, 0, 0))
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -387,8 +233,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
@@ -397,7 +241,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lTitle, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pExtruder)
@@ -437,43 +280,48 @@ public class ExtruderMaintenance2 extends BaseDialog {
     }//GEN-LAST:event_bQuitMouseExited
 
     private void bNextMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseEntered
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bNextMouseEntered
 
     private void bNextMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMouseExited
-            bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
     private void bBackMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseEntered
-            bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
+        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
     }//GEN-LAST:event_bBackMouseEntered
 
     private void bBackMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMouseExited
-            bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
+        bBack.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
 
     }//GEN-LAST:event_bBackMouseExited
 
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-
+        if (bNext.isEnabled()) {
             dispose();
             ExtruderMaintenance3 p = new ExtruderMaintenance3();
             p.setVisible(true);
+        }
     }//GEN-LAST:event_bNextMousePressed
 
     private void bBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBackMousePressed
-      
+        if (bBack.isEnabled()) {
             dispose();
             ExtruderMaintenance1 p = new ExtruderMaintenance1();
             p.setVisible(true);
-        
+        }
     }//GEN-LAST:event_bBackMousePressed
 
     private void bQuitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQuitMousePressed
-        doCancel();
+        if (bQuit.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bQuitMousePressed
 
     private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
-        doCancel();
+        if (jLabel15.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_jLabel15MousePressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bBack;
@@ -481,7 +329,6 @@ public class ExtruderMaintenance2 extends BaseDialog {
     private javax.swing.JLabel bQuit;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lTitle;
@@ -489,7 +336,5 @@ public class ExtruderMaintenance2 extends BaseDialog {
     private javax.swing.JLabel pExtruder;
     private javax.swing.JLabel pText1;
     private javax.swing.JLabel pText2;
-    private javax.swing.JLabel pWarning;
     // End of variables declaration//GEN-END:variables
 }
-

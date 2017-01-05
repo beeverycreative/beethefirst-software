@@ -1,8 +1,6 @@
 package replicatorg.app.ui.mainWindow;
 
 import java.awt.Color;
-import javax.swing.DefaultComboBoxModel;
-import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
@@ -22,16 +20,12 @@ import replicatorg.model.PrintBed;
 public class SceneDetailsPanel extends javax.swing.JPanel {
 
     private PrintBed bed;
-    private final String[] categories;
-    private final DefaultComboBoxModel comboModel;
     private static final String FORMAT = "%2d:%2d";
 
     public SceneDetailsPanel() {
         initComponents();
         setFont();
         setTextLanguage();
-        categories = fullFillCombo();
-        comboModel = new DefaultComboBoxModel(categories);
     }
 
     private void setFont() {
@@ -63,21 +57,6 @@ public class SceneDetailsPanel extends javax.swing.JPanel {
 
         jTextArea1.setText(Languager.getTagValue(1, "SceneDetails", "Scene_Notes_Placeholder"));
         jTextArea1.setForeground(Color.gray);
-    }
-
-    private String[] fullFillCombo() {
-        return Base.getMainWindow().getCategoriesManager().getCategories();
-    }
-
-    private int getModelCategoryIndex() {
-        String modelCategory = Base.getMainWindow().getBed().getCategory();
-        for (int i = 0; i < categories.length; i++) {
-            if (categories[i].equals(modelCategory)) {
-                return i;
-            }
-        }
-
-        return 0;
     }
 
     public void updateBed(PrintBed bed) {

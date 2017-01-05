@@ -3,3 +3,4 @@
 /beesoft-app/beesoft-usb/nbactions-platform-linux86_64.xml
 /beesoft-app/beesoft-usb/nbactions-platform-windows.xml
 *.pyc
+/beesoft-app/beesoft-usb/nbproject/

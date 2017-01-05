@@ -1,25 +1,17 @@
 package replicatorg.app;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import pt.beeverycreative.beesoft.filaments.PrintPreferences;
 import replicatorg.app.ui.MainWindow;
 import replicatorg.model.PrintBed;
@@ -41,99 +33,60 @@ public class Printer {
 
     private final MainWindow mainWindow;
     private final PrintBed bed;
-    private File gcode;
     private final PrintPreferences params;
-    private ArrayList<CuraGenerator.CuraEngineOption> options;
-    private File stl;
     private final CuraGenerator generator;
-    private final boolean printPrepared;
+    private File gcode;
+    private ArrayList<CuraGenerator.CuraEngineOption> options;
 
     public Printer(PrintPreferences printParams) {
         this.mainWindow = Base.getMainWindow();
         this.bed = mainWindow.getBed();
-        this.gcode = null;
         this.params = printParams;
         this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
-        generator = new CuraGenerator(params);
+        this.generator = new CuraGenerator(params, Base.GCODE2PRINTER_PATH);
+    }
 
-        if (params != null) {
-            printPrepared = generator.preparePrint();
-        } else {
-            printPrepared = false;
-        }
+    public Printer(PrintPreferences printParams, String targetGCodePath) {
+        this.mainWindow = Base.getMainWindow();
+        this.bed = mainWindow.getBed();
+        this.params = printParams;
+        this.options = new ArrayList<CuraGenerator.CuraEngineOption>();
+        this.generator = new CuraGenerator(params, targetGCodePath);
     }
 
     /**
-     * Generates GCode based on the print parameters choosen.
+     * Generates GCode based on the print parameters chosen.
      *
-     * @return estimated time for gcode generated or error code
+     * @return true if GCode generation was successful, false otherwise
      */
-    public String generateGCode() {
-
-        stl = generateSTL();
+    public boolean generateGCode() {
+        final File stl = generateSTL();
         Base.writeLog("STL generated with success", this.getClass());
 
-        options = parseParameters();
+        options = getRaftAndSupportParameters();
+
+        for (Object option : options) {
+            System.out.println(((CuraGenerator.CuraEngineOption) option).getArgument());
+        }
+
         appendStartAndEndGCode();
-        gcode = runToolpathGenerator(mainWindow, options);
+        gcode = generator.generateToolpath(stl, options);
+        stl.delete();
 
-        // Estimate print duration
-//        PrintEstimator.estimateTime(gcode);
-        if (gcode != null && gcode.canRead() && gcode.length() != 0) {
-            replaceLineInFile(gcode.getPath(), "M31 A0");
-            Base.writeLog("GCode generated", this.getClass());
-        } else {
-            if (!gcode.canRead() || gcode.length() == 0) {
-                // handles with mesh error
-                Base.getMainWindow().showFeedBackMessage("modelMeshError");
-                return "-2";
+        if (gcode != null) {
+            if (gcode.canRead() && gcode.length() != 0) {
+                //replaceLineInFile(gcode.getPath(), "M31 A0");
+                Base.writeLog("GCode generated", this.getClass());
             } else {
-                // handles with no permission error cancelling print and setting error message
-                return "-1";
+                Base.getMainWindow().showFeedBackMessage("modelMeshError");
+                return false;
             }
+        } else {
+            // handles with no permission error cancelling print and setting error message
+            return false;
         }
-        return PrintEstimator.getEstimatedTime();
-    }
 
-    private void replaceLineInFile(String pathString, String textToReplace) {
-
-        String m31String;
-        File fileToRead = new File(pathString);
-        File fileToWrite = new File(Base.GCODE2PRINTER_PATH);
-
-        m31String = "M31 A" + PrintEstimator.getEstimatedMinutes();
-        //+ " L" + getGCodeNLines();
-
-        Base.writeLog("Attempting to replace M31 A0 with " + m31String, this.getClass());
-        Base.writeLog("Original file: " + fileToRead.getPath(), this.getClass());
-        Base.writeLog("Modified file: " + fileToWrite.getPath(), this.getClass());
-
-        try {
-            Reader reader = new InputStreamReader(
-                    new FileInputStream(fileToRead), "UTF-8");
-            BufferedReader fin = new BufferedReader(reader);
-            Writer writer = new OutputStreamWriter(
-                    new FileOutputStream(fileToWrite, false), "UTF-8");
-            BufferedWriter fout = new BufferedWriter(writer);
-            String s;
-            while ((s = fin.readLine()) != null) {
-                String replaced = s.replaceAll(textToReplace, m31String);
-                fout.write(replaced);
-                fout.newLine();
-            }
-
-            // might seem weird but not doing this will prevent BEESOFT from
-            // deleting the unmodified file on Windows systems. probably a bug
-            // in the JVM (Java 6)?
-            fin.close();
-            fin = null;
-            fout.close();
-            fout = null;
-
-        } catch (IOException e) {
-            Base.writeLog("IOException when attempting to replace M31", this.getClass());
-            Logger.getLogger(Printer.class.getName()).log(Level.SEVERE, null, e);
-        }
+        return true;
     }
 
     private void appendStartAndEndGCode() {
@@ -268,18 +221,6 @@ public class Printer {
     }
 
     /**
-     * Run GCode generator.
-     *
-     * @param mw MainWindow object
-     * @param options CuraEngine options
-     * @return path for gcode file
-     */
-    private File runToolpathGenerator(MainWindow mw, ArrayList<CuraGenerator.CuraEngineOption> options) {
-
-        return generator.generateToolpath(stl, options);
-    }
-
-    /**
      * Get generated GCode.
      *
      * @return
@@ -323,7 +264,7 @@ public class Printer {
      *
      * @return list of CuraEngine options to be passed to CuraEngine bin.
      */
-    private ArrayList<CuraGenerator.CuraEngineOption> parseParameters() {
+    private ArrayList<CuraGenerator.CuraEngineOption> getRaftAndSupportParameters() {
 
         ArrayList<CuraGenerator.CuraEngineOption> opts;
         opts = new ArrayList<CuraGenerator.CuraEngineOption>();
@@ -338,20 +279,35 @@ public class Printer {
          * Raft and Support
          */
         if (params.isRaftPressed()) {
-            opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "1500"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "1000"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "700"));
-            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "200"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftAirGapLayer0", "220"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftLineSpacing", "3000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseLinewidth", "1000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceLayers", "2"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceLinewidth", "400"));
             opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLinewidth", "400"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "270"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftAirGap", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftMargin", "5000"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "300"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceLineSpacing", "400"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceLineSpacing", "800"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftBaseSpeed", "20"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceSpeed", "20"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftFanSpeed", "0"));
+            opts.add(new CuraGenerator.CuraEngineOption("raftSurfaceThickness", "270"));
         } else {
             opts.add(new CuraGenerator.CuraEngineOption("raftBaseThickness", "0"));
             opts.add(new CuraGenerator.CuraEngineOption("raftInterfaceThickness", "0"));
         }
 
         if (params.isSupportPressed()) {
-            opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "20"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportXYDistance", "700"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportExtruder", "-1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportType", "1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportZDistance", "150"));
             opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "1"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "60"));
+            opts.add(new CuraGenerator.CuraEngineOption("supportLineDistance", "2666"));
         } else {
             opts.add(new CuraGenerator.CuraEngineOption("supportAngle", "-1"));
             opts.add(new CuraGenerator.CuraEngineOption("supportEverywhere", "0"));
@@ -362,22 +318,16 @@ public class Printer {
         Tuple center = ptrBed.getBedCenter();
         opts.add(new CuraGenerator.CuraEngineOption("posx", center.x.toString()));
         opts.add(new CuraGenerator.CuraEngineOption("posY", center.y.toString()));
-
         opts.add(new CuraGenerator.CuraEngineOption("polygonL1Resolution", "125"));
         opts.add(new CuraGenerator.CuraEngineOption("polygonL2Resolution", "2500"));
-
         return opts;
     }
 
-    public double getFilamentTemperature() {
-        if (printPrepared) {
-            return Double.parseDouble(generator.getValue("print_temperature"));
-        } else {
-            return FilamentControler.getColorTemperature(
-                    Base.getMainWindow().getMachine().getDriver().getCoilText(),
-                    "medium",
-                    Base.getMainWindow().getMachine().getDriver().getConnectedDevice().filamentCode()
-            );
-        }
+    public int getFilamentTemperature() {
+        return Integer.parseInt(generator.getValue("print_temperature"));
+    }
+
+    public boolean isReadyToGenerateGCode() {
+        return generator.isReadyToGenerateGCode();
     }
 }

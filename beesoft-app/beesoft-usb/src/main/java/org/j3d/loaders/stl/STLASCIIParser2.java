@@ -164,7 +164,7 @@ public class STLASCIIParser2 extends STLParser {
 			tt = t.nextToken();
 		}
 		if (nameBuf != null) os.name = nameBuf.toString();
-		Base.logger.info("Got name "+os.name);
+		Base.LOGGER.info("Got name "+os.name);
 		// Scan all facets
 		while (tt == StreamTokenizer.TT_WORD && "facet".equals(t.sval)) {
 			tt = t.nextToken();
@@ -185,7 +185,7 @@ public class STLASCIIParser2 extends STLParser {
 		}
 		// Pushback solid
 		if (tt == StreamTokenizer.TT_WORD) { t.pushBack(); }
-		Base.logger.info("Parsed object name["+os.name+"] facets "+Integer.toString(os.facets));
+		Base.LOGGER.info("Parsed object name["+os.name+"] facets "+Integer.toString(os.facets));
 		return os;
 	}
 

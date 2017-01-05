@@ -50,14 +50,14 @@ public abstract class ToolpathGenerator {
 		
 	}
 	public static String displayName = "Toolpath Generator";
-	
+
 	protected ArrayList<Model> model;
 	protected LinkedList<GeneratorListener> listeners = new LinkedList<GeneratorListener>();
 	
 	public void addListener(GeneratorListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void setModels(ArrayList<Model> models) {
 		this.model = models;
 	}
@@ -71,17 +71,17 @@ public abstract class ToolpathGenerator {
 		assert model != null;
 		return true;
 	}
-	
+
 	/**
 	 * Returns true if configuration successful; false if aborted.
-	 */	
+	 */
 	public boolean visualConfigure(Frame parent, int x, int y, String name) {
 		//TODO: Why does this exist? Test/refactor
 		assert parent != null;
 		assert model != null;
 		return true;
 	}
-	
+
 	/**
 	 * asserts model exists, Returns true.
 	 */
@@ -91,15 +91,15 @@ public abstract class ToolpathGenerator {
 		assert model != null;
 		return true;
 	}
-	
+
 	public void editProfiles(Frame parent) {
 		assert parent != null;
 	}
-	
+
 	public abstract File generateToolpath(File stlPath, List<CuraGenerator.CuraEngineOption> prefs);
 	//should return a cached toolpath
 	public abstract File getGeneratedToolpath();
-        
+
         public abstract void destroyProcess();
 	
 	public void emitUpdate(String message) {
@@ -107,10 +107,10 @@ public abstract class ToolpathGenerator {
 			listener.updateGenerator(new GeneratorEvent(this, message, null));
 		}
 	}
-	
+
 	public void emitCompletion(GeneratorListener.Completion completion) {
 		for (GeneratorListener listener : listeners) {
-			Base.logger.finest("emitCompletion! sent to " + listener.toString());
+			Base.LOGGER.finest("emitCompletion! sent to " + listener.toString());
 			listener.generationComplete(new GeneratorEvent(this, null, completion));
 		}
 	}

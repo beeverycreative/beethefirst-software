@@ -27,6 +27,7 @@ import java.io.File;
 
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 
 import replicatorg.app.exceptions.BuildFailureException;
 import replicatorg.app.ui.mainWindow.ButtonsPanel;
@@ -69,6 +70,8 @@ public interface Driver {
      * @return 
      */
     public String dispatchCommand(String command);
+    
+    public String dispatchCommand(String command, int timeout);
 
     /**
      * Dispatch a command to the Driver agent.
@@ -78,24 +81,17 @@ public interface Driver {
      * answer)
      * @return answer for the command sent
      */
-    public String dispatchCommand(String command, Enum comtype);
+    public String dispatchCommand(String command, COM comtype);
 
     /**
-     * Dispatch a command to the Driver agent in byte[] instead of string.
+     * Transfers a given GCode file to the printer's SDCard.
      *
-     * @param next message byte[]
-     * @return number of bytes written into endpoint buffer
+     * @param gcodeFile
+     * @param header
+     * @param panel
+     * @return
      */
-    public int sendCommandBytes(byte[] next);
-
-    /**
-     * Transfer a GCode file content.
-     *
-     * @param gcode GCode file
-     * @param psAutonomous Autonomous agent that handles print with autonomy
-     * @return error or success message
-     */
-    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous);
+    public boolean transferGCode(File gcodeFile, String header, PrintSplashAutonomous panel);
 
     /**
      * Start print via Autonomous mode.
@@ -151,18 +147,15 @@ public interface Driver {
      */
     public void setCoilText(String coilText);
 
+    public void setInstalledNozzleSize(int microns);
+    
     /**
      * Return the BEECODE/COILCODE/Filament Code in the printer. coilCode is
      * AXXX printer stores return AXXX.
      */
     public void updateCoilText();
-
-    /**
-     * Read data from the read endpoint.
-     *
-     * @return data available at the endpoint
-     */
-    public String readResponse();
+    
+    public void updateNozzleType();
 
     /**
      * Get Total Extruded Value since filament change.
@@ -219,19 +212,6 @@ public interface Driver {
      * <li> false, if not.
      */
     public boolean isBootloader();
-
-    /**
-     * Holds BEESOFT for 1 nano.
-     */
-    public void hiccup();
-
-    /**
-     * Holds BEESOFT for a period of mili and nano.
-     *
-     * @param mili miliseconds for application to be held
-     * @param nano nanoseconds for application to be held
-     */
-    public void hiccup(int mili, int nano);
 
     /**
      * Check that the communication line is still up, the machine is still
@@ -418,10 +398,9 @@ public interface Driver {
      * Sets machine temperature.
      *
      * @param temperature Goal temperature
-     * @throws RetryException
      */
-    public void setTemperature(double temperature) throws RetryException;
-    public void setTemperatureBlocking(double temperature) throws RetryException;
+    public void setTemperature(int temperature);
+    public void setTemperatureBlocking(int temperature);
 
     /**
      * Read temperature from machine and updates internal variable.
@@ -566,7 +545,8 @@ public interface Driver {
     
     public void resetBootloaderAndFirmwareVersion();
     public boolean getMachinePaused();
+    public boolean isAlive();
     public void setMachinePaused(boolean machinePaused);
-    public void closeFeedback();
     public int getQueueSize();
+    public String getLastStatusMessage();
 }

@@ -24,7 +24,6 @@
 package replicatorg.drivers;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,10 +31,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.vecmath.Point3d;
+import org.scijava.vecmath.Point3d;
 
 import org.w3c.dom.Node;
 import pt.beeverycreative.beesoft.drivers.usb.PrinterInfo;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
 
 import replicatorg.app.Base;
 import replicatorg.app.exceptions.BuildFailureException;
@@ -50,7 +50,7 @@ public abstract class DriverBaseImplementation implements Driver {
 //	private GCodeParser parser;
 
     // models for our machine
-    protected MachineModel machine;
+    protected MachineModel machine = new MachineModel();
     // Driver name
     protected String driverName;
     // our firmware version info
@@ -87,20 +87,27 @@ public abstract class DriverBaseImplementation implements Driver {
      * Creates the driver object.
      */
     public DriverBaseImplementation() {
-        errorList = new ConcurrentLinkedQueue<DriverError>();
+        /*
+         errorList = new ConcurrentLinkedQueue<DriverError>();
 
-        // initialize our offsets
-        offsets = new Point3d[7];
-        for (int i = 0; i < 7; i++) {
-            offsets[i] = new Point3d();  // Constructs and initializes a Point3d to (0,0,0)
-        }
+         // initialize our offsets
+         offsets = new Point3d[7];
+         for (int i = 0; i < 7; i++) {
+         offsets[i] = new Point3d();  // Constructs and initializes a Point3d to (0,0,0)
+         }
+         */
         // TODO: do this properly.
-        machine = new MachineModel();
+        //machine = new MachineModel();
         // This must be initialize anyway so, it doesnt matter what name does it have. 
         // The truth is that the name come from the xml
-        driverName = "virtualprinter";
+        //driverName = "virtualprinter";
     }
-    
+
+    @Override
+    public boolean isAlive() {
+        return false;
+    }
+
     @Override
     public int getQueueSize() {
         return -1;
@@ -126,24 +133,23 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void executeGCodeLine(String code) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
     @Override
     public String dispatchCommand(String code) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
         return "";
     }
 
     @Override
-    public int sendCommandBytes(byte[] next) {
-        Base.logger.log(Level.SEVERE, "Ignoring sending bytes{0}", Arrays.toString(next));
-        return -1;
+    public String dispatchCommand(String code, int timeout) {
+        return "";
     }
 
     @Override
-    public String dispatchCommand(String code, Enum comtype) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
+    public String dispatchCommand(String code, COM comtype) {
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}:{1}", new Object[]{code, comtype});
         return "";
     }
 
@@ -186,13 +192,13 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     public void read(String code) {
-        Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
+        //Base.logger.log(Level.SEVERE, "Ignoring executeGCode command: {0}", code);
     }
 
     @Override
     public void dispose() {
-        if (Base.logger.isLoggable(Level.FINE)) {
-            Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
+        if (Base.LOGGER.isLoggable(Level.FINE)) {
+            //Base.logger.log(Level.FINE, "Disposing of driver {0}", getDriverName());
         }
 //		parser = null;
     }
@@ -224,23 +230,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public void hiccup() {
-    }
-
-    @Override
-    public void hiccup(int mili, int nano) {
-    }
-
-    @Override
     public void assessState() {
-    }
-
-    protected void setError(DriverError newError) {
-        errorList.add(newError);
-    }
-
-    protected void setError(String e) {
-        setError(new DriverError(e, true));
     }
 
     @Override
@@ -350,17 +340,17 @@ public abstract class DriverBaseImplementation implements Driver {
             }
         }
     }
-    
+
     @Override
     public Point5d getCurrentPosition2() {
-        synchronized(currentPosition) {
-            if(currentPosition.get() == null) {
+        synchronized (currentPosition) {
+            if (currentPosition.get() == null) {
                 try {
                     currentPosition.wait(5000);
                 } catch (InterruptedException ex) {
                 }
             }
-            
+
             return currentPosition.get();
         }
     }
@@ -369,10 +359,10 @@ public abstract class DriverBaseImplementation implements Driver {
     public Point5d getPosition() {
         return getCurrentPosition(false);
     }
-    
+
     @Override
     public void getPosition2() {
-        
+
     }
 
     @Override
@@ -423,12 +413,12 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public void setTemperature(double temperature) throws RetryException {
+    public void setTemperature(int temperature) {
         machine.currentTool().setTargetTemperature(temperature);
     }
 
     @Override
-    public void setTemperatureBlocking(double temperature) throws RetryException {
+    public void setTemperatureBlocking(int temperature) {
         machine.currentTool().setTargetTemperature(temperature);
     }
 
@@ -442,11 +432,6 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void readZValue() {
-    }
-
-    @Override
-    public String readResponse() {
-        return "";
     }
 
     @Override
@@ -499,7 +484,6 @@ public abstract class DriverBaseImplementation implements Driver {
     @Override
     public boolean isBusy() {
         return machine.getMachineBusy();
-
     }
 
     @Override
@@ -523,12 +507,22 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
+    public void setInstalledNozzleSize(int microns) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
     public String getCoilText() {
         return machine.getCoilText();
     }
 
     @Override
     public void updateCoilText() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateNozzleType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -553,7 +547,7 @@ public abstract class DriverBaseImplementation implements Driver {
     }
 
     @Override
-    public String gcodeTransfer(File gcode, PrintSplashAutonomous psAutonomous) {
+    public boolean transferGCode(File gcode, String header, PrintSplashAutonomous panel) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -604,11 +598,11 @@ public abstract class DriverBaseImplementation implements Driver {
 
     @Override
     public void resetBootloaderAndFirmwareVersion() {
-
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     @Override
-    public void closeFeedback() {
-        
+    public String getLastStatusMessage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

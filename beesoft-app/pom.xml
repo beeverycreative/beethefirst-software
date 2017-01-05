@@ -54,17 +54,8 @@
     </build>
     <repositories>
         <repository>
-            <id>ailis</id>
-            <name>Ailis Maven Releases</name>
-            <url>http://nexus.ailis.de/content/groups/public/</url>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
-        <repository>
-            <id>ooo-maven-repo</id>
-            <url>http://ooo-maven.googlecode.com/hg/repository</url>
-        </repository>
-        <repository>
-            <id>mednet-repo</id>
-            <url>http://server.mednet.lt/maven2</url>
-        </repository> 
     </repositories>
 </project>

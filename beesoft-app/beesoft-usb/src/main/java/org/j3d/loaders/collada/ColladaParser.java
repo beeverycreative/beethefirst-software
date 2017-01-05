@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.TriangleArray;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
+import org.scijava.java3d.GeometryArray;
+import org.scijava.java3d.TriangleArray;
+import org.scijava.vecmath.Point3d;
+import org.scijava.vecmath.Vector3f;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -191,11 +191,11 @@ public class ColladaParser {
 			}
 			return true;
 		} catch (ParserConfigurationException e) {
-			Base.logger.log(Level.SEVERE,"Could not configure parser",e);
+			//Base.logger.log(Level.SEVERE,"Could not configure parser",e);
 		} catch (SAXException e) {
-			Base.logger.log(Level.INFO,"Could not configure parser",e);
+			//Base.logger.log(Level.INFO,"Could not configure parser",e);
 		} catch (IOException e) {
-			Base.logger.log(Level.SEVERE,"IO Error during Collada document read",e);
+			//Base.logger.log(Level.SEVERE,"IO Error during Collada document read",e);
 		}
 		return false;
 	}

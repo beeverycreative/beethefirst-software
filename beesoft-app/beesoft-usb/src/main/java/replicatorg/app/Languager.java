@@ -29,11 +29,35 @@ import replicatorg.app.tools.XML;
  */
 public class Languager {
 
-    private static final String languager_file = Base.getApplicationDirectory() + "/languages/".concat(Base.language.toString()).concat(".xml");
+    private static final String languager_file = getLanguageFilePath();
     private static final String printsetup_file = Base.getApplicationDirectory() + "/machines/printSetup.xml";
     private static final String colors_file = Base.getApplicationDirectory() + "/machines/colorsGCode.xml";
     private static final String startend_file = Base.getApplicationDirectory() + "/machines/startEndCode.xml";
 
+
+    /**
+     * Gets the language file selected in config.properties file. If an appropriate file doesn't exist, return the
+     * path to the english file.
+     * 
+     * @return absolute path to the language file
+     */
+    private static String getLanguageFilePath() {
+        String languageFilesDir, selectedLanguage, finalPath; 
+        File languageFile;
+        
+        languageFilesDir = Base.getApplicationDirectory() + "/languages/";
+        selectedLanguage = ProperDefault.get("language").toLowerCase();
+        finalPath = languageFilesDir + selectedLanguage + ".xml";
+        languageFile = new File(finalPath);
+        
+        if(languageFile.exists() == true) {
+            return finalPath;
+        } else {
+            return languageFilesDir + "en.xml";
+        }
+     
+    }
+    
     /**
      * Gets the file based on a code key
      *
@@ -72,62 +96,6 @@ public class Languager {
         }
         return " ";
     }    
-
-    /**
-     * Loads XML File Stores in DataSets also.
-     */
-    public static void printXML() {
-        Document dom;
-        // Make an  instance of the DocumentBuilderFactory
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            // use the factory to take an instance of the document builder
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            // parse using the builder to get the DOM mapping of the    
-            // XML file
-
-            File f = new File(Base.getApplicationDirectory() + "/languages/".concat(Base.language.toString()).concat(".xml"));
-            if (f.exists() && f.isFile() && f.canRead()) {
-
-                dom = db.parse(f);
-                Element doc = dom.getDocumentElement();
-                Node rootNode = doc.cloneNode(true);
-                //System.out.println(doc.getTagName());
-
-                if (XML.hasChildNode(rootNode, "tags")) {
-                    Node startnode = XML.getChildNodeByName(rootNode, "tags");
-                    org.w3c.dom.Element element = (org.w3c.dom.Element) startnode;
-                    NodeList nodeList = element.getChildNodes(); // NodeList
-
-                    /**
-                     * Print section
-                     */
-                    for (int i = 1; i < nodeList.getLength(); i++) {
-                        if (!nodeList.item(i).getNodeName().equals("#text") && !nodeList.item(i).hasChildNodes()) {
-                            System.out.print(nodeList.item(i).getNodeName() + " Value: " + nodeList.item(i).getAttributes().getNamedItem("value") + "\n");
-                        } else if (!nodeList.item(i).getNodeName().equals("#text") && nodeList.item(i).hasChildNodes()) //SubNode List
-                        {
-                            for (int j = 1; j < nodeList.item(i).getChildNodes().getLength(); j += 2) //Each NodeSubList
-                            {
-                                System.out.println(nodeList.item(i).getNodeName());
-                                System.out.println("\t" + nodeList.item(i).getChildNodes().item(j).getNodeName() + " " + nodeList.item(i).getChildNodes().item(j).getAttributes().getNamedItem("value").getNodeValue());
-                            }
-                        }
-                    }
-                }
-
-            } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "languages/".concat(Base.language.toString()).concat(".xml"));
-            }
-        } catch (ParserConfigurationException pce) {
-            System.out.println(pce.getMessage());
-        } catch (SAXException se) {
-            System.out.println(se.getMessage());
-        } catch (IOException ioe) {
-            System.err.println(ioe.getMessage());
-        }
-
-    }
 
     /**
      * Parses tag value from XML and removes string chars only.
@@ -209,9 +177,7 @@ public class Languager {
                     }
                 }
 
-            } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language.toString()).concat(".xml"));
-            }
+            } 
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
         } catch (SAXException se) {
@@ -293,9 +259,7 @@ public class Languager {
                     }
                 }
 
-            } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "machines/".concat(Base.language.toString()).concat(".xml"));
-            }
+            } 
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());
         } catch (SAXException se) {
@@ -360,7 +324,7 @@ public class Languager {
                 }
 
             } else {
-                Base.logger.log(Level.INFO, "Permission denied over {0}", "file with root tag" + BASE_TAG);
+                //Base.logger.log(Level.INFO, "Permission denied over {0}", "file with root tag" + BASE_TAG);
             }
         } catch (ParserConfigurationException pce) {
             System.out.println(pce.getMessage());

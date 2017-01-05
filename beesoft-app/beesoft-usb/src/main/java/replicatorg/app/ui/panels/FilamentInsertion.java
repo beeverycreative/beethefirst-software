@@ -2,17 +2,18 @@ package replicatorg.app.ui.panels;
 
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.EventQueue;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+import pt.beeverycreative.beesoft.drivers.usb.UsbPassthroughDriver.COM;
+import pt.beeverycreative.beesoft.filaments.Filament;
+import pt.beeverycreative.beesoft.filaments.FilamentControler;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
-import replicatorg.app.ProperDefault;
 import replicatorg.app.ui.GraphicDesignComponents;
-import replicatorg.machine.MachineInterface;
+import replicatorg.drivers.Driver;
 
 /**
  * Copyright (c) 2013 BEEVC - Electronic Systems This file is part of BEESOFT
@@ -27,124 +28,65 @@ import replicatorg.machine.MachineInterface;
  */
 public class FilamentInsertion extends BaseDialog {
 
-    private final MachineInterface machine;
-    private boolean bLoadMouseClickedReady = true;
-    private boolean bUnloadMouseClickedReady = true;
-    private final boolean jLabel17GoBack = false;
-    private final DisposeFeedbackThread disposeThread;
-    private boolean jLabel18MouseClickedReady;
-    private boolean unloadPressed;
+    private final Driver driver = Base.getMachineLoader().getMachineInterface().getDriver();
+    private final BusyFeedbackThread disposeThread = new BusyFeedbackThread();
+    private final Filament selectedFilament;
+    private final ImageIcon extLoadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/load_filament_external.gif"));
+    private final ImageIcon extUnloadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_external.gif"));
+    private final ImageIcon intLoadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/load_filament_internal.gif"));
+    private final ImageIcon intUnloadImage = new ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_internal.gif"));
 
-    public FilamentInsertion() {
+    public FilamentInsertion(Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
-        Base.writeLog("Ongoing filament change operation", this.getClass());
+        Base.writeLog("Last step of filament change operation", this.getClass());
         initComponents();
-        setFont();
         setTextLanguage();
-        centerOnScreen();
-        Base.getMainWindow().setEnabled(false);
-        machine = Base.getMachineLoader().getMachineInterface();
+        super.centerOnScreen();
         moveToPosition();
-        enableDrag();
+        this.selectedFilament = selectedFilament;
 
-        disposeThread = new DisposeFeedbackThread(this, machine);
-        disposeThread.start();
-        Base.systemThreads.add(disposeThread);
-        bPrevious.setVisible(false);
+        if (this.selectedFilament != null) {
+            if (this.selectedFilament.getMaterial() != Filament.Material.PLA) {
+                jPanel6.remove(jInternalImg);
+                jPanel6.remove(filler1);
+                jPanel6.setPreferredSize(new Dimension(560, 221));
+            }
+        }
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                disposeThread.kill();
+            }
+        });
     }
 
     @Override
     public void resetFeedbackComponents() {
-        this.setEnabled(true);
-        if (!bLoadMouseClickedReady) {
-            bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-            bLoadMouseClickedReady = true;
-            /*
-             if (unloadPressed == false) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             } else {
-             if (Base.printPaused == true) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             } else {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             }
-             }
-             */
-            jLabel18MouseClickedReady = true;
-        }
-
-        if (!bUnloadMouseClickedReady) {
-            jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info_Title2"));
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unloadImage.png")));
-            jLabel4.setText(splitString(Languager.getTagValue(1, "Print", "Print_Unloaded1").concat(" ").concat(Languager.getTagValue(1, "Print", "Print_Unloaded2")).concat(Languager.getTagValue(1, "Print", "Print_Unloaded3"))));
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "retirar_filamento-04.png")));
-            bUnloadMouseClickedReady = true;
-            /*
-             if (unloadPressed == false) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             } else {
-             if (Base.printPaused == true) {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-             } else {
-             bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-             }
-             }
-             */
-            jLabel18MouseClickedReady = true;
-//            jLabel5.setVisible(false);
-        }
-
-        if (!jLabel18MouseClickedReady) {
-            if (unloadPressed == false) {
-                bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-            } else {
-                if (Base.printPaused == true) {
-                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                    bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-                } else {
-                    bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-                }
-            }
-            jLabel18MouseClickedReady = true;
-        }
-
+        bLoad.setEnabled(true);
+        bUnload.setEnabled(true);
+        bNext.setEnabled(true);
         disableMessageDisplay();
-    }
-
-    private void setFont() {
-        jLabel1.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        jLabel3.setFont(GraphicDesignComponents.getSSProBold("12"));
-        jLabel4.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bLoad.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bUnload.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        jLabel7.setFont(GraphicDesignComponents.getSSProRegular("14"));
-        bPrevious.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bNext.setFont(GraphicDesignComponents.getSSProRegular("12"));
-        bExit.setFont(GraphicDesignComponents.getSSProRegular("12"));
-
     }
 
     private void setTextLanguage() {
         jLabel1.setText(Languager.getTagValue(1, "FilamentWizard", "Title2"));
         jLabel3.setText(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info_Title"));
-        jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
+        jLabel4.setText("<html><br>" + Languager.getTagValue(1, "FilamentWizard", "Exchange_Info") + "</html>");
         bLoad.setText(Languager.getTagValue(1, "FilamentWizard", "LoadButton"));
         bUnload.setText(Languager.getTagValue(1, "FilamentWizard", "UnloadButton"));
         jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        bPrevious.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line4"));
-        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
+        jLabel7.setHorizontalAlignment(SwingConstants.CENTER);
+        bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
         bExit.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line3"));
-
     }
 
     @Override
     public void showMessage() {
+        bLoad.setEnabled(false);
+        bUnload.setEnabled(false);
+        bNext.setEnabled(false);
         enableMessageDisplay();
-        jLabel7.setText(Languager.getTagValue(1, "FeedbackLabel", "MovingMessage"));
-        this.setEnabled(false);
     }
 
     private void enableMessageDisplay() {
@@ -159,68 +101,16 @@ public class FilamentInsertion extends BaseDialog {
 
     private void moveToPosition() {
         Base.writeLog("Moving to load/unload position", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeStep());
-    }
-
-    private void finalizeHeat() {
-        Base.writeLog("Moving table to home position", this.getClass());
-        machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
-    }
-
-    private String splitString(String s) {
-        int width = 436;
-        return buildString(s.split("\\."), width);
-    }
-
-    private String buildString(String[] parts, int width) {
-        String text = "";
-        String ihtml = "<html>";
-        String ehtml = "</html>";
-        String br = "<br>";
-
-        for (int i = 0; i < parts.length; i++) {
-            if (i + 1 < parts.length) {
-                if (getStringPixelsWidth(parts[i]) + getStringPixelsWidth(parts[i + 1]) < width) {
-                    text = text.concat(parts[i]).concat(".").concat(parts[i + 1]).concat(".").concat(br);
-                    i++;
-                } else {
-                    text = text.concat(parts[i]).concat(".").concat(br);
-                }
-            } else {
-                text = text.concat(parts[i]).concat(".");
-            }
-        }
-
-        return ihtml.concat(text).concat(ehtml);
-    }
-
-    private int getStringPixelsWidth(String s) {
-        Graphics g = getGraphics();
-        FontMetrics fm = g.getFontMetrics(GraphicDesignComponents.getSSProRegular("10"));
-        return fm.stringWidth(s);
+        driver.setBusy(true);
+        driver.dispatchCommand("M703", COM.NO_RESPONSE);
+        disposeThread.start();
     }
 
     private void doCancel() {
-
-        if (Base.printPaused == false) {
-            Base.writeLog("Filament load/unload canceled", this.getClass());
-            dispose();
-            Base.getMainWindow().handleStop();
-            Base.bringAllWindowsToFront();
-            Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-            disposeThread.stop();
-            Base.enableAllOpenWindows();
-            finalizeHeat();
-        } else {
-            Base.writeLog("Filament heating canceled", this.getClass());
-            finalizeHeat();
-            dispose();
-        }
-
-        if (ProperDefault.get("maintenance").equals("1")) {
-            ProperDefault.remove("maintenance");
-        }
+        Base.writeLog("Filament load/unload canceled", this.getClass());
+        Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
+        driver.dispatchCommand("M704", COM.NO_RESPONSE);
+        dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -231,138 +121,47 @@ public class FilamentInsertion extends BaseDialog {
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        bLoad = new javax.swing.JLabel();
-        bUnload = new javax.swing.JLabel();
-        jSeparator2 = new javax.swing.JSeparator();
-        jPanel4 = new javax.swing.JPanel();
-        bX = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        bPrevious = new javax.swing.JLabel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
+        bX = new javax.swing.JLabel();
+        bLoad = new javax.swing.JLabel();
+        bUnload = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jPanel6 = new javax.swing.JPanel();
+        jExternalImg = new javax.swing.JLabel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(20, 0), new java.awt.Dimension(20, 0), new java.awt.Dimension(20, 0));
+        jInternalImg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(567, 490));
+        setMaximumSize(null);
+        setMinimumSize(null);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(571, 490));
-        setResizable(false);
+        setPreferredSize(null);
+        setSize(new java.awt.Dimension(0, 0));
 
         jPanel1.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel1.setPreferredSize(new java.awt.Dimension(541, 570));
 
-        jLabel1.setText("INSERIR FILAMENTO");
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
+        jLabel1.setText("Filament Load/Unload");
         jLabel1.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
-        jLabel3.setText("Como descarregar ou carregar o filamento");
+        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        jLabel3.setText("Make sure the filament is correctly unloaded before proceeding.");
 
-        jLabel4.setText("Suspendisse potenti. ");
+        jLabel4.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        jLabel4.setText("<html> To unload the filament, push the Unload button and pull the filament steadily.  To load the filament insert it in the inlet hole and push it until it reaches the end. Then click on the Load button, and push the filament a little more until the printer pulls it and extrudes a little filament.  </html>");
         jLabel4.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-        jPanel3.setBackground(new java.awt.Color(248, 248, 248));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/infografia-01.png"))); // NOI18N
-        jLabel2.setPreferredSize(new java.awt.Dimension(532, 233));
-
-        bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
-        bLoad.setText("Load");
-        bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bLoadMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bLoadMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bLoadMousePressed(evt);
-            }
-        });
-
-        bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
-        bUnload.setText("Unload");
-        bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bUnload.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bUnloadMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bUnloadMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bUnloadMousePressed(evt);
-            }
-        });
-
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(bLoad)
-                    .addComponent(bUnload))
-                .addContainerGap())
-            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(125, 125, 125)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bLoad)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bUnload)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
-        );
-
-        jPanel4.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
-        jPanel4.setRequestFocusEnabled(false);
-
-        bX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
-        bX.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bXMousePressed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(bX, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(14, 14, 14))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(bX, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jLabel4.setPreferredSize(new java.awt.Dimension(608, 96));
 
         jPanel5.setBackground(new java.awt.Color(255, 203, 5));
         jPanel5.setPreferredSize(new java.awt.Dimension(169, 17));
 
+        jLabel7.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         jLabel7.setText("Moving...Please wait.");
+        jLabel7.setPreferredSize(new java.awt.Dimension(137, 18));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -370,97 +169,52 @@ public class FilamentInsertion extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jLabel7))
-        );
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                .addGap(6, 6, 6))
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
-        jPanel2.setMinimumSize(new java.awt.Dimension(20, 38));
-        jPanel2.setPreferredSize(new java.awt.Dimension(567, 38));
+        jPanel2.setMaximumSize(new java.awt.Dimension(648, 26));
+        jPanel2.setMinimumSize(new java.awt.Dimension(648, 26));
+        jPanel2.setPreferredSize(new java.awt.Dimension(641, 26));
 
-        bPrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bPrevious.setText("ANTERIOR");
-        bPrevious.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bPrevious.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bPreviousMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bPreviousMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bPreviousMousePressed(evt);
-            }
-        });
-
-        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
-        bNext.setText("SEGUINTE");
+        bNext.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
+        bNext.setText("Ok");
+        bNext.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_21.png"))); // NOI18N
+        bNext.setEnabled(false);
         bNext.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bNext.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bNextMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bNextMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bNextMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bNextMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bNextMouseEntered(evt);
             }
         });
 
+        bExit.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_21.png"))); // NOI18N
-        bExit.setText("SAIR");
+        bExit.setText("Cancel");
         bExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bExit.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bExitMouseEntered(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bExitMousePressed(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 bExitMouseExited(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bExitMousePressed(evt);
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bExitMouseEntered(evt);
             }
         });
 
@@ -471,9 +225,7 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, Short.MAX_VALUE)
-                .addComponent(bPrevious)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -482,51 +234,153 @@ public class FilamentInsertion extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(2, 2, 2)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bPrevious)
                     .addComponent(bNext)
                     .addComponent(bExit))
                 .addGap(20, 20, 20))
+        );
+
+        bX.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_pressed_9.png"))); // NOI18N
+        bX.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bXMousePressed(evt);
+            }
+        });
+
+        bLoad.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
+        bLoad.setText("Load");
+        bLoad.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3.png"))); // NOI18N
+        bLoad.setEnabled(false);
+        bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bLoadMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bLoadMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bLoadMouseEntered(evt);
+            }
+        });
+
+        bUnload.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
+        bUnload.setText("Unload");
+        bUnload.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3_inverted.png"))); // NOI18N
+        bUnload.setEnabled(false);
+        bUnload.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bUnload.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                bUnloadMousePressed(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bUnloadMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bUnloadMouseEntered(evt);
+            }
+        });
+
+        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator2.setPreferredSize(null);
+
+        jPanel6.setBackground(new java.awt.Color(255, 0, 0));
+        jPanel6.setOpaque(false);
+        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
+
+        jExternalImg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jExternalImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_external.gif"))); // NOI18N
+        jExternalImg.setMaximumSize(new java.awt.Dimension(270, 221));
+        jExternalImg.setMinimumSize(new java.awt.Dimension(270, 221));
+        jExternalImg.setPreferredSize(new java.awt.Dimension(270, 221));
+        jPanel6.add(jExternalImg);
+        jPanel6.add(filler1);
+
+        jInternalImg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jInternalImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_internal.gif"))); // NOI18N
+        jInternalImg.setMaximumSize(new java.awt.Dimension(270, 221));
+        jInternalImg.setMinimumSize(new java.awt.Dimension(270, 221));
+        jInternalImg.setPreferredSize(new java.awt.Dimension(270, 221));
+        jPanel6.add(jInternalImg);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(93, 93, 93)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bX)
+                        .addGap(21, 21, 21))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(bUnload)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel3)
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(8, 8, 8))
+                                .addComponent(bLoad)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26))))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(bX, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bLoad)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bUnload)
+                .addGap(25, 25, 25)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void bLoadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMouseEntered
-        if (bLoadMouseClickedReady) {
-            bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3.png")));
-        }
-    }//GEN-LAST:event_bLoadMouseEntered
-
-    private void bLoadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMouseExited
-        if (bLoadMouseClickedReady) {
-            bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-        }
-    }//GEN-LAST:event_bLoadMouseExited
-
-    private void bUnloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseEntered
-        if (bUnloadMouseClickedReady) {
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_inverted.png")));
-        }    }//GEN-LAST:event_bUnloadMouseEntered
-
-    private void bUnloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseExited
-        if (bUnloadMouseClickedReady) {
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
-        }    }//GEN-LAST:event_bUnloadMouseExited
 
     private void bExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMouseEntered
         bExit.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
@@ -544,191 +398,89 @@ public class FilamentInsertion extends BaseDialog {
         bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
     }//GEN-LAST:event_bNextMouseExited
 
-    private void bPreviousMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseEntered
-        bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_21.png")));
-    }//GEN-LAST:event_bPreviousMouseEntered
-
-    private void bPreviousMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMouseExited
-        bPrevious.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-    }//GEN-LAST:event_bPreviousMouseExited
-
     private void bNextMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bNextMousePressed
-        if (!machine.getDriver().isBusy()) {
+        if (bNext.isEnabled()) {
+            Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
 
-            if (unloadPressed == false) {
-                Base.writeLog("Next button pressed, transitioning to next panel", this.getClass());
-                disposeThread.stop();
-                FilamentCodeInsertion p = new FilamentCodeInsertion(this);
-                dispose();
-                p.setVisible(true);
-            } else {
-                Base.writeLog(
-                        "Next button pressed but no filament was loaded. "
-                        + "Moving table to home position",
-                        this.getClass()
-                );
-
-                disposeThread.stop();
-                dispose();
-                Base.bringAllWindowsToFront();
-                finalizeHeat();
-                Base.getMainWindow().getButtons().updatePressedStateButton("quick_guide");
-                Base.getMainWindow().getButtons().updatePressedStateButton("maintenance");
-                Base.enableAllOpenWindows();
-
-                machine.runCommand(new replicatorg.drivers.commands.FilamentChangeEnd());
+            if (selectedFilament != null) {
+                driver.setCoilText(selectedFilament.getName());
             }
+
+            driver.dispatchCommand("G28", COM.NO_RESPONSE);
+            dispose();
         }
     }//GEN-LAST:event_bNextMousePressed
 
-    private void bPreviousMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bPreviousMousePressed
-        if (jLabel17GoBack) {
-            Base.writeLog("Previous button pressed", this.getClass());
-            dispose();
-            FilamentHeating p = new FilamentHeating();
-            p.setVisible(true);
-        }
-
-    }//GEN-LAST:event_bPreviousMousePressed
-
     private void bExitMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bExitMousePressed
-        doCancel();
+        if (bExit.isEnabled()) {
+            doCancel();
+        }
     }//GEN-LAST:event_bExitMousePressed
 
+    private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
+        if (bX.isEnabled()) {
+            doCancel();
+        }
+    }//GEN-LAST:event_bXMousePressed
+
     private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
-        if (!machine.getDriver().isBusy()) {
-            Base.writeLog("Load button pressed", this.getClass());
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "infografia-01.png")));
-            jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info2")));
-            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line7"));
-            unloadPressed = false;
-
-            showMessage();
-            bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3.png")));
-            bLoadMouseClickedReady = false;
-            //bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-            jLabel18MouseClickedReady = false;
-
+        if (bLoad.isEnabled()) {
             Base.writeLog("Loading filament", this.getClass());
-
-            //machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.LoadFilament());
-
-            // the printer reports as ready even if it isn't in the first few 
-            // seconds, so we need to set the busy boolean to true and set it 
-            // false 5 seconds later, as a kind of offset to compensate this 
-            // error
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(FilamentInsertion.class.getName()).log(Level.SEVERE, null, ex);
-                    } finally {
-                        machine.getDriver().setBusy(false);
-                    }
-                }
-            });
+            if (this.selectedFilament != null) {
+                jInternalImg.setIcon(intLoadImage);
+                jExternalImg.setIcon(extLoadImage);
+            }
+            driver.setBusy(true);
+            driver.dispatchCommand("M701", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bLoadMousePressed
 
     private void bUnloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMousePressed
-        if (!machine.getDriver().isBusy()) {
-            Base.writeLog("Unload button pressed", this.getClass());
-            showMessage();
-            bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_pressed_3_inverted.png")));
-            bUnloadMouseClickedReady = false;
-            //bNext.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_21.png")));
-            jLabel2.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "unload-01.png")));
-            jLabel4.setText(splitString(Languager.getTagValue(1, "FilamentWizard", "Exchange_Info3")));
-
-            jLabel18MouseClickedReady = false;
-            ProperDefault.put("filamentCoilRemaining", String.valueOf("0"));
-            ProperDefault.put("coilCode", String.valueOf("N/A"));
-            bNext.setText(Languager.getTagValue(1, "OptionPaneButtons", "Line6"));
-            unloadPressed = true;
-
+        if (bUnload.isEnabled()) {
             Base.writeLog("Unloading Filament", this.getClass());
-
-            machine.getDriver().setBusy(true);
-            machine.runCommand(new replicatorg.drivers.commands.UnloadFilament());
-
-            // the printer reports as ready even if it isn't in the first few 
-            // seconds, so we need to set the busy boolean to true and set it 
-            // false 10 seconds later, as a kind of offset to compensate this 
-            // error
-            EventQueue.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(FilamentInsertion.class.getName()).log(Level.SEVERE, null, ex);
-                    } finally {
-                        machine.getDriver().setBusy(false);
-                    }
-                }
-            });
-
-            //Set filament as NONE
-            machine.runCommand(new replicatorg.drivers.commands.SetCoilText());
+            if (this.selectedFilament != null) {
+                jInternalImg.setIcon(intUnloadImage);
+                jExternalImg.setIcon(extUnloadImage);
+            }
+            driver.setCoilText(FilamentControler.NO_FILAMENT);
+            driver.setBusy(true);
+            driver.dispatchCommand("M702", COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bUnloadMousePressed
 
-    private void bXMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bXMousePressed
-        doCancel();
-    }//GEN-LAST:event_bXMousePressed
+    private void bLoadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMouseEntered
+        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3.png")));
+    }//GEN-LAST:event_bLoadMouseEntered
+
+    private void bLoadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMouseExited
+        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
+    }//GEN-LAST:event_bLoadMouseExited
+
+    private void bUnloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseEntered
+        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_inverted.png")));
+    }//GEN-LAST:event_bUnloadMouseEntered
+
+    private void bUnloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bUnloadMouseExited
+        bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3_inverted.png")));
+    }//GEN-LAST:event_bUnloadMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bExit;
     private javax.swing.JLabel bLoad;
     private javax.swing.JLabel bNext;
-    private javax.swing.JLabel bPrevious;
     private javax.swing.JLabel bUnload;
     private javax.swing.JLabel bX;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.JLabel jExternalImg;
+    private javax.swing.JLabel jInternalImg;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JSeparator jSeparator2;
     // End of variables declaration//GEN-END:variables
-}
-
-class DisposeFeedbackThread extends Thread {
-
-    private final MachineInterface machine;
-    private final FilamentInsertion filamentPanel;
-
-    public DisposeFeedbackThread(FilamentInsertion filIns, MachineInterface mach) {
-        super("Filament Insertion Thread");
-        this.machine = mach;
-        this.filamentPanel = filIns;
-    }
-
-    @Override
-    public void run() {
-
-        while (true) {
-            machine.getModel().setMachineReady(false);
-            machine.runCommand(new replicatorg.drivers.commands.ReadStatus());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(DisposeFeedbackThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (machine.getModel().getMachineReady()
-                    && machine.getDriver().isBusy() == false) {
-                filamentPanel.resetFeedbackComponents();
-            } else {
-                filamentPanel.showMessage();
-            }
-        }
-    }
 }
