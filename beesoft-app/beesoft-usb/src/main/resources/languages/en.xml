@@ -565,14 +565,13 @@
       <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
       <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
+      <FilamentUnloadTitle value="Make sure the filament is correctly unloaded before proceeding."/>
+      <FilamentUnloadText value="To unload the filament, push the Unload button and pull the filament steadily."/>
+      <UnscrewNozzleTitle value="Unscrew Nozzle"/>
+      <ScrewNozzleTitle value="Screw the new Nozzle"/>
       <Info1b value=" "/>
       <Info2a value="Your 3D printer must finish heating before continuing this operation."/>
       <Info2b value="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
-      <StepByStepTitle value="Step-by-step instructions:" />
-      <Step1 value="1. Unload the filament;" />
-      <Step2 value="2. Unscrew nozzle;" />
-      <Step3 value="3. Screw new nozzle;" />
-      <Step4 value="4. Load filament." />
       <FirstSeries value="1st Series" />
       <SecondSeries value="2nd Series" />
       <FirstOrSecond value="First, verify if your nozzle belongs to the 1st or 2nd series." />
@@ -584,6 +583,7 @@
       <List4Surface value="A surface that can handle nozzle's heat, once you take it off." />
       <NoticeInfo1 value="the removed nozzle will be at around 200ºC" />
       <NoticeInfo2 value="Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+      <ProceedFilChange value="Proceed to insert filament wizard?"/>
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Support switch"/>

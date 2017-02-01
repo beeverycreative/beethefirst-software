@@ -45,10 +45,12 @@ public class FilamentCodeInsertion extends BaseDialog {
     private Nozzle currentNozzle = new Nozzle(model.getNozzleType());
     private DefaultComboBoxModel<Filament> comboModel;
     private int firstCompatibleFilamentIndex = 0;
+    private boolean skipHeating = false;
 
-    public FilamentCodeInsertion(boolean isFinalStep) {
+    public FilamentCodeInsertion(boolean isFinalStep, boolean skipHeating) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         this.isFinalStep = isFinalStep;
+        this.skipHeating = skipHeating;
 
         Base.writeLog("First step of the filament change operation", this.getClass());
         initComponents();
@@ -383,6 +385,11 @@ public class FilamentCodeInsertion extends BaseDialog {
                 driver.setCoilText(selectedFilament.getName());
                 driver.dispatchCommand("G28", UsbPassthroughDriver.COM.NO_RESPONSE);
                 dispose();
+            } else if(skipHeating && !isFinalStep) {
+                Base.writeLog("Next button pressed, transitioning to next panel", this.getClass());
+                FilamentInsertion p = new FilamentInsertion(selectedFilament);
+                dispose();
+                p.setVisible(true);
             } else {
                 FilamentHeating filamentHeatingPanel = new FilamentHeating(selectedFilament);
                 dispose();

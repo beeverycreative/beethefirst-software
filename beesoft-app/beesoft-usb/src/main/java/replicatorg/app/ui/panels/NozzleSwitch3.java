@@ -52,30 +52,26 @@ public class NozzleSwitch3 extends BaseDialog {
     }
 
     private void setTextLanguage() {
+        
         lTitle.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Title"));
-        lStepByStepTitle.setText("<html>" + Languager.getTagValue("NozzleSwitch", "StepByStepTitle"));
-        lStep1.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step1"));
-        lStep2.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step2"));
-        lStep3.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step3"));
-        lStep4.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Step4"));
-        lNotice.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NoticeWord"));
-        lNotice2.setText("<html>" + Languager.getTagValue("NozzleSwitch", "NoticeInfo2"));
-        lWarning.setText("<html>" + Languager.getTagValue("NozzleSwitch", "Info_Warning"));
+        lFilamentUnloadTitle.setText("<html>" + Languager.getTagValue("NozzleSwitch", "FilamentUnloadTitle"));
+        lFilamentUnloadText.setText("<html>" + Languager.getTagValue("NozzleSwitch", "FilamentUnloadText"));
 
         bNext.setText(Languager.getTagValue("OptionPaneButtons", "Line7"));
         bExit.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
+
     }
 
     @Override
     public void showMessage() {
-        bLoad.setEnabled(false);
+        //bLoad.setEnabled(false);
         bUnload.setEnabled(false);
         bNext.setEnabled(false);
     }
 
     @Override
     public void resetFeedbackComponents() {
-        bLoad.setEnabled(true);
+        //bLoad.setEnabled(true);
         bUnload.setEnabled(true);
         bNext.setEnabled(true);
     }
@@ -91,22 +87,15 @@ public class NozzleSwitch3 extends BaseDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        lWarning = new javax.swing.JLabel();
         lTitle = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        bLoad = new javax.swing.JLabel();
         bUnload = new javax.swing.JLabel();
         iInfographic = new javax.swing.JLabel();
-        jSeparator2 = new javax.swing.JSeparator();
-        lStepByStepTitle = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        lStep1 = new javax.swing.JLabel();
-        lStep2 = new javax.swing.JLabel();
-        lStep3 = new javax.swing.JLabel();
-        lStep4 = new javax.swing.JLabel();
-        lNotice2 = new javax.swing.JLabel();
-        lNotice = new javax.swing.JLabel();
+        lFilamentUnloadTitle = new javax.swing.JLabel();
+        lFilamentUnloadText = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
@@ -121,35 +110,12 @@ public class NozzleSwitch3 extends BaseDialog {
         jPanel1.setPreferredSize(new java.awt.Dimension(567, 501));
         jPanel1.setRequestFocusEnabled(false);
 
-        lWarning.setBackground(new java.awt.Color(248, 248, 248));
-        lWarning.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
-        lWarning.setText("WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS.");
-        lWarning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
         lTitle.setBackground(new java.awt.Color(248, 248, 248));
         lTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         lTitle.setText("Nozzle Switch");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
-
-        bLoad.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        bLoad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3.png"))); // NOI18N
-        bLoad.setText("Load");
-        bLoad.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_disabled_3.png"))); // NOI18N
-        bLoad.setEnabled(false);
-        bLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bLoad.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bLoadMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bLoadMouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                bLoadMousePressed(evt);
-            }
-        });
 
         bUnload.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
         bUnload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/b_simple_3_inverted.png"))); // NOI18N
@@ -169,49 +135,29 @@ public class NozzleSwitch3 extends BaseDialog {
             }
         });
 
-        iInfographic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/switch_nozzle_sized.png"))); // NOI18N
-
-        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
-        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
-        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
-        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
-
-        lStepByStepTitle.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
-        lStepByStepTitle.setText("Step-by-step instructions:");
+        iInfographic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/unload_filament_internal.gif"))); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(iInfographic)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(bLoad)
-                            .addComponent(bUnload)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lStepByStepTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(iInfographic)
+                .addGap(55, 55, 55)
+                .addComponent(bUnload)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(iInfographic)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(119, 119, 119)
-                        .addComponent(bLoad)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bUnload)))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lStepByStepTitle))
+                .addGap(147, 147, 147)
+                .addComponent(bUnload)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(48, Short.MAX_VALUE)
+                .addComponent(iInfographic)
+                .addContainerGap())
         );
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
@@ -242,30 +188,25 @@ public class NozzleSwitch3 extends BaseDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lStep1.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lStep1.setText("1. Unload the filament.");
+        lFilamentUnloadTitle.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        lFilamentUnloadTitle.setText("Make sure the filament is correctly unloaded before proceeding.");
 
-        lStep2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lStep2.setText("2. Unscrew nozzle.");
+        lFilamentUnloadText.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lFilamentUnloadText.setText("<html> To unload the filament, push the Unload button and pull the filament steadily.</html>");
+        lFilamentUnloadText.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lFilamentUnloadText.setPreferredSize(new java.awt.Dimension(608, 96));
 
-        lStep3.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lStep3.setText("3. Screw new nozzle.");
-
-        lStep4.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lStep4.setText("4. Load filament.");
-
-        lNotice2.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lNotice2.setText("<html> Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m).");
-
-        lNotice.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
-        lNotice.setText("NOTICE: ");
-        lNotice.setMaximumSize(null);
+        jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
+        jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
+        jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
+        jSeparator2.setPreferredSize(new java.awt.Dimension(50, 1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -273,19 +214,11 @@ public class NozzleSwitch3 extends BaseDialog {
                         .addComponent(lTitle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lStep1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lStep3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lStep4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lNotice2, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lFilamentUnloadTitle)
+                            .addComponent(lFilamentUnloadText, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 46, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,21 +228,13 @@ public class NozzleSwitch3 extends BaseDialog {
                     .addComponent(lTitle, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lStep1)
-                .addGap(0, 0, 0)
-                .addComponent(lStep2)
-                .addGap(1, 1, 1)
-                .addComponent(lStep3)
-                .addGap(0, 0, 0)
-                .addComponent(lStep4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lNotice2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(lWarning)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lFilamentUnloadTitle)
+                .addGap(26, 26, 26)
+                .addComponent(lFilamentUnloadText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -357,7 +282,7 @@ public class NozzleSwitch3 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 411, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -375,8 +300,8 @@ public class NozzleSwitch3 extends BaseDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -442,25 +367,8 @@ public class NozzleSwitch3 extends BaseDialog {
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3_inverted.png")));
     }//GEN-LAST:event_bUnloadMouseEntered
 
-    private void bLoadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMousePressed
-        if (bLoad.isEnabled()) {
-            Base.writeLog("Load filament pressed", this.getClass());
-            driver.setBusy(true);
-            driver.dispatchCommand("M701", COM.NO_RESPONSE);
-        }
-    }//GEN-LAST:event_bLoadMousePressed
-
-    private void bLoadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMouseExited
-        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_3.png")));
-    }//GEN-LAST:event_bLoadMouseExited
-
-    private void bLoadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bLoadMouseEntered
-        bLoad.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_3.png")));
-    }//GEN-LAST:event_bLoadMouseEntered
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel bExit;
-    private javax.swing.JLabel bLoad;
     private javax.swing.JLabel bNext;
     private javax.swing.JLabel bUnload;
     private javax.swing.JLabel iInfographic;
@@ -470,15 +378,9 @@ public class NozzleSwitch3 extends BaseDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JLabel lNotice;
-    private javax.swing.JLabel lNotice2;
-    private javax.swing.JLabel lStep1;
-    private javax.swing.JLabel lStep2;
-    private javax.swing.JLabel lStep3;
-    private javax.swing.JLabel lStep4;
-    private javax.swing.JLabel lStepByStepTitle;
+    private javax.swing.JLabel lFilamentUnloadText;
+    private javax.swing.JLabel lFilamentUnloadTitle;
     private javax.swing.JLabel lTitle;
-    private javax.swing.JLabel lWarning;
     // End of variables declaration//GEN-END:variables
 
 }

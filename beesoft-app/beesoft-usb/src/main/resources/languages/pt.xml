@@ -568,11 +568,10 @@
       <Info1b value=" "/>
       <Info2a value="O aquecimento precisa de estar concluído para poderes continuar esta operação."/>
       <Info2b value="O extrudor está completamente aquecido quando a barra de estado está completamente preenchida. Espera um momento para que a impressora derreta o PLA dentro do extrusor."/>
-      <StepByStepTitle value="Instruções passo-a-passo:" />
-      <Step1 value="1. Descarregar filamento;" />
-      <Step2 value="2. Desapertar nozzle;" />
-      <Step3 value="3. Apertar novo nozzle;" />
-      <Step4 value="4. Carregar filamento." />
+      <FilamentUnloadTitle value="Make sure the filament is correctly unloaded before proceeding."/>
+      <FilamentUnloadText value="To unload the filament, push the Unload button and pull the filament steadily."/>
+      <UnscrewNozzleTitle value="Unscrew Nozzle"/>
+      <ScrewNozzleTitle value="Screw the new Nozzle"/>
       <FirstSeries value="1ª Série" />
       <SecondSeries value="2ª Série" />
       <FirstOrSecond value="Primeiro, verifica se o nozzle em questão corresponde à 1ª ou 2ª série." />
@@ -584,6 +583,7 @@
       <List4Surface value="Uma superfície que aguente o nozzle quando o retirares." />
       <NoticeInfo1 value="o nozzle retirado vai sair a cerca de 200ºC" />
       <NoticeInfo2 value="Aperta o nozzle até sentires resistencia. O aperto deve ser suficiente para não existirem fugas de plástico e não excessivo para não danificar a rosca. Aperto ideal: 3,5 (N.m)" />
+      <ProceedFilChange value="Proceed to insert filament wizard?"/>
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Mudança de Suporte de Bobine"/>
