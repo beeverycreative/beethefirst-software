@@ -86,9 +86,9 @@ public class NozzleSwitch5 extends BaseDialog {
         lWarning = new javax.swing.JLabel();
         lTitle = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        iInfographic = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         lScrewNozzleTitle = new javax.swing.JLabel();
+        iInfographic = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         lNotice2 = new javax.swing.JLabel();
@@ -119,8 +119,6 @@ public class NozzleSwitch5 extends BaseDialog {
 
         jPanel3.setBackground(new java.awt.Color(248, 248, 248));
 
-        iInfographic.setIcon(new javax.swing.ImageIcon("/Users/mgomes/git/beethefirst-software/beesoft-app/beesoft-usb/src/main/resources/app_resources/panels/switch_nozzle2_sized.png")); // NOI18N
-
         jSeparator2.setBackground(new java.awt.Color(255, 255, 255));
         jSeparator2.setForeground(new java.awt.Color(222, 222, 222));
         jSeparator2.setMinimumSize(new java.awt.Dimension(4, 1));
@@ -130,29 +128,35 @@ public class NozzleSwitch5 extends BaseDialog {
         lScrewNozzleTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lScrewNozzleTitle.setText("Screw the new Nozzle");
 
+        iInfographic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/switch_nozzle2_sized.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(118, 118, 118)
-                        .addComponent(iInfographic))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lScrewNozzleTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap()
+                .addComponent(lScrewNozzleTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGap(125, 125, 125)
+                    .addComponent(iInfographic)
+                    .addContainerGap(126, Short.MAX_VALUE)))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(iInfographic)
-                .addGap(18, 18, 18)
+                .addGap(238, 238, 238)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lScrewNozzleTitle))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGap(28, 28, 28)
+                    .addComponent(iInfographic)
+                    .addContainerGap(28, Short.MAX_VALUE)))
         );
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));

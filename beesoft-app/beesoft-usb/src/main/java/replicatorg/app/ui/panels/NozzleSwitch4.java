@@ -90,6 +90,8 @@ public class NozzleSwitch4 extends BaseDialog {
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         lUnscrewNozzleTitle = new javax.swing.JLabel();
+        lNotice = new javax.swing.JLabel();
+        lNoticeTable = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
@@ -175,6 +177,13 @@ public class NozzleSwitch4 extends BaseDialog {
         lUnscrewNozzleTitle.setText("Unscrew Nozzle");
         lUnscrewNozzleTitle.setToolTipText("");
 
+        lNotice.setFont(new java.awt.Font("Source Sans Pro", 1, 12)); // NOI18N
+        lNotice.setText("NOTICE: ");
+        lNotice.setMaximumSize(null);
+
+        lNoticeTable.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
+        lNoticeTable.setText("<html> Remove the printing platform to have better access to the extruder nozzle.");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -189,7 +198,12 @@ public class NozzleSwitch4 extends BaseDialog {
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lWarning, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(lUnscrewNozzleTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lNoticeTable, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lUnscrewNozzleTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 553, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -202,7 +216,11 @@ public class NozzleSwitch4 extends BaseDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lUnscrewNozzleTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lNoticeTable, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
                 .addComponent(lWarning)
                 .addContainerGap())
         );
@@ -330,6 +348,8 @@ public class NozzleSwitch4 extends BaseDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel lNotice;
+    private javax.swing.JLabel lNoticeTable;
     private javax.swing.JLabel lTitle;
     private javax.swing.JLabel lUnscrewNozzleTitle;
     private javax.swing.JLabel lWarning;

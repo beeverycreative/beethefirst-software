@@ -362,6 +362,10 @@ public class NozzleSwitch2 extends BaseDialog {
             dispose();
             NozzleSwitch3 p = new NozzleSwitch3();
             p.setVisible(true);
+        } else {
+            dispose();
+            NozzleSwitch3 p = new NozzleSwitch3();
+            p.setVisible(true);
         }
     }//GEN-LAST:event_bNextMousePressed
 
