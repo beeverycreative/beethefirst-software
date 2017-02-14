@@ -309,7 +309,7 @@
                                         <!-- creates target directory -->
                                         <mkdir dir="${project.build.directory}/mac-${project.release.name}"/>
 
-                                        <property name="jdk.version" value="jdk1.8.0_77.jdk" />
+                                        <property name="jdk.version" value="jdk1.8.0_111.jdk" />
                                         <property name="compile_classpath" refid="maven.compile.classpath"/>
                                         <property name="target.app.dir" value="${project.build.directory}/mac-${project.release.name}" />
                                         <property name="resources.dir" value="${project.basedir}/src/main/resources" />
@@ -561,11 +561,6 @@
             <artifactId>JUnitParams</artifactId>
             <version>1.0.5</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>unknown.binary</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

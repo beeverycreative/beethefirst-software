@@ -182,7 +182,7 @@ public class NozzleSwitch4 extends BaseDialog {
         lNotice.setMaximumSize(null);
 
         lNoticeTable.setFont(new java.awt.Font("Source Sans Pro", 0, 12)); // NOI18N
-        lNoticeTable.setText("<html> Remove the printing platform to have better access to the extruder nozzle.");
+        lNoticeTable.setText("<html> Remove the printing platform to better access the extruder nozzle.");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
