@@ -214,7 +214,7 @@
                   </Group>
                   <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                   <Component id="lWarning" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="27" max="32767" attributes="0"/>
+                  <EmptySpace pref="30" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -540,7 +540,7 @@
         <Component class="javax.swing.JLabel" name="lWarning">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Source Sans Pro" size="13" style="1"/>
+              <Font name="Source Sans Pro" size="18" style="1"/>
             </Property>
             <Property name="text" type="java.lang.String" value="&lt;html&gt;WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS."/>
           </Properties>

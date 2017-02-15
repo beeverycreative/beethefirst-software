@@ -571,6 +571,7 @@
       <FilamentUnloadTitle value="Make sure the filament is correctly unloaded before proceeding."/>
       <FilamentUnloadText value="To unload the filament, push the Unload button and pull the filament steadily."/>
       <UnscrewNozzleTitle value="Unscrew Nozzle"/>
+      <NoticeTable value="Remove the printing platform to better access the extruder nozzle."/>
       <ScrewNozzleTitle value="Screw the new Nozzle"/>
       <FirstSeries value="1st Series" />
       <SecondSeries value="2nd Series" />

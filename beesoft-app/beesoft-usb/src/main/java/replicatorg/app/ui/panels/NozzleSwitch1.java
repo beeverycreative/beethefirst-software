@@ -255,7 +255,7 @@ public class NozzleSwitch1 extends BaseDialog {
         lNotice2.setFont(new java.awt.Font("Source Sans Pro", 0, 13)); // NOI18N
         lNotice2.setText("<html>the removed nozzle will be at around 200ºC");
 
-        lWarning.setFont(new java.awt.Font("Source Sans Pro", 1, 13)); // NOI18N
+        lWarning.setFont(new java.awt.Font("Source Sans Pro", 1, 18)); // NOI18N
         lWarning.setText("<html>WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE WITH YOUR SKIN DURING THIS PROCESS.");
 
         lVerify.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
@@ -390,7 +390,7 @@ public class NozzleSwitch1 extends BaseDialog {
                     .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addComponent(lWarning, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
