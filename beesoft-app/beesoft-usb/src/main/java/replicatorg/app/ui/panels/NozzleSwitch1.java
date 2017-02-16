@@ -90,16 +90,6 @@ public class NozzleSwitch1 extends BaseDialog {
 
         jPanel1 = new javax.swing.JPanel();
         lTitle = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        iFirstSeries = new javax.swing.JLabel();
-        lFirstSeries = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        iSecondSeries = new javax.swing.JLabel();
-        lSecondSeries = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         bX = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
@@ -124,6 +114,14 @@ public class NozzleSwitch1 extends BaseDialog {
         lVerify = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         lNotice = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        iFirstSeries = new javax.swing.JLabel();
+        lFirstSeries = new javax.swing.JLabel();
+        iSecondSeries = new javax.swing.JLabel();
+        lSecondSeries = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         bNext = new javax.swing.JLabel();
         bExit = new javax.swing.JLabel();
@@ -142,44 +140,6 @@ public class NozzleSwitch1 extends BaseDialog {
         lTitle.setFont(new java.awt.Font("Source Sans Pro", 0, 14)); // NOI18N
         lTitle.setText("Nozzle Switch");
         lTitle.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
-        jPanel3.setBackground(new java.awt.Color(248, 248, 248));
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        iFirstSeries.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/nozzles_old.png"))); // NOI18N
-        jPanel3.add(iFirstSeries, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 30, -1, 208));
-
-        lFirstSeries.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        lFirstSeries.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lFirstSeries.setText("1st Series");
-        jPanel3.add(lFirstSeries, new org.netbeans.lib.awtextra.AbsoluteConstraints(29, 12, 480, -1));
-
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 30, 20, 208));
-
-        iSecondSeries.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/nozzles_new.png"))); // NOI18N
-        jPanel3.add(iSecondSeries, new org.netbeans.lib.awtextra.AbsoluteConstraints(607, 36, -1, 208));
-
-        lSecondSeries.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        lSecondSeries.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lSecondSeries.setText("2nd Series");
-        jPanel3.add(lSecondSeries, new org.netbeans.lib.awtextra.AbsoluteConstraints(516, 12, 520, -1));
-
-        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        jLabel1.setText("0.6 mm");
-        jPanel3.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(850, 250, -1, -1));
-
-        jLabel2.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        jLabel2.setText("0.4 mm");
-        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 250, -1, -1));
-
-        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        jLabel3.setText("0.6 mm");
-        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 250, -1, -1));
-
-        jLabel4.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
-        jLabel4.setText("0.4 mm");
-        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 250, -1, -1));
 
         jPanel4.setBackground(new java.awt.Color(248, 248, 248));
         jPanel4.setMinimumSize(new java.awt.Dimension(62, 26));
@@ -271,11 +231,34 @@ public class NozzleSwitch1 extends BaseDialog {
         lNotice.setText("<html>NOTICE: ");
         lNotice.setMaximumSize(null);
 
+        jLabel3.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        jLabel3.setText("0.6 mm");
+
+        jLabel2.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        jLabel2.setText("0.4 mm");
+
+        iFirstSeries.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/nozzles_old.png"))); // NOI18N
+
+        lFirstSeries.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        lFirstSeries.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lFirstSeries.setText("1st Series");
+
+        iSecondSeries.setIcon(new javax.swing.ImageIcon(getClass().getResource("/replicatorg/app/ui/panels/nozzles_new.png"))); // NOI18N
+
+        lSecondSeries.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        lSecondSeries.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lSecondSeries.setText("2nd Series");
+
+        jLabel4.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        jLabel4.setText("0.4 mm");
+
+        jLabel1.setFont(new java.awt.Font("Source Sans Pro", 1, 14)); // NOI18N
+        jLabel1.setText("0.6 mm");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 1052, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,8 +314,29 @@ public class NozzleSwitch1 extends BaseDialog {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(lNotice2)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 2, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(lFirstSeries, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(7, 7, 7)
+                                .addComponent(lSecondSeries, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(51, 51, 51)
+                                .addComponent(iFirstSeries)
+                                .addGap(173, 173, 173)
+                                .addComponent(iSecondSeries))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(111, 111, 111)
+                                .addComponent(jLabel2)
+                                .addGap(132, 132, 132)
+                                .addComponent(jLabel3)
+                                .addGap(282, 282, 282)
+                                .addComponent(jLabel4)
+                                .addGap(122, 122, 122)
+                                .addComponent(jLabel1)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -340,9 +344,23 @@ public class NozzleSwitch1 extends BaseDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lTitle, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lFirstSeries)
+                    .addComponent(lSecondSeries))
+                .addGap(1, 1, 1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(iFirstSeries, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(iSecondSeries, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel1))
+                .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lVerify))
@@ -390,7 +408,7 @@ public class NozzleSwitch1 extends BaseDialog {
                     .addComponent(lNotice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addComponent(lWarning, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 203, 5));
@@ -437,7 +455,7 @@ public class NozzleSwitch1 extends BaseDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bExit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 914, Short.MAX_VALUE)
                 .addComponent(bNext)
                 .addContainerGap())
         );
@@ -455,8 +473,11 @@ public class NozzleSwitch1 extends BaseDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1052, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1052, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1074, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1050, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -524,9 +545,7 @@ public class NozzleSwitch1 extends BaseDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JLabel lAdditionalNozzle;
