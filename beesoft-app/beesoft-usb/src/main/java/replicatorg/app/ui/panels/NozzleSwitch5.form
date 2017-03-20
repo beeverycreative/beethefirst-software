@@ -150,7 +150,7 @@
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
-                          <Component id="iInfographic" min="-2" max="-2" attributes="0"/>
+                          <Component id="iInfographic" min="-2" pref="290" max="-2" attributes="0"/>
                           <EmptySpace pref="126" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -167,7 +167,7 @@
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                          <Component id="iInfographic" min="-2" max="-2" attributes="0"/>
+                          <Component id="iInfographic" min="-2" pref="200" max="-2" attributes="0"/>
                           <EmptySpace pref="28" max="32767" attributes="0"/>
                       </Group>
                   </Group>

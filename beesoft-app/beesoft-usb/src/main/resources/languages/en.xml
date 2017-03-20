@@ -584,7 +584,7 @@
       <List4Surface value="A surface that can stand the temperature of the removed nozzle." />
       <NoticeInfo1 value="the removed nozzle will be at around 200ºC" />
       <NoticeInfo2 value="Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
-      <ProceedFilChange value="Do you want/wish to change filament now?"/>
+      <ProceedFilChange value="Do you want to change filament now?"/>
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Support switch"/>
