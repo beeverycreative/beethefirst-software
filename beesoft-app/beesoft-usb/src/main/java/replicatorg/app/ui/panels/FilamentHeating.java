@@ -33,11 +33,14 @@ public class FilamentHeating extends BaseDialog {
     public FilamentHeating(Filament selectedFilament) {
         super(Base.getMainWindow(), Dialog.ModalityType.DOCUMENT_MODAL);
         Base.writeLog("Second step of the filament change operation", this.getClass());
+        
+        this.selectedFilament = selectedFilament;
+        
         initComponents();
         setFont();
         setTextLanguage();
         evaluateInitialConditions();
-        this.selectedFilament = selectedFilament;
+        
         super.centerOnScreen();
         jProgressBar1.setForeground(new Color(255, 203, 5));
         moveToPosition();
@@ -85,12 +88,14 @@ public class FilamentHeating extends BaseDialog {
             jProgressBar1.setValue(temperature);
         }
         
-        double temperatureError = (GENERIC_TEMPERATURE_GOAL - temperature)/(double)GENERIC_TEMPERATURE_GOAL;
+        int unloadTemp = selectedFilament.getUnloadTemperature();
+        
+        double temperatureError = (unloadTemp - temperature)/(double)unloadTemp;
         if (temperatureError < 0.01) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
             disableMessageDisplay();
-            driver.setTemperature(GENERIC_TEMPERATURE_GOAL);
+            driver.setTemperature(unloadTemp);
             driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }
@@ -113,13 +118,13 @@ public class FilamentHeating extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Waiting for extruder to reach the target temperature, " + GENERIC_TEMPERATURE_GOAL, this.getClass());
+        Base.writeLog("Waiting for extruder to reach the target temperature, " + selectedFilament.getUnloadTemperature(), this.getClass());
         showMessage();
-        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (selectedFilament.getUnloadTemperature() + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
-        jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
+        jProgressBar1.setMaximum(selectedFilament.getUnloadTemperature());
 
         driver.readTemperature();
         updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());

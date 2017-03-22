@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Filament implements Comparable {
 
     public enum Material {
-        PLA, TPU, PET;
+        PLA, TPU, PET, NYLON;
     }
 
     @XmlElement(name = "version")
@@ -37,6 +37,12 @@ public class Filament implements Comparable {
 
     @XmlElement(name = "material")
     private Material material;
+    
+    @XmlElement(name = "UnloadTemperature")
+    private String UnloadTemperature;
+    
+    @XmlElement(name = "UnloadType")
+    private String UnloadType;
 
     public Filament() {
         this.supportedPrinters = new ArrayList<>();
@@ -81,6 +87,14 @@ public class Filament implements Comparable {
 
     public Material getMaterial() {
         return material;
+    }
+    
+    public int getUnloadTemperature() {
+        return Integer.parseInt(UnloadTemperature);
+    }
+    
+    public int getUnloadType() {
+        return Integer.parseInt(UnloadType);
     }
 
     public List<Resolution> getSupportedResolutions(String printer, int nozzleMicrons) {
