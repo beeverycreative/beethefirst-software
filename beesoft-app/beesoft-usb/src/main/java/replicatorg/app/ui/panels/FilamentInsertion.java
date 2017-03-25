@@ -444,7 +444,7 @@ public class FilamentInsertion extends BaseDialog {
             }
             driver.setCoilText(FilamentControler.NO_FILAMENT);
             driver.setBusy(true);
-            driver.dispatchCommand("M702 S" + selectedFilament.getUnloadType(), COM.NO_RESPONSE);
+            driver.dispatchCommand("M702 T" + selectedFilament.getUnloadType(), COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bUnloadMousePressed
 
