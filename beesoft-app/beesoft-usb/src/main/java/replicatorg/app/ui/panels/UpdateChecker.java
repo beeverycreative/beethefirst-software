@@ -271,6 +271,8 @@ public class UpdateChecker extends BaseDialog {
             resetCmd = git.reset();
             resetCmd.setMode(ResetType.HARD);
             resetCmd.call();
+            
+            git.pull().call();
 
             /*
             repoStatus = git.status().call();
