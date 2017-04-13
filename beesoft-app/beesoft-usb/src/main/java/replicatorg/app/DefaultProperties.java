@@ -100,7 +100,7 @@ public class DefaultProperties {
         defaultHash.put("languagesCodes", "EN,PT,ES,DE,FR");
         defaultHash.put("languagesList", "English,Português,Español,Deutsch,Français");
         defaultHash.put("git.filament_repo_url", "https://github.com/beeverycreative/Filaments.git");
-        defaultHash.put("git.filament_repo_branch", "master");
+        defaultHash.put("git.filament_repo_branch", "origin/master");
         
         defaultHash.put("filament.dont_show_support_query", String.valueOf(false));
         defaultHash.put("serialnumber.reset", String.valueOf(false));
