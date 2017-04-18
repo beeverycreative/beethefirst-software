@@ -144,8 +144,8 @@ public class UpdateChecker extends BaseDialog {
         final Git git;
         final Status repoStatus;
         final RemoteAddCommand remoteAddCmd;
-        final ResetCommand resetCmd;
-        final CheckoutCommand checkoutCmd;
+        ResetCommand resetCmd;
+        CheckoutCommand checkoutCmd;
         final String currentBranch, newBranch;
         final List<Ref> branchList;
         Repository filamentsRepo;
@@ -259,7 +259,24 @@ public class UpdateChecker extends BaseDialog {
                     //git.cherryPick().setNoCommit(true).include(backup).call();
                 }
             }
+            
+            
+            repoStatus = git.status().call();
+            
+            checkoutCmd = git.checkout();
+            checkoutCmd.setName(FILAMENTS_REPO_BRANCH);
+            checkoutCmd.call();
+            
+            
+            git.fetch();
+            resetCmd = git.reset();
+            resetCmd.setMode(ResetType.HARD);
+            resetCmd.call();
+            
+            git.pull().call();
+            
 
+            /*
             repoStatus = git.status().call();
             if (repoStatus.hasUncommittedChanges()) {
                 Base.writeLog("Repo has uncommited changes, stashing and pulling...", this.getClass());
@@ -271,6 +288,8 @@ public class UpdateChecker extends BaseDialog {
                 Base.writeLog("Repo has no uncommited changes, a simple pull will suffice", this.getClass());
                 git.pull().call();
             }
+            */
+
 
             Base.writeLog("Filament update concluded successfully!", this.getClass());
 

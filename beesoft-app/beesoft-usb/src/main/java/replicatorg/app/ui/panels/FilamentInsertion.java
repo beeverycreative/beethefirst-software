@@ -431,7 +431,7 @@ public class FilamentInsertion extends BaseDialog {
                 jExternalImg.setIcon(extLoadImage);
             }
             driver.setBusy(true);
-            driver.dispatchCommand("M701", COM.NO_RESPONSE);
+            driver.dispatchCommand("M701 T" + selectedFilament.getUnloadType(), COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bLoadMousePressed
 
