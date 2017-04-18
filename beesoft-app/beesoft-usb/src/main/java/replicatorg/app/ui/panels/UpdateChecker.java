@@ -260,6 +260,7 @@ public class UpdateChecker extends BaseDialog {
                 }
             }
             
+            /*
             repoStatus = git.status().call();
             
             checkoutCmd = git.checkout();
@@ -273,8 +274,9 @@ public class UpdateChecker extends BaseDialog {
             resetCmd.call();
             
             git.pull().call();
+            */
 
-            /*
+            
             repoStatus = git.status().call();
             if (repoStatus.hasUncommittedChanges()) {
                 Base.writeLog("Repo has uncommited changes, stashing and pulling...", this.getClass());
@@ -286,7 +288,7 @@ public class UpdateChecker extends BaseDialog {
                 Base.writeLog("Repo has no uncommited changes, a simple pull will suffice", this.getClass());
                 git.pull().call();
             }
-            */
+            
 
             Base.writeLog("Filament update concluded successfully!", this.getClass());
 
