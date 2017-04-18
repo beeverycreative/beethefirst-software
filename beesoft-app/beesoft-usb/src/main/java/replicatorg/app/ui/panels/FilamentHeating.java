@@ -88,14 +88,11 @@ public class FilamentHeating extends BaseDialog {
             jProgressBar1.setValue(temperature);
         }
         
-        int unloadTemp = selectedFilament.getUnloadTemperature();
-        
-        double temperatureError = (unloadTemp - temperature)/(double)unloadTemp;
-        if (temperatureError < 0.01) {
+        if (temperature >= GENERIC_TEMPERATURE_GOAL) {
             Base.writeLog("Temperature achieved...", this.getClass());
             temperatureThread.kill();
             disableMessageDisplay();
-            driver.setTemperature(unloadTemp);
+            driver.setTemperature(GENERIC_TEMPERATURE_GOAL);
             driver.dispatchCommand("M300");
             bNext.setEnabled(true);
         }
@@ -118,13 +115,13 @@ public class FilamentHeating extends BaseDialog {
     }
 
     private void moveToPosition() {
-        Base.writeLog("Waiting for extruder to reach the target temperature, " + selectedFilament.getUnloadTemperature(), this.getClass());
+        Base.writeLog("Waiting for extruder to reach the target temperature, " + GENERIC_TEMPERATURE_GOAL, this.getClass());
         showMessage();
-        driver.dispatchCommand("M703 S" + (selectedFilament.getUnloadTemperature() + 5), COM.NO_RESPONSE);
+        driver.dispatchCommand("M703 S" + (GENERIC_TEMPERATURE_GOAL + 5), COM.NO_RESPONSE);
     }
 
     private void evaluateInitialConditions() {
-        jProgressBar1.setMaximum(selectedFilament.getUnloadTemperature());
+        jProgressBar1.setMaximum(GENERIC_TEMPERATURE_GOAL);
 
         driver.readTemperature();
         updateHeatBar(driver.getMachine().currentTool().getExtruderTemperature());
