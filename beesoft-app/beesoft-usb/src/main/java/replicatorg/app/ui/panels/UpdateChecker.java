@@ -144,8 +144,8 @@ public class UpdateChecker extends BaseDialog {
         final Git git;
         final Status repoStatus;
         final RemoteAddCommand remoteAddCmd;
-        ResetCommand resetCmd;
-        CheckoutCommand checkoutCmd;
+        final ResetCommand resetCmd;
+        final CheckoutCommand checkoutCmd;
         final String currentBranch, newBranch;
         final List<Ref> branchList;
         Repository filamentsRepo;
@@ -224,7 +224,7 @@ public class UpdateChecker extends BaseDialog {
                     Base.writeLog("No correct branch was found locally, attempting to checkout a new branch tracking the remote", this.getClass());
                     checkoutCmd.setCreateBranch(true);
                     checkoutCmd.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK);
-                    checkoutCmd.setStartPoint(FILAMENTS_REPO_BRANCH);
+                    checkoutCmd.setStartPoint("origin/" + FILAMENTS_REPO_BRANCH);
                     git.fetch().call();
                 }
 
@@ -259,24 +259,7 @@ public class UpdateChecker extends BaseDialog {
                     //git.cherryPick().setNoCommit(true).include(backup).call();
                 }
             }
-            
-            /*
-            repoStatus = git.status().call();
-            
-            checkoutCmd = git.checkout();
-            checkoutCmd.setName(FILAMENTS_REPO_BRANCH);
-            checkoutCmd.call();
-            
-            
-            git.fetch();
-            resetCmd = git.reset();
-            resetCmd.setMode(ResetType.HARD);
-            resetCmd.call();
-            
-            git.pull().call();
-            */
 
-            
             repoStatus = git.status().call();
             if (repoStatus.hasUncommittedChanges()) {
                 Base.writeLog("Repo has uncommited changes, stashing and pulling...", this.getClass());
@@ -288,7 +271,6 @@ public class UpdateChecker extends BaseDialog {
                 Base.writeLog("Repo has no uncommited changes, a simple pull will suffice", this.getClass());
                 git.pull().call();
             }
-            
 
             Base.writeLog("Filament update concluded successfully!", this.getClass());
 
@@ -585,7 +567,7 @@ public class UpdateChecker extends BaseDialog {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -735,31 +717,31 @@ public class UpdateChecker extends BaseDialog {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseEntered
+    private void bCancelMouseEntered(java.awt.event.MouseEvent evt) {                                     
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
-    }//GEN-LAST:event_bCancelMouseEntered
+    }                                    
 
-    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMouseExited
+    private void bCancelMouseExited(java.awt.event.MouseEvent evt) {                                    
         bCancel.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
-    }//GEN-LAST:event_bCancelMouseExited
+    }                                   
 
-    private void bDownloadMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bDownloadMouseEntered
+    private void bDownloadMouseEntered(java.awt.event.MouseEvent evt) {                                       
         bDownload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_hover_15.png")));
-    }//GEN-LAST:event_bDownloadMouseEntered
+    }                                      
 
-    private void bDownloadMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bDownloadMouseExited
+    private void bDownloadMouseExited(java.awt.event.MouseEvent evt) {                                      
         bDownload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_15.png")));
-    }//GEN-LAST:event_bDownloadMouseExited
+    }                                     
 
-    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelMousePressed
+    private void bCancelMousePressed(java.awt.event.MouseEvent evt) {                                     
         if (bCancel.isEnabled()) {
             doExit();
         }
-    }//GEN-LAST:event_bCancelMousePressed
+    }                                    
 
-    private void bDownloadMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bDownloadMousePressed
+    private void bDownloadMousePressed(java.awt.event.MouseEvent evt) {                                       
         if (bDownload.isEnabled()) {
             fileFromServer.delete();
             try {
@@ -777,15 +759,15 @@ public class UpdateChecker extends BaseDialog {
             //Closes BEESOFT
             System.exit(0);
         }
-    }//GEN-LAST:event_bDownloadMousePressed
+    }                                      
 
-    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel15MousePressed
+    private void jLabel15MousePressed(java.awt.event.MouseEvent evt) {                                      
         if (jLabel15.isEnabled()) {
             doExit();
         }
-    }//GEN-LAST:event_jLabel15MousePressed
+    }                                     
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JLabel bCancel;
     private javax.swing.JLabel bDownload;
     private javax.swing.JLabel jLabel1;
@@ -794,5 +776,5 @@ public class UpdateChecker extends BaseDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }
