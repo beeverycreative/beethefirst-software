@@ -224,7 +224,7 @@ public class UpdateChecker extends BaseDialog {
                     Base.writeLog("No correct branch was found locally, attempting to checkout a new branch tracking the remote", this.getClass());
                     checkoutCmd.setCreateBranch(true);
                     checkoutCmd.setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK);
-                    checkoutCmd.setStartPoint("origin/" + FILAMENTS_REPO_BRANCH);
+                    checkoutCmd.setStartPoint(FILAMENTS_REPO_BRANCH);
                     git.fetch().call();
                 }
 
