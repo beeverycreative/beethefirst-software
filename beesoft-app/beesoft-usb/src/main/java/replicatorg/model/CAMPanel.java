@@ -1,8 +1,10 @@
 package replicatorg.model;
 
-import org.scijava.java3d.utils.geometry.*;
-import org.scijava.java3d.utils.picking.*;
-import org.scijava.java3d.utils.universe.SimpleUniverse;
+import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.picking.PickCanvas;
+import com.sun.j3d.utils.picking.PickResult;
+import com.sun.j3d.utils.picking.PickTool;
+import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,9 +14,9 @@ import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.scijava.java3d.*;
+import javax.media.j3d.*;
 import javax.swing.JPanel;
-import org.scijava.vecmath.*;
+import javax.vecmath.*;
 import net.miginfocom.swing.MigLayout;
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;

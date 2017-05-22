@@ -2,7 +2,7 @@ package replicatorg.app.ui.mainWindow;
 
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
-import org.scijava.vecmath.AxisAngle4d;
+import javax.vecmath.AxisAngle4d;
 import replicatorg.app.Base;
 import replicatorg.app.Languager;
 import replicatorg.app.ui.GraphicDesignComponents;

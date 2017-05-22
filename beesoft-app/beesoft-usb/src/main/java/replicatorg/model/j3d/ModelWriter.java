@@ -3,10 +3,10 @@ package replicatorg.model.j3d;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.scijava.java3d.Geometry;
-import org.scijava.java3d.Shape3D;
-import org.scijava.java3d.Transform3D;
-import org.scijava.java3d.TriangleArray;
+import javax.media.j3d.Geometry;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Transform3D;
+import javax.media.j3d.TriangleArray;
 
 public abstract class ModelWriter {
 	protected OutputStream ostream;
