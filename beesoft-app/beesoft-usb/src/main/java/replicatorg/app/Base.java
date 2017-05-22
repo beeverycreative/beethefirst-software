@@ -703,7 +703,7 @@ public class Base {
     }
 
     public static void main(String[] args) {
-        
+
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             final StringWriter sw = new StringWriter();
             final BufferedWriter bw = initLog(EXCEPTION_FILE);
@@ -718,7 +718,7 @@ public class Base {
             } catch (IOException ex) {
             }
         });
-        
+
         if (Base.isMacOS()) {
             // Default to sun's XML parser, PLEASE.  Some apps are installing some janky-ass xerces.
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory",

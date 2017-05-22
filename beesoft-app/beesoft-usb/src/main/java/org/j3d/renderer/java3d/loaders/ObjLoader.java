@@ -13,20 +13,20 @@ import java.net.URL;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.TriangleArray;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.scijava.java3d.BranchGroup;
+import org.scijava.java3d.Shape3D;
+import org.scijava.java3d.TriangleArray;
+import org.scijava.vecmath.Point3d;
+import org.scijava.vecmath.Vector3d;
+import org.scijava.vecmath.Vector3f;
 
 import replicatorg.app.Base;
 
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.LoaderBase;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.SceneBase;
+import org.scijava.java3d.loaders.IncorrectFormatException;
+import org.scijava.java3d.loaders.LoaderBase;
+import org.scijava.java3d.loaders.ParsingErrorException;
+import org.scijava.java3d.loaders.Scene;
+import org.scijava.java3d.loaders.SceneBase;
 
 public class ObjLoader extends LoaderBase {
 

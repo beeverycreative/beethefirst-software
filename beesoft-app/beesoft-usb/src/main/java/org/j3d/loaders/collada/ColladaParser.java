@@ -3,11 +3,12 @@ package org.j3d.loaders.collada;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.media.j3d.TriangleArray;
+import java.util.logging.Level;
 
-import javax.media.j3d.GeometryArray;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
+import org.scijava.java3d.GeometryArray;
+import org.scijava.java3d.TriangleArray;
+import org.scijava.vecmath.Point3d;
+import org.scijava.vecmath.Vector3f;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,6 +19,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import replicatorg.app.Base;
 
 public class ColladaParser {
 	class FloatArray {
