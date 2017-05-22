@@ -14,10 +14,10 @@ import java.util.logging.Level;
 
 import replicatorg.app.Base;
 
-import org.scijava.java3d.loaders.IncorrectFormatException;
-import org.scijava.java3d.loaders.LoaderBase;
-import org.scijava.java3d.loaders.ParsingErrorException;
-import org.scijava.java3d.loaders.Scene;
+import com.sun.j3d.loaders.IncorrectFormatException;
+import com.sun.j3d.loaders.LoaderBase;
+import com.sun.j3d.loaders.ParsingErrorException;
+import com.sun.j3d.loaders.Scene;
 
 public class GTSLoader extends LoaderBase {
 
