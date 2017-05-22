@@ -568,11 +568,11 @@
       <Info1b value=" "/>
       <Info2a value="Tu impresora deve terminar el calentamiento antes de continuar esta operación."/>
       <Info2b value="La extrusora está totalmente caliente cuando la barra de estado está completamente llena. Espera um momento para que la impresora derrita el PLA dentro do la extrusora."/>
-      <StepByStepTitle value="Step-by-step instructions:" />
-      <Step1 value="1. Unload the filament;" />
-      <Step2 value="2. Unscrew nozzle;" />
-      <Step3 value="3. Screw new nozzle;" />
-      <Step4 value="4. Load filament." />
+      <FilamentUnloadTitle value="Make sure the filament is correctly unloaded before proceeding."/>
+      <FilamentUnloadText value="To unload the filament, push the Unload button and pull the filament steadily."/>
+      <UnscrewNozzleTitle value="Unscrew Nozzle"/>
+      <NoticeTable value="Remove the printing platform to better access the extruder nozzle."/>
+      <ScrewNozzleTitle value="Screw the new Nozzle"/>
       <FirstSeries value="1st Series" />
       <SecondSeries value="2nd Series" />
       <FirstOrSecond value="First, verify if your nozzle belongs to the 1st or 2nd series." />
@@ -584,6 +584,7 @@
       <List4Surface value="A surface that can handle nozzle's heat, once you take it off." />
       <NoticeInfo1 value="the removed nozzle will be at around 200ºC" />
       <NoticeInfo2 value="Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+      <ProceedFilChange value="Proceed to insert filament wizard?"/>
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Cambiar soporte de la bobina."/>

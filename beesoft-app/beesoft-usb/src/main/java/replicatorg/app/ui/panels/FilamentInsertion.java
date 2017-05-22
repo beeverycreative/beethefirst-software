@@ -169,7 +169,7 @@ public class FilamentInsertion extends BaseDialog {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -431,7 +431,7 @@ public class FilamentInsertion extends BaseDialog {
                 jExternalImg.setIcon(extLoadImage);
             }
             driver.setBusy(true);
-            driver.dispatchCommand("M701", COM.NO_RESPONSE);
+            driver.dispatchCommand("M701 T" + selectedFilament.getUnloadType(), COM.NO_RESPONSE);
         }
     }//GEN-LAST:event_bLoadMousePressed
 

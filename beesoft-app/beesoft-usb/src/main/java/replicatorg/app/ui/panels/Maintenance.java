@@ -700,7 +700,7 @@ public class Maintenance extends BaseDialog {
     private void bChangeFilamentMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChangeFilamentMousePressed
         if (bChangeFilament.isEnabled()) {
             dispose();
-            FilamentCodeInsertion p = new FilamentCodeInsertion(false);
+            FilamentCodeInsertion p = new FilamentCodeInsertion(false,false);
             p.setVisible(true);
             Base.getMainWindow().getCanvas().unPickAll();
         }

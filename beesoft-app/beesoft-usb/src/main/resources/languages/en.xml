@@ -561,18 +561,18 @@
       <Info_Warning value="WARNING: BE CAREFUL NOT TO TOUCH THE NOZZLE DIRECTLY DURING THIS PROCESS." />
       <NoticeWord value="NOTICE:" />
       <NozzleHeatingInfo1 value="The extruder is currently heating, please wait." />
-      <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full." />
+      <NozzleHeatingInfo2 value="When the extruder has reached the ideal temperature, the progress bar will be full, just click NEXT" />
       <NozzleSelectDesc1 value="Select the nozzle size that you just installed:"/>
       <NozzleSelectDesc2 value="0.6 mm nozzles are marked around their perimeter, as you can observe in the above image."/>
       <Info1a value="Use this operation if you wish to replace the extruder nozzle. This will involve handling a hot extruder, you will need: a heat-resistant tray or surface, a spare nozzle, and the nozzle removal tool from your maintenance kit."/>
+      <FilamentUnloadTitle value="Make sure the filament is correctly unloaded before proceeding."/>
+      <FilamentUnloadText value="To unload the filament, push the Unload button and pull the filament steadily."/>
+      <UnscrewNozzleTitle value="Unscrew Nozzle"/>
+      <NoticeTable value="Remove the printing platform to better access the extruder nozzle."/>
+      <ScrewNozzleTitle value="Screw the new Nozzle"/>
       <Info1b value=" "/>
       <Info2a value="Your 3D printer must finish heating before continuing this operation."/>
       <Info2b value="The extruder is fully hot when the status bar shown in BEESOFT is full. Leave the printer for a short while to allow any PLA inside to melt. "/>
-      <StepByStepTitle value="Step-by-step instructions:" />
-      <Step1 value="1. Unload the filament;" />
-      <Step2 value="2. Unscrew nozzle;" />
-      <Step3 value="3. Screw new nozzle;" />
-      <Step4 value="4. Load filament." />
       <FirstSeries value="1st Series" />
       <SecondSeries value="2nd Series" />
       <FirstOrSecond value="First, verify if your nozzle belongs to the 1st or 2nd series." />
@@ -581,9 +581,10 @@
       <List2Wrench value="6mm wrench;" />
       <List2SocketWrench value="10mm socket wrench;" />
       <List3Ratchet value="Ratchet for the socket wrench;" />
-      <List4Surface value="A surface that can handle nozzle's heat, once you take it off." />
+      <List4Surface value="A surface that can stand the temperature of the removed nozzle." />
       <NoticeInfo1 value="the removed nozzle will be at around 200ºC" />
       <NoticeInfo2 value="Screw the nozzle until you feel resistance. The tightness should be sufficient in order to prevent plastic leaks, though not excessive as to not damage the thread. Ideal tightness: 3.5 (N.m)." />
+      <ProceedFilChange value="Do you want to change filament now?"/>
     </NozzleSwitch>
     <SupportSwitch>
       <title value="Support switch"/>
@@ -634,7 +635,7 @@
       <ExtruderMaintenance_Intro value="This operation enables you to unclog the nozzle  using the Maintenance Kit."/>
       <NozzleSwitch_Title value="Switch nozzle"/>
       <NozzleSwitch_button value="Switch nozzle now"/>
-      <NozzleSwitch_Intro value="It is necessary to change the nozzle when it's clogged or if you need to print with a nozzle of a different diameter, ex: TPU-FLEX."/>
+      <NozzleSwitch_Intro value="It is necessary to change the nozzle when it's clogged or you want to print with a filament that requires a different nozzle diameter, ex: TPU-FLEX."/>
       <NozzleSwitch_CurrentNozzle value="Current nozzle: %.1f (mm)"/>
       <SupportSwitch_Title value="Install External Spool Holder."/>
       <SupportSwitch_button value="Change spool holder"/>
