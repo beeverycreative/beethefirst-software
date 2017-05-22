@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
-import org.scijava.vecmath.Point3d;
+import javax.vecmath.Point3d;
 
 import replicatorg.app.Base;
 import replicatorg.app.ProperDefault;

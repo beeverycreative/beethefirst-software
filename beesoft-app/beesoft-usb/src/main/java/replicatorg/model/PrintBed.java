@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.scijava.java3d.Shape3D;
+import javax.media.j3d.Shape3D;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import replicatorg.app.Base;

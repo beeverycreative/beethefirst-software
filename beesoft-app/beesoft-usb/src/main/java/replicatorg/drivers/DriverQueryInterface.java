@@ -1,6 +1,6 @@
 package replicatorg.drivers;
 
-import org.scijava.vecmath.Point3d;
+import javax.vecmath.Point3d;
 
 import replicatorg.util.Point5d;
 

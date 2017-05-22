@@ -163,13 +163,13 @@
                                     <fileset dir="${project.build.directory}" includes="*.jar" />    
                                 </copy>
                                 
-                                <copy todir="${target.dir}/natives/windows-i586">
+                                <copy todir="${target.dir}">
                                     <fileset dir="${natives.dir}/windows-i586" includes="*.dll" />                                
                                 </copy>
                                 
-                                <copy todir="${target.dir}/natives/windows-amd64">
+                                <!--copy todir="${target.dir}/natives/windows-amd64">
                                     <fileset dir="${natives.dir}/windows-amd64" includes="*.dll" />                                
-                                </copy>
+                                </copy-->
                                 
                                 <copy todir="${target.dir}">
                                     <filelist dir="${app.resources.dir}/images" files="icon.png" />
@@ -268,10 +268,10 @@
                                 <copy todir="${target.dir}/firmware">
                                     <filelist dir="${resources.dir}/firmware" files="firmware.properties" />
                                 </copy>                                 
-                                <copy todir="${target.dir}/natives/linux-i586">
+                                <!--copy todir="${target.dir}/natives/linux-i586">
                                     <fileset dir="${natives.dir}/linux-i586" includes="*.so" />
-                                </copy>
-                                <copy todir="${target.dir}/natives/linux-amd64">
+                                </copy-->
+                                <copy todir="${target.dir}">
                                     <fileset dir="${natives.dir}/linux-amd64" includes="*.so" />
                                 </copy>
                                 <!-- permissions -->
@@ -326,7 +326,7 @@
                                             <runtime dir="/Library/Java/JavaVirtualMachines/${jdk.version}/Contents/Home"/>
                                             <classpath dir="${project.build.directory}" includes="BEESOFT.jar" />
                                             <classpath dir="${lib.dir}" includes="*.jar" />
-                                            <classpath dir="${resources.dir}/natives/macosx-universal" includes="*.jar" />
+                                            <!--classpath dir="${resources.dir}/natives/macosx-universal" includes="*.jar" /-->
                                             <classpath dir="${installer.dir}" includes="*.jnilib" />
                                             <option value="-Dapple.laf.useScreenMenuBar=true" />
                                             <option value="-Djava.ext.dirs=${jdk.ext.dir}" />
@@ -425,6 +425,7 @@
                             <executable>java</executable>
                             <workingDirectory>${project.basedir}/target/linux-${project.release.name}</workingDirectory>
                             <arguments>                        
+                                <argument>-Djava.library.path=${project.basedir}/target/linux-${project.release.name}/natives/linux-amd64</argument>
                                 <argument>-ea</argument>
                                 <argument>-Xmx2048m</argument>
                                 <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
@@ -479,19 +480,19 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>org.scijava</groupId>
-            <artifactId>j3dcore</artifactId>
-            <version>1.6.0-scijava-2</version>
+            <groupId>java3d</groupId>
+            <artifactId>j3d-core</artifactId>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
-            <groupId>org.scijava</groupId>
-            <artifactId>j3dutils</artifactId>
-            <version>1.6.0-scijava-2</version>
+            <groupId>java3d</groupId>
+            <artifactId>j3d-core-utils</artifactId>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
-            <groupId>org.scijava</groupId>
+            <groupId>java3d</groupId>
             <artifactId>vecmath</artifactId>
-            <version>1.6.0-scijava-2</version>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
@@ -512,8 +513,8 @@
             <groupId>org.devzendo</groupId>
             <artifactId>Quaqua</artifactId>
             <version>7.3.4</version>
-        </dependency> 
-        <dependency>
+        </dependency>  
+       <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.0.19</version>
