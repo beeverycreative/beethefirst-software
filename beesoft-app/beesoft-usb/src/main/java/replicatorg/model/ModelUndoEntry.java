@@ -1,6 +1,6 @@
 package replicatorg.model;
 
-import javax.media.j3d.Transform3D;
+import org.scijava.java3d.Transform3D;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;

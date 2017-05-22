@@ -21,18 +21,18 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.TriangleArray;
-import javax.vecmath.Vector3d;
+import org.scijava.java3d.BranchGroup;
+import org.scijava.java3d.Shape3D;
+import org.scijava.java3d.TriangleArray;
+import org.scijava.vecmath.Vector3d;
 
 import org.j3d.loaders.stl.STLFileReader;
 
-import com.sun.j3d.loaders.IncorrectFormatException;
-import com.sun.j3d.loaders.LoaderBase;
-import com.sun.j3d.loaders.ParsingErrorException;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.loaders.SceneBase;
+import org.scijava.java3d.loaders.IncorrectFormatException;
+import org.scijava.java3d.loaders.LoaderBase;
+import org.scijava.java3d.loaders.ParsingErrorException;
+import org.scijava.java3d.loaders.Scene;
+import org.scijava.java3d.loaders.SceneBase;
 import java.io.Serializable;
 import replicatorg.app.Base;
 
