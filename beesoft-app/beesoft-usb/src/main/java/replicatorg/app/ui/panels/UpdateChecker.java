@@ -89,6 +89,7 @@ public class UpdateChecker extends BaseDialog {
 
     private static void copyFilamentProfiles() {
         final File filamentsFolder;
+        final File filamentsTestFile;
         final File[] filamentFileArray;
         final FilenameFilter xmlFilter;
         int length;
@@ -99,7 +100,9 @@ public class UpdateChecker extends BaseDialog {
         FileOutputStream fileOutStream;
 
         filamentsFolder = new File(Base.getAppDataDirectory() + "/filaments");
-
+        filamentsTestFile = new File(Base.getAppDataDirectory() + "/filaments/.filaments");
+        if (filamentsFolder.exists() && filamentsTestFile.exists() == false)
+            deleteDirectory(filamentsFolder);
         if (filamentsFolder.exists() == false) {
             filamentsFolder.mkdir();
 
@@ -138,7 +141,22 @@ public class UpdateChecker extends BaseDialog {
         }
 
     }
-
+    private static boolean deleteDirectory(File directory) {
+        if(directory.exists()){
+            File[] files = directory.listFiles();
+            if(null!=files){
+                for(int i=0; i<files.length; i++) {
+                    if(files[i].isDirectory()) {
+                        deleteDirectory(files[i]);
+                    }
+                    else {
+                        files[i].delete();
+                    }
+                }
+            }
+        }
+        return(directory.delete());
+    }
     private void updateFilaments() {
         final FileRepositoryBuilder repoBuilder = new FileRepositoryBuilder();
         final Git git;
