@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 @RunWith(JUnitParamsRunner.class)
 public class PrinterInfoTest {
 
-    private static final String FIRMWARE_VERSION = "10.5.13";
+    private static final String FIRMWARE_VERSION = "10.5.27";
 
     private Object[] parametersForTestValueOf() {
         return new Object[]{
