@@ -174,7 +174,7 @@ public class PrintSplashAutonomous extends BaseDialog {
         tEstimation.setText(Languager.getTagValue("Print", "Print_Estimation"));
         tRemaining.setText(Languager.getTagValue("Print", "Print_Remaining"));
         bCancel.setText(Languager.getTagValue("OptionPaneButtons", "Line3"));
-        bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line10"));
+        bOk.setText(Languager.getTagValue("OptionPaneButtons", "Line6"));
         bPause.setText(Languager.getTagValue("OptionPaneButtons", "Line11"));
         bUnload.setText(Languager.getTagValue("OptionPaneButtons", "Line14"));
         setProcessingInfo();
@@ -428,7 +428,8 @@ public class PrintSplashAutonomous extends BaseDialog {
         bOk.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_20.png")));
         bOk.setDisabledIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_disabled_20.png")));
         bUnload.setIcon(new ImageIcon(GraphicDesignComponents.getImage("panels", "b_simple_21.png")));
-        tRemaining.setText(Languager.getTagValue("Print", "Print_Splash_Info5"));
+        //tRemaining.setText(Languager.getTagValue("Print", "Print_Splash_Info5"));
+        tRemaining.setText("");
         tEstimation.setText(Languager.getTagValue("Print", "Print_Completion")
                 + " " + generateTimeString(elapsedMinutes));
         driver.setTemperature(0);
