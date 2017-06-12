@@ -47,6 +47,7 @@ import replicatorg.app.Base;
  */
 public class STLLoader extends LoaderBase implements Serializable
 {
+    private static final long serialVersionUID = 407514876605294425L;
     private final Component itsParentComponent;
     private boolean         itsShowProgress = false;
 
